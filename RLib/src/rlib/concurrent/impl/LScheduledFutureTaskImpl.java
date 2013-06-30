@@ -35,7 +35,7 @@ public class LScheduledFutureTaskImpl<L, V> extends LFutureTaskImpl<L, V> implem
      * Creates a one-shot action with given nanoTime-based trigger time.
      */
     public LScheduledFutureTaskImpl(LRunnable<L> r, V result, long sequenceNumber, long time) {
-        super(r, result);
+        super();
         this.time = time;
         this.period = 0;
         this.sequenceNumber = sequenceNumber;
@@ -45,7 +45,6 @@ public class LScheduledFutureTaskImpl<L, V> extends LFutureTaskImpl<L, V> implem
      * Creates a periodic action with given nano time and period.
      */
     public LScheduledFutureTaskImpl(LRunnable<L> r, V result, long sequenceNumber, long time, long period) {
-        super(r, result);
         this.time = time;
         this.period = period;
         this.sequenceNumber = sequenceNumber;
@@ -55,7 +54,6 @@ public class LScheduledFutureTaskImpl<L, V> extends LFutureTaskImpl<L, V> implem
      * Creates a one-shot action with given nanoTime-based trigger.
      */
     public LScheduledFutureTaskImpl(LCallable<L, V> callable, long sequenceNumber, long time) {
-        super(callable);
         this.time = time;
         this.period = 0;
         this.sequenceNumber = sequenceNumber;
@@ -129,8 +127,8 @@ public class LScheduledFutureTaskImpl<L, V> extends LFutureTaskImpl<L, V> implem
 
     public boolean cancel(boolean mayInterruptIfRunning) {
         boolean cancelled = super.cancel(mayInterruptIfRunning);
-        if (cancelled && removeOnCancel && heapIndex >= 0)
-            remove(this);
+       // if (cancelled && removeOnCancel && heapIndex >= 0)
+      //      remove(this);
         return cancelled;
     }
 
@@ -139,14 +137,14 @@ public class LScheduledFutureTaskImpl<L, V> extends LFutureTaskImpl<L, V> implem
      */
     public void run() {
         boolean periodic = isPeriodic();
-        if (!canRunInCurrentRunState(periodic))
-            cancel(false);
-        else if (!periodic)
-            ScheduledFutureTask.super.run();
-        else if (ScheduledFutureTask.super.runAndReset()) {
-            setNextRunTime();
-            reExecutePeriodic(outerTask);
-        }
+//        if (!canRunInCurrentRunState(periodic))
+//            cancel(false);
+//        else if (!periodic)
+//            ScheduledFutureTask.super.run();
+//        else if (ScheduledFutureTask.super.runAndReset()) {
+//            setNextRunTime();
+//            reExecutePeriodic(outerTask);
+//        }
     }
 	
     /**
@@ -165,12 +163,12 @@ public class LScheduledFutureTaskImpl<L, V> extends LFutureTaskImpl<L, V> implem
      * Long.MAX_VALUE.
      */
     private long overflowFree(long delay) {
-        Delayed head = (Delayed) super.getQueue().peek();
-        if (head != null) {
-            long headDelay = head.getDelay(TimeUnit.NANOSECONDS);
-            if (headDelay < 0 && (delay - headDelay < 0))
-                delay = Long.MAX_VALUE + headDelay;
-        }
+//        Delayed head = (Delayed) super.getQueue().peek();
+//        if (head != null) {
+//            long headDelay = head.getDelay(TimeUnit.NANOSECONDS);
+//            if (headDelay < 0 && (delay - headDelay < 0))
+//                delay = Long.MAX_VALUE + headDelay;
+//        }
         return delay;
     }
 }

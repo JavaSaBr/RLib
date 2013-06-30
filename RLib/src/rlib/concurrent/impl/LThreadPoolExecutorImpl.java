@@ -19,4 +19,11 @@ public class LThreadPoolExecutorImpl<L> extends AbstractLThreadPoolExecutor<L>
 	{
 		super(threadFactory, workerFactory, handler, waitTasks, sync, timeout, poolSize);
 	}
+
+	@Override
+	public boolean remove(LRunnable<L> task)
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
