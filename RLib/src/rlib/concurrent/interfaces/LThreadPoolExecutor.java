@@ -23,4 +23,6 @@ public interface LThreadPoolExecutor<L> extends LExecutorService<L>
 	 * @return кол-во выполненых задач.
 	 */
 	public long getCompletedTasks();
+	
+	public boolean remove(LRunnable<L> task);
 }

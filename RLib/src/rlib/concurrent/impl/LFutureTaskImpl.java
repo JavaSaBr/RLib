@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import rlib.concurrent.LExecutors;
 import rlib.concurrent.interfaces.LCallable;
 import rlib.concurrent.interfaces.LFutureTask;
 import rlib.concurrent.interfaces.LRunnable;
@@ -17,14 +18,9 @@ public class LFutureTaskImpl<L, V> implements LFutureTask<L, V>
 	/** синхронизатор */
 	private final FutureTaskSync<L, V> sync;
 
-	public LFutureTaskImpl(LRunnable<L> runnable, V result)
+	public LFutureTaskImpl()
 	{
-		this.sync = new FutureTaskSync<L, V>(this, callable);
-	}
-	
-	public LFutureTaskImpl(LCallable<L, V> callable)
-	{
-		this.sync = new FutureTaskSync<L, V>(this, callable);
+		this.sync = new FutureTaskSync<L, V>(this);
 	}
 
 	@Override
@@ -35,6 +31,12 @@ public class LFutureTaskImpl<L, V> implements LFutureTask<L, V>
 
 	@Override
 	public void done(){}
+
+	@Override
+	public void finalyze()
+	{
+		getSync().finalyze();
+	}
 
 	@Override
 	public V get() throws InterruptedException, ExecutionException
@@ -53,6 +55,16 @@ public class LFutureTaskImpl<L, V> implements LFutureTask<L, V>
 		return sync;
 	}
 
+	public void init(LCallable<L, V> callable)
+	{
+		getSync().setCallable(callable);
+	}
+
+	public void init(LRunnable<L> runnable, V result)
+	{
+		getSync().setCallable(LExecutors.runnableToCallable(runnable, result));
+	}
+
 	@Override
 	public boolean isCancelled()
 	{
@@ -66,9 +78,15 @@ public class LFutureTaskImpl<L, V> implements LFutureTask<L, V>
 	}
 
 	@Override
+	public void reinit()
+	{
+		getSync().reinit();
+	}
+
+	@Override
 	public void run(L localObjects)
 	{
-		getSync().innerRun();
+		getSync().innerRun(localObjects);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.concurrent.locks.Lock;
 import rlib.concurrent.impl.LThreadImpl;
 import rlib.concurrent.impl.LThreadPoolExecutorImpl;
 import rlib.concurrent.impl.LWorkerFactoryImpl;
+import rlib.concurrent.interfaces.LCallable;
 import rlib.concurrent.interfaces.LExecutorService;
 import rlib.concurrent.interfaces.LRunnable;
 import rlib.concurrent.interfaces.LThread;
@@ -64,6 +65,20 @@ public final class LExecutors
 	public static <L> LWorkerFactory<L> createWorkerFactory()
 	{
 		return new LWorkerFactoryImpl<L>();
+	}
+	
+	public static <L, V> LCallable<L, V> runnableToCallable(final LRunnable<L> runnable, final V result)
+	{
+		return new LCallable<L, V>()
+		{
+			@Override
+			public V call(L localObjects)
+			{
+				runnable.run(localObjects);
+				return result;
+			}
+		};
+		
 	}
 	
 	public static void main(String[] args)

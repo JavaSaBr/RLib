@@ -7,8 +7,9 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 import rlib.concurrent.interfaces.LCallable;
 import rlib.concurrent.interfaces.LFutureTask;
+import rlib.util.pools.Foldable;
 
-public final class FutureTaskSync<L, V> extends AbstractQueuedSynchronizer
+public final class FutureTaskSync<L, V> extends AbstractQueuedSynchronizer implements Foldable
 {
 	private static final long serialVersionUID = -7828117401763700385L;
 
@@ -20,67 +21,113 @@ public final class FutureTaskSync<L, V> extends AbstractQueuedSynchronizer
 	private static final int RAN = 2;
 	/** State value representing that task was cancelled */
 	private static final int CANCELLED = 4;
-
-	private LFutureTask<L, V> futureTask;
-	/** The underlying callable */
-	private LCallable<L, V> callable;
-	/** The result to return from get() */
-	private V result;
-	/** The exception to throw from get() */
-	private Throwable exception;
-
-	/**
-	 * The thread running task. When nulled after set/cancel, this indicates
-	 * that the results are accessible. Must be volatile, to ensure visibility
-	 * upon completion.
-	 */
+	
+	/** ссылка на задачу */
+	private final LFutureTask<L, V> futureTask;
+	
+	/** поток, в котором выполняется задача */
 	private volatile Thread runner;
-
-	public FutureTaskSync(LFutureTask<L, V> futureTask, LCallable<L, V> callable)
+	
+	/** обрабатываемая задача */
+	private LCallable<L, V> callable;
+	/** ошибка, вылетевшая во время ожидания и исполнения задачи */
+	private Throwable exception;
+	/** резульбтат выполнения задачи */
+	private V result;
+	
+	public FutureTaskSync(LFutureTask<L, V> futureTask)
 	{
 		this.futureTask = futureTask;
-		this.callable = callable;
 	}
 
+	/**
+	 * @param callable обрабатываемая задача.
+	 */
+	public void setCallable(LCallable<L, V> callable)
+	{
+		this.callable = callable;
+	}
+	
+	protected final Thread getRunner()
+	{
+		return runner;
+	}
+	
+	/**
+	 * Обработка отмены выполнения задачи.
+	 * 
+	 * @param mayInterruptIfRunning прерывать ли исполняющий поток.
+	 * @return произошла ли отмена.
+	 */
 	public boolean innerCancel(boolean mayInterruptIfRunning)
 	{
-		for(;;)
+		while(true)
 		{
-			int s = getState();
-			if(ranOrCancelled(s))
+			int state = getState();
+			
+			if(ranOrCancelled(state))
 				return false;
-			if(compareAndSetState(s, CANCELLED))
+			
+			if(compareAndSetState(state, CANCELLED))
 				break;
 		}
+		
 		if(mayInterruptIfRunning)
 		{
-			Thread r = runner;
-			if(r != null)
-				r.interrupt();
+			Thread runner = getRunner();
+			
+			if(runner != null)
+				runner.interrupt();
 		}
+		
 		releaseShared(0);
-		futureTask.done();
+		getFutureTask().done();
 		return true;
+	}
+
+	protected final LFutureTask<L, V> getFutureTask()
+	{
+		return futureTask;
 	}
 
 	public V innerGet() throws InterruptedException, ExecutionException
 	{
 		acquireSharedInterruptibly(0);
+		
 		if(getState() == CANCELLED)
 			throw new CancellationException();
+		
+		Throwable exception = getException();
+		
 		if(exception != null)
 			throw new ExecutionException(exception);
-		return result;
+		
+		return getResult();
+	}
+	
+	protected final Throwable getException()
+	{
+		return exception;
 	}
 
 	public V innerGet(long nanosTimeout) throws InterruptedException, ExecutionException, TimeoutException
 	{
 		if(!tryAcquireSharedNanos(0, nanosTimeout))
 			throw new TimeoutException();
+		
 		if(getState() == CANCELLED)
 			throw new CancellationException();
+		
+		Throwable exception = getException();
+		
 		if(exception != null)
 			throw new ExecutionException(exception);
+		
+		return getResult();
+	}
+	
+	protected final V getResult()
+	{
 		return result;
 	}
 
@@ -89,115 +136,141 @@ public final class FutureTaskSync<L, V> extends AbstractQueuedSynchronizer
 		return getState() == CANCELLED;
 	}
 
-	public boolean innerIsDone()
+	public final boolean innerIsDone()
 	{
-		return ranOrCancelled(getState()) && runner == null;
+		return ranOrCancelled(getState()) && getRunner() == null;
+	}
+	
+	protected final void setRunner(Thread runner)
+	{
+		this.runner = runner;
 	}
 
-	public void innerRun()
+	public void innerRun(L localObjects)
 	{
 		if(!compareAndSetState(READY, RUNNING))
 			return;
 
-		runner = Thread.currentThread();
+		setRunner(Thread.currentThread());
+		
+		LFutureTask<L, V> futureTask = getFutureTask();
+		
 		if(getState() == RUNNING)
-		{ // recheck after setting thread
+		{
 			V result;
+			
 			try
 			{
-				result = callable.call(null);
+				result = getCallable().call(localObjects);
 			}
-			catch(Throwable ex)
+			catch(Throwable throwable)
 			{
-				futureTask.setException(ex);
+				futureTask.setException(throwable);
 				return;
 			}
+			
 			futureTask.setResult(result);
 		}
 		else
 		{
-			releaseShared(0); // cancel
+			releaseShared(0);
 		}
 	}
+	
+	protected final LCallable<L, V> getCallable()
+	{
+		return callable;
+	}
 
-	public boolean innerRunAndReset()
+	public boolean innerRunAndReset(L localObjects)
 	{
 		if(!compareAndSetState(READY, RUNNING))
 			return false;
+		
 		try
 		{
-			runner = Thread.currentThread();
+			setRunner(Thread.currentThread());
+			
 			if(getState() == RUNNING)
-				callable.call(null); // don't set result
-			runner = null;
+				getCallable().call(localObjects);
+			
+			setRunner(null);
+			
 			return compareAndSetState(RUNNING, READY);
 		}
 		catch(Throwable ex)
 		{
-			futureTask.setException(ex);
+			getFutureTask().setException(ex);
 			return false;
 		}
 	}
 
-	public void innerSet(V v)
+	public void setResult(V result)
 	{
-		for(;;)
+		this.result = result;
+	}
+	
+	public void innerSet(V result)
+	{
+		while(true)
 		{
-			int s = getState();
-			if(s == RAN)
+			int state = getState();
+			
+			if(state == RAN)
 				return;
-			if(s == CANCELLED)
+			
+			if(state == CANCELLED)
 			{
-				// aggressively release to set runner to null,
-				// in case we are racing with a cancel request
-				// that will try to interrupt runner
 				releaseShared(0);
 				return;
 			}
-			if(compareAndSetState(s, RAN))
+			
+			if(compareAndSetState(state, RAN))
 			{
-				result = v;
+				setResult(result);
 				releaseShared(0);
-				futureTask.done();
+				getFutureTask().done();
 				return;
 			}
 		}
 	}
 
-	public void innerSetException(Throwable t)
+	protected final void setException(Throwable exception)
 	{
-		for(;;)
+		this.exception = exception;
+	}
+	
+	public void innerSetException(Throwable throwable)
+	{
+		while(true)
 		{
-			int s = getState();
-			if(s == RAN)
+			int state = getState();
+			
+			if(state == RAN)
 				return;
-			if(s == CANCELLED)
+			
+			if(state == CANCELLED)
 			{
-				// aggressively release to set runner to null,
-				// in case we are racing with a cancel request
-				// that will try to interrupt runner
 				releaseShared(0);
 				return;
 			}
-			if(compareAndSetState(s, RAN))
+			
+			if(compareAndSetState(state, RAN))
 			{
-				exception = t;
+				setException(throwable);
 				releaseShared(0);
-				futureTask.done();
+				getFutureTask().done();
 				return;
 			}
 		}
 	}
 
-	public boolean ranOrCancelled(int state)
+	protected final boolean ranOrCancelled(int state)
 	{
 		return (state & (RAN | CANCELLED)) != 0;
 	}
 
-	/**
-	 * Implements AQS base acquire to succeed if ran or cancelled
-	 */
-	public int tryAcquireShared(int ignore)
+	protected final int tryAcquireShared(int ignore)
 	{
 		return innerIsDone() ? 1 : -1;
 	}
@@ -208,7 +281,17 @@ public final class FutureTaskSync<L, V> extends AbstractQueuedSynchronizer
 	 */
 	public boolean tryReleaseShared(int ignore)
 	{
-		runner = null;
+		setRunner(null);
 		return true;
 	}
+
+	@Override
+	public void finalyze()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reinit(){}
 }
