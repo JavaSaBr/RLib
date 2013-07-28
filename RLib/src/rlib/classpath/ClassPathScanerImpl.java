@@ -7,6 +7,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import rlib.compiler.Compiler;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.Strings;
@@ -20,9 +21,7 @@ import rlib.util.array.Arrays;
  */
 class ClassPathScanerImpl implements ClassPathScaner
 {
-	private static final String JAR_EXTENSION = ".jar";
-
-	private static final Logger log = Loggers.getLogger(ClassPathScanerImpl.class);
+	private static final Logger log = Loggers.getLogger(ClassPathScaner.class);
 
 	private static final String CLASS_PATH = System.getProperty("java.class.path");
 	private static final String PATH_SEPARATOR = File.pathSeparator;
@@ -101,7 +100,7 @@ class ClassPathScanerImpl implements ClassPathScaner
 
 			if(file.isDirectory())
 				scaningDirectory(path, container, file);
-			else if(file.isFile() && file.getName().endsWith(JAR_EXTENSION))
+			else if(file.isFile() && file.getName().endsWith(Compiler.SOURCE_EXTENSION))
 				scaningJar(container, file);
 		}
 
@@ -134,7 +133,7 @@ class ClassPathScanerImpl implements ClassPathScaner
 			{
 				String name = file.getName();
 
-				if(name.endsWith(JAR_EXTENSION))
+				if(name.endsWith(Compiler.SOURCE_EXTENSION))
 					scaningJar(container, file);
 				else if(name.endsWith(CLASS_EXTENSION))
 				{
