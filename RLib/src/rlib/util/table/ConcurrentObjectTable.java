@@ -641,13 +641,13 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V>
 	@Override
 	public final void readLock()
 	{
-		locker.readLock();
+		locker.asynLock();
 	}
 
 	@Override
 	public final void readUnlock()
 	{
-		locker.readUnlock();
+		locker.asynUnlock();
 	}
 
 	@Override
@@ -901,12 +901,12 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V>
 	@Override
 	public final void writeLock()
 	{
-		locker.writeLock();
+		locker.synLock();
 	}
 
 	@Override
 	public final void writeUnlock()
 	{
-		locker.writeUnlock();
+		locker.synUnlock();
 	}
 }

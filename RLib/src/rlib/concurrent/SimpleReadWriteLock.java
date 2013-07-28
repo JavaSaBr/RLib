@@ -22,25 +22,25 @@ public final class SimpleReadWriteLock implements AsynReadSynWriteLock
 	}
 	
 	@Override
-	public void readLock()
+	public void asynLock()
 	{
 		readLock.lock();
 	}
 	
 	@Override
-	public void readUnlock()
+	public void asynUnlock()
 	{
 		readLock.unlock();
 	}
 	
 	@Override
-	public void writeLock()
+	public void synLock()
 	{
 		writeLock.lock();
 	}
 	
 	@Override
-	public void writeUnlock()
+	public void synUnlock()
 	{
 		writeLock.unlock();
 	}

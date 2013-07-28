@@ -17,10 +17,9 @@ import rlib.util.array.Arrays;
 import rlib.util.table.Table;
 import rlib.util.table.Tables;
 
-
 /**
  * Класс для работы с файлами в игровом режиме.
- *
+ * 
  * @author Ronn
  * @created 01.03.2012
  */
@@ -43,7 +42,7 @@ public class Files
 
 	/**
 	 * Определят, подходит ли по формату фаил.
-	 *
+	 * 
 	 * @param formats набор форматов.
 	 * @param file проверяемый фаил.
 	 * @return подходит ли.
@@ -55,7 +54,7 @@ public class Files
 
 	/**
 	 * Определят, подходит ли по формату фаил.
-	 *
+	 * 
 	 * @param formats набор форматов.
 	 * @param file проверяемый фаил.
 	 * @return подходит ли.
@@ -71,7 +70,7 @@ public class Files
 
 	/**
 	 * Копирует информацию с одного файла в другой.
-	 *
+	 * 
 	 * @param pathSource адресс исходного файла.
 	 * @param pathDest адресс конечного файла.
 	 * @return скопирован ли фаил.
@@ -100,7 +99,7 @@ public class Files
 
 	/**
 	 * Получаем все файлы в папке.
-	 *
+	 * 
 	 * @param dir папка.
 	 * @return все файлы.
 	 */
@@ -111,7 +110,7 @@ public class Files
 
 	/**
 	 * Получаем все файлы в папке.
-	 *
+	 * 
 	 * @param dir папка.
 	 * @param formats набор нужных форматов.
 	 * @return все файлы.
@@ -139,7 +138,7 @@ public class Files
 
 	/**
 	 * Получаем все файлы в пакете.
-	 *
+	 * 
 	 * @param pckg пакет.
 	 * @return все файлы.
 	 */
@@ -147,9 +146,10 @@ public class Files
 	{
 		return getFiles(pckg, Strings.EMPTY_ARRAY);
 	}
+
 	/**
 	 * Получаем все файлы в пакете нужных форматов.
-	 *
+	 * 
 	 * @param pckg пакет.
 	 * @param formats набор нужных форматов.
 	 * @return все файлы.
@@ -208,7 +208,7 @@ public class Files
 
 	/**
 	 * Извлекает время последней модификации файла.
-	 *
+	 * 
 	 * @param name имя файла.
 	 */
 	public static long lastModified(String name)
@@ -229,7 +229,7 @@ public class Files
 
 	/**
 	 * Извлекает текст из файла.
-	 *
+	 * 
 	 * @param path имя файла.
 	 */
 	public static String read(String path)
@@ -292,5 +292,31 @@ public class Files
 
 		// возвращаем результат
 		return content.toString();
+	}
+
+	/**
+	 * Чтение контента файла.
+	 * 
+	 * @param file читаемый фаил.
+	 * @return массив байтов фаила.
+	 */
+	public static byte[] getContent(File file)
+	{
+		try(FileInputStream fileInputStream = new FileInputStream(file))
+		{
+			FileChannel channel = fileInputStream.getChannel();
+
+			byte[] content = new byte[(int) channel.size()];
+
+			fileInputStream.read(content);
+
+			return content;
+		}
+		catch(IOException e)
+		{
+			log.warning(e);
+		}
+
+		return null;
 	}
 }

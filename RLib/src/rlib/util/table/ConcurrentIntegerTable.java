@@ -608,13 +608,13 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 	@Override
 	public void readLock()
 	{
-		locker.readLock();
+		locker.asynLock();
 	}
 
 	@Override
 	public void readUnlock()
 	{
-		locker.readUnlock();
+		locker.asynUnlock();
 	}
 
 	@Override
@@ -864,12 +864,12 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 	@Override
 	public void writeLock()
 	{
-		locker.writeLock();
+		locker.synLock();
 	}
 
 	@Override
 	public void writeUnlock()
 	{
-		locker.writeUnlock();
+		locker.synUnlock();
 	}
 }
