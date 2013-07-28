@@ -20,7 +20,7 @@ import rlib.util.array.Arrays;
  * 
  * @author Ronn
  */
-public class CompilerImpl implements Compiler
+class CompilerImpl implements Compiler
 {
 	private static final Logger log = Loggers.getLogger(Compiler.class);
 
@@ -89,7 +89,7 @@ public class CompilerImpl implements Compiler
 			compileDirectory(container, directory);
 		}
 
-		return null;
+		return container.toArray(new Class[container.size()]);
 	}
 
 	/**

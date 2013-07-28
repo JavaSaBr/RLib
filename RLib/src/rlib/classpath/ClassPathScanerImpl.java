@@ -100,7 +100,7 @@ class ClassPathScanerImpl implements ClassPathScaner
 
 			if(file.isDirectory())
 				scaningDirectory(path, container, file);
-			else if(file.isFile() && file.getName().endsWith(Compiler.SOURCE_EXTENSION))
+			else if(file.isFile() && file.getName().endsWith(JAR_EXTENSION))
 				scaningJar(container, file);
 		}
 

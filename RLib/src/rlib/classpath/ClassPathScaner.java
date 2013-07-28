@@ -9,6 +9,8 @@ import rlib.util.array.Array;
  */
 public interface ClassPathScaner
 {
+	public static final String JAR_EXTENSION = ".jar";
+
 	/**
 	 * Запустить сканирование classpath.
 	 */
