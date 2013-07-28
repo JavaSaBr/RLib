@@ -24,6 +24,14 @@ public class Compiler
 {
 	private static final Logger log = Loggers.getLogger(Compiler.class);
 
+	/**
+	 * @return доступен ли компилятор.
+	 */
+	public static boolean isAvailableCompiler()
+	{
+		return ToolProvider.getSystemJavaCompiler() != null;
+	}
+
 	/** слушатель ошибок компиляций */
 	private final CompileListener listener;
 
@@ -167,12 +175,5 @@ public class Compiler
 	protected CompileListener getListener()
 	{
 		return listener;
-	}
-
-	public static void main(String[] args)
-	{
-		Compiler compiler = new Compiler(true);
-
-		compiler.compile(new File("./HelloWorld.java"));
 	}
 }

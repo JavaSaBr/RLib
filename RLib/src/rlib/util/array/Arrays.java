@@ -2,10 +2,9 @@ package rlib.util.array;
 
 import java.util.Comparator;
 
-
 /**
  * Набор утильных методов для работы с массивами.
- *
+ * 
  * @author Ronn
  * @created 07.04.2012
  */
@@ -13,7 +12,7 @@ public abstract class Arrays
 {
 	/**
 	 * Добавляет элемент в массив с расширением массива на +1.
-	 *
+	 * 
 	 * @param array исходный массив.
 	 * @param element добавляемый элемент.
 	 * @param type тип массива.
@@ -48,7 +47,7 @@ public abstract class Arrays
 
 	/**
 	 * Зануление всех элементов массива.
-	 *
+	 * 
 	 * @param array массив, элементы которого нужно занулить.
 	 */
 	public static void clear(Object[] array)
@@ -59,7 +58,7 @@ public abstract class Arrays
 
 	/**
 	 * Совместить 2 массива в один.
-	 *
+	 * 
 	 * @param base исходный массив.
 	 * @param added добавочный массив.
 	 * @return новый общий массив.
@@ -95,7 +94,7 @@ public abstract class Arrays
 
 	/**
 	 * Совмещение 2х масивов в 1.
-	 *
+	 * 
 	 * @param base базовый массив.
 	 * @param added добавляемый массив.
 	 * @param type тип массива.
@@ -103,27 +102,19 @@ public abstract class Arrays
 	 */
 	public static <T, E extends T> T[] combine(T[] base, E[] added, Class<T> type)
 	{
-		// если изначального массива нет
-    	if(base == null)
-    		// возвращаем добавляемый
-    		return added;
+		if(base == null)
+			return added;
 
-    	// если добавляемого нет или он пуст
 		if(added == null || added.length < 1)
-			// возвращаем базовый
 			return base;
 
-		// создаем новый результирующий массив
 		T[] result = create(type, base.length + added.length);
 
-		// индекс след. ячейки в новом массиве
 		int index = 0;
 
-		// вносим значения из базового
 		for(int i = 0, length = base.length; i < length; i++)
 			result[index++] = base[i];
 
-		// вносим значения из добавочного
 		for(int i = 0, length = added.length; i < length; i++)
 			result[index++] = added[i];
 
@@ -132,7 +123,7 @@ public abstract class Arrays
 
 	/**
 	 * Проверка на содержания в массиве указанного значения.
-	 *
+	 * 
 	 * @param array проверяемый массив.
 	 * @param val искомое значение.
 	 * @return содержит ли массив указанное значение.
@@ -149,7 +140,7 @@ public abstract class Arrays
 
 	/**
 	 * Проверка на содержания в массиве указанного значения.
-	 *
+	 * 
 	 * @param array проверяемый массив.
 	 * @param object искомое значение.
 	 * @return содержит ли массив указанное значение.
@@ -166,7 +157,7 @@ public abstract class Arrays
 
 	/**
 	 * Копирование массива с созданием нового на указанный размер больше.
-	 *
+	 * 
 	 * @param old исходный массив.
 	 * @param added сила расширения.
 	 * @return новый массив.
@@ -185,7 +176,7 @@ public abstract class Arrays
 
 	/**
 	 * Копирование массива с созданием нового на указанный размер больше.
-	 *
+	 * 
 	 * @param old исходный массив.
 	 * @param added сила расширения.
 	 * @return новый массив.
@@ -201,10 +192,10 @@ public abstract class Arrays
 		// возвращаепм результирующий
 		return copy;
 	}
-	
+
 	/**
 	 * Копирование массива с созданием нового на указанный размер больше.
-	 *
+	 * 
 	 * @param old исходный массив.
 	 * @param added сила расширения.
 	 * @return новый массив.
@@ -223,7 +214,7 @@ public abstract class Arrays
 
 	/**
 	 * Копирование массива с созданием нового на указанный размер больше.
-	 *
+	 * 
 	 * @param old исходный массив.
 	 * @param added сила расширения.
 	 * @return новый массив.
@@ -246,7 +237,7 @@ public abstract class Arrays
 
 	/**
 	 * Копируем часть из массива и создаем новый массив из этой части.
-	 *
+	 * 
 	 * @param original исходный массив.
 	 * @param from с какого индекса.
 	 * @param to по какой индекс.
@@ -266,10 +257,10 @@ public abstract class Arrays
 		// возвращаепм результирующий
 		return copy;
 	}
-	
+
 	/**
 	 * Копируем часть из массива и создаем новый массив из этой части.
-	 *
+	 * 
 	 * @param original исходный массив.
 	 * @param from с какого индекса.
 	 * @param to по какой индекс.
@@ -289,10 +280,10 @@ public abstract class Arrays
 		// возвращаепм результирующий
 		return copy;
 	}
-	
+
 	/**
 	 * Копируем часть из массива и создаем новый массив из этой части.
-	 *
+	 * 
 	 * @param original исходный массив.
 	 * @param from с какого индекса.
 	 * @param to по какой индекс.
@@ -319,7 +310,7 @@ public abstract class Arrays
 
 	/**
 	 * Создание массива указанного типа.
-	 *
+	 * 
 	 * @param type тир массива.
 	 * @param size размер массива.
 	 * @return новый массив.
@@ -332,7 +323,7 @@ public abstract class Arrays
 
 	/**
 	 * Находит индекс объекта в указанном массиве.
-	 *
+	 * 
 	 * @param array массив.
 	 * @param object искомый объект.
 	 * @return индекс оюъекта.
@@ -353,8 +344,7 @@ public abstract class Arrays
 	{
 		return new FastIntegerArray();
 	}
-	
-	
+
 	/**
 	 * @param size начальный размер массива.
 	 * @return новый динамический массив примтивного инт.
@@ -363,7 +353,7 @@ public abstract class Arrays
 	{
 		return new FastIntegerArray(size);
 	}
-	
+
 	/**
 	 * @return новый динамический массив примтивного инт.
 	 */
@@ -371,7 +361,7 @@ public abstract class Arrays
 	{
 		return new FastLongArray();
 	}
-	
+
 	/**
 	 * @param size начальный размер массива.
 	 * @return новый динамический массив примтивного инт.
@@ -383,7 +373,7 @@ public abstract class Arrays
 
 	/**
 	 * Сортировка массива, недопустимы нулевые значения.
-	 *
+	 * 
 	 * @param array сортируемый массив.
 	 */
 	public static void sort(Comparable<?>[] array)
@@ -393,17 +383,17 @@ public abstract class Arrays
 
 	/**
 	 * Сортировка массива, недопустимы нулевые значения.
-	 *
+	 * 
 	 * @param array сортируемый массив.
 	 */
 	public static void sort(int[] array)
 	{
 		java.util.Arrays.sort(array);
 	}
-	
+
 	/**
 	 * Сортировка массива, недопустимы нулевые значения.
-	 *
+	 * 
 	 * @param array сортируемый массив.
 	 */
 	public static void sort(int[] array, int fromIndex, int toIndex)
@@ -413,7 +403,7 @@ public abstract class Arrays
 
 	/**
 	 * Сортировка массива, недопустимы нулевые значения.
-	 *
+	 * 
 	 * @param array сортируемый массив.
 	 */
 	public static void sort(long[] array, int fromIndex, int toIndex)
@@ -423,7 +413,7 @@ public abstract class Arrays
 
 	/**
 	 * Сортировка массива компаратором.
-	 *
+	 * 
 	 * @param array сортируемый массив.
 	 * @param comparator компаратор для массива.
 	 */
@@ -431,10 +421,10 @@ public abstract class Arrays
 	{
 		java.util.Arrays.sort(array, comparator);
 	}
-	
+
 	/**
 	 * Создать быстрый новый массив указанного типа.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @return новый массив.
 	 */
@@ -443,10 +433,10 @@ public abstract class Arrays
 	{
 		return new FastArray<E>((Class<E>) type);
 	}
-	
+
 	/**
 	 * Создать быстрый новый массив указанного типа.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @param size базовый размер массива.
 	 * @return новый массив.
@@ -459,7 +449,7 @@ public abstract class Arrays
 
 	/**
 	 * Создать уникальное множество на основе быстрого массива.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @return новый массив.
 	 */
@@ -471,7 +461,7 @@ public abstract class Arrays
 
 	/**
 	 * Создать уникальное множество на основе быстрого массива.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @param size базовый размер массива.
 	 * @return новый массив.
@@ -481,10 +471,10 @@ public abstract class Arrays
 	{
 		return new FastArraySet<E>((Class<E>) type, size);
 	}
-	
+
 	/**
 	 * Создать потокобезопасный новый массив указанного типа.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @return новый массив.
 	 */
@@ -496,7 +486,7 @@ public abstract class Arrays
 
 	/**
 	 * Создать потокобезопасный новый массив указанного типа.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @param size базовый размер массива.
 	 * @return новый массив.
@@ -509,7 +499,7 @@ public abstract class Arrays
 
 	/**
 	 * Создать уникальное множество на основе конкурентного массива.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @return новый массив.
 	 */
@@ -521,7 +511,7 @@ public abstract class Arrays
 
 	/**
 	 * Создать уникальное множество на основе конкурентного массива.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @param size базовый размер массива.
 	 * @return новый массив.
@@ -534,7 +524,7 @@ public abstract class Arrays
 
 	/**
 	 * Создает массив из перечисленных чисел.
-	 *
+	 * 
 	 * @param elements набор чисел.
 	 * @return новый массив.
 	 */
@@ -545,7 +535,7 @@ public abstract class Arrays
 
 	/**
 	 * Создает массив из перечисленных элементов.
-	 *
+	 * 
 	 * @param elements набор элементов.
 	 * @return новый массив.
 	 */
@@ -554,10 +544,10 @@ public abstract class Arrays
 	{
 		return elements;
 	}
-	
+
 	/**
 	 * Создает массив из перечисленных чисел.
-	 *
+	 * 
 	 * @param elements набор чисел.
 	 * @return новый массив.
 	 */
@@ -565,10 +555,10 @@ public abstract class Arrays
 	{
 		return elements;
 	}
-	
+
 	/**
 	 * Создать сортируемый новый массив указанного типа.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @return новый массив.
 	 */
@@ -577,10 +567,10 @@ public abstract class Arrays
 	{
 		return new SortedArray<E>((Class<E>) type);
 	}
-	
+
 	/**
 	 * Создать сортируемый новый массив указанного типа.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @param size базовый размер массива.
 	 * @return новый массив.
@@ -593,7 +583,7 @@ public abstract class Arrays
 
 	/**
 	 * Конфектирует массив объектов строку.
-	 *
+	 * 
 	 * @param array массив объектов.
 	 * @return строковый вариант.
 	 */
@@ -614,7 +604,7 @@ public abstract class Arrays
 		{
 			// вносим элемент
 			builder.append(String.valueOf(array.get(i)));
-			
+
 			// если это был последний, выходим
 			if(i == length)
 				break;
@@ -622,17 +612,17 @@ public abstract class Arrays
 			// добавляем разделитель
 			builder.append(", ");
 		}
-		
+
 		// завершаем массив
 		builder.append("]");
 
 		// отдаем итоговую строку
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Конфектирует массив объектов строку.
-	 *
+	 * 
 	 * @param array массив объектов.
 	 * @return строковый вариант.
 	 */
@@ -653,7 +643,7 @@ public abstract class Arrays
 		{
 			// вносим элемент
 			builder.append(String.valueOf(array.get(i)));
-			
+
 			// если это был последний, выходим
 			if(i == length)
 				break;
@@ -661,17 +651,17 @@ public abstract class Arrays
 			// добавляем разделитель
 			builder.append(", ");
 		}
-		
+
 		// завершаем массив
 		builder.append("]");
 
 		// отдаем итоговую строку
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Конфектирует массив объектов строку.
-	 *
+	 * 
 	 * @param array массив объектов.
 	 * @return строковый вариант.
 	 */
@@ -692,7 +682,7 @@ public abstract class Arrays
 		{
 			// вносим элемент
 			builder.append(String.valueOf(array.get(i)));
-			
+
 			// если это был последний, выходим
 			if(i == length)
 				break;
@@ -700,17 +690,17 @@ public abstract class Arrays
 			// добавляем разделитель
 			builder.append(", ");
 		}
-		
+
 		// завершаем массив
 		builder.append("]");
 
 		// отдаем итоговую строку
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Конфектирует массив объектов строку.
-	 *
+	 * 
 	 * @param array массив объектов.
 	 * @return строковый вариант.
 	 */
@@ -731,7 +721,7 @@ public abstract class Arrays
 		{
 			// вносим элемент
 			builder.append(String.valueOf(array[i]));
-			
+
 			// если это был последний, выходим
 			if(i == length)
 				break;
@@ -739,17 +729,17 @@ public abstract class Arrays
 			// добавляем разделитель
 			builder.append(", ");
 		}
-		
+
 		// завершаем массив
 		builder.append("]");
 
 		// отдаем итоговую строку
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Создать синхронизированный новый массив указанного типа.
-	 *
+	 * 
 	 * @param type тип массива.
 	 * @return новый массив.
 	 */
