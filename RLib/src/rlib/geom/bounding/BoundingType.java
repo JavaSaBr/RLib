@@ -5,8 +5,7 @@ package rlib.geom.bounding;
  * 
  * @author Ronn
  */
-public enum BoundingType
-{
+public enum BoundingType {
 	/** коробка */
 	AXIS_ALIGNED_BOX,
 	/** сфера */

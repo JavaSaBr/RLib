@@ -9,8 +9,8 @@ import javax.tools.JavaFileObject.Kind;
  * 
  * @author Ronn
  */
-public interface Compiler
-{
+public interface Compiler {
+
 	public static final String SOURCE_EXTENSION = Kind.SOURCE.extension;
 	public static final String CLASS_EXTENSION = Kind.CLASS.extension;
 

@@ -16,46 +16,43 @@ import rlib.util.array.Arrays;
  * 
  * @author Ronn
  */
-public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJavaFileManager>
-{
+public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
+
 	/** список имен загруженных классов */
 	private final Array<String> classNames;
 
 	/** загрузчик скомпиленных классов */
 	private final CompileClassLoader loader;
 
-	public CompileJavaFileManager(StandardJavaFileManager fileManager, CompileClassLoader loader)
-	{
+	public CompileJavaFileManager(StandardJavaFileManager fileManager, CompileClassLoader loader) {
 		super(fileManager);
 
 		this.loader = loader;
 		this.classNames = Arrays.toArray(String.class);
 	}
 
+	/**
+	 * Очистка списка имен последних загруженных классов.
+	 */
+	public void clear() {
+		classNames.clear();
+	}
+
+	/**
+	 * @return список последних загруженны классов.
+	 */
+	public String[] getClassNames() {
+		return classNames.toArray(new String[classNames.size()]);
+	}
+
 	@Override
-	public JavaFileObject getJavaFileForOutput(Location location, String name, Kind kind, FileObject sibling) throws IOException
-	{
+	public JavaFileObject getJavaFileForOutput(Location location, String name, Kind kind, FileObject sibling) throws IOException {
+
 		CompileByteCode byteCode = new CompileByteCode(name);
 
 		loader.addByteCode(byteCode);
 		classNames.add(name);
 
 		return byteCode;
-	}
-
-	/**
-	 * @return список последних загруженны классов.
-	 */
-	public String[] getClassNames()
-	{
-		return classNames.toArray(new String[classNames.size()]);
-	}
-
-	/**
-	 * Очистка списка имен последних загруженных классов.
-	 */
-	public void clear()
-	{
-		classNames.clear();
 	}
 }

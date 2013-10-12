@@ -5,26 +5,23 @@ package rlib.util.wraps;
  * 
  * @author Ronn
  */
-final class FloatWrap extends AbstractWrap
-{
+final class FloatWrap extends AbstractWrap {
+
 	/** значение */
 	private float value;
-	
+
 	@Override
-	public float getFloat()
-	{
+	public float getFloat() {
 		return value;
 	}
-	
+
 	@Override
-	public WrapType getWrapType()
-	{
+	public WrapType getWrapType() {
 		return WrapType.FLOAT;
 	}
-	
+
 	@Override
-	public void setFloat(float value)
-	{
+	public void setFloat(float value) {
 		this.value = value;
 	}
 }

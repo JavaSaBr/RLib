@@ -10,8 +10,8 @@ import rlib.geom.VectorBuffer;
  * 
  * @author Ronn
  */
-public interface Bounding
-{
+public interface Bounding {
+
 	/**
 	 * Входит ли в форму указанная точка.
 	 * 
@@ -22,7 +22,7 @@ public interface Bounding
 	 * @return входит ли точка.
 	 */
 	public boolean contains(float x, float y, float z, VectorBuffer buffer);
-	
+
 	/**
 	 * Входит ли в форму указанная точка.
 	 * 
@@ -31,7 +31,7 @@ public interface Bounding
 	 * @return входит ли.
 	 */
 	public boolean contains(Vector point, VectorBuffer buffer);
-	
+
 	/**
 	 * Определение дистанции от центра формы до указанной точки.
 	 * 
@@ -39,36 +39,36 @@ public interface Bounding
 	 * @return дистанция до точки.
 	 */
 	public float distanceTo(Vector point);
-	
+
 	/**
 	 * @return тип формы.
 	 */
 	public BoundingType getBoundingType();
-	
+
 	/**
 	 * @return центр формы.
 	 */
 	public Vector getCenter();
-    
+
 	/**
 	 * @return смещение вектора.
 	 */
 	public Vector getOffset();
-	
+
 	/**
 	 * @param buffer буффер векторов.
 	 * @return итоговый вектор центра формы.
 	 */
 	public Vector getResultCenter(VectorBuffer buffer);
-	
+
 	/**
 	 * Проверка пересечения с формой.
 	 * 
 	 * @param bounding проверяемая форма.
 	 * @return пересекаются ли формы.
 	 */
-    public boolean intersects(Bounding bounding, VectorBuffer buffer);
-	
+	public boolean intersects(Bounding bounding, VectorBuffer buffer);
+
 	/**
 	 * Пересекает ли указанный луч эту форму.
 	 * 
@@ -77,7 +77,7 @@ public interface Bounding
 	 * @return перескает ли.
 	 */
 	public boolean intersects(Ray ray, VectorBuffer buffer);
-	
+
 	/**
 	 * Пересекает ли указанный луч эту форму.
 	 * 
@@ -87,12 +87,12 @@ public interface Bounding
 	 * @return пересекает ли.
 	 */
 	public boolean intersects(Vector start, Vector direction, VectorBuffer buffer);
-	
+
 	/**
 	 * @param center новый центр.
 	 */
 	public void setCenter(Vector center);
-	
+
 	/**
 	 * Обновление формы с учетом вращения.
 	 * 

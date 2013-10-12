@@ -5,26 +5,23 @@ package rlib.util.wraps;
  * 
  * @author Ronn
  */
-final class ShortWrap extends AbstractWrap
-{
+final class ShortWrap extends AbstractWrap {
+
 	/** значение */
 	private short value;
-	
+
 	@Override
-	public short getShort()
-	{
+	public short getShort() {
 		return value;
 	}
-	
+
 	@Override
-	public WrapType getWrapType()
-	{
+	public WrapType getWrapType() {
 		return WrapType.SHORT;
 	}
-	
+
 	@Override
-	public void setShort(short value)
-	{
+	public void setShort(short value) {
 		this.value = value;
 	}
 }

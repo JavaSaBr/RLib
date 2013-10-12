@@ -5,18 +5,18 @@ package rlib.util;
  * 
  * @author Ronn
  */
-public interface Loadable
-{
+public interface Loadable {
+
 	/**
 	 * Загруть данные.
 	 */
 	public void load();
-	
+
 	/**
 	 * Перезагрузить данные.
 	 */
 	public void reload();
-	
+
 	/**
 	 * Выгрузить даные.
 	 */

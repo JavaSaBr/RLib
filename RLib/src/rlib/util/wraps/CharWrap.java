@@ -5,26 +5,23 @@ package rlib.util.wraps;
  * 
  * @author Ronn
  */
-final class CharWrap extends AbstractWrap
-{
+final class CharWrap extends AbstractWrap {
+
 	/** значение */
 	private char value;
-	
+
 	@Override
-	public char getChar()
-	{
+	public char getChar() {
 		return value;
 	}
-	
+
 	@Override
-	public WrapType getWrapType()
-	{
+	public WrapType getWrapType() {
 		return WrapType.CHAR;
 	}
-	
+
 	@Override
-	public void setChar(char value)
-	{
+	public void setChar(char value) {
 		this.value = value;
 	}
 }

@@ -7,20 +7,18 @@ import rlib.geom.Vector;
 import rlib.util.table.Table;
 import rlib.util.table.Tables;
 
-
 /**
  * Таблица параметров.
- *
+ * 
  * @author Ronn
  * @created 29.02.2012
  */
-public class VarTable
-{
+public class VarTable {
+
 	/**
 	 * @return новый экземпляр таблицы.
 	 */
-	public static VarTable newInstance()
-	{
+	public static VarTable newInstance() {
 		return new VarTable();
 	}
 
@@ -28,240 +26,206 @@ public class VarTable
 	 * @param node хмл узел с атрибутами.
 	 * @return новая таблица с атрибутами узла.
 	 */
-	public static VarTable newInstance(Node node)
-	{
+	public static VarTable newInstance(final Node node) {
 		return newInstance().parse(node);
 	}
 
-	public static VarTable newInstance(Node node, String childName, String nameType, String nameValue)
-	{
+	public static VarTable newInstance(final Node node, final String childName, final String nameType, final String nameValue) {
 		return newInstance().parse(node, childName, nameType, nameValue);
 	}
 
-	/** хранилище значений */
-	private Table<String, Object> values;
+	/** таблица параметров */
+	private final Table<String, Object> values;
 
-	public VarTable()
-	{
+	public VarTable() {
 		this.values = Tables.newObjectTable();
 	}
 
 	/**
 	 * Очистка таблицы.
 	 */
-	public void clear()
-	{
+	public void clear() {
 		values.clear();
 	}
 
 	/**
-	 *
-	 * @return значение по ключу.
+	 * @param key название параметра.
+	 * @return значение параметра.
 	 */
-	public Object get(String key)
-	{
+	public Object get(final String key) {
 		return values.get(key);
 	}
 
 	/**
-	 * Получить значению ключа указанного типа.
-	 *
-	 * @param key ключ значения.
-	 * @param type тип значения.
+	 * Получить значение параметра по его названию.
+	 * 
+	 * @param key название параметра.
+	 * @param type тип параметра.
 	 * @param def значение по умолчанию.
-	 * @return найденное значение.
+	 * @return текущее значение.
 	 */
-	public <T extends Object, E extends T> T get(String key, Class<T> type, E def)
-	{
-		// извлекаем объект по ключу
-		Object object = values.get(key);
+	public <T extends Object, E extends T> T get(final String key, final Class<T> type, final E def) {
 
-		// если его нет, возвращаем дефолтное
-		if(object == null)
+		final Object object = values.get(key);
+
+		if(object == null) {
 			return def;
+		}
 
-		// если объект нужного типа
-		if(type.isInstance(object))
-			// возвращаем его в нужном типе.
+		if(type.isInstance(object)) {
 			return type.cast(object);
+		}
 
-		// возвращаем значение по умолчанию.
 		return def;
 	}
+
 	/**
 	 * Получить значение ключа типа указанного по умолчанию значения.
-	 *
-	 * @param key ключ значения.
+	 * 
+	 * @param key название параметра.
 	 * @param def значение по умолчанию.
 	 * @return найденное значение.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T get(String key, T def)
-	{
-		// получаем объект по ключу
-		Object object = values.get(key);
+	public <T> T get(final String key, final T def) {
 
-		// еси его нет, возвращаем значение по умолчанию
-		if(object == null)
+		final Object object = values.get(key);
+
+		if(object == null) {
 			return def;
+		}
 
-		// получаем тип значения по умолчанию
-		Class<? extends Object> type = def.getClass();
+		final Class<? extends Object> type = def.getClass();
 
-		// если найденный объект подходит с типом
-		if(type.isInstance(object))
-			// возвращаем его в нужном типе
+		if(type.isInstance(object)) {
 			return (T) object;
+		}
 
-		// возвращаем значение по умолчанию
 		return def;
 	}
 
 	/**
 	 * Получить значение по ключу.
-	 *
-	 * @param key ключ значения.
-	 * @return найденноез начение.
+	 * 
+	 * @param key название параметра.
+	 * @return найденное начение.
 	 */
-	public boolean getBoolean(String key)
-	{
-		// получаем значение по ключу
-		Object object = values.get(key);
+	public boolean getBoolean(final String key) {
 
-		// если его нету, выбрасываем исключение
-		if(object == null)
+		final Object object = values.get(key);
+
+		if(object == null) {
 			throw new IllegalArgumentException("not found " + key);
+		}
 
-		// если он бул, возвращаем бул
-		if(object instanceof Boolean)
+		if(object instanceof Boolean) {
 			return (boolean) object;
+		}
 
-		// если это строка
-		if(object instanceof String)
-			// парсим в бул и возвращаем
+		if(object instanceof String) {
 			return Boolean.parseBoolean(object.toString());
+		}
 
-		// выбрасываем исключение
 		throw new IllegalArgumentException("not found " + key);
 	}
 
 	/**
 	 * Получить значение по ключу.
-	 *
-	 * @param key ключ значения.
+	 * 
+	 * @param key название параметра.
 	 * @param def значение по умолчанию.
 	 * @return найденное значение.
 	 */
-	public boolean getBoolean(String key, boolean def)
-	{
-		// получаем значение по ключу.
-		Object object = values.get(key);
+	public boolean getBoolean(final String key, final boolean def) {
 
-		// если его нету
-		if(object == null)
-			// возвращаем значение по умолчанию.
+		final Object object = values.get(key);
+
+		if(object == null) {
 			return def;
+		}
 
-		// если это бул, возвращаем его
-		if(object instanceof Boolean)
+		if(object instanceof Boolean) {
 			return (boolean) object;
+		}
 
-		// если это строка
-		if(object instanceof String)
-			// парсим в бул и возвращаем
+		if(object instanceof String) {
 			return Boolean.parseBoolean(object.toString());
+		}
 
-		// возвращаем значение по умолчанию
 		return def;
 	}
 
 	/**
 	 * Получить массив значений по ключу.
-	 *
-	 * @param key ключ значения.
+	 * 
+	 * @param key название параметра.
 	 * @param regex строка разбиения, если значение строка.
 	 * @return найденный массив.
 	 */
-	public boolean[] getBooleanArray(String key, String regex)
-	{
-		// получаем значение по ключу.
-		Object object = values.get(key);
+	public boolean[] getBooleanArray(final String key, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если значение уже массив булов, то возвращаем его
 		if(object instanceof boolean[])
 			return (boolean[]) object;
 
-		// если значение строка
-		if(object instanceof String)
-		{
-			// разбиваем строку
-			String[] strs = object.toString().split(regex);
-			// создаем новый массив булов
-			boolean[] result = new boolean[strs.length];
+		if(object instanceof String) {
 
-			// парсим строки в булы
+			final String[] strs = object.toString().split(regex);
+
+			final boolean[] result = new boolean[strs.length];
+
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Boolean.parseBoolean(strs[i]);
 
-			// возвращаем итоговый массив
 			return result;
 		}
 
-		// если ничего не подошло, выбрасываем исключение
 		throw new IllegalArgumentException("not found " + key);
 	}
 
 	/**
 	 * Получение массив значений по ключу.
-	 *
-	 * @param key ключ значения.
+	 * 
+	 * @param key название параметра.
 	 * @param regex строка разбиения, если значение строка.
 	 * @param def значение по умолчанию.
 	 * @return найденное значение
 	 */
-	public boolean[] getBooleanArray(String key, String regex, boolean... def)
-	{
-		// получаем значение по ключу
-		Object object = values.get(key);
+	public boolean[] getBooleanArray(final String key, final String regex, final boolean... def) {
 
-		// если нет значения, возвращаем по умолчанию
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если значение уже массив булов, возвращаем его
 		if(object instanceof boolean[])
 			return (boolean[]) object;
 
-		// если значение строка
-		if(object instanceof String)
-		{
-			// разбиваем строку
-			String[] strs = object.toString().split(regex);
-			// создаем массив булов
-			boolean[] result = new boolean[strs.length];
+		if(object instanceof String) {
 
-			// парсим строки в булы
+			final String[] strs = object.toString().split(regex);
+
+			final boolean[] result = new boolean[strs.length];
+
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Boolean.parseBoolean(strs[i]);
 
-			// возвращаем результат
 			return result;
 		}
 
-		// возвращаем значение по умолчанию
 		return def;
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public byte getByte(String key)
-	{
-		Object object = values.get(key);
+	public byte getByte(final String key) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
@@ -276,11 +240,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public byte getByte(String key, byte def)
-	{
-		Object object = values.get(key);
+	public byte getByte(final String key, final byte def) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			return def;
@@ -295,26 +259,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public byte[] getByteArray(String key, String regex)
-	{
-		Object object = values.get(key);
+	public byte[] getByteArray(final String key, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof byte[])
 			return (byte[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			byte[] result = new byte[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final byte[] result = new byte[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Byte.parseByte(strs[i]);
@@ -326,26 +287,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public byte[] getByteArray(String key, String regex, byte... def)
-	{
-		Object object = values.get(key);
+	public byte[] getByteArray(final String key, final String regex, final byte... def) {
 
-		// если нет значения, кидаем дефолтное
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof byte[])
 			return (byte[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			byte[] result = new byte[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final byte[] result = new byte[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Byte.parseByte(strs[i]);
@@ -357,11 +315,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public double getDouble(String key)
-	{
-		Object object = values.get(key);
+	public double getDouble(final String key) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
@@ -376,11 +334,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public double getDouble(String key, double def)
-	{
-		Object object = values.get(key);
+	public double getDouble(final String key, final double def) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			return def;
@@ -395,26 +353,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public double[] getDoubleArray(String key, String regex)
-	{
-		Object object = values.get(key);
+	public double[] getDoubleArray(final String key, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof double[])
 			return (double[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			double[] result = new double[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final double[] result = new double[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Double.parseDouble(strs[i]);
@@ -426,26 +381,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public double[] getDoubleArray(String key, String regex, double... def)
-	{
-		Object object = values.get(key);
+	public double[] getDoubleArray(final String key, final String regex, final double... def) {
 
-		// если нет значения, кидаем дефолтное
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof double[])
 			return (double[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			double[] result = new double[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final double[] result = new double[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Double.parseDouble(strs[i]);
@@ -457,11 +409,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public <T extends Enum<T>> T getEnum(String key, Class<T> type)
-	{
-		Object object = values.get(key);
+	public <T extends Enum<T>> T getEnum(final String key, final Class<T> type) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
@@ -476,11 +428,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public <T extends Enum<T>> T getEnum(String key, Class<T> type, T def)
-	{
-		Object object = values.get(key);
+	public <T extends Enum<T>> T getEnum(final String key, final Class<T> type, final T def) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			return def;
@@ -495,27 +447,24 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Enum<T>> T[] getEnumArray(String key, Class<T> type, String regex)
-	{
-		Object object = values.get(key);
+	public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof Enum[])
 			return (T[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
+			final String[] strs = object.toString().split(regex);
+
+			final T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Enum.valueOf(type, strs[i]);
@@ -527,27 +476,24 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Enum<T>> T[] getEnumArray(String key, Class<T> type, String regex, T... def)
-	{
-		Object object = values.get(key);
+	public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex, final T... def) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof Enum[])
 			return (T[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
+			final String[] strs = object.toString().split(regex);
+
+			final T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Enum.valueOf(type, strs[i]);
@@ -559,11 +505,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public float getFloat(String key)
-	{
-		Object object = values.get(key);
+	public float getFloat(final String key) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
@@ -578,11 +524,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public float getFloat(String key, float def)
-	{
-		Object object = values.get(key);
+	public float getFloat(final String key, final float def) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			return def;
@@ -597,26 +543,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public float[] getFloatArray(String key, String regex)
-	{
-		Object object = values.get(key);
+	public float[] getFloatArray(final String key, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException();
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof float[])
 			return (float[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			float[] result = new float[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final float[] result = new float[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Float.parseFloat(strs[i]);
@@ -628,26 +571,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public float[] getFloatArray(String key, String regex, float... def)
-	{
-		Object object = values.get(key);
+	public float[] getFloatArray(final String key, final String regex, final float... def) {
 
-		// если нет значения, кидаем дефолтное
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof float[])
 			return (float[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			float[] result = new float[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final float[] result = new float[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Float.parseFloat(strs[i]);
@@ -659,11 +599,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public <T extends Object> T getGeneric(String key, Class<T> type)
-	{
-		Object object = values.get(key);
+	public <T extends Object> T getGeneric(final String key, final Class<T> type) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException();
@@ -675,18 +615,16 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T[] getGenericArray(String key, Class<T[]> type)
-	{
-		Object object = values.get(key);
+	public <T> T[] getGenericArray(final String key, final Class<T[]> type) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если уже лежит массив байтов, то просто кастим
 		if(type.isInstance(object))
 			return (T[]) object;
 
@@ -694,18 +632,16 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T[] getGenericArray(String key, Class<T[]> type, T... def)
-	{
-		Object object = values.get(key);
+	public <T> T[] getGenericArray(final String key, final Class<T[]> type, final T... def) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(type.isInstance(object))
 			return (T[]) object;
 
@@ -713,11 +649,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public int getInteger(String key)
-	{
-		Object object = values.get(key);
+	public int getInteger(final String key) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
@@ -732,11 +668,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public int getInteger(String key, int def)
-	{
-		Object object = values.get(key);
+	public int getInteger(final String key, final int def) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			return def;
@@ -751,26 +687,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public int[] getIntegerArray(String key, String regex)
-	{
-		Object object = values.get(key);
+	public int[] getIntegerArray(final String key, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof int[])
 			return (int[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			int[] result = new int[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final int[] result = new int[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Integer.parseInt(strs[i]);
@@ -782,26 +715,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public int[] getIntegerArray(String key, String regex, int... def)
-	{
-		Object object = values.get(key);
+	public int[] getIntegerArray(final String key, final String regex, final int... def) {
 
-		// если нет значения, кидаем дефолтное
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof int[])
 			return (int[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			int[] result = new int[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final int[] result = new int[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Integer.parseInt(strs[i]);
@@ -813,11 +743,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public long getLong(String key)
-	{
-		Object object = values.get(key);
+	public long getLong(final String key) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
@@ -832,11 +762,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public long getLong(String key, long def)
-	{
-		Object object = values.get(key);
+	public long getLong(final String key, final long def) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			return def;
@@ -851,26 +781,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public long[] getLongArray(String key, String regex)
-	{
-		Object object = values.get(key);
+	public long[] getLongArray(final String key, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof long[])
 			return (long[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			long[] result = new long[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final long[] result = new long[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Long.parseLong(strs[i]);
@@ -882,26 +809,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public long[] getLongArray(String key, String regex, long... def)
-	{
-		Object object = values.get(key);
+	public long[] getLongArray(final String key, final String regex, final long... def) {
 
-		// если нет значения, кидаем дефолтное
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof long[])
 			return (long[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			long[] result = new long[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final long[] result = new long[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Long.parseLong(strs[i]);
@@ -913,11 +837,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public short getShort(String key)
-	{
-		Object object = values.get(key);
+	public short getShort(final String key) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
@@ -932,11 +856,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public short getShort(String key, short def)
-	{
-		Object object = values.get(key);
+	public short getShort(final String key, final short def) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			return def;
@@ -951,26 +875,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public short[] getShortArray(String key, String regex)
-	{
-		Object object = values.get(key);
+	public short[] getShortArray(final String key, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof short[])
 			return (short[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			short[] result = new short[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final short[] result = new short[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Short.parseShort(strs[i]);
@@ -982,26 +903,23 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public short[] getShortArray(String key, String regex, short... def)
-	{
-		Object object = values.get(key);
+	public short[] getShortArray(final String key, final String regex, final short... def) {
 
-		// если нет значения, кидаем дефолтное
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof short[])
 			return (short[]) object;
 
-		// если строка, сплитим и парсим
-		if(object instanceof String)
-		{
-			String[] strs = object.toString().split(regex);
+		if(object instanceof String) {
 
-			short[] result = new short[strs.length];
+			final String[] strs = object.toString().split(regex);
+
+			final short[] result = new short[strs.length];
 
 			for(int i = 0, length = strs.length; i < length; i++)
 				result[i] = Short.parseShort(strs[i]);
@@ -1013,11 +931,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public String getString(String key)
-	{
-		Object object = values.get(key);
+	public String getString(final String key) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
@@ -1029,11 +947,11 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public String getString(String key, String def)
-	{
-		Object object = values.get(key);
+	public String getString(final String key, final String def) {
+
+		final Object object = values.get(key);
 
 		if(object == null)
 			return def;
@@ -1045,21 +963,18 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public String[] getStringArray(String key, String regex)
-	{
-		Object object = values.get(key);
+	public String[] getStringArray(final String key, final String regex) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof String[])
 			return (String[]) object;
 
-		// если строка, сплитим и парсим
 		if(object instanceof String)
 			return object.toString().split(regex);
 
@@ -1067,96 +982,75 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public String[] getStringArray(String key, String regex, String... def)
-	{
-		Object object = values.get(key);
+	public String[] getStringArray(final String key, final String regex, final String... def) {
+		final Object object = values.get(key);
 
-		// если нет значения, кидаем дефолтное
 		if(object == null)
 			return def;
 
-		// если уже лежит массив байтов, то просто кастим
 		if(object instanceof String[])
 			return (String[]) object;
 
-		// если строка, сплитим и парсим
 		if(object instanceof String)
-			return object.toString().split(regex);
+			return (String[]) object;
 
-		throw new IllegalArgumentException("not found " + key);
+		throw new IllegalArgumentException("no found " + key);
 	}
 
 	/**
 	 * @return все пропаршенные параметры.
 	 */
-	public Table<String, Object> getValues()
-	{
+	public Table<String, Object> getValues() {
 		return values;
 	}
 
 	/**
 	 * @return вектор по ключу.
 	 */
-	public Vector getVector(String key)
-	{
-		// подучаем значение по ключу
-		Object object = values.get(key);
+	public Vector getVector(final String key) {
 
-		// если нет значения, кидаем исключение
+		final Object object = values.get(key);
+
 		if(object == null)
 			throw new IllegalArgumentException("not found " + key);
 
-		// если это уже вектор, возвращаем его
 		if(object instanceof Vector)
 			return (Vector) object;
 
-		// если это строка
-		if(object instanceof String)
-		{
-			// разбиваем ее
-			String[] vals = object.toString().split(",");
+		if(object instanceof String) {
 
-			// создаем вектор
-			Vector vector = Vector.newInstance();
+			final String[] vals = object.toString().split(",");
 
-			// парсим вектор
+			final Vector vector = Vector.newInstance();
+
 			vector.setXYZ(Float.parseFloat(vals[0]), Float.parseFloat(vals[1]), Float.parseFloat(vals[2]));
 
-			// возвращаем вектор
 			return vector;
 		}
 
 		throw new IllegalArgumentException("not found " + key);
 	}
 
-	public Vector getVector(String key, Vector def)
-	{
-		// подучаем значение по ключу
-		Object object = values.get(key);
+	public Vector getVector(final String key, final Vector def) {
 
-		// если значения нет, возвращаем дефолт
+		final Object object = values.get(key);
+
 		if(object == null)
 			return def;
 
-		// если это уже вектор, возвращаем его
 		if(object instanceof Vector)
 			return (Vector) object;
 
-		// если это строка
-		if(object instanceof String)
-		{
-			// разбиваем ее
-			String[] vals = object.toString().split(",");
+		if(object instanceof String) {
 
-			// создаем вектор
-			Vector vector = Vector.newInstance();
+			final String[] vals = object.toString().split(",");
 
-			// парсим вектор
+			final Vector vector = Vector.newInstance();
+
 			vector.setXYZ(Float.parseFloat(vals[0]), Float.parseFloat(vals[1]), Float.parseFloat(vals[2]));
 
-			// возвращаем вектор
 			return vector;
 		}
 
@@ -1165,31 +1059,26 @@ public class VarTable
 
 	/**
 	 * Парс атрибутов хмл узла.
-	 *
+	 * 
 	 * @param node хмл узел.
 	 * @return таблица параметров с атрибутами хмл узла.
 	 */
-	public VarTable parse(Node node)
-	{
-		// очищаем таблицу
+	public VarTable parse(final Node node) {
+
 		values.clear();
 
 		if(node == null)
 			return this;
 
-		// получаем атрибуты хмл узла
-		NamedNodeMap attrs = node.getAttributes();
+		final NamedNodeMap attrs = node.getAttributes();
 
-		// если их нет, выходим
 		if(attrs == null)
 			return this;
 
-		// перебираем атрибуты
-		for(int i = 0, length = attrs.getLength(); i < length; i++)
-		{
-			// извлекаем атриубт
-			Node item = attrs.item(i);
-			// вносим его значение
+		for(int i = 0, length = attrs.getLength(); i < length; i++) {
+
+			final Node item = attrs.item(i);
+
 			set(item.getNodeName(), item.getNodeValue());
 		}
 
@@ -1198,30 +1087,29 @@ public class VarTable
 
 	/**
 	 * Парс хмл узла.
-	 *
+	 * 
 	 * @param node узел, который парсим.
 	 * @param childName название узла, который задает параметр.
 	 * @param nameType название атрибута, задающее название параметра.
 	 * @param nameValue название атрибута, задающее значение параметра.
 	 * @return
 	 */
-	public VarTable parse(Node node, String childName, String nameType, String nameValue)
-	{
-		// очищаем таблицу
+	public VarTable parse(final Node node, final String childName, final String nameType, final String nameValue) {
+
 		values.clear();
 
 		if(node == null)
 			return this;
 
-		for(Node child = node.getFirstChild(); child != null; child = child.getNextSibling())
-		{
+		for(Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+
 			if(!childName.equals(child.getNodeName()))
 				continue;
 
-			NamedNodeMap attrs = child.getAttributes();
+			final NamedNodeMap attrs = child.getAttributes();
 
-			Node name = attrs.getNamedItem(nameType);
-			Node val = attrs.getNamedItem(nameValue);
+			final Node name = attrs.getNamedItem(nameType);
+			final Node val = attrs.getNamedItem(nameValue);
 
 			if(name == null || val == null)
 				continue;
@@ -1233,27 +1121,22 @@ public class VarTable
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public void set(String key, Object value)
-	{
+	public void set(final String key, final Object value) {
 		values.put(key, value);
 	}
 
 	/**
-	 * @return значение по ключу.
+	 * @return найденное значение.
 	 */
-	public VarTable set(VarTable set)
-	{
-		// вносим данные
+	public VarTable set(final VarTable set) {
 		values.put(set.getValues());
-
 		return this;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "VarTable: " + (values != null ? "values = " + values : "");
 	}
 }

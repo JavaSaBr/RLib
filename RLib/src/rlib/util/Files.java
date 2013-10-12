@@ -18,13 +18,13 @@ import rlib.util.table.Table;
 import rlib.util.table.Tables;
 
 /**
- * Класс для работы с файлами в игровом режиме.
+ * Класс для работы с файлами.
  * 
  * @author Ronn
  * @created 01.03.2012
  */
-public class Files
-{
+public class Files {
+
 	private static final Logger log = Loggers.getLogger("Files");
 
 	/** кэш текста файлов */
@@ -35,8 +35,7 @@ public class Files
 	/**
 	 * Очистка кэша файлов.
 	 */
-	public static void clean()
-	{
+	public static void clean() {
 		cache.clear();
 	}
 
@@ -47,8 +46,7 @@ public class Files
 	 * @param file проверяемый фаил.
 	 * @return подходит ли.
 	 */
-	public static boolean containsFormat(String[] formats, File file)
-	{
+	public static boolean containsFormat(final String[] formats, final File file) {
 		return containsFormat(formats, file.getName());
 	}
 
@@ -59,11 +57,13 @@ public class Files
 	 * @param file проверяемый фаил.
 	 * @return подходит ли.
 	 */
-	public static boolean containsFormat(String[] formats, String path)
-	{
-		for(int i = 0, length = formats.length; i < length; i++)
-			if(path.endsWith(formats[i]))
+	public static boolean containsFormat(final String[] formats, final String path) {
+
+		for(int i = 0, length = formats.length; i < length; i++) {
+			if(path.endsWith(formats[i])) {
 				return true;
+			}
+		}
 
 		return false;
 	}
@@ -75,26 +75,48 @@ public class Files
 	 * @param pathDest адресс конечного файла.
 	 * @return скопирован ли фаил.
 	 */
-	public static boolean copyFile(String pathSource, String pathDest)
-	{
-		try(FileInputStream source = new FileInputStream(pathSource))
-		{
-			try(FileOutputStream destination = new FileOutputStream(pathDest))
-			{
-				FileChannel sourceChannel = source.getChannel();
-				FileChannel destinationChannel = destination.getChannel();
+	public static boolean copyFile(final String pathSource, final String pathDest) {
+
+		try(FileInputStream source = new FileInputStream(pathSource)) {
+
+			try(FileOutputStream destination = new FileOutputStream(pathDest)) {
+
+				final FileChannel sourceChannel = source.getChannel();
+				final FileChannel destinationChannel = destination.getChannel();
 
 				destinationChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
 			}
 
 			return true;
-		}
-		catch(IOException e)
-		{
+		} catch(final IOException e) {
 			log.warning(e);
 		}
 
 		return false;
+	}
+
+	/**
+	 * Чтение контента файла.
+	 * 
+	 * @param file читаемый фаил.
+	 * @return массив байтов фаила.
+	 */
+	public static byte[] getContent(final File file) {
+
+		try(FileInputStream fileInputStream = new FileInputStream(file)) {
+
+			final FileChannel channel = fileInputStream.getChannel();
+
+			final byte[] content = new byte[(int) channel.size()];
+
+			fileInputStream.read(content);
+
+			return content;
+		} catch(final IOException e) {
+			log.warning(e);
+		}
+
+		return null;
 	}
 
 	/**
@@ -103,8 +125,7 @@ public class Files
 	 * @param dir папка.
 	 * @return все файлы.
 	 */
-	public static File[] getFiles(File dir)
-	{
+	public static File[] getFiles(final File dir) {
 		return getFiles(dir, Strings.EMPTY_ARRAY);
 	}
 
@@ -115,20 +136,21 @@ public class Files
 	 * @param formats набор нужных форматов.
 	 * @return все файлы.
 	 */
-	public static File[] getFiles(File dir, String... formats)
-	{
-		Array<File> array = Arrays.toArray(File.class);
+	public static File[] getFiles(final File dir, final String... formats) {
 
-		File[] files = dir.listFiles();
+		final Array<File> array = Arrays.toArray(File.class);
 
-		for(int i = 0, length = files.length; i < length; i++)
-		{
-			File file = files[i];
+		final File[] files = dir.listFiles();
 
-			if(file.isDirectory())
+		for(int i = 0, length = files.length; i < length; i++) {
+
+			final File file = files[i];
+
+			if(file.isDirectory()) {
 				array.addAll(getFiles(file, formats));
-			else if(formats == Strings.EMPTY_ARRAY || containsFormat(formats, file))
+			} else if(formats == Strings.EMPTY_ARRAY || containsFormat(formats, file)) {
 				array.add(file);
+			}
 		}
 
 		array.trimToSize();
@@ -142,8 +164,7 @@ public class Files
 	 * @param pckg пакет.
 	 * @return все файлы.
 	 */
-	public static File[] getFiles(Package pckg)
-	{
+	public static File[] getFiles(final Package pckg) {
 		return getFiles(pckg, Strings.EMPTY_ARRAY);
 	}
 
@@ -154,51 +175,40 @@ public class Files
 	 * @param formats набор нужных форматов.
 	 * @return все файлы.
 	 */
-	public static File[] getFiles(Package pckg, String... formats)
-	{
-		// пробуем получить загрузчик классов
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	public static File[] getFiles(final Package pckg, final String... formats) {
 
-		// список файлов
+		final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
 		Enumeration<URL> urls = null;
 
-		try
-		{
+		try {
 			urls = classLoader.getResources(pckg.getName().replace('.', '/'));
-		}
-		catch(IOException e)
-		{
+		} catch(final IOException e) {
 			Loggers.warning(Files.class, e);
 		}
 
-		// если файлов нет, вовращаем путсой массив
 		if(urls == null)
 			return new File[0];
 
-		Array<File> files = Arrays.toArray(File.class);
+		final Array<File> files = Arrays.toArray(File.class);
 
-		while(urls.hasMoreElements())
-		{
-			// получаем урл
-			URL next = urls.nextElement();
+		while(urls.hasMoreElements()) {
 
-			// получаем полный путь файла
+			final URL next = urls.nextElement();
+
 			String path = next.getFile();
 
-			if(path.contains("%20"))
-				path = path.replace("%20", " ");
+			if(path.contains("%20")) {
+				path = path.replaceAll("%20", " ");
+			}
 
-			// получаем фаил по пути
-			File file = new File(path);
+			final File file = new File(path);
 
-			// если это дерриктория
-			if(file.isDirectory())
-				// получаем файлы из дериктории
+			if(file.isDirectory()) {
 				files.addAll(getFiles(file, formats));
-			// если это файл с нужным форматом
-			else if(formats == Strings.EMPTY_ARRAY || containsFormat(formats, path))
-				// добавляем
+			} else if(formats == Strings.EMPTY_ARRAY || containsFormat(formats, path)) {
 				files.add(file);
+			}
 		}
 
 		files.trimToSize();
@@ -211,15 +221,14 @@ public class Files
 	 * 
 	 * @param name имя файла.
 	 */
-	public static long lastModified(String name)
-	{
+	public static long lastModified(final String name) {
+
 		if(name == null)
 			return 0;
 
 		File file = cacheFiles.get(name);
 
-		if(file == null)
-		{
+		if(file == null) {
 			file = new File("./" + name);
 			cacheFiles.put(name, file);
 		}
@@ -228,95 +237,51 @@ public class Files
 	}
 
 	/**
-	 * Извлекает текст из файла.
+	 * Чтение текста из файла по указанному пути.
 	 * 
-	 * @param path имя файла.
+	 * @param path путь к файлу.
 	 */
-	public static String read(String path)
-	{
-		// если пути нет ,возвращаем пустоту
-		if(path == null)
+	public static String read(final String path) {
+
+		if(path == null) {
 			return null;
+		}
 
-		// если есть в кеше
-		if(cache.containsKey(path))
-			// возвращаем из кеша
+		if(cache.containsKey(path)) {
 			return cache.get(path);
+		}
 
-		// пробуем получить сам файл из кеша
 		File file = cacheFiles.get(path);
 
-		// если файла нет
-		if(file == null)
-		{
-			// создаем его
+		if(file == null) {
 			file = new File(path);
-			// добавляем в кеш
 			cacheFiles.put(path, file);
 		}
 
-		// если файла такого не существует, выходим
-		if(!file.exists())
+		if(!file.exists()) {
 			return null;
+		}
 
-		// создаем билдер текста
-		StringBuilder content = new StringBuilder();
+		final StringBuilder content = new StringBuilder();
 
-		// получаем поток для считывания файла
-		try(FileReader in = new FileReader(file))
-		{
-			CharBuffer buffer = CharBuffer.allocate(512);
+		try(FileReader in = new FileReader(file)) {
 
-			while(in.ready())
-			{
-				// очищаем буффер
+			final CharBuffer buffer = CharBuffer.allocate(512);
+
+			while(in.ready()) {
+
 				buffer.clear();
-
-				// вносим данные в буффер
 				in.read(buffer);
-
-				// подготавливаем
 				buffer.flip();
 
-				// вносим данные в билдер
 				content.append(buffer.array(), 0, buffer.limit());
 			}
-		}
-		catch(IOException e)
-		{
+
+		} catch(final IOException e) {
 			log.warning(e);
 		}
 
-		// вносим в кеш
 		cache.put(path, content.toString());
-
-		// возвращаем результат
 		return content.toString();
-	}
-
-	/**
-	 * Чтение контента файла.
-	 * 
-	 * @param file читаемый фаил.
-	 * @return массив байтов фаила.
-	 */
-	public static byte[] getContent(File file)
-	{
-		try(FileInputStream fileInputStream = new FileInputStream(file))
-		{
-			FileChannel channel = fileInputStream.getChannel();
-
-			byte[] content = new byte[(int) channel.size()];
-
-			fileInputStream.read(content);
-
-			return content;
-		}
-		catch(IOException e)
-		{
-			log.warning(e);
-		}
-
-		return null;
 	}
 }

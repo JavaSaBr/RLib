@@ -1,41 +1,64 @@
 package rlib.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.URI;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
 /**
  * Класс различных дополнительных статик методов.
- *
+ * 
  * @author Ronn
  * @created 27.03.2012
  */
-public abstract class Util
-{
-	/** формат даты для лога */
-	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss:SSS");
+public abstract class Util {
+
+	private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("HH:mm:ss:SSS");
+		}
+	};
+
+	private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
+
+		@Override
+		protected Date initialValue() {
+			return new Date();
+		}
+	};
+
+	/**
+	 * Добавение параметров, указывающих что бы соединение к БД работало с UTF-8
+	 * кодировкой.
+	 * 
+	 * @param properties проперти соединения к БД.
+	 */
+	public static final void addUTFToSQLConnectionProperties(final Properties properties) {
+		properties.setProperty("useUnicode", "true");
+		properties.setProperty("characterEncoding", "UTF-8");
+	}
 
 	/**
 	 * Проверяет, занят ли указанный порт на указанном хосте.
-	 *
+	 * 
 	 * @param host проверяемый хост.
 	 * @param ports проверяемый порт.
 	 * @return свободен ли порт.
 	 * @throws InterruptedException
 	 */
-	public static boolean checkFreePorts(String host, int port) throws InterruptedException
-	{
-		try
-		{
-			ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
-			
+	public static boolean checkFreePorts(final String host, final int port) throws InterruptedException {
+
+		try {
+			final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
 			serverSocket.close();
-		}
-		catch(IOException e)
-		{
+		} catch(final IOException e) {
 			return false;
 		}
 
@@ -44,27 +67,21 @@ public abstract class Util
 
 	/**
 	 * Проверяет, заняты ли указанные порты на указанном хосте.
-	 *
+	 * 
 	 * @param host проверяемый хост.
 	 * @param ports проверяемые порты.
 	 * @return свободны ли все порты.
 	 * @throws InterruptedException
 	 */
-	public static boolean checkFreePorts(String host, int[] ports) throws InterruptedException
-	{
-		for(int port : ports)
-		{
-			try
-			{
-				ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
+	public static boolean checkFreePorts(final String host, final int[] ports) throws InterruptedException {
 
+		for(final int port : ports)
+			try {
+				final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
 				serverSocket.close();
-			}
-			catch(IOException e)
-			{
+			} catch(final IOException e) {
 				return false;
 			}
-		}
 
 		return true;
 	}
@@ -72,43 +89,96 @@ public abstract class Util
 	/**
 	 * форматирует время в секундах в дни/часы/минуты/секунды
 	 */
-	public static String formatTime(long time)
-	{
-		return timeFormat.format(new Date(time));
+	public static String formatTime(final long time) {
+
+		final Date date = LOCAL_DATE.get();
+		date.setTime(time);
+
+		final SimpleDateFormat format = LOCAL_DATE_FORMAT.get();
+
+		return format.format(date);
 	}
 
 	/**
 	 * Получение ближайшего свободного порта от указанного.
-	 *
+	 * 
 	 * @param port стартовый порт.
 	 * @return свободный порт или -1, если такого нет.
 	 */
-	public static int getFreePort(int port)
-	{
-		int limit = Short.MAX_VALUE * 2;
+	public static int getFreePort(int port) {
+
+		final int limit = Short.MAX_VALUE * 2;
 
 		while(port < limit)
-		{
-			try
-			{
+			try {
 				new ServerSocket(port).close();
 
 				return port;
-			}
-			catch(IOException e)
-			{
+			} catch(final IOException e) {
 				port++;
 			}
-		}
 
 		return -1;
 	}
 
 	/**
+	 * Получение папки, где лежит джарка указанного класса.
+	 * 
+	 * @param cs класс, для котого ищем папку с джаркой.
+	 * @return адресс папки с джаркой.
+	 */
+	public static File getRootFolderFromClass(final Class<?> cs) {
+
+		String className = cs.getName();
+
+		final StringBuilder builder = new StringBuilder(className.length());
+		builder.append('/');
+
+		for(int i = 0, length = className.length(); i < length; i++) {
+
+			char ch = className.charAt(i);
+
+			if(ch == '.')
+				ch = '/';
+
+			builder.append(ch);
+		}
+
+		builder.append(".class");
+
+		className = builder.toString();
+
+		try {
+
+			final URL url = Util.class.getResource(className);
+
+			String path = url.getPath();
+			path = path.substring(0, path.length() - className.length());
+			path = path.substring(0, path.lastIndexOf('/'));
+
+			final URI uri = new URI(path);
+			path = uri.getPath();
+			path = path.replaceAll("%20", " ");
+
+			File file = new File(path);
+
+			while(path.lastIndexOf('/') != -1 && !file.exists()) {
+				path = path.substring(0, path.lastIndexOf('/'));
+				file = new File(path);
+			}
+
+			return file;
+		} catch(final Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
 	 * @return путь к корневому каталогу приложения.
 	 */
-	public static String getRootPath()
-	{
+	public static String getRootPath() {
 		return ".";
 	}
 
@@ -119,124 +189,83 @@ public abstract class Util
 	 * @param offset отступ в массиве.
 	 * @return значение в short.
 	 */
-	public static short getShort(byte[] bytes, int offset)
-	{
+	public static short getShort(final byte[] bytes, final int offset) {
 		return (short) (bytes[offset + 1] << 8 | bytes[offset] & 0xff);
 	}
 
 	/**
 	 * Получение имя пользователя текущей системы.
-	 *
+	 * 
 	 * @return имя пользователя системы.
 	 */
-	public static final String getUserName()
-	{
+	public static final String getUserName() {
 		return System.getProperty("user.name");
 	}
 
 	/**
-	 * Добавение параметров,  указывающих что бы соединение к БД работало с UTF-8 кодировкой.
-	 * 
-	 * @param properties проперти соединения к БД.
-	 */
-	public static final void addUTFToSQLConnectionProperties(Properties properties)
-	{
-		properties.setProperty("useUnicode","true");
-        properties.setProperty("characterEncoding","UTF-8");
-	}
-	
-	/**
 	 * Формирования дампа байтов в хексе.
-	 *
+	 * 
 	 * @param array массив байтов.
 	 * @return строка с дампом.
 	 */
-	public static String hexdump(byte[] array, int size)
-	{
-		// создаем билдер
-		StringBuilder builder = new StringBuilder();
+	public static String hexdump(final byte[] array, final int size) {
 
-		// текущий индекс байта в строке дампа
+		final StringBuilder builder = new StringBuilder();
+
 		int count = 0;
-		// вычисляем индекс последнего байта
-		int end = size - 1;
+		final int end = size - 1;
 
-		// создаем массив символов 1 строки в дампе
-		char[] chars = new char[16];
+		final char[] chars = new char[16];
 
-		// заполняем ее точками
 		for(int g = 0; g < 16; g++)
 			chars[g] = '.';
 
-		// перебираем массив байтов
-		for(int i = 0; i < size; i++)
-		{
-			// получаем байт
+		for(int i = 0; i < size; i++) {
+
 			int val = array[i];
 
-			// делаем беззнаковым
 			if(val < 0)
 				val += 256;
 
-			// конвектируем в хекс значение байта
 			String text = Integer.toHexString(val).toUpperCase();
 
-			// если значение из 1 символа
 			if(text.length() == 1)
-				// добавляем нолик
 				text = "0" + text;
 
-			// получаем символ байта
 			char ch = (char) val;
 
-			// если ему принадлежит пустой символ
 			if(ch < 33)
-				// заменяем на точку
 				ch = '.';
 
-			// если это последний ,fqn
-			if(i == end)
-			{
-				// вносим его символ в текстовую часть дампа
+			if(i == end) {
+
 				chars[count] = ch;
 
-				// добавляем сам байт
 				builder.append(text);
 
-				// добавляем недостающий отступ
 				for(int j = 0; j < 15 - count; j++)
 					builder.append("   ");
 
-				// добавляем текстовое представление
 				builder.append("    ").append(chars).append('\n');
-			}
-			// если еще не завершена строка дампа
-			else if(count < 15)
-			{
-				// вносим в текстовое представление символ байта
+			} else if(count < 15) {
+
 				chars[count++] = ch;
 
-				// добавляем сам байт
 				builder.append(text).append(' ');
-			}
-			else
-			{
-				// вносим символ байта
+
+			} else {
+
 				chars[15] = ch;
 
-				// завершаем строку дампа
 				builder.append(text).append("    ").append(chars).append('\n');
 
-				// обнуляем счетчик для новой строки дампа
 				count = 0;
 
-				// очищаем массив текстового представления байтов
 				for(int g = 0; g < 16; g++)
 					chars[g] = 0x2E;
 			}
 		}
 
-		// получаем строку дампа
 		return builder.toString();
 	}
 }

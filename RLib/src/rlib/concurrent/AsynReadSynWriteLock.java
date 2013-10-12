@@ -6,8 +6,8 @@ package rlib.concurrent;
  * 
  * @author Ronn
  */
-public interface AsynReadSynWriteLock
-{
+public interface AsynReadSynWriteLock {
+
 	/**
 	 * Блокировка для ассинхронных действий.
 	 */

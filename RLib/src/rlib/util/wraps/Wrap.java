@@ -4,11 +4,11 @@ import rlib.util.pools.Foldable;
 
 /**
  * Интерфейс для реализации обертки.
- *
+ * 
  * @author Ronn
  */
-public interface Wrap extends Foldable
-{
+public interface Wrap extends Foldable {
+
 	/**
 	 * Сложить в пул.
 	 */
@@ -73,7 +73,6 @@ public interface Wrap extends Foldable
 	 * @param value дабл, который нужно обернуть.
 	 */
 	public void setDouble(double value);
-
 
 	/**
 	 * @param value флоат, который нужно обернуть.

@@ -11,27 +11,24 @@ import javax.tools.SimpleJavaFileObject;
  * 
  * @author Ronn
  */
-public class CompileByteCode extends SimpleJavaFileObject implements ByteSource
-{
+public class CompileByteCode extends SimpleJavaFileObject implements ByteSource {
+
 	/** контейнер байткода класса в памяти */
 	private final ByteArrayOutputStream outputStream;
 
-	public CompileByteCode(String name)
-	{
+	public CompileByteCode(String name) {
 		super(URI.create("byte:///" + name.replace('/', '.') + Compiler.CLASS_EXTENSION), Kind.CLASS);
 
 		this.outputStream = new ByteArrayOutputStream();
 	}
 
 	@Override
-	public OutputStream openOutputStream()
-	{
-		return outputStream;
+	public byte[] getByteSource() {
+		return outputStream.toByteArray();
 	}
 
 	@Override
-	public byte[] getByteSource()
-	{
-		return outputStream.toByteArray();
+	public OutputStream openOutputStream() {
+		return outputStream;
 	}
 }

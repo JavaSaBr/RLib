@@ -7,25 +7,22 @@ import rlib.geom.Vector;
  * 
  * @author Ronn
  */
-public final class Boundings
-{
-	public static Bounding newBoundingBox(Vector center, Vector offset, float sizeX, float sizeY, float sizeZ)
-	{
+public final class Boundings {
+
+	public static Bounding newBoundingBox(Vector center, Vector offset, float sizeX, float sizeY, float sizeZ) {
 		return new AxisAlignedBoundingBox(center, offset, sizeX, sizeY, sizeZ);
 	}
-	
-	public static Bounding newBoundingSphere(Vector center, Vector offset, int radius)
-	{
+
+	public static Bounding newBoundingSphere(Vector center, Vector offset, int radius) {
 		return new BoundingSphere(center, offset, radius);
 	}
-	
-	public static Bounding newBoundingEmpty()
-	{
-		return new AbstractBounding(null, null){};
+
+	public static Bounding newBoundingEmpty() {
+		return new AbstractBounding(null, null) {
+		};
 	}
-	
-	private Boundings()
-	{
+
+	private Boundings() {
 		throw new IllegalArgumentException();
 	}
 }

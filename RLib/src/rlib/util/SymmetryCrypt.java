@@ -16,8 +16,8 @@ import javax.crypto.ShortBufferException;
  * 
  * @author Ronn
  */
-public class SymmetryCrypt
-{	
+public class SymmetryCrypt {
+
 	/** криптовщик */
 	private Cipher ecipher;
 	/** декриптовщик */
@@ -25,7 +25,7 @@ public class SymmetryCrypt
 
 	/** ключ шифрования */
 	private SecretKey secretKey;
-	
+
 	/**
 	 * @param key 8 символов.
 	 * @throws NoSuchAlgorithmException
@@ -33,40 +33,37 @@ public class SymmetryCrypt
 	 * @throws UnsupportedEncodingException
 	 * @throws InvalidKeyException
 	 */
-	public SymmetryCrypt(String key) throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException
-	{
+	public SymmetryCrypt(final String key) throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException {
+
 		ecipher = Cipher.getInstance("RC4");
 		dcipher = Cipher.getInstance("RC4");
-		
+
 		final byte[] bytes = key.getBytes("UTF-8");
-		
-		secretKey = new SecretKey()
-		{
+
+		secretKey = new SecretKey() {
+
 			private static final long serialVersionUID = -8907627571317506056L;
 
 			@Override
-			public String getAlgorithm()
-			{
+			public String getAlgorithm() {
 				return "RC4";
 			}
 
 			@Override
-			public byte[] getEncoded()
-			{
+			public byte[] getEncoded() {
 				return bytes;
 			}
 
 			@Override
-			public String getFormat()
-			{
+			public String getFormat() {
 				return "RAW";
 			}
 		};
-		
+
 		ecipher.init(Cipher.ENCRYPT_MODE, secretKey);
 		dcipher.init(Cipher.DECRYPT_MODE, secretKey);
 	}
-	
+
 	/**
 	 * Расшифровать массив байтов.
 	 * 
@@ -78,11 +75,10 @@ public class SymmetryCrypt
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
 	 */
-	public void decrypt(byte[] in, int offset, int length, byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException
-	{
+	public void decrypt(final byte[] in, final int offset, final int length, final byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 		dcipher.doFinal(in, offset, length, out, offset);
 	}
-	
+
 	/**
 	 * Зашифровать массив байтов.
 	 * 
@@ -94,8 +90,7 @@ public class SymmetryCrypt
 	 * @throws IllegalBlockSizeException
 	 * @throws BadPaddingException
 	 */
-	public void encrypt(byte[] in, int offset, int length, byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException
-	{
+	public void encrypt(final byte[] in, final int offset, final int length, final byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
 		ecipher.doFinal(in, offset, length, out, offset);
 	}
 }

@@ -6,8 +6,8 @@ package rlib.geom;
  * @author Ronn
  * @created 01.03.2012
  */
-public abstract class Geometry
-{
+public abstract class Geometry {
+
 	/**
 	 * Рассчет расстояния между 2мя точками.
 	 * 
@@ -19,11 +19,10 @@ public abstract class Geometry
 	 * @param targetZ координата второй точки.
 	 * @return расстояние между точками.
 	 */
-	public static final float getDistance(float startX, float startY, float startZ, float targetX, float targetY, float targetZ)
-	{
+	public static final float getDistance(float startX, float startY, float startZ, float targetX, float targetY, float targetZ) {
 		return (float) Math.sqrt(getSquareDistance(startX, startY, startZ, targetX, targetY, targetZ));
 	}
-	
+
 	/**
 	 * Возвращает расстояние от точки до отрезка.
 	 * 
@@ -35,11 +34,10 @@ public abstract class Geometry
 	 * @param targetY координата точки.
 	 * @return расстояние от точки до отрезка.
 	 */
-	public static float getDistanceToLine(float startX, float startY, float endX, float endY, float targetX, float targetY)
-	{
+	public static float getDistanceToLine(float startX, float startY, float endX, float endY, float targetX, float targetY) {
 		return (float) Math.sqrt(getSquareDistanceToLine(startX, startY, endX, endY, targetX, targetY));
 	}
-	
+
 	/**
 	 * Возвращает расстояние от точки до отрезка.
 	 * 
@@ -54,11 +52,10 @@ public abstract class Geometry
 	 * @param targetZ координата точки.
 	 * @return расстояние от точки до отрезка.
 	 */
-	public final static float getDistanceToLine(float startX, float startY, float startZ, float endX, float endY, float endZ, float targetX, float targetY, float targetZ)
-	{
+	public final static float getDistanceToLine(float startX, float startY, float startZ, float endX, float endY, float endZ, float targetX, float targetY, float targetZ) {
 		return (float) Math.sqrt(getSquareDistanceToLine(startX, startY, startZ, endX, endY, endZ, targetX, targetY, targetZ));
 	}
-	
+
 	/**
 	 * Рассчет квадрата расстояния между 2мя точками.
 	 * 
@@ -70,15 +67,15 @@ public abstract class Geometry
 	 * @param targetZ координата второй точки.
 	 * @return квадрат расстояния между точками.
 	 */
-	public static final float getSquareDistance(float startX, float startY, float startZ, float targetX, float targetY, float targetZ)
-	{
+	public static final float getSquareDistance(float startX, float startY, float startZ, float targetX, float targetY, float targetZ) {
+
 		float dx = targetX - startX;
 		float dy = targetY - startY;
 		float dz = targetZ - startZ;
-		
+
 		return dx * dx + dy * dy + dz * dz;
 	}
-	
+
 	/**
 	 * Возвращает квадрат расстояния от точки до отрезка.
 	 * 
@@ -90,41 +87,43 @@ public abstract class Geometry
 	 * @param targetY координата точки.
 	 * @return квадрат расстояния от точки до отрезка.
 	 */
-	public static float getSquareDistanceToLine(float startX, float startY, float endX, float endY, float targetX, float targetY)
-	{
+	public static float getSquareDistanceToLine(float startX, float startY, float endX, float endY, float targetX, float targetY) {
+
 		endX -= startX;
 		endY -= startY;
-		
+
 		targetX -= startX;
 		targetY -= startY;
-		
+
 		float dotprod = targetX * endX + targetY * endY;
-		
+
 		float projlenSq;
-		
-		if(dotprod <= 0.0F)
+
+		if(dotprod <= 0.0F) {
 			projlenSq = 0.0F;
-		else
-		{
+		} else {
+
 			targetX = endX - targetX;
 			targetY = endY - targetY;
-			
+
 			dotprod = targetX * endX + targetY * endY;
-			
-			if(dotprod <= 0.0F)
+
+			if(dotprod <= 0.0F) {
 				projlenSq = 0.0F;
-			else
+			} else {
 				projlenSq = dotprod * dotprod / (endX * endX + endY * endY);
+			}
 		}
-		
+
 		float lenSq = targetX * targetX + targetY * targetY - projlenSq;
-		
-		if(lenSq < 0F)
+
+		if(lenSq < 0F) {
 			lenSq = 0F;
-		
+		}
+
 		return lenSq;
 	}
-	
+
 	/**
 	 * Возвращает квадрат расстояния от точки до отрезка.
 	 * 
@@ -139,37 +138,39 @@ public abstract class Geometry
 	 * @param targetZ координата точки.
 	 * @return квадрат расстояния от точки до отрезка.
 	 */
-	public final static float getSquareDistanceToLine(float startX, float startY, float startZ, float endX, float endY, float endZ, float targetX, float targetY, float targetZ)
-	{
+	public final static float getSquareDistanceToLine(float startX, float startY, float startZ, float endX, float endY, float endZ, float targetX, float targetY, float targetZ) {
+
 		float lineX = endX - startX;
 		float lineY = endY - startY;
 		float lineZ = endZ - startZ;
-		
+
 		float pointX = targetX - startX;
 		float pointY = targetY - startY;
 		float pointZ = targetZ - startZ;
-		
+
 		float c1 = scalar(pointX, pointY, pointZ, lineX, lineY, lineZ);
-		
-		if(c1 < 0F)
+
+		if(c1 < 0F) {
 			return squareLength(targetX, targetY, targetZ, startX, startY, startZ);
-		
+		}
+
 		float c2 = scalar(lineX, lineY, lineZ, lineX, lineY, lineZ);
-		
-		if(c2 <= c1)
+
+		if(c2 <= c1) {
 			return squareLength(targetX, targetY, targetZ, endX, endY, endZ);
-		
+		}
+
 		float b = c1 / c2;
-		
+
 		pointX = startX + lineX * b;
 		pointY = startY + lineY * b;
 		pointZ = startZ + lineZ * b;
-		
+
 		return squareLength(targetX, targetY, targetZ, pointX, pointY, pointZ);
 	}
-	
+
 	/**
-	 * Производит скалярное произведение  двух точек.
+	 * Производит скалярное произведение двух точек.
 	 * 
 	 * @param x1 координата первой точки.
 	 * @param y1 координата первой точки.
@@ -179,11 +180,10 @@ public abstract class Geometry
 	 * @param z2 координата второй точки.
 	 * @return произведение двух точек.
 	 */
-	public static final float scalar(float x1, float y1, float z1, float x2, float y2, float z2)
-	{
+	public static final float scalar(float x1, float y1, float z1, float x2, float y2, float z2) {
 		return x1 * x2 + y1 * y2 + z1 * z2;
 	}
-	
+
 	/**
 	 * Находит квадрат длинны между двумя точками.
 	 * 
@@ -195,12 +195,12 @@ public abstract class Geometry
 	 * @param z2 координата второй точки.
 	 * @return квадрат длинны между точками.
 	 */
-	public static final float squareLength(float x1, float y1, float z1, float x2, float y2, float z2)
-	{
+	public static final float squareLength(float x1, float y1, float z1, float x2, float y2, float z2) {
+
 		float dx = x1 - x2;
 		float dy = y1 - y2;
 		float dz = z1 - z2;
-		
+
 		return dx * dx + dy * dy + dz * dz;
 	}
 }

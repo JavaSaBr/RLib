@@ -5,26 +5,23 @@ package rlib.util.wraps;
  * 
  * @author Ronn
  */
-final class DoubleWrap extends AbstractWrap
-{
+final class DoubleWrap extends AbstractWrap {
+
 	/** значение */
 	private double value;
-	
+
 	@Override
-	public double getDouble()
-	{
+	public double getDouble() {
 		return value;
 	}
-	
+
 	@Override
-	public WrapType getWrapType()
-	{
+	public WrapType getWrapType() {
 		return WrapType.DOUBLE;
 	}
-	
+
 	@Override
-	public void setDouble(double value)
-	{
+	public void setDouble(double value) {
 		this.value = value;
 	}
 }

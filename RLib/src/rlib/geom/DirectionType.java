@@ -5,8 +5,7 @@ package rlib.geom;
  * 
  * @author Ronn
  */
-public enum VectorType
-{
+public enum DirectionType {
 	LEFT,
 	UP,
 	DIRECTION,

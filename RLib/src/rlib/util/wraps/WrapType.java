@@ -5,11 +5,11 @@ import rlib.util.pools.Pools;
 
 /**
  * Перечисление типов оберток.
- *
+ * 
  * @author Ronn
  */
-public enum WrapType
-{
+public enum WrapType {
+
 	FLOAT,
 	DOUBLE,
 	CHAR,
@@ -22,24 +22,21 @@ public enum WrapType
 	/** пул оберток */
 	private final FoldablePool<Wrap> pool;
 
-	private WrapType()
-	{
+	private WrapType() {
 		this.pool = Pools.newConcurrentFoldablePool(Wrap.class);
 	}
 
 	/**
 	 * @param wrap складировать экземпляр.
 	 */
-	protected void put(Wrap wrap)
-	{
+	protected void put(Wrap wrap) {
 		pool.put(wrap);
 	}
 
 	/**
 	 * @return достать экземпляр.
 	 */
-	protected Wrap take()
-	{
+	protected Wrap take() {
 		return pool.take();
 	}
 }

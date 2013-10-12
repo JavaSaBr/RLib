@@ -7,36 +7,35 @@ import javax.tools.JavaFileObject;
 import rlib.util.array.Array;
 import rlib.util.array.Arrays;
 
-public class CompileListener implements DiagnosticListener<JavaFileObject>
-{
+/**
+ * @author Ronn
+ */
+public class CompileListener implements DiagnosticListener<JavaFileObject> {
+
 	/** список рапортов о компиляции классов */
 	private final Array<Diagnostic<? extends JavaFileObject>> diagnostics;
 
-	public CompileListener()
-	{
+	public CompileListener() {
 		this.diagnostics = Arrays.toArray(Diagnostic.class);
 	}
 
-	@Override
-	public void report(Diagnostic<? extends JavaFileObject> diagnostic)
-	{
-		diagnostics.add(diagnostic);
+	/**
+	 * Очистка рапортов.
+	 */
+	public void clear() {
+		diagnostics.clear();
 	}
 
 	/**
 	 * @return список рапортов о компиляции классов.
 	 */
 	@SuppressWarnings("unchecked")
-	public Diagnostic<JavaFileObject>[] getDiagnostics()
-	{
+	public Diagnostic<JavaFileObject>[] getDiagnostics() {
 		return diagnostics.toArray(new Diagnostic[diagnostics.size()]);
 	}
 
-	/**
-	 * Очистка рапортов.
-	 */
-	public void clear()
-	{
-		diagnostics.clear();
+	@Override
+	public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
+		diagnostics.add(diagnostic);
 	}
 }

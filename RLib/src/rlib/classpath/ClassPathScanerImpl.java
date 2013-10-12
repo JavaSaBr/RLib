@@ -19,9 +19,9 @@ import rlib.util.array.Arrays;
  * 
  * @author Ronn
  */
-class ClassPathScanerImpl implements ClassPathScaner
-{
-	private static final Logger log = Loggers.getLogger(ClassPathScaner.class);
+class ClassPathScanerImpl implements ClassPathScaner {
+
+	protected static final Logger LOGGER = Loggers.getLogger(ClassPathScaner.class);
 
 	private static final String CLASS_PATH = System.getProperty("java.class.path");
 	private static final String PATH_SEPARATOR = File.pathSeparator;
@@ -33,86 +33,113 @@ class ClassPathScanerImpl implements ClassPathScaner
 	/** найденные классы */
 	private Class<?>[] classes;
 
-	public ClassPathScanerImpl()
-	{
+	public ClassPathScanerImpl() {
 		this.loader = getClass().getClassLoader();
 	}
 
 	@Override
-	public void getAll(Array<Class<?>> container)
-	{
+	public void addClasses(Array<Class<?>> added) {
+		this.classes = Arrays.combine(classes, added.toArray(new Class[added.size()]), Class.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T, R extends T> void findImplements(Array<Class<R>> container, Class<T> interfaceClass) {
+
+		if(!interfaceClass.isInterface()) {
+			throw new RuntimeException("class " + interfaceClass + " is not interface.");
+		}
+
+		for(Class<?> cs : getClasses()) {
+
+			if(cs.isInterface() || !interfaceClass.isAssignableFrom(cs) || Modifier.isAbstract(cs.getModifiers())) {
+				continue;
+			}
+
+			container.add((Class<R>) cs);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T, R extends T> void findInherited(Array<Class<R>> container, Class<T> parentClass) {
+
+		if(Modifier.isFinal(parentClass.getModifiers())) {
+			throw new RuntimeException("class " + parentClass + " is final class.");
+		}
+
+		for(Class<?> cs : getClasses()) {
+
+			if(cs.isInterface() || cs == parentClass || !parentClass.isAssignableFrom(cs) || Modifier.isAbstract(cs.getModifiers())) {
+				continue;
+			}
+
+			container.add((Class<R>) cs);
+		}
+	}
+
+	@Override
+	public void getAll(Array<Class<?>> container) {
 		container.addAll(getClasses());
 	}
 
-	private Class<?>[] getClasses()
-	{
+	private Class<?>[] getClasses() {
 		return classes;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T, R extends T> void findImplements(Array<Class<R>> container, Class<T> interfaceClass)
-	{
-		if(!interfaceClass.isInterface())
-			throw new RuntimeException("class " + interfaceClass + " is not interface.");
-
-		for(Class<?> cs : getClasses())
-		{
-			if(cs.isInterface() || !interfaceClass.isAssignableFrom(cs) || Modifier.isAbstract(cs.getModifiers()))
-				continue;
-
-			container.add((Class<R>) cs);
-		}
+	/**
+	 * @return загрузчик классов.
+	 */
+	private ClassLoader getLoader() {
+		return loader;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T, R extends T> void findInherited(Array<Class<R>> container, Class<T> parentClass)
-	{
-		if(Modifier.isFinal(parentClass.getModifiers()))
-			throw new RuntimeException("class " + parentClass + " is final class.");
-
-		for(Class<?> cs : getClasses())
-		{
-			if(cs.isInterface() || cs == parentClass || !parentClass.isAssignableFrom(cs) || Modifier.isAbstract(cs.getModifiers()))
-				continue;
-
-			container.add((Class<R>) cs);
-		}
+	protected String[] getPaths() {
+		return CLASS_PATH.split(PATH_SEPARATOR);
 	}
 
-	@Override
-	public void scanning()
-	{
-		if(classes != null)
-			throw new RuntimeException("scanning is already.");
+	/**
+	 * Загрузка класса по его имени в контейнер.
+	 * 
+	 * @param name название класса.
+	 * @param container контейнер загруженных классов.
+	 */
+	private void loadClass(String name, Array<Class<?>> container) {
 
-		String[] paths = CLASS_PATH.split(PATH_SEPARATOR);
-
-		Array<Class<?>> container = Arrays.toArraySet(Class.class);
-
-		for(String path : paths)
-		{
-			File file = new File(path);
-
-			if(!file.exists())
-				continue;
-
-			if(file.isDirectory())
-				scaningDirectory(path, container, file);
-			else if(file.isFile() && file.getName().endsWith(JAR_EXTENSION))
-				scaningJar(container, file);
+		if(!name.endsWith(CLASS_EXTENSION)) {
+			return;
 		}
 
-		classes = container.toArray(new Class[container.size()]);
+		String className = null;
 
-		log.info("scanned for " + classes.length + " classes.");
-	}
+		try {
 
-	@Override
-	public void addClasses(Array<Class<?>> added)
-	{
-		this.classes = Arrays.combine(classes, added.toArray(new Class[added.size()]), Class.class);
+			className = name.replace(CLASS_EXTENSION, Strings.EMPTY);
+
+			StringBuilder result = new StringBuilder(className.length());
+
+			for(int i = 0, length = className.length(); i < length; i++) {
+
+				char ch = className.charAt(i);
+
+				if(ch == File.separatorChar) {
+					ch = '.';
+				}
+
+				result.append(ch);
+			}
+
+			className = result.toString();
+		} catch(Exception e) {
+			LOGGER.info("incorrect replace " + name + " to java path, separator " + File.separator);
+			return;
+		}
+
+		try {
+			container.add(getLoader().loadClass(className));
+		} catch(ClassNotFoundException | NoClassDefFoundError e) {
+			return;
+		}
 	}
 
 	/**
@@ -121,28 +148,34 @@ class ClassPathScanerImpl implements ClassPathScaner
 	 * @param container контейнер загружаемых классов.
 	 * @param directory сканируемая папка.
 	 */
-	private void scaningDirectory(String rootPath, Array<Class<?>> container, File directory)
-	{
+	private void scaningDirectory(String rootPath, Array<Class<?>> container, File directory) {
+
 		File[] files = directory.listFiles();
 
-		for(File file : files)
-		{
-			if(file.isDirectory())
+		for(File file : files) {
+
+			if(file.isDirectory()) {
 				scaningDirectory(rootPath, container, file);
-			else if(file.isFile())
-			{
+			} else if(file.isFile()) {
+
 				String name = file.getName();
 
-				if(name.endsWith(Compiler.SOURCE_EXTENSION))
+				if(name.endsWith(Compiler.SOURCE_EXTENSION)) {
 					scaningJar(container, file);
-				else if(name.endsWith(CLASS_EXTENSION))
-				{
-					String path = file.getAbsolutePath().replace(rootPath, Strings.EMPTY);
+				} else if(name.endsWith(CLASS_EXTENSION)) {
+					try {
 
-					if(path.startsWith(File.separator))
-						path = path.replaceFirst(File.separator, Strings.EMPTY);
+						String path = file.getAbsolutePath();
+						path = path.substring(rootPath.length(), path.length());
 
-					loadClass(path, container);
+						if(path.startsWith(File.separator)) {
+							path = path.substring(1, path.length());
+						}
+
+						loadClass(path, container);
+					} catch(Exception e) {
+						System.out.println("incorrect replace " + file.getAbsolutePath() + " from root " + rootPath);
+					}
 				}
 			}
 		}
@@ -154,54 +187,55 @@ class ClassPathScanerImpl implements ClassPathScaner
 	 * @param container контейнер подгруженных классов.
 	 * @param jarFile ссылка на .jar фаил.
 	 */
-	private void scaningJar(Array<Class<?>> container, File jarFile)
-	{
-		try(JarFile jar = new JarFile(jarFile))
-		{
-			for(Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();)
-			{
+	private void scaningJar(Array<Class<?>> container, File jarFile) {
+
+		try(JarFile jar = new JarFile(jarFile)) {
+
+			for(Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
+
 				JarEntry entry = entries.nextElement();
 
-				if(entry.isDirectory())
+				if(entry.isDirectory()) {
 					continue;
+				}
 
 				loadClass(entry.getName(), container);
 			}
-		}
-		catch(IOException e)
-		{
-			log.warning(e);
-		}
-	}
 
-	/**
-	 * Загрузка класса по его имени в контейнер.
-	 * 
-	 * @param name название класса.
-	 * @param container контейнер загруженных классов.
-	 */
-	private void loadClass(String name, Array<Class<?>> container)
-	{
-		if(!name.endsWith(CLASS_EXTENSION))
-			return;
-
-		String className = name.replace(CLASS_EXTENSION, Strings.EMPTY).replaceAll(File.separator, ".");
-
-		try
-		{
-			container.add(getLoader().loadClass(className));
-		}
-		catch(ClassNotFoundException | NoClassDefFoundError e)
-		{
-			return;
+		} catch(IOException e) {
+			LOGGER.warning(e);
 		}
 	}
 
-	/**
-	 * @return загрузчик классов.
-	 */
-	private ClassLoader getLoader()
-	{
-		return loader;
+	@Override
+	public void scanning() {
+
+		if(classes != null) {
+			throw new RuntimeException("scanning is already.");
+		}
+
+		String[] paths = getPaths();
+
+		Array<Class<?>> container = Arrays.toArraySet(Class.class);
+
+		for(String path : paths) {
+
+			File file = new File(path);
+
+			LOGGER.info("scanning " + file);
+
+			if(!file.exists()) {
+				continue;
+			}
+
+			if(file.isDirectory()) {
+				scaningDirectory(path, container, file);
+			} else if(file.isFile() && file.getName().endsWith(JAR_EXTENSION)) {
+				scaningJar(container, file);
+			}
+		}
+
+		classes = container.toArray(new Class[container.size()]);
+		LOGGER.info("scanned for " + classes.length + " classes.");
 	}
 }

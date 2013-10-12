@@ -5,8 +5,8 @@ package rlib.concurrent.interfaces;
  * 
  * @author Ronn
  */
-public interface LWorkerFactory<L>
-{
+public interface WorkerFactory<L> {
+
 	/**
 	 * Создание нового работника.
 	 * 
@@ -14,12 +14,12 @@ public interface LWorkerFactory<L>
 	 * @param firstTask стартовая задача для работника.
 	 * @return новый работник.
 	 */
-	public LWorker<L> create(LThreadPoolExecutor<L> threadPoolExecutor, LRunnable<L> firstTask);
-	
+	public Worker<L> create(ExtThreadPoolExecutor<L> threadPoolExecutor, Task<L> firstTask);
+
 	/**
 	 * Сохранение использованного работника.
 	 * 
 	 * @param worker использованный работник.
 	 */
-	public void safe(LWorker<L> worker);
+	public void safe(Worker<L> worker);
 }

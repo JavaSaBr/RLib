@@ -5,13 +5,13 @@ package rlib.util;
  * 
  * @author Ronn
  */
-public interface Synchronized
-{
+public interface Synchronized {
+
 	/**
 	 * Заблокировать изминения.
 	 */
 	public void lock();
-	
+
 	/**
 	 * Разблокировать изминения.
 	 */

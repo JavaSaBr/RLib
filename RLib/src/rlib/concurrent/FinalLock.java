@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 
  * @author Ronn
  */
-public final class FinalLock extends ReentrantLock
-{
+public final class FinalLock extends ReentrantLock {
+
 	private static final long serialVersionUID = 411737919279934135L;
 }

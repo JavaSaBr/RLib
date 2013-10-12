@@ -5,7 +5,10 @@ package rlib.util;
  * 
  * @author Ronn
  */
-public interface Copyable<T>
-{
+public interface Copyable<T> {
+
+	/**
+	 * @return копия текущего объекта.
+	 */
 	public T copy();
 }

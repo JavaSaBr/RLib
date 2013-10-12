@@ -1,12 +1,12 @@
 package rlib.util;
 
 /**
- * Интерфейс, который помещает, что объект имеет имя.
+ * Интерфейс, который помечает, что объект имеет имя.
  * 
  * @author Ronn
  */
-public interface Nameable
-{
+public interface Nameable {
+
 	/**
 	 * @return имя объекта.
 	 */

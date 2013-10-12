@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import rlib.logging.Logger;
 import rlib.logging.Loggers;
 
 /**
@@ -14,8 +15,10 @@ import rlib.logging.Loggers;
  * @author Ronn
  * @created 27.03.2012
  */
-public class Strings
-{
+public class Strings {
+
+	private static final Logger LOGGER = Loggers.getLogger(Strings.class);
+
 	/** экземпляр пустой строки */
 	public static final String EMPTY = "".intern();
 
@@ -23,42 +26,16 @@ public class Strings
 	public static final String[] EMPTY_ARRAY = new String[0];
 
 	/** создаем регулярку для проверки почты */
-	public static final Pattern emailPattern = Pattern.compile(
-			"^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL
-					| Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+	public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE
+			| Pattern.MULTILINE);
 
-	/** класс для получения хэша */
-	private static final MessageDigest hashMD5 = getHashMD5();
+	private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = new ThreadLocal<MessageDigest>() {
 
-	/**
-	 * Проверка на корректность имейла.
-	 * 
-	 * @param email имеил.
-	 * @return корректно ли введен.
-	 */
-	public static boolean checkEmail(String email)
-	{
-		Matcher matcher = emailPattern.matcher(email);
-
-		return matcher.matches();
-	}
-
-	/**
-	 * @return получаение алгоритма хеша.
-	 */
-	private static MessageDigest getHashMD5()
-	{
-		try
-		{
-			return MessageDigest.getInstance("MD5");
+		@Override
+		protected MessageDigest initialValue() {
+			return getHashMD5();
 		}
-		catch(NoSuchAlgorithmException e)
-		{
-			Loggers.warning("Strings", e);
-		}
-
-		return null;
-	}
+	};
 
 	/**
 	 * Рассчет длинны строки для пакета
@@ -66,8 +43,8 @@ public class Strings
 	 * @param string
 	 * @return length
 	 */
-	public static int byteCount(String string)
-	{
+	public static int byteCount(final String string) {
+
 		if(string == null || string.isEmpty())
 			return 2;
 
@@ -75,18 +52,21 @@ public class Strings
 	}
 
 	/**
-	 * @return является ли строка пустой.
+	 * Проверка на корректность имейла.
+	 * 
+	 * @param email имеил.
+	 * @return корректно ли введен.
 	 */
-	public static boolean isEmpty(String string)
-	{
-		return string == null || string.isEmpty();
+	public static boolean checkEmail(final String email) {
+		final Matcher matcher = EMAIL_PATTERN.matcher(email);
+		return matcher.matches();
 	}
 
 	/**
 	 * Сравнение 2х строк.
 	 */
-	public static boolean equals(String first, String second)
-	{
+	public static boolean equals(final String first, final String second) {
+
 		if(first == null || second == null)
 			return false;
 
@@ -96,8 +76,8 @@ public class Strings
 	/**
 	 * Сравнение 2х строк без учета регистра.
 	 */
-	public static boolean equalsIgnoreCase(String first, String second)
-	{
+	public static boolean equalsIgnoreCase(final String first, final String second) {
+
 		if(first == null || second == null)
 			return false;
 
@@ -105,18 +85,21 @@ public class Strings
 	}
 
 	/**
-	 * Получение хэша пароля.
+	 * Конверктация эксепшена в строку.
 	 * 
-	 * @param password пароль.
-	 * @return хэш пароля.
+	 * @param throwable полученный эксепшен.
+	 * @return строковое представление.
 	 */
-	public synchronized static String passwordToHash(String password)
-	{
-		// обновляем строку
-		hashMD5.update(password.getBytes(), 0, password.length());
+	public static String format(final Throwable throwable) {
 
-		// конвиктируем в хэш
-		return new BigInteger(1, hashMD5.digest()).toString(16);
+		final StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
+
+		builder.append(" : stack trace:\n");
+
+		for(final StackTraceElement stack : throwable.getStackTrace())
+			builder.append(stack).append("\n");
+
+		return builder.toString();
 	}
 
 	/**
@@ -125,13 +108,49 @@ public class Strings
 	 * @param length длинна строки.
 	 * @return итоговая строка.
 	 */
-	public static String generate(int length)
-	{
-		char[] array = new char[length];
+	public static String generate(final int length) {
+
+		final char[] array = new char[length];
 
 		for(int i = 0; i < length; i++)
 			array[i] = (char) Rnd.nextInt('a', 'z');
 
 		return String.valueOf(array);
+	}
+
+	/**
+	 * @return получаение алгоритма хеша.
+	 */
+	private static MessageDigest getHashMD5() {
+
+		try {
+			return MessageDigest.getInstance("MD5");
+		} catch(final NoSuchAlgorithmException e) {
+			LOGGER.warning(e);
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return является ли строка пустой.
+	 */
+	public static boolean isEmpty(final String string) {
+		return string == null || string.isEmpty();
+	}
+
+	/**
+	 * Получение хэша пароля.
+	 * 
+	 * @param password пароль.
+	 * @return хэш пароля.
+	 */
+	public static String passwordToHash(final String password) {
+
+		final MessageDigest hashMD5 = LOCAL_HASH_MD.get();
+
+		hashMD5.update(password.getBytes(), 0, password.length());
+
+		return new BigInteger(1, hashMD5.digest()).toString(16);
 	}
 }

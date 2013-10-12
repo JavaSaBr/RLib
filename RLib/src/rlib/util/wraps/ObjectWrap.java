@@ -5,26 +5,23 @@ package rlib.util.wraps;
  * 
  * @author Ronn
  */
-final class ObjectWrap extends AbstractWrap
-{
+final class ObjectWrap extends AbstractWrap {
+
 	/** значение */
 	private Object object;
-	
+
 	@Override
-	public Object getObject()
-	{
+	public Object getObject() {
 		return object;
 	}
-	
+
 	@Override
-	public WrapType getWrapType()
-	{
+	public WrapType getWrapType() {
 		return WrapType.OBJECT;
 	}
-	
+
 	@Override
-	public void setObject(Object object)
-	{
+	public void setObject(Object object) {
 		this.object = object;
 	}
 }

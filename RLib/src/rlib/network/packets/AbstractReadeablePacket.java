@@ -11,61 +11,54 @@ import rlib.util.pools.FoldablePool;
  * 
  * @author Ronn
  */
-public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> implements ReadeablePacket<C>, Foldable
-{
-	protected static final Logger log = Loggers.getLogger(ReadeablePacket.class);
+public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> implements ReadeablePacket<C>, Foldable {
+
+	protected static final Logger LOGGER = Loggers.getLogger(ReadeablePacket.class);
 
 	@Override
-	public void finalyze(){}
-	
+	public void finalyze() {
+	}
+
 	@Override
-	public final int getAvaliableBytes()
-	{
+	public final int getAvaliableBytes() {
 		return buffer.remaining();
 	}
-	
+
 	/**
 	 * @return пул этого класса пакетов.
 	 */
 	@SuppressWarnings("rawtypes")
 	protected abstract FoldablePool getPool();
-	
+
 	@Override
-	public boolean isSynchronized()
-	{
+	public boolean isSynchronized() {
 		return false;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public ReadeablePacket<C> newInstance()
-	{
+	public ReadeablePacket<C> newInstance() {
 		return (ReadeablePacket<C>) getPool().take();
 	}
 
 	@Override
-	public final boolean read()
-	{
-		try
-		{
+	public final boolean read() {
+
+		try {
 			readImpl();
-			
 			return true;
+		} catch(Exception e) {
+			LOGGER.warning(this, e);
+			LOGGER.warning(this, "buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.limit()));
 		}
-		catch(Exception e)
-		{
-			log.warning(this, e);
-			log.warning(this, "buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.limit()));
-		}
-		
+
 		return false;
 	}
 
 	/**
 	 * Чтение одного байта из буфера.
 	 */
-	protected final int readByte()
-	{
+	public final int readByte() {
 		return buffer.get() & 0xFF;
 	}
 
@@ -74,11 +67,10 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 	 * 
 	 * @param array наполняемый массив байтов.
 	 */
-	protected final void readBytes(byte[] array)
-	{
+	public final void readBytes(byte[] array) {
 		buffer.get(array);
 	}
-	
+
 	/**
 	 * Наполнение указанного массива байтов, байтами из буфера.
 	 * 
@@ -86,16 +78,14 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 	 * @param offset отступ в массиве байтов.
 	 * @param length кол-во записываемых байтов в массив.
 	 */
-	protected final void readBytes(byte[] array, int offset, int length)
-	{
+	public final void readBytes(byte[] array, int offset, int length) {
 		buffer.get(array, offset, length);
 	}
 
 	/**
 	 * Чтение 4х байтов в виде float из буфера.
 	 */
-	protected final float readFloat()
-	{
+	public final float readFloat() {
 		return buffer.getFloat();
 	}
 
@@ -107,79 +97,72 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 	/**
 	 * Чтение 4х байтов в виде int из буфера.
 	 */
-	protected final int readInt()
-	{
+	public final int readInt() {
 		return buffer.getInt();
 	}
-	
+
 	/**
 	 * Чтение 8ми байтов в виде long из буфера.
 	 */
-	protected final long readLong()
-	{
+	public final long readLong() {
 		return buffer.getLong();
 	}
-	
+
 	/**
 	 * Чтение 2х байтов в виде short из буфера.
 	 */
-	protected final int readShort()
-	{
+	public final int readShort() {
 		return buffer.getShort() & 0xFFFF;
 	}
-	
+
 	/**
 	 * Чтение строки из буфера.
 	 */
-	protected final String readString()
-	{
+	public final String readString() {
+
 		StringBuilder builder = new StringBuilder();
-		
+
 		char cha;
-		
-		while(buffer.remaining() > 1)
-		{
+
+		while(buffer.remaining() > 1) {
+
 			cha = buffer.getChar();
-			
+
 			if(cha == 0)
 				break;
-			
+
 			builder.append(cha);
 		}
-		
+
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Чтение строки из буфера указанной длинны.
 	 */
-	protected final String readString(int length)
-	{
+	public final String readString(int length) {
+
 		char[] array = new char[length];
-		
-		for(int i = 0; i < length && buffer.remaining() > 1; i++)
+
+		for(int i = 0; i < length && buffer.remaining() > 1; i++) {
 			array[i] = buffer.getChar();
-		
+		}
+
 		return new String(array);
 	}
-	
+
 	@Override
-	public void reinit(){}
-	
+	public void reinit() {
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
-	public void run()
-	{
-		try
-		{
+	public void run() {
+		try {
 			runImpl();
-		}
-		catch(Exception e)
-		{
-			log.warning(this, e);
-		}
-		finally
-		{
+		} catch(Exception e) {
+			LOGGER.warning(this, e);
+		} finally {
 			getPool().put(this);
 		}
 	}

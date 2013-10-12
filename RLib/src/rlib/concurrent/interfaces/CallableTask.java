@@ -5,8 +5,8 @@ package rlib.concurrent.interfaces;
  * 
  * @author Ronn
  */
-public interface LCallable<L, V>
-{
+public interface CallableTask<L, V> {
+
 	/**
 	 * Вызвать обработку задачи с получением результата.
 	 * 

@@ -5,26 +5,23 @@ package rlib.util.wraps;
  * 
  * @author Ronn
  */
-final class ByteWrap extends AbstractWrap
-{
+final class ByteWrap extends AbstractWrap {
+
 	/** значение */
 	private byte value;
-	
+
 	@Override
-	public byte getByte()
-	{
+	public byte getByte() {
 		return value;
 	}
-	
+
 	@Override
-	public WrapType getWrapType()
-	{
+	public WrapType getWrapType() {
 		return WrapType.BYTE;
 	}
-	
+
 	@Override
-	public void setByte(byte value)
-	{
+	public void setByte(byte value) {
 		this.value = value;
 	}
 }

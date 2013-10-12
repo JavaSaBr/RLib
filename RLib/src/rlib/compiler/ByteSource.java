@@ -1,13 +1,14 @@
-/**
- * 
- */
 package rlib.compiler;
 
 /**
- * @author ronn
+ * Интерфейс для реализации хранилища байткода скомпиленного класса.
  * 
+ * @author Ronn
  */
-public interface ByteSource
-{
+public interface ByteSource {
+
+	/**
+	 * @return байт код скомпиленного класса.
+	 */
 	public byte[] getByteSource();
 }

@@ -6,42 +6,37 @@ import java.util.concurrent.locks.ReadWriteLock;
 /**
  * @author Ronn
  */
-public final class SimpleReadWriteLock implements AsynReadSynWriteLock
-{
+public final class SimpleReadWriteLock implements AsynReadSynWriteLock {
+
 	/** блокировщик записи */
-	private Lock readLock;
+	private final Lock readLock;
 	/** блокировщик чтения */
-	private Lock writeLock;
-	
-	public SimpleReadWriteLock()
-	{
-		ReadWriteLock readWriteLock = Locks.newRWLock();
-		
+	private final Lock writeLock;
+
+	public SimpleReadWriteLock() {
+		final ReadWriteLock readWriteLock = Locks.newRWLock();
+
 		readLock = readWriteLock.readLock();
 		writeLock = readWriteLock.writeLock();
 	}
-	
+
 	@Override
-	public void asynLock()
-	{
+	public void asynLock() {
 		readLock.lock();
 	}
-	
+
 	@Override
-	public void asynUnlock()
-	{
+	public void asynUnlock() {
 		readLock.unlock();
 	}
-	
+
 	@Override
-	public void synLock()
-	{
+	public void synLock() {
 		writeLock.lock();
 	}
-	
+
 	@Override
-	public void synUnlock()
-	{
+	public void synUnlock() {
 		writeLock.unlock();
 	}
 }

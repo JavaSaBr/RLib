@@ -9,15 +9,14 @@ import rlib.logging.Loggers;
 import rlib.util.array.Array;
 import rlib.util.array.Arrays;
 
-
 /**
  * Класс для работы с объектами.
- *
+ * 
  * @author Ronn
  * @created 07.04.2012
  */
-public abstract class Objects
-{
+public abstract class Objects {
+
 	/**
 	 * Клонирует объект, крайне медленная функция.
 	 * 
@@ -25,69 +24,63 @@ public abstract class Objects
 	 * @return новая копия.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T clone(T original)
-	{
+	public static <T> T clone(final T original) {
+
 		if(original == null)
 			return null;
-		
-		if(original instanceof Cloneable)
-		{
-			try
-			{
-				Method method = original.getClass().getMethod("clone");
-				
+
+		if(original instanceof Cloneable) {
+
+			try {
+
+				final Method method = original.getClass().getMethod("clone");
 				method.setAccessible(true);
-				
 				return (T) method.invoke(original);
-			}
-			catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-			{
+
+			} catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				Loggers.warning("Objects", e);
 			}
-			
+
 			return null;
 		}
-		
-		Object newObject = newInstance(original.getClass());
-		
+
+		final Object newObject = newInstance(original.getClass());
+
 		reload(newObject, original);
-		
+
 		return (T) newObject;
 	}
-	
+
 	/**
 	 * Рассчет хэша флага.
 	 * 
 	 * @param value значение флага.
 	 * @return хэш флага.
 	 */
-	public static int hash(boolean value)
-	{
+	public static int hash(final boolean value) {
 		return value ? 1231 : 1237;
 	}
-	
+
 	/**
 	 * Рассчет хэша числа.
 	 * 
 	 * @param value значение числа.
 	 * @return хэш числа.
 	 */
-	public static int hash(long value)
-	{
-		return (int)(value ^ (value >>> 32));
+	public static int hash(final long value) {
+		return (int) (value ^ value >>> 32);
 	}
-	
+
 	/**
 	 * Рассчет хэша объекта.
 	 * 
 	 * @param object хэшеируемый объект.
 	 * @return хэш объекта.
 	 */
-	public static int hash(Object object)
-	{
+	public static int hash(final Object object) {
 		return object.hashCode();
 	}
-	
+
 	/**
 	 * Создает новый объект указанного класса, крайне медленная функция.
 	 * 
@@ -95,8 +88,8 @@ public abstract class Objects
 	 * @return новый экземпляр объекта.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(Class<T> cs)
-	{
+	public static <T> T newInstance(final Class<T> cs) {
+
 		if(cs == Boolean.class || cs == boolean.class)
 			return (T) Boolean.valueOf(false);
 		else if(cs == Character.class || cs == char.class)
@@ -117,74 +110,68 @@ public abstract class Objects
 			return cs.cast("");
 		else if(cs == Class.class)
 			return (T) Object.class;
-		
-		for(Constructor<?> constructor : cs.getDeclaredConstructors())
-		{
+
+		for(final Constructor<?> constructor : cs.getDeclaredConstructors()) {
+
 			if(!constructor.isAccessible())
 				constructor.setAccessible(true);
-			
-			Class<?>[] types = constructor.getParameterTypes();
-			
-			Object[] parametrs = new Object[types.length];
-			
-			for(int i = 0, length = types.length; i < length; i++)
-			{
-				Object object = newInstance(types[i]);
-				
+
+			final Class<?>[] types = constructor.getParameterTypes();
+
+			final Object[] parametrs = new Object[types.length];
+
+			for(int i = 0, length = types.length; i < length; i++) {
+
+				final Object object = newInstance(types[i]);
+
 				parametrs[i] = object;
 			}
 
-			try
-			{
+			try {
 				return (T) constructor.newInstance(parametrs);
-			}
-			catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-			{
+			} catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				Loggers.warning("Objects", e);
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Обновляет полностью объект на новый вариант, крайне медленный метод.
 	 * 
 	 * @param original обновляемый объект.
 	 * @param updated объект, с которого нужно взять значения.
 	 */
-	public static final <O, N extends O> void reload(O original, N updated)
-	{
+	public static final <O, N extends O> void reload(final O original, final N updated) {
+
 		if(original == null || updated == null)
 			return;
-		
-		Array<Field> array = Arrays.toArray(Field.class);
-		
-		for(Class<?> cs = original.getClass(); cs != null; cs = cs.getSuperclass())
-		{
-			Field[] fields = cs.getDeclaredFields();
-			
-			for(Field field : fields)
+
+		final Array<Field> array = Arrays.toArray(Field.class);
+
+		for(Class<?> cs = original.getClass(); cs != null; cs = cs.getSuperclass()) {
+
+			final Field[] fields = cs.getDeclaredFields();
+
+			for(final Field field : fields)
 				array.add(field);
 		}
-		
+
 		array.trimToSize();
-		
-		for(Field field : array)
-		{
-			String str = field.toString();
-			
+
+		for(final Field field : array) {
+
+			final String str = field.toString();
+
 			if(str.contains("final") || str.contains("static"))
 				continue;
-			
+
 			field.setAccessible(true);
-			
-			try
-			{
+
+			try {
 				field.set(original, field.get(updated));
-			}
-			catch(IllegalArgumentException | IllegalAccessException e)
-			{
+			} catch(IllegalArgumentException | IllegalAccessException e) {
 				Loggers.warning("Objects", e.getMessage());;
 			}
 		}

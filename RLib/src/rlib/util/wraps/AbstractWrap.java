@@ -2,121 +2,105 @@ package rlib.util.wraps;
 
 /**
  * Базовая модель обертки.
- *
+ * 
  * @author Ronn
  */
-public abstract class AbstractWrap implements Wrap
-{
-	protected AbstractWrap()
-	{
+public abstract class AbstractWrap implements Wrap {
+
+	protected AbstractWrap() {
 		super();
 	}
 
 	@Override
-	public void finalyze(){}
+	public void finalyze() {
+	}
 
 	@Override
-	public final void fold()
-	{
+	public final void fold() {
 		getWrapType().put(this);
 	}
 
 	@Override
-	public byte getByte()
-	{
+	public byte getByte() {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public char getChar()
-	{
+	public char getChar() {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public double getDouble()
-	{
+	public double getDouble() {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public float getFloat()
-	{
+	public float getFloat() {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public int getInt()
-	{
+	public int getInt() {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public long getLong()
-	{
+	public long getLong() {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public Object getObject()
-	{
+	public Object getObject() {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public short getShort()
-	{
+	public short getShort() {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public void reinit(){}
+	public void reinit() {
+	}
 
 	@Override
-	public void setByte(byte value)
-	{
+	public void setByte(byte value) {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public void setChar(char value)
-	{
+	public void setChar(char value) {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public void setDouble(double value)
-	{
+	public void setDouble(double value) {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public void setFloat(float value)
-	{
+	public void setFloat(float value) {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public void setInt(int value)
-	{
+	public void setInt(int value) {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public void setLong(long value)
-	{
+	public void setLong(long value) {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public void setObject(Object object)
-	{
+	public void setObject(Object object) {
 		throw new IllegalArgumentException("not supported method.");
 	}
 
 	@Override
-	public void setShort(short value)
-	{
+	public void setShort(short value) {
 		throw new IllegalArgumentException("not supported method.");
 	}
 }

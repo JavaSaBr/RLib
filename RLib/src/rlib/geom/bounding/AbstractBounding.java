@@ -12,88 +12,76 @@ import rlib.logging.Loggers;
  * 
  * @author Ronn
  */
-public abstract class AbstractBounding implements Bounding
-{
-	protected static final Logger log = Loggers.getLogger(Bounding.class);
-	
+public abstract class AbstractBounding implements Bounding {
+
+	protected static final Logger LOGGER = Loggers.getLogger(Bounding.class);
+
 	/** центр формы */
 	protected Vector center;
-	
 	/** смещение от центра */
 	protected Vector offset;
-	
-	protected AbstractBounding(Vector center, Vector offset)
-	{
+
+	protected AbstractBounding(Vector center, Vector offset) {
 		this.center = center;
 		this.offset = offset;
 	}
-	
+
 	@Override
-	public boolean contains(Vector point, VectorBuffer buffer)
-	{
+	public boolean contains(Vector point, VectorBuffer buffer) {
 		return contains(point.getX(), point.getY(), point.getZ(), buffer);
 	}
-	
+
 	@Override
-	public final float distanceTo(Vector point)
-	{
+	public final float distanceTo(Vector point) {
 		return center.distance(point);
 	}
-	
+
 	@Override
-	public final Vector getCenter()
-	{
+	public final Vector getCenter() {
 		return center;
 	}
-	
+
 	@Override
-	public Vector getOffset()
-	{
+	public Vector getOffset() {
 		return offset;
 	}
-	
+
 	@Override
-	public final boolean intersects(Ray ray, VectorBuffer buffer)
-	{
+	public final boolean intersects(Ray ray, VectorBuffer buffer) {
 		return intersects(ray.getStart(), ray.getDirection(), buffer);
 	}
-	
+
 	@Override
-	public void setCenter(Vector center)
-	{
+	public void setCenter(Vector center) {
 		this.center = center;
 	}
-	
+
 	@Override
-	public boolean contains(float x, float y, float z, VectorBuffer buffer)
-	{
+	public boolean contains(float x, float y, float z, VectorBuffer buffer) {
 		return false;
 	}
-	
+
 	@Override
-	public BoundingType getBoundingType()
-	{
+	public BoundingType getBoundingType() {
 		return BoundingType.EMPTY;
 	}
-	
+
 	@Override
-	public Vector getResultCenter(VectorBuffer buffer)
-	{
+	public Vector getResultCenter(VectorBuffer buffer) {
 		return null;
 	}
-	
+
 	@Override
-	public boolean intersects(Bounding bounding, VectorBuffer buffer)
-	{
+	public boolean intersects(Bounding bounding, VectorBuffer buffer) {
 		return false;
 	}
-	
+
 	@Override
-	public boolean intersects(Vector start, Vector direction, VectorBuffer buffer)
-	{
+	public boolean intersects(Vector start, Vector direction, VectorBuffer buffer) {
 		return false;
 	}
-	
+
 	@Override
-	public void update(Rotation rotation, VectorBuffer buffer){}
+	public void update(Rotation rotation, VectorBuffer buffer) {
+	}
 }

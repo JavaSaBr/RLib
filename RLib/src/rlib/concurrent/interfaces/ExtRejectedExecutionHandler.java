@@ -5,13 +5,13 @@ package rlib.concurrent.interfaces;
  * 
  * @author Ronn
  */
-public interface LRejectedExecutionHandler
-{
+public interface ExtRejectedExecutionHandler {
+
 	/**
 	 * Обработка отклонения выполнения задачи указанным исполнителем.
 	 * 
 	 * @param runnable отклоненная задача.
 	 * @param threadPoolExecutor откланяющий исполнитель.
 	 */
-    public void rejectedExecution(LRunnable<?> runnable, LThreadPoolExecutor<?> threadPoolExecutor);
+	public void rejectedExecution(Task<?> runnable, ExtThreadPoolExecutor<?> threadPoolExecutor);
 }

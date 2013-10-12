@@ -7,8 +7,8 @@ import java.lang.management.ThreadInfo;
  * 
  * @author Ronn
  */
-public interface DeadLockListener
-{
+public interface DeadLockListener {
+
 	/**
 	 * Уведомление о дедлоке с предоставлением информации о заблоченном потоке.
 	 * 

@@ -2,41 +2,41 @@ package rlib.util;
 
 /**
  * Набор утильных методов по работе с числами.
- *
+ * 
  * @author Ronn
  */
-public final class NumberUtils
-{
-	private NumberUtils()
-	{
-		throw new IllegalArgumentException();
+public final class NumberUtils {
+
+	public static int bytesToInt(final byte[] array, final int offset, final boolean bigEndian) {
+
+		if(bigEndian) {
+			return makeInt(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
+		}
+
+		return makeInt(array[offset + 3], array[offset + 2], array[offset + 1], array[offset]);
 	}
 
-	public static long bytesToUInt(byte[] array, int offset, boolean bigEndian)
-	{
+	public static long bytesToUInt(final byte[] array, final int offset, final boolean bigEndian) {
+
 		long value = 0;
 
-		if(bigEndian)
-			value = (long) makeInt(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
-		else
-			value = (long) makeInt(array[offset + 3], array[offset + 2], array[offset + 1], array[offset]);
+		if(bigEndian) {
+			value = makeInt(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
+		} else {
+			value = makeInt(array[offset + 3], array[offset + 2], array[offset + 1], array[offset]);
+		}
 
 		return value & 0xFFFFFFFFL;
-	}
-
-	public static int bytesToInt(byte[] array, int offset, boolean bigEndian)
-	{
-		if(bigEndian)
-			return makeInt(array[offset], array[offset + 1], array[offset + 2], array[offset + 3]);
-		else
-			return makeInt(array[offset + 3], array[offset + 2], array[offset + 1], array[offset]);
 	}
 
 	/**
 	 * Конвектирование байтов в int.
 	 */
-	private static int makeInt(byte byte1, byte byte2, byte byte3, byte byte4)
-	{
-		return ((byte4 & 0xFF) << 24) | ((byte3 & 0xFF) << 16) | ((byte2 & 0xFF) << 8) | (byte1 & 0xFF);
+	private static int makeInt(final byte byte1, final byte byte2, final byte byte3, final byte byte4) {
+		return (byte4 & 0xFF) << 24 | (byte3 & 0xFF) << 16 | (byte2 & 0xFF) << 8 | byte1 & 0xFF;
+	}
+
+	private NumberUtils() {
+		throw new IllegalArgumentException();
 	}
 }

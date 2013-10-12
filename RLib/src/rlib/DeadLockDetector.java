@@ -14,15 +14,14 @@ import rlib.util.SafeTask;
 import rlib.util.array.Array;
 import rlib.util.array.Arrays;
 
-
 /**
  * Модель поиска и обнаружения делоков.
- *
+ * 
  * @author Ronn
  */
-public class DeadLockDetector extends SafeTask
-{
-	private static final Logger log = Loggers.getLogger(DeadLockDetector.class);
+public class DeadLockDetector extends SafeTask {
+
+	private static final Logger LOGGER = Loggers.getLogger(DeadLockDetector.class);
 
 	/** набор слушателей дедлоков */
 	private final Array<DeadLockListener> listeners;
@@ -37,12 +36,13 @@ public class DeadLockDetector extends SafeTask
 	private volatile ScheduledFuture<?> schedule;
 
 	/** интервал детектора */
-	private int interval;
+	private final int interval;
 
-	public DeadLockDetector(int interval)
-	{
-		if(interval < 1)
+	public DeadLockDetector(final int interval) {
+
+		if(interval < 1) {
 			throw new IllegalArgumentException("negative interval.");
+		}
 
 		this.listeners = Arrays.toConcurrentArray(DeadLockListener.class);
 		this.mxThread = ManagementFactory.getThreadMXBean();
@@ -50,56 +50,72 @@ public class DeadLockDetector extends SafeTask
 		this.interval = interval;
 	}
 
+	/**
+	 * Добавление слушателя мертвых блокировок.
+	 * 
+	 * @param listener новый слушатель.
+	 */
+	public void addListener(final DeadLockListener listener) {
+		listeners.add(listener);
+	}
+
+	/**
+	 * @return список слушателей.
+	 */
+	public Array<DeadLockListener> getListeners() {
+		return listeners;
+	}
+
 	@Override
-	protected void runImpl()
-	{
-		// ищем дедлоки
-		long[] threadIds = mxThread.findDeadlockedThreads();
+	protected void runImpl() {
 
-		// если не нашли, пропускаем цикл
-		if(threadIds.length < 1)
+		final long[] threadIds = mxThread.findDeadlockedThreads();
+
+		if(threadIds.length < 1) {
 			return;
+		}
 
-		// перебираем ид найденных деллоков
-		for(int i = 0, length = threadIds.length; i < length; i++)
-		{
-			// ид потока
-			long id = threadIds[i];
+		Array<DeadLockListener> listeners = getListeners();
 
-			// получаем инфу о потоке
-			ThreadInfo info = mxThread.getThreadInfo(id);
+		for(int i = 0, length = threadIds.length; i < length; i++) {
 
-			// если есть заинтересованные слушатели
-			if(!listeners.isEmpty())
-			{
-				listeners.readLock();
-				try
-				{
-					// получаем список слушателей
-					DeadLockListener[] array = listeners.array();
+			final long id = threadIds[i];
 
-					// уведомляем слушателей об этом
-					for(int g = 0, size = listeners.size(); g < size; g++)
-						array[g].onDetected(info);
+			final ThreadInfo info = mxThread.getThreadInfo(id);
+
+			if(listeners.isEmpty()) {
+				continue;
+			}
+
+			listeners.readLock();
+			try {
+
+				for(DeadLockListener listener : listeners.array()) {
+
+					if(listener == null) {
+						break;
+					}
+
+					listener.onDetected(info);
 				}
-				finally
-				{
-					listeners.readUnlock();
-				}
+
+			} finally {
+				listeners.readUnlock();
 			}
 
 			// пишем в консоль инфу о дедлоке
-			log.warning("DeadLock detected! : " + info);
+			LOGGER.warning("DeadLock detected! : " + info);
 		}
 	}
 
 	/**
 	 * Запуск детектора.
 	 */
-	public synchronized void start()
-	{
-		if(schedule != null)
+	public synchronized void start() {
+
+		if(schedule != null) {
 			return;
+		}
 
 		schedule = executor.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
 	}
@@ -107,23 +123,13 @@ public class DeadLockDetector extends SafeTask
 	/**
 	 * Остановка детектора.
 	 */
-	public synchronized void stop()
-	{
-		if(schedule == null)
+	public synchronized void stop() {
+
+		if(schedule == null) {
 			return;
+		}
 
 		schedule.cancel(false);
-
 		schedule = null;
-	}
-
-	/**
-	 * Добавление слушателя мертвых блокировок.
-	 *
-	 * @param listener новый слушатель.
-	 */
-	public void addListener(DeadLockListener listener)
-	{
-		listeners.add(listener);
 	}
 }
