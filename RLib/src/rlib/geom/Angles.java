@@ -7,7 +7,8 @@ package rlib.geom;
  */
 public abstract class Angles {
 
-	private static final float HEADINGS_IN_PI = 10430.378350470452724949566316381F;
+	public static final float HEADINGS_IN_PI = 10430.378350470452724949566316381F;
+	public static final float PI = 3.14159265358979323846F;
 
 	/**
 	 * Расчет разворота в указанные координаты.
@@ -70,6 +71,16 @@ public abstract class Angles {
 	 */
 	public static float degreeToRadians(float angle) {
 		return angle * 3.141592653f / 180f;
+	}
+
+	/**
+	 * Конвектироввание радианов в градусы.
+	 * 
+	 * @param radians угол в радианах.
+	 * @return угол в градусах.
+	 */
+	public static float radiansToDegree(float radians) {
+		return radians * 180.0F / PI;
 	}
 
 	/**

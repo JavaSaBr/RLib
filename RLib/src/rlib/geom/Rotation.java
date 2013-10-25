@@ -48,7 +48,7 @@ public class Rotation {
 	}
 
 	public static Rotation newInstance(float angleX, float angleY, float angleZ) {
-		return new Rotation().fromAngles(angleX, angleY, angleZ);
+		return newInstance().fromAngles(angleX, angleY, angleZ);
 	}
 
 	private float x;
@@ -486,8 +486,9 @@ public class Rotation {
 			return true;
 		}
 
-		if(obj == null)
+		if(obj == null) {
 			return false;
+		}
 
 		if(getClass() != obj.getClass()) {
 			return false;
@@ -600,6 +601,36 @@ public class Rotation {
 			w = (val_1_0 - val_0_1) * s;
 		}
 
+		return this;
+	}
+
+	/**
+	 * <code>add</code> adds the values of this quaternion to those of the
+	 * parameter quaternion. The result is stored in this Quaternion.
+	 * 
+	 * @param q the quaternion to add to this.
+	 * @return This Quaternion after addition.
+	 */
+	public Rotation addLocal(Rotation rotation) {
+		this.x += rotation.x;
+		this.y += rotation.y;
+		this.z += rotation.z;
+		this.w += rotation.w;
+		return this;
+	}
+
+	/**
+	 * <code>subtract</code> subtracts the values of the parameter quaternion
+	 * from those of this quaternion. The result is stored in this Quaternion.
+	 * 
+	 * @param rotation the quaternion to subtract from this.
+	 * @return This Quaternion after subtraction.
+	 */
+	public Rotation subtractLocal(Rotation rotation) {
+		this.x -= rotation.x;
+		this.y -= rotation.y;
+		this.z -= rotation.z;
+		this.w -= rotation.w;
 		return this;
 	}
 

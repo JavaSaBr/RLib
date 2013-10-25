@@ -8,53 +8,46 @@ import rlib.util.array.Arrays;
  * 
  * @author Ronn
  */
-public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<E>
-{
+public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<E> {
+
 	/** массив объектов */
-	private Array<E> pool;
-	
-	/**
-	 * @param size базовый размер пула.
-	 */
-	protected ConcurrentFoldablePool(int size, Class<?> type)
-	{
+	private final Array<E> pool;
+
+	protected ConcurrentFoldablePool(int size, Class<?> type) {
 		this.pool = Arrays.toConcurrentArray(type, size);
 	}
 
 	@Override
-	public boolean isEmpty()
-	{
+	public boolean isEmpty() {
 		return pool.isEmpty();
 	}
 
 	@Override
-	public void put(E object)
-	{
-		// если объекты 
-		if(object == null)
+	public void put(E object) {
+
+		if(object == null) {
 			return;
-		
-		// запускаем метод очистки
+		}
+
 		object.finalyze();
-		
-		// добавляем в пул
 		pool.add(object);
 	}
 
 	@Override
-	public E take()
-	{
-		// получаем объект их пула
+	public E take() {
+
 		E object = pool.pop();
-		
-		// если такого нет, возвращаем пустышку
-		if(object == null)
+
+		if(object == null) {
 			return null;
-		
-		// реинициализируем
+		}
+
 		object.reinit();
-		
-		// возвращаем
 		return object;
+	}
+
+	@Override
+	public void remove(E object) {
+		pool.fastRemove(object);
 	}
 }

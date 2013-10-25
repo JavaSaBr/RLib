@@ -5,13 +5,13 @@ package rlib.util.pools;
  * 
  * @author Ronn
  */
-public interface Foldable
-{
+public interface Foldable {
+
 	/**
 	 * Очисть объект от занятых ресурсов.
 	 */
 	public void finalyze();
-	
+
 	/**
 	 * Реинициализировать объект.
 	 */
