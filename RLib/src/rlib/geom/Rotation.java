@@ -639,7 +639,14 @@ public class Rotation {
 	 */
 	public void random() {
 		Random random = RANDOM_LOCAL.get();
-		setXYZW(random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat());
+		fromAngles(random.nextInt(0, 360), random.nextInt(0, 360), random.nextInt(0, 360));
+	}
+
+	/**
+	 * Создание случайного разворота.
+	 */
+	public void random(Random random) {
+		fromAngles(random.nextInt(0, 360), random.nextInt(0, 360), random.nextInt(0, 360));
 	}
 
 	@Override

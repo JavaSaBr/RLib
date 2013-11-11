@@ -2,11 +2,11 @@ package rlib.logging;
 
 /**
  * Интерфейс для реализации логера.
- *
+ * 
  * @author Ronn
  */
-public interface GameLogger
-{
+public interface GameLogger {
+
 	/**
 	 * Завершение работы логгера.
 	 */
@@ -14,7 +14,7 @@ public interface GameLogger
 
 	/**
 	 * Записать текст в лог.
-	 *
+	 * 
 	 * @param text записываемый текст.
 	 */
 	public void write(String text);

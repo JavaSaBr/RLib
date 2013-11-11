@@ -5,8 +5,8 @@ package rlib.logging;
  * 
  * @author Ronn
  */
-public interface LoggerListener
-{
+public interface LoggerListener {
+
 	/**
 	 * @param text текст.
 	 */

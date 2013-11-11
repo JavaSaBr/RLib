@@ -1,10 +1,9 @@
 package rlib.concurrent;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ThreadFactory;
 
-import rlib.logging.Loggers;
+import rlib.util.ClassUtil;
 
 /**
  * Модель формирования группы потоков.
@@ -24,7 +23,7 @@ public class GroupThreadFactory implements ThreadFactory {
 	private final ThreadGroup group;
 
 	/** конструктор потока */
-	private Constructor<? extends Thread> constructor;
+	private final Constructor<? extends Thread> constructor;
 
 	/**
 	 * @param name название группы потоков.
@@ -34,29 +33,14 @@ public class GroupThreadFactory implements ThreadFactory {
 	public GroupThreadFactory(final String name, final Class<? extends Thread> cs, final int priority) {
 		this.priority = priority;
 		this.name = name;
-
-		try {
-			constructor = cs.getConstructor(ThreadGroup.class, Runnable.class, String.class);
-		} catch(NoSuchMethodException | SecurityException e) {
-			Loggers.warning("GroupThreadFactory", e);
-		}
-
-		group = new ThreadGroup(name);
+		this.constructor = ClassUtil.getConstructor(cs, ThreadGroup.class, Runnable.class, String.class);
+		this.group = new ThreadGroup(name);
 	}
 
 	@Override
 	public Thread newThread(final Runnable runnable) {
-
-		Thread thread = null;
-
-		try {
-			thread = constructor.newInstance(group, runnable, name + "-" + ordinal++);
-		} catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			Loggers.warning("GroupThreadFactory", e);
-		}
-
+		Thread thread = ClassUtil.newInstance(constructor, group, runnable, name + "-" + ordinal++);
 		thread.setPriority(priority);
-
 		return thread;
 	}
 }

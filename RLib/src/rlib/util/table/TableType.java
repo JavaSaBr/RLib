@@ -5,8 +5,7 @@ package rlib.util.table;
  * 
  * @author Ronn
  */
-public enum TableType
-{
+public enum TableType {
 	DEPRECATED,
 	OBJECT,
 	INTEGER,

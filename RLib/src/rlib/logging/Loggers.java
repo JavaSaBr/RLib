@@ -9,135 +9,140 @@ import java.util.Date;
 import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.Locks;
+import rlib.util.array.Array;
 import rlib.util.array.Arrays;
 import rlib.util.table.Table;
 import rlib.util.table.Tables;
 
-
 /**
  * Менеджер логгеров, служит для самого процесса вывода и сохранения сообщений,
  * а так же и для создания индивидуальных логгеров
- *
+ * 
  * @author Ronn
  */
-public abstract class Loggers
-{
-	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+public abstract class Loggers {
+
+	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
 	/** таблица всех логгерров */
-	private static final Table<String, Logger> loggers = Tables.newObjectTable();
+	private static final Table<String, Logger> LOGGERS = Tables.newObjectTable();
+	/** список дополнительных записчиков лога */
+	private static final Array<Writer> WRITERS = Arrays.toArray(Writer.class);
 
-	/** блокировщик */
-	private static final Lock lock = Locks.newLock();
-
+	/** синхронизатор записи лога */
+	private static final Lock SYNC = Locks.newLock();
 	/** главный логгер */
-	private static final Logger log = new Logger();
+	private static final Logger LOGGER = new Logger();
 
-	/** массив слушателей логгера */
+	/** список слушателей логгера */
 	private static LoggerListener[] listeners;
-
-	/** записывальщик сообщений в фаил */
-	private static Writer out;
 
 	/**
 	 * Добавление слушателя к логгерам.
-	 *
+	 * 
 	 * @param listener слушатель.
 	 */
-	public static void addListener(LoggerListener listener)
-	{
+	public static void addListener(LoggerListener listener) {
 		listeners = Arrays.addToArray(listeners, listener, LoggerListener.class);
 	}
 
 	/**
+	 * Добавление дополнительного вывода для лога.
+	 * 
+	 * @param writer записчик лога.
+	 */
+	public static void addWriter(Writer writer) {
+		WRITERS.add(writer);
+		WRITERS.trimToSize();
+	}
+
+	/**
 	 * Создает индивидуальный логгер с указаным именем.
-	 *
+	 * 
 	 * @param cs класс, который запрашивает логгер
 	 * @return новый индивидуальный логгер
 	 */
-	public static final Logger getLogger(Class<?> cs)
-	{
+	public static final Logger getLogger(Class<?> cs) {
 		Logger logger = new Logger(cs.getSimpleName());
-
-		loggers.put(cs.getSimpleName(), logger);
-
+		LOGGERS.put(cs.getSimpleName(), logger);
 		return logger;
 	}
 
 	/**
 	 * Создает индивидуальный логгер с указаным именем.
-	 *
+	 * 
 	 * @param name имя объекта который запрашивает логгер
 	 * @return новый индивидуальный логгер
 	 */
-	public static final Logger getLogger(String name)
-	{
+	public static final Logger getLogger(String name) {
 		Logger logger = new Logger(name);
-
-		loggers.put(name, logger);
-
+		LOGGERS.put(name, logger);
 		return logger;
 	}
 
 	/**
 	 * Вывод информативного сообщение.
-	 *
+	 * 
 	 * @param class класс объекта, посылающего сообщение
 	 * @param message содержание сообщения
 	 */
-	public static final void info(Class<?> cs, String message)
-	{
-		log.info(cs, message);
+	public static final void info(Class<?> cs, String message) {
+		LOGGER.info(cs, message);
 	}
 
 	/**
 	 * Вывод информативного сообщение.
-	 *
+	 * 
 	 * @param owner объект, посылающий сообщение
 	 * @param message содержание сообщения
 	 */
-	public static final void info(Object owner, String message)
-	{
-		log.info(owner, message);
+	public static final void info(Object owner, String message) {
+		LOGGER.info(owner, message);
 	}
 
 	/**
 	 * Вывод информативного сообщение.
-	 *
+	 * 
 	 * @param name имя объекта, посылающего сообщение
 	 * @param message содержание сообщения
 	 */
-	public static final void info(String name, String message)
-	{
-		log.info(name, message);
+	public static final void info(String name, String message) {
+		LOGGER.info(name, message);
 	}
 
 	/**
 	 * Процесс вывода сообщения в консоль и по возможности в фаил
-	 *
+	 * 
 	 * @param text содержание сообщения
 	 */
-	public synchronized static final void println(String text)
-	{
-		if(listeners != null)
-			for(int i = 0, length = listeners.length; i < length; i++)
-				listeners[i].println(text);
+	public static final void println(String text) {
 
-		if(out != null)
-		{
-			lock.lock();
-			try
-			{
-				out.write(text + "\n");
-				out.flush();
+		LoggerListener[] listeners = getListeners();
+
+		if(listeners != null) {
+			for(int i = 0, length = listeners.length; i < length; i++) {
+				listeners[i].println(text);
 			}
-			catch(IOException e)
-			{
+		}
+
+		Array<Writer> writers = getWriters();
+
+		if(!writers.isEmpty()) {
+
+			String writeMessage = text + "\n";
+
+			SYNC.lock();
+			try {
+
+				for(Writer writer : writers.array()) {
+					writer.write(writeMessage);
+					writer.flush();
+				}
+
+			} catch(IOException e) {
 				e.printStackTrace();
-			}
-			finally
-			{
-				lock.unlock();
+			} finally {
+				SYNC.unlock();
 			}
 		}
 
@@ -145,108 +150,110 @@ public abstract class Loggers
 	}
 
 	/**
-	 * Установка файла для сохранения сообщений.
-	 * При существования указанного файла, будет создан новый с изминенным именем.
-	 *
-	 * @param projectPath путь к папке log.
+	 * @return список дополнительных записчиков лога.
+	 */
+	public static Array<Writer> getWriters() {
+		return WRITERS;
+	}
+
+	/**
+	 * @return массив слушателей логгера.
+	 */
+	public static LoggerListener[] getListeners() {
+		return listeners;
+	}
+
+	/**
+	 * Указание путь к дериктории, в которой будет создаваться папка
+	 * логирования.
+	 * 
+	 * @param path путь к папке, где разместить папку для логирования.
 	 * @param использовать ли запись в файл лога.
 	 */
-	public static final void setFile(String projectPath, boolean val)
-	{
-		if(!val)
+	public static final void setDirectory(String path, boolean val) {
+
+		if(!val) {
 			return;
-
-		// создаем ссылку на дерикторию логов
-		File directory = new File(projectPath + "/log/");
-
-		// если дериктории нету
-		if(!directory.exists())
-			// создаем
-			directory.mkdir();
-
-		try
-		{
-			// создаем ссылку на будущий файл лога
-			File file = new File(directory.getAbsolutePath() + "/" + timeFormat.format(new Date()) + ".log");
-
-			// если такого нет
-			if(!file.exists())
-				// создаем
-				file.createNewFile();
-
-			// создаем записчик лога в нужный нам файл
-			out = new FileWriter(new File(projectPath + "/log/" + timeFormat.format(new Date()) + ".log"), true);
 		}
-		catch(Exception e)
-		{
+
+		File directory = new File(path, "log");
+
+		if(!directory.exists()) {
+			directory.mkdirs();
+		}
+
+		try {
+
+			File file = new File(directory.getAbsolutePath(), TIME_FORMAT.format(new Date()) + ".log");
+
+			if(!file.exists()) {
+				file.createNewFile();
+			}
+
+			addWriter(new FileWriter(file, true));
+
+		} catch(Exception e) {
 			e.printStackTrace();
-			out = null;
 		}
 	}
 
 	/**
 	 * Вывод важного эксепшена.
-	 *
+	 * 
 	 * @param class класс объекта, посылающего сообщение
 	 * @param exception сам эксепшен.
 	 */
-	public static void warning(Class<?> cs, Exception exception)
-	{
-		log.warning(cs, exception);
+	public static void warning(Class<?> cs, Exception exception) {
+		LOGGER.warning(cs, exception);
 	}
 
 	/**
 	 * Вывод важного сообщение.
-	 *
+	 * 
 	 * @param class класс объекта, посылающего сообщение
 	 * @param message содержание сообщения
 	 */
-	public static final void warning(Class<?> cs, String message)
-	{
-		log.warning(cs, message);
+	public static final void warning(Class<?> cs, String message) {
+		LOGGER.warning(cs, message);
 	}
 
 	/**
 	 * Вывод важного эксепшена.
-	 *
+	 * 
 	 * @param owner объект, посылающий эксепшен.
 	 * @param exception сам эксепшен.
 	 */
-	public static void warning(Object owner, Exception exception)
-	{
-		log.warning(owner, exception);
+	public static void warning(Object owner, Exception exception) {
+		LOGGER.warning(owner, exception);
 	}
 
 	/**
 	 * Вывод важного сообщение.
-	 *
+	 * 
 	 * @param owner объект, посылающий сообщение
 	 * @param message содержание сообщения
 	 */
-	public static final void warning(Object owner, String message)
-	{
-		log.warning(owner, message);
+	public static final void warning(Object owner, String message) {
+		LOGGER.warning(owner, message);
 	}
 
 	/**
 	 * Вывод важного эксепшена.
-	 *
+	 * 
 	 * @param name имя объекта, посылающего сообщение
 	 * @param exception сам эксепшен.
 	 */
-	public static void warning(String name, Exception exception)
-	{
-		log.warning(name, exception);
+	public static void warning(String name, Exception exception) {
+		LOGGER.warning(name, exception);
 	}
 
 	/**
 	 * Вывод важного сообщение.
-	 *
+	 * 
 	 * @param name имя объекта, посылающего сообщение
 	 * @param message содержание сообщения
 	 */
-	public static final void warning(String name, String message)
-	{
-		log.warning(name, message);
+	public static final void warning(String name, String message) {
+		LOGGER.warning(name, message);
 	}
 }

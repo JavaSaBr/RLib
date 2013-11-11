@@ -51,11 +51,11 @@ public class ExtScheduledThreadPoolImpl<L> extends AbstractExtThreadPoolExecutor
 			while(!isShutdown()) {
 
 				if(firstTask == null) {
-					firstTask = getWaitTask();
+					firstTask = getWaitTask(true);
 				}
 
 				// выполняем доступные обычные задачи
-				for(Task<L> task = firstTask; task != null; task = getWaitTask()) {
+				for(Task<L> task = firstTask; task != null; task = getWaitTask(true)) {
 
 					Exception exception = null;
 

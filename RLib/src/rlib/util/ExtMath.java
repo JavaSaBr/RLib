@@ -26,8 +26,9 @@ public final class ExtMath {
 
 		if(-1.0f < fValue) {
 
-			if(fValue < 1.0f)
+			if(fValue < 1.0f) {
 				return (float) Math.acos(fValue);
+			}
 
 			return 0.0f;
 		}

@@ -12,15 +12,14 @@ import rlib.concurrent.Locks;
 import rlib.util.array.Array;
 import rlib.util.array.Arrays;
 
-
 /**
  * Модель строкового логера игровых событий.
- *
+ * 
  * @author Ronn
  */
-public class StringGameLogger implements GameLogger
-{
-	private static final Logger log = Loggers.getLogger(StringGameLogger.class);
+public class StringGameLogger implements GameLogger {
+
+	private static final Logger LOGGER = Loggers.getLogger(StringGameLogger.class);
 
 	/** синхронизатор */
 	private final Lock lock;
@@ -33,17 +32,13 @@ public class StringGameLogger implements GameLogger
 	/** средство записи в фаил */
 	private final Writer out;
 
-	/**
-	 * @param outFile выходной фаил.
-	 * @throws IOException
-	 */
-	protected StringGameLogger(File outFile) throws IOException
-	{
-		this.timeFormat  = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	protected StringGameLogger(File outFile) throws IOException {
+		this.timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		this.date = new Date();
 
-		if(!outFile.exists())
+		if(!outFile.exists()) {
 			outFile.createNewFile();
+		}
 
 		this.out = new FileWriter(outFile);
 		this.lock = Locks.newLock();
@@ -51,62 +46,47 @@ public class StringGameLogger implements GameLogger
 	}
 
 	@Override
-	public void finish()
-	{
+	public void finish() {
 		lock.lock();
-		try
-		{
+		try {
 			writeCache();
-		}
-		finally
-		{
+		} finally {
 			lock.unlock();
 		}
 	}
 
 	@Override
-	public void write(String text)
-	{
+	public void write(String text) {
 		lock.lock();
-		try
-		{
-			// если кеш переполнен
-			if(cache.size() > 1000)
-				// записываем кеш
-				writeCache();
+		try {
 
-			// указываем текущее время
+			if(cache.size() > 1000) {
+				writeCache();
+			}
+
 			date.setTime(System.currentTimeMillis());
-			// вносим запись
 			cache.add(timeFormat.format(date) + ": " + text + "\n");
-		}
-		finally
-		{
+
+		} finally {
 			lock.unlock();
 		}
 	}
 
 	@Override
-	public void writeCache()
-	{
-		try
-		{
-			// получаем массив ожидающих записи строк
+	public void writeCache() {
+		try {
+
 			String[] array = cache.array();
 
-			// аписываем их в файл
-			for(int i = 0, length = cache.size(); i < length; i++)
+			for(int i = 0, length = cache.size(); i < length; i++) {
 				out.write(array[i]);
+			}
 
-			// очищаем кэш
 			cache.clear();
-
-			// обновляем файл
 			out.flush();
-		}
-		catch(IOException e)
-		{
-			log.warning(e);
+
+		} catch(IOException e) {
+			LOGGER.warning(e);
 		}
 	}
 }

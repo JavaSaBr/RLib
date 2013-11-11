@@ -18,7 +18,6 @@ public class CompileByteCode extends SimpleJavaFileObject implements ByteSource 
 
 	public CompileByteCode(String name) {
 		super(URI.create("byte:///" + name.replace('/', '.') + Compiler.CLASS_EXTENSION), Kind.CLASS);
-
 		this.outputStream = new ByteArrayOutputStream();
 	}
 

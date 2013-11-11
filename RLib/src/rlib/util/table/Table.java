@@ -7,12 +7,12 @@ import rlib.util.pools.Foldable;
 
 /**
  * Интерфей для реализации таблицы.
- *
+ * 
  * @author Ronn
  * @created 27.02.2012
  */
-public interface Table<K, V> extends Iterable<V>, Foldable
-{
+public interface Table<K, V> extends Iterable<V>, Foldable {
+
 	/** размер таблицы по умолчанию */
 	public static final int DEFAULT_INITIAL_CAPACITY = 16;
 
@@ -24,14 +24,14 @@ public interface Table<K, V> extends Iterable<V>, Foldable
 
 	/**
 	 * Применить функцию на значения в таблице.
-	 *
+	 * 
 	 * @param func применяемая функция.
 	 */
 	public void apply(FuncKeyValue<K, V> func);
 
 	/**
 	 * Применить функцию на значения в таблице.
-	 *
+	 * 
 	 * @param func применяемая функция.
 	 */
 	public void apply(FuncValue<V> func);
@@ -43,49 +43,49 @@ public interface Table<K, V> extends Iterable<V>, Foldable
 
 	/**
 	 * Проверка наличия значения в таблице по указанному ключу.
-	 *
+	 * 
 	 * @param key проверяемый ключ.
 	 */
 	public boolean containsKey(int key);
 
 	/**
 	 * Проверка наличия значения в таблице по указанному ключу.
-	 *
+	 * 
 	 * @param key проверяемый ключ.
 	 */
 	public boolean containsKey(K key);
 
 	/**
 	 * Проверка наличия значения в таблице по указанному ключу.
-	 *
+	 * 
 	 * @param key проверяемый ключ.
 	 */
 	public boolean containsKey(long key);
 
 	/**
 	 * Проверка наличия указанного значения в таблице.
-	 *
+	 * 
 	 * @param value проверяемое значение.
 	 */
 	public boolean containsValue(V value);
 
 	/**
 	 * Вовзращает значения по указанному ключу.
-	 *
+	 * 
 	 * @param key ключ.
 	 */
 	public V get(int key);
 
 	/**
 	 * Вовзращает значения по указанному ключу.
-	 *
+	 * 
 	 * @param key ключ.
 	 */
 	public V get(K key);
 
 	/**
 	 * Вовзращает значения по указанному ключу.
-	 *
+	 * 
 	 * @param key ключ.
 	 */
 	public V get(long key);
@@ -120,30 +120,33 @@ public interface Table<K, V> extends Iterable<V>, Foldable
 
 	/**
 	 * Перенос данных в указанную таблицу.
-	 *
+	 * 
 	 * @param table новый контейнер данных.
 	 */
 	public void moveTo(Table<K, V> table);
 
 	/**
-	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с таким ключем, возвращает его.
-	 *
+	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с
+	 * таким ключем, возвращает его.
+	 * 
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
 	public V put(int key, V value);
 
 	/**
-	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с таким ключем, возвращает его.
-	 *
+	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с
+	 * таким ключем, возвращает его.
+	 * 
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
 	public V put(K key, V value);
 
 	/**
-	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с таким ключем, возвращает его.
-	 *
+	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с
+	 * таким ключем, возвращает его.
+	 * 
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
@@ -151,7 +154,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable
 
 	/**
 	 * Вставка в таблицу таблицы.
-	 *
+	 * 
 	 * @param table вставляемая таблица.
 	 */
 	public void put(Table<K, V> table);
@@ -168,21 +171,21 @@ public interface Table<K, V> extends Iterable<V>, Foldable
 
 	/**
 	 * Удаляет значение по ключу.
-	 *
+	 * 
 	 * @param key ключ значения.
 	 */
 	public V remove(int key);
 
 	/**
 	 * Удаляет значение по ключу.
-	 *
+	 * 
 	 * @param key ключ значения.
 	 */
 	public V remove(K key);
 
 	/**
 	 * Удаляет значение по ключу.
-	 *
+	 * 
 	 * @param key ключ значения.
 	 */
 	public V remove(long key);
@@ -194,7 +197,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable
 
 	/**
 	 * Перенос всех значений в массив.
-	 *
+	 * 
 	 * @param container контейнер значений.
 	 * @return итоговый список всех значений.
 	 */

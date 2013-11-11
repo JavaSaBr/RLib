@@ -5,10 +5,9 @@ package rlib.util.table;
  * 
  * @author Ronn
  */
-public final class LongKey
-{
-	private LongKey()
-	{
+public final class LongKey {
+
+	private LongKey() {
 		throw new IllegalArgumentException();
 	}
 }

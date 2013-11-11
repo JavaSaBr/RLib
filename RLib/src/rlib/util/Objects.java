@@ -26,8 +26,9 @@ public abstract class Objects {
 	@SuppressWarnings("unchecked")
 	public static <T> T clone(final T original) {
 
-		if(original == null)
+		if(original == null) {
 			return null;
+		}
 
 		if(original instanceof Cloneable) {
 
@@ -90,40 +91,39 @@ public abstract class Objects {
 	@SuppressWarnings("unchecked")
 	public static <T> T newInstance(final Class<T> cs) {
 
-		if(cs == Boolean.class || cs == boolean.class)
+		if(cs == Boolean.class || cs == boolean.class) {
 			return (T) Boolean.valueOf(false);
-		else if(cs == Character.class || cs == char.class)
+		} else if(cs == Character.class || cs == char.class) {
 			return (T) Character.valueOf('x');
-		else if(cs == Byte.class || cs == byte.class)
+		} else if(cs == Byte.class || cs == byte.class) {
 			return (T) Byte.valueOf((byte) 0);
-		else if(cs == Short.class || cs == short.class)
+		} else if(cs == Short.class || cs == short.class) {
 			return (T) Short.valueOf((short) 0);
-		else if(cs == Integer.class || cs == int.class)
+		} else if(cs == Integer.class || cs == int.class) {
 			return (T) Integer.valueOf(0);
-		else if(cs == Long.class || cs == long.class)
+		} else if(cs == Long.class || cs == long.class) {
 			return (T) Long.valueOf(0);
-		else if(cs == Float.class || cs == float.class)
+		} else if(cs == Float.class || cs == float.class) {
 			return (T) Float.valueOf(0);
-		else if(cs == Double.class || cs == double.class)
+		} else if(cs == Double.class || cs == double.class) {
 			return (T) Double.valueOf(0);
-		else if(cs == String.class)
+		} else if(cs == String.class) {
 			return cs.cast("");
-		else if(cs == Class.class)
+		} else if(cs == Class.class) {
 			return (T) Object.class;
+		}
 
 		for(final Constructor<?> constructor : cs.getDeclaredConstructors()) {
 
-			if(!constructor.isAccessible())
+			if(!constructor.isAccessible()) {
 				constructor.setAccessible(true);
+			}
 
 			final Class<?>[] types = constructor.getParameterTypes();
-
 			final Object[] parametrs = new Object[types.length];
 
 			for(int i = 0, length = types.length; i < length; i++) {
-
 				final Object object = newInstance(types[i]);
-
 				parametrs[i] = object;
 			}
 
@@ -145,8 +145,9 @@ public abstract class Objects {
 	 */
 	public static final <O, N extends O> void reload(final O original, final N updated) {
 
-		if(original == null || updated == null)
+		if(original == null || updated == null) {
 			return;
+		}
 
 		final Array<Field> array = Arrays.toArray(Field.class);
 
@@ -154,8 +155,9 @@ public abstract class Objects {
 
 			final Field[] fields = cs.getDeclaredFields();
 
-			for(final Field field : fields)
+			for(final Field field : fields) {
 				array.add(field);
+			}
 		}
 
 		array.trimToSize();
@@ -164,8 +166,9 @@ public abstract class Objects {
 
 			final String str = field.toString();
 
-			if(str.contains("final") || str.contains("static"))
+			if(str.contains("final") || str.contains("static")) {
 				continue;
+			}
 
 			field.setAccessible(true);
 

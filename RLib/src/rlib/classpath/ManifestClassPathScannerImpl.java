@@ -65,7 +65,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 							continue;
 						}
 
-						String[] classpath = attributes.getValue(classPathKey).split(" ");
+						String[] classpath = value.split(" ");
 
 						for(String path : classpath) {
 

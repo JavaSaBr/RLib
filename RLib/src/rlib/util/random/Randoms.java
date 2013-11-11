@@ -1,39 +1,28 @@
 package rlib.util.random;
 
-import rlib.logging.Loggers;
 
 /**
  * Фарика рандоминайзеров.
- *
+ * 
  * @author Ronn
  */
-public final class Randoms
-{
+public final class Randoms {
+
 	/**
 	 * @return создание быстрого псевдо генератора.
 	 */
-	public static Random newFastRandom()
-	{
+	public static Random newFastRandom() {
 		return new FastRandom();
 	}
 
 	/**
 	 * @return создание медленного реалистичного генератора.
 	 */
-	public static Random newRealRandom()
-	{
+	public static Random newRealRandom() {
 		return new RealRandom();
 	}
 
-	private Randoms()
-	{
-		try
-		{
-			throw new Exception();
-		}
-		catch(Exception e)
-		{
-			Loggers.warning(this, e);
-		}
+	private Randoms() {
+		throw new RuntimeException();
 	}
 }

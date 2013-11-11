@@ -40,21 +40,22 @@ public class Strings {
 	/**
 	 * Рассчет длинны строки для пакета
 	 * 
-	 * @param string
-	 * @return length
+	 * @param string интересуемая строка.
+	 * @return длинна строки в байтах.
 	 */
 	public static int byteCount(final String string) {
 
-		if(string == null || string.isEmpty())
+		if(string == null || string.isEmpty()) {
 			return 2;
+		}
 
 		return string.length() * 2 + 2;
 	}
 
 	/**
-	 * Проверка на корректность имейла.
+	 * Проверка на корректность почтового адресса.
 	 * 
-	 * @param email имеил.
+	 * @param email проверяемый адресс.
 	 * @return корректно ли введен.
 	 */
 	public static boolean checkEmail(final String email) {
@@ -67,8 +68,9 @@ public class Strings {
 	 */
 	public static boolean equals(final String first, final String second) {
 
-		if(first == null || second == null)
+		if(first == null || second == null) {
 			return false;
+		}
 
 		return first.equals(second);
 	}
@@ -78,8 +80,9 @@ public class Strings {
 	 */
 	public static boolean equalsIgnoreCase(final String first, final String second) {
 
-		if(first == null || second == null)
+		if(first == null || second == null) {
 			return false;
+		}
 
 		return first.equalsIgnoreCase(second);
 	}
@@ -96,8 +99,9 @@ public class Strings {
 
 		builder.append(" : stack trace:\n");
 
-		for(final StackTraceElement stack : throwable.getStackTrace())
+		for(final StackTraceElement stack : throwable.getStackTrace()) {
 			builder.append(stack).append("\n");
+		}
 
 		return builder.toString();
 	}
@@ -112,8 +116,9 @@ public class Strings {
 
 		final char[] array = new char[length];
 
-		for(int i = 0; i < length; i++)
+		for(int i = 0; i < length; i++) {
 			array[i] = (char) Rnd.nextInt('a', 'z');
+		}
 
 		return String.valueOf(array);
 	}
@@ -148,7 +153,6 @@ public class Strings {
 	public static String passwordToHash(final String password) {
 
 		final MessageDigest hashMD5 = LOCAL_HASH_MD.get();
-
 		hashMD5.update(password.getBytes(), 0, password.length());
 
 		return new BigInteger(1, hashMD5.digest()).toString(16);

@@ -22,27 +22,34 @@ public final class ReflectionUtils {
 	 * @param exceptions исключаемые поля.
 	 */
 	public static void addAllFields(final Array<Field> container, final Class<?> cs, final Class<?> last, final boolean declared, final String... exceptions) {
+
 		Class<?> next = cs;
 
 		while(next != null && next != last) {
+
 			final Field[] fields = declared ? next.getDeclaredFields() : next.getFields();
 
 			next = next.getSuperclass();
 
-			if(fields.length < 1)
+			if(fields.length < 1) {
 				continue;
+			}
 
-			if(exceptions == null || exceptions.length < 1)
+			if(exceptions == null || exceptions.length < 1) {
 				container.addAll(fields);
-			else
+			} else {
+
 				for(int i = 0, length = fields.length; i < length; i++) {
+
 					final Field field = fields[i];
 
-					if(Arrays.contains(exceptions, field.getName()))
+					if(Arrays.contains(exceptions, field.getName())) {
 						continue;
+					}
 
 					container.add(field);
 				}
+			}
 		}
 	}
 
@@ -55,11 +62,8 @@ public final class ReflectionUtils {
 	 * @param exceptions исключаемые поля.
 	 */
 	public static Array<Field> getAllFields(final Class<?> cs, final Class<?> last, final boolean declared, final String... exceptions) {
-
 		final Array<Field> container = Arrays.toArray(Field.class);
-
 		addAllFields(container, cs, last, declared, exceptions);
-
 		return container;
 	}
 

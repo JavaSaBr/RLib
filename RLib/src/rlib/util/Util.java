@@ -51,9 +51,8 @@ public abstract class Util {
 	 * @param host проверяемый хост.
 	 * @param ports проверяемый порт.
 	 * @return свободен ли порт.
-	 * @throws InterruptedException
 	 */
-	public static boolean checkFreePorts(final String host, final int port) throws InterruptedException {
+	public static boolean checkFreePort(final String host, final int port) {
 
 		try {
 			final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
@@ -75,13 +74,14 @@ public abstract class Util {
 	 */
 	public static boolean checkFreePorts(final String host, final int[] ports) throws InterruptedException {
 
-		for(final int port : ports)
+		for(final int port : ports) {
 			try {
 				final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
 				serverSocket.close();
 			} catch(final IOException e) {
 				return false;
 			}
+		}
 
 		return true;
 	}
@@ -95,7 +95,6 @@ public abstract class Util {
 		date.setTime(time);
 
 		final SimpleDateFormat format = LOCAL_DATE_FORMAT.get();
-
 		return format.format(date);
 	}
 
@@ -109,14 +108,11 @@ public abstract class Util {
 
 		final int limit = Short.MAX_VALUE * 2;
 
-		while(port < limit)
-			try {
-				new ServerSocket(port).close();
-
-				return port;
-			} catch(final IOException e) {
-				port++;
+		for(int i = port; i < limit; i++) {
+			if(checkFreePort("*", i)) {
+				return i;
 			}
+		}
 
 		return -1;
 	}
@@ -132,14 +128,15 @@ public abstract class Util {
 		String className = cs.getName();
 
 		final StringBuilder builder = new StringBuilder(className.length());
-		builder.append('/');
+		builder.append(File.separatorChar);
 
 		for(int i = 0, length = className.length(); i < length; i++) {
 
 			char ch = className.charAt(i);
 
-			if(ch == '.')
-				ch = '/';
+			if(ch == '.') {
+				ch = File.separatorChar;
+			}
 
 			builder.append(ch);
 		}
@@ -154,7 +151,7 @@ public abstract class Util {
 
 			String path = url.getPath();
 			path = path.substring(0, path.length() - className.length());
-			path = path.substring(0, path.lastIndexOf('/'));
+			path = path.substring(0, path.lastIndexOf(File.separatorChar));
 
 			final URI uri = new URI(path);
 			path = uri.getPath();
@@ -162,17 +159,15 @@ public abstract class Util {
 
 			File file = new File(path);
 
-			while(path.lastIndexOf('/') != -1 && !file.exists()) {
-				path = path.substring(0, path.lastIndexOf('/'));
+			while(path.lastIndexOf(File.separatorChar) != -1 && !file.exists()) {
+				path = path.substring(0, path.lastIndexOf(File.separatorChar));
 				file = new File(path);
 			}
 
 			return file;
 		} catch(final Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-
-		return null;
 	}
 
 	/**
@@ -217,25 +212,29 @@ public abstract class Util {
 
 		final char[] chars = new char[16];
 
-		for(int g = 0; g < 16; g++)
+		for(int g = 0; g < 16; g++) {
 			chars[g] = '.';
+		}
 
 		for(int i = 0; i < size; i++) {
 
 			int val = array[i];
 
-			if(val < 0)
+			if(val < 0) {
 				val += 256;
+			}
 
 			String text = Integer.toHexString(val).toUpperCase();
 
-			if(text.length() == 1)
+			if(text.length() == 1) {
 				text = "0" + text;
+			}
 
 			char ch = (char) val;
 
-			if(ch < 33)
+			if(ch < 33) {
 				ch = '.';
+			}
 
 			if(i == end) {
 
@@ -243,16 +242,14 @@ public abstract class Util {
 
 				builder.append(text);
 
-				for(int j = 0; j < 15 - count; j++)
+				for(int j = 0; j < 15 - count; j++) {
 					builder.append("   ");
+				}
 
 				builder.append("    ").append(chars).append('\n');
 			} else if(count < 15) {
-
 				chars[count++] = ch;
-
 				builder.append(text).append(' ');
-
 			} else {
 
 				chars[15] = ch;
@@ -261,8 +258,9 @@ public abstract class Util {
 
 				count = 0;
 
-				for(int g = 0; g < 16; g++)
+				for(int g = 0; g < 16; g++) {
 					chars[g] = 0x2E;
+				}
 			}
 		}
 

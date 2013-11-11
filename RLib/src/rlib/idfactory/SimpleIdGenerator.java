@@ -5,12 +5,12 @@ package rlib.idfactory;
  * 
  * @author Ronn
  */
-public final class SimpleIdGenerator implements IdGenerator
-{
+public final class SimpleIdGenerator implements IdGenerator {
+
 	/** промежуток генерирование ид */
 	private final int start;
 	private final int end;
-	
+
 	/** следующий ид */
 	private volatile int nextId;
 
@@ -18,33 +18,33 @@ public final class SimpleIdGenerator implements IdGenerator
 	 * @param start стартовый ид генератора.
 	 * @param end конечный ид генератора.
 	 */
-	public SimpleIdGenerator(int start, int end)
-	{
+	public SimpleIdGenerator(int start, int end) {
 		this.start = start;
 		this.end = end;
 		this.nextId = start;
 	}
-	
+
 	@Override
-	public synchronized int getNextId()
-	{
-		if(nextId == end)
+	public synchronized int getNextId() {
+
+		if(nextId == end) {
 			nextId = start;
-		
+		}
+
 		nextId += 1;
-		
 		return nextId;
 	}
 
 	@Override
-	public void prepare(){}
+	public void prepare() {
+	}
 
 	@Override
-	public void releaseId(int id){}
+	public void releaseId(int id) {
+	}
 
 	@Override
-	public int usedIds()
-	{
+	public int usedIds() {
 		return nextId - start;
 	}
 }

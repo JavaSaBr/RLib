@@ -5,10 +5,9 @@ package rlib.util.table;
  * 
  * @author Ronn
  */
-public final class IntKey
-{
-	private IntKey()
-	{
+public final class IntKey {
+
+	private IntKey() {
 		throw new IllegalArgumentException();
 	}
 }

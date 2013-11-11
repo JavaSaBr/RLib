@@ -15,7 +15,6 @@ public final class SimpleReadWriteLock implements AsynReadSynWriteLock {
 
 	public SimpleReadWriteLock() {
 		final ReadWriteLock readWriteLock = Locks.newRWLock();
-
 		readLock = readWriteLock.readLock();
 		writeLock = readWriteLock.writeLock();
 	}

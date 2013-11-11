@@ -25,7 +25,7 @@ import rlib.util.table.Tables;
  */
 public class Files {
 
-	private static final Logger log = Loggers.getLogger("Files");
+	private static final Logger LOGGER = Loggers.getLogger(Files.class);
 
 	/** кэш текста файлов */
 	private static final Table<String, String> cache = Tables.newObjectTable();
@@ -89,7 +89,7 @@ public class Files {
 
 			return true;
 		} catch(final IOException e) {
-			log.warning(e);
+			LOGGER.warning(e);
 		}
 
 		return false;
@@ -106,14 +106,13 @@ public class Files {
 		try(FileInputStream fileInputStream = new FileInputStream(file)) {
 
 			final FileChannel channel = fileInputStream.getChannel();
-
 			final byte[] content = new byte[(int) channel.size()];
 
 			fileInputStream.read(content);
 
 			return content;
 		} catch(final IOException e) {
-			log.warning(e);
+			LOGGER.warning(e);
 		}
 
 		return null;
@@ -139,7 +138,6 @@ public class Files {
 	public static File[] getFiles(final File dir, final String... formats) {
 
 		final Array<File> array = Arrays.toArray(File.class);
-
 		final File[] files = dir.listFiles();
 
 		for(int i = 0, length = files.length; i < length; i++) {
@@ -187,8 +185,9 @@ public class Files {
 			Loggers.warning(Files.class, e);
 		}
 
-		if(urls == null)
+		if(urls == null) {
 			return new File[0];
+		}
 
 		final Array<File> files = Arrays.toArray(File.class);
 
@@ -223,8 +222,9 @@ public class Files {
 	 */
 	public static long lastModified(final String name) {
 
-		if(name == null)
+		if(name == null) {
 			return 0;
+		}
 
 		File file = cacheFiles.get(name);
 
@@ -278,7 +278,7 @@ public class Files {
 			}
 
 		} catch(final IOException e) {
-			log.warning(e);
+			LOGGER.warning(e);
 		}
 
 		cache.put(path, content.toString());

@@ -1,5 +1,7 @@
 package rlib.concurrent.interfaces;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Интерфейс для реализации исполнительного пула потоков.
  * 
@@ -26,9 +28,14 @@ public interface ExtThreadPoolExecutor<L> extends ExtExecutorService<L> {
 	public boolean remove(Task<L> task);
 
 	/**
-	 * Запуск обработки воркера.
+	 * Запуск обработки работника.
 	 * 
-	 * @param worker запускаемый воркер.
+	 * @param worker запускаемый работник.
 	 */
 	public void runWorker(Worker<L> worker, L localObjects);
+
+	/**
+	 * @return состояние пула.
+	 */
+	public AtomicInteger getState();
 }

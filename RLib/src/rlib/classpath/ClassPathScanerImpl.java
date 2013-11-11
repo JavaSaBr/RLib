@@ -137,8 +137,9 @@ class ClassPathScanerImpl implements ClassPathScaner {
 
 		try {
 			container.add(getLoader().loadClass(className));
-		} catch(ClassNotFoundException | NoClassDefFoundError e) {
-			return;
+		} catch(NoClassDefFoundError ex) {
+		} catch(ClassNotFoundException e) {
+			LOGGER.warning(e);
 		}
 	}
 

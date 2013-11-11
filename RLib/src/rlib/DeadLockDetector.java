@@ -25,10 +25,8 @@ public class DeadLockDetector extends SafeTask {
 
 	/** набор слушателей дедлоков */
 	private final Array<DeadLockListener> listeners;
-
 	/** информация об состоянии потоков */
 	private final ThreadMXBean mxThread;
-
 	/** сервис по запуску детектора */
 	private final ScheduledExecutorService executor;
 
@@ -103,7 +101,6 @@ public class DeadLockDetector extends SafeTask {
 				listeners.readUnlock();
 			}
 
-			// пишем в консоль инфу о дедлоке
 			LOGGER.warning("DeadLock detected! : " + info);
 		}
 	}

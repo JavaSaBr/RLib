@@ -1,8 +1,11 @@
 package rlib.concurrent.abst;
 
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
+import rlib.concurrent.ConcurrentUtils;
 import rlib.concurrent.impl.ExtFutureTaskImpl;
 import rlib.concurrent.interfaces.CallableTask;
 import rlib.concurrent.interfaces.ExtThread;
@@ -16,7 +19,6 @@ import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.linkedlist.LinkedList;
 import rlib.util.linkedlist.LinkedLists;
-import rlib.util.linkedlist.Node;
 
 /**
  * Базовая реализация пула потоков.
@@ -24,6 +26,14 @@ import rlib.util.linkedlist.Node;
  * @author Ronn
  */
 public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecutorService<L> implements ExtThreadPoolExecutor<L> {
+
+	public static final int NEED_EXECUTE = 1;
+
+	public static final int WAIT = -2;
+
+	public static final int NEED_WAIT = -1;
+
+	public static final int EXECUTE = 1;
 
 	protected static final Logger LOGGER = Loggers.getLogger(ExtThreadPoolExecutor.class);
 
@@ -41,12 +51,13 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 
 	/** синхронизатор */
 	protected final Lock sync;
+	/** состояние ожидания */
+	protected final AtomicInteger state;
+	/** кол-во выполненных задач */
+	protected final AtomicLong completedTasks;
 
 	/** размер пула потоков */
 	protected final int poolSize;
-
-	/** кол-во выполненных задач */
-	protected volatile long completedTasks;
 
 	/** остановлен ли пул потоков */
 	protected volatile boolean shutdown;
@@ -62,6 +73,13 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 		this.sync = sync;
 		this.poolSize = poolSize;
 		this.workers = LinkedLists.newLinkedList(Worker.class);
+		this.state = new AtomicInteger(EXECUTE);
+		this.completedTasks = new AtomicLong(0);
+	}
+
+	@Override
+	public AtomicInteger getState() {
+		return state;
 	}
 
 	/**
@@ -69,20 +87,15 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 	 */
 	protected void addWaitTask(final Task<L> task) {
 
-		getWaitTasks().add(task);
+		final LinkedList<Task<L>> waitTasks = getWaitTasks();
+		waitTasks.add(task);
 
-		LinkedList<Worker<L>> workers = getWorkers();
+		AtomicInteger state = getState();
 
-		for(Node<Worker<L>> node = workers.getFirstNode(); node != null; node = node.getNext()) {
-
-			Worker<L> worker = node.getItem();
-
-			if(worker.isWaited()) {
-				synchronized(worker) {
-					if(worker.isWaited()) {
-						worker.notifyAll();
-						break;
-					}
+		if(state.compareAndSet(WAIT, NEED_EXECUTE)) {
+			synchronized(this) {
+				if(state.compareAndSet(NEED_EXECUTE, EXECUTE)) {
+					notifyAll();
 				}
 			}
 		}
@@ -95,11 +108,13 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 	 */
 	protected void addWorker(final Task<L> task) {
 
-		final Worker<L> worker = getWorkerFactory().create(this, task);
+		final WorkerFactory<L> workerFactory = getWorkerFactory();
+		final Worker<L> worker = workerFactory.create(this, task);
+
+		final LinkedList<Worker<L>> workers = getWorkers();
+		workers.add(worker);
+
 		final ExtThread<L> thread = worker.getThread();
-
-		getWorkers().add(worker);
-
 		thread.start();
 	}
 
@@ -121,36 +136,16 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 	protected void beforeExecute(final ExtThread<L> thread, final Task<L> task) {
 	}
 
-	/**
-	 * @return есть ли ожидающие работники новых задач.
-	 */
-	protected boolean hasFreeWorker() {
-
-		LinkedList<Worker<L>> workers = getWorkers();
-
-		for(Node<Worker<L>> node = workers.getFirstNode(); node != null; node = node.getNext()) {
-
-			Worker<L> worker = node.getItem();
-
-			if(worker.isWaited()) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	@Override
 	public void execute(final Task<L> task) {
 
+		final LinkedList<Worker<L>> workers = getWorkers();
 		final Lock sync = getSync();
 
 		sync.lock();
 		try {
 
-			final LinkedList<Worker<L>> workers = getWorkers();
-
-			if(hasFreeWorker() || workers.size() == getPoolSize()) {
+			if(workers.size() == getPoolSize()) {
 				addWaitTask(task);
 			} else {
 				addWorker(task);
@@ -163,7 +158,7 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 
 	@Override
 	public long getCompletedTasks() {
-		return completedTasks;
+		return completedTasks.get();
 	}
 
 	/**
@@ -188,19 +183,14 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 	/**
 	 * @return ближайшее ожидающее задание.
 	 */
-	protected Task<L> getWaitTask() {
+	protected Task<L> getWaitTask(boolean remove) {
 
 		final LinkedList<Task<L>> waitTasks = getWaitTasks();
-
-		if(waitTasks.isEmpty()) {
-			return null;
-		}
-
 		final Lock sync = getSync();
 
 		sync.lock();
 		try {
-			return waitTasks.poll();
+			return remove ? waitTasks.poll() : waitTasks.peek();
 		} finally {
 			sync.unlock();
 		}
@@ -239,11 +229,15 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 	@Override
 	public void runWorker(final Worker<L> worker, final L localObjects) {
 
+		final ExtThreadExceptionHandler handler = getHandler();
+		final LinkedList<Task<L>> waitTasks = getWaitTasks();
+		final ExtThread<L> thread = worker.getThread();
+		final Lock sync = getSync();
+
+		final AtomicInteger state = getState();
+
 		Task<L> firstTask = worker.getFirstTask();
 		worker.setFirstTask(null);
-
-		final ExtThreadExceptionHandler handler = getHandler();
-		final ExtThread<L> thread = worker.getThread();
 
 		Throwable throwable = null;
 
@@ -252,10 +246,10 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 			while(!isShutdown()) {
 
 				if(firstTask == null) {
-					firstTask = getWaitTask();
+					firstTask = getWaitTask(true);
 				}
 
-				for(Task<L> task = firstTask; task != null; task = getWaitTask()) {
+				for(Task<L> task = firstTask; task != null; task = getWaitTask(true)) {
 
 					Exception exception = null;
 
@@ -279,14 +273,13 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 					}
 				}
 
-				synchronized(worker) {
-					worker.setWaited(true);
-					try {
-						worker.wait();
-					} catch(InterruptedException e) {
-						LOGGER.warning(e);
-					} finally {
-						worker.setWaited(false);
+				synchronized(this) {
+
+					Task<L> task = getWaitTask(false);
+
+					if(task == null) {
+						state.getAndSet(WAIT);
+						ConcurrentUtils.waitInSynchronize(this);
 					}
 				}
 			}
@@ -314,14 +307,16 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 	 */
 	protected void workerFinish(final Worker<L> worker, final Throwable throwable) {
 
+		final WorkerFactory<L> workerFactory = getWorkerFactory();
+		final LinkedList<Worker<L>> workers = getWorkers();
 		final Lock sync = getSync();
 
-		completedTasks += worker.getCompletedTasks();
+		completedTasks.getAndSet(completedTasks.get() + worker.getCompletedTasks());
 
 		sync.lock();
 		try {
-			getWorkers().remove(worker);
-			getWorkerFactory().safe(worker);
+			workers.remove(worker);
+			workerFactory.safe(worker);
 		} finally {
 			sync.unlock();
 		}

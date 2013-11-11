@@ -5,25 +5,25 @@ package rlib.idfactory;
  * 
  * @author Ronn
  */
-public interface IdGenerator
-{	
+public interface IdGenerator {
+
 	/**
 	 * @return новый свободный ид.
 	 */
 	public int getNextId();
-	
+
 	/**
 	 * Подготовка фабрики.
 	 */
 	public void prepare();
-	
+
 	/**
 	 * Добавление нового освободившегося ид.
 	 * 
 	 * @param id освободившийся ид.
 	 */
 	public void releaseId(int id);
-	
+
 	/**
 	 * @return кол-во использованных ид.
 	 */

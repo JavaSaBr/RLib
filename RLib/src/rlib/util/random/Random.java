@@ -2,11 +2,11 @@ package rlib.util.random;
 
 /**
  * Интерфейс для реализации рандоминайзера.
- *
+ * 
  * @author Ronn
  */
-public interface Random
-{
+public interface Random {
+
 	/**
 	 * Заполнение массива случайными значениями.
 	 * 
@@ -15,7 +15,7 @@ public interface Random
 	 * @param length кол-во заполняемых байтов.
 	 */
 	public void byteArray(byte[] array, int offset, int length);
-	
+
 	/**
 	 * Рассчет срабатывания шанса.
 	 * 
@@ -23,7 +23,7 @@ public interface Random
 	 * @return сработал ли шанс.
 	 */
 	public boolean chance(float chance);
-	
+
 	/**
 	 * Рассчет срабатывания шанса.
 	 * 
@@ -38,7 +38,7 @@ public interface Random
 	 * @return число от 0.0 до 1.0
 	 */
 	public float nextFloat();
-	
+
 	/**
 	 * Генерация случайного целого числа.
 	 * 
@@ -53,7 +53,7 @@ public interface Random
 	 * @return случайное число [0, max]
 	 */
 	public int nextInt(int max);
-	
+
 	/**
 	 * Возвращает случайное число [min, max].
 	 * 
@@ -62,7 +62,7 @@ public interface Random
 	 * @return случайное число [min, max]
 	 */
 	public int nextInt(int min, int max);
-	
+
 	/**
 	 * Возвращает случайное число [min, max].
 	 * 

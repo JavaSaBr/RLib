@@ -5,8 +5,8 @@ package rlib.data;
  * 
  * @author Ronn
  */
-public interface DocumentXML<C>
-{
+public interface DocumentXML<C> {
+
 	/**
 	 * Парс файла с получением результата.
 	 */

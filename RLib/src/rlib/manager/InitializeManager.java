@@ -14,62 +14,59 @@ import rlib.util.linkedlist.LinkedLists;
  * 
  * @author Ronn
  */
-public final class InitializeManager
-{
-	private static final Logger log = Loggers.getLogger(InitializeManager.class);
-	
+public final class InitializeManager {
+
+	private static final Logger LOGGER = Loggers.getLogger(InitializeManager.class);
+
+	private static final String METHOD_NAME = "getInstance";
+
 	private static final LinkedList<Class<?>> queue = LinkedLists.newLinkedList(Class.class);
-	
+
 	/**
 	 * Инициализация зарегестрированных классов.
 	 */
-	public synchronized static void initialize()
-	{
-		for(final Iterator<Class<?>> iterator = queue.iterator(); iterator.hasNext();)
-		{
+	public synchronized static void initialize() {
+
+		for(final Iterator<Class<?>> iterator = queue.iterator(); iterator.hasNext();) {
+
 			final Class<?> next = iterator.next();
-			
-			try
-			{
-				final Method method = next.getMethod("getInstance");
-				
+
+			try {
+
+				final Method method = next.getMethod(METHOD_NAME);
 				final Object instance = method.invoke(null);
-				
-				if(instance == null)
-					log.warning("no initialize class " + next);
-				
+
+				if(instance == null) {
+					LOGGER.warning("no initialize class " + next);
+				}
+
 				iterator.remove();
-			}
-			catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-			{
-				e.printStackTrace();
+
+			} catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				LOGGER.warning(e);
 			}
 		}
 	}
-	
+
 	/**
 	 * Регистрация класса, имеющего статический метод getInstance().
-	 * 
-	 * @param cs
 	 */
-	public synchronized static void register(Class<?> cs)
-	{
+	public synchronized static void register(Class<?> cs) {
 		queue.add(cs);
 	}
-	
+
 	/**
 	 * Проверка валидности очереди инициализации класса.
 	 * 
 	 * @param cs проверяемый класс.
 	 */
-	public static void valid(Class<?> cs)
-	{
-		if(queue.getFirst() != cs)
+	public static void valid(Class<?> cs) {
+		if(queue.getFirst() != cs) {
 			Thread.dumpStack();
+		}
 	}
-	
-	private InitializeManager()
-	{
+
+	private InitializeManager() {
 		throw new RuntimeException();
 	}
 }
