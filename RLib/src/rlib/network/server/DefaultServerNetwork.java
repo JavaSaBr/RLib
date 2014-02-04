@@ -16,15 +16,14 @@ import rlib.network.NetworkConfig;
 import rlib.util.array.Array;
 import rlib.util.array.Arrays;
 
-
 /**
  * Базовая модель асинхронной сети.
- *
+ * 
  * @author Ronn
  */
-public final class DefaultServerNetwork implements ServerNetwork
-{
-	protected static final Logger log = Loggers.getLogger(ServerNetwork.class);
+public final class DefaultServerNetwork implements ServerNetwork {
+
+	protected static final Logger LOGGER = Loggers.getLogger(ServerNetwork.class);
 
 	/** пул буфферов для чтения */
 	private final Array<ByteBuffer> readBufferPool;
@@ -42,106 +41,82 @@ public final class DefaultServerNetwork implements ServerNetwork
 	/** обработчик новых подключений */
 	private final AcceptHandler acceptHandler;
 
-	public DefaultServerNetwork(NetworkConfig config, AcceptHandler acceptHandler) throws IOException
-	{
-		// хапоминаем конфиг
+	public DefaultServerNetwork(NetworkConfig config, AcceptHandler acceptHandler) throws IOException {
 		this.config = config;
-		// создаем пул читаемых буфферов
 		this.readBufferPool = Arrays.toConcurrentArray(ByteBuffer.class);
-		// создаем пул записываемых буфферов
 		this.writeBufferPool = Arrays.toConcurrentArray(ByteBuffer.class);
-		// создаем группу каналов
 		this.channelGroup = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
-		// открываем конал
 		this.serverChannel = AsynchronousServerSocketChannel.open(channelGroup);
-		// запоминаем обработчика
 		this.acceptHandler = acceptHandler;
 	}
 
 	@Override
-	public <A> void accept(A attachment, CompletionHandler<AsynchronousSocketChannel, ? super A> handler)
-	{
+	public <A> void accept(A attachment, CompletionHandler<AsynchronousSocketChannel, ? super A> handler) {
 		serverChannel.accept(attachment, handler);
 	}
 
 	@Override
-	public void bind(SocketAddress address) throws IOException
-	{
-		// биндим порт сети
+	public void bind(SocketAddress address) throws IOException {
 		serverChannel.bind(address);
-		// начинаем ждать новые подключения
 		serverChannel.accept(serverChannel, acceptHandler);
 	}
 
 	@Override
-	public NetworkConfig getConfig()
-	{
+	public NetworkConfig getConfig() {
 		return config;
 	}
 
 	@Override
-	public ByteBuffer getReadByteBuffer()
-	{
+	public ByteBuffer getReadByteBuffer() {
 		readBufferPool.writeLock();
-		try
-		{
-			// извлекаем свободный буффер из пула
+		try {
+
 			ByteBuffer buffer = readBufferPool.pop();
 
-			// если буффера нети
-			if(buffer == null)
-				// создаем новый
+			if(buffer == null) {
 				buffer = ByteBuffer.allocate(config.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
+			}
 
-			// возвращаем буффер
 			return buffer;
-		}
-		finally
-		{
+		} finally {
 			readBufferPool.writeUnlock();
 		}
 	}
 
 	@Override
-	public ByteBuffer getWriteByteBuffer()
-	{
+	public ByteBuffer getWriteByteBuffer() {
 		writeBufferPool.writeLock();
-		try
-		{
-			// извлекаем свободный буффер из пула
+		try {
+
 			ByteBuffer buffer = writeBufferPool.pop();
 
-			// если буффера нети
-			if(buffer == null)
-				// создаем новый
+			if(buffer == null) {
 				buffer = ByteBuffer.allocate(config.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
+			}
 
-			// возвращаем буффер
 			return buffer;
-		}
-		finally
-		{
+		} finally {
 			writeBufferPool.writeUnlock();
 		}
 	}
 
 	@Override
-	public void putReadByteBuffer(ByteBuffer buffer)
-	{
-		if(buffer == null)
-			return;
+	public void putReadByteBuffer(ByteBuffer buffer) {
 
-		// добавляем в пул
+		if(buffer == null) {
+			return;
+		}
+
 		readBufferPool.add(buffer);
 	}
 
 	@Override
-	public void putWriteByteBuffer(ByteBuffer buffer)
-	{
-		if(buffer == null)
-			return;
+	public void putWriteByteBuffer(ByteBuffer buffer) {
 
-		// добавляем в пул
+		if(buffer == null) {
+			return;
+		}
+
 		writeBufferPool.add(buffer);
 	}
 }

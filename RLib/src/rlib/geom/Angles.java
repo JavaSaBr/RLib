@@ -70,7 +70,7 @@ public abstract class Angles {
 	 * @return кол-во радианов.
 	 */
 	public static float degreeToRadians(float angle) {
-		return angle * 3.141592653f / 180f;
+		return angle * PI / 180F;
 	}
 
 	/**
@@ -80,7 +80,7 @@ public abstract class Angles {
 	 * @return угол в градусах.
 	 */
 	public static float radiansToDegree(float radians) {
-		return radians * 180.0F / PI;
+		return radians * 180F / PI;
 	}
 
 	/**

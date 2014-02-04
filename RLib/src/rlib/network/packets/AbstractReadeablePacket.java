@@ -128,8 +128,9 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 
 			cha = buffer.getChar();
 
-			if(cha == 0)
+			if(cha == 0) {
 				break;
+			}
 
 			builder.append(cha);
 		}

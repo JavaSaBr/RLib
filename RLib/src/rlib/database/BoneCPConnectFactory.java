@@ -15,7 +15,7 @@ import com.jolbox.bonecp.BoneCPConfig;
  * @author Ronn
  * @created 27.03.2012
  */
-public final class BoneCPConnectFactory extends ConnectFactory {
+public final class BoneCPConnectFactory implements ConnectFactory {
 
 	private static final Logger LOGGER = Loggers.getLogger(BoneCPConnectFactory.class);
 

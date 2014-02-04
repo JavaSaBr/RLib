@@ -4,31 +4,31 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.Locks;
+import rlib.concurrent.atomic.AtomicInteger;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
-import rlib.network.NetworkConfig;
-import rlib.util.array.Array;
-import rlib.util.array.Arrays;
-
+import rlib.util.linkedlist.LinkedList;
+import rlib.util.linkedlist.LinkedLists;
 
 /**
  * Базовая модель асинхронного конекта.
- *
+ * 
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S> implements AsynConnection<R, S>
-{
-	protected static final Logger log = Loggers.getLogger(AsynConnection.class);
+public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S> implements AsynConnection<R, S> {
+
+	protected static final Logger LOGGER = Loggers.getLogger(AsynConnection.class);
 
 	/** модель сети, в которой этот коннект */
 	protected final N network;
 
 	/** список ожидающих пакетов на отправку */
-	protected final Array<S> waitPackets;
+	protected final LinkedList<S> waitPackets;
 
 	/** канал конекта */
 	protected final AsynchronousSocketChannel channel;
@@ -38,17 +38,16 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	/** промежуточный буффер с отсылаемыми данными */
 	protected final ByteBuffer writeBuffer;
 
+	/** счетчик ожидающих отправки пакетов */
+	protected final AtomicInteger writeCounter;
+	/** флаг закрытости конекта */
+	protected final AtomicBoolean closed;
+
 	/** конфиг сети */
 	protected final NetworkConfig config;
 
 	/** блокировщик */
 	protected final Lock lock;
-
-	/** счетчик записи пакета */
-	protected volatile int write;
-
-	/** флаг закрытости конекта */
-	protected volatile boolean closed;
 
 	/** время последней активности конекта */
 	protected long lastActive;
@@ -56,46 +55,41 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	/**
 	 * Обработчик чтения пакетов.
 	 */
-	private final CompletionHandler<Integer, AbstractAsynConnection> readHandler = new CompletionHandler<Integer, AbstractAsynConnection>()
-	{
+	private final CompletionHandler<Integer, AbstractAsynConnection> readHandler = new CompletionHandler<Integer, AbstractAsynConnection>() {
+
 		@Override
-		public void completed(Integer result, AbstractAsynConnection attachment)
-		{
-			// если канал закрыт
-			if(result.intValue() == -1)
-			{
+		public void completed(Integer result, AbstractAsynConnection attachment) {
+
+			if(result.intValue() == -1) {
 				finish();
 				return;
 			}
 
-			// обновляем время последней активности
+			AsynchronousSocketChannel channel = getChannel();
+			ByteBuffer readBuffer = getReadBuffer();
+
 			setLastActive(System.currentTimeMillis());
 
-			// подготавливаем к обработки
 			readBuffer.flip();
-			
-			// если пакеты полностью прочитаны
-			if(isReady(readBuffer))
-				// обработка прочитанных пакетов
+
+			if(isReady(readBuffer)) {
 				readPacket(readBuffer);
+			}
 
-			// очищаем
 			readBuffer.clear();
-
-			// ставимся опять на ожидание новых байтов
 			channel.read(readBuffer, attachment, this);
 		}
 
 		@Override
-		public void failed(Throwable exc, AbstractAsynConnection attachment)
-		{
-			if(config.isVesibleReadException())
-				// выводим лог ошибки
-				log.warning(this, new Exception(exc));
+		public void failed(Throwable exc, AbstractAsynConnection attachment) {
 
-			// если закрыт конект, выходим
-			if(isClosed())
+			if(config.isVesibleReadException()) {
+				LOGGER.warning(this, exc);
+			}
+
+			if(isClosed()) {
 				return;
+			}
 
 			finish();
 		}
@@ -104,96 +98,93 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	/**
 	 * Обработчик записи пакетов.
 	 */
-	private final CompletionHandler<Integer, S> writeHandler = new CompletionHandler<Integer, S>()
-	{
+	private final CompletionHandler<Integer, S> writeHandler = new CompletionHandler<Integer, S>() {
+
 		@Override
-		public void completed(Integer result, S packet)
-		{
-			// если канал закрыт
-			if(result.intValue() == -1)
-			{
+		public void completed(Integer result, S packet) {
+
+			if(result.intValue() == -1) {
 				finish();
 				return;
 			}
 
-			// если не доконца записали
-			if(writeBuffer.remaining() > 0)
-			{
-				// дозаписываем
+			AsynchronousSocketChannel channel = getChannel();
+			ByteBuffer writeBuffer = getWriteBuffer();
+
+			AtomicInteger writeCounter = getWriteCounter();
+
+			if(writeBuffer.remaining() > 0) {
 				channel.write(writeBuffer, packet, this);
 				return;
 			}
 
-			// обновляем время последней активности
+			writeCounter.decrementAndGet();
+
 			setLastActive(System.currentTimeMillis());
-
-			// уменьшаем счетчик записи
-			write -= 1;
-
-			// переходим к записи следующего пакета
 			writeNextPacket();
 		}
 
 		@Override
-		public void failed(Throwable exc, S packet)
-		{
-			if(config.isVesibleWriteException())
-				// записываем в лог сообщение об кривом пакете
-				log.warning(this, new Exception("incorrect write packet " + packet, exc));
+		public void failed(Throwable exc, S packet) {
 
-			if(isClosed())
+			if(config.isVesibleWriteException()) {
+				LOGGER.warning(this, new Exception("incorrect write packet " + packet, exc));
+			}
+
+			if(isClosed()) {
 				return;
-			
-			// уменьшаем счетчик записи
-			write -= 1;
+			}
 
-			// записываем след. пакет
+			AtomicInteger writeCounter = getWriteCounter();
+			writeCounter.decrementAndGet();
+
 			writeNextPacket();
 		}
 	};
 
-	public AbstractAsynConnection(N network, AsynchronousSocketChannel channel, Class<S> sendableType)
-	{
+	public AbstractAsynConnection(N network, AsynchronousSocketChannel channel, Class<S> sendableType) {
 		this.lock = Locks.newLock();
 		this.channel = channel;
-		this.waitPackets = Arrays.toArray(sendableType);
+		this.waitPackets = LinkedLists.newLinkedList(sendableType);
 		this.network = network;
 		this.readBuffer = network.getReadByteBuffer();
 		this.writeBuffer = network.getWriteByteBuffer();
 		this.config = network.getConfig();
+		this.writeCounter = new AtomicInteger();
+		this.closed = new AtomicBoolean(false);
 	}
 
 	@Override
-	public void close()
-	{
+	public void close() {
+
+		AsynchronousSocketChannel channel = getChannel();
+		ByteBuffer writeBuffer = getWriteBuffer();
+		ByteBuffer readBuffer = getReadBuffer();
+
+		LinkedList<S> waitPackets = getWaitPackets();
+		N network = getNetwork();
+
 		lock.lock();
-		try
-		{
-			if(isClosed())
+		try {
+
+			if(isClosed()) {
 				return;
+			}
 
-			// если конал открыт
-			if(channel.isOpen())
-				// закрываем канал
+			if(channel.isOpen()) {
 				channel.close();
+			}
 
-			// ставим флаг закрытия
 			setClosed(true);
 
-			// слаживаем в пул читаемый буффер
 			network.putReadByteBuffer(readBuffer);
-			// слаживаем в пул записываемый буффер
 			network.putWriteByteBuffer(writeBuffer);
 
-			// очищаем от ожидающихся пакетов
 			waitPackets.clear();
-		}
-		catch(IOException e)
-		{
-			log.warning(this, e);
-		}
-		finally
-		{
+
+		} catch(IOException e) {
+			LOGGER.warning(this, e);
+		} finally {
 			lock.unlock();
 		}
 	}
@@ -204,47 +195,42 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	protected abstract void finish();
 
 	@Override
-	public final long getLastActive()
-	{
+	public final long getLastActive() {
 		return lastActive;
 	}
 
 	/**
 	 * @return буффер для чтения пакета.
 	 */
-	protected final ByteBuffer getReadBuffer()
-	{
+	protected final ByteBuffer getReadBuffer() {
 		return readBuffer;
 	}
 
 	/**
 	 * @return буффер для записи пакета.
 	 */
-	protected final ByteBuffer getWriteBuffer()
-	{
+	protected final ByteBuffer getWriteBuffer() {
 		return writeBuffer;
 	}
 
 	@Override
-	public final boolean isClosed()
-	{
-		return closed;
+	public final boolean isClosed() {
+		return closed.get();
 	}
-	
+
 	/**
 	 * Проверка готовности пакета к обработке.
 	 * 
 	 * @param buffer прочтенный пакет.
 	 * @return можно ли начинать обработку.
 	 */
-	protected boolean isReady(ByteBuffer buffer)
-	{
+	protected boolean isReady(ByteBuffer buffer) {
 		return true;
 	}
 
 	/**
 	 * Перенос данных с пакета в буффер.
-	 *
+	 * 
 	 * @param packet отправляемый пакет.
 	 * @param buffer буффер, в который надо перенести.
 	 */
@@ -259,85 +245,115 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 
 	/**
 	 * Чтение и обработка клиентского пакета.
-	 *
+	 * 
 	 * @param buffer буффер данных.
 	 */
 	protected abstract void readPacket(ByteBuffer buffer);
 
 	@Override
-	public final void sendPacket(S packet)
-	{
+	public final void sendPacket(S packet) {
+
 		lock.lock();
-		try
-		{
-			// добавлям пакет в список ожидающих
-			waitPackets.add(packet);
-		}
-		finally
-		{
+		try {
+			getWaitPackets().add(packet);
+		} finally {
 			lock.unlock();
 		}
 
-		// пробуем записать пакет
 		writeNextPacket();
 	}
 
 	/**
 	 * @param closed закрыт ли конект.
 	 */
-	protected final void setClosed(boolean closed)
-	{
-		this.closed = closed;
+	protected final void setClosed(boolean closed) {
+		this.closed.getAndSet(closed);
 	}
-	
+
 	@Override
-	public final void setLastActive(long lastActive)
-	{
+	public final void setLastActive(long lastActive) {
 		this.lastActive = lastActive;
 	}
-	
+
 	@Override
-	public final void startRead()
-	{
-		// очищаем на всякий буффер
+	public final void startRead() {
 		readBuffer.clear();
-		// ложим на ожидание клиентских пакетов
 		channel.read(readBuffer, this, readHandler);
 	}
-	
+
 	/**
 	 * Запись следующего ожидающего пакета.
 	 */
-	protected final void writeNextPacket()
-	{
-		lock.lock();
-		try
-		{
-			if(isClosed() || write > 0)
-				return;
+	protected final void writeNextPacket() {
 
-			// пытаемся извлеч ожидающий записи пакет
+		CompletionHandler<Integer, S> writeHandler = getWriteHandler();
+		LinkedList<S> waitPackets = getWaitPackets();
+		ByteBuffer writeBuffer = getWriteBuffer();
+		AtomicInteger writeCounter = getWriteCounter();
+
+		lock.lock();
+		try {
+
+			if(isClosed() || writeCounter.get() > 0) {
+				return;
+			}
+
 			S waitPacket = waitPackets.poll();
 
-			// если ожидающих пакетов нет, выходим
-			if(waitPacket == null)
+			if(waitPacket == null) {
 				return;
+			}
 
-			// увеличиваем счетчик записи
-			write += 1;
+			writeCounter.incrementAndGet();
 
-			// переносим данные с пакета в буффер
 			movePacketToBuffer(waitPacket, writeBuffer);
-
-			// отправляем на запись пакет
-			channel.write(writeBuffer, waitPacket, writeHandler);
-
-			// обрабатываем завершение отправки
+			getChannel().write(writeBuffer, waitPacket, writeHandler);
 			onWrited(waitPacket);
-		}
-		finally
-		{
+
+		} finally {
 			lock.unlock();
 		}
+	}
+
+	/**
+	 * @return счетчик ожидающих отправки пакетов.
+	 */
+	protected AtomicInteger getWriteCounter() {
+		return writeCounter;
+	}
+
+	/**
+	 * @return список ожидающих пакетов на отправку.
+	 */
+	protected LinkedList<S> getWaitPackets() {
+		return waitPackets;
+	}
+
+	/**
+	 * @return Обработчик записи пакетов.
+	 */
+	protected CompletionHandler<Integer, S> getWriteHandler() {
+		return writeHandler;
+	}
+
+	/**
+	 * @return канал конекта.
+	 */
+	protected AsynchronousSocketChannel getChannel() {
+		return channel;
+	}
+
+	/**
+	 * @return модель сети, в которой этот коннект.
+	 */
+	protected N getNetwork() {
+		return network;
+	}
+
+	/**
+	 * @return Обработчик чтения пакетов.
+	 */
+	protected CompletionHandler<Integer, AbstractAsynConnection> getReadHandler() {
+		return readHandler;
 	}
 }

@@ -2,6 +2,7 @@ package rlib.network.packets;
 
 import java.nio.ByteBuffer;
 
+import rlib.concurrent.atomic.AtomicInteger;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.Strings;
@@ -18,19 +19,23 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 	protected static final Logger LOGGER = Loggers.getLogger(SendablePacket.class);
 
 	/** счетчик добавлений на отправку экземпляра пакета */
-	protected volatile int counter;
+	protected final AtomicInteger counter;
+
+	public AbstractSendablePacket() {
+		this.counter = new AtomicInteger();
+	}
 
 	@Override
 	public abstract void complete();
 
 	@Override
 	public final void decreaseSends() {
-		counter -= 1;
+		counter.decrementAndGet();
 	}
 
 	@Override
 	public void decreaseSends(int count) {
-		counter -= count;
+		counter.subAndGet(count);
 	}
 
 	@Override
@@ -39,12 +44,12 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 
 	@Override
 	public final void increaseSends() {
-		counter += 1;
+		counter.incrementAndGet();
 	}
 
 	@Override
 	public void increaseSends(int count) {
-		counter += count;
+		counter.addAndGet(count);
 	}
 
 	@Override
@@ -54,13 +59,13 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 
 	@Override
 	public void reinit() {
-		counter = 0;
+		counter.getAndSet(0);
 	}
 
 	@Override
 	public void write(ByteBuffer buffer) {
-		// если пакет уже запулизирован
-		if(counter < 0) {
+
+		if(counter.get() < 0) {
 			LOGGER.warning(this, "write pooled packet");
 			return;
 		}
@@ -129,8 +134,8 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 
 	@Override
 	public void writeLocal() {
-		// если пакет уже запулизирован
-		if(counter < 0) {
+
+		if(counter.get() < 0) {
 			LOGGER.warning(this, "write local pooled packet");
 			return;
 		}

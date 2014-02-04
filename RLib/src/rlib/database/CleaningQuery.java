@@ -5,19 +5,18 @@ package rlib.database;
  * 
  * @author Ronn
  */
-public final class CleaningQuery
-{
+public final class CleaningQuery {
+
 	/** название таблицы, которую очищает запрос */
 	private String name;
 	/** содержание запроса */
 	private String query;
-	
+
 	/**
 	 * @param name имя таблицы
 	 * @param query запрос
 	 */
-	public CleaningQuery(String name, String query)
-	{
+	public CleaningQuery(String name, String query) {
 		this.name = name;
 		this.query = query;
 	}
@@ -25,16 +24,14 @@ public final class CleaningQuery
 	/**
 	 * @return name название запроса.
 	 */
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * @return query содержание запроса.
 	 */
-	public String getQuery()
-	{
+	public String getQuery() {
 		return query;
 	}
 }

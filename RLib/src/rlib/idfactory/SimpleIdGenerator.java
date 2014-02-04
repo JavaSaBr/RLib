@@ -1,5 +1,7 @@
 package rlib.idfactory;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Модель простого генератора ид.
  * 
@@ -12,7 +14,7 @@ public final class SimpleIdGenerator implements IdGenerator {
 	private final int end;
 
 	/** следующий ид */
-	private volatile int nextId;
+	private final AtomicInteger nextId;
 
 	/**
 	 * @param start стартовый ид генератора.
@@ -21,18 +23,13 @@ public final class SimpleIdGenerator implements IdGenerator {
 	public SimpleIdGenerator(int start, int end) {
 		this.start = start;
 		this.end = end;
-		this.nextId = start;
+		this.nextId = new AtomicInteger(start);
 	}
 
 	@Override
-	public synchronized int getNextId() {
-
-		if(nextId == end) {
-			nextId = start;
-		}
-
-		nextId += 1;
-		return nextId;
+	public int getNextId() {
+		nextId.compareAndSet(end, start);
+		return nextId.incrementAndGet();
 	}
 
 	@Override
@@ -45,6 +42,6 @@ public final class SimpleIdGenerator implements IdGenerator {
 
 	@Override
 	public int usedIds() {
-		return nextId - start;
+		return nextId.get() - start;
 	}
 }

@@ -128,14 +128,14 @@ public abstract class Util {
 		String className = cs.getName();
 
 		final StringBuilder builder = new StringBuilder(className.length());
-		builder.append(File.separatorChar);
+		builder.append('/');
 
 		for(int i = 0, length = className.length(); i < length; i++) {
 
 			char ch = className.charAt(i);
 
 			if(ch == '.') {
-				ch = File.separatorChar;
+				ch = '/';
 			}
 
 			builder.append(ch);
@@ -151,11 +151,34 @@ public abstract class Util {
 
 			String path = url.getPath();
 			path = path.substring(0, path.length() - className.length());
-			path = path.substring(0, path.lastIndexOf(File.separatorChar));
+			path = path.substring(0, path.lastIndexOf('/'));
 
 			final URI uri = new URI(path);
 			path = uri.getPath();
 			path = path.replaceAll("%20", " ");
+
+			// замена сепараторов
+			if(File.separatorChar != '/') {
+
+				StringBuilder pathBuilder = new StringBuilder();
+
+				for(int i = 0, length = path.length(); i < length; i++) {
+
+					char ch = path.charAt(i);
+
+					if(ch == '/' && i == 0) {
+						continue;
+					}
+
+					if(ch == '/') {
+						ch = File.separatorChar;
+					}
+
+					pathBuilder.append(ch);
+				}
+
+				path = pathBuilder.toString();
+			}
 
 			File file = new File(path);
 
@@ -204,6 +227,16 @@ public abstract class Util {
 	 * @return строка с дампом.
 	 */
 	public static String hexdump(final byte[] array, final int size) {
+		return hexdump(array, 0, size);
+	}
+
+	/**
+	 * Формирования дампа байтов в хексе.
+	 * 
+	 * @param array массив байтов.
+	 * @return строка с дампом.
+	 */
+	public static String hexdump(final byte[] array, final int offset, final int size) {
 
 		final StringBuilder builder = new StringBuilder();
 
@@ -216,7 +249,7 @@ public abstract class Util {
 			chars[g] = '.';
 		}
 
-		for(int i = 0; i < size; i++) {
+		for(int i = offset; i < size; i++) {
 
 			int val = array[i];
 

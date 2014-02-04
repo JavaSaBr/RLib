@@ -10,52 +10,49 @@ import rlib.network.GameCrypt;
 import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
 
-
 /**
  * Базовая модель сервера, к которому подключается клиент.
  * 
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt> implements Server<C>
-{
-	protected static final Logger log = Loggers.getLogger("Server");
-	
+public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt> implements Server<C> {
+
+	protected static final Logger LOGGER = Loggers.getLogger(Server.class);
+
 	/** блокировщик */
 	protected final Lock lock;
 	/** коннект к логин серверу */
 	protected final C connection;
 	/** криптор пакетов */
 	protected final T crypt;
-	
+
 	/** закрыт ли клиент */
 	protected boolean closed;
-	
-	protected AbstractServer(C connection, T crypt)
-	{
+
+	protected AbstractServer(C connection, T crypt) {
 		this.connection = connection;
 		this.lock = Locks.newLock();
 		this.crypt = crypt;
 	}
 
 	@Override
-	public void close()
-	{
+	public void close() {
+
 		C connection = getConnection();
-		
-		if(connection != null)
+
+		if(connection != null) {
 			connection.close();
+		}
 	}
 
 	@Override
-	public void decrypt(ByteBuffer data, int offset, int length)
-	{
+	public void decrypt(ByteBuffer data, int offset, int length) {
 		crypt.decrypt(data.array(), offset, length);
 	}
-	
+
 	@Override
-	public void encrypt(ByteBuffer data, int offset, int length)
-	{
+	public void encrypt(ByteBuffer data, int offset, int length) {
 		crypt.encrypt(data.array(), offset, length);
 	}
 
@@ -64,79 +61,66 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 	 * 
 	 * @param packet выполняемый пакет.
 	 */
-	protected abstract void executePacket(ReadeablePacket packet);
+	protected abstract void execute(ReadeablePacket packet);
 
 	@Override
-	public C getConnection()
-	{
+	public C getConnection() {
 		return connection;
 	}
 
 	@Override
-	public boolean isConnected()
-	{
+	public boolean isConnected() {
 		return !closed && connection != null && !connection.isClosed();
 	}
 
 	@Override
-	public final void lock()
-	{
+	public final void lock() {
 		lock.lock();
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void readPacket(ReadeablePacket packet, ByteBuffer buffer)
-	{
-		if(packet != null)
-		{
-			// устанавливаем заполненый буффер
+	public final void readPacket(ReadeablePacket packet, ByteBuffer buffer) {
+
+		if(packet != null) {
+
 			packet.setBuffer(buffer);
-			// устанавливаем сервер
 			packet.setOwner(this);
-			
-			//читаем пакет
-			if(packet.read())
-				//если успешно пакет прочитан, ложим в очередь на обработку
-				executePacket(packet);
-			
-			//удаляем буффер с пакета
-			packet.setBuffer(null);
+
+			if(packet.read()) {
+				packet.setBuffer(null);
+				execute(packet);
+			}
 		}
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void sendPacket(SendablePacket packet)
-	{
-		if(closed)
+	public final void sendPacket(SendablePacket packet) {
+
+		if(closed) {
 			return;
-		
-		lock.lock();
-		try
-		{
-			// получаем конект к серверу
+		}
+
+		lock();
+		try {
+
 			C connection = getConnection();
-			
-			// если его нет, ds[jlbv
-			if(connection == null)
-			{
-				log.warning(this, new Exception("not found connection"));
+
+			if(connection == null) {
+				LOGGER.warning(this, new Exception("not found connection"));
 				return;
 			}
-			
-			// добавляем пакет на отправку
+
 			connection.sendPacket(packet);
-		}
-		finally
-		{
-			lock.unlock();
+
+		} finally {
+			unlock();
 		}
 	}
 
 	@Override
-	public final void unlock()
-	{
+	public final void unlock() {
 		lock.unlock();
 	}
 }

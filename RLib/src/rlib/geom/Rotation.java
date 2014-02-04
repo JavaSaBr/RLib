@@ -638,15 +638,19 @@ public class Rotation {
 	 * Создание случайного разворота.
 	 */
 	public void random() {
-		Random random = RANDOM_LOCAL.get();
-		fromAngles(random.nextInt(0, 360), random.nextInt(0, 360), random.nextInt(0, 360));
+		random(RANDOM_LOCAL.get());
 	}
 
 	/**
 	 * Создание случайного разворота.
 	 */
 	public void random(Random random) {
-		fromAngles(random.nextInt(0, 360), random.nextInt(0, 360), random.nextInt(0, 360));
+
+		float x = Angles.degreeToRadians(random.nextInt(0, 360));
+		float y = Angles.degreeToRadians(random.nextInt(0, 360));
+		float z = Angles.degreeToRadians(random.nextInt(0, 360));
+
+		fromAngles(x, y, z);
 	}
 
 	@Override

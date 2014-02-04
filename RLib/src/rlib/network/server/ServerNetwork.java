@@ -7,22 +7,21 @@ import java.nio.channels.CompletionHandler;
 
 import rlib.network.AsynchronousNetwork;
 
-
 /**
  * Интерфейс для реализации модели асинхронной серверной сети.
  * 
  * @author Ronn
  */
-public interface ServerNetwork extends AsynchronousNetwork
-{
+public interface ServerNetwork extends AsynchronousNetwork {
+
 	/**
 	 * Отдать хандлер на ожидание конекта клиента.
 	 * 
 	 * @param attachment дополнительный объект.
 	 * @param handler обработчик.
 	 */
-	public <A> void accept(A attachment, CompletionHandler<AsynchronousSocketChannel,? super A> handler);
-	
+	public <A> void accept(A attachment, CompletionHandler<AsynchronousSocketChannel, ? super A> handler);
+
 	/**
 	 * Бинд сокета под сеть.
 	 * 

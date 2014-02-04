@@ -10,13 +10,13 @@ import rlib.network.packets.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public interface ClientConnection<T extends Client, R extends ReadeablePacket<T>, S extends SendablePacket<T>> extends AsynConnection<R, S>
-{
+public interface ClientConnection<T extends Client, R extends ReadeablePacket<T>, S extends SendablePacket<T>> extends AsynConnection<R, S> {
+
 	/**
 	 * @return клиент.
 	 */
 	public T getClient();
-	
+
 	/**
 	 * Установка клиента.
 	 * 

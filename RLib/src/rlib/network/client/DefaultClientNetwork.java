@@ -52,7 +52,7 @@ public final class DefaultClientNetwork extends AbstractAsynchronousNetwork impl
 		}
 		catch(IOException e)
 		{
-			log.warning(this, e);
+			LOGGER.warning(this, e);
 		}
 
 		// производим попытку подключения к серверу

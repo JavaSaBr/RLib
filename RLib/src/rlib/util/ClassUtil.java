@@ -29,6 +29,15 @@ public final class ClassUtil {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> T newInstance(String className) {
+		try {
+			return (T) Class.forName(className).newInstance();
+		} catch(InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * Создание нового экземпляра класса через указанный конструктор.
 	 * 

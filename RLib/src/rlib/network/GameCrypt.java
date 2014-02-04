@@ -5,8 +5,8 @@ package rlib.network;
  * 
  * @author Ronn
  */
-public interface GameCrypt
-{
+public interface GameCrypt {
+
 	/**
 	 * Декриптовать массив байтов.
 	 * 
@@ -15,7 +15,7 @@ public interface GameCrypt
 	 * @param size кол-во необходимых байтов.
 	 */
 	public void decrypt(byte[] data, int offset, int length);
-	
+
 	/**
 	 * Закриптовать массив байтов
 	 * 

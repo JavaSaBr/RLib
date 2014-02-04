@@ -122,7 +122,7 @@ class ClassPathScanerImpl implements ClassPathScaner {
 
 				char ch = className.charAt(i);
 
-				if(ch == File.separatorChar) {
+				if(ch == '/') {
 					ch = '.';
 				}
 
@@ -189,6 +189,11 @@ class ClassPathScanerImpl implements ClassPathScaner {
 	 * @param jarFile ссылка на .jar фаил.
 	 */
 	private void scaningJar(Array<Class<?>> container, File jarFile) {
+
+		if(!jarFile.exists()) {
+			LOGGER.warning("not exists " + jarFile);
+			return;
+		}
 
 		try(JarFile jar = new JarFile(jarFile)) {
 

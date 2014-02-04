@@ -11,20 +11,19 @@ import rlib.network.GameCrypt;
 import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
 
-
 /**
  * Базовая модель серверного клиента.
  * 
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractClient<A, O, C extends AsynConnection, T extends GameCrypt> implements Client<A, O, C>
-{
-	protected static final Logger log = Loggers.getLogger("Client");
-	
+public abstract class AbstractClient<A, O, C extends AsynConnection, T extends GameCrypt> implements Client<A, O, C> {
+
+	protected static final Logger LOGGER = Loggers.getLogger(Client.class);
+
 	/** блокировщик */
 	private final Lock lock;
-	
+
 	/** владелец коннекта */
 	protected O owner;
 	/** аккаунт клиента */
@@ -33,138 +32,130 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	protected C connection;
 	/** криптор клиента */
 	protected T crypt;
-	
+
 	/** закрыт ли клиент */
 	protected boolean closed;
-	
-	public AbstractClient(C connection, T crypt)
-	{
+
+	public AbstractClient(C connection, T crypt) {
 		this.lock = Locks.newLock();
 		this.connection = connection;
 		this.crypt = crypt;
 	}
 
 	@Override
-	public void close()
-	{
+	public void close() {
+
 		C connection = getConnection();
-		
-		if(connection != null)
+
+		if(connection != null) {
 			connection.close();
-		
-		closed = true;
+		}
+
+		setClosed(true);
 	}
-	
+
+	/**
+	 * @param closed закрыт ли клиент.
+	 */
+	private void setClosed(boolean closed) {
+		this.closed = closed;
+	}
+
 	@Override
-	public void decrypt(ByteBuffer data, int offset, int length)
-	{
+	public void decrypt(ByteBuffer data, int offset, int length) {
 		crypt.decrypt(data.array(), offset, length);
 	}
-	
+
 	@Override
-	public void encrypt(ByteBuffer data, int offset, int length)
-	{
+	public void encrypt(ByteBuffer data, int offset, int length) {
 		crypt.encrypt(data.array(), offset, length);
 	}
-	
+
 	/**
 	 * @param packet обрабатываемый пакет.
 	 */
 	protected abstract void executePacket(ReadeablePacket packet);
-	
+
 	@Override
-	public final A getAccount()
-	{
+	public final A getAccount() {
 		return account;
 	}
-	
+
 	@Override
-	public final C getConnection()
-	{
+	public final C getConnection() {
 		return connection;
 	}
-	
+
 	@Override
-	public final O getOwner()
-	{
+	public final O getOwner() {
 		return owner;
 	}
 
 	@Override
-	public final boolean isConnected()
-	{
+	public final boolean isConnected() {
 		return !closed && connection != null && !connection.isClosed();
 	}
 
 	@Override
-	public final void lock()
-	{
+	public final void lock() {
 		lock.lock();
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void readPacket(ReadeablePacket packet, ByteBuffer buffer)
-	{
-		if(packet != null)
-		{
-			//устанавливаем заполненый буффер
+	public final void readPacket(ReadeablePacket packet, ByteBuffer buffer) {
+
+		if(packet != null) {
+
 			packet.setBuffer(buffer);
-			//устанавливаем клиент
 			packet.setOwner(this);
-			
-			//читаем пакет
-			if(packet.read())
-				//если успешно пакет прочитан, ложим в очередь на обработку
+
+			if(packet.read()) {
+				packet.setBuffer(null);
 				executePacket(packet);
-			
-			//удаляем буффер с пакета
-			packet.setBuffer(null);
+			}
 		}
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void sendPacket(SendablePacket packet)
-	{
-		if(closed)
+	public final void sendPacket(SendablePacket packet) {
+
+		if(closed) {
 			return;
-		
-		lock();
-		try
-		{
-			C connection = getConnection();
-			
-			if(connection != null)
-				connection.sendPacket(packet);
 		}
-		finally
-		{
+
+		lock();
+		try {
+
+			C connection = getConnection();
+
+			if(connection != null) {
+				connection.sendPacket(packet);
+			}
+
+		} finally {
 			unlock();
 		}
 	}
-	
+
 	@Override
-	public final void setAccount(A account)
-	{
+	public final void setAccount(A account) {
 		this.account = account;
 	}
-	
+
 	@Override
-	public final void setOwner(O owner)
-	{
+	public final void setOwner(O owner) {
 		this.owner = owner;
 	}
 
 	@Override
-	public void successfulConnection()
-	{
-		log.info(this, getHostAddress() + " successful connection."); 
+	public void successfulConnection() {
+		LOGGER.info(this, getHostAddress() + " successful connection.");
 	}
 
 	@Override
-	public final void unlock()
-	{
+	public final void unlock() {
 		lock.unlock();
 	}
 }

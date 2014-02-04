@@ -4,11 +4,11 @@ import java.nio.ByteBuffer;
 
 /**
  * Интерфейс для реализации отправляемых пакетов.
- *
+ * 
  * @author Ronn
  */
-public interface SendablePacket<C> extends Packet<C>
-{
+public interface SendablePacket<C> extends Packet<C> {
+
 	/**
 	 * Завершение записи в буффер.
 	 */
@@ -41,14 +41,14 @@ public interface SendablePacket<C> extends Packet<C>
 
 	/**
 	 * Записать пакет в указанный буфер.
-	 *
+	 * 
 	 * @param buffer локальный буффер.
 	 */
 	public void write(ByteBuffer buffer);
 
 	/**
 	 * Записать размер пакета вначало пакета.
-	 *
+	 * 
 	 * @param length размер пакета.
 	 */
 	public void writeHeader(ByteBuffer buffer, int length);
