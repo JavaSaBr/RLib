@@ -42,34 +42,34 @@ public class ExtScheduledFutureImpl<L, V> extends ExtFutureTaskImpl<L, V> implem
 	}
 
 	@Override
-	public long getDelay(TimeUnit unit) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public int compareTo(Delayed o) {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	public ScheduleType getScheduleType() {
-		return scheduleType;
-	}
-
-	public void setFirst(boolean first) {
-		this.first = first;
-	}
-
-	public boolean isFirst() {
-		return first;
 	}
 
 	public long getDelay() {
 		return delay;
 	}
 
+	@Override
+	public long getDelay(TimeUnit unit) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	public long getInterval() {
 		return interval;
+	}
+
+	public ScheduleType getScheduleType() {
+		return scheduleType;
+	}
+
+	public boolean isFirst() {
+		return first;
+	}
+
+	public void setFirst(boolean first) {
+		this.first = first;
 	}
 }

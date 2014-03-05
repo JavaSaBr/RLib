@@ -20,16 +20,16 @@ public interface FoldablePool<E extends Foldable> {
 	public void put(E object);
 
 	/**
-	 * Взять из пула объект.
-	 * 
-	 * @return объект из пула.
-	 */
-	public E take();
-
-	/**
 	 * Удаление из пула объекта.
 	 * 
 	 * @param object удаляемый объект.
 	 */
 	public void remove(E object);
+
+	/**
+	 * Взять из пула объект.
+	 * 
+	 * @return объект из пула.
+	 */
+	public E take();
 }

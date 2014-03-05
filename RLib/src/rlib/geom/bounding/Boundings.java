@@ -13,13 +13,13 @@ public final class Boundings {
 		return new AxisAlignedBoundingBox(center, offset, sizeX, sizeY, sizeZ);
 	}
 
-	public static Bounding newBoundingSphere(Vector center, Vector offset, int radius) {
-		return new BoundingSphere(center, offset, radius);
-	}
-
 	public static Bounding newBoundingEmpty() {
 		return new AbstractBounding(null, null) {
 		};
+	}
+
+	public static Bounding newBoundingSphere(Vector center, Vector offset, int radius) {
+		return new BoundingSphere(center, offset, radius);
 	}
 
 	private Boundings() {

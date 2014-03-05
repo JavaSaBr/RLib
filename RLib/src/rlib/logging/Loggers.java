@@ -57,6 +57,13 @@ public abstract class Loggers {
 	}
 
 	/**
+	 * @return массив слушателей логгера.
+	 */
+	public static LoggerListener[] getListeners() {
+		return listeners;
+	}
+
+	/**
 	 * Создает индивидуальный логгер с указаным именем.
 	 * 
 	 * @param cs класс, который запрашивает логгер
@@ -78,6 +85,13 @@ public abstract class Loggers {
 		Logger logger = new Logger(name);
 		LOGGERS.put(name, logger);
 		return logger;
+	}
+
+	/**
+	 * @return список дополнительных записчиков лога.
+	 */
+	public static Array<Writer> getWriters() {
+		return WRITERS;
 	}
 
 	/**
@@ -147,20 +161,6 @@ public abstract class Loggers {
 		}
 
 		System.err.println(text);
-	}
-
-	/**
-	 * @return список дополнительных записчиков лога.
-	 */
-	public static Array<Writer> getWriters() {
-		return WRITERS;
-	}
-
-	/**
-	 * @return массив слушателей логгера.
-	 */
-	public static LoggerListener[] getListeners() {
-		return listeners;
 	}
 
 	/**

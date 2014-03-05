@@ -39,16 +39,16 @@ public class Rotation {
 		return new Rotation();
 	}
 
+	public static Rotation newInstance(float angleX, float angleY, float angleZ) {
+		return newInstance().fromAngles(angleX, angleY, angleZ);
+	}
+
 	public static Rotation newInstance(float x, float y, float z, float w) {
 		return new Rotation(x, y, z, w);
 	}
 
 	public static Rotation newInstance(float[] vals) {
 		return new Rotation(vals[0], vals[1], vals[2], vals[3]);
-	}
-
-	public static Rotation newInstance(float angleX, float angleY, float angleZ) {
-		return newInstance().fromAngles(angleX, angleY, angleZ);
 	}
 
 	private float x;
@@ -68,6 +68,21 @@ public class Rotation {
 	}
 
 	/**
+	 * <code>add</code> adds the values of this quaternion to those of the
+	 * parameter quaternion. The result is stored in this Quaternion.
+	 * 
+	 * @param q the quaternion to add to this.
+	 * @return This Quaternion after addition.
+	 */
+	public Rotation addLocal(Rotation rotation) {
+		this.x += rotation.x;
+		this.y += rotation.y;
+		this.z += rotation.z;
+		this.w += rotation.w;
+		return this;
+	}
+
+	/**
 	 * Рассчет косинуса угла между текущим и указанным разворотом.
 	 * 
 	 * @param rotation сверяемый разворот.
@@ -75,6 +90,146 @@ public class Rotation {
 	 */
 	public float dot(Rotation rotation) {
 		return w * rotation.w + x * rotation.x + y * rotation.y + z * rotation.z;
+	}
+
+	@Override
+	public final boolean equals(Object obj) {
+
+		if(this == obj) {
+			return true;
+		}
+
+		if(obj == null) {
+			return false;
+		}
+
+		if(getClass() != obj.getClass()) {
+			return false;
+		}
+
+		Rotation other = (Rotation) obj;
+
+		if(Float.floatToIntBits(w) != Float.floatToIntBits(other.w)) {
+			return false;
+		}
+		if(Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
+			return false;
+		}
+		if(Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
+			return false;
+		}
+		if(Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Расчет разворота по углам в 3х осях.
+	 * 
+	 * @param angleX угол по оси X.
+	 * @param yAngle угол по оси Y.
+	 * @param zAngle угол по оси Z.
+	 */
+	public final Rotation fromAngles(float angleX, float yAngle, float zAngle) {
+
+		float angle = zAngle * 0.5f;
+
+		float sinZ = ExtMath.sin(angle);
+		float cosZ = ExtMath.cos(angle);
+
+		angle = yAngle * 0.5f;
+
+		float sinY = ExtMath.sin(angle);
+		float cosY = ExtMath.cos(angle);
+
+		angle = angleX * 0.5f;
+
+		float sinX = ExtMath.sin(angle);
+		float cosX = ExtMath.cos(angle);
+
+		float cosYXcosZ = cosY * cosZ;
+		float sinYXsinZ = sinY * sinZ;
+		float cosYXsinZ = cosY * sinZ;
+		float sinYXcosZ = sinY * cosZ;
+
+		w = (cosYXcosZ * cosX - sinYXsinZ * sinX);
+		x = (cosYXcosZ * sinX + sinYXsinZ * cosX);
+		y = (sinYXcosZ * cosX + cosYXsinZ * sinX);
+		z = (cosYXsinZ * cosX - sinYXcosZ * sinX);
+
+		normalizeLocal();
+
+		return this;
+	}
+
+	/**
+	 * Расчет разворота по углам в 3х осях.
+	 * 
+	 * @param angles угол наклона по осям.
+	 */
+	public final Rotation fromAngles(float[] angles) {
+		return fromAngles(angles[0], angles[1], angles[2]);
+	}
+
+	/**
+	 * 
+	 * <code>fromAxes</code> creates a <code>Quaternion</code> that represents
+	 * the coordinate system defined by three axes. These axes are assumed to be
+	 * orthogonal and no error checking is applied. Thus, the user must insure
+	 * that the three axes being provided indeed represents a proper right
+	 * handed coordinate system.
+	 * 
+	 * @param axisX vector representing the x-axis of the coordinate system.
+	 * @param axisY vector representing the y-axis of the coordinate system.
+	 * @param axisZ vector representing the z-axis of the coordinate system.
+	 */
+	public Rotation fromAxes(Vector axisX, Vector axisY, Vector axisZ) {
+		return fromRotationMatrix(axisX.getX(), axisY.getX(), axisZ.getX(), axisX.getY(), axisY.getY(), axisZ.getY(), axisX.getZ(), axisY.getZ(), axisZ.getZ());
+	}
+
+	public Rotation fromRotationMatrix(float val_0_0, float val_0_1, float val_0_2, float val_1_0, float val_1_1, float val_1_2, float val_2_0, float val_2_1, float val_2_2) {
+		// Use the Graphics Gems code, from
+		// ftp://ftp.cis.upenn.edu/pub/graphics/shoemake/quatut.ps.Z
+		// *NOT* the "Matrix and Quaternions FAQ", which has errors!
+
+		// the trace is the sum of the diagonal elements; see
+		// http://mathworld.wolfram.com/MatrixTrace.html
+		float t = val_0_0 + val_1_1 + val_2_2;
+
+		// we protect the division by s by ensuring that s>=1
+		if(t >= 0) { // |w| >= .5
+			float s = ExtMath.sqrt(t + 1); // |s|>=1 ...
+			w = 0.5f * s;
+			s = 0.5f / s; // so this division isn't bad
+			x = (val_2_1 - val_1_2) * s;
+			y = (val_0_2 - val_2_0) * s;
+			z = (val_1_0 - val_0_1) * s;
+		} else if((val_0_0 > val_1_1) && (val_0_0 > val_2_2)) {
+			float s = ExtMath.sqrt(1.0f + val_0_0 - val_1_1 - val_2_2); // |s|>=1
+			x = s * 0.5f; // |x| >= .5
+			s = 0.5f / s;
+			y = (val_1_0 + val_0_1) * s;
+			z = (val_0_2 + val_2_0) * s;
+			w = (val_2_1 - val_1_2) * s;
+		} else if(val_1_1 > val_2_2) {
+			float s = ExtMath.sqrt(1.0f + val_1_1 - val_0_0 - val_2_2); // |s|>=1
+			y = s * 0.5f; // |y| >= .5
+			s = 0.5f / s;
+			x = (val_1_0 + val_0_1) * s;
+			z = (val_2_1 + val_1_2) * s;
+			w = (val_0_2 - val_2_0) * s;
+		} else {
+			float s = ExtMath.sqrt(1.0f + val_2_2 - val_0_0 - val_1_1); // |s|>=1
+			z = s * 0.5f; // |z| >= .5
+			s = 0.5f / s;
+			x = (val_0_2 + val_2_0) * s;
+			y = (val_2_1 + val_1_2) * s;
+			w = (val_1_0 - val_0_1) * s;
+		}
+
+		return this;
 	}
 
 	/**
@@ -157,11 +312,116 @@ public class Rotation {
 		return z;
 	}
 
+	@Override
+	public final int hashCode() {
+
+		final int prime = 31;
+		int result = 1;
+
+		result = prime * result + Float.floatToIntBits(w);
+		result = prime * result + Float.floatToIntBits(x);
+		result = prime * result + Float.floatToIntBits(y);
+		result = prime * result + Float.floatToIntBits(z);
+
+		return result;
+	}
+
+	/**
+	 * Рассчитать разворот, который будет смотреть в указанном напралвении.
+	 * 
+	 * @param direction направление, куда нужно смотреть.
+	 * @param up вектор для ориаентации где верх а где низ.
+	 * @param buffer буффер векторов для рассчета.
+	 */
+	public void lookAt(Vector direction, Vector up, VectorBuffer buffer) {
+
+		Vector first = buffer.getNextVector();
+		first.set(direction).normalizeLocal();
+
+		Vector second = buffer.getNextVector();
+		second.set(up).crossLocal(direction).normalizeLocal();
+
+		Vector thrid = buffer.getNextVector();
+		thrid.set(direction).crossLocal(second).normalizeLocal();
+
+		fromAxes(second, thrid, first);
+		normalizeLocal();
+	}
+
+	/**
+	 * Приминение разворота на вектор.
+	 * 
+	 * @param vector вектор, который надо развернуть.
+	 * @return полученный вектор.
+	 */
+	public final Vector multLocal(Vector vector) {
+
+		float vectorX = vector.getX();
+		float vectorY = vector.getY();
+		float vectorZ = vector.getZ();
+
+		float x = getX();
+		float y = getY();
+		float z = getZ();
+		float w = getW();
+
+		vector.setX(w * w * vectorX + 2 * y * w * vectorZ - 2 * z * w * vectorY + x * x * vectorX + 2 * y * x * vectorY + 2 * z * x * vectorZ - z * z * vectorX - y * y * vectorX);
+		vector.setY(2 * x * y * vectorX + y * y * vectorY + 2 * z * y * vectorZ + 2 * w * z * vectorX - z * z * vectorY + w * w * vectorY - 2 * x * w * vectorZ - x * x * vectorY);
+		vector.setZ(2 * x * z * vectorX + 2 * y * z * vectorY + z * z * vectorZ - 2 * w * y * vectorX - y * y * vectorZ + 2 * w * x * vectorY - x * x * vectorZ + w * w * vectorZ);
+
+		return vector;
+	}
+
+	/**
+	 * @return перевернуть значения.
+	 */
+	public final Rotation negateLocal() {
+		x = -x;
+		y = -y;
+		z = -z;
+		w = -w;
+		return this;
+	}
+
 	/**
 	 * @return норма этого разворота.
 	 */
 	public float norm() {
 		return w * w + x * x + y * y + z * z;
+	}
+
+	/**
+	 * Нормализация текущего разворота.
+	 */
+	public final Rotation normalizeLocal() {
+
+		float norm = ExtMath.invSqrt(norm());
+
+		x *= norm;
+		y *= norm;
+		z *= norm;
+		w *= norm;
+
+		return this;
+	}
+
+	/**
+	 * Создание случайного разворота.
+	 */
+	public void random() {
+		random(RANDOM_LOCAL.get());
+	}
+
+	/**
+	 * Создание случайного разворота.
+	 */
+	public void random(Random random) {
+
+		float x = Angles.degreeToRadians(random.nextInt(0, 360));
+		float y = Angles.degreeToRadians(random.nextInt(0, 360));
+		float z = Angles.degreeToRadians(random.nextInt(0, 360));
+
+		fromAngles(x, y, z);
 	}
 
 	public Rotation set(Rotation rotation) {
@@ -304,6 +564,21 @@ public class Rotation {
 	}
 
 	/**
+	 * <code>subtract</code> subtracts the values of the parameter quaternion
+	 * from those of this quaternion. The result is stored in this Quaternion.
+	 * 
+	 * @param rotation the quaternion to subtract from this.
+	 * @return This Quaternion after subtraction.
+	 */
+	public Rotation subtractLocal(Rotation rotation) {
+		this.x -= rotation.x;
+		this.y -= rotation.y;
+		this.z -= rotation.z;
+		this.w -= rotation.w;
+		return this;
+	}
+
+	/**
 	 * <code>toAngleAxis</code> sets a given angle and axis to that represented
 	 * by the current quaternion. The values are stored as follows: The axis is
 	 * provided as a parameter and built by the method, the angle is returned as
@@ -376,281 +651,6 @@ public class Rotation {
 
 		result.set(1 - (yy + zz), xy - zw, xz + yw, xy + zw, 1 - (xx + zz), yz - xw, xz - yw, yz + xw, 1 - (xx + yy));
 		return result;
-	}
-
-	/**
-	 * Приминение разворота на вектор.
-	 * 
-	 * @param vector вектор, который надо развернуть.
-	 * @return полученный вектор.
-	 */
-	public final Vector multLocal(Vector vector) {
-
-		float vectorX = vector.getX();
-		float vectorY = vector.getY();
-		float vectorZ = vector.getZ();
-
-		float x = getX();
-		float y = getY();
-		float z = getZ();
-		float w = getW();
-
-		vector.setX(w * w * vectorX + 2 * y * w * vectorZ - 2 * z * w * vectorY + x * x * vectorX + 2 * y * x * vectorY + 2 * z * x * vectorZ - z * z * vectorX - y * y * vectorX);
-		vector.setY(2 * x * y * vectorX + y * y * vectorY + 2 * z * y * vectorZ + 2 * w * z * vectorX - z * z * vectorY + w * w * vectorY - 2 * x * w * vectorZ - x * x * vectorY);
-		vector.setZ(2 * x * z * vectorX + 2 * y * z * vectorY + z * z * vectorZ - 2 * w * y * vectorX - y * y * vectorZ + 2 * w * x * vectorY - x * x * vectorZ + w * w * vectorZ);
-
-		return vector;
-	}
-
-	/**
-	 * Расчет разворота по углам в 3х осях.
-	 * 
-	 * @param angles угол наклона по осям.
-	 */
-	public final Rotation fromAngles(float[] angles) {
-		return fromAngles(angles[0], angles[1], angles[2]);
-	}
-
-	/**
-	 * Расчет разворота по углам в 3х осях.
-	 * 
-	 * @param angleX угол по оси X.
-	 * @param yAngle угол по оси Y.
-	 * @param zAngle угол по оси Z.
-	 */
-	public final Rotation fromAngles(float angleX, float yAngle, float zAngle) {
-
-		float angle = zAngle * 0.5f;
-
-		float sinZ = ExtMath.sin(angle);
-		float cosZ = ExtMath.cos(angle);
-
-		angle = yAngle * 0.5f;
-
-		float sinY = ExtMath.sin(angle);
-		float cosY = ExtMath.cos(angle);
-
-		angle = angleX * 0.5f;
-
-		float sinX = ExtMath.sin(angle);
-		float cosX = ExtMath.cos(angle);
-
-		float cosYXcosZ = cosY * cosZ;
-		float sinYXsinZ = sinY * sinZ;
-		float cosYXsinZ = cosY * sinZ;
-		float sinYXcosZ = sinY * cosZ;
-
-		w = (cosYXcosZ * cosX - sinYXsinZ * sinX);
-		x = (cosYXcosZ * sinX + sinYXsinZ * cosX);
-		y = (sinYXcosZ * cosX + cosYXsinZ * sinX);
-		z = (cosYXsinZ * cosX - sinYXcosZ * sinX);
-
-		normalizeLocal();
-
-		return this;
-	}
-
-	/**
-	 * Нормализация текущего разворота.
-	 */
-	public final Rotation normalizeLocal() {
-
-		float norm = ExtMath.invSqrt(norm());
-
-		x *= norm;
-		y *= norm;
-		z *= norm;
-		w *= norm;
-
-		return this;
-	}
-
-	@Override
-	public final int hashCode() {
-
-		final int prime = 31;
-		int result = 1;
-
-		result = prime * result + Float.floatToIntBits(w);
-		result = prime * result + Float.floatToIntBits(x);
-		result = prime * result + Float.floatToIntBits(y);
-		result = prime * result + Float.floatToIntBits(z);
-
-		return result;
-	}
-
-	@Override
-	public final boolean equals(Object obj) {
-
-		if(this == obj) {
-			return true;
-		}
-
-		if(obj == null) {
-			return false;
-		}
-
-		if(getClass() != obj.getClass()) {
-			return false;
-		}
-
-		Rotation other = (Rotation) obj;
-
-		if(Float.floatToIntBits(w) != Float.floatToIntBits(other.w)) {
-			return false;
-		}
-		if(Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
-			return false;
-		}
-		if(Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
-			return false;
-		}
-		if(Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * @return перевернуть значения.
-	 */
-	public final Rotation negateLocal() {
-		x = -x;
-		y = -y;
-		z = -z;
-		w = -w;
-		return this;
-	}
-
-	/**
-	 * Рассчитать разворот, который будет смотреть в указанном напралвении.
-	 * 
-	 * @param direction направление, куда нужно смотреть.
-	 * @param up вектор для ориаентации где верх а где низ.
-	 * @param buffer буффер векторов для рассчета.
-	 */
-	public void lookAt(Vector direction, Vector up, VectorBuffer buffer) {
-
-		Vector first = buffer.getNextVector();
-		first.set(direction).normalizeLocal();
-
-		Vector second = buffer.getNextVector();
-		second.set(up).crossLocal(direction).normalizeLocal();
-
-		Vector thrid = buffer.getNextVector();
-		thrid.set(direction).crossLocal(second).normalizeLocal();
-
-		fromAxes(second, thrid, first);
-		normalizeLocal();
-	}
-
-	/**
-	 * 
-	 * <code>fromAxes</code> creates a <code>Quaternion</code> that represents
-	 * the coordinate system defined by three axes. These axes are assumed to be
-	 * orthogonal and no error checking is applied. Thus, the user must insure
-	 * that the three axes being provided indeed represents a proper right
-	 * handed coordinate system.
-	 * 
-	 * @param axisX vector representing the x-axis of the coordinate system.
-	 * @param axisY vector representing the y-axis of the coordinate system.
-	 * @param axisZ vector representing the z-axis of the coordinate system.
-	 */
-	public Rotation fromAxes(Vector axisX, Vector axisY, Vector axisZ) {
-		return fromRotationMatrix(axisX.getX(), axisY.getX(), axisZ.getX(), axisX.getY(), axisY.getY(), axisZ.getY(), axisX.getZ(), axisY.getZ(), axisZ.getZ());
-	}
-
-	public Rotation fromRotationMatrix(float val_0_0, float val_0_1, float val_0_2, float val_1_0, float val_1_1, float val_1_2, float val_2_0, float val_2_1, float val_2_2) {
-		// Use the Graphics Gems code, from
-		// ftp://ftp.cis.upenn.edu/pub/graphics/shoemake/quatut.ps.Z
-		// *NOT* the "Matrix and Quaternions FAQ", which has errors!
-
-		// the trace is the sum of the diagonal elements; see
-		// http://mathworld.wolfram.com/MatrixTrace.html
-		float t = val_0_0 + val_1_1 + val_2_2;
-
-		// we protect the division by s by ensuring that s>=1
-		if(t >= 0) { // |w| >= .5
-			float s = ExtMath.sqrt(t + 1); // |s|>=1 ...
-			w = 0.5f * s;
-			s = 0.5f / s; // so this division isn't bad
-			x = (val_2_1 - val_1_2) * s;
-			y = (val_0_2 - val_2_0) * s;
-			z = (val_1_0 - val_0_1) * s;
-		} else if((val_0_0 > val_1_1) && (val_0_0 > val_2_2)) {
-			float s = ExtMath.sqrt(1.0f + val_0_0 - val_1_1 - val_2_2); // |s|>=1
-			x = s * 0.5f; // |x| >= .5
-			s = 0.5f / s;
-			y = (val_1_0 + val_0_1) * s;
-			z = (val_0_2 + val_2_0) * s;
-			w = (val_2_1 - val_1_2) * s;
-		} else if(val_1_1 > val_2_2) {
-			float s = ExtMath.sqrt(1.0f + val_1_1 - val_0_0 - val_2_2); // |s|>=1
-			y = s * 0.5f; // |y| >= .5
-			s = 0.5f / s;
-			x = (val_1_0 + val_0_1) * s;
-			z = (val_2_1 + val_1_2) * s;
-			w = (val_0_2 - val_2_0) * s;
-		} else {
-			float s = ExtMath.sqrt(1.0f + val_2_2 - val_0_0 - val_1_1); // |s|>=1
-			z = s * 0.5f; // |z| >= .5
-			s = 0.5f / s;
-			x = (val_0_2 + val_2_0) * s;
-			y = (val_2_1 + val_1_2) * s;
-			w = (val_1_0 - val_0_1) * s;
-		}
-
-		return this;
-	}
-
-	/**
-	 * <code>add</code> adds the values of this quaternion to those of the
-	 * parameter quaternion. The result is stored in this Quaternion.
-	 * 
-	 * @param q the quaternion to add to this.
-	 * @return This Quaternion after addition.
-	 */
-	public Rotation addLocal(Rotation rotation) {
-		this.x += rotation.x;
-		this.y += rotation.y;
-		this.z += rotation.z;
-		this.w += rotation.w;
-		return this;
-	}
-
-	/**
-	 * <code>subtract</code> subtracts the values of the parameter quaternion
-	 * from those of this quaternion. The result is stored in this Quaternion.
-	 * 
-	 * @param rotation the quaternion to subtract from this.
-	 * @return This Quaternion after subtraction.
-	 */
-	public Rotation subtractLocal(Rotation rotation) {
-		this.x -= rotation.x;
-		this.y -= rotation.y;
-		this.z -= rotation.z;
-		this.w -= rotation.w;
-		return this;
-	}
-
-	/**
-	 * Создание случайного разворота.
-	 */
-	public void random() {
-		random(RANDOM_LOCAL.get());
-	}
-
-	/**
-	 * Создание случайного разворота.
-	 */
-	public void random(Random random) {
-
-		float x = Angles.degreeToRadians(random.nextInt(0, 360));
-		float y = Angles.degreeToRadians(random.nextInt(0, 360));
-		float z = Angles.degreeToRadians(random.nextInt(0, 360));
-
-		fromAngles(x, y, z);
 	}
 
 	@Override

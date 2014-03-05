@@ -8,27 +8,25 @@ import java.nio.channels.CompletionHandler;
  * 
  * @author Ronn
  */
-public abstract class ConnectHandler implements CompletionHandler<Void, AsynchronousSocketChannel>
-{
+public abstract class ConnectHandler implements CompletionHandler<Void, AsynchronousSocketChannel> {
+
 	@Override
-	public void completed(Void result, AsynchronousSocketChannel attachment)
-	{
+	public void completed(Void result, AsynchronousSocketChannel attachment) {
 		onConnect(attachment);
 	}
-	
+
 	@Override
-	public void failed(Throwable exc, AsynchronousSocketChannel attachment)
-	{
+	public void failed(Throwable exc, AsynchronousSocketChannel attachment) {
 		onFailed(exc);
 	}
-	
+
 	/**
 	 * Обработка подключения к серверу.
 	 * 
 	 * @param channel канал с сервером.
 	 */
 	protected abstract void onConnect(AsynchronousSocketChannel channel);
-	
+
 	/**
 	 * Обработка ошибки подключения к серверу.
 	 * 

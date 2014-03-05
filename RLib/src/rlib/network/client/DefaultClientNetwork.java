@@ -8,54 +8,44 @@ import java.nio.channels.AsynchronousSocketChannel;
 import rlib.concurrent.GroupThreadFactory;
 import rlib.network.AbstractAsynchronousNetwork;
 import rlib.network.NetworkConfig;
-import rlib.network.client.ConnectHandler;
-
 
 /**
  * Базовая модель асинхронной сети.
  *
  * @author Ronn
  */
-public final class DefaultClientNetwork extends AbstractAsynchronousNetwork implements ClientNetwork
-{
-	/** группа асинхронных каналов */
-	private final AsynchronousChannelGroup channelGroup;
+public final class DefaultClientNetwork extends AbstractAsynchronousNetwork implements ClientNetwork {
 
+	/** группа асинхронных каналов */
+	private final AsynchronousChannelGroup group;
 	/** обработчик подключения к серверу */
 	private final ConnectHandler connectHandler;
-	
+
 	/** асинронный клиентский канал */
-	private AsynchronousSocketChannel clientChannel;
-	
-	public DefaultClientNetwork(NetworkConfig config, ConnectHandler connectHandler) throws IOException
-	{
+	private AsynchronousSocketChannel channel;
+
+	public DefaultClientNetwork(NetworkConfig config, ConnectHandler connectHandler) throws IOException {
 		super(config);
-		
-		// создаем группу каналов
-		this.channelGroup = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
-		// запоминаем менеджера по принятию конектов
+
+		this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
 		this.connectHandler = connectHandler;
 	}
 
 	@Override
-	public void connect(InetSocketAddress serverAddress)
-	{
-		try
-		{
-			// если еще весит прошлый конект
-			if(clientChannel != null)
-				// закрываем его
-				clientChannel.close();
-			
-			// создаем новый канал
-			clientChannel = AsynchronousSocketChannel.open(channelGroup);
-		}
-		catch(IOException e)
-		{
+	public void connect(InetSocketAddress serverAddress) {
+
+		try {
+
+			if(channel != null) {
+				channel.close();
+			}
+
+			channel = AsynchronousSocketChannel.open(group);
+
+		} catch(IOException e) {
 			LOGGER.warning(this, e);
 		}
 
-		// производим попытку подключения к серверу
-		clientChannel.connect(serverAddress, clientChannel, connectHandler);
+		channel.connect(serverAddress, channel, connectHandler);
 	}
 }

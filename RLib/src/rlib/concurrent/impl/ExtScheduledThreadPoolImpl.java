@@ -33,6 +33,46 @@ public class ExtScheduledThreadPoolImpl<L> extends AbstractExtThreadPoolExecutor
 		this.scheduledTasks = LinkedLists.newSortedLinkedList(ExtScheduledFuture.class);
 	}
 
+	protected void execute(ExtScheduledFuture<L, ?> scheduledTask) {
+
+	}
+
+	/**
+	 * @return ближайшая отложенная задача.
+	 */
+	protected Delayed getDelayedTask() {
+
+		LinkedList<Delayed> delayedTasks = getScheduledTasks();
+
+		if(delayedTasks.isEmpty()) {
+			return null;
+		}
+
+		return delayedTasks.getFirst();
+	}
+
+	/**
+	 * @return ближайшая отложенная задача.
+	 */
+	@SuppressWarnings("unchecked")
+	protected Task<L> getScheduledTask() {
+
+		final LinkedList<Delayed> scheduledTasks = getScheduledTasks();
+
+		if(scheduledTasks.isEmpty()) {
+			return null;
+		}
+
+		return (Task<L>) scheduledTasks.poll();
+	}
+
+	/**
+	 * @return список отложенных задач.
+	 */
+	protected LinkedList<Delayed> getScheduledTasks() {
+		return scheduledTasks;
+	}
+
 	@Override
 	public void runWorker(Worker<L> worker, L localObjects) {
 
@@ -149,46 +189,6 @@ public class ExtScheduledThreadPoolImpl<L> extends AbstractExtThreadPoolExecutor
 		} finally {
 			workerFinish(worker, throwable);
 		}
-	}
-
-	/**
-	 * @return ближайшая отложенная задача.
-	 */
-	protected Delayed getDelayedTask() {
-
-		LinkedList<Delayed> delayedTasks = getScheduledTasks();
-
-		if(delayedTasks.isEmpty()) {
-			return null;
-		}
-
-		return delayedTasks.getFirst();
-	}
-
-	/**
-	 * @return ближайшая отложенная задача.
-	 */
-	@SuppressWarnings("unchecked")
-	protected Task<L> getScheduledTask() {
-
-		final LinkedList<Delayed> scheduledTasks = getScheduledTasks();
-
-		if(scheduledTasks.isEmpty()) {
-			return null;
-		}
-
-		return (Task<L>) scheduledTasks.poll();
-	}
-
-	/**
-	 * @return список отложенных задач.
-	 */
-	protected LinkedList<Delayed> getScheduledTasks() {
-		return scheduledTasks;
-	}
-
-	protected void execute(ExtScheduledFuture<L, ?> scheduledTask) {
-
 	}
 
 	@Override

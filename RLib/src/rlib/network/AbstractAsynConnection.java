@@ -66,18 +66,19 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 			}
 
 			AsynchronousSocketChannel channel = getChannel();
-			ByteBuffer readBuffer = getReadBuffer();
+			ByteBuffer buffer = getReadBuffer();
 
 			setLastActive(System.currentTimeMillis());
 
-			readBuffer.flip();
+			buffer.flip();
 
-			if(isReady(readBuffer)) {
-				readPacket(readBuffer);
+			if(isReady(buffer)) {
+				readPacket(buffer);
 			}
 
-			readBuffer.clear();
-			channel.read(readBuffer, attachment, this);
+			buffer.clear();
+
+			channel.read(buffer, attachment, this);
 		}
 
 		@Override
@@ -109,15 +110,14 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 			}
 
 			AsynchronousSocketChannel channel = getChannel();
-			ByteBuffer writeBuffer = getWriteBuffer();
+			ByteBuffer buffer = getWriteBuffer();
 
-			AtomicInteger writeCounter = getWriteCounter();
-
-			if(writeBuffer.remaining() > 0) {
-				channel.write(writeBuffer, packet, this);
+			if(buffer.remaining() > 0) {
+				channel.write(buffer, packet, this);
 				return;
 			}
 
+			AtomicInteger writeCounter = getWriteCounter();
 			writeCounter.decrementAndGet();
 
 			setLastActive(System.currentTimeMillis());
@@ -164,6 +164,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 		LinkedList<S> waitPackets = getWaitPackets();
 		N network = getNetwork();
 
+		Lock lock = getLock();
 		lock.lock();
 		try {
 
@@ -194,9 +195,30 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	 */
 	protected abstract void finish();
 
+	/**
+	 * @return канал конекта.
+	 */
+	protected AsynchronousSocketChannel getChannel() {
+		return channel;
+	}
+
 	@Override
 	public final long getLastActive() {
 		return lastActive;
+	}
+
+	/**
+	 * @return блокировщик.
+	 */
+	public Lock getLock() {
+		return lock;
+	}
+
+	/**
+	 * @return модель сети, в которой этот коннект.
+	 */
+	protected N getNetwork() {
+		return network;
 	}
 
 	/**
@@ -207,10 +229,38 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	}
 
 	/**
+	 * @return Обработчик чтения пакетов.
+	 */
+	protected CompletionHandler<Integer, AbstractAsynConnection> getReadHandler() {
+		return readHandler;
+	}
+
+	/**
+	 * @return список ожидающих пакетов на отправку.
+	 */
+	protected LinkedList<S> getWaitPackets() {
+		return waitPackets;
+	}
+
+	/**
 	 * @return буффер для записи пакета.
 	 */
 	protected final ByteBuffer getWriteBuffer() {
 		return writeBuffer;
+	}
+
+	/**
+	 * @return счетчик ожидающих отправки пакетов.
+	 */
+	protected AtomicInteger getWriteCounter() {
+		return writeCounter;
+	}
+
+	/**
+	 * @return Обработчик записи пакетов.
+	 */
+	protected CompletionHandler<Integer, S> getWriteHandler() {
+		return writeHandler;
 	}
 
 	@Override
@@ -253,6 +303,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	@Override
 	public final void sendPacket(S packet) {
 
+		Lock lock = getLock();
 		lock.lock();
 		try {
 			getWaitPackets().add(packet);
@@ -291,6 +342,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 		ByteBuffer writeBuffer = getWriteBuffer();
 		AtomicInteger writeCounter = getWriteCounter();
 
+		Lock lock = getLock();
 		lock.lock();
 		try {
 
@@ -307,53 +359,14 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 			writeCounter.incrementAndGet();
 
 			movePacketToBuffer(waitPacket, writeBuffer);
-			getChannel().write(writeBuffer, waitPacket, writeHandler);
+
+			AsynchronousSocketChannel channel = getChannel();
+			channel.write(writeBuffer, waitPacket, writeHandler);
+
 			onWrited(waitPacket);
 
 		} finally {
 			lock.unlock();
 		}
-	}
-
-	/**
-	 * @return счетчик ожидающих отправки пакетов.
-	 */
-	protected AtomicInteger getWriteCounter() {
-		return writeCounter;
-	}
-
-	/**
-	 * @return список ожидающих пакетов на отправку.
-	 */
-	protected LinkedList<S> getWaitPackets() {
-		return waitPackets;
-	}
-
-	/**
-	 * @return Обработчик записи пакетов.
-	 */
-	protected CompletionHandler<Integer, S> getWriteHandler() {
-		return writeHandler;
-	}
-
-	/**
-	 * @return канал конекта.
-	 */
-	protected AsynchronousSocketChannel getChannel() {
-		return channel;
-	}
-
-	/**
-	 * @return модель сети, в которой этот коннект.
-	 */
-	protected N getNetwork() {
-		return network;
-	}
-
-	/**
-	 * @return Обработчик чтения пакетов.
-	 */
-	protected CompletionHandler<Integer, AbstractAsynConnection> getReadHandler() {
-		return readHandler;
 	}
 }

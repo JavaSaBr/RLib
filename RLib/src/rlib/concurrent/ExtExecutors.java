@@ -44,14 +44,14 @@ public final class ExtExecutors {
 		}
 	};
 
-	public static <L> ExtExecutorService<L> createExecutorService(final ExtThreadFactory<L> threadFactory, final WorkerFactory<L> workerFactory, final int timeout, final int poolSize) {
-		final LinkedList<Task<L>> waitTasks = LinkedLists.newLinkedList(Task.class);
-		return new ExtThreadPoolExecutorImpl<L>(threadFactory, workerFactory, THREAD_EXCEPTION_HANDLER, waitTasks, Locks.newLock(), poolSize);
-	}
-
 	public static <L> ExtExecutorService<L> createExecutorService(final ExtThreadFactory<L> threadFactory, final WorkerFactory<L> workerFactory, final ExtThreadExceptionHandler handler,
 			final LinkedList<Task<L>> waitTasks, final Lock sync, final int timeout, final int poolSize) {
 		return new ExtThreadPoolExecutorImpl<>(threadFactory, workerFactory, handler, waitTasks, sync, poolSize);
+	}
+
+	public static <L> ExtExecutorService<L> createExecutorService(final ExtThreadFactory<L> threadFactory, final WorkerFactory<L> workerFactory, final int timeout, final int poolSize) {
+		final LinkedList<Task<L>> waitTasks = LinkedLists.newLinkedList(Task.class);
+		return new ExtThreadPoolExecutorImpl<L>(threadFactory, workerFactory, THREAD_EXCEPTION_HANDLER, waitTasks, Locks.newLock(), poolSize);
 	}
 
 	public static <L> ExtThread<L> createThread(final ThreadGroup group, final Task<L> task, final L localObjects, final String name) {

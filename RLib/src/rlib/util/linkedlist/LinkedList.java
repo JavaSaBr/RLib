@@ -2,8 +2,9 @@ package rlib.util.linkedlist;
 
 import java.io.Serializable;
 import java.util.Deque;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-import rlib.util.array.FuncElement;
 import rlib.util.pools.Foldable;
 
 /**
@@ -15,10 +16,17 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 
 	/**
 	 * Применить функцию на все элементы в массиве.
-	 * 
-	 * @param func применяемая функция.
+	 *
+	 * @param consumer применяемая функция.
 	 */
-	public void apply(FuncElement<? super E> func);
+	public void accept(Consumer<? super E> consumer);
+
+	/**
+	 * Применить функцию замены всех элементов.
+	 *
+	 * @param function применяемая функция.
+	 */
+	public void apply(Function<? super E, ? extends E> function);
 
 	/**
 	 * Получение элемента по номеру в списке.
@@ -27,6 +35,16 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	 * @return элемент.
 	 */
 	public E get(int index);
+
+	/**
+	 * @return первый узел списка.
+	 */
+	public Node<E> getFirstNode();
+
+	/**
+	 * @return последний узел списка.
+	 */
+	public Node<E> getLastNode();
 
 	/**
 	 * @param object интересуемый объект.
@@ -52,6 +70,14 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	public E take();
 
 	/**
+	 * Удаление узла в списке.
+	 * 
+	 * @param node удаляемый узел.
+	 * @return удаленный элемент из узла.
+	 */
+	public E unlink(Node<E> node);
+
+	/**
 	 * Блокировка чтений для изменения массива.
 	 */
 	public void writeLock();
@@ -60,22 +86,4 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	 * Разблокировка чтения массива.
 	 */
 	public void writeUnlock();
-
-	/**
-	 * @return первый узел списка.
-	 */
-	public Node<E> getFirstNode();
-
-	/**
-	 * @return последний узел списка.
-	 */
-	public Node<E> getLastNode();
-
-	/**
-	 * Удаление узла в списке.
-	 * 
-	 * @param node удаляемый узел.
-	 * @return удаленный элемент из узла.
-	 */
-	public E unlink(Node<E> node);
 }

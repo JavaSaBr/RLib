@@ -38,21 +38,6 @@ public class ExtFutureTaskImpl<L, V> implements ExtFutureTask<L, V> {
 	}
 
 	@Override
-	public void run(L localObjects) {
-
-		if(getState() == State.CANCELED) {
-			return;
-		}
-
-		setState(State.RUNNING);
-		try {
-			setResult(getTask().call(localObjects));
-		} finally {
-			done();
-		}
-	}
-
-	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
 
 		if(getState() == State.WAIT) {
@@ -68,13 +53,15 @@ public class ExtFutureTaskImpl<L, V> implements ExtFutureTask<L, V> {
 	}
 
 	@Override
-	public boolean isCancelled() {
-		return getState() == State.CANCELED;
-	}
+	public void done() {
 
-	@Override
-	public boolean isDone() {
-		return getState() == State.DONE;
+		setState(State.DONE);
+
+		if(isWait()) {
+			synchronized(this) {
+				notifyAll();
+			}
+		}
 	}
 
 	@Override
@@ -115,30 +102,11 @@ public class ExtFutureTaskImpl<L, V> implements ExtFutureTask<L, V> {
 		return getResult();
 	}
 
-	@Override
-	public void done() {
-
-		setState(State.DONE);
-
-		if(isWait()) {
-			synchronized(this) {
-				notifyAll();
-			}
-		}
-	}
-
 	/**
-	 * @return есть ли ожидающий исполнения поток.
+	 * @return результат исполнения.
 	 */
-	public boolean isWait() {
-		return wait > 0;
-	}
-
-	/**
-	 * @param isWaiting есть ли ожидающий исполнения поток.
-	 */
-	public void setWait(boolean isWaiting) {
-		wait = isWaiting ? wait + 1 : wait - 1;
+	public V getResult() {
+		return result;
 	}
 
 	/**
@@ -149,17 +117,42 @@ public class ExtFutureTaskImpl<L, V> implements ExtFutureTask<L, V> {
 	}
 
 	/**
-	 * @param state состояние задачи.
+	 * @return исполняемая задача.
 	 */
-	public void setState(State state) {
-		this.state = state;
+	public CallableTask<L, V> getTask() {
+		return task;
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return getState() == State.CANCELED;
+	}
+
+	@Override
+	public boolean isDone() {
+		return getState() == State.DONE;
 	}
 
 	/**
-	 * @return результат исполнения.
+	 * @return есть ли ожидающий исполнения поток.
 	 */
-	public V getResult() {
-		return result;
+	public boolean isWait() {
+		return wait > 0;
+	}
+
+	@Override
+	public void run(L localObjects) {
+
+		if(getState() == State.CANCELED) {
+			return;
+		}
+
+		setState(State.RUNNING);
+		try {
+			setResult(getTask().call(localObjects));
+		} finally {
+			done();
+		}
 	}
 
 	/**
@@ -170,9 +163,16 @@ public class ExtFutureTaskImpl<L, V> implements ExtFutureTask<L, V> {
 	}
 
 	/**
-	 * @return исполняемая задача.
+	 * @param state состояние задачи.
 	 */
-	public CallableTask<L, V> getTask() {
-		return task;
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	/**
+	 * @param isWaiting есть ли ожидающий исполнения поток.
+	 */
+	public void setWait(boolean isWaiting) {
+		wait = isWaiting ? wait + 1 : wait - 1;
 	}
 }

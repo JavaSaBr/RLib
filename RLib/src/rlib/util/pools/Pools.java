@@ -57,6 +57,26 @@ public final class Pools {
 		return new MultiConcurrentFoldablePool<T>(size, type);
 	}
 
+	/**
+	 * Создание нового синхронизированного объектного пула.
+	 * 
+	 * @param type тип объектов пула.
+	 * @return новый объектный пул.
+	 */
+	public static final <T extends Foldable> FoldablePool<T> newSynchronizedFoldablePool(Class<? extends Foldable> type) {
+		return new SynchronizedFoldablePool<T>(10, type);
+	}
+
+	/**
+	 * Создание нового синхронизированного объектного пула.
+	 * 
+	 * @param type тип объектов пула.
+	 * @return новый объектный пул.
+	 */
+	public static final <T extends Foldable> FoldablePool<T> newSynchronizedFoldablePool(Class<? extends Foldable> type, int size) {
+		return new SynchronizedFoldablePool<T>(size, type);
+	}
+
 	private Pools() {
 		throw new IllegalArgumentException();
 	}

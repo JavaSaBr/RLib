@@ -2,6 +2,8 @@ package rlib.util.linkedlist;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import rlib.util.pools.FoldablePool;
 import rlib.util.pools.Pools;
@@ -32,6 +34,13 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	}
 
 	@Override
+	public void accept(Consumer<? super E> consumer) {
+		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+			consumer.accept(node.getItem());
+		}
+	}
+
+	@Override
 	public boolean add(final E element) {
 
 		if(element == null) {
@@ -50,6 +59,13 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	@Override
 	public void addLast(final E element) {
 		linkLast(element);
+	}
+
+	@Override
+	public void apply(Function<? super E, ? extends E> function) {
+		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+			node.setItem(function.apply(node.getItem()));
+		}
 	}
 
 	@Override
@@ -202,6 +218,34 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 		return -1;
 	}
 
+	protected final void insertAfter(Node<E> node, final E item) {
+
+		final Node<E> next = node.getNext();
+		final Node<E> newNode = getNewNode(node, item, next);
+
+		if(next == null) {
+			setLastNode(newNode);
+		} else {
+			next.setPrev(newNode);
+		}
+
+		node.setNext(newNode);
+	}
+
+	protected final void insertBefore(Node<E> node, final E item) {
+
+		final Node<E> prev = node.getPrev();
+		final Node<E> newNode = getNewNode(prev, item, node);
+
+		if(prev == null) {
+			setFirstNode(newNode);
+		} else {
+			prev.setNext(newNode);
+		}
+
+		node.setPrev(newNode);
+	}
+
 	@Override
 	public Iterator<E> iterator() {
 		return new IteratorImpl<E>(this, IteratorImpl.NEXT);
@@ -221,34 +265,6 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 		}
 
 		size++;
-	}
-
-	protected final void insertBefore(Node<E> node, final E item) {
-
-		final Node<E> prev = node.getPrev();
-		final Node<E> newNode = getNewNode(prev, item, node);
-
-		if(prev == null) {
-			setFirstNode(newNode);
-		} else {
-			prev.setNext(newNode);
-		}
-
-		node.setPrev(newNode);
-	}
-
-	protected final void insertAfter(Node<E> node, final E item) {
-
-		final Node<E> next = node.getNext();
-		final Node<E> newNode = getNewNode(node, item, next);
-
-		if(next == null) {
-			setLastNode(newNode);
-		} else {
-			next.setPrev(newNode);
-		}
-
-		node.setNext(newNode);
 	}
 
 	protected final void linkLast(final E item) {

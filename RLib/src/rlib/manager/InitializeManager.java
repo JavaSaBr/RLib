@@ -20,14 +20,14 @@ public final class InitializeManager {
 
 	private static final String METHOD_NAME = "getInstance";
 
-	private static final LinkedList<Class<?>> queue = LinkedLists.newLinkedList(Class.class);
+	private static final LinkedList<Class<?>> QUEUE = LinkedLists.newLinkedList(Class.class);
 
 	/**
 	 * Инициализация зарегестрированных классов.
 	 */
 	public synchronized static void initialize() {
 
-		for(final Iterator<Class<?>> iterator = queue.iterator(); iterator.hasNext();) {
+		for(final Iterator<Class<?>> iterator = QUEUE.iterator(); iterator.hasNext();) {
 
 			final Class<?> next = iterator.next();
 
@@ -52,7 +52,7 @@ public final class InitializeManager {
 	 * Регистрация класса, имеющего статический метод getInstance().
 	 */
 	public synchronized static void register(Class<?> cs) {
-		queue.add(cs);
+		QUEUE.add(cs);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public final class InitializeManager {
 	 * @param cs проверяемый класс.
 	 */
 	public static void valid(Class<?> cs) {
-		if(queue.getFirst() != cs) {
+		if(QUEUE.getFirst() != cs) {
 			Thread.dumpStack();
 		}
 	}

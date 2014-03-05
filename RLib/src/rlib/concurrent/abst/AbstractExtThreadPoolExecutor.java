@@ -77,11 +77,6 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 		this.completedTasks = new AtomicLong(0);
 	}
 
-	@Override
-	public AtomicInteger getState() {
-		return state;
-	}
-
 	/**
 	 * @param task ожидающая задача.
 	 */
@@ -161,11 +156,20 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 		return completedTasks.get();
 	}
 
+	public ExtThreadExceptionHandler getHandler() {
+		return handler;
+	}
+
 	/**
 	 * @return размер пула потоков.
 	 */
 	protected final int getPoolSize() {
 		return poolSize;
+	}
+
+	@Override
+	public AtomicInteger getState() {
+		return state;
 	}
 
 	/**
@@ -222,8 +226,10 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 		return shutdown;
 	}
 
-	public ExtThreadExceptionHandler getHandler() {
-		return handler;
+	@Override
+	public boolean remove(final Task<L> task) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
@@ -295,6 +301,13 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 	}
 
 	@Override
+	public <R> Future<R> submit(CallableTask<L, R> task) {
+		ExtFutureTaskImpl<L, R> future = new ExtFutureTaskImpl<L, R>(task);
+		execute(future);
+		return future;
+	}
+
+	@Override
 	public String toString() {
 		return super.toString();
 	}
@@ -320,18 +333,5 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 		} finally {
 			sync.unlock();
 		}
-	}
-
-	@Override
-	public <R> Future<R> submit(CallableTask<L, R> task) {
-		ExtFutureTaskImpl<L, R> future = new ExtFutureTaskImpl<L, R>(task);
-		execute(future);
-		return future;
-	}
-
-	@Override
-	public boolean remove(final Task<L> task) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

@@ -89,6 +89,11 @@ public final class MultiConcurrentFoldablePool<E extends Foldable> implements Fo
 		pools[getOrder()].put(object);
 	}
 
+	@Override
+	public void remove(E object) {
+		throw new RuntimeException("unsupperted method.");
+	}
+
 	/**
 	 * @param order номер пула.
 	 */
@@ -107,10 +112,5 @@ public final class MultiConcurrentFoldablePool<E extends Foldable> implements Fo
 
 		object.reinit();
 		return object;
-	}
-
-	@Override
-	public void remove(E object) {
-		throw new RuntimeException("unsupperted method.");
 	}
 }

@@ -4,16 +4,16 @@ import rlib.util.array.Array;
 import rlib.util.array.Arrays;
 
 /**
- * Не потокобезопасный пул.
+ * Синхронизированный объектный пул.
  * 
  * @author Ronn
  */
-public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
+public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePool<E> {
 
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected FastFoldablePool(int size, Class<?> type) {
+	protected SynchronizedFoldablePool(int size, Class<?> type) {
 		this.pool = Arrays.toArray(type, size);
 	}
 
@@ -30,18 +30,27 @@ public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 		}
 
 		object.finalyze();
-		pool.add(object);
+
+		synchronized(pool) {
+			pool.add(object);
+		}
 	}
 
 	@Override
 	public void remove(E object) {
-		pool.fastRemove(object);
+		synchronized(pool) {
+			pool.fastRemove(object);
+		}
 	}
 
 	@Override
 	public E take() {
 
-		E object = pool.pop();
+		E object = null;
+
+		synchronized(pool) {
+			object = pool.pop();
+		}
 
 		if(object == null) {
 			return null;

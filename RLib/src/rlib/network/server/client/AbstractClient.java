@@ -54,13 +54,6 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 		setClosed(true);
 	}
 
-	/**
-	 * @param closed закрыт ли клиент.
-	 */
-	private void setClosed(boolean closed) {
-		this.closed = closed;
-	}
-
 	@Override
 	public void decrypt(ByteBuffer data, int offset, int length) {
 		crypt.decrypt(data.array(), offset, length);
@@ -142,6 +135,13 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	@Override
 	public final void setAccount(A account) {
 		this.account = account;
+	}
+
+	/**
+	 * @param closed закрыт ли клиент.
+	 */
+	private void setClosed(boolean closed) {
+		this.closed = closed;
 	}
 
 	@Override

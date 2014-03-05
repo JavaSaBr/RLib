@@ -47,6 +47,7 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 			}
 
 			if(element.compareTo(old) < 0) {
+
 				size++;
 
 				int numMoved = size - i - 1;

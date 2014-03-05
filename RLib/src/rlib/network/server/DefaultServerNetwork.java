@@ -31,34 +31,32 @@ public final class DefaultServerNetwork implements ServerNetwork {
 	private final Array<ByteBuffer> writeBufferPool;
 
 	/** группа асинхронных каналов */
-	private final AsynchronousChannelGroup channelGroup;
+	private final AsynchronousChannelGroup group;
 	/** асинронный серверый канал */
-	private final AsynchronousServerSocketChannel serverChannel;
-
-	/** конфигурация сети */
-	private final NetworkConfig config;
-
+	private final AsynchronousServerSocketChannel channel;
 	/** обработчик новых подключений */
 	private final AcceptHandler acceptHandler;
+	/** конфигурация сети */
+	private final NetworkConfig config;
 
 	public DefaultServerNetwork(NetworkConfig config, AcceptHandler acceptHandler) throws IOException {
 		this.config = config;
 		this.readBufferPool = Arrays.toConcurrentArray(ByteBuffer.class);
 		this.writeBufferPool = Arrays.toConcurrentArray(ByteBuffer.class);
-		this.channelGroup = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
-		this.serverChannel = AsynchronousServerSocketChannel.open(channelGroup);
+		this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
+		this.channel = AsynchronousServerSocketChannel.open(group);
 		this.acceptHandler = acceptHandler;
 	}
 
 	@Override
 	public <A> void accept(A attachment, CompletionHandler<AsynchronousSocketChannel, ? super A> handler) {
-		serverChannel.accept(attachment, handler);
+		channel.accept(attachment, handler);
 	}
 
 	@Override
 	public void bind(SocketAddress address) throws IOException {
-		serverChannel.bind(address);
-		serverChannel.accept(serverChannel, acceptHandler);
+		channel.bind(address);
+		channel.accept(channel, acceptHandler);
 	}
 
 	@Override

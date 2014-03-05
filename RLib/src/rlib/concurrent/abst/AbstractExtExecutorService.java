@@ -80,6 +80,22 @@ public abstract class AbstractExtExecutorService<L> implements ExtExecutorServic
 		return container;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> Future<T>[] invokeAll(final CallableTask<L, T>[] tasks) throws InterruptedException {
+		return invokeAll(tasks, new Future[tasks.length]);
+	}
+
+	@Override
+	public <T> Future<T>[] invokeAll(final CallableTask<L, T>[] tasks, final Future<T>[] container) throws InterruptedException {
+
+		for(int i = 0, length = tasks.length; i < length; i++) {
+			container[i] = submit(tasks[i]);
+		}
+
+		return container;
+	}
+
 	@Override
 	public <T> Collection<Future<T>> invokeAll(final Collection<? extends CallableTask<L, T>> tasks) throws InterruptedException {
 		return invokeAll(tasks, new ArrayList<Future<T>>(tasks.size()));
@@ -95,22 +111,6 @@ public abstract class AbstractExtExecutorService<L> implements ExtExecutorServic
 			if(future != null) {
 				container.add(future);
 			}
-		}
-
-		return container;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> Future<T>[] invokeAll(final CallableTask<L, T>[] tasks) throws InterruptedException {
-		return invokeAll(tasks, new Future[tasks.length]);
-	}
-
-	@Override
-	public <T> Future<T>[] invokeAll(final CallableTask<L, T>[] tasks, final Future<T>[] container) throws InterruptedException {
-
-		for(int i = 0, length = tasks.length; i < length; i++) {
-			container[i] = submit(tasks[i]);
 		}
 
 		return container;
@@ -152,17 +152,6 @@ public abstract class AbstractExtExecutorService<L> implements ExtExecutorServic
 		return submit(wrap(task, result));
 	}
 
-	protected <T> CallableTask<L, T> wrap(final Task<L> task, final T result) {
-		return new CallableTask<L, T>() {
-
-			@Override
-			public T call(L localObjects) {
-				task.run(localObjects);
-				return result;
-			}
-		};
-	}
-
 	protected CallableTask<L, Void> wrap(final Task<L> task) {
 		return new CallableTask<L, Void>() {
 
@@ -170,6 +159,17 @@ public abstract class AbstractExtExecutorService<L> implements ExtExecutorServic
 			public Void call(L localObjects) {
 				task.run(localObjects);
 				return null;
+			}
+		};
+	}
+
+	protected <T> CallableTask<L, T> wrap(final Task<L> task, final T result) {
+		return new CallableTask<L, T>() {
+
+			@Override
+			public T call(L localObjects) {
+				task.run(localObjects);
+				return result;
 			}
 		};
 	}

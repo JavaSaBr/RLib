@@ -5,8 +5,8 @@ package rlib.util.array;
  * 
  * @author Ronn
  */
-public interface IntegerArray extends Iterable<Integer>
-{
+public interface IntegerArray extends Iterable<Integer> {
+
 	/**
 	 * Добавление элемента в массив.
 	 *
@@ -46,13 +46,14 @@ public interface IntegerArray extends Iterable<Integer>
 	/**
 	 * Проверяет, содержит ли массив указанный элемент.
 	 *
-     * @param element искомый элемент.
-     * @return содержит ли.
-     */
+	 * @param element искомый элемент.
+	 * @return содержит ли.
+	 */
 	public boolean contains(int element);
 
 	/**
-	 * Проверяет, содержатся ли все элементы с указанного массива в этом массиве.
+	 * Проверяет, содержатся ли все элементы с указанного массива в этом
+	 * массиве.
 	 *
 	 * @param array массив элементов.
 	 * @return содержит ли.
@@ -60,7 +61,8 @@ public interface IntegerArray extends Iterable<Integer>
 	public boolean containsAll(int[] array);
 
 	/**
-	 * Проверяет, содержатся ли все элементы с указанного массива в этом массиве.
+	 * Проверяет, содержатся ли все элементы с указанного массива в этом
+	 * массиве.
 	 *
 	 * @param array массив элементов.
 	 * @return содержит ли.
@@ -138,12 +140,14 @@ public interface IntegerArray extends Iterable<Integer>
 	/**
 	 * Блокировка изменения массива на время чтения его.
 	 */
-	public void readLock();
+	public default void readLock() {
+	}
 
 	/**
 	 * Разблокировка изменения массива.
 	 */
-	public void readUnlock();
+	public default void readUnlock() {
+	}
 
 	/**
 	 * Удаляет из массива все элементы из указанного массива.
@@ -153,12 +157,12 @@ public interface IntegerArray extends Iterable<Integer>
 	 */
 	public boolean removeAll(IntegerArray array);
 
-    /**
-     * Удаляет все элементы массива, которые отсутствуют в указанном массиве.
-     *
-     * @param array массив с элементами.
-     * @return удалены ли все объекты.
-     */
+	/**
+	 * Удаляет все элементы массива, которые отсутствуют в указанном массиве.
+	 *
+	 * @param array массив с элементами.
+	 * @return удалены ли все объекты.
+	 */
 	public boolean retainAll(IntegerArray array);
 
 	/**
@@ -191,7 +195,8 @@ public interface IntegerArray extends Iterable<Integer>
 	public IntegerArray sort();
 
 	/**
-	 * Копирует элементы коллекции в указаный массив, либо возвращает исходный в указанном типе.
+	 * Копирует элементы коллекции в указаный массив, либо возвращает исходный в
+	 * указанном типе.
 	 *
 	 * @param newArray массив, в который нужно перенести.
 	 */
@@ -207,10 +212,12 @@ public interface IntegerArray extends Iterable<Integer>
 	/**
 	 * Блокировка чтений для изменения массива.
 	 */
-	public void writeLock();
+	public default void writeLock() {
+	}
 
 	/**
 	 * Разблокировка чтения массива.
 	 */
-	public void writeUnlock();
+	public default void writeUnlock() {
+	}
 }

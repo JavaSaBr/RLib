@@ -12,90 +12,125 @@ public interface Wrap extends Foldable {
 	/**
 	 * Сложить в пул.
 	 */
-	public void fold();
+	default public void fold() {
+	}
 
 	/**
 	 * @return обернутый байт.
 	 */
-	public byte getByte();
+	default public byte getByte() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @return обернутый чар.
 	 */
-	public char getChar();
+	default public char getChar() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @return обернутый дабл.
 	 */
-	public double getDouble();
+	default public double getDouble() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @return обернутый флоат.
 	 */
-	public float getFloat();
+	default public float getFloat() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @return обернутый инт.
 	 */
-	public int getInt();
+	default public int getInt() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @return обернутый лонг.
 	 */
-	public long getLong();
+	default public long getLong() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @return обернутый объект.
 	 */
-	public Object getObject();
+	default public Object getObject() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @return обернутый шорт.
 	 */
-	public short getShort();
+	default public short getShort() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @return тип обертки.
 	 */
-	public WrapType getWrapType();
+	default public WrapType getWrapType() {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @param value байт, который нужно обернуть.
 	 */
-	public void setByte(byte value);
+	default public void setByte(byte value) {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @param value чар, который нужно обернуть.
 	 */
-	public void setChar(char value);
+	default public void setChar(char value) {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @param value дабл, который нужно обернуть.
 	 */
-	public void setDouble(double value);
+	default public void setDouble(double value) {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @param value флоат, который нужно обернуть.
 	 */
-	public void setFloat(float value);
+	default public void setFloat(float value) {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @param value инт, который нужно обернуть.
 	 */
-	public void setInt(int value);
+	default public void setInt(int value) {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @param value лонг, который нужно обернуть.
 	 */
-	public void setLong(long value);
+	default public void setLong(long value) {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @param object объект, который нужно обернуть.
 	 */
-	public void setObject(Object object);
+	default public void setObject(Object object) {
+		throw new RuntimeException("not implemented.");
+	}
 
 	/**
 	 * @param value шорт, который нужно обернуть.
 	 */
-	public void setShort(short value);
+	default public void setShort(short value) {
+		throw new RuntimeException("not implemented.");
+	}
 }

@@ -7,16 +7,18 @@ import java.util.Comparator;
  *
  * @author Ronn
  */
-public abstract class ArrayComparator<T> implements Comparator<T>
-{
-	@Override
-	public int compare(T first, T second)
-	{
-		if(first == null)
-			return 1;
+public interface ArrayComparator<T> extends Comparator<T> {
 
-		if(second == null)
+	@Override
+	public default int compare(T first, T second) {
+
+		if(first == null) {
+			return 1;
+		}
+
+		if(second == null) {
 			return -1;
+		}
 
 		return compareImpl(first, second);
 	}
@@ -24,5 +26,5 @@ public abstract class ArrayComparator<T> implements Comparator<T>
 	/**
 	 * Сравнение 2х объектов.
 	 */
-	protected abstract int compareImpl(T first, T second);
+	public int compareImpl(T first, T second);
 }

@@ -74,16 +74,6 @@ public abstract class Angles {
 	}
 
 	/**
-	 * Конвектироввание радианов в градусы.
-	 * 
-	 * @param radians угол в радианах.
-	 * @return угол в градусах.
-	 */
-	public static float radiansToDegree(float radians) {
-		return radians * 180F / PI;
-	}
-
-	/**
 	 * Получаем относительный градус между 2 точками.
 	 * 
 	 * @param startX х координата первой точки.
@@ -177,5 +167,15 @@ public abstract class Angles {
 		angle += 360;
 
 		return angle > min;
+	}
+
+	/**
+	 * Конвектироввание радианов в градусы.
+	 * 
+	 * @param radians угол в радианах.
+	 * @return угол в градусах.
+	 */
+	public static float radiansToDegree(float radians) {
+		return radians * 180F / PI;
 	}
 }

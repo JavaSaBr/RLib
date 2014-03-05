@@ -27,6 +27,11 @@ public abstract class AbstractBounding implements Bounding {
 	}
 
 	@Override
+	public boolean contains(float x, float y, float z, VectorBuffer buffer) {
+		return false;
+	}
+
+	@Override
 	public boolean contains(Vector point, VectorBuffer buffer) {
 		return contains(point.getX(), point.getY(), point.getZ(), buffer);
 	}
@@ -34,6 +39,11 @@ public abstract class AbstractBounding implements Bounding {
 	@Override
 	public final float distanceTo(Vector point) {
 		return center.distance(point);
+	}
+
+	@Override
+	public BoundingType getBoundingType() {
+		return BoundingType.EMPTY;
 	}
 
 	@Override
@@ -47,26 +57,6 @@ public abstract class AbstractBounding implements Bounding {
 	}
 
 	@Override
-	public final boolean intersects(Ray ray, VectorBuffer buffer) {
-		return intersects(ray.getStart(), ray.getDirection(), buffer);
-	}
-
-	@Override
-	public void setCenter(Vector center) {
-		this.center = center;
-	}
-
-	@Override
-	public boolean contains(float x, float y, float z, VectorBuffer buffer) {
-		return false;
-	}
-
-	@Override
-	public BoundingType getBoundingType() {
-		return BoundingType.EMPTY;
-	}
-
-	@Override
 	public Vector getResultCenter(VectorBuffer buffer) {
 		return null;
 	}
@@ -77,8 +67,18 @@ public abstract class AbstractBounding implements Bounding {
 	}
 
 	@Override
+	public final boolean intersects(Ray ray, VectorBuffer buffer) {
+		return intersects(ray.getStart(), ray.getDirection(), buffer);
+	}
+
+	@Override
 	public boolean intersects(Vector start, Vector direction, VectorBuffer buffer) {
 		return false;
+	}
+
+	@Override
+	public void setCenter(Vector center) {
+		this.center = center;
 	}
 
 	@Override

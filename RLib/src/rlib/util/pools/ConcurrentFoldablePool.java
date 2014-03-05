@@ -34,6 +34,11 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 	}
 
 	@Override
+	public void remove(E object) {
+		pool.fastRemove(object);
+	}
+
+	@Override
 	public E take() {
 
 		E object = pool.pop();
@@ -44,10 +49,5 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 
 		object.reinit();
 		return object;
-	}
-
-	@Override
-	public void remove(E object) {
-		pool.fastRemove(object);
 	}
 }

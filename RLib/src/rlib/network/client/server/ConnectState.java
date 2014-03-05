@@ -6,8 +6,7 @@ package rlib.network.client.server;
  * @author Ronn
  * @created 25.03.2012
  */
-public enum ConnectState
-{
+public enum ConnectState {
 	/** ожидание новых пакетов для отправки */
 	WAITING_PACKETS,
 	/** ожидание отправки новых пакетов */

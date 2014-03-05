@@ -130,9 +130,85 @@ public final class GeoMap3D implements GeoMap
 		}
 	}
 
-	private GeoQuard[][][] getQuards()
+	@Override
+	public void addQuard(int x, int y, float height)
 	{
-		return quards;
+		// если по X для квадрата нет места
+		if(x >= quards.length)
+			// расширяем массив
+			quards = Arrays.copyOf(quards, x + 1);
+
+		// получаем массив по Y
+		GeoQuard[][] yQuards = quards[x];
+
+		// если его нет
+		if(yQuards == null)
+		{
+			// создаем
+			yQuards = new GeoQuard[y + 1][];
+			// вносим
+			quards[x] = yQuards;
+		}
+		// если в нем нет места
+		else if(y >= yQuards.length)
+		{
+			// расширяем
+			yQuards = Arrays.copyOf(yQuards, y + 1 - yQuards.length);
+			// обновляем
+			quards[x] = yQuards;
+		}
+
+		// получаем массив по Z
+		GeoQuard[] zQuards = yQuards[y];
+
+		// если массива нет
+		if(zQuards == null)
+		{
+			// создаем новый
+			zQuards = new GeoQuard[1];
+			// вносим в него новый квадрат
+			zQuards[0] = new GeoQuard(x, y, height);
+			// обновляем в массиве по Y
+			yQuards[y] = zQuards;
+			// увеличиваем счетчик размера
+			size++;
+		}
+		else
+		{
+			// рассчитываем Z индекс
+			int z = ((int) height) / quardHeight;
+
+			// смотрим есть ли уже с таким индексом квадрат
+			for(int i = 0, length = zQuards.length; i < length; i++)
+			{
+				// получаем уже имеющийся квадраwт
+				GeoQuard target = zQuards[i];
+
+				// расчитываем его индекс по Z
+				int targetZ = ((int) target.getHeight()) / quardHeight;
+
+				// если находим с таким же индексом
+				if(z == targetZ)
+				{
+					// если он вышел, его и оставляем
+					if(target.getHeight() > height)
+						return;
+					// иначе
+					else
+					{
+						// заменяе его на новый
+						zQuards[i] = new GeoQuard(x, y, height);
+						return;
+					}
+				}
+			}
+
+			// если с таким индексом квадратов небыло, добавляем в массив новый
+			yQuards[y] = Arrays.addToArray(zQuards, new GeoQuard(x, y, height), GeoQuard.class);
+
+			// увеличиваем счетчик размера
+			size++;
+		}
 	}
 	
 	@Override
@@ -310,6 +386,11 @@ public final class GeoMap3D implements GeoMap
 
 		// если квадрат не относится к этому уровню, возвращаем изначальную высоту
 		return Math.abs(quard.getHeight() - z) > quardHeight? z : quard.getHeight();
+	}
+
+	private GeoQuard[][][] getQuards()
+	{
+		return quards;
 	}
 
 	/**
@@ -496,7 +577,7 @@ public final class GeoMap3D implements GeoMap
 			yQuards[quard.getY()] = result;
 		}
 	}
-
+	
 	@Override
 	public int size()
 	{
@@ -510,86 +591,5 @@ public final class GeoMap3D implements GeoMap
 	private int toIndex(float coord)
 	{
 		return (int) coord / quardSize;
-	}
-	
-	@Override
-	public void addQuard(int x, int y, float height)
-	{
-		// если по X для квадрата нет места
-		if(x >= quards.length)
-			// расширяем массив
-			quards = Arrays.copyOf(quards, x + 1);
-
-		// получаем массив по Y
-		GeoQuard[][] yQuards = quards[x];
-
-		// если его нет
-		if(yQuards == null)
-		{
-			// создаем
-			yQuards = new GeoQuard[y + 1][];
-			// вносим
-			quards[x] = yQuards;
-		}
-		// если в нем нет места
-		else if(y >= yQuards.length)
-		{
-			// расширяем
-			yQuards = Arrays.copyOf(yQuards, y + 1 - yQuards.length);
-			// обновляем
-			quards[x] = yQuards;
-		}
-
-		// получаем массив по Z
-		GeoQuard[] zQuards = yQuards[y];
-
-		// если массива нет
-		if(zQuards == null)
-		{
-			// создаем новый
-			zQuards = new GeoQuard[1];
-			// вносим в него новый квадрат
-			zQuards[0] = new GeoQuard(x, y, height);
-			// обновляем в массиве по Y
-			yQuards[y] = zQuards;
-			// увеличиваем счетчик размера
-			size++;
-		}
-		else
-		{
-			// рассчитываем Z индекс
-			int z = ((int) height) / quardHeight;
-
-			// смотрим есть ли уже с таким индексом квадрат
-			for(int i = 0, length = zQuards.length; i < length; i++)
-			{
-				// получаем уже имеющийся квадраwт
-				GeoQuard target = zQuards[i];
-
-				// расчитываем его индекс по Z
-				int targetZ = ((int) target.getHeight()) / quardHeight;
-
-				// если находим с таким же индексом
-				if(z == targetZ)
-				{
-					// если он вышел, его и оставляем
-					if(target.getHeight() > height)
-						return;
-					// иначе
-					else
-					{
-						// заменяе его на новый
-						zQuards[i] = new GeoQuard(x, y, height);
-						return;
-					}
-				}
-			}
-
-			// если с таким индексом квадратов небыло, добавляем в массив новый
-			yQuards[y] = Arrays.addToArray(zQuards, new GeoQuard(x, y, height), GeoQuard.class);
-
-			// увеличиваем счетчик размера
-			size++;
-		}
 	}
 }

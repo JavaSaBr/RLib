@@ -17,20 +17,6 @@ public final class TaskWrapper<L, V> implements CallableTask<L, V>, Foldable {
 	/** результат его работы */
 	private V result;
 
-	/**
-	 * @param result результат его работы.
-	 */
-	public void setResult(V result) {
-		this.result = result;
-	}
-
-	/**
-	 * @param tasl обернутая задача.
-	 */
-	public void setTask(Task<L> tasl) {
-		this.task = tasl;
-	}
-
 	@Override
 	public V call(L localObjects) {
 		task.run(localObjects);
@@ -45,5 +31,19 @@ public final class TaskWrapper<L, V> implements CallableTask<L, V>, Foldable {
 
 	@Override
 	public void reinit() {
+	}
+
+	/**
+	 * @param result результат его работы.
+	 */
+	public void setResult(V result) {
+		this.result = result;
+	}
+
+	/**
+	 * @param tasl обернутая задача.
+	 */
+	public void setTask(Task<L> tasl) {
+		this.task = tasl;
 	}
 }

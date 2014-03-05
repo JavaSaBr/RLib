@@ -49,13 +49,6 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 	}
 
 	/**
-	 * @param stream контент для парса.
-	 */
-	protected void setStream(InputStream stream) {
-		this.stream = stream;
-	}
-
-	/**
 	 * Создание соответствующей коллекцией, в которой будет хранится результат.
 	 */
 	protected abstract C create();
@@ -69,6 +62,7 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			document = builder.parse(stream);
 		} catch(SAXException | IOException | ParserConfigurationException e) {
+			LOGGER.warning(this, e);
 			throw new RuntimeException(e);
 		} finally {
 			IOUtils.close(stream);
@@ -79,6 +73,7 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 		try {
 			parse(document);
 		} catch(Exception e) {
+			LOGGER.warning(this, e);
 			throw new RuntimeException(e);
 		}
 
@@ -91,4 +86,11 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 	 * @param document DOM представление xml файла.
 	 */
 	protected abstract void parse(Document document);
+
+	/**
+	 * @param stream контент для парса.
+	 */
+	protected void setStream(InputStream stream) {
+		this.stream = stream;
+	}
 }

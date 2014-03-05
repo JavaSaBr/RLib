@@ -2,9 +2,10 @@ package rlib.util.array;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import rlib.util.pools.Foldable;
-
 
 /**
  * Интерфейс для реализации динамических массивов.
@@ -12,8 +13,15 @@ import rlib.util.pools.Foldable;
  * @author Ronn
  * @created 27.02.2012
  */
-public interface Array<E> extends Iterable<E>, Serializable, Foldable
-{
+public interface Array<E> extends Iterable<E>, Serializable, Foldable {
+
+	/**
+	 * Применить функцию на все элементы в массиве.
+	 *
+	 * @param consumer применяемая функция.
+	 */
+	public void accept(Consumer<? super E> consumer);
+
 	/**
 	 * Добавление элемента в массив.
 	 *
@@ -39,6 +47,13 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable
 	public Array<E> addAll(E[] array);
 
 	/**
+	 * Применить функцию замены всех элементов.
+	 *
+	 * @param function применяемая функция.
+	 */
+	public void apply(Function<? super E, ? extends E> function);
+
+	/**
 	 * @return возвращает массив элементов.
 	 */
 	public E[] array();
@@ -53,13 +68,14 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable
 	/**
 	 * Проверяет, содержит ли массив указанный объект.
 	 *
-     * @param object искомый объект.
-     * @return содержит ли.
-     */
+	 * @param object искомый объект.
+	 * @return содержит ли.
+	 */
 	public boolean contains(Object object);
 
 	/**
-	 * Проверяет, содержатся ли все элементы с указанного массива в этом массиве.
+	 * Проверяет, содержатся ли все элементы с указанного массива в этом
+	 * массиве.
 	 *
 	 * @param array массив элементов.
 	 * @return содержит ли.
@@ -67,7 +83,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable
 	public boolean containsAll(Array<?> array);
 
 	/**
-	 * Проверяет, содержатся ли все элементы с указанного массива в этом массиве.
+	 * Проверяет, содержатся ли все элементы с указанного массива в этом
+	 * массиве.
 	 *
 	 * @param array массив элементов.
 	 * @return содержит ли.
@@ -119,6 +136,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable
 	/**
 	 * @return итератор для перебора массива.
 	 */
+	@Override
 	public ArrayIterator<E> iterator();
 
 	/**
@@ -147,12 +165,14 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable
 	/**
 	 * Блокировка изменения массива на время чтения его.
 	 */
-	public void readLock();
+	default public void readLock() {
+	}
 
 	/**
 	 * Разблокировка изменения массива.
 	 */
-	public void readUnlock();
+	default public void readUnlock() {
+	}
 
 	/**
 	 * Удаляет из массива все элементы из указанного массива.
@@ -162,12 +182,12 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable
 	 */
 	public boolean removeAll(Array<?> array);
 
-    /**
-     * Удаляет все элементы массива, которые отсутствуют в указанном массиве.
-     *
-     * @param array массив с элементами.
-     * @return удалены ли все объекты.
-     */
+	/**
+	 * Удаляет все элементы массива, которые отсутствуют в указанном массиве.
+	 *
+	 * @param array массив с элементами.
+	 * @return удалены ли все объекты.
+	 */
 	public boolean retainAll(Array<?> array);
 
 	/**
@@ -217,7 +237,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable
 	public Array<E> sort(Comparator<E> comparator);
 
 	/**
-	 * Копирует элементы коллекции в указаный массив, либо возвращает исходный в указанном типе.
+	 * Копирует элементы коллекции в указаный массив, либо возвращает исходный в
+	 * указанном типе.
 	 *
 	 * @param newArray массив, в который нужно перенести.
 	 */
@@ -233,17 +254,12 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable
 	/**
 	 * Блокировка чтений для изменения массива.
 	 */
-	public void writeLock();
+	default public void writeLock() {
+	}
 
 	/**
 	 * Разблокировка чтения массива.
 	 */
-	public void writeUnlock();
-
-	/**
-	 * Применить функцию на все элементы в массиве.
-	 *
-	 * @param func применяемая функция.
-	 */
-	public void apply(FuncElement<? super E> func);
+	default public void writeUnlock() {
+	}
 }

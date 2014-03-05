@@ -33,6 +33,13 @@ public final class BoundingSphere extends AbstractBounding {
 		return BoundingType.SPHERE;
 	}
 
+	/**
+	 * @return радиус сферы.
+	 */
+	public float getRadius() {
+		return radius;
+	}
+
 	@Override
 	public Vector getResultCenter(VectorBuffer buffer) {
 
@@ -108,13 +115,6 @@ public final class BoundingSphere extends AbstractBounding {
 		}
 
 		return b * b >= a;
-	}
-
-	/**
-	 * @return радиус сферы.
-	 */
-	public float getRadius() {
-		return radius;
 	}
 
 	@Override

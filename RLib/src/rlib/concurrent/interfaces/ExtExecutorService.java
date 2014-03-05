@@ -83,27 +83,6 @@ public interface ExtExecutorService<L> {
 	 * @throws InterruptedException
 	 * @throws NullPointerException
 	 */
-	public <T> Collection<Future<T>> invokeAll(Collection<? extends CallableTask<L, T>> tasks) throws InterruptedException;
-
-	/**
-	 * Отправка набора задач с получением набора фьючерсов.
-	 * 
-	 * @param tasks список исполняемых задач.
-	 * @param container контейнер для фьючерсов.
-	 * @return список фьючерсов под список указанных задач.
-	 * @throws InterruptedException
-	 * @throws NullPointerException
-	 */
-	public <T, C extends Collection<Future<T>>> C invokeAll(Collection<? extends CallableTask<L, T>> tasks, C container) throws InterruptedException;
-
-	/**
-	 * Отправка набора задач с получением набора фьючерсов.
-	 * 
-	 * @param tasks список исполняемых задач.
-	 * @return список фьючерсов под список указанных задач.
-	 * @throws InterruptedException
-	 * @throws NullPointerException
-	 */
 	public <T> Future<T>[] invokeAll(CallableTask<L, T>[] tasks) throws InterruptedException;
 
 	/**
@@ -116,6 +95,27 @@ public interface ExtExecutorService<L> {
 	 * @throws NullPointerException
 	 */
 	public <T> Future<T>[] invokeAll(CallableTask<L, T>[] tasks, Future<T>[] container) throws InterruptedException;
+
+	/**
+	 * Отправка набора задач с получением набора фьючерсов.
+	 * 
+	 * @param tasks список исполняемых задач.
+	 * @return список фьючерсов под список указанных задач.
+	 * @throws InterruptedException
+	 * @throws NullPointerException
+	 */
+	public <T> Collection<Future<T>> invokeAll(Collection<? extends CallableTask<L, T>> tasks) throws InterruptedException;
+
+	/**
+	 * Отправка набора задач с получением набора фьючерсов.
+	 * 
+	 * @param tasks список исполняемых задач.
+	 * @param container контейнер для фьючерсов.
+	 * @return список фьючерсов под список указанных задач.
+	 * @throws InterruptedException
+	 * @throws NullPointerException
+	 */
+	public <T, C extends Collection<Future<T>>> C invokeAll(Collection<? extends CallableTask<L, T>> tasks, C container) throws InterruptedException;
 
 	/**
 	 * @return остановлен ли исполнитель.

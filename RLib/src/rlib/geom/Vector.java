@@ -27,6 +27,29 @@ public final class Vector implements GamePoint {
 	public final static Vector POSITIVE_INFINITY = new Vector(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
 	public final static Vector NEGATIVE_INFINITY = new Vector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
+	/**
+	 * Проверка на валидность вектора.
+	 * 
+	 * @param vector проверяемый вектор.
+	 * @return валиден ли вектор.
+	 */
+	public static boolean isValidVector(Vector vector) {
+
+		if(vector == null) {
+			return false;
+		}
+
+		if(Float.isNaN(vector.getX()) || Float.isNaN(vector.getY()) || Float.isNaN(vector.getZ())) {
+			return false;
+		}
+
+		if(Float.isInfinite(vector.getX()) || Float.isInfinite(vector.getY()) || Float.isInfinite(vector.getZ())) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public static Vector newInstance() {
 		return new Vector();
 	}
@@ -38,10 +61,10 @@ public final class Vector implements GamePoint {
 	public static Vector newInstance(float[] vals) {
 		return new Vector(vals[0], vals[1], vals[2]);
 	}
-
 	/** координаты */
 	protected float x;
 	protected float y;
+
 	protected float z;
 
 	private Vector() {
@@ -109,6 +132,39 @@ public final class Vector implements GamePoint {
 	 */
 	public Vector cross(Vector vector, Vector result) {
 		return cross(vector.x, vector.y, vector.z, result);
+	}
+
+	/**
+	 * Вычислние векторного произведение этого вектора.
+	 * 
+	 * @param otherX координата вектора, с которым нужно произвести
+	 * произведение.
+	 * @param otherY координата вектора, с которым нужно произвести
+	 * произведение.
+	 * @param otherZ координата вектора, с которым нужно произвести
+	 * произведение.
+	 * @return этот же вектор.
+	 */
+	public Vector crossLocal(float otherX, float otherY, float otherZ) {
+
+		float tempx = (y * otherZ) - (z * otherY);
+		float tempy = (z * otherX) - (x * otherZ);
+
+		z = (x * otherY) - (y * otherX);
+		x = tempx;
+		y = tempy;
+
+		return this;
+	}
+
+	/**
+	 * Вычислние векторного произведение этого вектора.
+	 * 
+	 * @param vector вектор, с которым нужно произвести произведение.
+	 * @return этот же вектор.
+	 */
+	public Vector crossLocal(Vector vector) {
+		return crossLocal(vector.x, vector.y, vector.z);
 	}
 
 	/**
@@ -221,6 +277,66 @@ public final class Vector implements GamePoint {
 	}
 
 	/**
+	 * 
+	 * <code>negate</code> returns the negative of this vector. All values are
+	 * negated and set to a new vector.
+	 * 
+	 * @return the negated vector.
+	 */
+	public Vector negate() {
+		return newInstance(-x, -y, -z);
+	}
+
+	/**
+	 * 
+	 * <code>negateLocal</code> negates the internal values of this vector.
+	 * 
+	 * @return this.
+	 */
+	public Vector negateLocal() {
+		x = -x;
+		y = -y;
+		z = -z;
+		return this;
+	}
+
+	/**
+	 * Конвектирование вектора в еденичный.
+	 * 
+	 * @return товый еденичный вектор.
+	 */
+	public Vector normalize() {
+
+		float length = x * x + y * y + z * z;
+
+		if(length != 1F && length != 0F) {
+			length = 1.0F / ExtMath.sqrt(length);
+			return new Vector(x * length, y * length, z * length);
+		}
+
+		return new Vector(x, y, z);
+	}
+
+	/**
+	 * Конвектирование вектора в еденичный.
+	 * 
+	 * @return этот же вектор.
+	 */
+	public Vector normalizeLocal() {
+
+		float length = x * x + y * y + z * z;
+
+		if(length != 1f && length != 0f) {
+			length = 1.0f / ExtMath.sqrt(length);
+			x *= length;
+			y *= length;
+			z *= length;
+		}
+
+		return this;
+	}
+
+	/**
 	 * @param vector вектор.
 	 * @return вектор.
 	 */
@@ -325,122 +441,6 @@ public final class Vector implements GamePoint {
 	 */
 	public Vector subtractLocal(Vector vector) {
 		return subtractLocal(vector.x, vector.y, vector.z);
-	}
-
-	/**
-	 * Проверка на валидность вектора.
-	 * 
-	 * @param vector проверяемый вектор.
-	 * @return валиден ли вектор.
-	 */
-	public static boolean isValidVector(Vector vector) {
-
-		if(vector == null) {
-			return false;
-		}
-
-		if(Float.isNaN(vector.getX()) || Float.isNaN(vector.getY()) || Float.isNaN(vector.getZ())) {
-			return false;
-		}
-
-		if(Float.isInfinite(vector.getX()) || Float.isInfinite(vector.getY()) || Float.isInfinite(vector.getZ())) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Конвектирование вектора в еденичный.
-	 * 
-	 * @return товый еденичный вектор.
-	 */
-	public Vector normalize() {
-
-		float length = x * x + y * y + z * z;
-
-		if(length != 1F && length != 0F) {
-			length = 1.0F / ExtMath.sqrt(length);
-			return new Vector(x * length, y * length, z * length);
-		}
-
-		return new Vector(x, y, z);
-	}
-
-	/**
-	 * Конвектирование вектора в еденичный.
-	 * 
-	 * @return этот же вектор.
-	 */
-	public Vector normalizeLocal() {
-
-		float length = x * x + y * y + z * z;
-
-		if(length != 1f && length != 0f) {
-			length = 1.0f / ExtMath.sqrt(length);
-			x *= length;
-			y *= length;
-			z *= length;
-		}
-
-		return this;
-	}
-
-	/**
-	 * Вычислние векторного произведение этого вектора.
-	 * 
-	 * @param vector вектор, с которым нужно произвести произведение.
-	 * @return этот же вектор.
-	 */
-	public Vector crossLocal(Vector vector) {
-		return crossLocal(vector.x, vector.y, vector.z);
-	}
-
-	/**
-	 * Вычислние векторного произведение этого вектора.
-	 * 
-	 * @param otherX координата вектора, с которым нужно произвести
-	 * произведение.
-	 * @param otherY координата вектора, с которым нужно произвести
-	 * произведение.
-	 * @param otherZ координата вектора, с которым нужно произвести
-	 * произведение.
-	 * @return этот же вектор.
-	 */
-	public Vector crossLocal(float otherX, float otherY, float otherZ) {
-
-		float tempx = (y * otherZ) - (z * otherY);
-		float tempy = (z * otherX) - (x * otherZ);
-
-		z = (x * otherY) - (y * otherX);
-		x = tempx;
-		y = tempy;
-
-		return this;
-	}
-
-	/**
-	 * 
-	 * <code>negate</code> returns the negative of this vector. All values are
-	 * negated and set to a new vector.
-	 * 
-	 * @return the negated vector.
-	 */
-	public Vector negate() {
-		return newInstance(-x, -y, -z);
-	}
-
-	/**
-	 * 
-	 * <code>negateLocal</code> negates the internal values of this vector.
-	 * 
-	 * @return this.
-	 */
-	public Vector negateLocal() {
-		x = -x;
-		y = -y;
-		z = -z;
-		return this;
 	}
 
 	@Override

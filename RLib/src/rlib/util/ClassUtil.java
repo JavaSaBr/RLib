@@ -10,51 +10,6 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class ClassUtil {
 
-	private ClassUtil() {
-		throw new RuntimeException();
-	}
-
-	/**
-	 * Создание нового экземпляра класса через стандартный конструктор.
-	 * 
-	 * @param cs интересуемый класс.
-	 * @return новый экземпляр класса.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(Class<?> cs) {
-		try {
-			return (T) cs.newInstance();
-		} catch(InstantiationException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(String className) {
-		try {
-			return (T) Class.forName(className).newInstance();
-		} catch(InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Создание нового экземпляра класса через указанный конструктор.
-	 * 
-	 * @param constructor конструктор класса.
-	 * @param objects набор параметров дял конструктора.
-	 * @return новый экземпляр класса.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(Constructor<?> constructor, Object... objects) {
-
-		try {
-			return (T) constructor.newInstance(objects);
-		} catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	/**
 	 * Получение конструктора по указанным параметрам указанного класса.
 	 * 
@@ -86,5 +41,49 @@ public final class ClassUtil {
 		} catch(NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	/**
+	 * Создание нового экземпляра класса через стандартный конструктор.
+	 * 
+	 * @param cs интересуемый класс.
+	 * @return новый экземпляр класса.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T newInstance(Class<?> cs) {
+		try {
+			return (T) cs.newInstance();
+		} catch(InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Создание нового экземпляра класса через указанный конструктор.
+	 * 
+	 * @param constructor конструктор класса.
+	 * @param objects набор параметров дял конструктора.
+	 * @return новый экземпляр класса.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T newInstance(Constructor<?> constructor, Object... objects) {
+		try {
+			return (T) constructor.newInstance(objects);
+		} catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T newInstance(String className) {
+		try {
+			return (T) Class.forName(className).newInstance();
+		} catch(InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private ClassUtil() {
+		throw new RuntimeException();
 	}
 }

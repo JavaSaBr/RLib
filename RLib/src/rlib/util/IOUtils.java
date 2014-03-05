@@ -15,15 +15,15 @@ public final class IOUtils {
 
 	private static final Logger LOGGER = Loggers.getLogger(IOUtils.class);
 
-	private IOUtils() {
-		throw new RuntimeException();
-	}
-
 	public static final void close(Closeable stream) {
 		try {
 			stream.close();
 		} catch(IOException e) {
 			LOGGER.warning(e);
 		}
+	}
+
+	private IOUtils() {
+		throw new RuntimeException();
 	}
 }

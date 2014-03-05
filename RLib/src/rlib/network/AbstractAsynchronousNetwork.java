@@ -36,38 +36,44 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 		return config;
 	}
 
+	/**
+	 * @return пул буфферов для чтения.
+	 */
+	private Array<ByteBuffer> getReadBufferPool() {
+		return readBufferPool;
+	}
+
 	@Override
 	public ByteBuffer getReadByteBuffer() {
-		readBufferPool.writeLock();
-		try {
 
-			ByteBuffer buffer = readBufferPool.pop();
+		Array<ByteBuffer> pool = getReadBufferPool();
+		ByteBuffer buffer = pool.pop();
 
-			if(buffer == null) {
-				buffer = ByteBuffer.allocate(config.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
-			}
-
-			return buffer;
-		} finally {
-			readBufferPool.writeUnlock();
+		if(buffer == null) {
+			buffer = ByteBuffer.allocate(config.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
 		}
+
+		return buffer;
+	}
+
+	/**
+	 * @return пул буфферов для записи.
+	 */
+	private Array<ByteBuffer> getWriteBufferPool() {
+		return writeBufferPool;
 	}
 
 	@Override
 	public ByteBuffer getWriteByteBuffer() {
-		writeBufferPool.writeLock();
-		try {
 
-			ByteBuffer buffer = writeBufferPool.pop();
+		Array<ByteBuffer> writeBufferPool = getWriteBufferPool();
+		ByteBuffer buffer = writeBufferPool.pop();
 
-			if(buffer == null) {
-				buffer = ByteBuffer.allocate(config.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
-			}
-
-			return buffer;
-		} finally {
-			writeBufferPool.writeUnlock();
+		if(buffer == null) {
+			buffer = ByteBuffer.allocate(config.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
 		}
+
+		return buffer;
 	}
 
 	@Override
@@ -77,7 +83,8 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 			return;
 		}
 
-		readBufferPool.add(buffer);
+		Array<ByteBuffer> pool = getReadBufferPool();
+		pool.add(buffer);
 	}
 
 	@Override
@@ -87,6 +94,7 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 			return;
 		}
 
-		writeBufferPool.add(buffer);
+		Array<ByteBuffer> pool = getWriteBufferPool();
+		pool.add(buffer);
 	}
 }

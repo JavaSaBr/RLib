@@ -1,8 +1,7 @@
 package rlib.util.linkedlist;
 
 import java.util.Collection;
-
-import rlib.util.array.FuncElement;
+import java.util.function.Consumer;
 
 /**
  * Базовая реализация связанного списка.
@@ -22,6 +21,13 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 	}
 
 	@Override
+	public void accept(Consumer<? super E> consumer) {
+		for(final E element : this) {
+			consumer.accept(element);
+		}
+	}
+
+	@Override
 	public boolean addAll(final Collection<? extends E> collection) {
 
 		for(final E object : collection) {
@@ -31,13 +37,6 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 		}
 
 		return true;
-	}
-
-	@Override
-	public void apply(final FuncElement<? super E> func) {
-		for(final E element : this) {
-			func.apply(element);
-		}
 	}
 
 	@Override

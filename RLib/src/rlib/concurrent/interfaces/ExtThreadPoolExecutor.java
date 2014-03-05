@@ -15,6 +15,11 @@ public interface ExtThreadPoolExecutor<L> extends ExtExecutorService<L> {
 	public long getCompletedTasks();
 
 	/**
+	 * @return состояние пула.
+	 */
+	public AtomicInteger getState();
+
+	/**
 	 * @return фабрика потоков.
 	 */
 	public ExtThreadFactory<L> getThreadFactory();
@@ -33,9 +38,4 @@ public interface ExtThreadPoolExecutor<L> extends ExtExecutorService<L> {
 	 * @param worker запускаемый работник.
 	 */
 	public void runWorker(Worker<L> worker, L localObjects);
-
-	/**
-	 * @return состояние пула.
-	 */
-	public AtomicInteger getState();
 }

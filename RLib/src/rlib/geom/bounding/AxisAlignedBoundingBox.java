@@ -73,6 +73,27 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 		return vector.addLocal(offsetX, offsetY, offsetZ);
 	}
 
+	/**
+	 * @return размер формы по X.
+	 */
+	public final float getSizeX() {
+		return sizeX;
+	}
+
+	/**
+	 * @return размер формы по Y.
+	 */
+	public final float getSizeY() {
+		return sizeY;
+	}
+
+	/**
+	 * @return размер формы по Z.
+	 */
+	public final float getSizeZ() {
+		return sizeZ;
+	}
+
 	@Override
 	public boolean intersects(Bounding bounding, VectorBuffer buffer) {
 		switch(bounding.getBoundingType()) {
@@ -166,6 +187,11 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
+	public String toString() {
+		return "BoundingBox size = " + size + ", sizeX = " + sizeX + ", sizeY = " + sizeY + ", sizeZ = " + sizeZ + ", center = " + center + ", offset = " + offset;
+	}
+
+	@Override
 	public void update(Rotation rotation, VectorBuffer buffer) {
 
 		matrix.set(rotation);
@@ -191,31 +217,5 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 		offsetX = vector.getX();
 		offsetY = vector.getY();
 		offsetZ = vector.getZ();
-	}
-
-	/**
-	 * @return размер формы по X.
-	 */
-	public final float getSizeX() {
-		return sizeX;
-	}
-
-	/**
-	 * @return размер формы по Y.
-	 */
-	public final float getSizeY() {
-		return sizeY;
-	}
-
-	/**
-	 * @return размер формы по Z.
-	 */
-	public final float getSizeZ() {
-		return sizeZ;
-	}
-
-	@Override
-	public String toString() {
-		return "BoundingBox size = " + size + ", sizeX = " + sizeX + ", sizeY = " + sizeY + ", sizeZ = " + sizeZ + ", center = " + center + ", offset = " + offset;
 	}
 }

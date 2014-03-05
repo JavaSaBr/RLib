@@ -32,6 +32,13 @@ public class PathBuilder {
 	}
 
 	/**
+	 * @return конструктор пути.
+	 */
+	private StringBuilder getBuilder() {
+		return builder;
+	}
+
+	/**
 	 * @return итоговый текущий путь.
 	 */
 	public String getPath() {
@@ -41,12 +48,5 @@ public class PathBuilder {
 	@Override
 	public String toString() {
 		return builder.toString();
-	}
-
-	/**
-	 * @return конструктор пути.
-	 */
-	private StringBuilder getBuilder() {
-		return builder;
 	}
 }

@@ -18,23 +18,13 @@ import rlib.network.server.ServerNetwork;
 public abstract class AbstractClientConnection<T extends Client, R extends ReadeablePacket<T>, S extends SendablePacket<T>> extends AbstractAsynConnection<ServerNetwork, R, S> implements
 		ClientConnection<T, R, S> {
 
-	public AbstractClientConnection(ServerNetwork network, AsynchronousSocketChannel channel, Class<S> sendableType) {
-		super(network, channel, sendableType);
-	}
-
 	protected static final Logger LOGGER = Loggers.getLogger(ClientConnection.class);
 
 	/** клиент пользователя */
 	protected T client;
 
-	@Override
-	public final T getClient() {
-		return client;
-	}
-
-	@Override
-	public final void setClient(T client) {
-		this.client = client;
+	public AbstractClientConnection(ServerNetwork network, AsynchronousSocketChannel channel, Class<S> sendableType) {
+		super(network, channel, sendableType);
 	}
 
 	@Override
@@ -43,6 +33,16 @@ public abstract class AbstractClientConnection<T extends Client, R extends Reade
 	}
 
 	@Override
+	public final T getClient() {
+		return client;
+	}
+
+	@Override
 	protected void onWrited(S packet) {
+	}
+
+	@Override
+	public final void setClient(T client) {
+		this.client = client;
 	}
 }

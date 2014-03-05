@@ -10,10 +10,12 @@ public interface Foldable {
 	/**
 	 * Очисть объект от занятых ресурсов.
 	 */
-	public void finalyze();
+	default public void finalyze() {
+	}
 
 	/**
 	 * Реинициализировать объект.
 	 */
-	public void reinit();
+	default public void reinit() {
+	}
 }
