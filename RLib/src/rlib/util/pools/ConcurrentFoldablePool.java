@@ -1,7 +1,7 @@
 package rlib.util.pools;
 
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Потокобезопасный объектный пул.
@@ -14,7 +14,7 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 	private final Array<E> pool;
 
 	protected ConcurrentFoldablePool(int size, Class<?> type) {
-		this.pool = Arrays.toConcurrentArray(type, size);
+		this.pool = ArrayUtils.toConcurrentArray(type, size);
 	}
 
 	@Override
@@ -30,18 +30,46 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 		}
 
 		object.finalyze();
-		pool.add(object);
+
+		Array<E> pool = getPool();
+		pool.writeLock();
+		try {
+			pool.add(object);
+		} finally {
+			pool.writeUnlock();
+		}
+	}
+
+	/**
+	 * @return массив объектов.
+	 */
+	private Array<E> getPool() {
+		return pool;
 	}
 
 	@Override
 	public void remove(E object) {
-		pool.fastRemove(object);
+		Array<E> pool = getPool();
+		pool.writeLock();
+		try {
+			pool.fastRemove(object);
+		} finally {
+			pool.writeUnlock();
+		}
 	}
 
 	@Override
 	public E take() {
 
-		E object = pool.pop();
+		E object = null;
+
+		Array<E> pool = getPool();
+		pool.writeLock();
+		try {
+			object = pool.pop();
+		} finally {
+			pool.writeUnlock();
+		}
 
 		if(object == null) {
 			return null;

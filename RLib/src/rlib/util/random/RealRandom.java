@@ -13,9 +13,6 @@ public final class RealRandom implements Random {
 	/** генератор чисел */
 	private final SecureRandom random;
 
-	/** счетчик вызавов */
-	// private int counter;
-
 	public RealRandom() {
 		try {
 			random = SecureRandom.getInstance("SHA1PRNG");

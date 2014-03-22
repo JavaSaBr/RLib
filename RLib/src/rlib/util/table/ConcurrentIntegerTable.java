@@ -2,11 +2,15 @@ package rlib.util.table;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import rlib.concurrent.AsynReadSynWriteLock;
 import rlib.concurrent.Locks;
+import rlib.concurrent.atomic.AtomicInteger;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 import rlib.util.array.IntegerArray;
 import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
@@ -17,15 +21,15 @@ import rlib.util.pools.Pools;
  *
  * @author Ronn
  */
-public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
-{
+public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V> {
+
 	/**
 	 * Модель ячейки в таблице.
 	 *
 	 * @author Ronn
 	 */
-	private final static class Entry<V> implements Foldable
-	{
+	private final static class Entry<V> implements Foldable {
+
 		/** следующая ячейка */
 		private Entry<V> next;
 
@@ -37,38 +41,31 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 		/** ключ */
 		private int key;
 
-        @Override
-		public boolean equals(Object object)
-		{
-			if(object == null || object.getClass() != Entry.class)
+		@Override
+		public boolean equals(Object object) {
+
+			if(object == null || object.getClass() != Entry.class) {
 				return false;
+			}
 
 			Entry<?> entry = (Entry<?>) object;
 
-			// получаем первый ключ
 			int firstKey = getKey();
-			// получаем второй ключ
 			int secondKey = entry.getKey();
 
-			// если ключи совпадают
-			if(firstKey == secondKey)
-			{
-				// получаем первое значение
+			if(firstKey == secondKey) {
+
 				Object firstValue = getValue();
-				// получаем второе значение
 				Object secondValue = entry.getValue();
 
-				// сли значения совпадают
-				if(firstValue == secondValue || (firstValue != null && firstValue.equals(secondValue)))
-					return true;
+				return Objects.equals(secondValue, firstValue);
 			}
 
 			return false;
 		}
 
 		@Override
-		public void finalyze()
-		{
+		public void finalyze() {
 			value = null;
 			next = null;
 			key = 0;
@@ -78,60 +75,52 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 		/**
 		 * @return хэш ячейки.
 		 */
-		public int getHash()
-		{
+		public int getHash() {
 			return hash;
 		}
 
 		/**
 		 * @return ключ ячейки.
 		 */
-		public int getKey()
-		{
+		public int getKey() {
 			return key;
 		}
 
 		/**
 		 * @return следующая ячейка.
 		 */
-		public Entry<V> getNext()
-		{
+		public Entry<V> getNext() {
 			return next;
 		}
 
 		/**
 		 * @return значение ячейки.
 		 */
-		public V getValue()
-		{
+		public V getValue() {
 			return value;
 		}
 
 		@Override
-		public final int hashCode()
-		{
-            return key ^ (value==null ? 0 : value.hashCode());
-        }
+		public final int hashCode() {
+			return key ^ (value == null ? 0 : value.hashCode());
+		}
 
 		@Override
-		public void reinit()
-		{
+		public void reinit() {
 			hash = 0;
 		}
 
-		public void set(int hash, int key, V value, Entry<V> next)
-        {
-            this.value = value;
-            this.next = next;
-            this.key = key;
-            this. hash = hash;
-        }
+		public void set(int hash, int key, V value, Entry<V> next) {
+			this.value = value;
+			this.next = next;
+			this.key = key;
+			this.hash = hash;
+		}
 
 		/**
 		 * @param next следующая цепочка.
 		 */
-		public void setNext(Entry<V> next)
-		{
+		public void setNext(Entry<V> next) {
 			this.next = next;
 		}
 
@@ -141,18 +130,14 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 		 * @param value новое значение.
 		 * @return старое значение.
 		 */
-		public V setValue(V value)
-		{
+		public V setValue(V value) {
 			V old = getValue();
-
 			this.value = value;
-
 			return old;
 		}
 
 		@Override
-		public final String toString()
-		{
+		public final String toString() {
 			return "Entry : " + key + " = " + value;
 		}
 	}
@@ -162,8 +147,8 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 	 *
 	 * @author Ronn
 	 */
-	private final class TableIterator implements Iterator<V>
-	{
+	private final class TableIterator implements Iterator<V> {
+
 		/** следующий entry */
 		private Entry<V> next;
 
@@ -173,58 +158,51 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 		/** текущий индекс в таблице */
 		private int index;
 
-		private TableIterator()
-		{
-			// получаем таблицу ячеяк
+		private TableIterator() {
+
 			Entry<V>[] table = table();
 
-			// если есть элементы
-			if(size > 0)
-				// исчем первую занятую ячейку
+			if(size() > 0) {
 				while(index < table.length && (next = table[index++]) == null);
+			}
 		}
 
 		@Override
-		public boolean hasNext()
-		{
+		public boolean hasNext() {
 			return next != null;
 		}
 
 		@Override
-		public V next()
-		{
+		public V next() {
 			return nextEntry().getValue();
 		}
 
 		/**
 		 * @return следующая занятая ячейка.
 		 */
-		private Entry<V> nextEntry()
-		{
-			// получаем таблицу
+		private Entry<V> nextEntry() {
+
 			Entry<V>[] table = table();
-			// получаем ячейку
 			Entry<V> entry = next;
 
-			// если ячейки нет, выходим
-			if(entry == null)
+			if(entry == null) {
 				throw new NoSuchElementException();
+			}
 
-			// перебираем цепочку
-			if((next = entry.getNext()) == null)
+			if((next = entry.getNext()) == null) {
 				while(index < table.length && (next = table[index++]) == null);
+			}
 
-			// запоминаем текущую
 			current = entry;
-
 			return entry;
 		}
 
 		@Override
-		public void remove()
-		{
-			if(current == null)
+		public void remove() {
+
+			if(current == null) {
 				throw new IllegalStateException();
+			}
 
 			int key = current.getKey();
 			current = null;
@@ -235,47 +213,39 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 
 	/** пул ячеяк */
 	private final FoldablePool<Entry<V>> entryPool;
-
 	/** блокировщик */
 	private final AsynReadSynWriteLock locker;
+	/** кол-во элементов в таблице */
+	private final AtomicInteger size;
 
 	/** таблица элементов */
 	private volatile Entry<V>[] table;
 
 	/** следующий размер для метода изминения размера (capacity * load factor) */
 	private volatile int threshold;
-	/** кол-во элементов в таблице */
-	private volatile int size;
 
 	/** фактор загружеености */
 	private volatile float loadFactor;
 
-	protected ConcurrentIntegerTable()
-	{
+	protected ConcurrentIntegerTable() {
 		this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
 	}
 
-	protected ConcurrentIntegerTable(float loadFactor)
-	{
+	protected ConcurrentIntegerTable(float loadFactor) {
 		this(loadFactor, DEFAULT_INITIAL_CAPACITY);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected ConcurrentIntegerTable(float loadFactor, int initCapacity)
-	{
+	protected ConcurrentIntegerTable(float loadFactor, int initCapacity) {
 		this.loadFactor = loadFactor;
 		this.threshold = (int) (initCapacity * loadFactor);
-
-		size = 0;
-
-		table = new Entry[DEFAULT_INITIAL_CAPACITY];
-		entryPool = Pools.newFoldablePool(Entry.class);
-
-		locker = Locks.newARSWLock();
+		this.size = new AtomicInteger();
+		this.table = new Entry[DEFAULT_INITIAL_CAPACITY];
+		this.entryPool = Pools.newFoldablePool(Entry.class);
+		this.locker = Locks.newARSWLock();
 	}
 
-	protected ConcurrentIntegerTable(int initCapacity)
-	{
+	protected ConcurrentIntegerTable(int initCapacity) {
 		this(DEFAULT_LOAD_FACTOR, initCapacity);
 	}
 
@@ -287,185 +257,98 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 	 * @param value значение по ключу.
 	 * @param index индекс ячейки.
 	 */
-	private final void addEntry(int hash, int key, V value, int index)
-	{
-		// получаем таблицу ячеяк
+	private final void addEntry(int hash, int key, V value, int index) {
+
 		Entry<V>[] table = table();
-
-		// получаем текущую ячейку
 		Entry<V> entry = table[index];
-
-		// достаем из пула новую.
 		Entry<V> newEntry = entryPool.take();
 
-		// если в пуле небыло
-		if(newEntry == null)
-			// создаем новую
+		if(newEntry == null) {
 			newEntry = new Entry<V>();
+		}
 
-		// вносим данные
 		newEntry.set(hash, key, value, entry);
-
-		// вносим в таблицу
 		table[index] = newEntry;
 
-		// если размер привысел загрузку
-		if(size++ >= threshold)
-			// переформировываем таблицу
+		if(size.getAndIncrement() >= threshold) {
 			resize(2 * table.length);
+		}
 	}
 
 	@Override
-	public void apply(FuncKeyValue<IntKey, V> func)
-	{
-		throw new IllegalArgumentException("not supported.");
+	public void apply(Function<? super V, V> function) {
+		for(Entry<V> entry : table()) {
+			while(entry != null) {
+				entry.setValue(function.apply(entry.getValue()));
+				entry = entry.getNext();
+			}
+		}
 	}
 
 	@Override
-	public void apply(FuncValue<V> func)
-	{
-		readLock();
-		try
-		{
-			// получаем таблицу ячеяк
-			Entry<V>[] table = table();
+	public final void clear() {
 
-			// перебираем цепочки
-			for(int i = 0, length = table.length; i < length; i++)
-			{
-				// получаем ячейку
-				Entry<V> entry = table[i];
+		FoldablePool<Entry<V>> entryPool = getEntryPool();
 
-				// перебираем ее цепочку
-				while(entry != null)
-				{
-					// применяем функцию
-					func.apply(entry.getValue());
+		Entry<V>[] table = table();
+		Entry<V> next = null;
 
-					// обновляем ячейку
-					entry = entry.getNext();
+		for(Entry<V> entry : table()) {
+			while(entry != null) {
+				next = entry.getNext();
+				entryPool.put(entry);
+				entry = next;
+			}
+		}
+
+		ArrayUtils.clear(table);
+		size.getAndSet(0);
+	}
+
+	@Override
+	public final boolean containsKey(int key) {
+		return getEntry(key) != null;
+	}
+
+	@Override
+	public final boolean containsValue(V value) {
+
+		if(value == null) {
+			throw new NullPointerException("value is null.");
+		}
+
+		for(Entry<V> element : table()) {
+			for(Entry<V> entry = element; entry != null; entry = entry.getNext()) {
+				if(value.equals(entry.getValue())) {
+					return true;
 				}
 			}
 		}
-		finally
-		{
-			readUnlock();
-		}
+
+		return false;
 	}
 
 	@Override
-	public final void clear()
-	{
-		writeLock();
-		try
-		{
-			// получаем таблицу ячеяк
-			Entry<V>[] table = table();
-
-			// следующая ячейка
-			Entry<V> next = null;
-
-			// перебираем ячейки
-			for(int i = 0, length = table.length; i < length; i++)
-			{
-				// получаем ячейку
-				Entry<V> entry = table[i];
-
-				// если ячейка есть
-				while(entry != null)
-				{
-					// получаем следующую ячейку от ее
-					next = entry.getNext();
-
-					// текущую ложим в пул
-					entryPool.put(entry);
-
-					// в текущую ложим следующую
-					entry = next;
-				}
-			}
-
-			// очищаем
-			Arrays.clear(table);
-
-			size = 0;
-		}
-		finally
-		{
-			writeUnlock();
-		}
-	}
-
-	@Override
-	public final boolean containsKey(int key)
-	{
-		readLock();
-		try
-		{
-			return getEntry(key) != null;
-		}
-		finally
-		{
-			readUnlock();
-		}
-	}
-
-	@Override
-	public final boolean containsValue(V value)
-	{
-		readLock();
-		try
-		{
-			// если значение нул, выходим
-			if(value == null)
-				throw new NullPointerException("value is null.");
-
-			// получаем таблицу ячеяк
-			Entry<V>[] table = table();
-
-			// перебираем ячейки
-			for(int i = 0, length = table.length; i < length; i++)
-			{
-				// получаем ячейку
-				Entry<V> element = table[i];
-
-				// перебираем цепочку
-				for(Entry<V> entry = element; entry != null; entry = entry.next)
-					if(value.equals(entry.getValue()))
-						return true;
-			}
-
-			return false;
-		}
-		finally
-		{
-			readUnlock();
-		}
-	}
-
-	@Override
-	public final void finalyze()
-	{
-		if(size() > 0)
+	public final void finalyze() {
+		if(size() > 0) {
 			clear();
+		}
 	}
 
 	@Override
-	public final V get(int key)
-	{
-		readLock();
-		try
-		{
-			// получаем ячейку
-			Entry<V> entry = getEntry(key);
+	public void forEach(Consumer<? super V> consumer) {
+		for(Entry<V> entry : table()) {
+			while(entry != null) {
+				consumer.accept(entry.getValue());
+				entry = entry.getNext();
+			}
+		}
+	}
 
-			// получаем значение из ячейки
-			return entry == null? null : entry.getValue();
-		}
-		finally
-		{
-			readUnlock();
-		}
+	@Override
+	public final V get(int key) {
+		Entry<V> entry = getEntry(key);
+		return entry == null ? null : entry.getValue();
 	}
 
 	/**
@@ -474,171 +357,108 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 	 * @param key ключ ячейки.
 	 * @return ячейка.
 	 */
-	private final Entry<V> getEntry(int key)
-	{
-		// рассчитываем хэш
+	private final Entry<V> getEntry(int key) {
+
 		int hash = hash(key);
 
-		// получаем таблицу ячеяк
 		Entry<V>[] table = table();
 
-		// перебираем цепочку ячеяк
-		for(Entry<V> entry = table[indexFor(hash, table.length)]; entry != null; entry = entry.getNext())
-			if(entry.getHash() == hash && key == entry.getKey())
+		for(Entry<V> entry = table[indexFor(hash, table.length)]; entry != null; entry = entry.getNext()) {
+			if(entry.getHash() == hash && key == entry.getKey()) {
 				return entry;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return пул ячеяк.
+	 */
+	public FoldablePool<Entry<V>> getEntryPool() {
+		return entryPool;
+	}
+
+	@Override
+	public TableType getType() {
+		return TableType.INTEGER;
+	}
+
+	@Override
+	public final Iterator<V> iterator() {
+		return new TableIterator();
+	}
+
+	@Override
+	public IntegerArray keyIntegerArray(IntegerArray container) {
+
+		for(Entry<V> entry : table()) {
+			while(entry != null) {
+				container.add(entry.getKey());
+				entry = entry.getNext();
+			}
+		}
+
+		return container;
+	}
+
+	@Override
+	public void moveTo(Table<? super IntKey, ? super V> table) {
+		if(isEmpty()) {
+			return;
+		}
+
+		super.moveTo(table);
+
+		for(Entry<V> entry : table()) {
+			while(entry != null) {
+				table.put(entry.getKey(), entry.getValue());
+				entry = entry.getNext();
+			}
+		}
+	}
+
+	@Override
+	public final V put(int key, V value) {
+
+		Entry<V>[] table = table();
+
+		int hash = hash(key);
+		int i = indexFor(hash, table.length);
+
+		for(Entry<V> entry = table[i]; entry != null; entry = entry.getNext()) {
+			if(entry.getHash() == hash && key == entry.getKey()) {
+				return entry.setValue(value);
+			}
+		}
+
+		addEntry(hash, key, value, i);
 
 		return null;
 	}
 
 	@Override
-	public TableType getType()
-	{
-		return TableType.INTEGER;
-	}
-
-	@Override
-	public final Iterator<V> iterator()
-	{
-		return new TableIterator();
-	}
-
-	@Override
-	public IntegerArray keyIntegerArray(IntegerArray container)
-	{
-		readLock();
-		try
-		{
-			// получаем таблицу ячеяк
-			Entry<V>[] table = table();
-
-			// перебираем цепочки
-			for(int i = 0, length = table.length; i < length; i++)
-			{
-				// получаем ячейку
-				Entry<V> entry = table[i];
-
-				// перебираем ее цепочку
-				while(entry != null)
-				{
-					// добавлям ключ
-					container.add(entry.getKey());
-
-					// обновляем ячейку
-					entry = entry.getNext();
-				}
-			}
-
-			return container;
-		}
-		finally
-		{
-			readUnlock();
-		}
-	}
-
-	@Override
-	public void moveTo(Table<IntKey, V> table)
-	{
-		if(getType() != table.getType())
-			throw new IllegalArgumentException("incorrect table type.");
-
-		readLock();
-		try
-		{
-			if(isEmpty())
-				return;
-
-			// получаем таблицу ячеяк
-			Entry<V>[] entryes = table();
-
-			// перебираем цепочки
-			for(int i = 0, length = entryes.length; i < length; i++)
-			{
-				// получаем ячейку
-				Entry<V> entry = entryes[i];
-
-				// перебираем ее цепочку
-				while(entry != null)
-				{
-					// вносим запись
-					table.put(entry.getKey(), entry.getValue());
-
-					// обновляем ячейку
-					entry = entry.getNext();
-				}
-			}
-		}
-		finally
-		{
-			readUnlock();
-		}
-	}
-
-	@Override
-	public final V put(int key, V value)
-	{
-		writeLock();
-		try
-		{
-			// рассчитываем хэш
-			int hash = hash(key);
-
-			// получаем таблицу ячеяк
-			Entry<V>[] table = table();
-
-			// рассчитываем позицию в таблице
-			int i = indexFor(hash, table.length);
-
-			// перебираем цепочку ячеяк
-			for(Entry<V> entry = table[i]; entry != null; entry = entry.getNext())
-				if(entry.getHash() == hash && key == entry.getKey())
-					return entry.setValue(value);
-
-			// добавляем новую ячейку
-			addEntry(hash, key, value, i);
-
-			return null;
-		}
-		finally
-		{
-			writeUnlock();
-		}
-	}
-
-	@Override
-	public void readLock()
-	{
+	public void readLock() {
 		locker.asynLock();
 	}
 
 	@Override
-	public void readUnlock()
-	{
+	public void readUnlock() {
 		locker.asynUnlock();
 	}
 
 	@Override
-	public final V remove(int key)
-	{
-		writeLock();
-		try
-		{
-			// удаляем ячейку по ключу
-			Entry<V> old = removeEntryForKey(key);
+	public final V remove(int key) {
 
-			// если есть удаленная ячейка, запоминаем значение в ней
-			V value = old == null? null : old.getValue();
+		Entry<V> old = removeEntryForKey(key);
+		V value = old == null ? null : old.getValue();
 
-			// ячейку ложим в пул
+		if(old != null) {
+			FoldablePool<Entry<V>> entryPool = getEntryPool();
 			entryPool.put(old);
+		}
 
-			// возвращаем старое значение
-			return value;
-		}
-		finally
-		{
-			writeUnlock();
-		}
+		return value;
 	}
 
 	/**
@@ -647,39 +467,31 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 	 * @param key ключ ячейки.
 	 * @return удаленная ячейка.
 	 */
-	private final Entry<V> removeEntryForKey(int key)
-	{
-		// определяем хеш ключа
+	private final Entry<V> removeEntryForKey(int key) {
+
 		int hash = hash(key);
 
-		// получаем таблицу ячеяк
 		Entry<V>[] table = table();
 
-		// определяем индекс цепочки
 		int i = indexFor(hash, table.length);
 
 		Entry<V> prev = table[i];
 		Entry<V> entry = prev;
 
-		// если ячейка есть
-		while(entry != null)
-		{
-			// получаем следующую
+		while(entry != null) {
+
 			Entry<V> next = entry.getNext();
 
-			// если это искомая ячейка
-			if(entry.getHash() == hash && key == entry.getKey())
-			{
-				// уменьшаем размер таблицы
-				size--;
+			if(entry.getHash() == hash && key == entry.getKey()) {
 
-				// обновляем цепочку
-				if(prev == entry)
+				size.decrementAndGet();
+
+				if(prev == entry) {
 					table[i] = next;
-				else
+				} else {
 					prev.setNext(next);
+				}
 
-				// возвращаем удаляемую ячейку
 				return entry;
 			}
 
@@ -696,92 +508,64 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 	 * @param newLength новый размер.
 	 */
 	@SuppressWarnings("unchecked")
-	private final void resize(int newLength)
-	{
-		// получаем старую таблицу
+	private final void resize(int newLength) {
+
 		Entry<V>[] oldTable = table();
 
-		// получаем старый размер
 		int oldLength = oldTable.length;
 
-		// если размер таблицы достиг предела
-		if(oldLength >= DEFAULT_MAXIMUM_CAPACITY)
-		{
-			// обновляем максимальную загруженность
+		if(oldLength >= DEFAULT_MAXIMUM_CAPACITY) {
 			threshold = Integer.MAX_VALUE;
 			return;
 		}
 
-		// создаем новую таблицу
 		Entry<V>[] newTable = new Entry[newLength];
-
-		// переносим данные в нее
 		transfer(newTable);
 
-		// сохраняем ее
-		table = newTable;
-
-		// обновляем максимальную загруженность
-		threshold = (int) (newLength * loadFactor);
+		this.table = newTable;
+		this.threshold = (int) (newLength * loadFactor);
 	}
 
 	@Override
-	public final int size()
-	{
-		return size;
+	public final int size() {
+		return size.get();
 	}
 
 	/**
 	 * @return массив ячеяк.
 	 */
-	private final Entry<V>[] table()
-	{
+	private final Entry<V>[] table() {
 		return table;
 	}
 
 	@Override
-	public final String toString()
-	{
-		readLock();
-		try
-		{
-			// создаем билдер строки
-			StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+	public final String toString() {
 
-			// добавляем размер таблицы
-			builder.append(" size = ").append(size).append(" : ");
+		int size = size();
 
-			// получаем таблицу ячеяк
-			Entry<V>[] table = table();
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		builder.append(" size = ").append(size).append(" : ");
 
-			// перебираем цепочки
-			for(int i = 0, length = table.length; i < length; i++)
-			{
-				// получаем ячейку
-				Entry<V> entry = table[i];
+		Entry<V>[] table = table();
 
-				// перебираем ее цепочку
-				while(entry != null)
-				{
-					// вносим
-					builder.append("[").append(entry.getKey()).append(" - ").append(entry.getValue()).append("]");
-					// добавляес разделитель
-					builder.append(", ");
+		for(int i = 0, length = table.length; i < length; i++) {
 
-					// обновляем ячейку
-					entry = entry.getNext();
-				}
+			Entry<V> entry = table[i];
+
+			while(entry != null) {
+
+				builder.append("[").append(entry.getKey()).append(" - ").append(entry.getValue()).append("]");
+				builder.append("\n");
+
+				entry = entry.getNext();
 			}
-
-			if(size > 0)
-				builder.replace(builder.length() - 2, builder.length(), ".");
-
-			return builder.toString();
 		}
-		finally
-		{
-			readUnlock();
+
+		if(size > 0) {
+			builder.replace(builder.length() - 1, builder.length(), ".");
 		}
+
+		return builder.toString();
 	}
 
 	/**
@@ -789,87 +573,53 @@ public class ConcurrentIntegerTable<V> extends AbstractTable<IntKey, V>
 	 *
 	 * @param newTable новая таблица.
 	 */
-	private final void transfer(Entry<V>[] newTable)
-	{
-		// получаем текущую таблицу
-		Entry<V>[] original = table;
+	private final void transfer(Entry<V>[] newTable) {
 
-		// получаем размер новай таблицы
+		Entry<V>[] original = table;
 		int newCapacity = newTable.length;
 
-		// перебираем старую таблицу
-		for(int j = 0, length = original.length; j < length; j++)
-		{
-			// получаем ячейку
+		for(int j = 0, length = original.length; j < length; j++) {
+
 			Entry<V> entry = original[j];
 
-			// если она есть
-			if(entry != null)
-			{
-				do
-				{
-					// получаем след. ячейку
-					Entry<V> next = entry.getNext();
-
-					// получаем новый хэш ячейки
-					int i = indexFor(entry.getHash(), newCapacity);
-
-					// запоминаем след. ячейку
-					entry.setNext(newTable[i]);
-
-					// вносим в таблицу
-					newTable[i] = entry;
-
-					entry = next;
-				}
-				while(entry != null);
+			if(entry == null) {
+				continue;
 			}
+
+			do {
+
+				Entry<V> next = entry.getNext();
+
+				int i = indexFor(entry.getHash(), newCapacity);
+
+				entry.setNext(newTable[i]);
+				newTable[i] = entry;
+				entry = next;
+
+			} while(entry != null);
 		}
 	}
 
 	@Override
-	public Array<V> values(Array<V> container)
-	{
-		readLock();
-		try
-		{
-			// получаем таблицу ячеяк
-			Entry<V>[] table = table();
+	public Array<V> values(Array<V> container) {
 
-			// перебираем цепочки
-			for(int i = 0, length = table.length; i < length; i++)
-			{
-				// получаем ячейку
-				Entry<V> entry = table[i];
-
-				// перебираем ее цепочку
-				while(entry != null)
-				{
-					// добавлям ключ
-					container.add(entry.getValue());
-
-					// обновляем ячейку
-					entry = entry.getNext();
-				}
+		for(Entry<V> entry : table()) {
+			while(entry != null) {
+				container.add(entry.getValue());
+				entry = entry.getNext();
 			}
+		}
 
-			return container;
-		}
-		finally
-		{
-			readUnlock();
-		}
+		return container;
 	}
 
 	@Override
-	public void writeLock()
-	{
+	public void writeLock() {
 		locker.synLock();
 	}
 
 	@Override
-	public void writeUnlock()
-	{
+	public void writeUnlock() {
 		locker.synUnlock();
 	}
 }

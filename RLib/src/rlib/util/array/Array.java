@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import rlib.util.Objects;
 import rlib.util.pools.Foldable;
 
 /**
@@ -16,33 +17,26 @@ import rlib.util.pools.Foldable;
 public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 
 	/**
-	 * Применить функцию на все элементы в массиве.
-	 *
-	 * @param consumer применяемая функция.
-	 */
-	public void accept(Consumer<? super E> consumer);
-
-	/**
 	 * Добавление элемента в массив.
 	 *
 	 * @param object добавляемый элемент.
-	 * @return this.
+	 * @return ссылка на этот же массив.
 	 */
 	public Array<E> add(E object);
 
 	/**
-	 * Добавление всех элементов массива.
+	 * Добавление набора элементов массива в этот массив.
 	 *
 	 * @param array добавляемый массив.
-	 * @return this.
+	 * @return ссылка на этот же массив.
 	 */
 	public Array<E> addAll(Array<? extends E> array);
 
 	/**
-	 * Добавление всех элементов массива.
+	 * Добавление всех элементов массива в этот массив..
 	 *
 	 * @param array добавляемый массив.
-	 * @return this.
+	 * @return ссылка на этот же массив.
 	 */
 	public Array<E> addAll(E[] array);
 
@@ -51,7 +45,14 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 *
 	 * @param function применяемая функция.
 	 */
-	public void apply(Function<? super E, ? extends E> function);
+	public default void apply(Function<? super E, ? extends E> function) {
+
+		E[] array = array();
+
+		for(int i = 0, length = size(); i < length; i++) {
+			array[i] = function.apply(array[i]);
+		}
+	}
 
 	/**
 	 * @return возвращает массив элементов.
@@ -61,7 +62,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	/**
 	 * Очистить массив путем зануления элементов.
 	 *
-	 * @return this.
+	 * @return ссылка на этот же массив.
 	 */
 	public Array<E> clear();
 
@@ -71,7 +72,21 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param object искомый объект.
 	 * @return содержит ли.
 	 */
-	public boolean contains(Object object);
+	public default boolean contains(Object object) {
+
+		for(E element : array()) {
+
+			if(element == null) {
+				break;
+			}
+
+			if(element.equals(object)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	/**
 	 * Проверяет, содержатся ли все элементы с указанного массива в этом
@@ -80,7 +95,21 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param array массив элементов.
 	 * @return содержит ли.
 	 */
-	public boolean containsAll(Array<?> array);
+	public default boolean containsAll(Array<?> array) {
+
+		for(Object element : array.array()) {
+
+			if(element == null) {
+				break;
+			}
+
+			if(!contains(element)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * Проверяет, содержатся ли все элементы с указанного массива в этом
@@ -89,7 +118,16 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param array массив элементов.
 	 * @return содержит ли.
 	 */
-	public boolean containsAll(Object[] array);
+	public default boolean containsAll(Object[] array) {
+
+		for(Object element : array) {
+			if(!contains(element)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * Удаляет элемент по индексу с установкой последнего элемента на месте его.
@@ -105,12 +143,34 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param object удаляемый объект.
 	 * @return удален ли объект.
 	 */
-	public boolean fastRemove(Object object);
+	public default boolean fastRemove(Object object) {
+		return fastRemove(indexOf(object)) != null;
+	}
 
 	/**
 	 * @return первый элемент в массиве.
 	 */
-	public E first();
+	public default E first() {
+
+		if(isEmpty()) {
+			return null;
+		}
+
+		return get(0);
+	}
+
+	@Override
+	public default void forEach(Consumer<? super E> consumer) {
+
+		for(E element : array()) {
+
+			if(element == null) {
+				break;
+			}
+
+			consumer.accept(element);
+		}
+	}
 
 	/**
 	 * Извлекает элемент с указанным индексом.
@@ -126,12 +186,36 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param object искомый объект.
 	 * @return первый индекс объекта.
 	 */
-	public int indexOf(Object object);
+	public default int indexOf(Object object) {
+
+		if(object == null) {
+			return -1;
+		}
+
+		int index = 0;
+
+		for(E element : array()) {
+
+			if(element == null) {
+				break;
+			}
+
+			if(Objects.equals(object, element)) {
+				return index;
+			}
+
+			index++;
+		}
+
+		return -1;
+	}
 
 	/**
 	 * @return является ли массив пустым.
 	 */
-	public boolean isEmpty();
+	public default boolean isEmpty() {
+		return size() < 1;
+	}
 
 	/**
 	 * @return итератор для перебора массива.
@@ -142,7 +226,16 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	/**
 	 * @return последний элемент в массиве.
 	 */
-	public E last();
+	public default E last() {
+
+		int size = size();
+
+		if(size < 1) {
+			return null;
+		}
+
+		return get(size - 1);
+	}
 
 	/**
 	 * Найти последний индекс указанного объекта.
@@ -150,17 +243,41 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param object искомый объект.
 	 * @return последний индекс искомого объекта.
 	 */
-	public int lastIndexOf(Object object);
+	public default int lastIndexOf(Object object) {
+
+		if(object == null) {
+			return -1;
+		}
+
+		E[] array = array();
+
+		int last = -1;
+
+		for(int i = 0, length = size(); i < length; i++) {
+
+			E element = array[i];
+
+			if(element.equals(object)) {
+				last = i;
+			}
+		}
+
+		return last;
+	}
 
 	/**
 	 * @return первый элемент массива.
 	 */
-	public E poll();
+	public default E poll() {
+		return slowRemove(0);
+	}
 
 	/**
 	 * @return последний элемент массива.
 	 */
-	public E pop();
+	public default E pop() {
+		return fastRemove(size() - 1);
+	}
 
 	/**
 	 * Блокировка изменения массива на время чтения его.
@@ -180,7 +297,23 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param array массив с элементами.
 	 * @return удалены ли все указанные объекты.
 	 */
-	public boolean removeAll(Array<?> array);
+	public default boolean removeAll(Array<?> target) {
+
+		if(target.isEmpty()) {
+			return true;
+		}
+
+		for(Object element : target.array()) {
+
+			if(element == null) {
+				break;
+			}
+
+			fastRemove(element);
+		}
+
+		return true;
+	}
 
 	/**
 	 * Удаляет все элементы массива, которые отсутствуют в указанном массиве.
@@ -188,7 +321,19 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param array массив с элементами.
 	 * @return удалены ли все объекты.
 	 */
-	public boolean retainAll(Array<?> array);
+	public default boolean retainAll(Array<?> target) {
+
+		E[] array = array();
+
+		for(int i = 0, length = size(); i < length; i++) {
+			if(!target.contains(array[i])) {
+				fastRemove(i--);
+				length--;
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * Ищет подходящий элемент к указанному объекту.
@@ -197,7 +342,21 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param search поисковик подходящего объекта.
 	 * @return искомый объект.
 	 */
-	public E search(E required, Search<E> search);
+	public default E search(E required, Search<E> search) {
+
+		E[] array = array();
+
+		for(int i = 0, length = size(); i < length; i++) {
+
+			E element = array[i];
+
+			if(search.compare(required, element)) {
+				return element;
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * Установка указанного элемента по указанному индексу.
@@ -234,7 +393,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param comparator компаратор для сортировки.
 	 * @return this.
 	 */
-	public Array<E> sort(Comparator<E> comparator);
+	public default Array<E> sort(Comparator<E> comparator) {
+		ArrayUtils.sort(array(), comparator);
+		return this;
+	}
 
 	/**
 	 * Копирует элементы коллекции в указаный массив, либо возвращает исходный в
@@ -242,7 +404,27 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 *
 	 * @param newArray массив, в который нужно перенести.
 	 */
-	public <T> T[] toArray(T[] newArray);
+	@SuppressWarnings("unchecked")
+	public default <T> T[] toArray(T[] newArray) {
+
+		E[] array = array();
+
+		if(newArray.length >= size()) {
+
+			for(int i = 0, j = 0, length = array.length, newLength = newArray.length; i < length && j < newLength; i++) {
+
+				if(array[i] == null) {
+					continue;
+				}
+
+				newArray[j++] = (T) array[i];
+			}
+
+			return newArray;
+		}
+
+		return (T[]) array;
+	}
 
 	/**
 	 * Уменьшает массив до текущего набора реальных элементов.

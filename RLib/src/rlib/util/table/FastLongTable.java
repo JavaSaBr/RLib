@@ -2,9 +2,11 @@ package rlib.util.table;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 import rlib.util.array.LongArray;
 import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
@@ -26,13 +28,11 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 
 		/** следующая ячейка */
 		private Entry<V> next;
-
 		/** значение */
 		private V value;
 
 		/** ключ */
 		private long key;
-
 		/** хэш ключа */
 		private int hash;
 
@@ -128,11 +128,8 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 		 * @return старое значение.
 		 */
 		public V setValue(V value) {
-
 			V old = getValue();
-
 			this.value = value;
-
 			return old;
 		}
 
@@ -151,7 +148,6 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 
 		/** следующий entry */
 		private Entry<V> next;
-
 		/** текущий entry */
 		private Entry<V> current;
 
@@ -162,7 +158,7 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 
 			Entry<V>[] table = table();
 
-			if(size > 0) {
+			if(size() > 0) {
 				while(index < table.length && (next = table[index++]) == null);
 			}
 		}
@@ -238,11 +234,9 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	protected FastLongTable(float loadFactor, int initCapacity) {
 		this.loadFactor = loadFactor;
 		this.threshold = (int) (initCapacity * loadFactor);
-
-		size = 0;
-
-		table = new Entry[DEFAULT_INITIAL_CAPACITY];
-		entryPool = Pools.newFoldablePool(Entry.class);
+		this.size = 0;
+		this.table = new Entry[DEFAULT_INITIAL_CAPACITY];
+		this.entryPool = Pools.newFoldablePool(Entry.class);
 	}
 
 	protected FastLongTable(int initCapacity) {
@@ -258,6 +252,8 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	 * @param index индекс ячейки.
 	 */
 	private final void addEntry(int hash, long key, V value, int index) {
+
+		FoldablePool<Entry<V>> entryPool = getEntryPool();
 
 		Entry<V>[] table = table();
 		Entry<V> entry = table[index];
@@ -277,21 +273,10 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	}
 
 	@Override
-	public void apply(FuncKeyValue<LongKey, V> func) {
-		throw new IllegalArgumentException("not supported.");
-	}
-
-	@Override
-	public void apply(FuncValue<V> func) {
-
-		Entry<V>[] table = table();
-
-		for(int i = 0, length = table.length; i < length; i++) {
-
-			Entry<V> entry = table[i];
-
+	public void apply(Function<? super V, V> function) {
+		for(Entry<V> entry : table()) {
 			while(entry != null) {
-				func.apply(entry.getValue());
+				entry.setValue(function.apply(entry.getValue()));
 				entry = entry.getNext();
 			}
 		}
@@ -300,13 +285,11 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	@Override
 	public final void clear() {
 
+		FoldablePool<Entry<V>> entryPool = getEntryPool();
 		Entry<V>[] table = table();
 		Entry<V> next = null;
 
-		for(int i = 0, length = table.length; i < length; i++) {
-
-			Entry<V> entry = table[i];
-
+		for(Entry<V> entry : table) {
 			while(entry != null) {
 				next = entry.getNext();
 				entryPool.put(entry);
@@ -314,7 +297,7 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 			}
 		}
 
-		Arrays.clear(table);
+		ArrayUtils.clear(table);
 
 		size = 0;
 	}
@@ -336,13 +319,8 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 			throw new NullPointerException("value is null.");
 		}
 
-		Entry<V>[] table = table();
-
-		for(int i = 0, length = table.length; i < length; i++) {
-
-			Entry<V> element = table[i];
-
-			for(Entry<V> entry = element; entry != null; entry = entry.next) {
+		for(Entry<V> element : table()) {
+			for(Entry<V> entry = element; entry != null; entry = entry.getNext()) {
 				if(value.equals(entry.getValue())) {
 					return true;
 				}
@@ -356,6 +334,16 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	public final void finalyze() {
 		if(size() > 0) {
 			clear();
+		}
+	}
+
+	@Override
+	public void forEach(Consumer<? super V> consumer) {
+		for(Entry<V> entry : table()) {
+			while(entry != null) {
+				consumer.accept(entry.getValue());
+				entry = entry.getNext();
+			}
 		}
 	}
 
@@ -391,6 +379,10 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 		return null;
 	}
 
+	private FoldablePool<Entry<V>> getEntryPool() {
+		return entryPool;
+	}
+
 	@Override
 	public TableType getType() {
 		return TableType.LONG;
@@ -404,12 +396,7 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	@Override
 	public LongArray keyLongArray(LongArray container) {
 
-		Entry<V>[] table = table();
-
-		for(int i = 0, length = table.length; i < length; i++) {
-
-			Entry<V> entry = table[i];
-
+		for(Entry<V> entry : table()) {
 			while(entry != null) {
 				container.add(entry.getKey());
 				entry = entry.getNext();
@@ -420,22 +407,15 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	}
 
 	@Override
-	public void moveTo(Table<LongKey, V> table) {
-
-		if(getType() != table.getType()) {
-			throw new IllegalArgumentException("incorrect table type.");
-		}
+	public void moveTo(Table<? super LongKey, ? super V> table) {
 
 		if(isEmpty()) {
 			return;
 		}
 
-		Entry<V>[] entryes = table();
+		super.moveTo(table);
 
-		for(int i = 0, length = entryes.length; i < length; i++) {
-
-			Entry<V> entry = entryes[i];
-
+		for(Entry<V> entry : table()) {
 			while(entry != null) {
 				table.put(entry.getKey(), entry.getValue());
 				entry = entry.getNext();
@@ -451,10 +431,9 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	@Override
 	public final V put(long key, V value) {
 
-		int hash = hash(key);
-
 		Entry<V>[] table = table();
 
+		int hash = hash(key);
 		int i = indexFor(hash, table.length);
 
 		for(Entry<V> entry = table[i]; entry != null; entry = entry.getNext()) {
@@ -479,6 +458,7 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 		Entry<V> old = removeEntryForKey(key);
 		V value = old == null ? null : old.getValue();
 
+		FoldablePool<Entry<V>> entryPool = getEntryPool();
 		entryPool.put(old);
 
 		return value;
@@ -543,11 +523,10 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 		}
 
 		Entry<V>[] newTable = new Entry[newLength];
-
 		transfer(newTable);
 
-		table = newTable;
-		threshold = (int) (newLength * loadFactor);
+		this.table = newTable;
+		this.threshold = (int) (newLength * loadFactor);
 	}
 
 	@Override
@@ -564,6 +543,8 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 
 	@Override
 	public final String toString() {
+
+		int size = size();
 
 		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
 		builder.append(" size = ").append(size).append(" :\n");
@@ -597,7 +578,7 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 	 */
 	private final void transfer(Entry<V>[] newTable) {
 
-		Entry<V>[] original = table;
+		Entry<V>[] original = table();
 
 		int newCapacity = newTable.length;
 
@@ -605,33 +586,28 @@ public class FastLongTable<V> extends AbstractTable<LongKey, V> {
 
 			Entry<V> entry = original[j];
 
-			if(entry != null) {
-				do {
-
-					Entry<V> next = entry.getNext();
-
-					int i = indexFor(entry.getHash(), newCapacity);
-
-					entry.setNext(newTable[i]);
-
-					newTable[i] = entry;
-
-					entry = next;
-
-				} while(entry != null);
+			if(entry == null) {
+				continue;
 			}
+
+			do {
+
+				Entry<V> next = entry.getNext();
+
+				int i = indexFor(entry.getHash(), newCapacity);
+
+				entry.setNext(newTable[i]);
+				newTable[i] = entry;
+				entry = next;
+
+			} while(entry != null);
 		}
 	}
 
 	@Override
 	public Array<V> values(Array<V> container) {
 
-		Entry<V>[] table = table();
-
-		for(int i = 0, length = table.length; i < length; i++) {
-
-			Entry<V> entry = table[i];
-
+		for(Entry<V> entry : table()) {
 			while(entry != null) {
 				container.add(entry.getValue());
 				entry = entry.getNext();

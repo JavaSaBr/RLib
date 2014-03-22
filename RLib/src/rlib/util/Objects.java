@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 import rlib.logging.Loggers;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Класс для работы с объектами.
@@ -149,7 +149,7 @@ public abstract class Objects {
 			return;
 		}
 
-		final Array<Field> array = Arrays.toArray(Field.class);
+		final Array<Field> array = ArrayUtils.toArray(Field.class);
 
 		for(Class<?> cs = original.getClass(); cs != null; cs = cs.getSuperclass()) {
 
@@ -178,5 +178,9 @@ public abstract class Objects {
 				Loggers.warning("Objects", e.getMessage());;
 			}
 		}
+	}
+
+	public static boolean equals(Object first, Object second) {
+		return (first == second) || (first != null && first.equals(second));
 	}
 }

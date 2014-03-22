@@ -10,7 +10,7 @@ import java.nio.channels.FileChannel;
 
 import rlib.logging.Loggers;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 
 /**
@@ -53,7 +53,7 @@ public final class GeoMap3D implements GeoMap
 		// если по X для квадрата нет места
 		if(quard.getX() >= quards.length)
 			// расширяем массив
-			quards = Arrays.copyOf(quards, quard.getX() + 1);
+			quards = ArrayUtils.copyOf(quards, quard.getX() + 1);
 
 		// получаем массив по Y
 		GeoQuard[][] yQuards = quards[quard.getX()];
@@ -70,7 +70,7 @@ public final class GeoMap3D implements GeoMap
 		else if(quard.getY() >= yQuards.length)
 		{
 			// расширяем
-			yQuards = Arrays.copyOf(yQuards, quard.getY() + 1 - yQuards.length);
+			yQuards = ArrayUtils.copyOf(yQuards, quard.getY() + 1 - yQuards.length);
 			// обновляем
 			quards[quard.getX()] = yQuards;
 		}
@@ -123,7 +123,7 @@ public final class GeoMap3D implements GeoMap
 			}
 
 			// если с таким индексом квадратов небыло, добавляем в массив новый
-			yQuards[quard.getY()] = Arrays.addToArray(zQuards, quard, GeoQuard.class);
+			yQuards[quard.getY()] = ArrayUtils.addToArray(zQuards, quard, GeoQuard.class);
 
 			// увеличиваем счетчик размера
 			size++;
@@ -136,7 +136,7 @@ public final class GeoMap3D implements GeoMap
 		// если по X для квадрата нет места
 		if(x >= quards.length)
 			// расширяем массив
-			quards = Arrays.copyOf(quards, x + 1);
+			quards = ArrayUtils.copyOf(quards, x + 1);
 
 		// получаем массив по Y
 		GeoQuard[][] yQuards = quards[x];
@@ -153,7 +153,7 @@ public final class GeoMap3D implements GeoMap
 		else if(y >= yQuards.length)
 		{
 			// расширяем
-			yQuards = Arrays.copyOf(yQuards, y + 1 - yQuards.length);
+			yQuards = ArrayUtils.copyOf(yQuards, y + 1 - yQuards.length);
 			// обновляем
 			quards[x] = yQuards;
 		}
@@ -204,7 +204,7 @@ public final class GeoMap3D implements GeoMap
 			}
 
 			// если с таким индексом квадратов небыло, добавляем в массив новый
-			yQuards[y] = Arrays.addToArray(zQuards, new GeoQuard(x, y, height), GeoQuard.class);
+			yQuards[y] = ArrayUtils.addToArray(zQuards, new GeoQuard(x, y, height), GeoQuard.class);
 
 			// увеличиваем счетчик размера
 			size++;

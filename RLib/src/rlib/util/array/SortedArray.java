@@ -31,7 +31,7 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 	public SortedArray<E> add(E element) {
 
 		if(size == array.length) {
-			array = Arrays.copyOf(array, array.length * 3 / 2 + 1);
+			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
 		}
 
 		E[] array = array();

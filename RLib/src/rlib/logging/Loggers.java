@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.Locks;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 import rlib.util.table.Table;
 import rlib.util.table.Tables;
 
@@ -27,7 +27,7 @@ public abstract class Loggers {
 	/** таблица всех логгерров */
 	private static final Table<String, Logger> LOGGERS = Tables.newObjectTable();
 	/** список дополнительных записчиков лога */
-	private static final Array<Writer> WRITERS = Arrays.toArray(Writer.class);
+	private static final Array<Writer> WRITERS = ArrayUtils.toArray(Writer.class);
 
 	/** синхронизатор записи лога */
 	private static final Lock SYNC = Locks.newLock();
@@ -43,7 +43,7 @@ public abstract class Loggers {
 	 * @param listener слушатель.
 	 */
 	public static void addListener(LoggerListener listener) {
-		listeners = Arrays.addToArray(listeners, listener, LoggerListener.class);
+		listeners = ArrayUtils.addToArray(listeners, listener, LoggerListener.class);
 	}
 
 	/**

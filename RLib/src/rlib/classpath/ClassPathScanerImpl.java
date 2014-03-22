@@ -12,7 +12,7 @@ import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.Strings;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Реализация сканера classpath.
@@ -39,7 +39,7 @@ class ClassPathScanerImpl implements ClassPathScaner {
 
 	@Override
 	public void addClasses(Array<Class<?>> added) {
-		this.classes = Arrays.combine(classes, added.toArray(new Class[added.size()]), Class.class);
+		this.classes = ArrayUtils.combine(classes, added.toArray(new Class[added.size()]), Class.class);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -222,7 +222,7 @@ class ClassPathScanerImpl implements ClassPathScaner {
 
 		String[] paths = getPaths();
 
-		Array<Class<?>> container = Arrays.toArraySet(Class.class);
+		Array<Class<?>> container = ArrayUtils.toArraySet(Class.class);
 
 		for(String path : paths) {
 

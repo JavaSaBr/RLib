@@ -1,4 +1,4 @@
-package rlib.concurrent;
+package rlib.concurrent.util;
 
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
@@ -14,8 +14,6 @@ public final class ConcurrentUtils {
 
 	/**
 	 * Отпускание ожидающих потоков на этом объекте.
-	 * 
-	 * @param object
 	 */
 	public static void notifyAll(Object object) {
 		synchronized(object) {
@@ -25,13 +23,15 @@ public final class ConcurrentUtils {
 
 	/**
 	 * Отпускание ожидающих потоков на этом объекте.
-	 * 
-	 * @param object
 	 */
 	public static void notifyAllInSynchronize(Object object) {
 		object.notifyAll();
 	}
 
+	/**
+	 * Отпускание ожидающих потоков на этом объекте и становится самому в
+	 * ожидание.
+	 */
 	public static void notifyAndWait(Object object) {
 		synchronized(object) {
 			notifyAllInSynchronize(object);
@@ -39,6 +39,9 @@ public final class ConcurrentUtils {
 		}
 	}
 
+	/**
+	 * Ождивать на этом объекте.
+	 */
 	public static void wait(Object object) {
 		synchronized(object) {
 			try {
@@ -49,6 +52,9 @@ public final class ConcurrentUtils {
 		}
 	}
 
+	/**
+	 * Ожидать определнное время на этом объекте.
+	 */
 	public static void wait(Object object, long time) {
 		synchronized(object) {
 			try {
@@ -59,6 +65,9 @@ public final class ConcurrentUtils {
 		}
 	}
 
+	/**
+	 * Ождивать на этом объекте.
+	 */
 	public static void waitInSynchronize(Object object) {
 		try {
 			object.wait();

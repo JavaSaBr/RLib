@@ -11,7 +11,7 @@ import java.util.jar.Manifest;
 
 import rlib.util.Util;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * @author Ronn
@@ -36,7 +36,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 			return new String[0];
 		}
 
-		Array<String> result = Arrays.toArray(String.class);
+		Array<String> result = ArrayUtils.toArray(String.class);
 
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
@@ -92,7 +92,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 	@Override
 	protected String[] getPaths() {
 
-		Array<String> result = Arrays.toArraySet(String.class);
+		Array<String> result = ArrayUtils.toArraySet(String.class);
 		result.addAll(super.getPaths());
 		result.addAll(getManifestClassPath());
 		result.trimToSize();

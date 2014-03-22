@@ -1,7 +1,7 @@
 package rlib.util.pools;
 
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Не потокобезопасный пул.
@@ -14,7 +14,7 @@ public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	private final Array<E> pool;
 
 	protected FastFoldablePool(int size, Class<?> type) {
-		this.pool = Arrays.toArray(type, size);
+		this.pool = ArrayUtils.toArray(type, size);
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package rlib.util.pools;
 
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Синхронизированный объектный пул.
@@ -14,7 +14,7 @@ public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePoo
 	private final Array<E> pool;
 
 	protected SynchronizedFoldablePool(int size, Class<?> type) {
-		this.pool = Arrays.toArray(type, size);
+		this.pool = ArrayUtils.toArray(type, size);
 	}
 
 	@Override

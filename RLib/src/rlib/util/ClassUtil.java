@@ -83,6 +83,15 @@ public final class ClassUtil {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T> getClass(String name) {
+		try {
+			return (Class<T>) Class.forName(name);
+		} catch(ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private ClassUtil() {
 		throw new RuntimeException();
 	}

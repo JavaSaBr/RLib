@@ -6,8 +6,8 @@ package rlib.util.array;
  * @author Ronn
  * @created 12.04.2012
  */
-public interface Search<E>
-{
+public interface Search<E> {
+
 	/**
 	 * Проверка, подходит ли элемент к указанному
 	 * 

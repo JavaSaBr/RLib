@@ -1,18 +1,17 @@
 package rlib.util.array;
 
-import java.util.Comparator;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import rlib.concurrent.atomic.AtomicInteger;
 
 /**
- * Массив с синхронизированными методами.
+ * Реализация динамического массива с возможностью использовать потокобезопасную
+ * запись и чтение.
  *
  * @author Ronn
  */
-public final class SynchronizedArray<E> extends AbstractArray<E> {
+public class SynchronizedArray<E> extends AbstractArray<E> {
 
 	/**
-	 * Быстрый итератор массива.
+	 * Быстрый итератор по массиву.
 	 *
 	 * @author Ronn
 	 */
@@ -28,7 +27,7 @@ public final class SynchronizedArray<E> extends AbstractArray<E> {
 
 		@Override
 		public boolean hasNext() {
-			return ordinal < size;
+			return ordinal < size();
 		}
 
 		@Override
@@ -38,6 +37,11 @@ public final class SynchronizedArray<E> extends AbstractArray<E> {
 
 		@Override
 		public E next() {
+
+			if(ordinal >= array.length) {
+				return null;
+			}
+
 			return array[ordinal++];
 		}
 
@@ -52,19 +56,19 @@ public final class SynchronizedArray<E> extends AbstractArray<E> {
 		}
 	}
 
-	private static final long serialVersionUID = -8477384427415127978L;
+	private static final long serialVersionUID = 1L;
+
+	/** кол-во элементов в колекции */
+	private final AtomicInteger size;
 
 	/** массив элементов */
 	private volatile E[] array;
-
-	/** кол-во элементов в колекции */
-	private volatile int size;
 
 	/**
 	 * @param type тип элементов в массиве.
 	 */
 	public SynchronizedArray(Class<E> type) {
-		super(type);
+		this(type, 10);
 	}
 
 	/**
@@ -73,302 +77,153 @@ public final class SynchronizedArray<E> extends AbstractArray<E> {
 	 */
 	public SynchronizedArray(Class<E> type, int size) {
 		super(type, size);
-	}
 
-	@Override
-	public synchronized void accept(Consumer<? super E> consumer) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			consumer.accept(array[i]);
-		}
+		this.size = new AtomicInteger();
 	}
 
 	@Override
 	public synchronized SynchronizedArray<E> add(E element) {
 
-		if(size == array.length) {
-			array = Arrays.copyOf(array, array.length * 3 / 2 + 1);
+		if(size() == array.length) {
+			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
 		}
 
-		array[size++] = element;
+		array[size.getAndIncrement()] = element;
 
 		return this;
 	}
 
 	@Override
-	public synchronized SynchronizedArray<E> addAll(Array<? extends E> addArray) {
+	public synchronized final SynchronizedArray<E> addAll(Array<? extends E> elements) {
 
-		if(addArray == null || addArray.isEmpty()) {
+		if(elements == null || elements.isEmpty()) {
 			return this;
 		}
 
-		int diff = size + addArray.size() - array.length;
+		int diff = size() + elements.size() - array.length;
 
 		if(diff > 0) {
-			array = Arrays.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, diff);
 		}
 
-		E[] array = addArray.array();
+		for(E element : elements.array()) {
 
-		for(int i = 0, length = addArray.size(); i < length; i++) {
-			add(array[i]);
+			if(element == null) {
+				break;
+			}
+
+			add(element);
 		}
 
 		return this;
 	}
 
 	@Override
-	public synchronized Array<E> addAll(E[] addArray) {
+	public synchronized final Array<E> addAll(E[] elements) {
 
-		if(addArray == null || addArray.length < 1) {
+		if(elements == null || elements.length < 1) {
 			return this;
 		}
 
-		int diff = size + addArray.length - array.length;
+		int diff = size() + elements.length - array.length;
 
 		if(diff > 0) {
-			array = Arrays.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, diff);
 		}
 
-		for(int i = 0, length = addArray.length; i < length; i++) {
-			add(addArray[i]);
+		for(E element : elements) {
+			add(element);
 		}
 
 		return this;
 	}
 
 	@Override
-	public synchronized void apply(Function<? super E, ? extends E> function) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			array[i] = function.apply(array[i]);
-		}
-	}
-
-	@Override
-	public E[] array() {
+	public final E[] array() {
 		return array;
 	}
 
 	@Override
-	public synchronized SynchronizedArray<E> clear() {
+	public synchronized final E fastRemove(int index) {
 
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			array[i] = null;
-		}
-
-		size = 0;
-
-		return this;
-	}
-
-	@Override
-	public synchronized boolean contains(Object object) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			if(array[i].equals(object)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	@Override
-	public synchronized E fastRemove(int index) {
-
-		if(index < 0 || size < 1) {
+		if(index < 0) {
 			return null;
 		}
 
+		E[] array = array();
+
+		int length = size();
+
+		if(length < 1 || index >= length) {
+			return null;
+		}
+
+		size.decrementAndGet();
+		length = size();
+
 		E old = array[index];
 
-		array[index] = array[--size];
-		array[size] = null;
+		array[index] = array[length];
+		array[length] = null;
 
 		return old;
 	}
 
 	@Override
-	public synchronized E first() {
-
-		if(size < 1) {
-			return null;
-		}
-
-		return array[0];
-	}
-
-	@Override
-	public E get(int index) {
+	public final E get(int index) {
 		return array[index];
 	}
 
 	@Override
-	public synchronized int indexOf(Object object) {
-
-		if(object == null) {
-			return -1;
-		}
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			if(array[i].equals(object)) {
-				return i;
-			}
-		}
-
-		return -1;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return size < 1;
-	}
-
-	@Override
-	public ArrayIterator<E> iterator() {
+	public final ArrayIterator<E> iterator() {
 		return new FastIterator();
 	}
 
 	@Override
-	public synchronized E last() {
+	public synchronized final void set(int index, E element) {
 
-		if(size < 1) {
-			return null;
-		}
-
-		return array[size - 1];
-	}
-
-	@Override
-	public synchronized int lastIndexOf(Object object) {
-
-		if(object == null) {
-			return -1;
-		}
-
-		E[] array = array();
-
-		int last = -1;
-
-		for(int i = 0, length = size; i < length; i++) {
-
-			E element = array[i];
-
-			if(element.equals(object)) {
-				last = i;
-			}
-		}
-
-		return last;
-	}
-
-	@Override
-	public E poll() {
-		return slowRemove(0);
-	}
-
-	@Override
-	public E pop() {
-		return fastRemove(size - 1);
-	}
-
-	@Override
-	public synchronized boolean removeAll(Array<?> remove) {
-
-		if(remove.isEmpty()) {
-			return true;
-		}
-
-		Object[] array = remove.array();
-
-		for(int i = 0, length = remove.size(); i < length; i++) {
-			fastRemove(array[i]);
-		}
-
-		return true;
-	}
-
-	@Override
-	public synchronized boolean retainAll(Array<?> targetArray) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			if(!targetArray.contains(array[i])) {
-				fastRemove(i--);
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public synchronized E search(E required, Search<E> search) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-
-			E element = array[i];
-
-			if(search.compare(required, element)) {
-				return element;
-			}
-		}
-
-		return null;
-	}
-
-	@Override
-	public synchronized void set(int index, E element) {
-
-		if(index < size || element == null) {
+		if(index < 0 || index >= size() || element == null) {
 			return;
 		}
 
+		E[] array = array();
+
 		if(array[index] != null) {
-			size--;
+			size.decrementAndGet();
 		}
 
 		array[index] = element;
 
-		size++;
+		size.incrementAndGet();
 	}
 
 	@Override
-	protected void setArray(E[] array) {
+	protected final void setArray(E[] array) {
 		this.array = array;
 	}
 
 	@Override
-	protected void setSize(int size) {
-		this.size = size;
+	protected final void setSize(int size) {
+		this.size.getAndSet(size);
 	}
 
 	@Override
-	public int size() {
-		return size;
+	public final int size() {
+		return size.get();
 	}
 
 	@Override
-	public synchronized E slowRemove(int index) {
+	public synchronized final E slowRemove(int index) {
 
-		if(index < 0 || size < 1) {
+		int length = size();
+
+		if(index < 0 || length < 1) {
 			return null;
 		}
 
-		int numMoved = size - index - 1;
+		E[] array = array();
+
+		int numMoved = length - index - 1;
 
 		E old = array[index];
 
@@ -376,47 +231,23 @@ public final class SynchronizedArray<E> extends AbstractArray<E> {
 			System.arraycopy(array, index + 1, array, index, numMoved);
 		}
 
-		array[--size] = null;
+		size.decrementAndGet();
+
+		array[size.get()] = null;
 
 		return old;
 	}
 
 	@Override
-	public synchronized SynchronizedArray<E> sort(Comparator<E> comparator) {
-		Arrays.sort(array, comparator);
-		return this;
-	}
+	public final SynchronizedArray<E> trimToSize() {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public synchronized <T> T[] toArray(T[] newArray) {
-
-		if(newArray.length >= size) {
-
-			for(int i = 0, j = 0, length = array.length, newLength = newArray.length; i < length && j < newLength; i++) {
-
-				if(array[i] == null) {
-					continue;
-				}
-
-				newArray[j++] = (T) array[i];
-			}
-
-			return newArray;
-		}
-
-		return (T[]) array;
-	}
-
-	@Override
-	public synchronized SynchronizedArray<E> trimToSize() {
+		int size = size();
 
 		if(size == array.length) {
 			return this;
 		}
 
-		array = Arrays.copyOfRange(array, 0, size);
-
+		array = ArrayUtils.copyOfRange(array, 0, size);
 		return this;
 	}
 }

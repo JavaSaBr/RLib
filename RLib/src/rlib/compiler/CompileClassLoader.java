@@ -1,7 +1,7 @@
 package rlib.compiler;
 
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Загрузчик откомпиленных классов в рантайме.
@@ -15,7 +15,7 @@ public class CompileClassLoader extends ClassLoader {
 
 	public CompileClassLoader() {
 		super();
-		this.byteCode = Arrays.toArray(ByteSource.class);
+		this.byteCode = ArrayUtils.toArray(ByteSource.class);
 	}
 
 	/**

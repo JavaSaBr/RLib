@@ -5,7 +5,7 @@ import javax.tools.DiagnosticListener;
 import javax.tools.JavaFileObject;
 
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * @author Ronn
@@ -16,7 +16,7 @@ public class CompileListener implements DiagnosticListener<JavaFileObject> {
 	private final Array<Diagnostic<? extends JavaFileObject>> diagnostics;
 
 	public CompileListener() {
-		this.diagnostics = Arrays.toArray(Diagnostic.class);
+		this.diagnostics = ArrayUtils.toArray(Diagnostic.class);
 	}
 
 	/**

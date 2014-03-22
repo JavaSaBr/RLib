@@ -11,7 +11,7 @@ public final class FastRandom implements Random {
 	private final java.util.Random random;
 
 	public FastRandom() {
-		random = new java.util.Random();
+		this.random = new java.util.Random();
 	}
 
 	@Override

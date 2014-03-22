@@ -1,9 +1,5 @@
 package rlib.util.array;
 
-import java.util.Comparator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 /**
  * Быстрый динамический массив. Использовать только в неконкурентных местах.
  *
@@ -82,20 +78,10 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public void accept(Consumer<? super E> consumer) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			consumer.accept(array[i]);
-		}
-	}
-
-	@Override
 	public FastArray<E> add(E element) {
 
 		if(size == array.length) {
-			array = Arrays.copyOf(array, array.length * 3 / 2 + 1);
+			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
 		}
 
 		array[size++] = element;
@@ -113,7 +99,7 @@ public class FastArray<E> extends AbstractArray<E> {
 		int diff = size + elements.size() - array.length;
 
 		if(diff > 0) {
-			array = Arrays.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, diff);
 		}
 
 		E[] array = elements.array();
@@ -135,7 +121,7 @@ public class FastArray<E> extends AbstractArray<E> {
 		int diff = size + elements.length - array.length;
 
 		if(diff > 0) {
-			array = Arrays.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, diff);
 		}
 
 		for(int i = 0, length = elements.length; i < length; i++) {
@@ -146,42 +132,8 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public void apply(Function<? super E, ? extends E> function) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			array[i] = function.apply(array[i]);
-		}
-	}
-
-	@Override
 	public final E[] array() {
 		return array;
-	}
-
-	@Override
-	public final FastArray<E> clear() {
-
-		Arrays.clear(array);
-
-		size = 0;
-
-		return this;
-	}
-
-	@Override
-	public final boolean contains(Object object) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			if(array[i].equals(object)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	@Override
@@ -204,139 +156,13 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E first() {
-
-		if(size < 1) {
-			return null;
-		}
-
-		return array[0];
-	}
-
-	@Override
 	public final E get(int index) {
 		return array[index];
 	}
 
 	@Override
-	public final int indexOf(Object object) {
-
-		if(object == null) {
-			return -1;
-		}
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-
-			E element = array[i];
-
-			if(element.equals(object)) {
-				return i;
-			}
-		}
-
-		return -1;
-	}
-
-	@Override
-	public final boolean isEmpty() {
-		return size < 1;
-	}
-
-	@Override
 	public final ArrayIterator<E> iterator() {
 		return new FastIterator();
-	}
-
-	@Override
-	public final E last() {
-
-		if(size < 1) {
-			return null;
-		}
-
-		return array[size - 1];
-	}
-
-	@Override
-	public final int lastIndexOf(Object object) {
-
-		if(object == null) {
-			return -1;
-		}
-
-		E[] array = array();
-
-		int last = -1;
-
-		for(int i = 0, length = size; i < length; i++) {
-
-			E element = array[i];
-
-			if(element.equals(object)) {
-				last = i;
-			}
-		}
-
-		return last;
-	}
-
-	@Override
-	public final E poll() {
-		return slowRemove(0);
-	}
-
-	@Override
-	public final E pop() {
-		return fastRemove(size - 1);
-	}
-
-	@Override
-	public final boolean removeAll(Array<?> target) {
-
-		if(target.isEmpty()) {
-			return true;
-		}
-
-		Object[] array = target.array();
-
-		for(int i = 0, length = target.size(); i < length; i++) {
-			fastRemove(array[i]);
-		}
-
-		return true;
-	}
-
-	@Override
-	public final boolean retainAll(Array<?> target) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++)
-			if(!target.contains(array[i])) {
-				fastRemove(i--);
-				length--;
-			}
-
-		return true;
-	}
-
-	@Override
-	public final E search(E required, Search<E> search) {
-
-		E[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-
-			E element = array[i];
-
-			if(search.compare(required, element)) {
-				return element;
-			}
-		}
-
-		return null;
 	}
 
 	@Override
@@ -397,41 +223,13 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final FastArray<E> sort(Comparator<E> comparator) {
-		Arrays.sort(array, comparator);
-		return this;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public final <T> T[] toArray(T[] container) {
-
-		E[] array = array();
-
-		if(container.length >= size) {
-			for(int i = 0, j = 0, length = array.length, newLength = container.length; i < length && j < newLength; i++) {
-
-				if(array[i] == null) {
-					continue;
-				}
-
-				container[j++] = (T) array[i];
-			}
-
-			return container;
-		}
-
-		return (T[]) array;
-	}
-
-	@Override
 	public final FastArray<E> trimToSize() {
 
 		if(size == array.length) {
 			return this;
 		}
 
-		array = Arrays.copyOfRange(array, 0, size);
+		array = ArrayUtils.copyOfRange(array, 0, size);
 
 		return this;
 	}

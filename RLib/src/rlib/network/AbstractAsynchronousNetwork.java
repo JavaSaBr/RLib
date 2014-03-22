@@ -6,7 +6,7 @@ import java.nio.ByteOrder;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Базовая модель асинхронной сети.
@@ -27,8 +27,8 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 
 	protected AbstractAsynchronousNetwork(NetworkConfig config) {
 		this.config = config;
-		this.readBufferPool = Arrays.toConcurrentArray(ByteBuffer.class);
-		this.writeBufferPool = Arrays.toConcurrentArray(ByteBuffer.class);
+		this.readBufferPool = ArrayUtils.toConcurrentArray(ByteBuffer.class);
+		this.writeBufferPool = ArrayUtils.toConcurrentArray(ByteBuffer.class);
 	}
 
 	@Override

@@ -1,5 +1,8 @@
 package rlib.util.table;
 
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
 import rlib.util.array.Array;
 import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
@@ -23,107 +26,161 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	public static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
 	/**
-	 * Применить функцию на значения в таблице.
-	 * 
-	 * @param func применяемая функция.
+	 * Обработать значения и ключи в таблице.
 	 */
-	public void apply(FuncKeyValue<K, V> func);
+	public default void accept(BiConsumer<? super K, ? super V> consumer) {
+	}
 
 	/**
-	 * Применить функцию на значения в таблице.
-	 * 
-	 * @param func применяемая функция.
+	 * Применить функцию к таблице для обновления значений.
 	 */
-	public void apply(FuncValue<V> func);
+	public default void apply(Function<? super V, V> function) {
+	}
 
 	/**
 	 * Очищает таблицу
 	 */
-	public void clear();
+	public default void clear() {
+	}
 
 	/**
 	 * Проверка наличия значения в таблице по указанному ключу.
 	 * 
 	 * @param key проверяемый ключ.
 	 */
-	public boolean containsKey(int key);
+	public default boolean containsKey(int key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Проверка наличия значения в таблице по указанному ключу.
 	 * 
 	 * @param key проверяемый ключ.
 	 */
-	public boolean containsKey(K key);
+	public default boolean containsKey(K key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Проверка наличия значения в таблице по указанному ключу.
 	 * 
 	 * @param key проверяемый ключ.
 	 */
-	public boolean containsKey(long key);
+	public default boolean containsKey(long key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Проверка наличия указанного значения в таблице.
 	 * 
 	 * @param value проверяемое значение.
 	 */
-	public boolean containsValue(V value);
+	public default boolean containsValue(V value) {
+		throw new RuntimeException("not supported.");
+	}
+
+	@Override
+	public default void finalyze() {
+		clear();
+	}
 
 	/**
 	 * Вовзращает значения по указанному ключу.
 	 * 
 	 * @param key ключ.
 	 */
-	public V get(int key);
+	public default V get(int key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Вовзращает значения по указанному ключу.
 	 * 
 	 * @param key ключ.
 	 */
-	public V get(K key);
+	public default V get(K key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Вовзращает значения по указанному ключу.
 	 * 
 	 * @param key ключ.
 	 */
-	public V get(long key);
+	public default V get(long key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * @return тип таблица по возможным ключам.
 	 */
-	public TableType getType();
+	public default TableType getType() {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * @return пустая ли таблица.
 	 */
-	public boolean isEmpty();
+	public default boolean isEmpty() {
+		return size() == 0;
+	}
 
 	/**
 	 * @param container контейнер для ключей.
 	 * @return массив ключей таблицы.
 	 */
-	public Array<K> keyArray(Array<K> container);
+	public default Array<K> keyArray(Array<K> container) {
+		throw new RuntimeException("not supported.");
+	}
+
+	/**
+	 * @return массив ключей таблицы.
+	 */
+	public default Array<K> keyArray(Class<K> type) {
+		throw new RuntimeException("not supported.");
+	}
+
+	/**
+	 * @return массив ключей таблицы.
+	 */
+	public default IntegerArray keyIntegerArray() {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * @param container контейнер для ключей.
 	 * @return массив ключей таблицы.
 	 */
-	public IntegerArray keyIntegerArray(IntegerArray container);
+	public default IntegerArray keyIntegerArray(IntegerArray container) {
+		throw new RuntimeException("not supported.");
+	}
+
+	/**
+	 * @return массив ключей таблицы.
+	 */
+	public default LongArray keyLongArray() {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * @param container контейнер для ключей.
 	 * @return массив ключей таблицы.
 	 */
-	public LongArray keyLongArray(LongArray container);
+	public default LongArray keyLongArray(LongArray container) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Перенос данных в указанную таблицу.
 	 * 
 	 * @param table новый контейнер данных.
 	 */
-	public void moveTo(Table<K, V> table);
+	public default void moveTo(Table<? super K, ? super V> table) {
+
+		if(getType() != table.getType()) {
+			throw new IllegalArgumentException("incorrect table type.");
+		}
+	}
 
 	/**
 	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с
@@ -132,7 +189,9 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
-	public V put(int key, V value);
+	public default V put(int key, V value) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с
@@ -141,7 +200,9 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
-	public V put(K key, V value);
+	public default V put(K key, V value) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Добавляет новое значение по указанному ключу, и если уже есть элемент с
@@ -150,66 +211,88 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
-	public V put(long key, V value);
+	public default V put(long key, V value) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Вставка в таблицу таблицы.
 	 * 
 	 * @param table вставляемая таблица.
 	 */
-	public void put(Table<K, V> table);
+	public default void put(Table<K, V> table) {
+	}
 
 	/**
 	 * Блокировка изменение таблицы на время чтения его.
 	 */
-	public void readLock();
+	public default void readLock() {
+	}
 
 	/**
 	 * Разблокировка изменения таблицы.
 	 */
-	public void readUnlock();
+	public default void readUnlock() {
+	}
 
 	/**
 	 * Удаляет значение по ключу.
 	 * 
 	 * @param key ключ значения.
 	 */
-	public V remove(int key);
+	public default V remove(int key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Удаляет значение по ключу.
 	 * 
 	 * @param key ключ значения.
 	 */
-	public V remove(K key);
+	public default V remove(K key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Удаляет значение по ключу.
 	 * 
 	 * @param key ключ значения.
 	 */
-	public V remove(long key);
+	public default V remove(long key) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * @return кол-во значений в таблице.
 	 */
-	public int size();
+	public default int size() {
+		return 0;
+	}
 
 	/**
-	 * Перенос всех значений в массив.
-	 * 
 	 * @param container контейнер значений.
 	 * @return итоговый список всех значений.
 	 */
-	public Array<V> values(Array<V> container);
+	public default Array<V> values(Array<V> container) {
+		throw new RuntimeException("not supported.");
+	}
+
+	/**
+	 * @return итоговый список всех значений.
+	 */
+	public default Array<V> values(Class<V> type) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Блокировка чтений для изменения таблицы.
 	 */
-	public void writeLock();
+	public default void writeLock() {
+	}
 
 	/**
 	 * Разблокировка чтения таблицы.
 	 */
-	public void writeUnlock();
+	public default void writeUnlock() {
+	}
 }

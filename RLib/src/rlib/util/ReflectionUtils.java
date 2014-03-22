@@ -3,7 +3,7 @@ package rlib.util;
 import java.lang.reflect.Field;
 
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Набор утильных методов по работе с рефлексией.
@@ -43,7 +43,7 @@ public final class ReflectionUtils {
 
 					final Field field = fields[i];
 
-					if(Arrays.contains(exceptions, field.getName())) {
+					if(ArrayUtils.contains(exceptions, field.getName())) {
 						continue;
 					}
 
@@ -62,7 +62,7 @@ public final class ReflectionUtils {
 	 * @param exceptions исключаемые поля.
 	 */
 	public static Array<Field> getAllFields(final Class<?> cs, final Class<?> last, final boolean declared, final String... exceptions) {
-		final Array<Field> container = Arrays.toArray(Field.class);
+		final Array<Field> container = ArrayUtils.toArray(Field.class);
 		addAllFields(container, cs, last, declared, exceptions);
 		return container;
 	}

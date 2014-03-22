@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.ConcurrentUtils;
 import rlib.concurrent.impl.ExtFutureTaskImpl;
 import rlib.concurrent.interfaces.CallableTask;
 import rlib.concurrent.interfaces.ExtThread;
@@ -15,6 +14,7 @@ import rlib.concurrent.interfaces.ExtThreadPoolExecutor;
 import rlib.concurrent.interfaces.Task;
 import rlib.concurrent.interfaces.Worker;
 import rlib.concurrent.interfaces.WorkerFactory;
+import rlib.concurrent.util.ConcurrentUtils;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.linkedlist.LinkedList;

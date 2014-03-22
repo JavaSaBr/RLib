@@ -7,7 +7,7 @@ import java.sql.Statement;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Менеджер для очистки БД от ненужных записей. Хранит список запросов
@@ -20,7 +20,7 @@ public abstract class CleaningManager {
 	private static final Logger LOGGER = Loggers.getLogger(CleaningManager.class);
 
 	/** список запросов для очистки */
-	public static final Array<CleaningQuery> QUERY = Arrays.toArray(CleaningQuery.class);
+	public static final Array<CleaningQuery> QUERY = ArrayUtils.toArray(CleaningQuery.class);
 
 	/**
 	 * Добавление запроса для очистки БД.

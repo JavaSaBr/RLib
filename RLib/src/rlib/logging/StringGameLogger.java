@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.Locks;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Модель строкового логера игровых событий.
@@ -42,7 +42,7 @@ public class StringGameLogger implements GameLogger {
 
 		this.out = new FileWriter(outFile);
 		this.lock = Locks.newLock();
-		this.cache = Arrays.toArray(String.class);
+		this.cache = ArrayUtils.toArray(String.class);
 	}
 
 	@Override

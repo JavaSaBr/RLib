@@ -36,38 +36,18 @@ public abstract class AbstractArray<E> implements Array<E> {
 	}
 
 	@Override
-	public final boolean containsAll(Array<?> array) {
+	public Array<E> clear() {
 
-		Object[] elements = array.array();
-
-		for(int i = 0, length = array.size(); i < length; i++) {
-			if(!contains(elements[i])) {
-				return false;
-			}
+		if(size() > 0) {
+			ArrayUtils.clear(array());
+			setSize(0);
 		}
 
-		return true;
+		return this;
 	}
 
 	@Override
-	public final boolean containsAll(Object[] array) {
-
-		for(int i = 0, length = array.length; i < length; i++) {
-			if(!contains(array[i])) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean fastRemove(Object object) {
-		return fastRemove(indexOf(object)) != null;
-	}
-
-	@Override
-	public void finalyze() {
+	public final void finalyze() {
 		clear();
 	}
 
@@ -88,6 +68,6 @@ public abstract class AbstractArray<E> implements Array<E> {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " size = " + size() + " : " + Arrays.toString(this);
+		return getClass().getSimpleName() + " size = " + size() + " : " + ArrayUtils.toString(this);
 	}
 }

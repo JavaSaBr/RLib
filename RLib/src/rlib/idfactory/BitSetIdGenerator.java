@@ -13,7 +13,7 @@ import rlib.database.DBUtils;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.SafeTask;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 import rlib.util.array.IntegerArray;
 import rlib.util.table.IntKey;
 import rlib.util.table.Table;
@@ -110,8 +110,8 @@ public final class BitSetIdGenerator extends SafeTask implements IdGenerator {
 
 				Table<IntKey, String> useIds = Tables.newIntegerTable();
 
-				IntegerArray clearIds = Arrays.newIntegerArray();
-				IntegerArray extractedIds = Arrays.newIntegerArray();
+				IntegerArray clearIds = ArrayUtils.newIntegerArray();
+				IntegerArray extractedIds = ArrayUtils.newIntegerArray();
 
 				Connection con = null;
 				Statement statement = null;
@@ -160,7 +160,7 @@ public final class BitSetIdGenerator extends SafeTask implements IdGenerator {
 
 				LOGGER.info("extracted " + extracted.length + " ids.");
 
-				Arrays.sort(extracted);
+				ArrayUtils.sort(extracted);
 
 				for(int objectId : extracted) {
 

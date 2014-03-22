@@ -2,13 +2,15 @@ package rlib.util.array;
 
 import java.util.Comparator;
 
+import rlib.util.Objects;
+
 /**
  * Набор утильных методов для работы с массивами.
  * 
  * @author Ronn
  * @created 07.04.2012
  */
-public abstract class Arrays {
+public final class ArrayUtils {
 
 	/**
 	 * Добавляет элемент в массив с расширением массива на +1.
@@ -119,8 +121,8 @@ public abstract class Arrays {
 	 */
 	public static boolean contains(int[] array, int val) {
 
-		for(int i = 0, length = array.length; i < length; i++) {
-			if(array[i] == val) {
+		for(int value : array) {
+			if(value == val) {
 				return true;
 			}
 		}
@@ -137,8 +139,8 @@ public abstract class Arrays {
 	 */
 	public static boolean contains(Object[] array, Object object) {
 
-		for(int i = 0, length = array.length; i < length; i++) {
-			if(array[i].equals(object)) {
+		for(Object element : array) {
+			if(Objects.equals(element, object)) {
 				return true;
 			}
 		}
@@ -294,10 +296,15 @@ public abstract class Arrays {
 	 */
 	public static int indexOf(Object[] array, Object object) {
 
-		for(int i = 0, length = array.length; i < length; i++) {
-			if(array[i] == object) {
-				return i;
+		int index = 0;
+
+		for(Object element : array) {
+
+			if(Objects.equals(element, object)) {
+				return index;
 			}
+
+			index++;
 		}
 
 		return -1;

@@ -9,7 +9,7 @@ import rlib.concurrent.interfaces.CallableTask;
 import rlib.concurrent.interfaces.ExtExecutorService;
 import rlib.concurrent.interfaces.Task;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Базовая реализация исполнителя задач.
@@ -57,7 +57,7 @@ public abstract class AbstractExtExecutorService<L> implements ExtExecutorServic
 
 	@Override
 	public <T> Array<Future<T>> invokeAll(final Array<? extends CallableTask<L, T>> tasks) throws InterruptedException {
-		final Array<Future<T>> container = Arrays.toArray(Future.class, tasks.size());
+		final Array<Future<T>> container = ArrayUtils.toArray(Future.class, tasks.size());
 		return invokeAll(tasks, container);
 	}
 

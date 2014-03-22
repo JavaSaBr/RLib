@@ -13,7 +13,7 @@ import java.util.Enumeration;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 import rlib.util.table.Table;
 import rlib.util.table.Tables;
 
@@ -137,7 +137,7 @@ public class Files {
 	 */
 	public static File[] getFiles(final File dir, final String... formats) {
 
-		final Array<File> array = Arrays.toArray(File.class);
+		final Array<File> array = ArrayUtils.toArray(File.class);
 		final File[] files = dir.listFiles();
 
 		for(int i = 0, length = files.length; i < length; i++) {
@@ -189,7 +189,7 @@ public class Files {
 			return new File[0];
 		}
 
-		final Array<File> files = Arrays.toArray(File.class);
+		final Array<File> files = ArrayUtils.toArray(File.class);
 
 		while(urls.hasMoreElements()) {
 

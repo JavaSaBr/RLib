@@ -2,28 +2,30 @@ package rlib.util.table;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
 import rlib.util.pools.Pools;
-
 
 /**
  * Модель быстрой объектной таблицы.
  *
  * @author Ronn
  */
-public class FastObjectTable<K, V> extends AbstractTable<K, V>
-{
+public class FastObjectTable<K, V> extends AbstractTable<K, V> {
+
 	/**
 	 * Модель ячейки в таблице.
 	 *
 	 * @author Ronn
 	 */
-	private final static class Entry<K, V> implements Foldable
-	{
+	private final static class Entry<K, V> implements Foldable {
+
 		/** следующая ячейка */
 		private Entry<K, V> next;
 
@@ -35,38 +37,33 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 		/** хэш ключа */
 		private int hash;
 
-        @Override
-		public boolean equals(Object object)
-		{
-			if(object == null || object.getClass() != Entry.class)
+		@Override
+		public boolean equals(final Object object) {
+
+			if(object == null || object.getClass() != Entry.class) {
 				return false;
+			}
 
-			Entry<?, ?> entry = (Entry<?, ?>) object;
+			final Entry<?, ?> entry = (Entry<?, ?>) object;
 
-			// получаем первый ключ
-			Object firstKey = getKey();
-			// получаем второй ключ
-			Object secondKey = entry.getKey();
+			final Object firstKey = getKey();
+			final Object secondKey = entry.getKey();
 
-			// если ключи совпадают
-			if(firstKey == secondKey || (firstKey != null && firstKey.equals(secondKey)))
-			{
-				// получаем первое значение
-				Object firstValue = getValue();
-				// получаем второе значение
-				Object secondValue = entry.getValue();
+			if(firstKey == secondKey || firstKey != null && firstKey.equals(secondKey)) {
 
-				// сли значения совпадают
-				if(firstValue == secondValue || (firstValue != null && firstValue.equals(secondValue)))
+				final Object firstValue = getValue();
+				final Object secondValue = entry.getValue();
+
+				if(firstValue == secondValue || firstValue != null && firstValue.equals(secondValue)) {
 					return true;
+				}
 			}
 
 			return false;
 		}
 
 		@Override
-		public void finalyze()
-		{
+		public void finalyze() {
 			key = null;
 			value = null;
 			next = null;
@@ -76,60 +73,52 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 		/**
 		 * @return хэш ячейки.
 		 */
-		public int getHash()
-		{
+		public int getHash() {
 			return hash;
 		}
 
 		/**
 		 * @return ключ ячейки.
 		 */
-		public K getKey()
-		{
+		public K getKey() {
 			return key;
 		}
 
 		/**
 		 * @return следующая ячейка.
 		 */
-		public Entry<K, V> getNext()
-		{
+		public Entry<K, V> getNext() {
 			return next;
 		}
 
 		/**
 		 * @return значение ячейки.
 		 */
-		public V getValue()
-		{
+		public V getValue() {
 			return value;
 		}
 
 		@Override
-		public final int hashCode()
-		{
-            return (key == null? 0 : key.hashCode()) ^ (value==null ? 0 : value.hashCode());
-        }
+		public final int hashCode() {
+			return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+		}
 
 		@Override
-		public void reinit()
-		{
+		public void reinit() {
 			hash = 0;
 		}
 
-		public void set(int hash, K key, V value, Entry<K,V> next)
-        {
-            this.value = value;
-            this.next = next;
-            this.key = key;
-            this. hash = hash;
-        }
+		public void set(final int hash, final K key, final V value, final Entry<K, V> next) {
+			this.value = value;
+			this.next = next;
+			this.key = key;
+			this.hash = hash;
+		}
 
 		/**
 		 * @param next следующая цепочка.
 		 */
-		public void setNext(Entry<K, V> next)
-		{
+		public void setNext(final Entry<K, V> next) {
 			this.next = next;
 		}
 
@@ -139,18 +128,14 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 		 * @param value новое значение.
 		 * @return старое значение.
 		 */
-		public V setValue(V value)
-		{
-			V old = getValue();
-
+		public V setValue(final V value) {
+			final V old = getValue();
 			this.value = value;
-
 			return old;
 		}
 
 		@Override
-		public final String toString()
-		{
+		public final String toString() {
 			return "Entry : " + key + " = " + value;
 		}
 	}
@@ -160,71 +145,65 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 	 *
 	 * @author Ronn
 	 */
-	private final class TableIterator implements Iterator<V>
-	{
+	private final class TableIterator implements Iterator<V> {
+
 		/** следующий entry */
 		private Entry<K, V> next;
-
 		/** текущий entry */
 		private Entry<K, V> current;
 
 		/** текущий индекс в таблице */
 		private int index;
 
-		private TableIterator()
-		{
-			// получаем таблицу ячеяк
-			Entry<K, V>[] table = table();
+		private TableIterator() {
 
-			// если есть элементы
-			if(size > 0)
-				// исчем первую занятую ячейку
-				while(index < table.length && (next = table[index++]) == null);
+			final Entry<K, V>[] table = table();
+
+			if(size > 0) {
+				while(index < table.length && (next = table[index++]) == null) {
+					;
+				}
+			}
 		}
 
 		@Override
-		public boolean hasNext()
-		{
+		public boolean hasNext() {
 			return next != null;
 		}
 
 		@Override
-		public V next()
-		{
+		public V next() {
 			return nextEntry().getValue();
 		}
 
 		/**
 		 * @return следующая занятая ячейка.
 		 */
-		private Entry<K, V> nextEntry()
-		{
-			// получаем таблицу
-			Entry<K, V>[] table = table();
-			// получаем ячейку
-			Entry<K, V> entry = next;
+		private Entry<K, V> nextEntry() {
 
-			// если ячейки нет, выходим
-			if(entry == null)
+			final Entry<K, V>[] table = table();
+			final Entry<K, V> entry = next;
+
+			if(entry == null) {
 				throw new NoSuchElementException();
+			}
 
-			// перебираем цепочку
-			if((next = entry.getNext()) == null)
+			if((next = entry.getNext()) == null) {
 				while(index < table.length && (next = table[index++]) == null);
+			}
 
-			// запоминаем текущую
 			current = entry;
-
 			return entry;
 		}
 
 		@Override
-		public void remove()
-		{
-			if(current == null)
-				throw new IllegalStateException();
+		public void remove() {
 
-			K key = current.getKey();
+			if(current == null) {
+				throw new IllegalStateException();
+			}
+
+			final K key = current.getKey();
 			current = null;
 
 			removeEntryForKey(key);
@@ -245,31 +224,35 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 	/** фактор загружеености */
 	private float loadFactor;
 
-	protected FastObjectTable()
-	{
+	protected FastObjectTable() {
 		this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
 	}
 
-	protected FastObjectTable(float loadFactor)
-	{
+	protected FastObjectTable(final float loadFactor) {
 		this(loadFactor, DEFAULT_INITIAL_CAPACITY);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected FastObjectTable(float loadFactor, int initCapacity)
-	{
+	protected FastObjectTable(final float loadFactor, final int initCapacity) {
 		this.loadFactor = loadFactor;
 		this.threshold = (int) (initCapacity * loadFactor);
-
-		size = 0;
-
-		table = new Entry[DEFAULT_INITIAL_CAPACITY];
-		entryPool = Pools.newFoldablePool(Entry.class);
+		this.size = 0;
+		this.table = new Entry[DEFAULT_INITIAL_CAPACITY];
+		this.entryPool = Pools.newFoldablePool(Entry.class);
 	}
 
-	protected FastObjectTable(int initCapacity)
-	{
+	protected FastObjectTable(final int initCapacity) {
 		this(DEFAULT_LOAD_FACTOR, initCapacity);
+	}
+
+	@Override
+	public void accept(final BiConsumer<? super K, ? super V> consumer) {
+		for(Entry<K, V> entry : table()) {
+			while(entry != null) {
+				consumer.accept(entry.getKey(), entry.getValue());
+				entry = entry.getNext();
+			}
+		}
 	}
 
 	/**
@@ -280,167 +263,104 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 	 * @param value значение по ключу.
 	 * @param index индекс ячейки.
 	 */
-	private final void addEntry(int hash, K key, V value, int index)
-	{
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
+	private final void addEntry(final int hash, final K key, final V value, final int index) {
 
-		// получаем текущую ячейку
-		Entry<K, V> entry = table[index];
-
-		// достаем из пула новую.
+		final Entry<K, V>[] table = table();
+		final Entry<K, V> entry = table[index];
 		Entry<K, V> newEntry = entryPool.take();
 
-		// если в пуле небыло
-		if(newEntry == null)
-			// создаем новую
+		if(newEntry == null) {
 			newEntry = new Entry<K, V>();
+		}
 
-		// вносим данные
 		newEntry.set(hash, key, value, entry);
-
-		// вносим в таблицу
 		table[index] = newEntry;
 
-		// если размер привысел загрузку
-		if(size++ >= threshold)
-			// переформировываем таблицу
+		if(size++ >= threshold) {
 			resize(2 * table.length);
+		}
 	}
 
 	@Override
-	public void apply(FuncKeyValue<K, V> func)
-	{
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
-
-		// перебираем цепочки
-		for(int i = 0, length = table.length; i < length; i++)
-		{
-			// получаем ячейку
-			Entry<K, V> entry = table[i];
-
-			// перебираем ее цепочку
-			while(entry != null)
-			{
-				// применяем функци.
-				func.apply(entry.getKey(), entry.getValue());
-
-				// обновляем ячейку
+	public void apply(final Function<? super V, V> function) {
+		for(Entry<K, V> entry : table()) {
+			while(entry != null) {
+				entry.setValue(function.apply(entry.getValue()));
 				entry = entry.getNext();
 			}
 		}
 	}
 
 	@Override
-	public void apply(FuncValue<V> func)
-	{
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
+	public final void clear() {
 
-		// перебираем цепочки
-		for(int i = 0, length = table.length; i < length; i++)
-		{
-			// получаем ячейку
-			Entry<K, V> entry = table[i];
+		final FoldablePool<Entry<K, V>> entryPool = getEntryPool();
 
-			// перебираем ее цепочку
-			while(entry != null)
-			{
-				// применяем функци.
-				func.apply(entry.getValue());
-
-				// обновляем ячейку
-				entry = entry.getNext();
-			}
-		}
-	}
-
-	@Override
-	public final void clear()
-	{
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
-
-		// следующая ячейка
+		final Entry<K, V>[] table = table();
 		Entry<K, V> next = null;
 
-		// перебираем ячейки
-		for(int i = 0, length = table.length; i < length; i++)
-		{
-			// получаем ячейку
-			Entry<K, V> entry = table[i];
-
-			// если ячейка есть
-			while(entry != null)
-			{
-				// получаем следующую ячейку от ее
+		for(Entry<K, V> entry : table) {
+			while(entry != null) {
 				next = entry.getNext();
-
-				// текущую ложим в пул
 				entryPool.put(entry);
-
-				// в текущую ложим следующую
 				entry = next;
 			}
 		}
 
-		// очищаем
-		Arrays.clear(table);
+		ArrayUtils.clear(table);
 
 		size = 0;
 	}
 
 	@Override
-	public final boolean containsKey(K key)
-	{
+	public final boolean containsKey(final K key) {
 		return getEntry(key) != null;
 	}
 
 	@Override
-	public final boolean containsValue(V value)
-	{
-		// если значение нул, выходим
-		if(value == null)
+	public final boolean containsValue(final V value) {
+
+		if(value == null) {
 			throw new NullPointerException("value is null.");
+		}
 
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
-
-		// перебираем ячейки
-		for(int i = 0, length = table.length; i < length; i++)
-		{
-			// получаем ячейку
-			Entry<K, V> element = table[i];
-
-			// перебираем цепочку
-			for(Entry<K, V> entry = element; entry != null; entry = entry.next)
-				if(value.equals(entry.getValue()))
+		for(final Entry<K, V> element : table()) {
+			for(Entry<K, V> entry = element; entry != null; entry = entry.next) {
+				if(value.equals(entry.getValue())) {
 					return true;
+				}
+			}
 		}
 
 		return false;
 	}
 
 	@Override
-	public final void finalyze()
-	{
-		if(size() > 0)
+	public final void finalyze() {
+		if(size() > 0) {
 			clear();
+		}
 	}
 
 	@Override
-	public final V get(K key)
-	{
-		// если ключа нет, выходим
-		if(key == null)
+	public void forEach(final Consumer<? super V> consumer) {
+		for(Entry<K, V> entry : table()) {
+			while(entry != null) {
+				consumer.accept(entry.getValue());
+				entry = entry.getNext();
+			}
+		}
+	}
+
+	@Override
+	public final V get(final K key) {
+
+		if(key == null) {
 			throw new NullPointerException("key is null.");
+		}
 
-		// получаем ячейку
-		Entry<K, V> entry = getEntry(key);
-
-		// получаем значение из ячейки
-		return entry == null? null : entry.getValue();
+		final Entry<K, V> entry = getEntry(key);
+		return entry == null ? null : entry.getValue();
 	}
 
 	/**
@@ -449,53 +369,44 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 	 * @param key ключ ячейки.
 	 * @return ячейка.
 	 */
-	private final Entry<K, V> getEntry(K key)
-	{
-		// рассчитываем хэш
-		int hash = hash(key.hashCode());
+	private final Entry<K, V> getEntry(final K key) {
 
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
+		final int hash = hash(key.hashCode());
 
-		// перебираем цепочку ячеяк
-		for(Entry<K, V> entry = table[indexFor(hash, table.length)]; entry != null; entry = entry.getNext())
-			if(entry.getHash() == hash && key.equals(entry.getKey()))
+		final Entry<K, V>[] table = table();
+
+		for(Entry<K, V> entry = table[indexFor(hash, table.length)]; entry != null; entry = entry.getNext()) {
+			if(entry.getHash() == hash && key.equals(entry.getKey())) {
 				return entry;
+			}
+		}
 
 		return null;
 	}
 
+	/**
+	 * @return пул ячеяк.
+	 */
+	protected FoldablePool<Entry<K, V>> getEntryPool() {
+		return entryPool;
+	}
+
 	@Override
-	public TableType getType()
-	{
+	public TableType getType() {
 		return TableType.OBJECT;
 	}
 
 	@Override
-	public final Iterator<V> iterator()
-	{
+	public final Iterator<V> iterator() {
 		return new TableIterator();
 	}
 
 	@Override
-	public final Array<K> keyArray(Array<K> container)
-	{
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
+	public final Array<K> keyArray(final Array<K> container) {
 
-		// перебираем цепочки
-		for(int i = 0, length = table.length; i < length; i++)
-		{
-			// получаем ячейку
-			Entry<K, V> entry = table[i];
-
-			// перебираем ее цепочку
-			while(entry != null)
-			{
-				// добавлям ключ
+		for(Entry<K, V> entry : table()) {
+			while(entry != null) {
 				container.add(entry.getKey());
-
-				// обновляем ячейку
 				entry = entry.getNext();
 			}
 		}
@@ -504,79 +415,63 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 	}
 
 	@Override
-	public void moveTo(Table<K, V> table)
-	{
-		if(getType() != table.getType())
-			throw new IllegalArgumentException("incorrect table type.");
+	public Array<K> keyArray(final Class<K> type) {
+		return keyArray(ArrayUtils.toArray(type, size()));
+	}
 
-		if(isEmpty())
+	@Override
+	public void moveTo(final Table<? super K, ? super V> table) {
+
+		if(isEmpty()) {
 			return;
+		}
 
-		// получаем таблицу ячеяк
-		Entry<K, V>[] entryes = table();
+		super.moveTo(table);
 
-		// перебираем цепочки
-		for(int i = 0, length = entryes.length; i < length; i++)
-		{
-			// получаем ячейку
-			Entry<K, V> entry = entryes[i];
-
-			// перебираем ее цепочку
-			while(entry != null)
-			{
-				// вносим запись
+		for(Entry<K, V> entry : table()) {
+			while(entry != null) {
 				table.put(entry.getKey(), entry.getValue());
-
-				// обновляем ячейку
 				entry = entry.getNext();
 			}
 		}
 	}
 
 	@Override
-	public final V put(K key, V value)
-	{
-		// если ключа нет, выходим
-		if(key == null)
+	public final V put(final K key, final V value) {
+
+		if(key == null) {
 			throw new NullPointerException("key is null.");
+		}
 
-		// рассчитываем хэш
-		int hash = hash(key.hashCode());
+		final Entry<K, V>[] table = table();
 
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
+		final int hash = hash(key.hashCode());
+		final int i = indexFor(hash, table.length);
 
-		// рассчитываем позицию в таблице
-		int i = indexFor(hash, table.length);
-
-		// перебираем цепочку ячеяк
-		for(Entry<K, V> entry = table[i]; entry != null; entry = entry.getNext())
-			if(entry.getHash() == hash && key.equals(entry.getKey()))
+		for(Entry<K, V> entry = table[i]; entry != null; entry = entry.getNext()) {
+			if(entry.getHash() == hash && key.equals(entry.getKey())) {
 				return entry.setValue(value);
+			}
+		}
 
-		// добавляем новую ячейку
 		addEntry(hash, key, value, i);
 
 		return null;
 	}
 
 	@Override
-	public final V remove(K key)
-	{
-		// если ключа нет
-		if(key == null)
+	public final V remove(final K key) {
+
+		if(key == null) {
 			throw new NullPointerException("key is null.");
+		}
 
-		// удаляем ячейку по ключу
-		Entry<K, V> old = removeEntryForKey(key);
+		final Entry<K, V> old = removeEntryForKey(key);
+		final V value = old == null ? null : old.getValue();
 
-		// если есть удаленная ячейка, запоминаем значение в ней
-		V value = old == null? null : old.getValue();
+		final FoldablePool<Entry<K, V>> pool = getEntryPool();
+		pool.put(old);
 
-		// ячейку ложим в пул
-		entryPool.put(old);
-
-		// возвращаем старое значение
 		return value;
 	}
 
@@ -586,39 +481,30 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 	 * @param key ключ ячейки.
 	 * @return удаленная ячейка.
 	 */
-	private final Entry<K, V> removeEntryForKey(K key)
-	{
-		// определяем хеш ключа
-		int hash = hash(key.hashCode());
+	private final Entry<K, V> removeEntryForKey(final K key) {
 
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
+		final Entry<K, V>[] table = table();
 
-		// определяем индекс цепочки
-		int i = indexFor(hash, table.length);
+		final int hash = hash(key.hashCode());
+		final int i = indexFor(hash, table.length);
 
 		Entry<K, V> prev = table[i];
 		Entry<K, V> entry = prev;
 
-		// если ячейка есть
-		while(entry != null)
-		{
-			// получаем следующую
-			Entry<K, V> next = entry.getNext();
+		while(entry != null) {
 
-			// если это искомая ячейка
-			if(entry.getHash() == hash && key.equals(entry.getKey()))
-			{
-				// уменьшаем размер таблицы
+			final Entry<K, V> next = entry.getNext();
+
+			if(entry.getHash() == hash && key.equals(entry.getKey())) {
+
 				size--;
 
-				// обновляем цепочку
-				if(prev == entry)
+				if(prev == entry) {
 					table[i] = next;
-				else
+				} else {
 					prev.setNext(next);
+				}
 
-				// возвращаем удаляемую ячейку
 				return entry;
 			}
 
@@ -635,82 +521,59 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 	 * @param newLength новый размер.
 	 */
 	@SuppressWarnings("unchecked")
-	private final void resize(int newLength)
-	{
-		// получаем старую таблицу
-		Entry<K, V>[] oldTable = table();
+	private final void resize(final int newLength) {
 
-		// получаем старый размер
-		int oldLength = oldTable.length;
+		final Entry<K, V>[] oldTable = table();
 
-		// если размер таблицы достиг предела
-		if(oldLength >= DEFAULT_MAXIMUM_CAPACITY)
-		{
-			// обновляем максимальную загруженность
+		final int oldLength = oldTable.length;
+
+		if(oldLength >= DEFAULT_MAXIMUM_CAPACITY) {
 			threshold = Integer.MAX_VALUE;
 			return;
 		}
 
-		// создаем новую таблицу
-		Entry<K, V>[] newTable = new Entry[newLength];
-
-		// переносим данные в нее
+		final Entry<K, V>[] newTable = new Entry[newLength];
 		transfer(newTable);
 
-		// сохраняем ее
-		table = newTable;
-
-		// обновляем максимальную загруженность
-		threshold = (int) (newLength * loadFactor);
+		this.table = newTable;
+		this.threshold = (int) (newLength * loadFactor);
 	}
 
 	@Override
-	public final int size()
-	{
+	public final int size() {
 		return size;
 	}
 
 	/**
 	 * @return массив ячеяк.
 	 */
-	private final Entry<K, V>[] table()
-	{
+	private final Entry<K, V>[] table() {
 		return table;
 	}
 
 	@Override
-	public final String toString()
-	{
-		// создаем билдер строки
-		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+	public final String toString() {
 
-		// добавляем размер таблицы
+		int size = size();
+
+		final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
 		builder.append(" size = ").append(size).append(" : ");
 
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
+		final Entry<K, V>[] table = table();
 
-		// перебираем цепочки
-		for(int i = 0, length = table.length; i < length; i++)
-		{
-			// получаем ячейку
+		for(int i = 0, length = table.length; i < length; i++) {
+
 			Entry<K, V> entry = table[i];
 
-			// перебираем ее цепочку
-			while(entry != null)
-			{
-				// вносим
-				builder.append("[").append(entry.getKey()).append(" - ").append(entry.getValue()).append("]");
-				// добавляес разделитель
-				builder.append(", ");
-
-				// обновляем ячейку
+			while(entry != null) {
+				builder.append("[").append(entry.getKey()).append(" - ").append(entry.getValue()).append("]\n");
 				entry = entry.getNext();
 			}
 		}
 
-		if(size > 0)
-			builder.replace(builder.length() - 2, builder.length(), ".");
+		if(size > 0) {
+			builder.replace(builder.length() - 1, builder.length(), ".");
+		}
 
 		return builder.toString();
 	}
@@ -720,67 +583,48 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V>
 	 *
 	 * @param newTable новая таблица.
 	 */
-	private final void transfer(Entry<K, V>[] newTable)
-	{
-		// получаем текущую таблицу
-		Entry<K, V>[] original = table;
+	private final void transfer(final Entry<K, V>[] newTable) {
 
-		// получаем размер новай таблицы
-		int newCapacity = newTable.length;
+		final Entry<K, V>[] original = table;
+		final int newCapacity = newTable.length;
 
-		// перебираем старую таблицу
-		for(int j = 0, length = original.length; j < length; j++)
-		{
-			// получаем ячейку
+		for(int j = 0, length = original.length; j < length; j++) {
+
 			Entry<K, V> entry = original[j];
 
-			// если она есть
-			if(entry != null)
-			{
-				do
-				{
-					// получаем след. ячейку
-					Entry<K, V> next = entry.getNext();
-
-					// получаем новый хэш ячейки
-					int i = indexFor(entry.getHash(), newCapacity);
-
-					// запоминаем след. ячейку
-					entry.setNext(newTable[i]);
-
-					// вносим в таблицу
-					newTable[i] = entry;
-
-					entry = next;
-				}
-				while(entry != null);
+			if(entry == null) {
+				continue;
 			}
+
+			do {
+
+				final Entry<K, V> next = entry.getNext();
+
+				final int i = indexFor(entry.getHash(), newCapacity);
+
+				entry.setNext(newTable[i]);
+				newTable[i] = entry;
+				entry = next;
+
+			} while(entry != null);
 		}
 	}
 
 	@Override
-	public Array<V> values(Array<V> container)
-	{
-		// получаем таблицу ячеяк
-		Entry<K, V>[] table = table();
+	public Array<V> values(final Array<V> container) {
 
-		// перебираем цепочки
-		for(int i = 0, length = table.length; i < length; i++)
-		{
-			// получаем ячейку
-			Entry<K, V> entry = table[i];
-
-			// перебираем ее цепочку
-			while(entry != null)
-			{
-				// добавлям ключ
+		for(Entry<K, V> entry : table()) {
+			while(entry != null) {
 				container.add(entry.getValue());
-
-				// обновляем ячейку
 				entry = entry.getNext();
 			}
 		}
 
 		return container;
+	}
+
+	@Override
+	public Array<V> values(final Class<V> type) {
+		return values(ArrayUtils.toArray(type));
 	}
 }

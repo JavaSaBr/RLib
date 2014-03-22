@@ -12,7 +12,7 @@ import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.SafeTask;
 import rlib.util.array.Array;
-import rlib.util.array.Arrays;
+import rlib.util.array.ArrayUtils;
 
 /**
  * Модель поиска и обнаружения делоков.
@@ -25,6 +25,7 @@ public class DeadLockDetector extends SafeTask {
 
 	/** набор слушателей дедлоков */
 	private final Array<DeadLockListener> listeners;
+
 	/** информация об состоянии потоков */
 	private final ThreadMXBean mxThread;
 	/** сервис по запуску детектора */
@@ -42,7 +43,7 @@ public class DeadLockDetector extends SafeTask {
 			throw new IllegalArgumentException("negative interval.");
 		}
 
-		this.listeners = Arrays.toConcurrentArray(DeadLockListener.class);
+		this.listeners = ArrayUtils.toConcurrentArray(DeadLockListener.class);
 		this.mxThread = ManagementFactory.getThreadMXBean();
 		this.executor = Executors.newSingleThreadScheduledExecutor();
 		this.interval = interval;

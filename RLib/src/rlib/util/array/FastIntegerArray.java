@@ -74,7 +74,7 @@ public class FastIntegerArray implements IntegerArray {
 	public FastIntegerArray add(int element) {
 
 		if(size == array.length) {
-			array = Arrays.copyOf(array, array.length * 3 / 2 + 1);
+			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
 		}
 
 		array[size++] = element;
@@ -92,7 +92,7 @@ public class FastIntegerArray implements IntegerArray {
 		int diff = size + elements.length - array.length;
 
 		if(diff > 0) {
-			array = Arrays.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, diff);
 		}
 
 		for(int i = 0, length = elements.length; i < length; i++) {
@@ -112,7 +112,7 @@ public class FastIntegerArray implements IntegerArray {
 		int diff = size + elements.size() - array.length;
 
 		if(diff > 0) {
-			array = Arrays.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, diff);
 		}
 
 		array = elements.array();
@@ -361,7 +361,7 @@ public class FastIntegerArray implements IntegerArray {
 
 	@Override
 	public final FastIntegerArray sort() {
-		Arrays.sort(array, 0, size);
+		ArrayUtils.sort(array, 0, size);
 		return this;
 	}
 
@@ -384,7 +384,7 @@ public class FastIntegerArray implements IntegerArray {
 
 	@Override
 	public String toString() {
-		return Arrays.toString(this);
+		return ArrayUtils.toString(this);
 	}
 
 	@Override
@@ -396,7 +396,7 @@ public class FastIntegerArray implements IntegerArray {
 			return this;
 		}
 
-		array = Arrays.copyOfRange(array, 0, size);
+		array = ArrayUtils.copyOfRange(array, 0, size);
 
 		return this;
 	}

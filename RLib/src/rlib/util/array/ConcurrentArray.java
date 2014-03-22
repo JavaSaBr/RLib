@@ -1,16 +1,14 @@
 package rlib.util.array;
 
-import java.util.Comparator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import rlib.concurrent.Locks;
+import rlib.concurrent.atomic.AtomicInteger;
 
 /**
- * Динамический конкурентный массив объектов. Используется синхронная запись и
- * асинхронное чтение.
+ * Реализация динамического массива с возможностью использовать потокобезопасную
+ * запись и чтение.
  *
  * @author Ronn
  */
@@ -33,7 +31,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 
 		@Override
 		public boolean hasNext() {
-			return ordinal < size;
+			return ordinal < size();
 		}
 
 		@Override
@@ -68,12 +66,11 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	private final Lock readLock;
 	/** блокировщик на запись */
 	private final Lock writeLock;
+	/** кол-во элементов в колекции */
+	private final AtomicInteger size;
 
 	/** массив элементов */
 	private volatile E[] array;
-
-	/** кол-во элементов в колекции */
-	private volatile int size;
 
 	/**
 	 * @param type тип элементов в массиве.
@@ -91,47 +88,21 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 
 		ReadWriteLock readWriteLock = Locks.newRWLock();
 
+		this.size = new AtomicInteger();
 		this.readLock = readWriteLock.readLock();
 		this.writeLock = readWriteLock.writeLock();
 	}
 
 	@Override
-	public void accept(Consumer<? super E> consumer) {
-		readLock();
-		try {
-
-			E[] array = array();
-
-			for(int i = 0, length = size; i < length; i++) {
-				consumer.accept(array[i]);
-			}
-
-		} finally {
-			readUnlock();
-		}
-	}
-
-	@Override
 	public ConcurrentArray<E> add(E element) {
-		writeLock();
-		try {
 
-			if(size < 0) {
-				size = 0;
-			}
-
-			if(size >= array.length) {
-				array = Arrays.copyOf(array, array.length * 3 / 2 + 1);
-			}
-
-			array[size] = element;
-
-			size += 1;
-
-			return this;
-		} finally {
-			writeUnlock();
+		if(size() == array.length) {
+			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
 		}
+
+		array[size.getAndIncrement()] = element;
+
+		return this;
 	}
 
 	@Override
@@ -141,26 +112,22 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 			return this;
 		}
 
-		writeLock();
-		try {
+		int diff = size() + elements.size() - array.length;
 
-			int diff = size + elements.size() - array.length;
-
-			if(diff > 0) {
-				array = Arrays.copyOf(array, diff);
-			}
-
-			E[] array = elements.array();
-
-			for(int i = 0, length = elements.size(); i < length; i++) {
-				add(array[i]);
-			}
-
-			return this;
-
-		} finally {
-			writeUnlock();
+		if(diff > 0) {
+			array = ArrayUtils.copyOf(array, diff);
 		}
+
+		for(E element : elements.array()) {
+
+			if(element == null) {
+				break;
+			}
+
+			add(element);
+		}
+
+		return this;
 	}
 
 	@Override
@@ -170,81 +137,22 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 			return this;
 		}
 
-		writeLock();
-		try {
+		int diff = size() + elements.length - array.length;
 
-			int diff = size + elements.length - array.length;
-
-			if(diff > 0) {
-				array = Arrays.copyOf(array, diff);
-			}
-
-			for(int i = 0, length = elements.length; i < length; i++) {
-				add(elements[i]);
-			}
-
-			return this;
-
-		} finally {
-			writeUnlock();
+		if(diff > 0) {
+			array = ArrayUtils.copyOf(array, diff);
 		}
-	}
 
-	@Override
-	public void apply(Function<? super E, ? extends E> function) {
-		readLock();
-		try {
-
-			E[] array = array();
-
-			for(int i = 0, length = size; i < length; i++) {
-				array[i] = function.apply(array[i]);
-			}
-
-		} finally {
-			readUnlock();
+		for(E element : elements) {
+			add(element);
 		}
+
+		return this;
 	}
 
 	@Override
 	public final E[] array() {
 		return array;
-	}
-
-	@Override
-	public final ConcurrentArray<E> clear() {
-		writeLock();
-		try {
-
-			Arrays.clear(array);
-
-			size = 0;
-
-			return this;
-
-		} finally {
-			writeUnlock();
-		}
-	}
-
-	@Override
-	public final boolean contains(Object object) {
-		readLock();
-		try {
-
-			E[] array = array();
-
-			for(int i = 0, length = size; i < length; i++) {
-				if(array[i].equals(object)) {
-					return true;
-				}
-			}
-
-			return false;
-
-		} finally {
-			readUnlock();
-		}
 	}
 
 	@Override
@@ -254,43 +162,23 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 			return null;
 		}
 
-		writeLock();
-		try {
+		E[] array = array();
 
-			E[] array = array();
+		int length = size();
 
-			if(size < 1 || index >= size) {
-				return null;
-			}
-
-			size -= 1;
-
-			E old = array[index];
-
-			array[index] = array[size];
-			array[size] = null;
-
-			return old;
-
-		} finally {
-			writeUnlock();
+		if(length < 1 || index >= length) {
+			return null;
 		}
-	}
 
-	@Override
-	public final E first() {
-		readLock();
-		try {
+		size.decrementAndGet();
+		length = size();
 
-			if(size < 1) {
-				return null;
-			}
+		E old = array[index];
 
-			return array[0];
+		array[index] = array[length];
+		array[length] = null;
 
-		} finally {
-			readUnlock();
-		}
+		return old;
 	}
 
 	@Override
@@ -299,97 +187,8 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final int indexOf(Object object) {
-
-		if(object == null) {
-			return -1;
-		}
-
-		readLock();
-		try {
-
-			E[] array = array();
-
-			for(int i = 0, length = size; i < length; i++) {
-
-				E element = array[i];
-
-				if(element.equals(object)) {
-					return i;
-				}
-			}
-
-			return -1;
-
-		} finally {
-			readUnlock();
-		}
-	}
-
-	@Override
-	public final boolean isEmpty() {
-		return size < 1;
-	}
-
-	@Override
 	public final ArrayIterator<E> iterator() {
 		return new FastIterator();
-	}
-
-	@Override
-	public final E last() {
-		readLock();
-		try {
-
-			if(size < 1) {
-				return null;
-			}
-
-			return array[size - 1];
-
-		} finally {
-			readUnlock();
-		}
-	}
-
-	@Override
-	public final int lastIndexOf(Object object) {
-
-		if(object == null) {
-			return -1;
-		}
-
-		readLock();
-		try {
-
-			E[] array = array();
-
-			int last = -1;
-
-			for(int i = 0, length = size; i < length; i++) {
-
-				E element = array[i];
-
-				if(element.equals(object)) {
-					last = i;
-				}
-			}
-
-			return last;
-
-		} finally {
-			readUnlock();
-		}
-	}
-
-	@Override
-	public final E poll() {
-		return slowRemove(0);
-	}
-
-	@Override
-	public final E pop() {
-		return fastRemove(size - 1);
 	}
 
 	@Override
@@ -403,95 +202,21 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final boolean removeAll(Array<?> target) {
-
-		if(target.isEmpty()) {
-			return true;
-		}
-
-		writeLock();
-		try {
-
-			Object[] array = target.array();
-
-			for(int i = 0, length = target.size(); i < length; i++) {
-				fastRemove(array[i]);
-			}
-
-		} finally {
-			writeUnlock();
-		}
-
-		return true;
-	}
-
-	@Override
-	public final boolean retainAll(Array<?> target) {
-		writeLock();
-		try {
-
-			E[] array = array();
-
-			for(int i = 0, length = size; i < length; i++)
-
-				if(!target.contains(array[i])) {
-					fastRemove(i--);
-					length--;
-				}
-
-		} finally {
-			writeUnlock();
-		}
-
-		return true;
-	}
-
-	@Override
-	public final E search(E required, Search<E> search) {
-		readLock();
-		try {
-
-			E[] array = array();
-
-			for(int i = 0, length = size; i < length; i++) {
-
-				E element = array[i];
-
-				if(search.compare(required, element)) {
-					return element;
-				}
-			}
-
-			return null;
-
-		} finally {
-			readUnlock();
-		}
-	}
-
-	@Override
 	public final void set(int index, E element) {
 
-		if(index < 0 || index >= size || element == null) {
+		if(index < 0 || index >= size() || element == null) {
 			return;
 		}
 
-		writeLock();
-		try {
+		E[] array = array();
 
-			E[] array = array();
-
-			if(array[index] != null) {
-				size -= 1;
-			}
-
-			array[index] = element;
-
-			size += 1;
-
-		} finally {
-			writeUnlock();
+		if(array[index] != null) {
+			size.decrementAndGet();
 		}
+
+		array[index] = element;
+
+		size.incrementAndGet();
 	}
 
 	@Override
@@ -501,97 +226,51 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 
 	@Override
 	protected final void setSize(int size) {
-		this.size = size;
+		this.size.getAndSet(size);
 	}
 
 	@Override
 	public final int size() {
-		return size;
+		return size.get();
 	}
 
 	@Override
 	public final E slowRemove(int index) {
 
-		if(index < 0 || size < 1) {
+		int length = size();
+
+		if(index < 0 || length < 1) {
 			return null;
 		}
 
-		writeLock();
-		try {
+		E[] array = array();
 
-			E[] array = array();
+		int numMoved = length - index - 1;
 
-			int numMoved = size - index - 1;
+		E old = array[index];
 
-			E old = array[index];
-
-			if(numMoved > 0) {
-				System.arraycopy(array, index + 1, array, index, numMoved);
-			}
-
-			size -= 1;
-
-			array[size] = null;
-
-			return old;
-		} finally {
-			writeUnlock();
+		if(numMoved > 0) {
+			System.arraycopy(array, index + 1, array, index, numMoved);
 		}
-	}
 
-	@Override
-	public final ConcurrentArray<E> sort(Comparator<E> comparator) {
-		writeLock();
-		try {
-			Arrays.sort(array, comparator);
-			return this;
-		} finally {
-			writeUnlock();
-		}
-	}
+		size.decrementAndGet();
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public final <T> T[] toArray(T[] container) {
-		readLock();
-		try {
+		array[size.get()] = null;
 
-			E[] array = array();
-
-			if(container.length >= size) {
-
-				for(int i = 0, j = 0, length = array.length, newLength = container.length; i < length && j < newLength; i++) {
-
-					if(array[i] == null) {
-						continue;
-					}
-
-					container[j++] = (T) array[i];
-				}
-
-				return container;
-			}
-
-			return (T[]) array;
-		} finally {
-			readUnlock();
-		}
+		return old;
 	}
 
 	@Override
 	public final ConcurrentArray<E> trimToSize() {
 
+		int size = size();
+
 		if(size == array.length) {
 			return this;
 		}
 
-		writeLock();
-		try {
-			array = Arrays.copyOfRange(array, 0, size);
-			return this;
-		} finally {
-			writeUnlock();
-		}
+		array = ArrayUtils.copyOfRange(array, 0, size);
+		return this;
 	}
 
 	@Override
