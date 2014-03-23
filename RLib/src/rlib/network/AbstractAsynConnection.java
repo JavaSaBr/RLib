@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.sync.LockFactory;
+import rlib.concurrent.lock.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.linkedlist.LinkedList;

@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.sync.AsynReadSynWriteLock;
-import rlib.concurrent.sync.LockFactory;
+import rlib.concurrent.lock.AsynReadSynWriteLock;
+import rlib.concurrent.lock.LockFactory;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.pools.Foldable;

@@ -3,7 +3,7 @@ package rlib.network.server.client;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.sync.LockFactory;
+import rlib.concurrent.lock.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.network.AsynConnection;

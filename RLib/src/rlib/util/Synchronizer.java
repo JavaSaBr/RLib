@@ -2,7 +2,7 @@ package rlib.util;
 
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.sync.LockFactory;
+import rlib.concurrent.lock.LockFactory;
 
 /**
  * @author Ronn

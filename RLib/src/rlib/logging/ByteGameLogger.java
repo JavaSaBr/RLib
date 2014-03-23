@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.sync.LockFactory;
+import rlib.concurrent.lock.LockFactory;
 import rlib.util.Synchronized;
 
 /**

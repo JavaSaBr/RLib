@@ -2,6 +2,8 @@ package rlib.database;
 
 import java.sql.SQLException;
 
+import rlib.database.impl.BoneCPConnectFactory;
+
 import com.jolbox.bonecp.BoneCPConfig;
 
 /**

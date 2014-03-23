@@ -2,7 +2,7 @@ package rlib.util.pools;
 
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.sync.LockFactory;
+import rlib.concurrent.lock.LockFactory;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
