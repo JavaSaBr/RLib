@@ -6,11 +6,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
-import rlib.util.pools.Pools;
+import rlib.util.pools.PoolFactory;
 
 /**
  * Модель быстрой объектной таблицы.
@@ -238,7 +239,7 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V> {
 		this.threshold = (int) (initCapacity * loadFactor);
 		this.size = 0;
 		this.table = new Entry[DEFAULT_INITIAL_CAPACITY];
-		this.entryPool = Pools.newFoldablePool(Entry.class);
+		this.entryPool = PoolFactory.newFoldablePool(Entry.class);
 	}
 
 	protected FastObjectTable(final int initCapacity) {
@@ -416,7 +417,7 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V> {
 
 	@Override
 	public Array<K> keyArray(final Class<K> type) {
-		return keyArray(ArrayUtils.toArray(type, size()));
+		return keyArray(ArrayFactory.newArray(type, size()));
 	}
 
 	@Override
@@ -625,6 +626,6 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V> {
 
 	@Override
 	public Array<V> values(final Class<V> type) {
-		return values(ArrayUtils.toArray(type));
+		return values(ArrayFactory.newArray(type));
 	}
 }

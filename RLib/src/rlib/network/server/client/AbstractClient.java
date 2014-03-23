@@ -3,7 +3,7 @@ package rlib.network.server.client;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.Locks;
+import rlib.concurrent.sync.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.network.AsynConnection;
@@ -37,7 +37,7 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	protected boolean closed;
 
 	public AbstractClient(C connection, T crypt) {
-		this.lock = Locks.newLock();
+		this.lock = LockFactory.newLock();
 		this.connection = connection;
 		this.crypt = crypt;
 	}

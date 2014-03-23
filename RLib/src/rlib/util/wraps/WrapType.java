@@ -1,7 +1,7 @@
 package rlib.util.wraps;
 
 import rlib.util.pools.FoldablePool;
-import rlib.util.pools.Pools;
+import rlib.util.pools.PoolFactory;
 
 /**
  * Перечисление типов оберток.
@@ -23,7 +23,7 @@ public enum WrapType {
 	private final FoldablePool<Wrap> pool;
 
 	private WrapType() {
-		this.pool = Pools.newConcurrentFoldablePool(Wrap.class);
+		this.pool = PoolFactory.newConcurrentFoldablePool(Wrap.class);
 	}
 
 	/**

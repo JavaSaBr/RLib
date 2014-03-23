@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import rlib.util.pools.FoldablePool;
-import rlib.util.pools.Pools;
+import rlib.util.pools.PoolFactory;
 
 /**
  * Реадизация быстрого связанного списка.
@@ -30,7 +30,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 
 	public FastLinkedList(final Class<?> type) {
 		super(type);
-		this.pool = Pools.newFoldablePool(Node.class);
+		this.pool = PoolFactory.newFoldablePool(Node.class);
 	}
 
 	@Override

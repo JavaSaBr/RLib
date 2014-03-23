@@ -3,7 +3,7 @@ package rlib.network.client.server;
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.Locks;
+import rlib.concurrent.sync.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.network.GameCrypt;
@@ -32,7 +32,7 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
 	protected AbstractServer(C connection, T crypt) {
 		this.connection = connection;
-		this.lock = Locks.newLock();
+		this.lock = LockFactory.newLock();
 		this.crypt = crypt;
 	}
 

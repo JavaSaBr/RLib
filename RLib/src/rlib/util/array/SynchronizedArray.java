@@ -1,6 +1,7 @@
 package rlib.util.array;
 
 import rlib.concurrent.atomic.AtomicInteger;
+import rlib.util.ArrayUtils;
 
 /**
  * Реализация динамического массива с возможностью использовать потокобезопасную

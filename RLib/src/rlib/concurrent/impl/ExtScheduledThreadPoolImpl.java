@@ -16,7 +16,7 @@ import rlib.concurrent.interfaces.Task;
 import rlib.concurrent.interfaces.Worker;
 import rlib.concurrent.interfaces.WorkerFactory;
 import rlib.util.linkedlist.LinkedList;
-import rlib.util.linkedlist.LinkedLists;
+import rlib.util.linkedlist.LinkedListFactory;
 
 /**
  * Реализация сервиса по исполнению отложенных задач.
@@ -30,7 +30,7 @@ public class ExtScheduledThreadPoolImpl<L> extends AbstractExtThreadPoolExecutor
 
 	public ExtScheduledThreadPoolImpl(ExtThreadFactory<L> threadFactory, WorkerFactory<L> workerFactory, ExtThreadExceptionHandler handler, LinkedList<Task<L>> waitTasks, Lock sync, int poolSize) {
 		super(threadFactory, workerFactory, handler, waitTasks, sync, poolSize);
-		this.scheduledTasks = LinkedLists.newSortedLinkedList(ExtScheduledFuture.class);
+		this.scheduledTasks = LinkedListFactory.newSortedLinkedList(ExtScheduledFuture.class);
 	}
 
 	protected void execute(ExtScheduledFuture<L, ?> scheduledTask) {

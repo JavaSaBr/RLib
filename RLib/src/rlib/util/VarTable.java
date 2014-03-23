@@ -5,7 +5,7 @@ import org.w3c.dom.Node;
 
 import rlib.geom.Vector;
 import rlib.util.table.Table;
-import rlib.util.table.Tables;
+import rlib.util.table.TableFactory;
 
 /**
  * Таблица параметров.
@@ -38,7 +38,7 @@ public class VarTable {
 	private final Table<String, Object> values;
 
 	public VarTable() {
-		this.values = Tables.newObjectTable();
+		this.values = TableFactory.newObjectTable();
 	}
 
 	/**

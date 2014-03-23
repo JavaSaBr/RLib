@@ -1,4 +1,4 @@
-package rlib.concurrent;
+package rlib.concurrent.sync;
 
 /**
  * Интерфейс для реализации блокировщика для синхронной записи и асинхронного

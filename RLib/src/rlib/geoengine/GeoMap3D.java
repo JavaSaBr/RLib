@@ -9,8 +9,8 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
 import rlib.logging.Loggers;
+import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
 
 
 /**

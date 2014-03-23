@@ -5,7 +5,7 @@ import rlib.concurrent.interfaces.WorkerFactory;
 import rlib.concurrent.interfaces.Task;
 import rlib.concurrent.interfaces.Worker;
 import rlib.util.pools.FoldablePool;
-import rlib.util.pools.Pools;
+import rlib.util.pools.PoolFactory;
 
 /**
  * Базовая реализация фабрики работников потоков.
@@ -18,7 +18,7 @@ public class ExtWorkerFactoryImpl<L> implements WorkerFactory<L> {
 	private final FoldablePool<Worker<L>> pool;
 
 	public ExtWorkerFactoryImpl() {
-		this.pool = Pools.newFoldablePool(Worker.class);
+		this.pool = PoolFactory.newFoldablePool(Worker.class);
 	}
 
 	@Override

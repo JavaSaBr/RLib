@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 import rlib.logging.Loggers;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Класс для работы с объектами.
@@ -149,7 +149,7 @@ public abstract class Objects {
 			return;
 		}
 
-		final Array<Field> array = ArrayUtils.toArray(Field.class);
+		final Array<Field> array = ArrayFactory.newArray(Field.class);
 
 		for(Class<?> cs = original.getClass(); cs != null; cs = cs.getSuperclass()) {
 

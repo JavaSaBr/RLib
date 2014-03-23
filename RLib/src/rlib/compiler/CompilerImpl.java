@@ -12,7 +12,7 @@ import javax.tools.ToolProvider;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Реализация обертки над java компилятором для удобной компиляции java кода в
@@ -60,7 +60,7 @@ class CompilerImpl implements Compiler {
 			return null;
 		}
 
-		Array<JavaFileObject> javaSource = ArrayUtils.toArray(JavaFileObject.class, files.length);
+		Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class, files.length);
 
 		for(File file : files) {
 			javaSource.add(new JavaFileSource(file));
@@ -100,7 +100,7 @@ class CompilerImpl implements Compiler {
 				}
 			}
 
-			Array<Class<?>> result = ArrayUtils.toArray(Class.class);
+			Array<Class<?>> result = ArrayFactory.newArray(Class.class);
 
 			String[] classNames = fileManager.getClassNames();
 
@@ -142,7 +142,7 @@ class CompilerImpl implements Compiler {
 	@Override
 	public Class<?>[] compileDirectory(File... files) {
 
-		Array<Class<?>> container = ArrayUtils.toArraySet(Class.class);
+		Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
 		for(File directory : files) {
 

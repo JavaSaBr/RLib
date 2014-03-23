@@ -14,11 +14,12 @@ import rlib.concurrent.interfaces.ExtThreadExceptionHandler;
 import rlib.concurrent.interfaces.ExtThreadFactory;
 import rlib.concurrent.interfaces.Task;
 import rlib.concurrent.interfaces.WorkerFactory;
+import rlib.concurrent.sync.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.Copyable;
 import rlib.util.linkedlist.LinkedList;
-import rlib.util.linkedlist.LinkedLists;
+import rlib.util.linkedlist.LinkedListFactory;
 
 /**
  * @author Ronn
@@ -50,8 +51,8 @@ public final class ExtExecutors {
 	}
 
 	public static <L> ExtExecutorService<L> createExecutorService(final ExtThreadFactory<L> threadFactory, final WorkerFactory<L> workerFactory, final int timeout, final int poolSize) {
-		final LinkedList<Task<L>> waitTasks = LinkedLists.newLinkedList(Task.class);
-		return new ExtThreadPoolExecutorImpl<L>(threadFactory, workerFactory, THREAD_EXCEPTION_HANDLER, waitTasks, Locks.newLock(), poolSize);
+		final LinkedList<Task<L>> waitTasks = LinkedListFactory.newLinkedList(Task.class);
+		return new ExtThreadPoolExecutorImpl<L>(threadFactory, workerFactory, THREAD_EXCEPTION_HANDLER, waitTasks, LockFactory.newLock(), poolSize);
 	}
 
 	public static <L> ExtThread<L> createThread(final ThreadGroup group, final Task<L> task, final L localObjects, final String name) {

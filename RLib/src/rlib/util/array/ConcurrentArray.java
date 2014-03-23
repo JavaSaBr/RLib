@@ -3,8 +3,9 @@ package rlib.util.array;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import rlib.concurrent.Locks;
 import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.sync.LockFactory;
+import rlib.util.ArrayUtils;
 
 /**
  * Реализация динамического массива с возможностью использовать потокобезопасную
@@ -86,7 +87,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	public ConcurrentArray(Class<E> type, int size) {
 		super(type, size);
 
-		ReadWriteLock readWriteLock = Locks.newRWLock();
+		ReadWriteLock readWriteLock = LockFactory.newRWLock();
 
 		this.size = new AtomicInteger();
 		this.readLock = readWriteLock.readLock();

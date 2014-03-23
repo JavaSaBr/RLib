@@ -9,7 +9,7 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
 
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Файловый менеджер по загрузке классов для компиляции.
@@ -28,7 +28,7 @@ public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJa
 		super(fileManager);
 
 		this.loader = loader;
-		this.classNames = ArrayUtils.toArray(String.class);
+		this.classNames = ArrayFactory.newArray(String.class);
 	}
 
 	/**

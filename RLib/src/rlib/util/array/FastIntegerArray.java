@@ -1,5 +1,7 @@
 package rlib.util.array;
 
+import rlib.util.ArrayUtils;
+
 /**
  * Быстрый динамический массив примитивных int.
  *

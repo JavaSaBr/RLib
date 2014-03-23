@@ -18,7 +18,7 @@ import rlib.concurrent.util.ConcurrentUtils;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.linkedlist.LinkedList;
-import rlib.util.linkedlist.LinkedLists;
+import rlib.util.linkedlist.LinkedListFactory;
 
 /**
  * Базовая реализация пула потоков.
@@ -72,7 +72,7 @@ public abstract class AbstractExtThreadPoolExecutor<L> extends AbstractExtExecut
 		this.waitTasks = waitTasks;
 		this.sync = sync;
 		this.poolSize = poolSize;
-		this.workers = LinkedLists.newLinkedList(Worker.class);
+		this.workers = LinkedListFactory.newLinkedList(Worker.class);
 		this.state = new AtomicInteger(EXECUTE);
 		this.completedTasks = new AtomicLong(0);
 	}

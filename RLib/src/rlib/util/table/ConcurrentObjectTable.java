@@ -7,14 +7,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import rlib.concurrent.AsynReadSynWriteLock;
-import rlib.concurrent.Locks;
 import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.sync.AsynReadSynWriteLock;
+import rlib.concurrent.sync.LockFactory;
+import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
 import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
-import rlib.util.pools.Pools;
+import rlib.util.pools.PoolFactory;
 
 /**
  * Реализация таблицы с возможностью потокобезопасно асинхронно читать и
@@ -240,8 +240,8 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 		this.threshold = (int) (initCapacity * loadFactor);
 		this.size = new AtomicInteger();
 		this.table = new Entry[DEFAULT_INITIAL_CAPACITY];
-		this.entryPool = Pools.newFoldablePool(Entry.class);
-		this.locker = Locks.newARSWLock();
+		this.entryPool = PoolFactory.newFoldablePool(Entry.class);
+		this.locker = LockFactory.newARSWLock();
 	}
 
 	protected ConcurrentObjectTable(int initCapacity) {

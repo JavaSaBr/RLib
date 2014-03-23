@@ -12,12 +12,13 @@ import rlib.database.ConnectFactory;
 import rlib.database.DBUtils;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
+import rlib.util.ArrayUtils;
 import rlib.util.SafeTask;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 import rlib.util.array.IntegerArray;
 import rlib.util.table.IntKey;
 import rlib.util.table.Table;
-import rlib.util.table.Tables;
+import rlib.util.table.TableFactory;
 
 /**
  * Модель фабрики ид основаной на BitSet
@@ -108,10 +109,10 @@ public final class BitSetIdGenerator extends SafeTask implements IdGenerator {
 
 			if(tables != null) {
 
-				Table<IntKey, String> useIds = Tables.newIntegerTable();
+				Table<IntKey, String> useIds = TableFactory.newIntegerTable();
 
-				IntegerArray clearIds = ArrayUtils.newIntegerArray();
-				IntegerArray extractedIds = ArrayUtils.newIntegerArray();
+				IntegerArray clearIds = ArrayFactory.newIntegerArray();
+				IntegerArray extractedIds = ArrayFactory.newIntegerArray();
 
 				Connection con = null;
 				Statement statement = null;

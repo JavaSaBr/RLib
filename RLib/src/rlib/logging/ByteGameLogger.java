@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.Locks;
+import rlib.concurrent.sync.LockFactory;
 import rlib.util.Synchronized;
 
 /**
@@ -37,7 +37,7 @@ public class ByteGameLogger implements GameLogger, Synchronized {
 
 		this.out = new FileOutputStream(outFile);
 		this.channel = out.getChannel();
-		this.lock = Locks.newLock();
+		this.lock = LockFactory.newLock();
 		this.cache = ByteBuffer.allocate(1024 * 1024).order(ByteOrder.LITTLE_ENDIAN);
 	}
 

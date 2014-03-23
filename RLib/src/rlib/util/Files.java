@@ -13,9 +13,9 @@ import java.util.Enumeration;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 import rlib.util.table.Table;
-import rlib.util.table.Tables;
+import rlib.util.table.TableFactory;
 
 /**
  * Класс для работы с файлами.
@@ -28,9 +28,9 @@ public class Files {
 	private static final Logger LOGGER = Loggers.getLogger(Files.class);
 
 	/** кэш текста файлов */
-	private static final Table<String, String> cache = Tables.newObjectTable();
+	private static final Table<String, String> cache = TableFactory.newObjectTable();
 	/** кэш файлов */
-	private static final Table<String, File> cacheFiles = Tables.newObjectTable();
+	private static final Table<String, File> cacheFiles = TableFactory.newObjectTable();
 
 	/**
 	 * Очистка кэша файлов.
@@ -137,7 +137,7 @@ public class Files {
 	 */
 	public static File[] getFiles(final File dir, final String... formats) {
 
-		final Array<File> array = ArrayUtils.toArray(File.class);
+		final Array<File> array = ArrayFactory.newArray(File.class);
 		final File[] files = dir.listFiles();
 
 		for(int i = 0, length = files.length; i < length; i++) {
@@ -189,7 +189,7 @@ public class Files {
 			return new File[0];
 		}
 
-		final Array<File> files = ArrayUtils.toArray(File.class);
+		final Array<File> files = ArrayFactory.newArray(File.class);
 
 		while(urls.hasMoreElements()) {
 

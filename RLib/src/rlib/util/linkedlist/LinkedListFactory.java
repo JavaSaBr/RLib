@@ -5,7 +5,7 @@ package rlib.util.linkedlist;
  * 
  * @author Ronn
  */
-public final class LinkedLists {
+public final class LinkedListFactory {
 
 	/**
 	 * Создание быстрого связанного списка.
@@ -27,7 +27,7 @@ public final class LinkedLists {
 		return new SortedLinkedList<>(type);
 	}
 
-	private LinkedLists() {
+	private LinkedListFactory() {
 		throw new RuntimeException();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import rlib.util.ArrayUtils;
 import rlib.util.Objects;
 import rlib.util.pools.Foldable;
 

@@ -1,4 +1,4 @@
-package rlib;
+package rlib.concurrent.deadlock;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -12,7 +12,7 @@ import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.SafeTask;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Модель поиска и обнаружения делоков.
@@ -43,7 +43,7 @@ public class DeadLockDetector extends SafeTask {
 			throw new IllegalArgumentException("negative interval.");
 		}
 
-		this.listeners = ArrayUtils.toConcurrentArray(DeadLockListener.class);
+		this.listeners = ArrayFactory.newConcurrentArray(DeadLockListener.class);
 		this.mxThread = ManagementFactory.getThreadMXBean();
 		this.executor = Executors.newSingleThreadScheduledExecutor();
 		this.interval = interval;
@@ -55,7 +55,12 @@ public class DeadLockDetector extends SafeTask {
 	 * @param listener новый слушатель.
 	 */
 	public void addListener(final DeadLockListener listener) {
-		listeners.add(listener);
+		listeners.writeLock();
+		try {
+			listeners.add(listener);
+		} finally {
+			listeners.writeUnlock();
+		}
 	}
 
 	/**

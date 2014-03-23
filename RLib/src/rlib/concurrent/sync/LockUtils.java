@@ -1,16 +1,15 @@
-package rlib.concurrent;
+package rlib.concurrent.sync;
 
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
 
 import rlib.util.Synchronized;
 
 /**
- * Класс для создание блокировщиков.
+ * Утильный класс для работы с блокерами.
  * 
  * @author Ronn
  */
-public abstract class Locks {
+public class LockUtils {
 
 	/**
 	 * Заблокировать 2 объекта.
@@ -32,27 +31,6 @@ public abstract class Locks {
 	public static void lock(final Synchronized first, final Synchronized second) {
 		first.lock();
 		second.lock();
-	}
-
-	/**
-	 * @return новый блокировщик.
-	 */
-	public static final AsynReadSynWriteLock newARSWLock() {
-		return new SimpleReadWriteLock();
-	}
-
-	/**
-	 * @return новый блокировщик.
-	 */
-	public static final Lock newLock() {
-		return new FinalLock();
-	}
-
-	/**
-	 * @return новый блокировщик.
-	 */
-	public static final ReadWriteLock newRWLock() {
-		return new FinalReadWriteLock();
 	}
 
 	/**

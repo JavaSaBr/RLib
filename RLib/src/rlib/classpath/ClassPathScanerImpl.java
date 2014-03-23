@@ -10,9 +10,10 @@ import java.util.jar.JarFile;
 import rlib.compiler.Compiler;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
+import rlib.util.ArrayUtils;
 import rlib.util.Strings;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Реализация сканера classpath.
@@ -222,7 +223,7 @@ class ClassPathScanerImpl implements ClassPathScaner {
 
 		String[] paths = getPaths();
 
-		Array<Class<?>> container = ArrayUtils.toArraySet(Class.class);
+		Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
 		for(String path : paths) {
 

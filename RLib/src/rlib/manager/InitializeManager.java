@@ -7,7 +7,7 @@ import java.util.Iterator;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.linkedlist.LinkedList;
-import rlib.util.linkedlist.LinkedLists;
+import rlib.util.linkedlist.LinkedListFactory;
 
 /**
  * Инициализатор друих менеджеров в указанном порядке.
@@ -20,7 +20,7 @@ public final class InitializeManager {
 
 	private static final String METHOD_NAME = "getInstance";
 
-	private static final LinkedList<Class<?>> QUEUE = LinkedLists.newLinkedList(Class.class);
+	private static final LinkedList<Class<?>> QUEUE = LinkedListFactory.newLinkedList(Class.class);
 
 	/**
 	 * Инициализация зарегестрированных классов.

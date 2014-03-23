@@ -2,7 +2,7 @@ package rlib.util;
 
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.Locks;
+import rlib.concurrent.sync.LockFactory;
 
 /**
  * @author Ronn
@@ -16,7 +16,7 @@ public final class Synchronizer implements Synchronized {
 	public volatile boolean locked;
 
 	public Synchronizer() {
-		this.sync = Locks.newLock();
+		this.sync = LockFactory.newLock();
 	}
 
 	/**

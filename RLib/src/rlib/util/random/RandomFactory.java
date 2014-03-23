@@ -6,7 +6,7 @@ package rlib.util.random;
  * 
  * @author Ronn
  */
-public final class Randoms {
+public final class RandomFactory {
 
 	/**
 	 * @return создание быстрого псевдо генератора.
@@ -22,7 +22,7 @@ public final class Randoms {
 		return new RealRandom();
 	}
 
-	private Randoms() {
+	private RandomFactory() {
 		throw new RuntimeException();
 	}
 }

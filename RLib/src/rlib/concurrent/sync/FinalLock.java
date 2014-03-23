@@ -1,9 +1,9 @@
-package rlib.concurrent;
+package rlib.concurrent.sync;
 
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Финализированная версия локера для более быстрой работы.
+ * Финализированная версия блокера для более быстрой работы.
  * 
  * @author Ronn
  */

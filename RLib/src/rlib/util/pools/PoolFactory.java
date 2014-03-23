@@ -5,7 +5,7 @@ package rlib.util.pools;
  * 
  * @author Ronn
  */
-public final class Pools {
+public final class PoolFactory {
 
 	/**
 	 * Создание нового быстрого объектного пула.
@@ -77,7 +77,18 @@ public final class Pools {
 		return new SynchronizedFoldablePool<T>(size, type);
 	}
 
-	private Pools() {
+	/**
+	 * Создание нового атомак объектного пула, синхронизированный через атомик
+	 * переменные.
+	 * 
+	 * @param type тип объектов пула.
+	 * @return новый объектный пул.
+	 */
+	public static final <T extends Foldable> FoldablePool<T> newAtomicFoldablePool(Class<? extends Foldable> type) {
+		return new AtomicFoldablePool<T>(10, type);
+	}
+
+	private PoolFactory() {
 		throw new IllegalArgumentException();
 	}
 }

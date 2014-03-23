@@ -1,16 +1,15 @@
-package rlib.geom;
+package rlib.geom.util;
 
-import rlib.gamemodel.GameObject;
+import rlib.geom.GamePoint;
 import rlib.logging.Loggers;
 import rlib.util.Rnd;
-import rlib.util.array.Array;
 
 /**
- * Класс для рассчета координат.
+ * Реализация утильного класса с методами для рассчета координат.
  * 
  * @author Ronn
  */
-public abstract class Coords {
+public final class CoordsUtils {
 
 	/**
 	 * Генерация дуговых позиций.
@@ -31,7 +30,7 @@ public abstract class Coords {
 
 		T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
 
-		float current = Angles.headingToDegree(heading) - degree;
+		float current = AngleUtils.headingToDegree(heading) - degree;
 
 		float min = current - width;
 		float max = current + width;
@@ -43,56 +42,7 @@ public abstract class Coords {
 
 				T loc = type.newInstance();
 
-				float radians = Angles.degreeToRadians(min + angle * i);
-
-				float newX = calcX(x, radius, radians);
-				float newY = calcY(y, radius, radians);
-
-				loc.setXYZ(newX, newY, z);
-
-				locs[i] = loc;
-
-			} catch(InstantiationException | IllegalAccessException e) {
-				Loggers.warning(type, e);
-			}
-		}
-
-		return locs;
-	}
-
-	/**
-	 * Генерация дуговых позиций.
-	 * 
-	 * @param type тип позиций.
-	 * @param object объект, вокруг которого и формируются позиции.
-	 * @param radius радиус формирования.
-	 * @param count кол-во необходимых позиций.
-	 * @param degree положение на окружности центра дуги.
-	 * @param width ширина дуги.
-	 * @return массив позиций.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends GamePoint> T[] arcCoords(Class<T> type, GameObject object, int radius, int count, int degree, int width) {
-
-		T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
-
-		float current = Angles.headingToDegree(object.getHeading()) - degree;
-
-		float min = current - width;
-		float max = current + width;
-
-		float angle = Math.abs(min - max) / count;
-
-		float x = object.getX();
-		float y = object.getY();
-		float z = object.getZ();
-
-		for(int i = 0; i < count; i++) {
-			try {
-
-				T loc = type.newInstance();
-
-				float radians = Angles.degreeToRadians(min + angle * i);
+				float radians = AngleUtils.degreeToRadians(min + angle * i);
 
 				float newX = calcX(x, radius, radians);
 				float newY = calcY(y, radius, radians);
@@ -130,7 +80,7 @@ public abstract class Coords {
 	 * @return новая х координата.
 	 */
 	public static float calcX(float x, int distance, int heading) {
-		return x + distance * (float) Math.cos(Angles.headingToRadians(heading));
+		return x + distance * (float) Math.cos(AngleUtils.headingToRadians(heading));
 	}
 
 	/**
@@ -143,7 +93,7 @@ public abstract class Coords {
 	 * @return новая х координата.
 	 */
 	public static float calcX(float x, int distance, int heading, int offset) {
-		return x + distance * (float) Math.cos(Angles.headingToRadians(heading + offset));
+		return x + distance * (float) Math.cos(AngleUtils.headingToRadians(heading + offset));
 	}
 
 	/**
@@ -167,7 +117,7 @@ public abstract class Coords {
 	 * @return новая у координата.
 	 */
 	public static float calcY(float y, int distance, int heading) {
-		return y + distance * (float) Math.sin(Angles.headingToRadians(heading));
+		return y + distance * (float) Math.sin(AngleUtils.headingToRadians(heading));
 	}
 
 	/**
@@ -180,7 +130,7 @@ public abstract class Coords {
 	 * @return новая у координата.
 	 */
 	public static float calcY(float y, int distance, int heading, int offset) {
-		return y + distance * (float) Math.sin(Angles.headingToRadians(heading + offset));
+		return y + distance * (float) Math.sin(AngleUtils.headingToRadians(heading + offset));
 	}
 
 	/**
@@ -205,7 +155,7 @@ public abstract class Coords {
 
 				T loc = type.newInstance();
 
-				float radians = Angles.degreeToRadians(i * angle);
+				float radians = AngleUtils.degreeToRadians(i * angle);
 
 				float newX = calcX(x, radius, radians);
 				float newY = calcY(y, radius, radians);
@@ -243,7 +193,7 @@ public abstract class Coords {
 
 		for(int i = 1; i <= count; i++) {
 
-			float radians = Angles.degreeToRadians(angle * i);
+			float radians = AngleUtils.degreeToRadians(angle * i);
 
 			float newX = x + radius * (float) Math.cos(radians);
 			float newY = y + radius * (float) Math.sin(radians);
@@ -289,7 +239,7 @@ public abstract class Coords {
 		}
 
 		int radius = Rnd.nextInt(radiusMin, radiusMax);
-		float radians = Angles.degreeToRadians(Rnd.nextInt(0, 360));
+		float radians = AngleUtils.degreeToRadians(Rnd.nextInt(0, 360));
 
 		float newX = calcX(x, radius, radians);
 		float newY = calcY(y, radius, radians);
@@ -297,70 +247,5 @@ public abstract class Coords {
 		loc.setXYZH(newX, newY, z, heading);
 
 		return loc;
-	}
-
-	/**
-	 * Спавн объектов вокруг объекта.
-	 * 
-	 * @param locator центральный объект.
-	 * @param objects список объектов, которые нужно отспавнить.
-	 * @param radius радиус, в котором нужно отспавнить объекты.
-	 */
-	public static void spawnCircularObjects(GameObject locator, Array<? extends GameObject> objects, int radius) {
-
-		if(objects.size() < 1) {
-			return;
-		}
-
-		float angle = 360F / objects.size();
-
-		float x = locator.getX();
-		float y = locator.getY();
-		float z = locator.getZ();
-
-		for(int i = 1, length = objects.size(); i <= length; i++) {
-
-			float radians = Angles.degreeToRadians(angle * i);
-
-			float newX = x + radius * (float) Math.cos(radians);
-			float newY = y + radius * (float) Math.sin(radians);
-
-			GameObject item = objects.get(i - 1);
-
-			item.spawnMe(newX, newY, z, 0);
-		}
-	}
-
-	/**
-	 * Спавн объектов вокруг объекта.
-	 * 
-	 * @param locator центральный объект.
-	 * @param objects список объектов, которые нужно отспавнить.
-	 * @param length кол-во объектов.
-	 * @param radius радиус, в котором нужно отспавнить объекты.
-	 */
-	public static void spawnCircularObjects(GameObject locator, GameObject[] objects, int length, int radius) {
-
-		if(length < 1) {
-			return;
-		}
-
-		float angle = 360F / length;
-
-		float x = locator.getX();
-		float y = locator.getY();
-		float z = locator.getZ();
-
-		for(int i = 1; i <= length; i++) {
-
-			float radians = Angles.degreeToRadians(angle * i);
-
-			float newX = x + radius * (float) Math.cos(radians);
-			float newY = y + radius * (float) Math.sin(radians);
-
-			GameObject item = objects[i - 1];
-
-			item.spawnMe(newX, newY, z, 0);
-		}
 	}
 }

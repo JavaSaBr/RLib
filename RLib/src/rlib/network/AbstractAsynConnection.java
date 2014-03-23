@@ -7,12 +7,12 @@ import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.Locks;
 import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.sync.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.linkedlist.LinkedList;
-import rlib.util.linkedlist.LinkedLists;
+import rlib.util.linkedlist.LinkedListFactory;
 
 /**
  * Базовая модель асинхронного конекта.
@@ -143,9 +143,9 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	};
 
 	public AbstractAsynConnection(N network, AsynchronousSocketChannel channel, Class<S> sendableType) {
-		this.lock = Locks.newLock();
+		this.lock = LockFactory.newLock();
 		this.channel = channel;
-		this.waitPackets = LinkedLists.newLinkedList(sendableType);
+		this.waitPackets = LinkedListFactory.newLinkedList(sendableType);
 		this.network = network;
 		this.readBuffer = network.getReadByteBuffer();
 		this.writeBuffer = network.getWriteByteBuffer();

@@ -1,20 +1,26 @@
 package rlib.util.pools;
 
+import java.util.concurrent.locks.Lock;
+
+import rlib.concurrent.sync.LockFactory;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Потокобезопасный объектный пул.
+ * Синхронизированный объектный пул.
  * 
  * @author Ronn
  */
-public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<E> {
+public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 
-	/** массив объектов */
+	/** пул объектов */
 	private final Array<E> pool;
+	/** блокировщик */
+	private final Lock lock;
 
-	protected ConcurrentFoldablePool(int size, Class<?> type) {
-		this.pool = ArrayFactory.newConcurrentArray(type, size);
+	protected AtomicFoldablePool(int size, Class<?> type) {
+		this.pool = ArrayFactory.newArray(type, size);
+		this.lock = LockFactory.newPrimitiveAtomicLoc();
 	}
 
 	@Override
@@ -31,30 +37,21 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 
 		object.finalyze();
 
-		Array<E> pool = getPool();
-		pool.writeLock();
+		lock.lock();
 		try {
 			pool.add(object);
 		} finally {
-			pool.writeUnlock();
+			lock.unlock();
 		}
-	}
-
-	/**
-	 * @return массив объектов.
-	 */
-	private Array<E> getPool() {
-		return pool;
 	}
 
 	@Override
 	public void remove(E object) {
-		Array<E> pool = getPool();
-		pool.writeLock();
+		lock.lock();
 		try {
 			pool.fastRemove(object);
 		} finally {
-			pool.writeUnlock();
+			lock.unlock();
 		}
 	}
 
@@ -63,12 +60,11 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 
 		E object = null;
 
-		Array<E> pool = getPool();
-		pool.writeLock();
+		lock.lock();
 		try {
 			object = pool.pop();
 		} finally {
-			pool.writeUnlock();
+			lock.unlock();
 		}
 
 		if(object == null) {
@@ -77,5 +73,10 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 
 		object.reinit();
 		return object;
+	}
+
+	@Override
+	public String toString() {
+		return pool.toString();
 	}
 }

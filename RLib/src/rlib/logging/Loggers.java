@@ -8,11 +8,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.Locks;
+import rlib.concurrent.sync.LockFactory;
+import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 import rlib.util.table.Table;
-import rlib.util.table.Tables;
+import rlib.util.table.TableFactory;
 
 /**
  * Менеджер логгеров, служит для самого процесса вывода и сохранения сообщений,
@@ -25,12 +26,12 @@ public abstract class Loggers {
 	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 
 	/** таблица всех логгерров */
-	private static final Table<String, Logger> LOGGERS = Tables.newObjectTable();
+	private static final Table<String, Logger> LOGGERS = TableFactory.newObjectTable();
 	/** список дополнительных записчиков лога */
-	private static final Array<Writer> WRITERS = ArrayUtils.toArray(Writer.class);
+	private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
 
 	/** синхронизатор записи лога */
-	private static final Lock SYNC = Locks.newLock();
+	private static final Lock SYNC = LockFactory.newLock();
 	/** главный логгер */
 	private static final Logger LOGGER = new Logger();
 

@@ -5,12 +5,12 @@ import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
 import rlib.util.array.IntegerArray;
 import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
-import rlib.util.pools.Pools;
+import rlib.util.pools.PoolFactory;
 
 /**
  * Модель быстрой таблицы с примитивным инт числом ключем.
@@ -236,7 +236,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 		this.threshold = (int) (initCapacity * loadFactor);
 		this.size = 0;
 		this.table = new Entry[DEFAULT_INITIAL_CAPACITY];
-		this.entryPool = Pools.newFoldablePool(Entry.class);
+		this.entryPool = PoolFactory.newFoldablePool(Entry.class);
 	}
 
 	protected FastIntegerTable(int initCapacity) {

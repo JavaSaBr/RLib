@@ -14,7 +14,7 @@ import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.network.NetworkConfig;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Базовая модель асинхронной сети.
@@ -41,8 +41,8 @@ public final class DefaultServerNetwork implements ServerNetwork {
 
 	public DefaultServerNetwork(NetworkConfig config, AcceptHandler acceptHandler) throws IOException {
 		this.config = config;
-		this.readBufferPool = ArrayUtils.toConcurrentArray(ByteBuffer.class);
-		this.writeBufferPool = ArrayUtils.toConcurrentArray(ByteBuffer.class);
+		this.readBufferPool = ArrayFactory.newArray(ByteBuffer.class);
+		this.writeBufferPool = ArrayFactory.newArray(ByteBuffer.class);
 		this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
 		this.channel = AsynchronousServerSocketChannel.open(group);
 		this.acceptHandler = acceptHandler;

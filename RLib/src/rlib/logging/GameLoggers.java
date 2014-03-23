@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Менеджер для создания игровых логгеров.
@@ -95,6 +95,6 @@ public abstract class GameLoggers {
 	 */
 	public static final void setDirectory(String directory) {
 		GameLoggers.directory = directory;
-		GameLoggers.loggers = ArrayUtils.toConcurrentArray(GameLogger.class);
+		GameLoggers.loggers = ArrayFactory.newConcurrentArray(GameLogger.class);
 	}
 }

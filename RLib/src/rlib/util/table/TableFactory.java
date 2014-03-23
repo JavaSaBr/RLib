@@ -5,7 +5,7 @@ package rlib.util.table;
  * 
  * @author Ronn
  */
-public final class Tables {
+public final class TableFactory {
 
 	/**
 	 * Создание таблицы с int ключем.
@@ -181,7 +181,7 @@ public final class Tables {
 		return new FastObjectTable<K, V>(initCapacity);
 	}
 
-	private Tables() {
+	private TableFactory() {
 		throw new IllegalArgumentException();
 	}
 }

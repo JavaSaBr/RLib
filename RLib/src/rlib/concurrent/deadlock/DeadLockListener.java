@@ -1,4 +1,4 @@
-package rlib;
+package rlib.concurrent.deadlock;
 
 import java.lang.management.ThreadInfo;
 

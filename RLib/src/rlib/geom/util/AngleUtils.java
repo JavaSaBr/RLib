@@ -1,11 +1,11 @@
-package rlib.geom;
+package rlib.geom.util;
 
 /**
- * Класс для работы с углами.
+ * Реализация утильного класса с методами по работе с углами.
  * 
  * @author Ronn
  */
-public abstract class Angles {
+public final class AngleUtils {
 
 	public static final float HEADINGS_IN_PI = 10430.378350470452724949566316381F;
 	public static final float PI = 3.14159265358979323846F;
@@ -140,7 +140,7 @@ public abstract class Angles {
 	 */
 	public static boolean isInDegree(float x, float y, int heading, float targetX, float targetY, int width) {
 
-		int angle = (int) Angles.headingToDegree(calcHeadingTo(x, y, heading, targetX, targetY));
+		int angle = (int) AngleUtils.headingToDegree(calcHeadingTo(x, y, heading, targetX, targetY));
 		int degree = (int) headingToDegree(heading);
 
 		int min = degree - width;

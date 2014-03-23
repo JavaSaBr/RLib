@@ -1,9 +1,10 @@
-package rlib.concurrent;
+package rlib.concurrent.sync;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Финализированный рид/врайт лок.
+ * Финализированный версия асинхроно читающего и синхронно записывающего
+ * блокера.
  * 
  * @author Ronn
  */

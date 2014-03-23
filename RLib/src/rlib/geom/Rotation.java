@@ -1,8 +1,9 @@
 package rlib.geom;
 
+import rlib.geom.util.AngleUtils;
 import rlib.util.ExtMath;
 import rlib.util.random.Random;
-import rlib.util.random.Randoms;
+import rlib.util.random.RandomFactory;
 
 /**
  * Модель описание направления объекта в 3D пространстве, реализовано в виде
@@ -24,7 +25,7 @@ public class Rotation {
 
 		@Override
 		protected Random initialValue() {
-			return Randoms.newFastRandom();
+			return RandomFactory.newFastRandom();
 		};
 	};
 
@@ -417,9 +418,9 @@ public class Rotation {
 	 */
 	public void random(Random random) {
 
-		float x = Angles.degreeToRadians(random.nextInt(0, 360));
-		float y = Angles.degreeToRadians(random.nextInt(0, 360));
-		float z = Angles.degreeToRadians(random.nextInt(0, 360));
+		float x = AngleUtils.degreeToRadians(random.nextInt(0, 360));
+		float y = AngleUtils.degreeToRadians(random.nextInt(0, 360));
+		float z = AngleUtils.degreeToRadians(random.nextInt(0, 360));
 
 		fromAngles(x, y, z);
 	}

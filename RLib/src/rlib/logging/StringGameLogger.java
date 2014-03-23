@@ -8,9 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.Locks;
+import rlib.concurrent.sync.LockFactory;
 import rlib.util.array.Array;
-import rlib.util.array.ArrayUtils;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Модель строкового логера игровых событий.
@@ -41,8 +41,8 @@ public class StringGameLogger implements GameLogger {
 		}
 
 		this.out = new FileWriter(outFile);
-		this.lock = Locks.newLock();
-		this.cache = ArrayUtils.toArray(String.class);
+		this.lock = LockFactory.newLock();
+		this.cache = ArrayFactory.newArray(String.class);
 	}
 
 	@Override
