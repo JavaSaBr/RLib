@@ -1,11 +1,13 @@
 package rlib.network;
 
+import rlib.util.Synchronized;
+
 /**
- * Интерфейс для реализации конекта к клиенту.
+ * Интерфейс для реализации сетевого подключения.
  * 
  * @author Ronn
  */
-public interface AsynConnection<R, S> {
+public interface AsynConnection<R, S> extends Synchronized {
 
 	/**
 	 * Закрытие коннекта.

@@ -1,4 +1,4 @@
-package rlib.network.client;
+package rlib.network.client.impl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -6,11 +6,13 @@ import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousSocketChannel;
 
 import rlib.concurrent.GroupThreadFactory;
-import rlib.network.AbstractAsynchronousNetwork;
 import rlib.network.NetworkConfig;
+import rlib.network.client.ClientNetwork;
+import rlib.network.client.ConnectHandler;
+import rlib.network.impl.AbstractAsynchronousNetwork;
 
 /**
- * Базовая модель асинхронной сети.
+ * Базовая модель асинхронной клиентской сети.
  *
  * @author Ronn
  */

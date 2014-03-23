@@ -10,40 +10,56 @@ public interface NetworkConfig {
 	/**
 	 * @return название группы сети.
 	 */
-	public String getGroupName();
+	public default String getGroupName() {
+		return "NetworkThread";
+	}
 
 	/**
 	 * @return кол-во потоков в группе сети.
 	 */
-	public int getGroupSize();
+	public default int getGroupSize() {
+		return 1;
+	}
 
 	/**
 	 * @return размер читаемого буфера сети.
 	 */
-	public int getReadBufferSize();
+	public default int getReadBufferSize() {
+		return 2048;
+	}
 
 	/**
 	 * @return класс потоков сети
 	 */
-	public Class<? extends Thread> getThreadClass();
+	public default Class<? extends Thread> getThreadClass() {
+		return Thread.class;
+	}
 
 	/**
 	 * @return приоритет потокв сети.
 	 */
-	public int getThreadPriority();
+	public default int getThreadPriority() {
+		return Thread.NORM_PRIORITY;
+	}
 
 	/**
 	 * @return размер записываемого буфера.
 	 */
-	public int getWriteBufferSize();
+	public default int getWriteBufferSize() {
+		return 2048;
+	}
 
 	/**
-	 * @return отображать ли эксепшены читаемой сети.
+	 * @return отображать ли ошибки при чтении из сети.
 	 */
-	public boolean isVesibleReadException();
+	public default boolean isVesibleReadException() {
+		return false;
+	}
 
 	/**
-	 * @return отображать ли эксепшены записываемой сети.
+	 * @return отображать ли ошибки при записи в сеть.
 	 */
-	public boolean isVesibleWriteException();
+	public default boolean isVesibleWriteException() {
+		return false;
+	}
 }

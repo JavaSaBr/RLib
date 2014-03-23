@@ -4,7 +4,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
-import rlib.network.AbstractAsynConnection;
+import rlib.network.impl.AbstractAsynConnection;
 import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
 import rlib.network.server.ServerNetwork;

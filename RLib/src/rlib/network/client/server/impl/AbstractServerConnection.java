@@ -1,11 +1,13 @@
-package rlib.network.client.server;
+package rlib.network.client.server.impl;
 
 import java.nio.channels.AsynchronousSocketChannel;
 
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
-import rlib.network.AbstractAsynConnection;
 import rlib.network.client.ClientNetwork;
+import rlib.network.client.server.Server;
+import rlib.network.client.server.ServerConnection;
+import rlib.network.impl.AbstractAsynConnection;
 import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
 
@@ -46,7 +48,6 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reade
 
 	@Override
 	protected void onWrited(S packet) {
-		// TODO
 	}
 
 	@Override

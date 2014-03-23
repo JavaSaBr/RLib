@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 
 import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
-import rlib.util.Synchronized;
 
 /**
  * Интерфейс для реализации сервера для игрового клиента.
@@ -12,7 +11,7 @@ import rlib.util.Synchronized;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public interface Server<C extends ServerConnection> extends Synchronized {
+public interface Server<C extends ServerConnection> {
 
 	/**
 	 * Отключиться от сервера.

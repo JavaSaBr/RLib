@@ -8,15 +8,15 @@ import java.nio.channels.CompletionHandler;
  * 
  * @author Ronn
  */
-public abstract class ConnectHandler implements CompletionHandler<Void, AsynchronousSocketChannel> {
+public interface ConnectHandler extends CompletionHandler<Void, AsynchronousSocketChannel> {
 
 	@Override
-	public void completed(Void result, AsynchronousSocketChannel attachment) {
+	public default void completed(Void result, AsynchronousSocketChannel attachment) {
 		onConnect(attachment);
 	}
 
 	@Override
-	public void failed(Throwable exc, AsynchronousSocketChannel attachment) {
+	public default void failed(Throwable exc, AsynchronousSocketChannel attachment) {
 		onFailed(exc);
 	}
 
@@ -25,12 +25,12 @@ public abstract class ConnectHandler implements CompletionHandler<Void, Asynchro
 	 * 
 	 * @param channel канал с сервером.
 	 */
-	protected abstract void onConnect(AsynchronousSocketChannel channel);
+	public void onConnect(AsynchronousSocketChannel channel);
 
 	/**
 	 * Обработка ошибки подключения к серверу.
 	 * 
 	 * @param exc ошибка подключения.
 	 */
-	protected abstract void onFailed(Throwable exc);
+	public void onFailed(Throwable exc);
 }

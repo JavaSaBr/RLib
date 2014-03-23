@@ -5,13 +5,13 @@ import java.io.IOException;
 import rlib.logging.Loggers;
 import rlib.network.client.ClientNetwork;
 import rlib.network.client.ConnectHandler;
-import rlib.network.client.DefaultClientNetwork;
+import rlib.network.client.impl.DefaultClientNetwork;
 import rlib.network.server.AcceptHandler;
 import rlib.network.server.DefaultServerNetwork;
 import rlib.network.server.ServerNetwork;
 
 /**
- * Фабрика моделей сети.
+ * Фабрика реализаций сетей.
  * 
  * @author Ronn
  */

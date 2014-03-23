@@ -1,10 +1,12 @@
-package rlib.network;
+package rlib.network.impl;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
+import rlib.network.AsynchronousNetwork;
+import rlib.network.NetworkConfig;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -47,7 +49,12 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	public ByteBuffer getReadByteBuffer() {
 
 		Array<ByteBuffer> pool = getReadBufferPool();
-		ByteBuffer buffer = pool.pop();
+
+		ByteBuffer buffer = null;
+
+		synchronized(pool) {
+			buffer = pool.pop();
+		}
 
 		if(buffer == null) {
 			buffer = ByteBuffer.allocate(config.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
@@ -66,8 +73,12 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	@Override
 	public ByteBuffer getWriteByteBuffer() {
 
-		Array<ByteBuffer> writeBufferPool = getWriteBufferPool();
-		ByteBuffer buffer = writeBufferPool.pop();
+		Array<ByteBuffer> pool = getWriteBufferPool();
+		ByteBuffer buffer = null;
+
+		synchronized(pool) {
+			buffer = pool.pop();
+		}
 
 		if(buffer == null) {
 			buffer = ByteBuffer.allocate(config.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
@@ -84,7 +95,10 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 		}
 
 		Array<ByteBuffer> pool = getReadBufferPool();
-		pool.add(buffer);
+
+		synchronized(pool) {
+			pool.add(buffer);
+		}
 	}
 
 	@Override
@@ -95,6 +109,9 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 		}
 
 		Array<ByteBuffer> pool = getWriteBufferPool();
-		pool.add(buffer);
+
+		synchronized(pool) {
+			pool.add(buffer);
+		}
 	}
 }

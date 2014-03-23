@@ -1,17 +1,17 @@
-package rlib.network.client.server;
+package rlib.network.client.server.impl;
 
 import java.nio.ByteBuffer;
-import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.lock.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.network.GameCrypt;
+import rlib.network.client.server.Server;
+import rlib.network.client.server.ServerConnection;
 import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
 
 /**
- * Базовая модель сервера, к которому подключается клиент.
+ * Базовая реализация сервера, к которому подключается клиент.
  * 
  * @author Ronn
  */
@@ -20,8 +20,6 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
 	protected static final Logger LOGGER = Loggers.getLogger(Server.class);
 
-	/** блокировщик */
-	protected final Lock lock;
 	/** коннект к логин серверу */
 	protected final C connection;
 	/** криптор пакетов */
@@ -32,7 +30,6 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
 	protected AbstractServer(C connection, T crypt) {
 		this.connection = connection;
-		this.lock = LockFactory.newLock();
 		this.crypt = crypt;
 	}
 
@@ -70,12 +67,7 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
 	@Override
 	public boolean isConnected() {
-		return !closed && connection != null && !connection.isClosed();
-	}
-
-	@Override
-	public final void lock() {
-		lock.lock();
+		return !isClosed() && connection != null && !connection.isClosed();
 	}
 
 	@Override
@@ -94,33 +86,28 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 		}
 	}
 
+	/**
+	 * @return закрыт ли клиент.
+	 */
+	public boolean isClosed() {
+		return closed;
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public final void sendPacket(SendablePacket packet) {
 
-		if(closed) {
+		if(isClosed()) {
 			return;
 		}
 
-		lock();
-		try {
+		C connection = getConnection();
 
-			C connection = getConnection();
-
-			if(connection == null) {
-				LOGGER.warning(this, new Exception("not found connection"));
-				return;
-			}
-
-			connection.sendPacket(packet);
-
-		} finally {
-			unlock();
+		if(connection == null || connection.isClosed()) {
+			LOGGER.warning(this, new Exception("not found connection"));
+			return;
 		}
-	}
 
-	@Override
-	public final void unlock() {
-		lock.unlock();
+		connection.sendPacket(packet);
 	}
 }

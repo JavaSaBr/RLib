@@ -5,7 +5,7 @@ import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
 
 /**
- * Интерфейс для реализации асинхронного коннекта к серверу.
+ * Интерфейс для реализации асинхронного подключения к серверу.
  * 
  * @author Ronn
  */
