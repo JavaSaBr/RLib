@@ -33,7 +33,6 @@ public abstract class AbstractArray<E> implements Array<E> {
 			throw new IllegalArgumentException("negative size");
 		}
 
-		setSize(0);
 		setArray((E[]) java.lang.reflect.Array.newInstance(type, size));
 	}
 

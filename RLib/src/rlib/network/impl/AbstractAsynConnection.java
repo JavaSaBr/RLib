@@ -145,7 +145,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	};
 
 	public AbstractAsynConnection(N network, AsynchronousSocketChannel channel, Class<S> sendableType) {
-		this.lock = LockFactory.newPrimitiveAtomicLoc();
+		this.lock = LockFactory.newThreadAtomicLock();
 		this.channel = channel;
 		this.waitPackets = LinkedListFactory.newLinkedList(sendableType);
 		this.network = network;
