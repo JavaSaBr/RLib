@@ -1,15 +1,14 @@
-package rlib.network.server.client;
+package rlib.network.server.client.impl;
 
 import java.nio.ByteBuffer;
-import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.lock.LockFactory;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.network.AsynConnection;
 import rlib.network.GameCrypt;
 import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
+import rlib.network.server.client.Client;
 
 /**
  * Базовая модель серверного клиента.
@@ -20,9 +19,6 @@ import rlib.network.packets.SendablePacket;
 public abstract class AbstractClient<A, O, C extends AsynConnection, T extends GameCrypt> implements Client<A, O, C> {
 
 	protected static final Logger LOGGER = Loggers.getLogger(Client.class);
-
-	/** блокировщик */
-	private final Lock lock;
 
 	/** владелец коннекта */
 	protected O owner;
@@ -37,7 +33,6 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	protected boolean closed;
 
 	public AbstractClient(C connection, T crypt) {
-		this.lock = LockFactory.newLock();
 		this.connection = connection;
 		this.crypt = crypt;
 	}
@@ -86,12 +81,14 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 
 	@Override
 	public final boolean isConnected() {
-		return !closed && connection != null && !connection.isClosed();
+		return !isClosed() && connection != null && !connection.isClosed();
 	}
 
-	@Override
-	public final void lock() {
-		lock.lock();
+	/**
+	 * @return закрыт ли клиент.
+	 */
+	public boolean isClosed() {
+		return closed;
 	}
 
 	@Override
@@ -114,21 +111,14 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	@SuppressWarnings("unchecked")
 	public final void sendPacket(SendablePacket packet) {
 
-		if(closed) {
+		if(isClosed()) {
 			return;
 		}
 
-		lock();
-		try {
+		C connection = getConnection();
 
-			C connection = getConnection();
-
-			if(connection != null) {
-				connection.sendPacket(packet);
-			}
-
-		} finally {
-			unlock();
+		if(connection != null) {
+			connection.sendPacket(packet);
 		}
 	}
 
@@ -152,10 +142,5 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	@Override
 	public void successfulConnection() {
 		LOGGER.info(this, getHostAddress() + " successful connection.");
-	}
-
-	@Override
-	public final void unlock() {
-		lock.unlock();
 	}
 }

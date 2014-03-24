@@ -1,6 +1,8 @@
-package rlib.network.packets;
+package rlib.network.packets.impl;
 
 import java.nio.ByteBuffer;
+
+import rlib.network.packets.Packet;
 
 /**
  * Базовая модель реализации сетевого пакета.

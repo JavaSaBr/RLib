@@ -14,12 +14,15 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
+ * Реализация сканера, который еще умеет из манифеста класспаз доставать.
+ * 
  * @author Ronn
  */
 public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 
 	/** рутовый класс для приложения */
 	private final Class<?> rootClass;
+
 	/** ключ, по которому будет извлекаться дополнительный classpath */
 	private final String classPathKey;
 

@@ -8,7 +8,7 @@ import rlib.logging.Logger;
 import rlib.logging.Loggers;
 
 /**
- * Базовая модель обработчика принятия конектов.
+ * Базовая модель обработчика принятия подключений.
  * 
  * @author Ronn
  */

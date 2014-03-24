@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import rlib.network.AsynConnection;
 import rlib.network.packets.ReadeablePacket;
 import rlib.network.packets.SendablePacket;
-import rlib.util.Synchronized;
 
 /**
  * Интерфейс для реализации игрового клиента в ММО играх.
@@ -13,7 +12,7 @@ import rlib.util.Synchronized;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public interface Client<A, P, C extends AsynConnection> extends Synchronized {
+public interface Client<A, P, C extends AsynConnection> {
 
 	/**
 	 * Закрыть клиент.

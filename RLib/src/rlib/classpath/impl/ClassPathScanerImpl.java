@@ -17,7 +17,7 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Реализация сканера classpath.
+ * Реализация обычного сканера classpath.
  * 
  * @author Ronn
  */
@@ -177,7 +177,7 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 
 						loadClass(path, container);
 					} catch(Exception e) {
-						System.out.println("incorrect replace " + file.getAbsolutePath() + " from root " + rootPath);
+						LOGGER.info("incorrect replace " + file.getAbsolutePath() + " from root " + rootPath);
 					}
 				}
 			}

@@ -5,7 +5,7 @@ import javax.tools.ToolProvider;
 import rlib.compiler.impl.CompilerImpl;
 
 /**
- * Фабрика компиляторов java кода в на рантайме.
+ * Фабрика компиляторов java кода на рантайме.
  * 
  * @author Ronn
  */

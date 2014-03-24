@@ -1,7 +1,8 @@
-package rlib.network.packets;
+package rlib.network.packets.impl;
 
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
+import rlib.network.packets.ReadeablePacket;
 import rlib.util.Util;
 import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
@@ -14,10 +15,6 @@ import rlib.util.pools.FoldablePool;
 public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> implements ReadeablePacket<C>, Foldable {
 
 	protected static final Logger LOGGER = Loggers.getLogger(ReadeablePacket.class);
-
-	@Override
-	public void finalyze() {
-	}
 
 	@Override
 	public final int getAvaliableBytes() {
@@ -150,10 +147,6 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 		}
 
 		return new String(array);
-	}
-
-	@Override
-	public void reinit() {
 	}
 
 	@Override

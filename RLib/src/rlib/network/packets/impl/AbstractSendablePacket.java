@@ -1,10 +1,11 @@
-package rlib.network.packets;
+package rlib.network.packets.impl;
 
 import java.nio.ByteBuffer;
 
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
+import rlib.network.packets.SendablePacket;
 import rlib.util.Strings;
 import rlib.util.Util;
 import rlib.util.pools.Foldable;
@@ -36,10 +37,6 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 	@Override
 	public void decreaseSends(int count) {
 		counter.subAndGet(count);
-	}
-
-	@Override
-	public void finalyze() {
 	}
 
 	@Override

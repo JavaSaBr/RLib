@@ -7,8 +7,8 @@ import rlib.network.client.ClientNetwork;
 import rlib.network.client.ConnectHandler;
 import rlib.network.client.impl.DefaultClientNetwork;
 import rlib.network.server.AcceptHandler;
-import rlib.network.server.DefaultServerNetwork;
 import rlib.network.server.ServerNetwork;
+import rlib.network.server.impl.DefaultServerNetwork;
 
 /**
  * Фабрика реализаций сетей.
