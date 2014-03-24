@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import rlib.util.ArrayUtils;
-import rlib.util.Objects;
+import rlib.util.ObjectUtils;
 import rlib.util.pools.Foldable;
 
 /**
@@ -201,7 +201,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 				break;
 			}
 
-			if(Objects.equals(object, element)) {
+			if(ObjectUtils.equals(object, element)) {
 				return index;
 			}
 

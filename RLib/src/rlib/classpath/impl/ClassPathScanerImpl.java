@@ -12,7 +12,7 @@ import rlib.compiler.Compiler;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.util.ArrayUtils;
-import rlib.util.Strings;
+import rlib.util.StringUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -116,7 +116,7 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 
 		try {
 
-			className = name.replace(CLASS_EXTENSION, Strings.EMPTY);
+			className = name.replace(CLASS_EXTENSION, StringUtils.EMPTY);
 
 			StringBuilder result = new StringBuilder(className.length());
 

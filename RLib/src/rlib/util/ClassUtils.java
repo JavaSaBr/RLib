@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
  * 
  * @author Ronn
  */
-public final class ClassUtil {
+public final class ClassUtils {
 
 	/**
 	 * Получение конструктора по указанным параметрам указанного класса.
@@ -92,7 +92,7 @@ public final class ClassUtil {
 		}
 	}
 
-	private ClassUtil() {
+	private ClassUtils() {
 		throw new RuntimeException();
 	}
 }

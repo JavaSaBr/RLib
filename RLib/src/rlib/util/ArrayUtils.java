@@ -142,7 +142,7 @@ public final class ArrayUtils {
 	public static boolean contains(Object[] array, Object object) {
 
 		for(Object element : array) {
-			if(Objects.equals(element, object)) {
+			if(ObjectUtils.equals(element, object)) {
 				return true;
 			}
 		}
@@ -302,7 +302,7 @@ public final class ArrayUtils {
 
 		for(Object element : array) {
 
-			if(Objects.equals(element, object)) {
+			if(ObjectUtils.equals(element, object)) {
 				return index;
 			}
 

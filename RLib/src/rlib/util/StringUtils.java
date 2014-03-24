@@ -15,9 +15,9 @@ import rlib.logging.Loggers;
  * @author Ronn
  * @created 27.03.2012
  */
-public class Strings {
+public class StringUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(Strings.class);
+	private static final Logger LOGGER = Loggers.getLogger(StringUtils.class);
 
 	/** экземпляр пустой строки */
 	public static final String EMPTY = "".intern();

@@ -15,7 +15,7 @@ import rlib.util.array.ArrayFactory;
  * @author Ronn
  * @created 07.04.2012
  */
-public abstract class Objects {
+public final class ObjectUtils {
 
 	/**
 	 * Клонирует объект, крайне медленная функция.

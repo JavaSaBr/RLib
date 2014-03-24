@@ -23,7 +23,7 @@ public class PathBuilder {
 	 */
 	public PathBuilder append(String path) {
 
-		if(Strings.isEmpty(path)) {
+		if(StringUtils.isEmpty(path)) {
 			throw new RuntimeException("incorrect path.");
 		}
 

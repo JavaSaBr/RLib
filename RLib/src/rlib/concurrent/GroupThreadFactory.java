@@ -3,7 +3,7 @@ package rlib.concurrent;
 import java.lang.reflect.Constructor;
 import java.util.concurrent.ThreadFactory;
 
-import rlib.util.ClassUtil;
+import rlib.util.ClassUtils;
 
 /**
  * Модель формирования группы потоков.
@@ -33,13 +33,13 @@ public class GroupThreadFactory implements ThreadFactory {
 	public GroupThreadFactory(final String name, final Class<? extends Thread> cs, final int priority) {
 		this.priority = priority;
 		this.name = name;
-		this.constructor = ClassUtil.getConstructor(cs, ThreadGroup.class, Runnable.class, String.class);
+		this.constructor = ClassUtils.getConstructor(cs, ThreadGroup.class, Runnable.class, String.class);
 		this.group = new ThreadGroup(name);
 	}
 
 	@Override
 	public Thread newThread(final Runnable runnable) {
-		Thread thread = ClassUtil.newInstance(constructor, group, runnable, name + "-" + ordinal++);
+		Thread thread = ClassUtils.newInstance(constructor, group, runnable, name + "-" + ordinal++);
 		thread.setPriority(priority);
 		return thread;
 	}

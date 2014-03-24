@@ -6,7 +6,7 @@ import rlib.concurrent.atomic.AtomicInteger;
 import rlib.logging.Logger;
 import rlib.logging.Loggers;
 import rlib.network.packets.SendablePacket;
-import rlib.util.Strings;
+import rlib.util.StringUtils;
 import rlib.util.Util;
 import rlib.util.pools.Foldable;
 
@@ -164,7 +164,7 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 	public void writeString(ByteBuffer buffer, String string) {
 
 		if(string == null) {
-			string = Strings.EMPTY;
+			string = StringUtils.EMPTY;
 		}
 
 		for(int i = 0, length = string.length(); i < length; i++) {

@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import javax.tools.SimpleJavaFileObject;
 
-import rlib.util.Files;
+import rlib.util.FileUtils;
 
 /**
  * Объект исходного java кода.
@@ -49,7 +49,7 @@ public class JavaFileSource extends SimpleJavaFileObject {
 	@Override
 	public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
 		File file = new File(uri);
-		String content = new String(Files.getContent(file), "UTF-8");
+		String content = new String(FileUtils.getContent(file), "UTF-8");
 		return content;
 	}
 

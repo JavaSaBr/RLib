@@ -23,9 +23,9 @@ import rlib.util.table.TableFactory;
  * @author Ronn
  * @created 01.03.2012
  */
-public class Files {
+public class FileUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(Files.class);
+	private static final Logger LOGGER = Loggers.getLogger(FileUtils.class);
 
 	/** кэш текста файлов */
 	private static final Table<String, String> cache = TableFactory.newObjectTable();
@@ -125,7 +125,7 @@ public class Files {
 	 * @return все файлы.
 	 */
 	public static File[] getFiles(final File dir) {
-		return getFiles(dir, Strings.EMPTY_ARRAY);
+		return getFiles(dir, StringUtils.EMPTY_ARRAY);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class Files {
 
 			if(file.isDirectory()) {
 				array.addAll(getFiles(file, formats));
-			} else if(formats == Strings.EMPTY_ARRAY || containsFormat(formats, file)) {
+			} else if(formats == StringUtils.EMPTY_ARRAY || containsFormat(formats, file)) {
 				array.add(file);
 			}
 		}
@@ -163,7 +163,7 @@ public class Files {
 	 * @return все файлы.
 	 */
 	public static File[] getFiles(final Package pckg) {
-		return getFiles(pckg, Strings.EMPTY_ARRAY);
+		return getFiles(pckg, StringUtils.EMPTY_ARRAY);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class Files {
 		try {
 			urls = classLoader.getResources(pckg.getName().replace('.', '/'));
 		} catch(final IOException e) {
-			Loggers.warning(Files.class, e);
+			Loggers.warning(FileUtils.class, e);
 		}
 
 		if(urls == null) {
@@ -205,7 +205,7 @@ public class Files {
 
 			if(file.isDirectory()) {
 				files.addAll(getFiles(file, formats));
-			} else if(formats == Strings.EMPTY_ARRAY || containsFormat(formats, path)) {
+			} else if(formats == StringUtils.EMPTY_ARRAY || containsFormat(formats, path)) {
 				files.add(file);
 			}
 		}
