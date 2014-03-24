@@ -10,22 +10,28 @@ public interface IdGenerator {
 	/**
 	 * @return новый свободный ид.
 	 */
-	public int getNextId();
+	public default int getNextId() {
+		return 0;
+	}
 
 	/**
 	 * Подготовка фабрики.
 	 */
-	public void prepare();
+	public default void prepare() {
+	}
 
 	/**
 	 * Добавление нового освободившегося ид.
 	 * 
 	 * @param id освободившийся ид.
 	 */
-	public void releaseId(int id);
+	public default void releaseId(int id) {
+	}
 
 	/**
 	 * @return кол-во использованных ид.
 	 */
-	public int usedIds();
+	public default int usedIds() {
+		return 0;
+	}
 }

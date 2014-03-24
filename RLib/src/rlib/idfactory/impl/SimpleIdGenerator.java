@@ -35,14 +35,6 @@ public final class SimpleIdGenerator implements IdGenerator {
 	}
 
 	@Override
-	public void prepare() {
-	}
-
-	@Override
-	public void releaseId(int id) {
-	}
-
-	@Override
 	public int usedIds() {
 		return nextId.get() - start;
 	}

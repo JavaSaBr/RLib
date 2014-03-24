@@ -6,7 +6,7 @@ import rlib.geom.bounding.Bounding;
 import rlib.geom.bounding.BoundingType;
 
 /**
- * Модель формы сферы.
+ * Реализация формы сферы.
  * 
  * @author Ronn
  */

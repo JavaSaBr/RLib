@@ -10,7 +10,7 @@ import rlib.geom.bounding.Bounding;
 import rlib.geom.bounding.BoundingType;
 
 /**
- * Модель формы коробки.
+ * Реализация формы коробки.
  * 
  * @author Ronn
  */

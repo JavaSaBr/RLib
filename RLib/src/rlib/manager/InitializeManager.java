@@ -10,7 +10,7 @@ import rlib.util.linkedlist.LinkedList;
 import rlib.util.linkedlist.LinkedListFactory;
 
 /**
- * Инициализатор друих менеджеров в указанном порядке.
+ * Инициализатор синглетонов в указанном порядке.
  * 
  * @author Ronn
  */

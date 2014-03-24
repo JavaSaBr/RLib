@@ -68,13 +68,6 @@ public class Rotation {
 		this.w = w;
 	}
 
-	/**
-	 * <code>add</code> adds the values of this quaternion to those of the
-	 * parameter quaternion. The result is stored in this Quaternion.
-	 * 
-	 * @param q the quaternion to add to this.
-	 * @return This Quaternion after addition.
-	 */
 	public Rotation addLocal(Rotation rotation) {
 		this.x += rotation.x;
 		this.y += rotation.y;
@@ -191,12 +184,7 @@ public class Rotation {
 	}
 
 	public Rotation fromRotationMatrix(float val_0_0, float val_0_1, float val_0_2, float val_1_0, float val_1_1, float val_1_2, float val_2_0, float val_2_1, float val_2_2) {
-		// Use the Graphics Gems code, from
-		// ftp://ftp.cis.upenn.edu/pub/graphics/shoemake/quatut.ps.Z
-		// *NOT* the "Matrix and Quaternions FAQ", which has errors!
 
-		// the trace is the sum of the diagonal elements; see
-		// http://mathworld.wolfram.com/MatrixTrace.html
 		float t = val_0_0 + val_1_1 + val_2_2;
 
 		// we protect the division by s by ensuring that s>=1
@@ -564,13 +552,6 @@ public class Rotation {
 		return this;
 	}
 
-	/**
-	 * <code>subtract</code> subtracts the values of the parameter quaternion
-	 * from those of this quaternion. The result is stored in this Quaternion.
-	 * 
-	 * @param rotation the quaternion to subtract from this.
-	 * @return This Quaternion after subtraction.
-	 */
 	public Rotation subtractLocal(Rotation rotation) {
 		this.x -= rotation.x;
 		this.y -= rotation.y;
@@ -579,15 +560,6 @@ public class Rotation {
 		return this;
 	}
 
-	/**
-	 * <code>toAngleAxis</code> sets a given angle and axis to that represented
-	 * by the current quaternion. The values are stored as follows: The axis is
-	 * provided as a parameter and built by the method, the angle is returned as
-	 * a float.
-	 * 
-	 * @param axisStore the object we'll store the computed axis in.
-	 * @return the angle of rotation in radians.
-	 */
 	public final float toAngleAxis(Vector axisStore) {
 
 		float sqrLength = x * x + y * y + z * z;

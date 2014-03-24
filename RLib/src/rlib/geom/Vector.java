@@ -3,7 +3,7 @@ package rlib.geom;
 import rlib.util.ExtMath;
 
 /**
- * Модель вектора.
+ * Реализация игровой позиции и вектора.
  * 
  * @author Ronn
  */
@@ -61,6 +61,7 @@ public final class Vector implements GamePoint {
 	public static Vector newInstance(float[] vals) {
 		return new Vector(vals[0], vals[1], vals[2]);
 	}
+
 	/** координаты */
 	protected float x;
 	protected float y;
@@ -219,25 +220,16 @@ public final class Vector implements GamePoint {
 		return 0;
 	}
 
-	/**
-	 * @return координата.
-	 */
 	@Override
 	public float getX() {
 		return x;
 	}
 
-	/**
-	 * @return координата.
-	 */
 	@Override
 	public float getY() {
 		return y;
 	}
 
-	/**
-	 * @return координата.
-	 */
 	@Override
 	public float getZ() {
 		return z;
@@ -261,37 +253,28 @@ public final class Vector implements GamePoint {
 	 * Локальное умножение вектора.
 	 */
 	public Vector multLocal(float x, float y, float z) {
-
 		this.x *= x;
 		this.y *= y;
 		this.z *= z;
-
 		return this;
 	}
 
 	/**
 	 * Локальное умножение вектора.
 	 */
-	public Vector multLocal(Vector vec) {
-		return multLocal(vec.x, vec.y, vec.z);
+	public Vector multLocal(Vector vector) {
+		return multLocal(vector.getX(), vector.getY(), vector.getZ());
 	}
 
 	/**
-	 * 
-	 * <code>negate</code> returns the negative of this vector. All values are
-	 * negated and set to a new vector.
-	 * 
-	 * @return the negated vector.
+	 * Получение противоположного вектора.
 	 */
 	public Vector negate() {
-		return newInstance(-x, -y, -z);
+		return newInstance(-getX(), -getY(), -getZ());
 	}
 
 	/**
-	 * 
-	 * <code>negateLocal</code> negates the internal values of this vector.
-	 * 
-	 * @return this.
+	 * Изменение вектора на противоположное.
 	 */
 	public Vector negateLocal() {
 		x = -x;
@@ -302,8 +285,6 @@ public final class Vector implements GamePoint {
 
 	/**
 	 * Конвектирование вектора в еденичный.
-	 * 
-	 * @return товый еденичный вектор.
 	 */
 	public Vector normalize() {
 
@@ -319,8 +300,6 @@ public final class Vector implements GamePoint {
 
 	/**
 	 * Конвектирование вектора в еденичный.
-	 * 
-	 * @return этот же вектор.
 	 */
 	public Vector normalizeLocal() {
 
@@ -336,12 +315,8 @@ public final class Vector implements GamePoint {
 		return this;
 	}
 
-	/**
-	 * @param vector вектор.
-	 * @return вектор.
-	 */
 	public Vector set(Vector vector) {
-		return setXYZ(vector.x, vector.y, vector.z);
+		return setXYZ(vector.getX(), vector.getY(), vector.getZ());
 	}
 
 	@Override
@@ -349,29 +324,17 @@ public final class Vector implements GamePoint {
 		return this;
 	}
 
-	/**
-	 * @param x координата.
-	 * @return вектор.
-	 */
 	@Override
 	public Vector setX(float x) {
 		this.x = x;
 		return this;
 	}
 
-	/**
-	 * @param x координата.
-	 * @param y координата.
-	 * @param z координата.
-	 * @return вектор.
-	 */
 	@Override
 	public Vector setXYZ(float x, float y, float z) {
-
 		this.x = x;
 		this.y = y;
 		this.z = z;
-
 		return this;
 	}
 
@@ -380,20 +343,12 @@ public final class Vector implements GamePoint {
 		return this;
 	}
 
-	/**
-	 * @param y координата.
-	 * @return вектор.
-	 */
 	@Override
 	public Vector setY(float y) {
 		this.y = y;
 		return this;
 	}
 
-	/**
-	 * @param z координата.
-	 * @return вектор.
-	 */
 	@Override
 	public Vector setZ(float z) {
 		this.z = z;
@@ -408,11 +363,9 @@ public final class Vector implements GamePoint {
 	 * @return разность между текущим и указанным вектором.
 	 */
 	public Vector subtract(Vector vector, Vector result) {
-
 		result.x = x - vector.x;
 		result.y = y - vector.y;
 		result.z = z - vector.z;
-
 		return result;
 	}
 
@@ -425,11 +378,9 @@ public final class Vector implements GamePoint {
 	 * @return итоговый вектор.
 	 */
 	public Vector subtractLocal(float subX, float subY, float subZ) {
-
 		x -= subX;
 		y -= subY;
 		z -= subZ;
-
 		return this;
 	}
 

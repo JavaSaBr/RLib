@@ -1,11 +1,13 @@
 package rlib.geom;
 
+import rlib.util.pools.Foldable;
+
 /**
  * Модель матрицы 3x3.
  * 
  * @author Ronn
  */
-public final class Matrix3f {
+public final class Matrix3f implements Foldable {
 
 	public static final Matrix3f ZERO = new Matrix3f(0, 0, 0, 0, 0, 0, 0, 0, 0);
 
