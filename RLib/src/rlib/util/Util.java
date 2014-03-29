@@ -10,6 +10,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import rlib.logging.Logger;
+import rlib.logging.Loggers;
+
 /**
  * Класс различных дополнительных статик методов.
  * 
@@ -17,6 +20,8 @@ import java.util.Properties;
  * @created 27.03.2012
  */
 public abstract class Util {
+
+	private static final Logger LOGGER = Loggers.getLogger(Util.class);
 
 	private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
 
@@ -295,6 +300,32 @@ public abstract class Util {
 					chars[g] = 0x2E;
 				}
 			}
+		}
+
+		return builder.toString();
+	}
+
+	/**
+	 * Безопасное выполнение задачи.
+	 * 
+	 * @param runnable выполняемая задача.
+	 */
+	public static void safeExecute(Runnable runnable) {
+		try {
+			runnable.run();
+		} catch(Throwable e) {
+			LOGGER.warning(e);
+		}
+	}
+
+	public static String toString(Throwable throwable) {
+
+		StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
+
+		builder.append(" : stack trace:\n");
+
+		for(StackTraceElement stack : throwable.getStackTrace()) {
+			builder.append(stack).append("\n");
 		}
 
 		return builder.toString();

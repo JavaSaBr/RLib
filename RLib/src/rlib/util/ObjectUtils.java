@@ -5,7 +5,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import rlib.logging.Loggers;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -16,6 +17,8 @@ import rlib.util.array.ArrayFactory;
  * @created 07.04.2012
  */
 public final class ObjectUtils {
+
+	private static final Logger LOGGER = LoggerManager.getLogger(ObjectUtils.class);
 
 	/**
 	 * Клонирует объект, крайне медленная функция.
@@ -39,7 +42,7 @@ public final class ObjectUtils {
 				return (T) method.invoke(original);
 
 			} catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				Loggers.warning("Objects", e);
+				LOGGER.warning(e);
 			}
 
 			return null;
@@ -130,7 +133,7 @@ public final class ObjectUtils {
 			try {
 				return (T) constructor.newInstance(parametrs);
 			} catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				Loggers.warning("Objects", e);
+				LOGGER.warning(e);
 			}
 		}
 
@@ -175,7 +178,7 @@ public final class ObjectUtils {
 			try {
 				field.set(original, field.get(updated));
 			} catch(IllegalArgumentException | IllegalAccessException e) {
-				Loggers.warning("Objects", e.getMessage());;
+				LOGGER.warning(e);
 			}
 		}
 	}

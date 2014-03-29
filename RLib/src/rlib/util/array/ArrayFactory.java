@@ -193,4 +193,35 @@ public class ArrayFactory {
 	public static <E> Array<E> newSynchronizedArray(Class<?> type) {
 		return new SynchronizedArray<E>((Class<E>) type);
 	}
+
+	/**
+	 * Создает массив из перечисленных чисел.
+	 * 
+	 * @param elements набор чисел.
+	 * @return новый массив.
+	 */
+	public static float[] toFloatArray(float... elements) {
+		return elements;
+	}
+
+	/**
+	 * Создает массив из перечисленных элементов.
+	 * 
+	 * @param elements набор элементов.
+	 * @return новый массив.
+	 */
+	@SafeVarargs
+	public static <T, K extends T> T[] toGenericArray(K... elements) {
+		return elements;
+	}
+
+	/**
+	 * Создает массив из перечисленных чисел.
+	 * 
+	 * @param elements набор чисел.
+	 * @return новый массив.
+	 */
+	public static int[] toIntegerArray(int... elements) {
+		return elements;
+	}
 }

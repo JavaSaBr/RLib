@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.util.SafeTask;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
@@ -19,9 +19,9 @@ import rlib.util.array.ArrayFactory;
  * 
  * @author Ronn
  */
-public class DeadLockDetector extends SafeTask {
+public class DeadLockDetector implements SafeTask {
 
-	private static final Logger LOGGER = Loggers.getLogger(DeadLockDetector.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(DeadLockDetector.class);
 
 	/** набор слушателей дедлоков */
 	private final Array<DeadLockListener> listeners;
@@ -71,7 +71,7 @@ public class DeadLockDetector extends SafeTask {
 	}
 
 	@Override
-	protected void runImpl() {
+	public void runImpl() {
 
 		final long[] threadIds = mxThread.findDeadlockedThreads();
 

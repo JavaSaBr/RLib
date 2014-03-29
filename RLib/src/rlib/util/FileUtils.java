@@ -11,7 +11,7 @@ import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.table.Table;
@@ -25,7 +25,7 @@ import rlib.util.table.TableFactory;
  */
 public class FileUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(FileUtils.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
 
 	/** кэш текста файлов */
 	private static final Table<String, String> cache = TableFactory.newObjectTable();
@@ -182,7 +182,7 @@ public class FileUtils {
 		try {
 			urls = classLoader.getResources(pckg.getName().replace('.', '/'));
 		} catch(final IOException e) {
-			Loggers.warning(FileUtils.class, e);
+			LOGGER.warning(e);
 		}
 
 		if(urls == null) {

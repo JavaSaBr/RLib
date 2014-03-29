@@ -2,7 +2,8 @@ package rlib.network;
 
 import java.io.IOException;
 
-import rlib.logging.Loggers;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 import rlib.network.client.ClientNetwork;
 import rlib.network.client.ConnectHandler;
 import rlib.network.client.impl.DefaultClientNetwork;
@@ -17,6 +18,8 @@ import rlib.network.server.impl.DefaultServerNetwork;
  */
 public final class NetworkFactory {
 
+	private static final Logger LOGGER = LoggerManager.getLogger(NetworkFactory.class);
+
 	/**
 	 * Создание модели клиентской сети.
 	 * 
@@ -29,7 +32,7 @@ public final class NetworkFactory {
 		try {
 			return new DefaultClientNetwork(config, connectHandler);
 		} catch(IOException e) {
-			Loggers.warning(NetworkFactory.class, e);
+			LOGGER.warning(e);
 		}
 
 		return null;
@@ -47,7 +50,7 @@ public final class NetworkFactory {
 		try {
 			return new DefaultServerNetwork(config, acceptHandler);
 		} catch(IOException e) {
-			Loggers.warning(NetworkFactory.class, e);
+			LOGGER.warning(e);
 		}
 
 		return null;

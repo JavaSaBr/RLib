@@ -1,7 +1,8 @@
 package rlib.geom.util;
 
 import rlib.geom.GamePoint;
-import rlib.logging.Loggers;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 import rlib.util.Rnd;
 
 /**
@@ -10,6 +11,8 @@ import rlib.util.Rnd;
  * @author Ronn
  */
 public final class CoordsUtils {
+
+	private static final Logger LOGGER = LoggerManager.getLogger(CoordsUtils.class);
 
 	/**
 	 * Генерация дуговых позиций.
@@ -52,7 +55,7 @@ public final class CoordsUtils {
 				locs[i] = loc;
 
 			} catch(InstantiationException | IllegalAccessException e) {
-				Loggers.warning(type, e);
+				LOGGER.warning(e);
 			}
 		}
 
@@ -146,6 +149,7 @@ public final class CoordsUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends GamePoint> T[] circularCoords(Class<T> type, float x, float y, float z, int radius, int count) {
+
 		T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
 
 		float angle = 360F / count;
@@ -165,7 +169,7 @@ public final class CoordsUtils {
 				locs[i - 1] = loc;
 
 			} catch(InstantiationException | IllegalAccessException e) {
-				Loggers.warning(type, e);
+				LOGGER.warning(e);
 			}
 		}
 

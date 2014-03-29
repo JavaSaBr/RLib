@@ -12,7 +12,7 @@ import rlib.database.ConnectFactory;
 import rlib.database.DBUtils;
 import rlib.idfactory.IdGenerator;
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.util.ArrayUtils;
 import rlib.util.SafeTask;
 import rlib.util.array.ArrayFactory;
@@ -26,10 +26,10 @@ import rlib.util.table.TableFactory;
  * 
  * @author Ronn
  */
-public final class BitSetIdGenerator extends SafeTask implements IdGenerator {
+public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 
 	/** логгер */
-	private static final Logger LOGGER = Loggers.getLogger(BitSetIdGenerator.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(BitSetIdGenerator.class);
 
 	/** первый ид */
 	public static final int FIRST_ID = 0x10000000;
@@ -201,7 +201,7 @@ public final class BitSetIdGenerator extends SafeTask implements IdGenerator {
 	}
 
 	@Override
-	protected void runImpl() {
+	public void runImpl() {
 		if(reachingBitSetCapacity()) {
 			increaseBitSetCapacity();
 		}

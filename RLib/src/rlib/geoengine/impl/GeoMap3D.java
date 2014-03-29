@@ -11,18 +11,20 @@ import java.nio.channels.FileChannel;
 import rlib.geoengine.GeoConfig;
 import rlib.geoengine.GeoMap;
 import rlib.geoengine.GeoQuard;
-import rlib.logging.Loggers;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
-
 
 /**
  * Модель 3х мерной геокарты.
  *
  * @author Ronn
  */
-public final class GeoMap3D implements GeoMap
-{
+public final class GeoMap3D implements GeoMap {
+
+	private static final Logger LOGGER = LoggerManager.getLogger(GeoMap3D.class);
+
 	/** отступ по X */
 	private final int offsetX;
 	/** отступ по Y */
@@ -40,8 +42,7 @@ public final class GeoMap3D implements GeoMap
 	/** кол-во квадратов в карте */
 	private int size;
 
-	public GeoMap3D(GeoConfig config)
-	{
+	public GeoMap3D(GeoConfig config) {
 		this.quardSize = config.getQuardSize();
 		this.quardHeight = config.getQuardHeight();
 		this.split = config.getSplit();
@@ -51,249 +52,174 @@ public final class GeoMap3D implements GeoMap
 	}
 
 	@Override
-	public void addQuard(GeoQuard quard)
-	{
-		// если по X для квадрата нет места
-		if(quard.getX() >= quards.length)
-			// расширяем массив
-			quards = ArrayUtils.copyOf(quards, quard.getX() + 1);
+	public void addQuard(GeoQuard quard) {
 
-		// получаем массив по Y
+		if(quard.getX() >= quards.length) {
+			quards = ArrayUtils.copyOf(quards, quard.getX() + 1);
+		}
+
 		GeoQuard[][] yQuards = quards[quard.getX()];
 
-		// если его нет
-		if(yQuards == null)
-		{
-			// создаем
+		if(yQuards == null) {
 			yQuards = new GeoQuard[quard.getY() + 1][];
-			// вносим
 			quards[quard.getX()] = yQuards;
-		}
-		// если в нем нет места
-		else if(quard.getY() >= yQuards.length)
-		{
-			// расширяем
+		} else if(quard.getY() >= yQuards.length) {
 			yQuards = ArrayUtils.copyOf(yQuards, quard.getY() + 1 - yQuards.length);
-			// обновляем
 			quards[quard.getX()] = yQuards;
 		}
 
-		// получаем массив по Z
 		GeoQuard[] zQuards = yQuards[quard.getY()];
 
-		// если массива нет
-		if(zQuards == null)
-		{
-			// создаем новый
+		if(zQuards == null) {
 			zQuards = new GeoQuard[1];
-			// вносим в него новый квадрат
 			zQuards[0] = quard;
-			// обновляем в массиве по Y
 			yQuards[quard.getY()] = zQuards;
-			// увеличиваем счетчик размера
 			size++;
-		}
-		else
-		{
-			// рассчитываем Z индекс
+		} else {
+
 			int z = ((int) quard.getHeight()) / quardHeight;
 
-			// смотрим есть ли уже с таким индексом квадрат
-			for(int i = 0, length = zQuards.length; i < length; i++)
-			{
-				// получаем уже имеющийся квадраwт
+			for(int i = 0, length = zQuards.length; i < length; i++) {
+
 				GeoQuard target = zQuards[i];
 
-				// расчитываем его индекс по Z
 				int targetZ = ((int) target.getHeight()) / quardHeight;
 
-				//System.out.println("[" + z + "]  new " + quard + " [" + targetZ + "] old " + target);
-
-				// если находим с таким же индексом
-				if(z == targetZ)
-				{
-					// если он вышел, его и оставляем
-					if(target.getHeight() > quard.getHeight())
+				if(z == targetZ) {
+					if(target.getHeight() > quard.getHeight()) {
 						return;
-					// иначе
-					else
-					{
-						// заменяе его на новый
+					} else {
 						zQuards[i] = quard;
 						return;
 					}
 				}
 			}
 
-			// если с таким индексом квадратов небыло, добавляем в массив новый
 			yQuards[quard.getY()] = ArrayUtils.addToArray(zQuards, quard, GeoQuard.class);
-
-			// увеличиваем счетчик размера
 			size++;
 		}
 	}
 
 	@Override
-	public void addQuard(int x, int y, float height)
-	{
-		// если по X для квадрата нет места
-		if(x >= quards.length)
-			// расширяем массив
-			quards = ArrayUtils.copyOf(quards, x + 1);
+	public void addQuard(int x, int y, float height) {
 
-		// получаем массив по Y
+		if(x >= quards.length) {
+			quards = ArrayUtils.copyOf(quards, x + 1);
+		}
+
 		GeoQuard[][] yQuards = quards[x];
 
-		// если его нет
-		if(yQuards == null)
-		{
-			// создаем
+		if(yQuards == null) {
 			yQuards = new GeoQuard[y + 1][];
-			// вносим
 			quards[x] = yQuards;
-		}
-		// если в нем нет места
-		else if(y >= yQuards.length)
-		{
-			// расширяем
+		} else if(y >= yQuards.length) {
 			yQuards = ArrayUtils.copyOf(yQuards, y + 1 - yQuards.length);
-			// обновляем
 			quards[x] = yQuards;
 		}
 
-		// получаем массив по Z
 		GeoQuard[] zQuards = yQuards[y];
 
-		// если массива нет
-		if(zQuards == null)
-		{
-			// создаем новый
+		if(zQuards == null) {
 			zQuards = new GeoQuard[1];
-			// вносим в него новый квадрат
 			zQuards[0] = new GeoQuard(x, y, height);
-			// обновляем в массиве по Y
 			yQuards[y] = zQuards;
-			// увеличиваем счетчик размера
 			size++;
-		}
-		else
-		{
-			// рассчитываем Z индекс
+		} else {
+
 			int z = ((int) height) / quardHeight;
 
-			// смотрим есть ли уже с таким индексом квадрат
-			for(int i = 0, length = zQuards.length; i < length; i++)
-			{
-				// получаем уже имеющийся квадраwт
+			for(int i = 0, length = zQuards.length; i < length; i++) {
+
 				GeoQuard target = zQuards[i];
 
-				// расчитываем его индекс по Z
 				int targetZ = ((int) target.getHeight()) / quardHeight;
 
-				// если находим с таким же индексом
-				if(z == targetZ)
-				{
-					// если он вышел, его и оставляем
-					if(target.getHeight() > height)
+				if(z == targetZ) {
+					if(target.getHeight() > height) {
 						return;
-					// иначе
-					else
-					{
-						// заменяе его на новый
+					} else {
 						zQuards[i] = new GeoQuard(x, y, height);
 						return;
 					}
 				}
 			}
 
-			// если с таким индексом квадратов небыло, добавляем в массив новый
 			yQuards[y] = ArrayUtils.addToArray(zQuards, new GeoQuard(x, y, height), GeoQuard.class);
-
-			// увеличиваем счетчик размера
 			size++;
 		}
 	}
-	
-	@Override
-	public void exportTo(File file)
-	{
-		try(FileOutputStream out = new FileOutputStream(file))
-		{
-			// получаем канал файла
-			FileChannel channel = out.getChannel();
 
-			// создаем буфер для записи
+	@Override
+	public void exportTo(File file) {
+
+		try(FileOutputStream out = new FileOutputStream(file)) {
+
+			FileChannel channel = out.getChannel();
 			ByteBuffer buffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN);
 
-			// получаем разделитель
 			byte split = (byte) getSplit();
 
 			GeoQuard[][][] quards = getQuards();
-			
-			// перебираем все квадраты
-			for(int x = quards.length - 1; x >= 0; x--)
-			{
+
+			for(int x = quards.length - 1; x >= 0; x--) {
+
 				GeoQuard[][] yQuards = quards[x];
 
-				if(yQuards == null)
+				if(yQuards == null) {
 					continue;
+				}
 
-				for(int y = yQuards.length - 1; y >= 0; y--)
-				{
+				for(int y = yQuards.length - 1; y >= 0; y--) {
+
 					GeoQuard[] zQuards = yQuards[y];
 
-					if(zQuards == null)
+					if(zQuards == null) {
 						continue;
+					}
 
-					for(int z = zQuards.length - 1; z >= 0; z--)
-					{
-						// получаем квадрат
+					for(int z = zQuards.length - 1; z >= 0; z--) {
+
 						GeoQuard quard = zQuards[z];
 
-						// очищаем буффер
 						buffer.clear();
-
-						// вносим квадрат
 						buffer.put(split);
 						buffer.putInt(quard.getX());
 						buffer.putInt(quard.getY());
 						buffer.putFloat(quard.getHeight());
-
-						// подготавливаем к записи буфер
 						buffer.flip();
 
-						// записываем
 						channel.write(buffer);
 					}
 				}
 			}
-		}
-		catch(IOException e)
-		{
-			Loggers.warning(this, e);
+
+		} catch(IOException e) {
+			LOGGER.warning(e);
 		}
 	}
 
 	@Override
-	public Array<GeoQuard> getAllQuards(Array<GeoQuard> container)
-	{
-		// перебираем все квадраты
-		for(int x = 0, lengthX = quards.length; x < lengthX; x++)
-		{
+	public Array<GeoQuard> getAllQuards(Array<GeoQuard> container) {
+
+		for(int x = 0, lengthX = quards.length; x < lengthX; x++) {
+
 			GeoQuard[][] yQuards = quards[x];
 
-			if(yQuards == null)
+			if(yQuards == null) {
 				continue;
+			}
 
-			for(int y = 0, lengthY = yQuards.length; y < lengthY; y++)
-			{
+			for(int y = 0, lengthY = yQuards.length; y < lengthY; y++) {
+
 				GeoQuard[] zQuards = yQuards[y];
 
-				if(zQuards == null)
+				if(zQuards == null) {
 					continue;
+				}
 
-				for(int z = 0, lengthZ = zQuards.length; z < lengthZ; z++)
+				for(int z = 0, lengthZ = zQuards.length; z < lengthZ; z++) {
 					container.add(zQuards[z]);
+				}
 			}
 		}
 
@@ -301,98 +227,74 @@ public final class GeoMap3D implements GeoMap
 	}
 
 	@Override
-	public GeoQuard getGeoQuard(float x, float y, float z)
-	{
+	public GeoQuard getGeoQuard(float x, float y, float z) {
+
 		int newX = toIndex(x) + offsetX;
 		int newY = toIndex(y) + offsetY;
 
-		// получаем массив квадратов по Z
 		GeoQuard[] quards = getQuards(newX, newY);
 
-		// если нет квадратов, пробуем найти соседние
-		if(quards == null)
-		{
-			// перебираем соседние индексы
-			for(int i = -2; i <= 2; i ++)
-				for(int j = -2; j <= 2; j++)
-				{
-					// если это не найденый, пропускаем
-					if(i == 0 && j == 0)
-						continue;
+		if(quards == null) {
+			for(int i = -2; i <= 2; i++)
+				for(int j = -2; j <= 2; j++) {
 
-					// смотрим наличие соседних
+					if(i == 0 && j == 0) {
+						continue;
+					}
+
 					quards = getQuards(Math.max(newX + i, 0), Math.max(newY + j, 0));
 
-					// если нашли, выходим
-					if(quards != null)
+					if(quards != null) {
 						break;
+					}
 				}
 		}
 
-		// если их нет, вовращаем принятую Z координату
-		if(quards == null)
+		if(quards == null) {
 			return null;
-		// если там 1 квадрат, его и возвращаем
-		else if(quards.length == 1)
+		} else if(quards.length == 1) {
 			return quards[0];
-		else
-		{
-			// целевой квадрат
+		} else {
+
 			GeoQuard target = null;
 
-			// минимальное расхождение с принятым Z
 			float min = 0;
 
-			// перебираем квадраты
-			for(int i = 0, length = quards.length; i < length; i++)
-			{
-				// получаем квадрат
+			for(int i = 0, length = quards.length; i < length; i++) {
+
 				GeoQuard quard = quards[i];
 
-				// если еще не один квадрат не брался
-				if(target == null)
-				{
-					// берем этот
+				if(target == null) {
 					target = quard;
-					// рассчитываем расхождение с присланным Z
 					min = Math.abs(quard.getHeight() - z);
 					continue;
 				}
 
-				// рассчитываем расхождение
 				float diff = Math.abs(quard.getHeight() - z);
 
-				// если оно меньше текущего минимального
-				if(diff < min)
-				{
-					// обновляем
+				if(diff < min) {
 					min = diff;
-					// обновляем квадрат
 					target = quard;
 				}
 			}
 
-			// возвращаем высоту самого подходящего квадрата
 			return target;
 		}
 	}
 
 	@Override
-	public float getHeight(float x, float y, float z)
-	{
-		// получаем гео квадрат
+	public float getHeight(float x, float y, float z) {
+
 		GeoQuard quard = getGeoQuard(x, y, z);
 
-		// если квадрата нет
-		if(quard == null)
+		if(quard == null) {
 			return z;
+		}
 
-		// если квадрат не относится к этому уровню, возвращаем изначальную высоту
-		return Math.abs(quard.getHeight() - z) > quardHeight? z : quard.getHeight();
+		return Math.abs(quard.getHeight() - z) > quardHeight ? z : quard.getHeight();
 	}
 
-	private GeoQuard[][][] getQuards()
-	{
+	private GeoQuard[][][] getQuards() {
 		return quards;
 	}
 
@@ -403,137 +305,109 @@ public final class GeoMap3D implements GeoMap
 	 * @param y индекс квадрата по Y.
 	 * @return массив квадратов.
 	 */
-	public GeoQuard[] getQuards(int x, int y)
-	{
-		// если нет по такому X
-		if(quards.length <= x)
-			return null;
+	public GeoQuard[] getQuards(int x, int y) {
 
-		// получаем массив квадратов по Y
+		if(quards.length <= x) {
+			return null;
+		}
+
 		GeoQuard[][] yQuards = quards[x];
 
-		// если нет массива или же в нем нет квадратов по такому Y
-		if(yQuards == null || yQuards.length <= y)
+		if(yQuards == null || yQuards.length <= y) {
 			return null;
+		}
 
-		// возвращаем массив квадратов по такому X и Y
 		return yQuards[y];
 	}
 
 	/**
 	 * @return разделитель квадратов в файле.
 	 */
-	private int getSplit()
-	{
+	private int getSplit() {
 		return split;
 	}
 
 	@Override
-	public GeoMap3D importTo(File file)
-	{
-		try(FileInputStream in = new FileInputStream(file))
-		{
-			// получаем канал файла
+	public GeoMap3D importTo(File file) {
+
+		try(FileInputStream in = new FileInputStream(file)) {
+
 			FileChannel channel = in.getChannel();
 
-			if(channel.size() < 100000000)
-			{
-				Loggers.info(this, "start fast import " + file.getName());
+			if(channel.size() < 100000000) {
 
-				// создаем буфер для чтения
+				if(LOGGER.isEnabledInfo()) {
+					LOGGER.info("start fast import " + file.getName());
+				}
+
 				ByteBuffer buffer = ByteBuffer.allocate((int) channel.size()).order(ByteOrder.LITTLE_ENDIAN);
 
-				// получаем разделитель квадратов
 				byte split = (byte) getSplit();
 
-				// очищаем буфер
 				buffer.clear();
-
-				// читаем в буфер
 				channel.read(buffer);
-				
-				// подготавливаем дял обработки
 				buffer.flip();
-				
-				while(buffer.remaining() > 12)
-				{
-					// получаем разделить
+
+				while(buffer.remaining() > 12) {
+
 					byte val = buffer.get();
 
-					// если не подходит, пропускаем
-					if(val != split)
-					{
-						Loggers.warning(this, "incorrect import file.");
+					if(val != split) {
+						LOGGER.warning("incorrect import file.");
 						break;
 					}
 
-					// читаем квадрат
 					GeoQuard quard = new GeoQuard(buffer.getInt(), buffer.getInt(), buffer.getFloat());
 
-					// если некорректный квадрат, то пропускам его
-					if(quard.getX() < 0 || quard.getY() < 0)
-					{
-						Loggers.warning(this, "incorrect quard " + quard);
+					if(quard.getX() < 0 || quard.getY() < 0) {
+						LOGGER.warning("incorrect quard " + quard);
 						continue;
 					}
-					
-					// добавляем
+
 					addQuard(quard);
 				}
-			}
-			else
-			{
-				Loggers.info(this, "start slow import " + file.getName());
-				
-				// создаем буфер для чтения
+
+			} else {
+
+				if(LOGGER.isEnabledInfo()) {
+					LOGGER.info("start slow import " + file.getName());
+				}
+
 				ByteBuffer buffer = ByteBuffer.allocate(13).order(ByteOrder.LITTLE_ENDIAN);
 
-				// получаем разделитель квадратов
 				byte split = (byte) getSplit();
 
-				// читаем файл
-				while(channel.size() - channel.position() > 12)
-				{
-					// очищаем буфер
+				while(channel.size() - channel.position() > 12) {
+
 					buffer.clear();
-
-					// читаем в буфер
 					channel.read(buffer);
-
-					// подготавливаем дял обработки
 					buffer.flip();
 
-					// получаем разделить
 					byte val = buffer.get();
 
-					// если не подходит, пропускаем
-					if(val != split)
-					{
-						Loggers.warning(this, "incorrect import file.");
+					if(val != split) {
+						LOGGER.warning("incorrect import file.");
 						break;
 					}
 
-					// читаем квадрат
 					GeoQuard quard = new GeoQuard(buffer.getInt(), buffer.getInt(), buffer.getFloat());
 
-					// если некорректный квадрат, то пропускам его
-					if(quard.getX() < 0 || quard.getY() < 0)
-					{
-						Loggers.warning(this, "incorrect quard " + quard);
+					if(quard.getX() < 0 || quard.getY() < 0) {
+						LOGGER.warning("incorrect quard " + quard);
 						continue;
 					}
-					
-					// добавляем
+
 					addQuard(quard);
 				}
 			}
-		}
-		catch(Exception e)
-		{
-			Loggers.warning(this, e);
+
+		} catch(Exception e) {
+			LOGGER.warning(e);
 		}
 
-		Loggers.info(this, "import ended. load " + size() + " quards.");
+		if(LOGGER.isEnabledInfo()) {
+			LOGGER.info("import ended. load " + size() + " quards.");
+		}
 
 		return this;
 	}
@@ -541,58 +415,51 @@ public final class GeoMap3D implements GeoMap
 	/**
 	 * @param quard удаляемый квадрат.
 	 */
-	public void remove(GeoQuard quard)
-	{
-		// если нет по такому X
-		if(quards.length <= quard.getX())
-			return;
+	public void remove(GeoQuard quard) {
 
-		// получаем массив квадратов по Y
+		if(quards.length <= quard.getX()) {
+			return;
+		}
+
 		GeoQuard[][] yQuards = quards[quard.getX()];
 
-		// если нет массива или же в нем нет квадратов по такому Y
-		if(yQuards == null || yQuards.length <= quard.getY())
+		if(yQuards == null || yQuards.length <= quard.getY()) {
 			return;
+		}
 
-		// возвращаем массив квадратов по такому X и Y
-		GeoQuard[] quards =  yQuards[quard.getY()];
-		
-		// если это последний квадрат, зануляем
-		if(quards == null || quards.length < 2)
+		GeoQuard[] quards = yQuards[quard.getY()];
+
+		if(quards == null || quards.length < 2) {
 			yQuards[quard.getY()] = null;
-		else
-		{
-			// создаем массив на 1 элемент меньше
+		} else {
+
 			GeoQuard[] result = new GeoQuard[quards.length - 1];
-			
-			// переносим туда оставшиеся квадраты
-			for(int i = 0, j = 0, length = quards.length; i < length; i++)
-			{
+
+			for(int i = 0, j = 0, length = quards.length; i < length; i++) {
+
 				GeoQuard item = quards[i];
-				
-				if(item == quard)
+
+				if(item == quard) {
 					continue;
-				
+				}
+
 				result[j++] = item;
 			}
-			
-			// заменяем массив
+
 			yQuards[quard.getY()] = result;
 		}
 	}
-	
+
 	@Override
-	public int size()
-	{
+	public int size() {
 		return size;
 	}
-	
+
 	/**
 	 * @param coord координата.
 	 * @return индекс для той координаты.
 	 */
-	private int toIndex(float coord)
-	{
+	private int toIndex(float coord) {
 		return (int) coord / quardSize;
 	}
 }

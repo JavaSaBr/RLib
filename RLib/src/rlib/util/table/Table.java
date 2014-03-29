@@ -221,6 +221,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param table вставляемая таблица.
 	 */
 	public default void put(Table<K, V> table) {
+		table.moveTo(this);
 	}
 
 	/**

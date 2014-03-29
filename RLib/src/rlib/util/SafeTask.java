@@ -1,26 +1,28 @@
 package rlib.util;
 
-import rlib.logging.Loggers;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 
 /**
- * Класс для создания безопасного таска
+ * Интерфейс для реализации безопасно исполняющейся задачи.
  * 
  * @author Ronn
  * @created 22.04.2012
  */
-public abstract class SafeTask implements Runnable {
+public interface SafeTask extends Runnable {
 
 	@Override
-	public void run() {
+	public default void run() {
 		try {
 			runImpl();
 		} catch(final Exception e) {
-			Loggers.warning(this, e);
+			Logger logger = LoggerManager.getDefaultLogger();
+			logger.warning(this, e);
 		}
 	}
 
 	/**
-	 * Безопасный запуск таска.
+	 * Безопасный исполнение задачи.
 	 */
-	protected abstract void runImpl();
+	public void runImpl();
 }
