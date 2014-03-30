@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Класс с утильными методами по работе с классами.
@@ -13,7 +13,7 @@ import rlib.logging.Loggers;
  */
 public final class ClassUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(ClassUtils.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
 
 	/**
 	 * Получение конструктора по указанным параметрам указанного класса.
@@ -27,7 +27,7 @@ public final class ClassUtils {
 		try {
 			return (Constructor<T>) cs.getConstructor(classes);
 		} catch(NoSuchMethodException | SecurityException e) {
-			LOGGER.warning(e);
+			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -45,7 +45,7 @@ public final class ClassUtils {
 			Class<?> cs = Class.forName(className);
 			return (Constructor<T>) cs.getConstructor(classes);
 		} catch(NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-			LOGGER.warning(e);
+			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -61,7 +61,7 @@ public final class ClassUtils {
 		try {
 			return (T) cs.newInstance();
 		} catch(InstantiationException | IllegalAccessException e) {
-			LOGGER.warning(e);
+			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -78,7 +78,7 @@ public final class ClassUtils {
 		try {
 			return (T) constructor.newInstance(objects);
 		} catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			LOGGER.warning(e);
+			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -97,7 +97,7 @@ public final class ClassUtils {
 		try {
 			return (Class<T>) Class.forName(name);
 		} catch(ClassNotFoundException e) {
-			LOGGER.warning(e);
+			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
 	}

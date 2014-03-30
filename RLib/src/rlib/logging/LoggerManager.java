@@ -22,26 +22,22 @@ import rlib.util.table.TableFactory;
  */
 public class LoggerManager {
 
-	/** главный логгер */
-	private static final Logger LOGGER = getLogger(LoggerManager.class);
-
 	/** таблица всех логгерров */
 	private static final Table<String, Logger> LOGGERS = TableFactory.newObjectTable();
-
 	/** список слушателей логирования */
 	private static final Array<LoggerListener> LISTENERS = ArrayFactory.newArray(LoggerListener.class);
 	/** список записчиков лога */
 	private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
-
 	/** синхронизатор записи лога */
 	private static final Lock SYNC = LockFactory.newPrimitiveAtomicLoc();
 
-	// private static SimpleDateFormat timeFormat = new
-	// SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 	/** формат записи времени */
 	private static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
 	/** класс реализации логгера */
 	private static Class<? extends Logger> implementedClass = LoggerImpl.class;
+
+	/** главный логгер */
+	private static final Logger LOGGER = getLogger(LoggerManager.class);
 
 	/**
 	 * Добавление слушателя логирования.
@@ -161,7 +157,7 @@ public class LoggerManager {
 
 			StringBuilder builder = new StringBuilder(level.getTitle());
 			builder.append(' ').append(timeFormat.format(LocalTime.now()));
-			builder.append(' ').append(name).append(" : ").append(message);
+			builder.append(' ').append(name).append(": ").append(message);
 
 			String result = builder.toString();
 
@@ -189,7 +185,8 @@ public class LoggerManager {
 					}
 
 					try {
-						writer.write(result + "\n");
+						writer.append(result);
+						writer.append('\n');
 						writer.flush();
 					} catch(IOException e) {
 						e.printStackTrace();
@@ -197,7 +194,7 @@ public class LoggerManager {
 				}
 			}
 
-			System.err.println(message);
+			System.err.println(result);
 
 		} finally {
 			SYNC.unlock();

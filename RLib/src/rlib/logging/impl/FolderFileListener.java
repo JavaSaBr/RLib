@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import rlib.logging.LoggerListener;
@@ -44,8 +44,8 @@ public class FolderFileListener implements LoggerListener {
 	public Writer getWriter() throws IOException {
 
 		if(writer == null) {
-			DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
-			writer = new FileWriter(new File(folder, timeFormat.format(LocalTime.now()) + ".log"));
+			DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyy-MM-dd_HH-mm-ss");
+			writer = new FileWriter(new File(folder, timeFormat.format(LocalDateTime.now()) + ".log"));
 		}
 
 		return writer;
@@ -56,6 +56,7 @@ public class FolderFileListener implements LoggerListener {
 		try {
 			Writer writer = getWriter();
 			writer.append(text);
+			writer.append('\n');
 			writer.flush();
 		} catch(IOException e) {
 			e.printStackTrace();
