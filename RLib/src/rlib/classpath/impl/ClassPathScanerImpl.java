@@ -6,11 +6,12 @@ import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipException;
 
 import rlib.classpath.ClassPathScaner;
 import rlib.compiler.Compiler;
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.util.ArrayUtils;
 import rlib.util.StringUtils;
 import rlib.util.array.Array;
@@ -23,7 +24,7 @@ import rlib.util.array.ArrayFactory;
  */
 public class ClassPathScanerImpl implements ClassPathScaner {
 
-	protected static final Logger LOGGER = Loggers.getLogger(ClassPathScaner.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(ClassPathScaner.class);
 
 	private static final String CLASS_PATH = System.getProperty("java.class.path");
 	private static final String PATH_SEPARATOR = File.pathSeparator;
@@ -140,7 +141,9 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 		try {
 			container.add(getLoader().loadClass(className));
 		} catch(NoClassDefFoundError ex) {
+		} catch(VerifyError error) {
 		} catch(ClassNotFoundException e) {
+
 			LOGGER.warning(e);
 		}
 	}
@@ -210,6 +213,8 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 				loadClass(entry.getName(), container);
 			}
 
+		} catch(ZipException e) {
+			LOGGER.warning("can't open zip file " + jarFile.getAbsolutePath());
 		} catch(IOException e) {
 			LOGGER.warning(e);
 		}

@@ -1,11 +1,11 @@
-package rlib.util.wraps;
+package rlib.util.ref;
 
 /**
  * Обертка вокруг float.
  * 
  * @author Ronn
  */
-final class FloatWrap extends AbstractWrap {
+final class FloatWrap extends AbstractReference {
 
 	/** значение */
 	private float value;
@@ -16,8 +16,8 @@ final class FloatWrap extends AbstractWrap {
 	}
 
 	@Override
-	public WrapType getWrapType() {
-		return WrapType.FLOAT;
+	public ReferenceType getReferenceType() {
+		return ReferenceType.FLOAT;
 	}
 
 	@Override

@@ -1,11 +1,11 @@
-package rlib.util.wraps;
+package rlib.util.ref;
 
 /**
  * Обертка вокруг double.
  * 
  * @author Ronn
  */
-final class DoubleWrap extends AbstractWrap {
+final class DoubleWrap extends AbstractReference {
 
 	/** значение */
 	private double value;
@@ -16,8 +16,8 @@ final class DoubleWrap extends AbstractWrap {
 	}
 
 	@Override
-	public WrapType getWrapType() {
-		return WrapType.DOUBLE;
+	public ReferenceType getReferenceType() {
+		return ReferenceType.DOUBLE;
 	}
 
 	@Override

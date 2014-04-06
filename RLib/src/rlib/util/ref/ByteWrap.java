@@ -1,11 +1,11 @@
-package rlib.util.wraps;
+package rlib.util.ref;
 
 /**
  * Обертка вокруг byte.
  * 
  * @author Ronn
  */
-final class ByteWrap extends AbstractWrap {
+final class ByteWrap extends AbstractReference {
 
 	/** значение */
 	private byte value;
@@ -16,8 +16,8 @@ final class ByteWrap extends AbstractWrap {
 	}
 
 	@Override
-	public WrapType getWrapType() {
-		return WrapType.BYTE;
+	public ReferenceType getReferenceType() {
+		return ReferenceType.BYTE;
 	}
 
 	@Override

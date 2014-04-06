@@ -98,6 +98,17 @@ public class ArrayFactory {
 	 * Создать потокобезопасный новый массив указанного типа.
 	 * 
 	 * @param type тип массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newAtomicArray(Class<?> type) {
+		return new AtomicArray<E>((Class<E>) type);
+	}
+
+	/**
+	 * Создать потокобезопасный новый массив указанного типа.
+	 * 
+	 * @param type тип массива.
 	 * @param size базовый размер массива.
 	 * @return новый массив.
 	 */

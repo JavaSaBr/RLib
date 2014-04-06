@@ -48,6 +48,16 @@ public final class PoolFactory {
 	}
 
 	/**
+	 * Создание нового быстрого объектного пула.
+	 * 
+	 * @param type тип объектов пула.
+	 * @return новый объектный пул.
+	 */
+	public static final <T> Pool<T> newPool(Class<?> type) {
+		return new FastPool<T>(10, type);
+	}
+
+	/**
 	 * Создание нового мульти конкурентного объектного пула.
 	 * 
 	 * @param type тип объектов пула.

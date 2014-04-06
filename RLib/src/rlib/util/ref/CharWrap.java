@@ -1,11 +1,11 @@
-package rlib.util.wraps;
+package rlib.util.ref;
 
 /**
  * Обертка вокруг char.
  * 
  * @author Ronn
  */
-final class CharWrap extends AbstractWrap {
+final class CharWrap extends AbstractReference {
 
 	/** значение */
 	private char value;
@@ -16,8 +16,8 @@ final class CharWrap extends AbstractWrap {
 	}
 
 	@Override
-	public WrapType getWrapType() {
-		return WrapType.CHAR;
+	public ReferenceType getReferenceType() {
+		return ReferenceType.CHAR;
 	}
 
 	@Override

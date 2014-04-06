@@ -1,11 +1,11 @@
-package rlib.util.wraps;
+package rlib.util.ref;
 
 /**
  * Обертка вокруг Object.
  * 
  * @author Ronn
  */
-final class ObjectWrap extends AbstractWrap {
+final class ObjectWrap extends AbstractReference {
 
 	/** значение */
 	private Object object;
@@ -16,8 +16,8 @@ final class ObjectWrap extends AbstractWrap {
 	}
 
 	@Override
-	public WrapType getWrapType() {
-		return WrapType.OBJECT;
+	public ReferenceType getReferenceType() {
+		return ReferenceType.OBJECT;
 	}
 
 	@Override

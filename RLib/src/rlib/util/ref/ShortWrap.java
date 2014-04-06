@@ -1,11 +1,11 @@
-package rlib.util.wraps;
+package rlib.util.ref;
 
 /**
  * Обертка вокруг short.
  * 
  * @author Ronn
  */
-final class ShortWrap extends AbstractWrap {
+final class ShortWrap extends AbstractReference {
 
 	/** значение */
 	private short value;
@@ -16,8 +16,8 @@ final class ShortWrap extends AbstractWrap {
 	}
 
 	@Override
-	public WrapType getWrapType() {
-		return WrapType.SHORT;
+	public ReferenceType getReferenceType() {
+		return ReferenceType.SHORT;
 	}
 
 	@Override
