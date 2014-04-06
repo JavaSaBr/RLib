@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
 /**
- * Обертка вокруг char.
+ * Ссылка на тип данных char.
  * 
  * @author Ronn
  */
-final class CharWrap extends AbstractReference {
+final class CharReference extends AbstractReference {
 
-	/** значение */
+	/** значение по ссылке */
 	private char value;
 
 	@Override
@@ -23,5 +23,10 @@ final class CharWrap extends AbstractReference {
 	@Override
 	public void setChar(char value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "CharReference [value=" + value + "]";
 	}
 }

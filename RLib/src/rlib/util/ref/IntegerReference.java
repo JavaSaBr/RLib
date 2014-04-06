@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
 /**
- * Обертка вокруг int.
+ * Ссылка на тип данных int.
  * 
  * @author Ronn
  */
-final class IntegerWrap extends AbstractReference {
+final class IntegerReference extends AbstractReference {
 
-	/** обернутое значение */
+	/** значение по ссылке */
 	private int value;
 
 	@Override
@@ -27,6 +27,6 @@ final class IntegerWrap extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return String.valueOf(value);
+		return "IntegerReference [value=" + value + "]";
 	}
 }

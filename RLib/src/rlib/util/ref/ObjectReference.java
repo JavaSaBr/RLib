@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
 /**
- * Обертка вокруг Object.
+ * Ссылка на тип данных Object.
  * 
  * @author Ronn
  */
-final class ObjectWrap extends AbstractReference {
+final class ObjectReference extends AbstractReference {
 
-	/** значение */
+	/** значение по ссылке */
 	private Object object;
 
 	@Override
@@ -23,5 +23,10 @@ final class ObjectWrap extends AbstractReference {
 	@Override
 	public void setObject(Object object) {
 		this.object = object;
+	}
+
+	@Override
+	public String toString() {
+		return "ObjectReference [object=" + object + "]";
 	}
 }

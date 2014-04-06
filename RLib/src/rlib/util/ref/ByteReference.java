@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
 /**
- * Обертка вокруг byte.
+ * Ссылка на тип данных byte.
  * 
  * @author Ronn
  */
-final class ByteWrap extends AbstractReference {
+final class ByteReference extends AbstractReference {
 
-	/** значение */
+	/** значение по ссылке */
 	private byte value;
 
 	@Override
@@ -23,5 +23,10 @@ final class ByteWrap extends AbstractReference {
 	@Override
 	public void setByte(byte value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "ByteReference [value=" + value + "]";
 	}
 }

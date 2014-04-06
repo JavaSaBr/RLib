@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
 /**
- * Обертка вокруг double.
+ * Ссылка на тип данных double.
  * 
  * @author Ronn
  */
-final class DoubleWrap extends AbstractReference {
+final class DoubleReference extends AbstractReference {
 
-	/** значение */
+	/** значение по ссылке */
 	private double value;
 
 	@Override
@@ -23,5 +23,10 @@ final class DoubleWrap extends AbstractReference {
 	@Override
 	public void setDouble(double value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "DoubleReference [value=" + value + "]";
 	}
 }

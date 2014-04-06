@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
 /**
- * Обертка вокруг float.
+ * Ссылка на тип данных float.
  * 
  * @author Ronn
  */
-final class FloatWrap extends AbstractReference {
+final class FloatReference extends AbstractReference {
 
-	/** значение */
+	/** значение по ссылке */
 	private float value;
 
 	@Override
@@ -23,5 +23,10 @@ final class FloatWrap extends AbstractReference {
 	@Override
 	public void setFloat(float value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "FloatReference [value=" + value + "]";
 	}
 }

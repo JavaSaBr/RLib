@@ -16,7 +16,7 @@ public final class ReferenceFactory {
 		}
 
 		if(reference == null) {
-			reference = new ByteWrap();
+			reference = new ByteReference();
 		}
 
 		reference.setByte(value);
@@ -32,7 +32,7 @@ public final class ReferenceFactory {
 		}
 
 		if(reference == null) {
-			reference = new CharWrap();
+			reference = new CharReference();
 		}
 
 		reference.setChar(value);
@@ -48,7 +48,7 @@ public final class ReferenceFactory {
 		}
 
 		if(reference == null) {
-			reference = new DoubleWrap();
+			reference = new DoubleReference();
 		}
 
 		reference.setDouble(value);
@@ -64,7 +64,7 @@ public final class ReferenceFactory {
 		}
 
 		if(reference == null) {
-			reference = new FloatWrap();
+			reference = new FloatReference();
 		}
 
 		reference.setFloat(value);
@@ -80,7 +80,7 @@ public final class ReferenceFactory {
 		}
 
 		if(reference == null) {
-			reference = new IntegerWrap();
+			reference = new IntegerReference();
 		}
 
 		reference.setInt(value);
@@ -96,7 +96,7 @@ public final class ReferenceFactory {
 		}
 
 		if(reference == null) {
-			reference = new LongWrap();
+			reference = new LongReference();
 		}
 
 		reference.setLong(value);
@@ -112,7 +112,7 @@ public final class ReferenceFactory {
 		}
 
 		if(reference == null) {
-			reference = new ObjectWrap();
+			reference = new ObjectReference();
 		}
 
 		reference.setObject(object);
@@ -128,7 +128,7 @@ public final class ReferenceFactory {
 		}
 
 		if(reference == null) {
-			reference = new ShortWrap();
+			reference = new ShortReference();
 		}
 
 		reference.setShort(value);

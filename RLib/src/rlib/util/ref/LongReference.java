@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
 /**
- * Обертка вокруг long.
+ * Ссылка на тип данных long.
  * 
  * @author Ronn
  */
-final class LongWrap extends AbstractReference {
+final class LongReference extends AbstractReference {
 
-	/** обернутое значение */
+	/** значение по ссылке */
 	private long value;
 
 	@Override
@@ -27,6 +27,6 @@ final class LongWrap extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return String.valueOf(value);
+		return "LongReference [value=" + value + "]";
 	}
 }

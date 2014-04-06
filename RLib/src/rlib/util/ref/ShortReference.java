@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
 /**
- * Обертка вокруг short.
+ * Ссылка на тип данных short.
  * 
  * @author Ronn
  */
-final class ShortWrap extends AbstractReference {
+final class ShortReference extends AbstractReference {
 
-	/** значение */
+	/** значение по ссылке */
 	private short value;
 
 	@Override
@@ -23,5 +23,10 @@ final class ShortWrap extends AbstractReference {
 	@Override
 	public void setShort(short value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "ShortReference [value=" + value + "]";
 	}
 }
