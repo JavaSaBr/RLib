@@ -9,7 +9,7 @@ import java.nio.channels.CompletionHandler;
 
 import rlib.concurrent.GroupThreadFactory;
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.network.NetworkConfig;
 import rlib.network.impl.AbstractAsynchronousNetwork;
 import rlib.network.server.AcceptHandler;
@@ -22,7 +22,7 @@ import rlib.network.server.ServerNetwork;
  */
 public final class DefaultServerNetwork extends AbstractAsynchronousNetwork implements ServerNetwork {
 
-	protected static final Logger LOGGER = Loggers.getLogger(ServerNetwork.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(ServerNetwork.class);
 
 	/** группа асинхронных каналов */
 	private final AsynchronousChannelGroup group;

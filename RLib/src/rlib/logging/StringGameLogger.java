@@ -19,7 +19,7 @@ import rlib.util.array.ArrayFactory;
  */
 public class StringGameLogger implements GameLogger {
 
-	private static final Logger LOGGER = Loggers.getLogger(StringGameLogger.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(StringGameLogger.class);
 
 	/** синхронизатор */
 	private final Lock lock;

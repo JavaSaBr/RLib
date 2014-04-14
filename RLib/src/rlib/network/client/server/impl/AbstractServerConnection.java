@@ -3,7 +3,7 @@ package rlib.network.client.server.impl;
 import java.nio.channels.AsynchronousSocketChannel;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.network.client.ClientNetwork;
 import rlib.network.client.server.Server;
 import rlib.network.client.server.ServerConnection;
@@ -20,7 +20,7 @@ import rlib.network.packets.SendablePacket;
 public abstract class AbstractServerConnection<T extends Server, R extends ReadeablePacket<T>, S extends SendablePacket<T>> extends AbstractAsynConnection<ClientNetwork, R, S> implements
 		ServerConnection<T, R, S> {
 
-	protected static final Logger LOGGER = Loggers.getLogger(ServerConnection.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(ServerConnection.class);
 
 	/** сервер */
 	protected T server;

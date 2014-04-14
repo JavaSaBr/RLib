@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Набор методов для работы со строками
@@ -17,7 +17,7 @@ import rlib.logging.Loggers;
  */
 public class StringUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(StringUtils.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(StringUtils.class);
 
 	/** экземпляр пустой строки */
 	public static final String EMPTY = "".intern();

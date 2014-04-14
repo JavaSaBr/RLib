@@ -9,9 +9,10 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Класс различных дополнительных статик методов.
@@ -21,7 +22,7 @@ import rlib.logging.Loggers;
  */
 public abstract class Util {
 
-	private static final Logger LOGGER = Loggers.getLogger(Util.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
 
 	private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
 
@@ -316,6 +317,22 @@ public abstract class Util {
 		} catch(Throwable e) {
 			LOGGER.warning(e);
 		}
+	}
+
+	/**
+	 * Безопасное выполнение задачи.
+	 * 
+	 * @param callable выполняемая задача.
+	 */
+	public static <V> V safeExecute(Callable<V> callable) {
+
+		try {
+			return callable.call();
+		} catch(Throwable e) {
+			LOGGER.warning(e);
+		}
+
+		return null;
 	}
 
 	public static String toString(Throwable throwable) {

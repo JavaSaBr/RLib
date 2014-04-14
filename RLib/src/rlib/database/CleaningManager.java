@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -17,7 +17,7 @@ import rlib.util.array.ArrayFactory;
  */
 public abstract class CleaningManager {
 
-	private static final Logger LOGGER = Loggers.getLogger(CleaningManager.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(CleaningManager.class);
 
 	/** список запросов для очистки */
 	public static final Array<CleaningQuery> QUERY = ArrayFactory.newArray(CleaningQuery.class);

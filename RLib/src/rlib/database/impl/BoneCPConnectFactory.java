@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import rlib.database.ConnectFactory;
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
@@ -18,7 +18,7 @@ import com.jolbox.bonecp.BoneCPConfig;
  */
 public final class BoneCPConnectFactory implements ConnectFactory {
 
-	private static final Logger LOGGER = Loggers.getLogger(BoneCPConnectFactory.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(BoneCPConnectFactory.class);
 
 	/** основной комбо пул подключений */
 	private BoneCP source;

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Набор утильных методов для работы с БД.
@@ -16,7 +16,7 @@ import rlib.logging.Loggers;
  */
 public final class DBUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(DBUtils.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(DBUtils.class);
 
 	/**
 	 * Завершение использования указанного подключения.

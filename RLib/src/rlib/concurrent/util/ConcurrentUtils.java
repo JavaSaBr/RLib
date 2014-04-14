@@ -1,7 +1,7 @@
 package rlib.concurrent.util;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Набор утильных методов для работы в сфере кокнуренции.
@@ -10,7 +10,7 @@ import rlib.logging.Loggers;
  */
 public final class ConcurrentUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(ConcurrentUtils.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(ConcurrentUtils.class);
 
 	/**
 	 * Отпускание ожидающих потоков на этом объекте.

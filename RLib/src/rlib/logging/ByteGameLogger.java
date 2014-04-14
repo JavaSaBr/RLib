@@ -18,7 +18,7 @@ import rlib.util.Synchronized;
  */
 public class ByteGameLogger implements GameLogger, Synchronized {
 
-	private static final Logger LOGGER = Loggers.getLogger(ByteGameLogger.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(ByteGameLogger.class);
 
 	/** синхронизатор */
 	private final Lock lock;

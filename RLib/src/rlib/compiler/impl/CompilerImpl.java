@@ -11,7 +11,7 @@ import javax.tools.ToolProvider;
 
 import rlib.compiler.Compiler;
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -23,7 +23,7 @@ import rlib.util.array.ArrayFactory;
  */
 public class CompilerImpl implements Compiler {
 
-	private static final Logger LOGGER = Loggers.getLogger(Compiler.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(Compiler.class);
 
 	/** слушатель ошибок компиляций */
 	private final CompileListener listener;

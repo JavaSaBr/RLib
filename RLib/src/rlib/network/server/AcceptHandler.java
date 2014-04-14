@@ -5,7 +5,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Базовая модель обработчика принятия подключений.
@@ -14,7 +14,7 @@ import rlib.logging.Loggers;
  */
 public abstract class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
 
-	protected static final Logger LOGGER = Loggers.getLogger(AcceptHandler.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(AcceptHandler.class);
 
 	@Override
 	public void completed(AsynchronousSocketChannel result, AsynchronousServerSocketChannel serverChannel) {

@@ -3,7 +3,7 @@ package rlib.network.server.client.impl;
 import java.nio.ByteBuffer;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.network.AsynConnection;
 import rlib.network.GameCrypt;
 import rlib.network.packets.ReadeablePacket;
@@ -18,7 +18,7 @@ import rlib.network.server.client.Client;
 @SuppressWarnings("rawtypes")
 public abstract class AbstractClient<A, O, C extends AsynConnection, T extends GameCrypt> implements Client<A, O, C> {
 
-	protected static final Logger LOGGER = Loggers.getLogger(Client.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
 
 	/** владелец коннекта */
 	protected O owner;

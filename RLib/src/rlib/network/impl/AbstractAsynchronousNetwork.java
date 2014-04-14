@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.network.AsynchronousNetwork;
 import rlib.network.NetworkConfig;
 import rlib.util.array.Array;
@@ -17,7 +17,7 @@ import rlib.util.array.ArrayFactory;
  */
 public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork {
 
-	protected static final Logger LOGGER = Loggers.getLogger(AsynchronousNetwork.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(AsynchronousNetwork.class);
 
 	/** пул буфферов для чтения */
 	protected final Array<ByteBuffer> readBufferPool;

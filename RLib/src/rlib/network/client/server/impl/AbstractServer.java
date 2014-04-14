@@ -3,7 +3,7 @@ package rlib.network.client.server.impl;
 import java.nio.ByteBuffer;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.network.GameCrypt;
 import rlib.network.client.server.Server;
 import rlib.network.client.server.ServerConnection;
@@ -18,7 +18,7 @@ import rlib.network.packets.SendablePacket;
 @SuppressWarnings("rawtypes")
 public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt> implements Server<C> {
 
-	protected static final Logger LOGGER = Loggers.getLogger(Server.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(Server.class);
 
 	/** коннект к логин серверу */
 	protected final C connection;

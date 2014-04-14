@@ -11,7 +11,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.util.IOUtils;
 
 /**
@@ -21,7 +21,7 @@ import rlib.util.IOUtils;
  */
 public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 
-	protected static final Logger LOGGER = Loggers.getLogger(DocumentXML.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(DocumentXML.class);
 
 	protected static final ThreadLocal<DocumentBuilderFactory> LOCAL_FACTORY = new ThreadLocal<DocumentBuilderFactory>() {
 

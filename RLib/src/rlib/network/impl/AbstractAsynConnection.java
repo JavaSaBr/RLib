@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Lock;
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.lock.LockFactory;
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.network.AsynConnection;
 import rlib.network.AsynchronousNetwork;
 import rlib.network.NetworkConfig;
@@ -25,7 +25,7 @@ import rlib.util.linkedlist.LinkedListFactory;
 @SuppressWarnings("rawtypes")
 public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S> implements AsynConnection<R, S> {
 
-	protected static final Logger LOGGER = Loggers.getLogger(AsynConnection.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(AsynConnection.class);
 
 	/** модель сети, в которой этот коннект */
 	protected final N network;

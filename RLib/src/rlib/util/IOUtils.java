@@ -4,7 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Набор утильных методов по работе с i/o.
@@ -13,7 +13,7 @@ import rlib.logging.Loggers;
  */
 public final class IOUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(IOUtils.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(IOUtils.class);
 
 	public static final void close(Closeable stream) {
 		try {

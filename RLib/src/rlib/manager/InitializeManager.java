@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.util.linkedlist.LinkedList;
 import rlib.util.linkedlist.LinkedListFactory;
 
@@ -16,7 +16,7 @@ import rlib.util.linkedlist.LinkedListFactory;
  */
 public final class InitializeManager {
 
-	private static final Logger LOGGER = Loggers.getLogger(InitializeManager.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(InitializeManager.class);
 
 	private static final String METHOD_NAME = "getInstance";
 

@@ -7,7 +7,7 @@ import rlib.geom.VectorBuffer;
 import rlib.geom.bounding.Bounding;
 import rlib.geom.bounding.BoundingType;
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Базовая реализация формы из точек.
@@ -16,7 +16,7 @@ import rlib.logging.Loggers;
  */
 public abstract class AbstractBounding implements Bounding {
 
-	protected static final Logger LOGGER = Loggers.getLogger(Bounding.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(Bounding.class);
 
 	/** центр формы */
 	protected Vector center;

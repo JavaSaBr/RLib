@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.network.packets.SendablePacket;
 import rlib.util.StringUtils;
 import rlib.util.Util;
@@ -17,7 +17,7 @@ import rlib.util.pools.Foldable;
  */
 public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implements SendablePacket<C>, Foldable {
 
-	protected static final Logger LOGGER = Loggers.getLogger(SendablePacket.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(SendablePacket.class);
 
 	/** счетчик добавлений на отправку экземпляра пакета */
 	protected final AtomicInteger counter;

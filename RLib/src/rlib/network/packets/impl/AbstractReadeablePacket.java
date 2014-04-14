@@ -1,7 +1,7 @@
 package rlib.network.packets.impl;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 import rlib.network.packets.ReadeablePacket;
 import rlib.util.Util;
 import rlib.util.pools.Foldable;
@@ -14,7 +14,7 @@ import rlib.util.pools.FoldablePool;
  */
 public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> implements ReadeablePacket<C>, Foldable {
 
-	protected static final Logger LOGGER = Loggers.getLogger(ReadeablePacket.class);
+	protected static final Logger LOGGER = LoggerManager.getLogger(ReadeablePacket.class);
 
 	@Override
 	public final int getAvaliableBytes() {

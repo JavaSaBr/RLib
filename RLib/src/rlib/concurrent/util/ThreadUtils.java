@@ -1,7 +1,7 @@
 package rlib.concurrent.util;
 
 import rlib.logging.Logger;
-import rlib.logging.Loggers;
+import rlib.logging.LoggerManager;
 
 /**
  * Набор утильных методов по работе с потоками.
@@ -10,7 +10,7 @@ import rlib.logging.Loggers;
  */
 public class ThreadUtils {
 
-	private static final Logger LOGGER = Loggers.getLogger(ThreadUtils.class);
+	private static final Logger LOGGER = LoggerManager.getLogger(ThreadUtils.class);
 
 	public static void sleep(long time) {
 		try {
