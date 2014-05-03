@@ -1,6 +1,5 @@
 package rlib.util.random;
 
-
 /**
  * Фарика рандоминайзеров.
  * 

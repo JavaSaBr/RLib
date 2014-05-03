@@ -43,12 +43,12 @@ public final class BoneCPConnectFactory implements ConnectFactory {
 	 * @param driver драйвер БД.
 	 * @throws SQLException
 	 */
-	public synchronized void init(BoneCPConfig config, String driver) throws SQLException {
+	public synchronized void init(final BoneCPConfig config, final String driver) throws SQLException {
 		try {
 			Class.forName(driver).newInstance();
 			source = new BoneCP(config);
 			source.getConnection().close();
-		} catch(Exception e) {
+		} catch(final Exception e) {
 			LOGGER.warning(new SQLException("could not init DB connection:" + e));
 		}
 	}

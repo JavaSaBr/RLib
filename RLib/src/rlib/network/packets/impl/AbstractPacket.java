@@ -41,12 +41,12 @@ public abstract class AbstractPacket<C> implements Packet<C> {
 	}
 
 	@Override
-	public final void setBuffer(ByteBuffer buffer) {
+	public final void setBuffer(final ByteBuffer buffer) {
 		this.buffer = buffer;
 	}
 
 	@Override
-	public void setOwner(C owner) {
+	public void setOwner(final C owner) {
 		this.owner = owner;
 	}
 }

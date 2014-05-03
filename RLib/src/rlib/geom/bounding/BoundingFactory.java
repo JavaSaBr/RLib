@@ -12,7 +12,7 @@ import rlib.geom.bounding.impl.BoundingSphere;
  */
 public final class BoundingFactory {
 
-	public static Bounding newBoundingBox(Vector center, Vector offset, float sizeX, float sizeY, float sizeZ) {
+	public static Bounding newBoundingBox(final Vector center, final Vector offset, final float sizeX, final float sizeY, final float sizeZ) {
 		return new AxisAlignedBoundingBox(center, offset, sizeX, sizeY, sizeZ);
 	}
 
@@ -21,7 +21,7 @@ public final class BoundingFactory {
 		};
 	}
 
-	public static Bounding newBoundingSphere(Vector center, Vector offset, int radius) {
+	public static Bounding newBoundingSphere(final Vector center, final Vector offset, final int radius) {
 		return new BoundingSphere(center, offset, radius);
 	}
 

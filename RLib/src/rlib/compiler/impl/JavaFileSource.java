@@ -14,12 +14,12 @@ import rlib.util.FileUtils;
  */
 public class JavaFileSource extends SimpleJavaFileObject {
 
-	protected JavaFileSource(File file) {
+	protected JavaFileSource(final File file) {
 		super(file.toURI(), Kind.SOURCE);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 
 		if(this == obj) {
 			return true;
@@ -33,7 +33,7 @@ public class JavaFileSource extends SimpleJavaFileObject {
 			return false;
 		}
 
-		JavaFileSource other = (JavaFileSource) obj;
+		final JavaFileSource other = (JavaFileSource) obj;
 
 		if(uri == null) {
 			if(other.uri != null) {
@@ -47,9 +47,9 @@ public class JavaFileSource extends SimpleJavaFileObject {
 	}
 
 	@Override
-	public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
-		File file = new File(uri);
-		String content = new String(FileUtils.getContent(file), "UTF-8");
+	public CharSequence getCharContent(final boolean ignoreEncodingErrors) throws IOException {
+		final File file = new File(uri);
+		final String content = new String(FileUtils.getContent(file), "UTF-8");
 		return content;
 	}
 
@@ -57,7 +57,7 @@ public class JavaFileSource extends SimpleJavaFileObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+		result = prime * result + (uri == null ? 0 : uri.hashCode());
 		return result;
 	}
 }

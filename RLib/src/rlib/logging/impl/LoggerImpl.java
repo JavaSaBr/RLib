@@ -20,62 +20,62 @@ public final class LoggerImpl implements Logger {
 	}
 
 	@Override
-	public void debug(Class<?> cs, String message) {
+	public void debug(final Class<?> cs, final String message) {
 		LoggerManager.write(LoggerLevel.DEBUG, cs.getSimpleName(), message);
 	}
 
 	@Override
-	public void debug(Object owner, String message) {
+	public void debug(final Object owner, final String message) {
 		LoggerManager.write(LoggerLevel.DEBUG, owner.getClass().getSimpleName(), message);
 	}
 
 	@Override
-	public void debug(String message) {
+	public void debug(final String message) {
 		LoggerManager.write(LoggerLevel.DEBUG, getName(), message);
 	}
 
 	@Override
-	public void debug(String name, String message) {
+	public void debug(final String name, final String message) {
 		LoggerManager.write(LoggerLevel.DEBUG, name, message);
 	}
 
 	@Override
-	public void error(Class<?> cs, String message) {
+	public void error(final Class<?> cs, final String message) {
 		LoggerManager.write(LoggerLevel.ERROR, cs.getSimpleName(), message);
 	}
 
 	@Override
-	public void error(Class<?> cs, Throwable exception) {
+	public void error(final Class<?> cs, final Throwable exception) {
 		LoggerManager.write(LoggerLevel.ERROR, cs.getSimpleName(), Util.toString(exception));
 	}
 
 	@Override
-	public void error(Object owner, String message) {
+	public void error(final Object owner, final String message) {
 		LoggerManager.write(LoggerLevel.ERROR, owner.getClass().getSimpleName(), message);
 	}
 
 	@Override
-	public void error(Object owner, Throwable exception) {
+	public void error(final Object owner, final Throwable exception) {
 		LoggerManager.write(LoggerLevel.ERROR, owner.getClass().getSimpleName(), Util.toString(exception));
 	}
 
 	@Override
-	public void error(String message) {
+	public void error(final String message) {
 		LoggerManager.write(LoggerLevel.ERROR, getName(), message);
 	}
 
 	@Override
-	public void error(String name, String message) {
+	public void error(final String name, final String message) {
 		LoggerManager.write(LoggerLevel.ERROR, name, message);
 	}
 
 	@Override
-	public void error(String name, Throwable exception) {
+	public void error(final String name, final Throwable exception) {
 		LoggerManager.write(LoggerLevel.ERROR, name, Util.toString(exception));
 	}
 
 	@Override
-	public void error(Throwable exception) {
+	public void error(final Throwable exception) {
 		LoggerManager.write(LoggerLevel.ERROR, getName(), Util.toString(exception));
 	}
 
@@ -85,22 +85,22 @@ public final class LoggerImpl implements Logger {
 	}
 
 	@Override
-	public void info(Class<?> cs, String message) {
+	public void info(final Class<?> cs, final String message) {
 		LoggerManager.write(LoggerLevel.INFO, cs.getSimpleName(), message);
 	}
 
 	@Override
-	public void info(Object owner, String message) {
+	public void info(final Object owner, final String message) {
 		LoggerManager.write(LoggerLevel.INFO, owner.getClass().getSimpleName(), message);
 	}
 
 	@Override
-	public void info(String message) {
+	public void info(final String message) {
 		LoggerManager.write(LoggerLevel.INFO, getName(), message);
 	}
 
 	@Override
-	public void info(String name, String message) {
+	public void info(final String name, final String message) {
 		LoggerManager.write(LoggerLevel.INFO, name, message);
 	}
 
@@ -125,47 +125,47 @@ public final class LoggerImpl implements Logger {
 	}
 
 	@Override
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
 	@Override
-	public void warning(Class<?> cs, String message) {
+	public void warning(final Class<?> cs, final String message) {
 		LoggerManager.write(LoggerLevel.WARNING, cs.getSimpleName(), message);
 	}
 
 	@Override
-	public void warning(Class<?> cs, Throwable exception) {
+	public void warning(final Class<?> cs, final Throwable exception) {
 		LoggerManager.write(LoggerLevel.WARNING, cs.getSimpleName(), Util.toString(exception));
 	}
 
 	@Override
-	public void warning(Object owner, String message) {
+	public void warning(final Object owner, final String message) {
 		LoggerManager.write(LoggerLevel.WARNING, owner.getClass().getSimpleName(), message);
 	}
 
 	@Override
-	public void warning(Object owner, Throwable exception) {
+	public void warning(final Object owner, final Throwable exception) {
 		LoggerManager.write(LoggerLevel.WARNING, owner.getClass().getSimpleName(), Util.toString(exception));
 	}
 
 	@Override
-	public void warning(String message) {
+	public void warning(final String message) {
 		LoggerManager.write(LoggerLevel.WARNING, getName(), message);
 	}
 
 	@Override
-	public void warning(String name, String message) {
+	public void warning(final String name, final String message) {
 		LoggerManager.write(LoggerLevel.WARNING, name, message);
 	}
 
 	@Override
-	public void warning(String name, Throwable exception) {
+	public void warning(final String name, final Throwable exception) {
 		LoggerManager.write(LoggerLevel.WARNING, name, Util.toString(exception));
 	}
 
 	@Override
-	public void warning(Throwable exception) {
+	public void warning(final Throwable exception) {
 		LoggerManager.write(LoggerLevel.WARNING, getName(), Util.toString(exception));
 	}
 }

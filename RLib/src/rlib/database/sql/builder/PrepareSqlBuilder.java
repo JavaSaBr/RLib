@@ -14,22 +14,22 @@ import rlib.database.sql.builder.operator.UpdateSqlOperator;
 public interface PrepareSqlBuilder {
 
 	/**
-	 * @return оператор для формирования SELECT запроса.
-	 */
-	public SelectSqlOperator select(SelectSqlOperatorArgs args);
-
-	/**
 	 * @return оператор для формирования DELETE запроса.
 	 */
 	public DeleteSqlOperator delete();
 
 	/**
-	 * @return оператор для формирования UPDATE запроса.
-	 */
-	public UpdateSqlOperator update();
-
-	/**
 	 * @return оператор для формирования INSERT запроса.
 	 */
 	public InsertSqlOperator insert();
+
+	/**
+	 * @return оператор для формирования SELECT запроса.
+	 */
+	public SelectSqlOperator select(SelectSqlOperatorArgs args);
+
+	/**
+	 * @return оператор для формирования UPDATE запроса.
+	 */
+	public UpdateSqlOperator update();
 }

@@ -44,7 +44,7 @@ public class LoggerManager {
 	 * 
 	 * @param listener добавляемый слушатель.
 	 */
-	public static void addListener(LoggerListener listener) {
+	public static void addListener(final LoggerListener listener) {
 
 		if(listener == null) {
 			throw new IllegalArgumentException("ilistener is null.");
@@ -58,7 +58,7 @@ public class LoggerManager {
 	 * 
 	 * @param writer записчик лога.
 	 */
-	public static void addWriter(Writer writer) {
+	public static void addWriter(final Writer writer) {
 
 		if(writer == null) {
 			throw new IllegalArgumentException("writer is null.");
@@ -87,7 +87,7 @@ public class LoggerManager {
 	 * @param cs класс, который запрашивает логгер
 	 * @return индивидуальный логер для указанного класса.
 	 */
-	public static final Logger getLogger(Class<?> cs) {
+	public static final Logger getLogger(final Class<?> cs) {
 
 		Logger logger = LOGGERS.get(cs.getName());
 
@@ -114,7 +114,7 @@ public class LoggerManager {
 	 * 
 	 * @param listener удаляемый слушатель.
 	 */
-	public static void removeListener(LoggerListener listener) {
+	public static void removeListener(final LoggerListener listener) {
 		LISTENERS.slowRemove(listener);
 	}
 
@@ -123,7 +123,7 @@ public class LoggerManager {
 	 * 
 	 * @param writer записчик лога.
 	 */
-	public static void removeWriter(Writer writer) {
+	public static void removeWriter(final Writer writer) {
 		WRITERS.slowRemove(writer);
 	}
 
@@ -132,7 +132,7 @@ public class LoggerManager {
 	 * 
 	 * @param implementedClass класс реализации логера.
 	 */
-	public static void setImplementedClass(Class<? extends Logger> implementedClass) {
+	public static void setImplementedClass(final Class<? extends Logger> implementedClass) {
 
 		if(implementedClass == null) {
 			throw new IllegalArgumentException("implemented class is null.");
@@ -146,7 +146,7 @@ public class LoggerManager {
 	 * 
 	 * @param message содержание сообщения
 	 */
-	public static final void write(LoggerLevel level, String name, String message) {
+	public static final void write(final LoggerLevel level, final String name, final String message) {
 
 		if(!level.isEnabled()) {
 			return;
@@ -155,17 +155,17 @@ public class LoggerManager {
 		SYNC.lock();
 		try {
 
-			StringBuilder builder = new StringBuilder(level.getTitle());
+			final StringBuilder builder = new StringBuilder(level.getTitle());
 			builder.append(' ').append(timeFormat.format(LocalTime.now()));
 			builder.append(' ').append(name).append(": ").append(message);
 
-			String result = builder.toString();
+			final String result = builder.toString();
 
-			Array<LoggerListener> listeners = getListeners();
+			final Array<LoggerListener> listeners = getListeners();
 
 			if(!listeners.isEmpty()) {
 
-				for(LoggerListener listener : listeners.array()) {
+				for(final LoggerListener listener : listeners.array()) {
 
 					if(listener == null) {
 						break;
@@ -175,10 +175,10 @@ public class LoggerManager {
 				}
 			}
 
-			Array<Writer> writers = getWriters();
+			final Array<Writer> writers = getWriters();
 
 			if(!writers.isEmpty()) {
-				for(Writer writer : writers.array()) {
+				for(final Writer writer : writers.array()) {
 
 					if(writer == null) {
 						continue;
@@ -188,7 +188,7 @@ public class LoggerManager {
 						writer.append(result);
 						writer.append('\n');
 						writer.flush();
-					} catch(IOException e) {
+					} catch(final IOException e) {
 						e.printStackTrace();
 					}
 				}

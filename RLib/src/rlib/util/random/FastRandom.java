@@ -15,7 +15,7 @@ public final class FastRandom implements Random {
 	}
 
 	@Override
-	public void byteArray(byte[] array, int offset, int length) {
+	public void byteArray(final byte[] array, final int offset, int length) {
 
 		length += offset;
 
@@ -25,7 +25,7 @@ public final class FastRandom implements Random {
 	}
 
 	@Override
-	public boolean chance(float chance) {
+	public boolean chance(final float chance) {
 
 		if(chance < 0F) {
 			return false;
@@ -39,7 +39,7 @@ public final class FastRandom implements Random {
 	}
 
 	@Override
-	public boolean chance(int chance) {
+	public boolean chance(final int chance) {
 
 		if(chance < 1) {
 			return false;
@@ -63,17 +63,17 @@ public final class FastRandom implements Random {
 	}
 
 	@Override
-	public int nextInt(int max) {
+	public int nextInt(final int max) {
 		return random.nextInt(max);
 	}
 
 	@Override
-	public int nextInt(int min, int max) {
+	public int nextInt(final int min, final int max) {
 		return min + nextInt(Math.abs(max - min) + 1);
 	}
 
 	@Override
-	public long nextLong(long min, long max) {
+	public long nextLong(final long min, final long max) {
 		return min + Math.round(nextFloat() * Math.abs(max - min) + 1);
 	}
 }

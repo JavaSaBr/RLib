@@ -39,7 +39,7 @@ public class GroupThreadFactory implements ThreadFactory {
 
 	@Override
 	public Thread newThread(final Runnable runnable) {
-		Thread thread = ClassUtils.newInstance(constructor, group, runnable, name + "-" + ordinal++);
+		final Thread thread = ClassUtils.newInstance(constructor, group, runnable, name + "-" + ordinal++);
 		thread.setPriority(priority);
 		return thread;
 	}

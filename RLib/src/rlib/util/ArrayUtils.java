@@ -22,7 +22,7 @@ public final class ArrayUtils {
 	 * @param type тип массива.
 	 * @return новый массив с указанным элементом в конце.
 	 */
-	public static <T> T[] addToArray(T[] array, T element, Class<T> type) {
+	public static <T> T[] addToArray(T[] array, final T element, final Class<T> type) {
 
 		if(array == null) {
 			array = create(type, 1);
@@ -30,7 +30,7 @@ public final class ArrayUtils {
 			return array;
 		}
 
-		int length = array.length;
+		final int length = array.length;
 
 		array = copyOf(array, 1);
 		array[length] = element;
@@ -43,7 +43,7 @@ public final class ArrayUtils {
 	 * 
 	 * @param array массив, элементы которого нужно занулить.
 	 */
-	public static void clear(Object[] array) {
+	public static void clear(final Object[] array) {
 		for(int i = 0, length = array.length; i < length; i++) {
 			array[i] = null;
 		}
@@ -56,7 +56,7 @@ public final class ArrayUtils {
 	 * @param added добавочный массив.
 	 * @return новый общий массив.
 	 */
-	public static int[] combine(int[] base, int[] added) {
+	public static int[] combine(final int[] base, final int[] added) {
 
 		if(base == null) {
 			return added;
@@ -66,7 +66,7 @@ public final class ArrayUtils {
 			return base;
 		}
 
-		int[] result = new int[base.length + added.length];
+		final int[] result = new int[base.length + added.length];
 
 		int index = 0;
 
@@ -89,7 +89,7 @@ public final class ArrayUtils {
 	 * @param type тип массива.
 	 * @return новый массив.
 	 */
-	public static <T, E extends T> T[] combine(T[] base, E[] added, Class<T> type) {
+	public static <T, E extends T> T[] combine(final T[] base, final E[] added, final Class<T> type) {
 
 		if(base == null) {
 			return added;
@@ -99,7 +99,7 @@ public final class ArrayUtils {
 			return base;
 		}
 
-		T[] result = create(type, base.length + added.length);
+		final T[] result = create(type, base.length + added.length);
 
 		int index = 0;
 
@@ -121,9 +121,9 @@ public final class ArrayUtils {
 	 * @param val искомое значение.
 	 * @return содержит ли массив указанное значение.
 	 */
-	public static boolean contains(int[] array, int val) {
+	public static boolean contains(final int[] array, final int val) {
 
-		for(int value : array) {
+		for(final int value : array) {
 			if(value == val) {
 				return true;
 			}
@@ -139,9 +139,9 @@ public final class ArrayUtils {
 	 * @param object искомое значение.
 	 * @return содержит ли массив указанное значение.
 	 */
-	public static boolean contains(Object[] array, Object object) {
+	public static boolean contains(final Object[] array, final Object object) {
 
-		for(Object element : array) {
+		for(final Object element : array) {
 			if(ObjectUtils.equals(element, object)) {
 				return true;
 			}
@@ -157,25 +157,9 @@ public final class ArrayUtils {
 	 * @param added сила расширения.
 	 * @return новый массив.
 	 */
-	public static byte[] copyOf(byte[] old, int added) {
+	public static byte[] copyOf(final byte[] old, final int added) {
 
-		byte[] copy = new byte[old.length + added];
-
-		System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
-
-		return copy;
-	}
-
-	/**
-	 * Копирование массива с созданием нового на указанный размер больше.
-	 * 
-	 * @param old исходный массив.
-	 * @param added сила расширения.
-	 * @return новый массив.
-	 */
-	public static int[] copyOf(int[] old, int added) {
-
-		int[] copy = new int[old.length + added];
+		final byte[] copy = new byte[old.length + added];
 
 		System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
 
@@ -189,9 +173,25 @@ public final class ArrayUtils {
 	 * @param added сила расширения.
 	 * @return новый массив.
 	 */
-	public static long[] copyOf(long[] old, int added) {
+	public static int[] copyOf(final int[] old, final int added) {
 
-		long[] copy = new long[old.length + added];
+		final int[] copy = new int[old.length + added];
+
+		System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
+
+		return copy;
+	}
+
+	/**
+	 * Копирование массива с созданием нового на указанный размер больше.
+	 * 
+	 * @param old исходный массив.
+	 * @param added сила расширения.
+	 * @return новый массив.
+	 */
+	public static long[] copyOf(final long[] old, final int added) {
+
+		final long[] copy = new long[old.length + added];
 
 		System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
 
@@ -206,11 +206,11 @@ public final class ArrayUtils {
 	 * @return новый массив.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T[] copyOf(T[] old, int added) {
+	public static <T> T[] copyOf(final T[] old, final int added) {
 
-		Class<? extends Object[]> newType = old.getClass();
+		final Class<? extends Object[]> newType = old.getClass();
 
-		T[] copy = (T[]) create(newType.getComponentType(), old.length + added);
+		final T[] copy = (T[]) create(newType.getComponentType(), old.length + added);
 
 		System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
 
@@ -225,11 +225,11 @@ public final class ArrayUtils {
 	 * @param to по какой индекс.
 	 * @return новый массив.
 	 */
-	public static int[] copyOfRange(int[] original, int from, int to) {
+	public static int[] copyOfRange(final int[] original, final int from, final int to) {
 
-		int newLength = to - from;
+		final int newLength = to - from;
 
-		int[] copy = new int[newLength];
+		final int[] copy = new int[newLength];
 
 		System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
 
@@ -244,11 +244,11 @@ public final class ArrayUtils {
 	 * @param to по какой индекс.
 	 * @return новый массив.
 	 */
-	public static long[] copyOfRange(long[] original, int from, int to) {
+	public static long[] copyOfRange(final long[] original, final int from, final int to) {
 
-		int newLength = to - from;
+		final int newLength = to - from;
 
-		long[] copy = new long[newLength];
+		final long[] copy = new long[newLength];
 
 		System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
 
@@ -264,13 +264,13 @@ public final class ArrayUtils {
 	 * @return новый массив.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T[] copyOfRange(T[] original, int from, int to) {
+	public static <T> T[] copyOfRange(final T[] original, final int from, final int to) {
 
-		Class<? extends Object[]> newType = original.getClass();
+		final Class<? extends Object[]> newType = original.getClass();
 
-		int newLength = to - from;
+		final int newLength = to - from;
 
-		T[] copy = (T[]) create(newType.getComponentType(), newLength);
+		final T[] copy = (T[]) create(newType.getComponentType(), newLength);
 
 		System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
 
@@ -285,7 +285,7 @@ public final class ArrayUtils {
 	 * @return новый массив.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T[] create(Class<?> type, int size) {
+	public static <T> T[] create(final Class<?> type, final int size) {
 		return (T[]) java.lang.reflect.Array.newInstance(type, size);
 	}
 
@@ -296,11 +296,11 @@ public final class ArrayUtils {
 	 * @param object искомый объект.
 	 * @return индекс оюъекта.
 	 */
-	public static int indexOf(Object[] array, Object object) {
+	public static int indexOf(final Object[] array, final Object object) {
 
 		int index = 0;
 
-		for(Object element : array) {
+		for(final Object element : array) {
 
 			if(ObjectUtils.equals(element, object)) {
 				return index;
@@ -317,7 +317,7 @@ public final class ArrayUtils {
 	 * 
 	 * @param array сортируемый массив.
 	 */
-	public static void sort(Comparable<?>[] array) {
+	public static void sort(final Comparable<?>[] array) {
 		java.util.Arrays.sort(array);
 	}
 
@@ -326,7 +326,7 @@ public final class ArrayUtils {
 	 * 
 	 * @param array сортируемый массив.
 	 */
-	public static void sort(int[] array) {
+	public static void sort(final int[] array) {
 		java.util.Arrays.sort(array);
 	}
 
@@ -335,7 +335,7 @@ public final class ArrayUtils {
 	 * 
 	 * @param array сортируемый массив.
 	 */
-	public static void sort(int[] array, int fromIndex, int toIndex) {
+	public static void sort(final int[] array, final int fromIndex, final int toIndex) {
 		java.util.Arrays.sort(array, fromIndex, toIndex);
 	}
 
@@ -344,7 +344,7 @@ public final class ArrayUtils {
 	 * 
 	 * @param array сортируемый массив.
 	 */
-	public static void sort(long[] array, int fromIndex, int toIndex) {
+	public static void sort(final long[] array, final int fromIndex, final int toIndex) {
 		java.util.Arrays.sort(array, fromIndex, toIndex);
 	}
 
@@ -354,7 +354,7 @@ public final class ArrayUtils {
 	 * @param array сортируемый массив.
 	 * @param comparator компаратор для массива.
 	 */
-	public static <T> void sort(T[] array, Comparator<? super T> comparator) {
+	public static <T> void sort(final T[] array, final Comparator<? super T> comparator) {
 		java.util.Arrays.sort(array, comparator);
 	}
 
@@ -364,15 +364,15 @@ public final class ArrayUtils {
 	 * @param array массив объектов.
 	 * @return строковый вариант.
 	 */
-	public static String toString(Array<?> array) {
+	public static String toString(final Array<?> array) {
 
 		if(array == null) {
 			return "[]";
 		}
 
-		String className = array.array().getClass().getSimpleName();
+		final String className = array.array().getClass().getSimpleName();
 
-		StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
+		final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
 		for(int i = 0, length = array.size() - 1; i <= length; i++) {
 
@@ -395,14 +395,14 @@ public final class ArrayUtils {
 	 * @param array массив объектов.
 	 * @return строковый вариант.
 	 */
-	public static String toString(IntegerArray array) {
+	public static String toString(final IntegerArray array) {
 
 		if(array == null) {
 			return "[]";
 		}
 
-		String className = array.array().getClass().getSimpleName();
-		StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
+		final String className = array.array().getClass().getSimpleName();
+		final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
 		for(int i = 0, length = array.size() - 1; i <= length; i++) {
 
@@ -425,14 +425,14 @@ public final class ArrayUtils {
 	 * @param array массив объектов.
 	 * @return строковый вариант.
 	 */
-	public static String toString(LongArray array) {
+	public static String toString(final LongArray array) {
 
 		if(array == null) {
 			return "[]";
 		}
 
-		String className = array.array().getClass().getSimpleName();
-		StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
+		final String className = array.array().getClass().getSimpleName();
+		final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
 		for(int i = 0, length = array.size() - 1; i <= length; i++) {
 
@@ -455,14 +455,14 @@ public final class ArrayUtils {
 	 * @param array массив объектов.
 	 * @return строковый вариант.
 	 */
-	public static String toString(Object[] array) {
+	public static String toString(final Object[] array) {
 
 		if(array == null) {
 			return "[]";
 		}
 
-		String className = array.getClass().getSimpleName();
-		StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
+		final String className = array.getClass().getSimpleName();
+		final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
 		for(int i = 0, length = array.length - 1; i <= length; i++) {
 

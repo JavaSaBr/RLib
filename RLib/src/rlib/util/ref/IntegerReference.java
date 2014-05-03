@@ -21,7 +21,7 @@ final class IntegerReference extends AbstractReference {
 	}
 
 	@Override
-	public void setInt(int value) {
+	public void setInt(final int value) {
 		this.value = value;
 	}
 

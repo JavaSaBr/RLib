@@ -29,7 +29,7 @@ public class ByteGameLogger implements GameLogger, Synchronized {
 	/** канал записи в фаил */
 	private final FileChannel channel;
 
-	protected ByteGameLogger(File outFile) throws IOException {
+	protected ByteGameLogger(final File outFile) throws IOException {
 
 		if(!outFile.exists()) {
 			outFile.createNewFile();
@@ -62,7 +62,7 @@ public class ByteGameLogger implements GameLogger, Synchronized {
 	}
 
 	@Override
-	public void write(String text) {
+	public void write(final String text) {
 		lock.lock();
 		try {
 
@@ -82,7 +82,7 @@ public class ByteGameLogger implements GameLogger, Synchronized {
 	/**
 	 * Запись байта в лог.
 	 */
-	public void writeByte(int value) {
+	public void writeByte(final int value) {
 
 		if(cache.remaining() < 1) {
 			writeCache();
@@ -98,7 +98,7 @@ public class ByteGameLogger implements GameLogger, Synchronized {
 			channel.write(cache);
 			cache.clear();
 			out.flush();
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			LOGGER.warning(e);
 		}
 	}
@@ -106,7 +106,7 @@ public class ByteGameLogger implements GameLogger, Synchronized {
 	/**
 	 * Запись флоат числа в лог.
 	 */
-	public void writeFloat(float value) {
+	public void writeFloat(final float value) {
 
 		if(cache.remaining() < 4) {
 			writeCache();
@@ -118,7 +118,7 @@ public class ByteGameLogger implements GameLogger, Synchronized {
 	/**
 	 * Запись инт числа в лог.
 	 */
-	public void writeInt(int value) {
+	public void writeInt(final int value) {
 
 		if(cache.remaining() < 4) {
 			writeCache();

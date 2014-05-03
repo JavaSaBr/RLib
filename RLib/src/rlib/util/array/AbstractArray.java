@@ -17,7 +17,7 @@ public abstract class AbstractArray<E> implements Array<E> {
 	/**
 	 * @param type тип элементов в массиве.
 	 */
-	public AbstractArray(Class<E> type) {
+	public AbstractArray(final Class<E> type) {
 		this(type, DEFAULT_SIZE);
 	}
 
@@ -26,7 +26,7 @@ public abstract class AbstractArray<E> implements Array<E> {
 	 * @param size размер массива.
 	 */
 	@SuppressWarnings("unchecked")
-	public AbstractArray(Class<E> type, int size) {
+	public AbstractArray(final Class<E> type, final int size) {
 		super();
 
 		if(size < 0) {
@@ -63,7 +63,7 @@ public abstract class AbstractArray<E> implements Array<E> {
 	protected abstract void setSize(int size);
 
 	@Override
-	public final boolean slowRemove(Object object) {
+	public final boolean slowRemove(final Object object) {
 		return slowRemove(indexOf(object)) != null;
 	}
 

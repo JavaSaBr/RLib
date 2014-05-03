@@ -67,7 +67,7 @@ public class FastArray<E> extends AbstractArray<E> {
 	/**
 	 * @param type тип элементов в массиве.
 	 */
-	public FastArray(Class<E> type) {
+	public FastArray(final Class<E> type) {
 		super(type);
 	}
 
@@ -75,15 +75,15 @@ public class FastArray<E> extends AbstractArray<E> {
 	 * @param type тип элементов в массиве.
 	 * @param size размер массива.
 	 */
-	public FastArray(Class<E> type, int size) {
+	public FastArray(final Class<E> type, final int size) {
 		super(type, size);
 	}
 
 	@Override
-	public FastArray<E> add(E element) {
+	public FastArray<E> add(final E element) {
 
 		if(size == array.length) {
-			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
+			array = ArrayUtils.copyOf(array, array.length >> 1);
 		}
 
 		array[size++] = element;
@@ -92,19 +92,19 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final FastArray<E> addAll(Array<? extends E> elements) {
+	public final FastArray<E> addAll(final Array<? extends E> elements) {
 
 		if(elements == null || elements.isEmpty()) {
 			return this;
 		}
 
-		int diff = size + elements.size() - array.length;
+		final int diff = size + elements.size() - array.length;
 
 		if(diff > 0) {
 			array = ArrayUtils.copyOf(array, diff);
 		}
 
-		E[] array = elements.array();
+		final E[] array = elements.array();
 
 		for(int i = 0, length = elements.size(); i < length; i++) {
 			add(array[i]);
@@ -114,13 +114,13 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final Array<E> addAll(E[] elements) {
+	public final Array<E> addAll(final E[] elements) {
 
 		if(elements == null || elements.length < 1) {
 			return this;
 		}
 
-		int diff = size + elements.length - array.length;
+		final int diff = size + elements.length - array.length;
 
 		if(diff > 0) {
 			array = ArrayUtils.copyOf(array, diff);
@@ -139,9 +139,9 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E fastRemove(int index) {
+	public final E fastRemove(final int index) {
 
-		E[] array = array();
+		final E[] array = array();
 
 		if(index < 0 || size < 1 || index >= size) {
 			return null;
@@ -149,7 +149,7 @@ public class FastArray<E> extends AbstractArray<E> {
 
 		size -= 1;
 
-		E old = array[index];
+		final E old = array[index];
 
 		array[index] = array[size];
 		array[size] = null;
@@ -158,7 +158,7 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E get(int index) {
+	public final E get(final int index) {
 		return array[index];
 	}
 
@@ -168,13 +168,13 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final void set(int index, E element) {
+	public final void set(final int index, final E element) {
 
 		if(index < 0 || index >= size || element == null) {
 			return;
 		}
 
-		E[] array = array();
+		final E[] array = array();
 
 		if(array[index] != null) {
 			size -= 1;
@@ -186,12 +186,12 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	protected final void setArray(E[] array) {
+	protected final void setArray(final E[] array) {
 		this.array = array;
 	}
 
 	@Override
-	protected final void setSize(int size) {
+	protected final void setSize(final int size) {
 		this.size = size;
 	}
 
@@ -201,17 +201,17 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E slowRemove(int index) {
+	public final E slowRemove(final int index) {
 
 		if(index < 0 || size < 1) {
 			return null;
 		}
 
-		E[] array = array();
+		final E[] array = array();
 
-		int numMoved = size - index - 1;
+		final int numMoved = size - index - 1;
 
-		E old = array[index];
+		final E old = array[index];
 
 		if(numMoved > 0) {
 			System.arraycopy(array, index + 1, array, index, numMoved);

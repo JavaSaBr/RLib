@@ -76,7 +76,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	/**
 	 * @param type тип элементов в массиве.
 	 */
-	public ConcurrentArray(Class<E> type) {
+	public ConcurrentArray(final Class<E> type) {
 		this(type, 10);
 	}
 
@@ -84,10 +84,10 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	 * @param type тип элементов в массиве.
 	 * @param size размер массива.
 	 */
-	public ConcurrentArray(Class<E> type, int size) {
+	public ConcurrentArray(final Class<E> type, final int size) {
 		super(type, size);
 
-		ReadWriteLock readWriteLock = LockFactory.newRWLock();
+		final ReadWriteLock readWriteLock = LockFactory.newRWLock();
 
 		this.size = new AtomicInteger();
 		this.readLock = readWriteLock.readLock();
@@ -95,10 +95,10 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public ConcurrentArray<E> add(E element) {
+	public ConcurrentArray<E> add(final E element) {
 
 		if(size() == array.length) {
-			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
+			array = ArrayUtils.copyOf(array, array.length >> 1);
 		}
 
 		array[size.getAndIncrement()] = element;
@@ -107,19 +107,19 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final ConcurrentArray<E> addAll(Array<? extends E> elements) {
+	public final ConcurrentArray<E> addAll(final Array<? extends E> elements) {
 
 		if(elements == null || elements.isEmpty()) {
 			return this;
 		}
 
-		int diff = size() + elements.size() - array.length;
+		final int diff = size() + elements.size() - array.length;
 
 		if(diff > 0) {
 			array = ArrayUtils.copyOf(array, diff);
 		}
 
-		for(E element : elements.array()) {
+		for(final E element : elements.array()) {
 
 			if(element == null) {
 				break;
@@ -132,19 +132,19 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final Array<E> addAll(E[] elements) {
+	public final Array<E> addAll(final E[] elements) {
 
 		if(elements == null || elements.length < 1) {
 			return this;
 		}
 
-		int diff = size() + elements.length - array.length;
+		final int diff = size() + elements.length - array.length;
 
 		if(diff > 0) {
 			array = ArrayUtils.copyOf(array, diff);
 		}
 
-		for(E element : elements) {
+		for(final E element : elements) {
 			add(element);
 		}
 
@@ -157,13 +157,13 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E fastRemove(int index) {
+	public final E fastRemove(final int index) {
 
 		if(index < 0) {
 			return null;
 		}
 
-		E[] array = array();
+		final E[] array = array();
 
 		int length = size();
 
@@ -174,7 +174,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 		size.decrementAndGet();
 		length = size();
 
-		E old = array[index];
+		final E old = array[index];
 
 		array[index] = array[length];
 		array[length] = null;
@@ -183,7 +183,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E get(int index) {
+	public final E get(final int index) {
 		return array[index];
 	}
 
@@ -203,13 +203,13 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final void set(int index, E element) {
+	public final void set(final int index, final E element) {
 
 		if(index < 0 || index >= size() || element == null) {
 			return;
 		}
 
-		E[] array = array();
+		final E[] array = array();
 
 		if(array[index] != null) {
 			size.decrementAndGet();
@@ -221,12 +221,12 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	protected final void setArray(E[] array) {
+	protected final void setArray(final E[] array) {
 		this.array = array;
 	}
 
 	@Override
-	protected final void setSize(int size) {
+	protected final void setSize(final int size) {
 		this.size.getAndSet(size);
 	}
 
@@ -236,19 +236,19 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E slowRemove(int index) {
+	public final E slowRemove(final int index) {
 
-		int length = size();
+		final int length = size();
 
 		if(index < 0 || length < 1) {
 			return null;
 		}
 
-		E[] array = array();
+		final E[] array = array();
 
-		int numMoved = length - index - 1;
+		final int numMoved = length - index - 1;
 
-		E old = array[index];
+		final E old = array[index];
 
 		if(numMoved > 0) {
 			System.arraycopy(array, index + 1, array, index, numMoved);
@@ -264,7 +264,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	@Override
 	public final ConcurrentArray<E> trimToSize() {
 
-		int size = size();
+		final int size = size();
 
 		if(size == array.length) {
 			return this;

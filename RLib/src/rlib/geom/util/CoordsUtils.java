@@ -29,26 +29,27 @@ public final class CoordsUtils {
 	 * @return массив позиций.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends GamePoint> T[] arcCoords(Class<T> type, float x, float y, float z, int heading, int radius, int count, int degree, int width) {
+	public static <T extends GamePoint> T[] arcCoords(final Class<T> type, final float x, final float y, final float z, final int heading, final int radius, final int count, final int degree,
+			final int width) {
 
-		T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
+		final T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
 
-		float current = AngleUtils.headingToDegree(heading) - degree;
+		final float current = AngleUtils.headingToDegree(heading) - degree;
 
-		float min = current - width;
-		float max = current + width;
+		final float min = current - width;
+		final float max = current + width;
 
-		float angle = Math.abs(min - max) / count;
+		final float angle = Math.abs(min - max) / count;
 
 		for(int i = 0; i < count; i++) {
 			try {
 
-				T loc = type.newInstance();
+				final T loc = type.newInstance();
 
-				float radians = AngleUtils.degreeToRadians(min + angle * i);
+				final float radians = AngleUtils.degreeToRadians(min + angle * i);
 
-				float newX = calcX(x, radius, radians);
-				float newY = calcY(y, radius, radians);
+				final float newX = calcX(x, radius, radians);
+				final float newY = calcY(y, radius, radians);
 
 				loc.setXYZ(newX, newY, z);
 
@@ -70,7 +71,7 @@ public final class CoordsUtils {
 	 * @param radians направление сдвига.
 	 * @return новая х координата.
 	 */
-	public static float calcX(float x, int distance, float radians) {
+	public static float calcX(final float x, final int distance, final float radians) {
 		return x + distance * (float) Math.cos(radians);
 	}
 
@@ -82,7 +83,7 @@ public final class CoordsUtils {
 	 * @param heading направление сдвига.
 	 * @return новая х координата.
 	 */
-	public static float calcX(float x, int distance, int heading) {
+	public static float calcX(final float x, final int distance, final int heading) {
 		return x + distance * (float) Math.cos(AngleUtils.headingToRadians(heading));
 	}
 
@@ -95,7 +96,7 @@ public final class CoordsUtils {
 	 * @param offset смещение по градусам.
 	 * @return новая х координата.
 	 */
-	public static float calcX(float x, int distance, int heading, int offset) {
+	public static float calcX(final float x, final int distance, final int heading, final int offset) {
 		return x + distance * (float) Math.cos(AngleUtils.headingToRadians(heading + offset));
 	}
 
@@ -107,7 +108,7 @@ public final class CoordsUtils {
 	 * @param radians направление сдвига.
 	 * @return новая у координата.
 	 */
-	public static float calcY(float y, int distance, float radians) {
+	public static float calcY(final float y, final int distance, final float radians) {
 		return y + distance * (float) Math.sin(radians);
 	}
 
@@ -119,7 +120,7 @@ public final class CoordsUtils {
 	 * @param heading направление сдвига.
 	 * @return новая у координата.
 	 */
-	public static float calcY(float y, int distance, int heading) {
+	public static float calcY(final float y, final int distance, final int heading) {
 		return y + distance * (float) Math.sin(AngleUtils.headingToRadians(heading));
 	}
 
@@ -132,7 +133,7 @@ public final class CoordsUtils {
 	 * @param offset смещение по градусам.
 	 * @return новая у координата.
 	 */
-	public static float calcY(float y, int distance, int heading, int offset) {
+	public static float calcY(final float y, final int distance, final int heading, final int offset) {
 		return y + distance * (float) Math.sin(AngleUtils.headingToRadians(heading + offset));
 	}
 
@@ -148,21 +149,21 @@ public final class CoordsUtils {
 	 * @return массив позиций.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends GamePoint> T[] circularCoords(Class<T> type, float x, float y, float z, int radius, int count) {
+	public static <T extends GamePoint> T[] circularCoords(final Class<T> type, final float x, final float y, final float z, final int radius, final int count) {
 
-		T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
+		final T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
 
-		float angle = 360F / count;
+		final float angle = 360F / count;
 
 		for(int i = 1; i <= count; i++) {
 			try {
 
-				T loc = type.newInstance();
+				final T loc = type.newInstance();
 
-				float radians = AngleUtils.degreeToRadians(i * angle);
+				final float radians = AngleUtils.degreeToRadians(i * angle);
 
-				float newX = calcX(x, radius, radians);
-				float newY = calcY(y, radius, radians);
+				final float newX = calcX(x, radius, radians);
+				final float newY = calcY(y, radius, radians);
 
 				loc.setXYZ(newX, newY, z);
 
@@ -187,22 +188,22 @@ public final class CoordsUtils {
 	 * @param radius радиус от центра.
 	 * @return массив точек.
 	 */
-	public static <T extends GamePoint> T[] getCircularPoints(T[] source, float x, float y, float z, int count, int radius) {
+	public static <T extends GamePoint> T[] getCircularPoints(final T[] source, final float x, final float y, final float z, final int count, final int radius) {
 
 		if(count < 1) {
 			return source;
 		}
 
-		float angle = 360F / count;
+		final float angle = 360F / count;
 
 		for(int i = 1; i <= count; i++) {
 
-			float radians = AngleUtils.degreeToRadians(angle * i);
+			final float radians = AngleUtils.degreeToRadians(angle * i);
 
-			float newX = x + radius * (float) Math.cos(radians);
-			float newY = y + radius * (float) Math.sin(radians);
+			final float newX = x + radius * (float) Math.cos(radians);
+			final float newY = y + radius * (float) Math.sin(radians);
 
-			T point = source[i - 1];
+			final T point = source[i - 1];
 
 			point.setXYZ(newX, newY, z);
 		}
@@ -220,7 +221,7 @@ public final class CoordsUtils {
 	 * @param radiusMax максимальный радиус рандома.
 	 * @return новая точка.
 	 */
-	public static <T extends GamePoint> T randomCoords(T loc, float x, float y, float z, int radiusMin, int radiusMax) {
+	public static <T extends GamePoint> T randomCoords(final T loc, final float x, final float y, final float z, final int radiusMin, final int radiusMax) {
 		return randomCoords(loc, x, y, z, Rnd.nextInt(35000), radiusMin, radiusMax);
 	}
 
@@ -235,18 +236,18 @@ public final class CoordsUtils {
 	 * @param radiusMax максимальный радиус рандома.
 	 * @return новая точка.
 	 */
-	public static <T extends GamePoint> T randomCoords(T loc, float x, float y, float z, int heading, int radiusMin, int radiusMax) {
+	public static <T extends GamePoint> T randomCoords(final T loc, final float x, final float y, final float z, final int heading, final int radiusMin, final int radiusMax) {
 
 		if(radiusMax == 0 || radiusMax < radiusMin) {
 			loc.setXYZH(x, y, z, heading);
 			return loc;
 		}
 
-		int radius = Rnd.nextInt(radiusMin, radiusMax);
-		float radians = AngleUtils.degreeToRadians(Rnd.nextInt(0, 360));
+		final int radius = Rnd.nextInt(radiusMin, radiusMax);
+		final float radians = AngleUtils.degreeToRadians(Rnd.nextInt(0, 360));
 
-		float newX = calcX(x, radius, radians);
-		float newY = calcY(y, radius, radians);
+		final float newX = calcX(x, radius, radians);
+		final float newY = calcY(y, radius, radians);
 
 		loc.setXYZH(newX, newY, z, heading);
 

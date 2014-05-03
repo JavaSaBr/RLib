@@ -14,7 +14,7 @@ public interface SqlOperatorArgs<T extends SqlOperator> {
 	 * 
 	 * @param operator SQL оператор.
 	 */
-	public default void applyArgs(T operator) {
+	public default void applyArgs(final T operator) {
 
 		applyArgsImpl(operator);
 

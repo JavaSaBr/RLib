@@ -15,6 +15,16 @@ public final class ClassUtils {
 
 	private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
 
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T> getClass(final String name) {
+		try {
+			return (Class<T>) Class.forName(name);
+		} catch(final ClassNotFoundException e) {
+			LOGGER.error(e);
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * Получение конструктора по указанным параметрам указанного класса.
 	 * 
@@ -23,7 +33,7 @@ public final class ClassUtils {
 	 * @return конструктор класса.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> Constructor<T> getConstructor(Class<?> cs, Class<?>... classes) {
+	public static <T> Constructor<T> getConstructor(final Class<?> cs, final Class<?>... classes) {
 		try {
 			return (Constructor<T>) cs.getConstructor(classes);
 		} catch(NoSuchMethodException | SecurityException e) {
@@ -40,9 +50,9 @@ public final class ClassUtils {
 	 * @return конструктор класса.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> Constructor<T> getConstructor(String className, Class<?>... classes) {
+	public static <T> Constructor<T> getConstructor(final String className, final Class<?>... classes) {
 		try {
-			Class<?> cs = Class.forName(className);
+			final Class<?> cs = Class.forName(className);
 			return (Constructor<T>) cs.getConstructor(classes);
 		} catch(NoSuchMethodException | SecurityException | ClassNotFoundException e) {
 			LOGGER.error(e);
@@ -57,7 +67,7 @@ public final class ClassUtils {
 	 * @return новый экземпляр класса.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(Class<?> cs) {
+	public static <T> T newInstance(final Class<?> cs) {
 		try {
 			return (T) cs.newInstance();
 		} catch(InstantiationException | IllegalAccessException e) {
@@ -74,29 +84,23 @@ public final class ClassUtils {
 	 * @return новый экземпляр класса.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(Constructor<?> constructor, Object... objects) {
+	public static <T> T newInstance(final Constructor<?> constructor, final Object... objects) {
 		try {
 			return (T) constructor.newInstance(objects);
-		} catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch(final InvocationTargetException e) {
+			LOGGER.error(e.getTargetException());
+			throw new RuntimeException(e);
+		} catch(InstantiationException | IllegalAccessException | IllegalArgumentException e) {
 			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(String className) {
+	public static <T> T newInstance(final String className) {
 		try {
 			return (T) Class.forName(className).newInstance();
 		} catch(InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> Class<T> getClass(String name) {
-		try {
-			return (Class<T>) Class.forName(name);
-		} catch(ClassNotFoundException e) {
 			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}

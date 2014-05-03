@@ -35,7 +35,7 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 	}
 
 	@Override
-	public void decreaseSends(int count) {
+	public void decreaseSends(final int count) {
 		counter.subAndGet(count);
 	}
 
@@ -45,7 +45,7 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 	}
 
 	@Override
-	public void increaseSends(int count) {
+	public void increaseSends(final int count) {
 		counter.addAndGet(count);
 	}
 
@@ -60,7 +60,7 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 	}
 
 	@Override
-	public void write(ByteBuffer buffer) {
+	public void write(final ByteBuffer buffer) {
 
 		if(counter.get() < 0) {
 			LOGGER.warning(this, "write pooled packet");
@@ -69,41 +69,41 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 
 		try {
 			writeImpl(buffer);
-		} catch(Exception e) {
+		} catch(final Exception e) {
 			LOGGER.warning(this, e);
 			LOGGER.warning(this, "Buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.position()));
 		}
 	}
 
-	public final void writeByte(ByteBuffer buffer, int value) {
+	public final void writeByte(final ByteBuffer buffer, final int value) {
 		buffer.put((byte) value);
 	}
 
-	protected final void writeByte(int value) {
+	protected final void writeByte(final int value) {
 		writeByte(buffer, value);
 	}
 
-	public final void writeChar(ByteBuffer buffer, char value) {
+	public final void writeChar(final ByteBuffer buffer, final char value) {
 		buffer.putChar(value);
 	}
 
-	public final void writeChar(ByteBuffer buffer, int value) {
+	public final void writeChar(final ByteBuffer buffer, final int value) {
 		buffer.putChar((char) value);
 	}
 
-	protected final void writeChar(char value) {
+	protected final void writeChar(final char value) {
 		writeChar(buffer, value);
 	}
 
-	protected final void writeChar(int value) {
+	protected final void writeChar(final int value) {
 		writeChar(buffer, value);
 	}
 
-	public final void writeFloat(ByteBuffer buffer, float value) {
+	public final void writeFloat(final ByteBuffer buffer, final float value) {
 		buffer.putFloat(value);
 	}
 
-	protected final void writeFloat(float value) {
+	protected final void writeFloat(final float value) {
 		writeFloat(buffer, value);
 	}
 
@@ -117,15 +117,15 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 	/**
 	 * Процесс записи пакета в указанный буффер.
 	 */
-	protected void writeImpl(ByteBuffer buffer) {
+	protected void writeImpl(final ByteBuffer buffer) {
 		LOGGER.warning(this, new Exception("unsupperted method"));
 	}
 
-	public final void writeInt(ByteBuffer buffer, int value) {
+	public final void writeInt(final ByteBuffer buffer, final int value) {
 		buffer.putInt(value);
 	}
 
-	protected final void writeInt(int value) {
+	protected final void writeInt(final int value) {
 		writeInt(buffer, value);
 	}
 
@@ -139,29 +139,29 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 
 		try {
 			writeImpl();
-		} catch(Exception e) {
+		} catch(final Exception e) {
 			LOGGER.warning(this, e);
 			LOGGER.warning(this, "Buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.position()));
 		}
 	}
 
-	public final void writeLong(ByteBuffer buffer, long value) {
+	public final void writeLong(final ByteBuffer buffer, final long value) {
 		buffer.putLong(value);
 	}
 
-	protected final void writeLong(long value) {
+	protected final void writeLong(final long value) {
 		writeLong(buffer, value);
 	}
 
-	public void writeShort(ByteBuffer buffer, int value) {
+	public void writeShort(final ByteBuffer buffer, final int value) {
 		buffer.putShort((short) value);
 	}
 
-	protected void writeShort(int value) {
+	protected void writeShort(final int value) {
 		writeShort(buffer, value);
 	}
 
-	public void writeString(ByteBuffer buffer, String string) {
+	public void writeString(final ByteBuffer buffer, String string) {
 
 		if(string == null) {
 			string = StringUtils.EMPTY;
@@ -172,7 +172,7 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
 		}
 	}
 
-	protected void writeString(String string) {
+	protected void writeString(final String string) {
 		writeString(buffer, string);
 	}
 }

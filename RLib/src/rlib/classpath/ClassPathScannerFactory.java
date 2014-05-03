@@ -14,7 +14,7 @@ public final class ClassPathScannerFactory {
 		return new ClassPathScanerImpl();
 	}
 
-	public static final ClassPathScaner newManifestScanner(Class<?> rootClass, String classPathKey) {
+	public static final ClassPathScaner newManifestScanner(final Class<?> rootClass, final String classPathKey) {
 		return new ManifestClassPathScannerImpl(rootClass, classPathKey);
 	}
 

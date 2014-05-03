@@ -21,7 +21,7 @@ public abstract class AbstractClientConnection<T extends Client, R extends Reade
 	/** клиент пользователя */
 	protected T client;
 
-	public AbstractClientConnection(ServerNetwork network, AsynchronousSocketChannel channel, Class<S> sendableType) {
+	public AbstractClientConnection(final ServerNetwork network, final AsynchronousSocketChannel channel, final Class<S> sendableType) {
 		super(network, channel, sendableType);
 	}
 
@@ -36,11 +36,11 @@ public abstract class AbstractClientConnection<T extends Client, R extends Reade
 	}
 
 	@Override
-	protected void onWrited(S packet) {
+	protected void onWrited(final S packet) {
 	}
 
 	@Override
-	public final void setClient(T client) {
+	public final void setClient(final T client) {
 		this.client = client;
 	}
 }

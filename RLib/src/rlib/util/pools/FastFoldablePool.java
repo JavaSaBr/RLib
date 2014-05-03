@@ -13,7 +13,7 @@ public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected FastFoldablePool(int size, Class<?> type) {
+	protected FastFoldablePool(final int size, final Class<?> type) {
 		this.pool = ArrayFactory.newArray(type, size);
 	}
 
@@ -23,7 +23,7 @@ public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	}
 
 	@Override
-	public void put(E object) {
+	public void put(final E object) {
 
 		if(object == null) {
 			return;
@@ -34,14 +34,14 @@ public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	}
 
 	@Override
-	public void remove(E object) {
+	public void remove(final E object) {
 		pool.fastRemove(object);
 	}
 
 	@Override
 	public E take() {
 
-		E object = pool.pop();
+		final E object = pool.pop();
 
 		if(object == null) {
 			return null;

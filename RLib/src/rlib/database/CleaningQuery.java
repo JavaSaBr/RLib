@@ -8,15 +8,15 @@ package rlib.database;
 public final class CleaningQuery {
 
 	/** название таблицы, которую очищает запрос */
-	private String name;
+	private final String name;
 	/** содержание запроса */
-	private String query;
+	private final String query;
 
 	/**
 	 * @param name имя таблицы
 	 * @param query запрос
 	 */
-	public CleaningQuery(String name, String query) {
+	public CleaningQuery(final String name, final String query) {
 		this.name = name;
 		this.query = query;
 	}

@@ -29,7 +29,7 @@ public enum ReferenceType {
 	/**
 	 * @param wrap складировать ссылку.
 	 */
-	protected void put(Reference wrap) {
+	protected void put(final Reference wrap) {
 		pool.put(wrap);
 	}
 

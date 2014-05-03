@@ -9,9 +9,9 @@ public interface WhereSqlCondition extends SqlCondition {
 
 	public void equals(String fieldName);
 
-	public void gt(String fieldName);
-
 	public void ge(String fieldName);
+
+	public void gt(String fieldName);
 
 	public void le(String fieldName);
 

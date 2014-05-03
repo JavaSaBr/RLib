@@ -11,17 +11,17 @@ final class ShortReference extends AbstractReference {
 	private short value;
 
 	@Override
-	public short getShort() {
-		return value;
-	}
-
-	@Override
 	public ReferenceType getReferenceType() {
 		return ReferenceType.SHORT;
 	}
 
 	@Override
-	public void setShort(short value) {
+	public short getShort() {
+		return value;
+	}
+
+	@Override
+	public void setShort(final short value) {
 		this.value = value;
 	}
 

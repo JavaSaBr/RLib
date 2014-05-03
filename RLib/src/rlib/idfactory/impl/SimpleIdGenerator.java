@@ -22,7 +22,7 @@ public final class SimpleIdGenerator implements IdGenerator {
 	 * @param start стартовый ид генератора.
 	 * @param end конечный ид генератора.
 	 */
-	public SimpleIdGenerator(int start, int end) {
+	public SimpleIdGenerator(final int start, final int end) {
 		this.start = start;
 		this.end = end;
 		this.nextId = new AtomicInteger(start);

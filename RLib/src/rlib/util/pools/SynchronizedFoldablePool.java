@@ -13,7 +13,7 @@ public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePoo
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected SynchronizedFoldablePool(int size, Class<?> type) {
+	protected SynchronizedFoldablePool(final int size, final Class<?> type) {
 		this.pool = ArrayFactory.newArray(type, size);
 	}
 
@@ -23,7 +23,7 @@ public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePoo
 	}
 
 	@Override
-	public void put(E object) {
+	public void put(final E object) {
 
 		if(object == null) {
 			return;
@@ -37,7 +37,7 @@ public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePoo
 	}
 
 	@Override
-	public void remove(E object) {
+	public void remove(final E object) {
 		synchronized(pool) {
 			pool.fastRemove(object);
 		}

@@ -23,7 +23,7 @@ public final class DBUtils {
 	 * 
 	 * @param connection подключение, с каторым завершена работа.
 	 */
-	public static void closeConnection(Connection connection) {
+	public static void closeConnection(final Connection connection) {
 
 		if(connection == null) {
 			return;
@@ -31,7 +31,7 @@ public final class DBUtils {
 
 		try {
 			connection.close();
-		} catch(SQLException e) {
+		} catch(final SQLException e) {
 			LOGGER.warning(e);
 		}
 	}
@@ -42,7 +42,7 @@ public final class DBUtils {
 	 * @param connection подключение, которое необходимо закрыть.
 	 * @param statement запрос, который необходимо закрыть.
 	 */
-	public static void closeDatabaseCS(Connection connection, Statement statement) {
+	public static void closeDatabaseCS(final Connection connection, final Statement statement) {
 		closeStatement(statement);
 		closeConnection(connection);
 	}
@@ -54,7 +54,7 @@ public final class DBUtils {
 	 * @param statement запрос, который необходимо закрыть.
 	 * @param rset резуьтат, который необходимо закрыть.
 	 */
-	public static void closeDatabaseCSR(Connection connection, Statement statement, ResultSet rset) {
+	public static void closeDatabaseCSR(final Connection connection, final Statement statement, final ResultSet rset) {
 		closeResultSet(rset);
 		closeStatement(statement);
 		closeConnection(connection);
@@ -66,7 +66,7 @@ public final class DBUtils {
 	 * @param statement запрос, который необходимо закрыть.
 	 * @param rset результат, который необходимо закрыть.
 	 */
-	public static void closeDatabaseSR(Statement statement, ResultSet rset) {
+	public static void closeDatabaseSR(final Statement statement, final ResultSet rset) {
 		closeResultSet(rset);
 		closeStatement(statement);
 	}
@@ -76,7 +76,7 @@ public final class DBUtils {
 	 * 
 	 * @param rset результат, который необходимо закрыть.
 	 */
-	public static void closeResultSet(ResultSet rset) {
+	public static void closeResultSet(final ResultSet rset) {
 
 		if(rset == null) {
 			return;
@@ -84,7 +84,7 @@ public final class DBUtils {
 
 		try {
 			rset.close();
-		} catch(SQLException e) {
+		} catch(final SQLException e) {
 			LOGGER.warning(e);
 		}
 	}
@@ -94,7 +94,7 @@ public final class DBUtils {
 	 * 
 	 * @param statement запрос, который необходимо закрыть.
 	 */
-	public static void closeStatement(Statement statement) {
+	public static void closeStatement(final Statement statement) {
 
 		if(statement == null) {
 			return;
@@ -102,7 +102,7 @@ public final class DBUtils {
 
 		try {
 			statement.close();
-		} catch(SQLException e) {
+		} catch(final SQLException e) {
 			LOGGER.warning(e);
 		}
 	}

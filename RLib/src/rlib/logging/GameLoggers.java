@@ -27,7 +27,7 @@ public abstract class GameLoggers {
 	 * Завершение работы всех логгеров.
 	 */
 	public static final void finish() {
-		for(GameLogger logger : loggers) {
+		for(final GameLogger logger : loggers) {
 			logger.finish();
 		}
 	}
@@ -38,9 +38,9 @@ public abstract class GameLoggers {
 	 * @param name имя объекта который запрашивает логгер
 	 * @return новый индивидуальный логгер
 	 */
-	public static final ByteGameLogger getByteLogger(String name) {
+	public static final ByteGameLogger getByteLogger(final String name) {
 
-		File dir = new File(directory, name);
+		final File dir = new File(directory, name);
 
 		if(!dir.exists()) {
 			dir.mkdir();
@@ -50,13 +50,13 @@ public abstract class GameLoggers {
 			throw new IllegalArgumentException("incorrect directory for game logger " + name);
 		}
 
-		File outFile = new File(dir.getAbsolutePath() + "/" + TIME_FORMAT.format(new Date()) + ".gamelog");
+		final File outFile = new File(dir.getAbsolutePath() + "/" + TIME_FORMAT.format(new Date()) + ".gamelog");
 
 		try {
-			ByteGameLogger logger = new ByteGameLogger(outFile);
+			final ByteGameLogger logger = new ByteGameLogger(outFile);
 			loggers.add(logger);
 			return logger;
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			throw new IllegalArgumentException("incorrect create log file for game logger " + name);
 		}
 	}
@@ -67,9 +67,9 @@ public abstract class GameLoggers {
 	 * @param name имя объекта который запрашивает логгер
 	 * @return новый индивидуальный логгер
 	 */
-	public static final StringGameLogger getLogger(String name) {
+	public static final StringGameLogger getLogger(final String name) {
 
-		File dir = new File(directory + "/" + name);
+		final File dir = new File(directory + "/" + name);
 
 		if(!dir.exists()) {
 			dir.mkdir();
@@ -79,13 +79,13 @@ public abstract class GameLoggers {
 			throw new IllegalArgumentException("incorrect directory for game logger " + name);
 		}
 
-		File outFile = new File(dir.getAbsolutePath() + "/" + TIME_FORMAT.format(new Date()) + ".gamelog");
+		final File outFile = new File(dir.getAbsolutePath() + "/" + TIME_FORMAT.format(new Date()) + ".gamelog");
 
 		try {
-			StringGameLogger logger = new StringGameLogger(outFile);
+			final StringGameLogger logger = new StringGameLogger(outFile);
 			loggers.add(logger);
 			return logger;
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			throw new IllegalArgumentException("incorrect create log file for game logger " + name);
 		}
 	}
@@ -93,7 +93,7 @@ public abstract class GameLoggers {
 	/**
 	 * @param directory адресс директори лог папки.
 	 */
-	public static final void setDirectory(String directory) {
+	public static final void setDirectory(final String directory) {
 		GameLoggers.directory = directory;
 		GameLoggers.loggers = ArrayFactory.newConcurrentArray(GameLogger.class);
 	}

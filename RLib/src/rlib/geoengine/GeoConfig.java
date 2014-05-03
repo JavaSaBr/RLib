@@ -5,8 +5,8 @@ package rlib.geoengine;
  *
  * @author Ronn
  */
-public interface GeoConfig
-{
+public interface GeoConfig {
+
 	/**
 	 * @return отступ по X.
 	 */

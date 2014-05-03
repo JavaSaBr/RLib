@@ -27,7 +27,7 @@ public final class OrientedBoundingBox extends AbstractBounding {
 	/** размер формы по z */
 	protected float sizeZ;
 
-	protected OrientedBoundingBox(Vector center, Vector offset, float sizeX, float sizeY, float sizeZ) {
+	protected OrientedBoundingBox(final Vector center, final Vector offset, final float sizeX, final float sizeY, final float sizeZ) {
 		super(center, offset);
 
 		this.matrix = Matrix3f.newInstance();
@@ -39,8 +39,8 @@ public final class OrientedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public boolean contains(float x, float y, float z, VectorBuffer buffer) {
-		Vector center = getResultCenter(buffer);
+	public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
+		final Vector center = getResultCenter(buffer);
 		return Math.abs(center.getX() - x) < sizeX && Math.abs(center.getY() - y) < sizeY && Math.abs(center.getZ() - z) < sizeZ;
 	}
 
@@ -50,9 +50,9 @@ public final class OrientedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public Vector getResultCenter(VectorBuffer buffer) {
+	public Vector getResultCenter(final VectorBuffer buffer) {
 
-		Vector vector = buffer.getNextVector();
+		final Vector vector = buffer.getNextVector();
 		vector.set(center);
 
 		if(offset == Vector.ZERO) {
@@ -84,21 +84,21 @@ public final class OrientedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public boolean intersects(Bounding bounding, VectorBuffer buffer) {
+	public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
 		switch(bounding.getBoundingType()) {
 			case EMPTY: {
 				return false;
 			}
 			case AXIS_ALIGNED_BOX: {
 
-				OrientedBoundingBox box = (OrientedBoundingBox) bounding;
+				final OrientedBoundingBox box = (OrientedBoundingBox) bounding;
 
-				Vector target = box.getResultCenter(buffer);
-				Vector center = getResultCenter(buffer);
+				final Vector target = box.getResultCenter(buffer);
+				final Vector center = getResultCenter(buffer);
 
-				float sizeX = getSizeX();
-				float sizeY = getSizeY();
-				float sizeZ = getSizeZ();
+				final float sizeX = getSizeX();
+				final float sizeY = getSizeY();
+				final float sizeZ = getSizeZ();
 
 				if(center.getX() + sizeX < target.getX() - box.getSizeX() || center.getX() - sizeX > target.getX() + box.getSizeX()) {
 					return false;
@@ -112,12 +112,12 @@ public final class OrientedBoundingBox extends AbstractBounding {
 			}
 			case SPHERE: {
 
-				BoundingSphere sphere = (BoundingSphere) bounding;
+				final BoundingSphere sphere = (BoundingSphere) bounding;
 
-				Vector target = sphere.getResultCenter(buffer);
-				Vector center = getResultCenter(buffer);
+				final Vector target = sphere.getResultCenter(buffer);
+				final Vector center = getResultCenter(buffer);
 
-				float radius = sphere.getRadius();
+				final float radius = sphere.getRadius();
 
 				if(Math.abs(center.getX() - target.getX()) > radius + getSizeX()) {
 					return false;
@@ -142,26 +142,26 @@ public final class OrientedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public boolean intersects(Vector start, Vector direction, VectorBuffer buffer) {
+	public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
 
 		float rhs;
 
-		Vector diff = start.subtract(getResultCenter(buffer), buffer.getNextVector());
+		final Vector diff = start.subtract(getResultCenter(buffer), buffer.getNextVector());
 
-		Vector fWdU = buffer.getNextVector();
-		Vector fAWdU = buffer.getNextVector();
-		Vector fDdU = buffer.getNextVector();;
-		Vector fADdU = buffer.getNextVector();
-		Vector fAWxDdU = buffer.getNextVector();
+		final Vector fWdU = buffer.getNextVector();
+		final Vector fAWdU = buffer.getNextVector();
+		final Vector fDdU = buffer.getNextVector();;
+		final Vector fADdU = buffer.getNextVector();
+		final Vector fAWxDdU = buffer.getNextVector();
 
 		fWdU.setX(direction.dot(Vector.UNIT_X));
 		fAWdU.setX(Math.abs(fWdU.getX()));
 		fDdU.setX(diff.dot(Vector.UNIT_X));
 		fADdU.setX(Math.abs(fDdU.getX()));
 
-		float sizeX = getSizeX();
-		float sizeY = getSizeY();
-		float sizeZ = getSizeZ();
+		final float sizeX = getSizeX();
+		final float sizeY = getSizeY();
+		final float sizeZ = getSizeZ();
 
 		if(fADdU.getX() > sizeX && fDdU.getX() * fWdU.getX() >= 0.0F) {
 			return false;
@@ -185,7 +185,7 @@ public final class OrientedBoundingBox extends AbstractBounding {
 			return false;
 		}
 
-		Vector wCrossD = direction.cross(diff, buffer.getNextVector());
+		final Vector wCrossD = direction.cross(diff, buffer.getNextVector());
 
 		fAWxDdU.setX(Math.abs(wCrossD.dot(Vector.UNIT_X)));
 
@@ -216,12 +216,12 @@ public final class OrientedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public void update(Rotation rotation, VectorBuffer buffer) {
+	public void update(final Rotation rotation, final VectorBuffer buffer) {
 
 		matrix.set(rotation);
 		matrix.absoluteLocal();
 
-		Vector vector = buffer.getNextVector();
+		final Vector vector = buffer.getNextVector();
 		vector.set(size);
 
 		matrix.mult(vector, vector);

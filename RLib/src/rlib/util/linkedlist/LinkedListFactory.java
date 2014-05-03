@@ -23,7 +23,7 @@ public final class LinkedListFactory {
 	 * @param type тип элементов.
 	 * @return отсортированный связанный список.
 	 */
-	public static <E extends Comparable<E>> LinkedList<E> newSortedLinkedList(Class<?> type) {
+	public static <E extends Comparable<E>> LinkedList<E> newSortedLinkedList(final Class<?> type) {
 		return new SortedLinkedList<>(type);
 	}
 

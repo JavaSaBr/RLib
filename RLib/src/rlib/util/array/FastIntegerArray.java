@@ -67,13 +67,13 @@ public class FastIntegerArray implements IntegerArray {
 		this(10);
 	}
 
-	public FastIntegerArray(int size) {
+	public FastIntegerArray(final int size) {
 		this.array = new int[size];
 		this.size = 0;
 	}
 
 	@Override
-	public FastIntegerArray add(int element) {
+	public FastIntegerArray add(final int element) {
 
 		if(size == array.length) {
 			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
@@ -85,13 +85,13 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final FastIntegerArray addAll(int[] elements) {
+	public final FastIntegerArray addAll(final int[] elements) {
 
 		if(elements == null || elements.length < 1) {
 			return this;
 		}
 
-		int diff = size + elements.length - array.length;
+		final int diff = size + elements.length - array.length;
 
 		if(diff > 0) {
 			array = ArrayUtils.copyOf(array, diff);
@@ -105,13 +105,13 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final FastIntegerArray addAll(IntegerArray elements) {
+	public final FastIntegerArray addAll(final IntegerArray elements) {
 
 		if(elements == null || elements.isEmpty()) {
 			return this;
 		}
 
-		int diff = size + elements.size() - array.length;
+		final int diff = size + elements.size() - array.length;
 
 		if(diff > 0) {
 			array = ArrayUtils.copyOf(array, diff);
@@ -138,9 +138,9 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean contains(int element) {
+	public final boolean contains(final int element) {
 
-		int[] array = array();
+		final int[] array = array();
 
 		for(int i = 0, length = size; i < length; i++) {
 			if(array[i] == element) {
@@ -152,7 +152,7 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean containsAll(int[] array) {
+	public final boolean containsAll(final int[] array) {
 
 		for(int i = 0, length = array.length; i < length; i++) {
 			if(!contains(array[i])) {
@@ -164,9 +164,9 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean containsAll(IntegerArray array) {
+	public final boolean containsAll(final IntegerArray array) {
 
-		int[] elements = array.array();
+		final int[] elements = array.array();
 
 		for(int i = 0, length = array.size(); i < length; i++) {
 			if(!contains(elements[i])) {
@@ -178,9 +178,9 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public boolean fastRemove(int element) {
+	public boolean fastRemove(final int element) {
 
-		int index = indexOf(element);
+		final int index = indexOf(element);
 
 		if(index > -1) {
 			fastRemoveByIndex(index);
@@ -190,13 +190,13 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean fastRemoveByIndex(int index) {
+	public final boolean fastRemoveByIndex(final int index) {
 
 		if(index < 0 || size < 1 || index >= size) {
 			return false;
 		}
 
-		int[] array = array();
+		final int[] array = array();
 
 		size -= 1;
 
@@ -217,18 +217,18 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final int get(int index) {
+	public final int get(final int index) {
 		return array[index];
 	}
 
 	@Override
-	public final int indexOf(int element) {
+	public final int indexOf(final int element) {
 
-		int[] array = array();
+		final int[] array = array();
 
 		for(int i = 0, length = size; i < length; i++) {
 
-			int val = array[i];
+			final int val = array[i];
 
 			if(element == val) {
 				return i;
@@ -259,15 +259,15 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final int lastIndexOf(int element) {
+	public final int lastIndexOf(final int element) {
 
-		int[] array = array();
+		final int[] array = array();
 
 		int last = -1;
 
 		for(int i = 0, length = size; i < length; i++) {
 
-			int val = array[i];
+			final int val = array[i];
 
 			if(element == val) {
 				last = i;
@@ -279,26 +279,26 @@ public class FastIntegerArray implements IntegerArray {
 
 	@Override
 	public final int poll() {
-		int val = first();
+		final int val = first();
 		slowRemoveByIndex(0);
 		return val;
 	}
 
 	@Override
 	public final int pop() {
-		int last = last();
+		final int last = last();
 		fastRemoveByIndex(size - 1);
 		return last;
 	}
 
 	@Override
-	public final boolean removeAll(IntegerArray target) {
+	public final boolean removeAll(final IntegerArray target) {
 
 		if(target.isEmpty()) {
 			return true;
 		}
 
-		int[] array = target.array();
+		final int[] array = target.array();
 
 		for(int i = 0, length = target.size(); i < length; i++) {
 			fastRemove(array[i]);
@@ -308,9 +308,9 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean retainAll(IntegerArray target) {
+	public final boolean retainAll(final IntegerArray target) {
 
-		int[] array = array();
+		final int[] array = array();
 
 		for(int i = 0, length = size; i < length; i++) {
 			if(!target.contains(array[i])) {
@@ -328,9 +328,9 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public boolean slowRemove(int element) {
+	public boolean slowRemove(final int element) {
 
-		int index = indexOf(element);
+		final int index = indexOf(element);
 
 		if(index > -1) {
 			slowRemoveByIndex(index);
@@ -340,15 +340,15 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean slowRemoveByIndex(int index) {
+	public final boolean slowRemoveByIndex(final int index) {
 
 		if(index < 0 || size < 1) {
 			return false;
 		}
 
-		int[] array = array();
+		final int[] array = array();
 
-		int numMoved = size - index - 1;
+		final int numMoved = size - index - 1;
 
 		if(numMoved > 0) {
 			System.arraycopy(array, index + 1, array, index, numMoved);
@@ -368,9 +368,9 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final int[] toArray(int[] container) {
+	public final int[] toArray(final int[] container) {
 
-		int[] array = array();
+		final int[] array = array();
 
 		if(container.length >= size) {
 

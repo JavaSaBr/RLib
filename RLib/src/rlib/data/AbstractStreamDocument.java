@@ -27,7 +27,7 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 
 		@Override
 		protected DocumentBuilderFactory initialValue() {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(false);
 			factory.setIgnoringComments(true);
 			return factory;
@@ -44,7 +44,7 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 	public AbstractStreamDocument() {
 	}
 
-	public AbstractStreamDocument(InputStream stream) {
+	public AbstractStreamDocument(final InputStream stream) {
 		this.stream = stream;
 	}
 
@@ -56,10 +56,10 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 	@Override
 	public C parse() {
 
-		DocumentBuilderFactory factory = LOCAL_FACTORY.get();
+		final DocumentBuilderFactory factory = LOCAL_FACTORY.get();
 
 		try {
-			DocumentBuilder builder = factory.newDocumentBuilder();
+			final DocumentBuilder builder = factory.newDocumentBuilder();
 			document = builder.parse(stream);
 		} catch(SAXException | IOException | ParserConfigurationException e) {
 			LOGGER.warning(this, e);
@@ -72,7 +72,7 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 
 		try {
 			parse(document);
-		} catch(Exception e) {
+		} catch(final Exception e) {
 			LOGGER.warning(this, e);
 			throw new RuntimeException(e);
 		}
@@ -90,7 +90,7 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 	/**
 	 * @param stream контент для парса.
 	 */
-	protected void setStream(InputStream stream) {
+	protected void setStream(final InputStream stream) {
 		this.stream = stream;
 	}
 }

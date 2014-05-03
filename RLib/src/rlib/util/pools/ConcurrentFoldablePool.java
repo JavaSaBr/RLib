@@ -13,31 +13,8 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 	/** массив объектов */
 	private final Array<E> pool;
 
-	protected ConcurrentFoldablePool(int size, Class<?> type) {
+	protected ConcurrentFoldablePool(final int size, final Class<?> type) {
 		this.pool = ArrayFactory.newConcurrentArray(type, size);
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return pool.isEmpty();
-	}
-
-	@Override
-	public void put(E object) {
-
-		if(object == null) {
-			return;
-		}
-
-		object.finalyze();
-
-		Array<E> pool = getPool();
-		pool.writeLock();
-		try {
-			pool.add(object);
-		} finally {
-			pool.writeUnlock();
-		}
 	}
 
 	/**
@@ -48,8 +25,31 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 	}
 
 	@Override
-	public void remove(E object) {
-		Array<E> pool = getPool();
+	public boolean isEmpty() {
+		return pool.isEmpty();
+	}
+
+	@Override
+	public void put(final E object) {
+
+		if(object == null) {
+			return;
+		}
+
+		object.finalyze();
+
+		final Array<E> pool = getPool();
+		pool.writeLock();
+		try {
+			pool.add(object);
+		} finally {
+			pool.writeUnlock();
+		}
+	}
+
+	@Override
+	public void remove(final E object) {
+		final Array<E> pool = getPool();
 		pool.writeLock();
 		try {
 			pool.fastRemove(object);
@@ -63,7 +63,7 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 
 		E object = null;
 
-		Array<E> pool = getPool();
+		final Array<E> pool = getPool();
 		pool.writeLock();
 		try {
 			object = pool.pop();

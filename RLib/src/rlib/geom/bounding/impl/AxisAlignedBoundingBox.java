@@ -36,7 +36,7 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 	/** отступ формы от цента по Z */
 	protected float offsetZ;
 
-	public AxisAlignedBoundingBox(Vector center, Vector offset, float sizeX, float sizeY, float sizeZ) {
+	public AxisAlignedBoundingBox(final Vector center, final Vector offset, final float sizeX, final float sizeY, final float sizeZ) {
 		super(center, offset);
 
 		this.matrix = Matrix3f.newInstance();
@@ -52,8 +52,8 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public boolean contains(float x, float y, float z, VectorBuffer buffer) {
-		Vector center = getResultCenter(buffer);
+	public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
+		final Vector center = getResultCenter(buffer);
 		return Math.abs(center.getX() - x) < sizeX && Math.abs(center.getY() - y) < sizeY && Math.abs(center.getZ() - z) < sizeZ;
 	}
 
@@ -63,9 +63,9 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public Vector getResultCenter(VectorBuffer buffer) {
+	public Vector getResultCenter(final VectorBuffer buffer) {
 
-		Vector vector = buffer.getNextVector();
+		final Vector vector = buffer.getNextVector();
 		vector.set(center);
 
 		if(offset == Vector.ZERO) {
@@ -97,21 +97,21 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public boolean intersects(Bounding bounding, VectorBuffer buffer) {
+	public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
 		switch(bounding.getBoundingType()) {
 			case EMPTY: {
 				return false;
 			}
 			case AXIS_ALIGNED_BOX: {
 
-				AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
+				final AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
 
-				Vector target = box.getResultCenter(buffer);
-				Vector center = getResultCenter(buffer);
+				final Vector target = box.getResultCenter(buffer);
+				final Vector center = getResultCenter(buffer);
 
-				float sizeX = getSizeX();
-				float sizeY = getSizeY();
-				float sizeZ = getSizeZ();
+				final float sizeX = getSizeX();
+				final float sizeY = getSizeY();
+				final float sizeZ = getSizeZ();
 
 				if(center.getX() + sizeX < target.getX() - box.getSizeX() || center.getX() - sizeX > target.getX() + box.getSizeX()) {
 					return false;
@@ -125,12 +125,12 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 			}
 			case SPHERE: {
 
-				BoundingSphere sphere = (BoundingSphere) bounding;
+				final BoundingSphere sphere = (BoundingSphere) bounding;
 
-				Vector target = sphere.getResultCenter(buffer);
-				Vector center = getResultCenter(buffer);
+				final Vector target = sphere.getResultCenter(buffer);
+				final Vector center = getResultCenter(buffer);
 
-				float radius = sphere.getRadius();
+				final float radius = sphere.getRadius();
 
 				if(Math.abs(center.getX() - target.getX()) > radius + getSizeX()) {
 					return false;
@@ -155,37 +155,37 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public boolean intersects(Vector start, Vector direction, VectorBuffer buffer) {
+	public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
 
-		float divX = 1.0F / (direction.getX() == 0 ? 0.00001F : direction.getX());
-		float divY = 1.0F / (direction.getY() == 0 ? 0.00001F : direction.getY());
-		float divZ = 1.0F / (direction.getZ() == 0 ? 0.00001F : direction.getZ());
+		final float divX = 1.0F / (direction.getX() == 0 ? 0.00001F : direction.getX());
+		final float divY = 1.0F / (direction.getY() == 0 ? 0.00001F : direction.getY());
+		final float divZ = 1.0F / (direction.getZ() == 0 ? 0.00001F : direction.getZ());
 
-		float sizeX = getSizeX() * 0.5F;
-		float sizeY = getSizeY() * 0.5F;
-		float sizeZ = getSizeZ() * 0.5F;
+		final float sizeX = getSizeX() * 0.5F;
+		final float sizeY = getSizeY() * 0.5F;
+		final float sizeZ = getSizeZ() * 0.5F;
 
-		Vector center = getResultCenter(buffer);
+		final Vector center = getResultCenter(buffer);
 
-		float minX = center.getX() - sizeX;
-		float minY = center.getY() - sizeY;
-		float minZ = center.getZ() - sizeZ;
+		final float minX = center.getX() - sizeX;
+		final float minY = center.getY() - sizeY;
+		final float minZ = center.getZ() - sizeZ;
 
-		float maxX = center.getX() + sizeX;
-		float maxY = center.getY() + sizeY;
-		float maxZ = center.getZ() + sizeZ;
+		final float maxX = center.getX() + sizeX;
+		final float maxY = center.getY() + sizeY;
+		final float maxZ = center.getZ() + sizeZ;
 
-		float t1 = (minX - start.getX()) * divX;
-		float t2 = (maxX - start.getX()) * divX;
-		float t3 = (minY - start.getY()) * divY;
-		float t4 = (maxY - start.getY()) * divY;
-		float t5 = (minZ - start.getZ()) * divZ;
-		float t6 = (maxZ - start.getZ()) * divZ;
+		final float t1 = (minX - start.getX()) * divX;
+		final float t2 = (maxX - start.getX()) * divX;
+		final float t3 = (minY - start.getY()) * divY;
+		final float t4 = (maxY - start.getY()) * divY;
+		final float t5 = (minZ - start.getZ()) * divZ;
+		final float t6 = (maxZ - start.getZ()) * divZ;
 
-		float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
-		float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+		final float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
+		final float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
 
-		return (tmin <= tmax) && (tmax > 0.f);
+		return tmin <= tmax && tmax > 0.f;
 	}
 
 	@Override
@@ -194,12 +194,12 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 	}
 
 	@Override
-	public void update(Rotation rotation, VectorBuffer buffer) {
+	public void update(final Rotation rotation, final VectorBuffer buffer) {
 
 		matrix.set(rotation);
 		matrix.absoluteLocal();
 
-		Vector vector = buffer.getNextVector();
+		final Vector vector = buffer.getNextVector();
 		vector.set(size);
 
 		matrix.mult(vector, vector);

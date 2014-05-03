@@ -43,21 +43,21 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 		private int hash;
 
 		@Override
-		public boolean equals(Object object) {
+		public boolean equals(final Object object) {
 
 			if(object == null || object.getClass() != Entry.class) {
 				return false;
 			}
 
-			Entry<?, ?> entry = (Entry<?, ?>) object;
+			final Entry<?, ?> entry = (Entry<?, ?>) object;
 
-			Object firstKey = getKey();
-			Object secondKey = entry.getKey();
+			final Object firstKey = getKey();
+			final Object secondKey = entry.getKey();
 
 			if(Objects.equals(firstKey, secondKey)) {
 
-				Object firstValue = getValue();
-				Object secondValue = entry.getValue();
+				final Object firstValue = getValue();
+				final Object secondValue = entry.getValue();
 
 				return Objects.equals(firstValue, secondValue);
 			}
@@ -111,7 +111,7 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 			hash = 0;
 		}
 
-		public void set(int hash, K key, V value, Entry<K, V> next) {
+		public void set(final int hash, final K key, final V value, final Entry<K, V> next) {
 			this.value = value;
 			this.next = next;
 			this.key = key;
@@ -121,7 +121,7 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 		/**
 		 * @param next следующая цепочка.
 		 */
-		public void setNext(Entry<K, V> next) {
+		public void setNext(final Entry<K, V> next) {
 			this.next = next;
 		}
 
@@ -131,8 +131,8 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 		 * @param value новое значение.
 		 * @return старое значение.
 		 */
-		public V setValue(V value) {
-			V old = getValue();
+		public V setValue(final V value) {
+			final V old = getValue();
 			this.value = value;
 			return old;
 		}
@@ -160,10 +160,12 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 
 		private TableIterator() {
 
-			Entry<K, V>[] table = table();
+			final Entry<K, V>[] table = table();
 
 			if(size.get() > 0) {
-				while(index < table.length && (next = table[index++]) == null);
+				while(index < table.length && (next = table[index++]) == null) {
+					;
+				}
 			}
 		}
 
@@ -182,15 +184,17 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 		 */
 		private Entry<K, V> nextEntry() {
 
-			Entry<K, V>[] table = table();
-			Entry<K, V> entry = next;
+			final Entry<K, V>[] table = table();
+			final Entry<K, V> entry = next;
 
 			if(entry == null) {
 				throw new NoSuchElementException();
 			}
 
 			if((next = entry.getNext()) == null) {
-				while(index < table.length && (next = table[index++]) == null);
+				while(index < table.length && (next = table[index++]) == null) {
+					;
+				}
 			}
 
 			current = entry;
@@ -204,7 +208,7 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 				throw new IllegalStateException();
 			}
 
-			K key = current.getKey();
+			final K key = current.getKey();
 			current = null;
 
 			removeEntryForKey(key);
@@ -230,12 +234,12 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 		this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
 	}
 
-	protected ConcurrentObjectTable(float loadFactor) {
+	protected ConcurrentObjectTable(final float loadFactor) {
 		this(loadFactor, DEFAULT_INITIAL_CAPACITY);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected ConcurrentObjectTable(float loadFactor, int initCapacity) {
+	protected ConcurrentObjectTable(final float loadFactor, final int initCapacity) {
 		this.loadFactor = loadFactor;
 		this.threshold = (int) (initCapacity * loadFactor);
 		this.size = new AtomicInteger();
@@ -244,12 +248,12 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 		this.locker = LockFactory.newARSWLock();
 	}
 
-	protected ConcurrentObjectTable(int initCapacity) {
+	protected ConcurrentObjectTable(final int initCapacity) {
 		this(DEFAULT_LOAD_FACTOR, initCapacity);
 	}
 
 	@Override
-	public void accept(BiConsumer<? super K, ? super V> consumer) {
+	public void accept(final BiConsumer<? super K, ? super V> consumer) {
 		for(Entry<K, V> entry : table()) {
 			while(entry != null) {
 				consumer.accept(entry.getKey(), entry.getValue());
@@ -266,12 +270,12 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	 * @param value значение по ключу.
 	 * @param index индекс ячейки.
 	 */
-	private final void addEntry(int hash, K key, V value, int index) {
+	private final void addEntry(final int hash, final K key, final V value, final int index) {
 
-		FoldablePool<Entry<K, V>> entryPool = getEntryPool();
+		final FoldablePool<Entry<K, V>> entryPool = getEntryPool();
 
-		Entry<K, V>[] table = table();
-		Entry<K, V> entry = table[index];
+		final Entry<K, V>[] table = table();
+		final Entry<K, V> entry = table[index];
 		Entry<K, V> newEntry = entryPool.take();
 
 		if(newEntry == null) {
@@ -287,7 +291,7 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public void apply(Function<? super V, V> function) {
+	public void apply(final Function<? super V, V> function) {
 		for(Entry<K, V> entry : table()) {
 			while(entry != null) {
 				entry.setValue(function.apply(entry.getValue()));
@@ -299,9 +303,9 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	@Override
 	public final void clear() {
 
-		FoldablePool<Entry<K, V>> entryPool = getEntryPool();
+		final FoldablePool<Entry<K, V>> entryPool = getEntryPool();
 
-		Entry<K, V>[] table = table();
+		final Entry<K, V>[] table = table();
 		Entry<K, V> next = null;
 
 		for(Entry<K, V> entry : table) {
@@ -318,18 +322,18 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public final boolean containsKey(K key) {
+	public final boolean containsKey(final K key) {
 		return getEntry(key) != null;
 	}
 
 	@Override
-	public final boolean containsValue(V value) {
+	public final boolean containsValue(final V value) {
 
 		if(value == null) {
 			throw new NullPointerException("value is null.");
 		}
 
-		for(Entry<K, V> element : table()) {
+		for(final Entry<K, V> element : table()) {
 			for(Entry<K, V> entry = element; entry != null; entry = entry.getNext()) {
 				if(value.equals(entry.getValue())) {
 					return true;
@@ -348,7 +352,7 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public void forEach(Consumer<? super V> consumer) {
+	public void forEach(final Consumer<? super V> consumer) {
 		for(Entry<K, V> entry : table()) {
 			while(entry != null) {
 				consumer.accept(entry.getValue());
@@ -358,13 +362,13 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public final V get(K key) {
+	public final V get(final K key) {
 
 		if(key == null) {
 			throw new NullPointerException("key is null.");
 		}
 
-		Entry<K, V> entry = getEntry(key);
+		final Entry<K, V> entry = getEntry(key);
 		return entry == null ? null : entry.getValue();
 	}
 
@@ -374,11 +378,11 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	 * @param key ключ ячейки.
 	 * @return ячейка.
 	 */
-	private final Entry<K, V> getEntry(K key) {
+	private final Entry<K, V> getEntry(final K key) {
 
-		Entry<K, V>[] table = table();
+		final Entry<K, V>[] table = table();
 
-		int hash = hash(key.hashCode());
+		final int hash = hash(key.hashCode());
 
 		for(Entry<K, V> entry = table[indexFor(hash, table.length)]; entry != null; entry = entry.getNext()) {
 			if(entry.getHash() == hash && key.equals(entry.getKey())) {
@@ -407,7 +411,7 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public final Array<K> keyArray(Array<K> container) {
+	public final Array<K> keyArray(final Array<K> container) {
 
 		for(Entry<K, V> entry : table()) {
 			while(entry != null) {
@@ -420,7 +424,7 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public void moveTo(Table<? super K, ? super V> table) {
+	public void moveTo(final Table<? super K, ? super V> table) {
 
 		if(isEmpty()) {
 			return;
@@ -437,16 +441,16 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public final V put(K key, V value) {
+	public final V put(final K key, final V value) {
 
 		if(key == null) {
 			throw new NullPointerException("key is null.");
 		}
 
-		Entry<K, V>[] table = table();
+		final Entry<K, V>[] table = table();
 
-		int hash = hash(key.hashCode());
-		int i = indexFor(hash, table.length);
+		final int hash = hash(key.hashCode());
+		final int i = indexFor(hash, table.length);
 
 		for(Entry<K, V> entry = table[i]; entry != null; entry = entry.getNext()) {
 			if(entry.getHash() == hash && key.equals(entry.getKey())) {
@@ -470,17 +474,17 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public final V remove(K key) {
+	public final V remove(final K key) {
 
 		if(key == null) {
 			throw new NullPointerException("key is null.");
 		}
 
-		Entry<K, V> old = removeEntryForKey(key);
-		V value = old == null ? null : old.getValue();
+		final Entry<K, V> old = removeEntryForKey(key);
+		final V value = old == null ? null : old.getValue();
 
 		if(old != null) {
-			FoldablePool<Entry<K, V>> entryPool = getEntryPool();
+			final FoldablePool<Entry<K, V>> entryPool = getEntryPool();
 			entryPool.put(old);
 		}
 
@@ -493,20 +497,20 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	 * @param key ключ ячейки.
 	 * @return удаленная ячейка.
 	 */
-	private final Entry<K, V> removeEntryForKey(K key) {
+	private final Entry<K, V> removeEntryForKey(final K key) {
 
-		int hash = hash(key.hashCode());
+		final int hash = hash(key.hashCode());
 
-		Entry<K, V>[] table = table();
+		final Entry<K, V>[] table = table();
 
-		int i = indexFor(hash, table.length);
+		final int i = indexFor(hash, table.length);
 
 		Entry<K, V> prev = table[i];
 		Entry<K, V> entry = prev;
 
 		while(entry != null) {
 
-			Entry<K, V> next = entry.getNext();
+			final Entry<K, V> next = entry.getNext();
 
 			if(entry.getHash() == hash && key.equals(entry.getKey())) {
 
@@ -534,17 +538,17 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	 * @param newLength новый размер.
 	 */
 	@SuppressWarnings("unchecked")
-	private final void resize(int newLength) {
+	private final void resize(final int newLength) {
 
-		Entry<K, V>[] oldTable = table();
+		final Entry<K, V>[] oldTable = table();
 
-		int oldLength = oldTable.length;
+		final int oldLength = oldTable.length;
 
 		if(oldLength >= DEFAULT_MAXIMUM_CAPACITY) {
 			threshold = Integer.MAX_VALUE;
 			return;
 		}
-		Entry<K, V>[] newTable = new Entry[newLength];
+		final Entry<K, V>[] newTable = new Entry[newLength];
 		transfer(newTable);
 
 		this.table = newTable;
@@ -566,12 +570,12 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	@Override
 	public final String toString() {
 
-		int size = size();
+		final int size = size();
 
-		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
 		builder.append(" size = ").append(size).append(" : ");
 
-		Entry<K, V>[] table = table();
+		final Entry<K, V>[] table = table();
 
 		for(int i = 0, length = table.length; i < length; i++) {
 
@@ -598,11 +602,11 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	 *
 	 * @param newTable новая таблица.
 	 */
-	private final void transfer(Entry<K, V>[] newTable) {
+	private final void transfer(final Entry<K, V>[] newTable) {
 
-		Entry<K, V>[] original = table;
+		final Entry<K, V>[] original = table;
 
-		int newCapacity = newTable.length;
+		final int newCapacity = newTable.length;
 
 		for(int j = 0, length = original.length; j < length; j++) {
 
@@ -614,9 +618,9 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 
 			do {
 
-				Entry<K, V> next = entry.getNext();
+				final Entry<K, V> next = entry.getNext();
 
-				int i = indexFor(entry.getHash(), newCapacity);
+				final int i = indexFor(entry.getHash(), newCapacity);
 
 				entry.setNext(newTable[i]);
 				newTable[i] = entry;
@@ -627,7 +631,7 @@ public class ConcurrentObjectTable<K, V> extends AbstractTable<K, V> {
 	}
 
 	@Override
-	public Array<V> values(Array<V> container) {
+	public Array<V> values(final Array<V> container) {
 
 		for(Entry<K, V> entry : table()) {
 			while(entry != null) {

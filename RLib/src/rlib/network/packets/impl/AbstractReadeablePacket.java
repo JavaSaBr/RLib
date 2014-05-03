@@ -44,7 +44,7 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 		try {
 			readImpl();
 			return true;
-		} catch(Exception e) {
+		} catch(final Exception e) {
 			LOGGER.warning(this, e);
 			LOGGER.warning(this, "buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.limit()));
 		}
@@ -64,7 +64,7 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 	 * 
 	 * @param array наполняемый массив байтов.
 	 */
-	public final void readBytes(byte[] array) {
+	public final void readBytes(final byte[] array) {
 		buffer.get(array);
 	}
 
@@ -75,7 +75,7 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 	 * @param offset отступ в массиве байтов.
 	 * @param length кол-во записываемых байтов в массив.
 	 */
-	public final void readBytes(byte[] array, int offset, int length) {
+	public final void readBytes(final byte[] array, final int offset, final int length) {
 		buffer.get(array, offset, length);
 	}
 
@@ -117,7 +117,7 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 	 */
 	public final String readString() {
 
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 
 		char cha;
 
@@ -138,9 +138,9 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 	/**
 	 * Чтение строки из буфера указанной длинны.
 	 */
-	public final String readString(int length) {
+	public final String readString(final int length) {
 
-		char[] array = new char[length];
+		final char[] array = new char[length];
 
 		for(int i = 0; i < length && buffer.remaining() > 1; i++) {
 			array[i] = buffer.getChar();
@@ -154,7 +154,7 @@ public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> imple
 	public void run() {
 		try {
 			runImpl();
-		} catch(Exception e) {
+		} catch(final Exception e) {
 			LOGGER.warning(this, e);
 		} finally {
 			getPool().put(this);

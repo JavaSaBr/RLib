@@ -24,7 +24,7 @@ public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJa
 	/** загрузчик скомпиленных классов */
 	private final CompileClassLoader loader;
 
-	public CompileJavaFileManager(StandardJavaFileManager fileManager, CompileClassLoader loader) {
+	public CompileJavaFileManager(final StandardJavaFileManager fileManager, final CompileClassLoader loader) {
 		super(fileManager);
 
 		this.loader = loader;
@@ -46,9 +46,9 @@ public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJa
 	}
 
 	@Override
-	public JavaFileObject getJavaFileForOutput(Location location, String name, Kind kind, FileObject sibling) throws IOException {
+	public JavaFileObject getJavaFileForOutput(final Location location, final String name, final Kind kind, final FileObject sibling) throws IOException {
 
-		CompileByteCode byteCode = new CompileByteCode(name);
+		final CompileByteCode byteCode = new CompileByteCode(name);
 
 		loader.addByteCode(byteCode);
 		classNames.add(name);

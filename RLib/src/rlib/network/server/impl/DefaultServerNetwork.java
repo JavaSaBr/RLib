@@ -31,7 +31,7 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
 	/** обработчик новых подключений */
 	private final AcceptHandler acceptHandler;
 
-	public DefaultServerNetwork(NetworkConfig config, AcceptHandler acceptHandler) throws IOException {
+	public DefaultServerNetwork(final NetworkConfig config, final AcceptHandler acceptHandler) throws IOException {
 		super(config);
 		this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
 		this.channel = AsynchronousServerSocketChannel.open(group);
@@ -39,12 +39,12 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
 	}
 
 	@Override
-	public <A> void accept(A attachment, CompletionHandler<AsynchronousSocketChannel, ? super A> handler) {
+	public <A> void accept(final A attachment, final CompletionHandler<AsynchronousSocketChannel, ? super A> handler) {
 		channel.accept(attachment, handler);
 	}
 
 	@Override
-	public void bind(SocketAddress address) throws IOException {
+	public void bind(final SocketAddress address) throws IOException {
 		channel.bind(address);
 		channel.accept(channel, acceptHandler);
 	}

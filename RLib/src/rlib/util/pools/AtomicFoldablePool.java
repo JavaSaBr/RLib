@@ -18,7 +18,7 @@ public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	/** блокировщик */
 	private final Lock lock;
 
-	protected AtomicFoldablePool(int size, Class<?> type) {
+	protected AtomicFoldablePool(final int size, final Class<?> type) {
 		this.pool = ArrayFactory.newArray(type, size);
 		this.lock = LockFactory.newPrimitiveAtomicLoc();
 	}
@@ -29,7 +29,7 @@ public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	}
 
 	@Override
-	public void put(E object) {
+	public void put(final E object) {
 
 		if(object == null) {
 			return;
@@ -46,7 +46,7 @@ public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	}
 
 	@Override
-	public void remove(E object) {
+	public void remove(final E object) {
 		lock.lock();
 		try {
 			pool.fastRemove(object);

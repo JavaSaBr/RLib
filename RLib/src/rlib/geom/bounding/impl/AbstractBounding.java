@@ -23,23 +23,23 @@ public abstract class AbstractBounding implements Bounding {
 	/** смещение от центра */
 	protected Vector offset;
 
-	protected AbstractBounding(Vector center, Vector offset) {
+	protected AbstractBounding(final Vector center, final Vector offset) {
 		this.center = center;
 		this.offset = offset;
 	}
 
 	@Override
-	public boolean contains(float x, float y, float z, VectorBuffer buffer) {
+	public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
 		return false;
 	}
 
 	@Override
-	public boolean contains(Vector point, VectorBuffer buffer) {
+	public boolean contains(final Vector point, final VectorBuffer buffer) {
 		return contains(point.getX(), point.getY(), point.getZ(), buffer);
 	}
 
 	@Override
-	public final float distanceTo(Vector point) {
+	public final float distanceTo(final Vector point) {
 		return center.distance(point);
 	}
 
@@ -59,31 +59,31 @@ public abstract class AbstractBounding implements Bounding {
 	}
 
 	@Override
-	public Vector getResultCenter(VectorBuffer buffer) {
+	public Vector getResultCenter(final VectorBuffer buffer) {
 		return null;
 	}
 
 	@Override
-	public boolean intersects(Bounding bounding, VectorBuffer buffer) {
+	public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
 		return false;
 	}
 
 	@Override
-	public final boolean intersects(Ray ray, VectorBuffer buffer) {
+	public final boolean intersects(final Ray ray, final VectorBuffer buffer) {
 		return intersects(ray.getStart(), ray.getDirection(), buffer);
 	}
 
 	@Override
-	public boolean intersects(Vector start, Vector direction, VectorBuffer buffer) {
+	public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
 		return false;
 	}
 
 	@Override
-	public void setCenter(Vector center) {
+	public void setCenter(final Vector center) {
 		this.center = center;
 	}
 
 	@Override
-	public void update(Rotation rotation, VectorBuffer buffer) {
+	public void update(final Rotation rotation, final VectorBuffer buffer) {
 	}
 }

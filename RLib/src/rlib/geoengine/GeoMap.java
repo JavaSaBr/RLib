@@ -4,21 +4,20 @@ import java.io.File;
 
 import rlib.util.array.Array;
 
-
 /**
  * Интерфейс для реализации карты квадратов геодаты.
  *
  * @author Ronn
  */
-public interface GeoMap
-{
+public interface GeoMap {
+
 	/**
 	 * Добавление нового квадрата в движек.
 	 *
 	 * @param quard квадрат геодаты.
 	 */
 	public void addQuard(GeoQuard quard);
-	
+
 	/**
 	 * Добавление нового квадрата в движек.
 	 * 

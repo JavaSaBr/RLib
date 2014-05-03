@@ -16,26 +16,26 @@ import rlib.database.sql.builder.operator.impl.MySqlSelectSqlOperator;
 public class MySqlBuilder implements PrepareSqlBuilder {
 
 	@Override
-	public SelectSqlOperator select(SelectSqlOperatorArgs args) {
-		MySqlSelectSqlOperator operator = new MySqlSelectSqlOperator();
-		args.applyArgs(operator);
-		return operator;
-	}
-
-	@Override
 	public DeleteSqlOperator delete() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public UpdateSqlOperator update() {
+	public InsertSqlOperator insert() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public InsertSqlOperator insert() {
+	public SelectSqlOperator select(final SelectSqlOperatorArgs args) {
+		final MySqlSelectSqlOperator operator = new MySqlSelectSqlOperator();
+		args.applyArgs(operator);
+		return operator;
+	}
+
+	@Override
+	public UpdateSqlOperator update() {
 		// TODO Auto-generated method stub
 		return null;
 	}

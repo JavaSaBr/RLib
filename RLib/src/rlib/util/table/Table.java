@@ -28,13 +28,13 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	/**
 	 * Обработать значения и ключи в таблице.
 	 */
-	public default void accept(BiConsumer<? super K, ? super V> consumer) {
+	public default void accept(final BiConsumer<? super K, ? super V> consumer) {
 	}
 
 	/**
 	 * Применить функцию к таблице для обновления значений.
 	 */
-	public default void apply(Function<? super V, V> function) {
+	public default void apply(final Function<? super V, V> function) {
 	}
 
 	/**
@@ -48,7 +48,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key проверяемый ключ.
 	 */
-	public default boolean containsKey(int key) {
+	public default boolean containsKey(final int key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -57,7 +57,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key проверяемый ключ.
 	 */
-	public default boolean containsKey(K key) {
+	public default boolean containsKey(final K key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -66,7 +66,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key проверяемый ключ.
 	 */
-	public default boolean containsKey(long key) {
+	public default boolean containsKey(final long key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -75,7 +75,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param value проверяемое значение.
 	 */
-	public default boolean containsValue(V value) {
+	public default boolean containsValue(final V value) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -89,7 +89,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key ключ.
 	 */
-	public default V get(int key) {
+	public default V get(final int key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -98,7 +98,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key ключ.
 	 */
-	public default V get(K key) {
+	public default V get(final K key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -107,7 +107,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key ключ.
 	 */
-	public default V get(long key) {
+	public default V get(final long key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -129,14 +129,14 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param container контейнер для ключей.
 	 * @return массив ключей таблицы.
 	 */
-	public default Array<K> keyArray(Array<K> container) {
+	public default Array<K> keyArray(final Array<K> container) {
 		throw new RuntimeException("not supported.");
 	}
 
 	/**
 	 * @return массив ключей таблицы.
 	 */
-	public default Array<K> keyArray(Class<K> type) {
+	public default Array<K> keyArray(final Class<K> type) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -151,7 +151,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param container контейнер для ключей.
 	 * @return массив ключей таблицы.
 	 */
-	public default IntegerArray keyIntegerArray(IntegerArray container) {
+	public default IntegerArray keyIntegerArray(final IntegerArray container) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -166,7 +166,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param container контейнер для ключей.
 	 * @return массив ключей таблицы.
 	 */
-	public default LongArray keyLongArray(LongArray container) {
+	public default LongArray keyLongArray(final LongArray container) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -175,7 +175,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param table новый контейнер данных.
 	 */
-	public default void moveTo(Table<? super K, ? super V> table) {
+	public default void moveTo(final Table<? super K, ? super V> table) {
 
 		if(getType() != table.getType()) {
 			throw new IllegalArgumentException("incorrect table type.");
@@ -189,7 +189,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
-	public default V put(int key, V value) {
+	public default V put(final int key, final V value) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -200,7 +200,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
-	public default V put(K key, V value) {
+	public default V put(final K key, final V value) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -211,7 +211,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param key ключ значения.
 	 * @param value вставляемое значение.
 	 */
-	public default V put(long key, V value) {
+	public default V put(final long key, final V value) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -220,7 +220,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param table вставляемая таблица.
 	 */
-	public default void put(Table<K, V> table) {
+	public default void put(final Table<K, V> table) {
 		table.moveTo(this);
 	}
 
@@ -241,7 +241,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key ключ значения.
 	 */
-	public default V remove(int key) {
+	public default V remove(final int key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -250,7 +250,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key ключ значения.
 	 */
-	public default V remove(K key) {
+	public default V remove(final K key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -259,7 +259,7 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * 
 	 * @param key ключ значения.
 	 */
-	public default V remove(long key) {
+	public default V remove(final long key) {
 		throw new RuntimeException("not supported.");
 	}
 
@@ -274,14 +274,14 @@ public interface Table<K, V> extends Iterable<V>, Foldable {
 	 * @param container контейнер значений.
 	 * @return итоговый список всех значений.
 	 */
-	public default Array<V> values(Array<V> container) {
+	public default Array<V> values(final Array<V> container) {
 		throw new RuntimeException("not supported.");
 	}
 
 	/**
 	 * @return итоговый список всех значений.
 	 */
-	public default Array<V> values(Class<V> type) {
+	public default Array<V> values(final Class<V> type) {
 		throw new RuntimeException("not supported.");
 	}
 

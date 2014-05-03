@@ -21,7 +21,7 @@ final class DoubleReference extends AbstractReference {
 	}
 
 	@Override
-	public void setDouble(double value) {
+	public void setDouble(final double value) {
 		this.value = value;
 	}
 

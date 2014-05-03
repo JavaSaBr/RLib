@@ -26,7 +26,7 @@ public final class DefaultClientNetwork extends AbstractAsynchronousNetwork impl
 	/** асинронный клиентский канал */
 	private AsynchronousSocketChannel channel;
 
-	public DefaultClientNetwork(NetworkConfig config, ConnectHandler connectHandler) throws IOException {
+	public DefaultClientNetwork(final NetworkConfig config, final ConnectHandler connectHandler) throws IOException {
 		super(config);
 
 		this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
@@ -34,7 +34,7 @@ public final class DefaultClientNetwork extends AbstractAsynchronousNetwork impl
 	}
 
 	@Override
-	public void connect(InetSocketAddress serverAddress) {
+	public void connect(final InetSocketAddress serverAddress) {
 
 		try {
 
@@ -44,7 +44,7 @@ public final class DefaultClientNetwork extends AbstractAsynchronousNetwork impl
 
 			channel = AsynchronousSocketChannel.open(group);
 
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			LOGGER.warning(this, e);
 		}
 

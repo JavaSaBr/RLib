@@ -21,7 +21,7 @@ final class ByteReference extends AbstractReference {
 	}
 
 	@Override
-	public void setByte(byte value) {
+	public void setByte(final byte value) {
 		this.value = value;
 	}
 

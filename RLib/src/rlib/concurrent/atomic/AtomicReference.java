@@ -13,7 +13,7 @@ public class AtomicReference<V> extends java.util.concurrent.atomic.AtomicRefere
 		super();
 	}
 
-	public AtomicReference(V initialValue) {
+	public AtomicReference(final V initialValue) {
 		super(initialValue);
 	}
 }

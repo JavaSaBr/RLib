@@ -33,8 +33,8 @@ public abstract class AbstractTable<K, V> implements Table<K, V> {
 	 * @param key лонг ключ.
 	 * @return новый хэш.
 	 */
-	protected final static int hash(long key) {
-		int hash = (int) (key ^ (key >>> 32));
+	protected final static int hash(final long key) {
+		int hash = (int) (key ^ key >>> 32);
 		hash ^= hash >>> 20 ^ hash >>> 12;
 		return hash ^ hash >>> 7 ^ hash >>> 4;
 	}
@@ -46,7 +46,7 @@ public abstract class AbstractTable<K, V> implements Table<K, V> {
 	 * @param длинна массива.
 	 * @return индекс ячейки.
 	 */
-	protected final static int indexFor(int hash, int length) {
+	protected final static int indexFor(final int hash, final int length) {
 		return hash & length - 1;
 	}
 }

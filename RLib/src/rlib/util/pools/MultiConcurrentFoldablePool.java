@@ -17,7 +17,7 @@ public final class MultiConcurrentFoldablePool<E extends Foldable> implements Fo
 	private int order;
 
 	@SuppressWarnings("unchecked")
-	protected MultiConcurrentFoldablePool(int size, Class<?> type) {
+	protected MultiConcurrentFoldablePool(final int size, final Class<?> type) {
 		this.pools = new ConcurrentFoldablePool[size];
 		this.limit = size;
 
@@ -66,7 +66,7 @@ public final class MultiConcurrentFoldablePool<E extends Foldable> implements Fo
 	@Override
 	public boolean isEmpty() {
 
-		ConcurrentFoldablePool<E>[] pools = getPools();
+		final ConcurrentFoldablePool<E>[] pools = getPools();
 
 		// если какой-то пул не пуст, возвращаем фалс
 		for(int i = 0, length = pools.length; i < length; i++) {
@@ -79,7 +79,7 @@ public final class MultiConcurrentFoldablePool<E extends Foldable> implements Fo
 	}
 
 	@Override
-	public void put(E object) {
+	public void put(final E object) {
 
 		if(object == null) {
 			return;
@@ -90,21 +90,21 @@ public final class MultiConcurrentFoldablePool<E extends Foldable> implements Fo
 	}
 
 	@Override
-	public void remove(E object) {
+	public void remove(final E object) {
 		throw new RuntimeException("unsupperted method.");
 	}
 
 	/**
 	 * @param order номер пула.
 	 */
-	private final void setOrder(int order) {
+	private final void setOrder(final int order) {
 		this.order = order;
 	}
 
 	@Override
 	public E take() {
 
-		E object = pools[getNextOrder()].take();
+		final E object = pools[getNextOrder()].take();
 
 		if(object == null) {
 			return null;

@@ -262,7 +262,7 @@ public final class PrimeFinder {
 	/**
 	 * @return следующее простое число.
 	 */
-	public static final int nextPrime(int desiredCapacity) {
+	public static final int nextPrime(final int desiredCapacity) {
 
 		int i = Arrays.binarySearch(PRIME_CAPACITIES, desiredCapacity);
 

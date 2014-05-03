@@ -12,10 +12,10 @@ public class ThreadUtils {
 
 	private static final Logger LOGGER = LoggerManager.getLogger(ThreadUtils.class);
 
-	public static void sleep(long time) {
+	public static void sleep(final long time) {
 		try {
 			Thread.sleep(time);
-		} catch(InterruptedException e) {
+		} catch(final InterruptedException e) {
 			LOGGER.warning(e);
 		}
 	}

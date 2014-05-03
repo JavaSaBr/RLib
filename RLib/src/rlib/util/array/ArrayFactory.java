@@ -8,6 +8,130 @@ package rlib.util.array;
 public class ArrayFactory {
 
 	/**
+	 * Создать быстрый новый массив указанного типа.
+	 * 
+	 * @param type тип массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newArray(final Class<?> type) {
+		return new FastArray<E>((Class<E>) type);
+	}
+
+	/**
+	 * Создать быстрый новый массив указанного типа.
+	 * 
+	 * @param type тип массива.
+	 * @param size базовый размер массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newArray(final Class<?> type, final int size) {
+		return new FastArray<E>((Class<E>) type, size);
+	}
+
+	/**
+	 * Создать уникальное множество на основе быстрого массива.
+	 * 
+	 * @param type тип массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newArraySet(final Class<?> type) {
+		return new FastArraySet<E>((Class<E>) type);
+	}
+
+	/**
+	 * Создать уникальное множество на основе быстрого массива.
+	 * 
+	 * @param type тип массива.
+	 * @param size базовый размер массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newArraySet(final Class<?> type, final int size) {
+		return new FastArraySet<E>((Class<E>) type, size);
+	}
+
+	/**
+	 * Создать потокобезопасный новый массив указанного типа.
+	 * 
+	 * @param type тип массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newAtomicArray(final Class<?> type) {
+		return new AtomicArray<E>((Class<E>) type);
+	}
+
+	/**
+	 * Создать потокобезопасный новый массив указанного типа.
+	 * 
+	 * @param type тип массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newConcurrentArray(final Class<?> type) {
+		return new ConcurrentArray<E>((Class<E>) type);
+	}
+
+	/**
+	 * Создать потокобезопасный новый массив указанного типа.
+	 * 
+	 * @param type тип массива.
+	 * @param size базовый размер массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newConcurrentArray(final Class<?> type, final int size) {
+		return new ConcurrentArray<E>((Class<E>) type, size);
+	}
+
+	/**
+	 * Создать уникальное множество на основе конкурентного массива.
+	 * 
+	 * @param type тип массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newConcurrentArraySet(final Class<?> type) {
+		return new ConcurrentArraySet<E>((Class<E>) type);
+	}
+
+	/**
+	 * Создать уникальное множество на основе конкурентного массива.
+	 * 
+	 * @param type тип массива.
+	 * @param size базовый размер массива.
+	 * @return новый массив.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newConcurrentArraySet(final Class<?> type, final int size) {
+		return new ConcurrentArraySet<E>((Class<E>) type, size);
+	}
+
+	/**
+	 * Создает массив из перечисленных чисел.
+	 * 
+	 * @param elements набор чисел.
+	 * @return новый массив.
+	 */
+	public static float[] newFloatArray(final float... elements) {
+		return elements;
+	}
+
+	/**
+	 * Создает массив из перечисленных элементов.
+	 * 
+	 * @param elements набор элементов.
+	 * @return новый массив.
+	 */
+	@SafeVarargs
+	public static <T, K extends T> T[] newGenericArray(final K... elements) {
+		return elements;
+	}
+
+	/**
 	 * @return новый динамический массив примтивного инт.
 	 */
 	public static IntegerArray newIntegerArray() {
@@ -18,8 +142,18 @@ public class ArrayFactory {
 	 * @param size начальный размер массива.
 	 * @return новый динамический массив примтивного инт.
 	 */
-	public static IntegerArray newIntegerArray(int size) {
+	public static IntegerArray newIntegerArray(final int size) {
 		return new FastIntegerArray(size);
+	}
+
+	/**
+	 * Создает массив из перечисленных чисел.
+	 * 
+	 * @param elements набор чисел.
+	 * @return новый массив.
+	 */
+	public static int[] newIntegerArray(final int... elements) {
+		return elements;
 	}
 
 	/**
@@ -33,142 +167,8 @@ public class ArrayFactory {
 	 * @param size начальный размер массива.
 	 * @return новый динамический массив примтивного инт.
 	 */
-	public static LongArray newLongArray(int size) {
+	public static LongArray newLongArray(final int size) {
 		return new FastLongArray(size);
-	}
-
-	/**
-	 * Создать быстрый новый массив указанного типа.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newArray(Class<?> type) {
-		return new FastArray<E>((Class<E>) type);
-	}
-
-	/**
-	 * Создать быстрый новый массив указанного типа.
-	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newArray(Class<?> type, int size) {
-		return new FastArray<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создать уникальное множество на основе быстрого массива.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newArraySet(Class<?> type) {
-		return new FastArraySet<E>((Class<E>) type);
-	}
-
-	/**
-	 * Создать уникальное множество на основе быстрого массива.
-	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newArraySet(Class<?> type, int size) {
-		return new FastArraySet<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создать потокобезопасный новый массив указанного типа.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newConcurrentArray(Class<?> type) {
-		return new ConcurrentArray<E>((Class<E>) type);
-	}
-
-	/**
-	 * Создать потокобезопасный новый массив указанного типа.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newAtomicArray(Class<?> type) {
-		return new AtomicArray<E>((Class<E>) type);
-	}
-
-	/**
-	 * Создать потокобезопасный новый массив указанного типа.
-	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newConcurrentArray(Class<?> type, int size) {
-		return new ConcurrentArray<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создать уникальное множество на основе конкурентного массива.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newConcurrentArraySet(Class<?> type) {
-		return new ConcurrentArraySet<E>((Class<E>) type);
-	}
-
-	/**
-	 * Создать уникальное множество на основе конкурентного массива.
-	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newConcurrentArraySet(Class<?> type, int size) {
-		return new ConcurrentArraySet<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создает массив из перечисленных чисел.
-	 * 
-	 * @param elements набор чисел.
-	 * @return новый массив.
-	 */
-	public static float[] newFloatArray(float... elements) {
-		return elements;
-	}
-
-	/**
-	 * Создает массив из перечисленных элементов.
-	 * 
-	 * @param elements набор элементов.
-	 * @return новый массив.
-	 */
-	@SafeVarargs
-	public static <T, K extends T> T[] newGenericArray(K... elements) {
-		return elements;
-	}
-
-	/**
-	 * Создает массив из перечисленных чисел.
-	 * 
-	 * @param elements набор чисел.
-	 * @return новый массив.
-	 */
-	public static int[] newIntegerArray(int... elements) {
-		return elements;
 	}
 
 	/**
@@ -178,7 +178,7 @@ public class ArrayFactory {
 	 * @return новый массив.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E extends Comparable<E>> Array<E> newSortedArray(Class<?> type) {
+	public static <E extends Comparable<E>> Array<E> newSortedArray(final Class<?> type) {
 		return new SortedArray<E>((Class<E>) type);
 	}
 
@@ -190,7 +190,7 @@ public class ArrayFactory {
 	 * @return новый массив.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E extends Comparable<E>> Array<E> newSortedArray(Class<?> type, int size) {
+	public static <E extends Comparable<E>> Array<E> newSortedArray(final Class<?> type, final int size) {
 		return new SortedArray<E>((Class<E>) type, size);
 	}
 
@@ -201,7 +201,7 @@ public class ArrayFactory {
 	 * @return новый массив.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newSynchronizedArray(Class<?> type) {
+	public static <E> Array<E> newSynchronizedArray(final Class<?> type) {
 		return new SynchronizedArray<E>((Class<E>) type);
 	}
 
@@ -211,7 +211,7 @@ public class ArrayFactory {
 	 * @param elements набор чисел.
 	 * @return новый массив.
 	 */
-	public static float[] toFloatArray(float... elements) {
+	public static float[] toFloatArray(final float... elements) {
 		return elements;
 	}
 
@@ -222,7 +222,7 @@ public class ArrayFactory {
 	 * @return новый массив.
 	 */
 	@SafeVarargs
-	public static <T, K extends T> T[] toGenericArray(K... elements) {
+	public static <T, K extends T> T[] toGenericArray(final K... elements) {
 		return elements;
 	}
 
@@ -232,7 +232,7 @@ public class ArrayFactory {
 	 * @param elements набор чисел.
 	 * @return новый массив.
 	 */
-	public static int[] toIntegerArray(int... elements) {
+	public static int[] toIntegerArray(final int... elements) {
 		return elements;
 	}
 }

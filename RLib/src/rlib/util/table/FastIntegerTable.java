@@ -38,23 +38,23 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 		private int key;
 
 		@Override
-		public boolean equals(Object object) {
+		public boolean equals(final Object object) {
 
 			if(object == null || object.getClass() != Entry.class) {
 				return false;
 			}
 
-			Entry<?> entry = (Entry<?>) object;
+			final Entry<?> entry = (Entry<?>) object;
 
-			int firstKey = getKey();
-			int secondKey = entry.getKey();
+			final int firstKey = getKey();
+			final int secondKey = entry.getKey();
 
 			if(firstKey == secondKey) {
 
-				Object firstValue = getValue();
-				Object secondValue = entry.getValue();
+				final Object firstValue = getValue();
+				final Object secondValue = entry.getValue();
 
-				if(firstValue == secondValue || (firstValue != null && firstValue.equals(secondValue))) {
+				if(firstValue == secondValue || firstValue != null && firstValue.equals(secondValue)) {
 					return true;
 				}
 			}
@@ -108,7 +108,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 			hash = 0;
 		}
 
-		public void set(int hash, int key, V value, Entry<V> next) {
+		public void set(final int hash, final int key, final V value, final Entry<V> next) {
 			this.value = value;
 			this.next = next;
 			this.key = key;
@@ -118,7 +118,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 		/**
 		 * @param next следующая цепочка.
 		 */
-		public void setNext(Entry<V> next) {
+		public void setNext(final Entry<V> next) {
 			this.next = next;
 		}
 
@@ -128,8 +128,8 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 		 * @param value новое значение.
 		 * @return старое значение.
 		 */
-		public V setValue(V value) {
-			V old = getValue();
+		public V setValue(final V value) {
+			final V old = getValue();
 			this.value = value;
 			return old;
 		}
@@ -157,10 +157,12 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 
 		private TableIterator() {
 
-			Entry<V>[] table = table();
+			final Entry<V>[] table = table();
 
 			if(size > 0) {
-				while(index < table.length && (next = table[index++]) == null);
+				while(index < table.length && (next = table[index++]) == null) {
+					;
+				}
 			}
 		}
 
@@ -179,15 +181,17 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 		 */
 		private Entry<V> nextEntry() {
 
-			Entry<V>[] table = table();
-			Entry<V> entry = next;
+			final Entry<V>[] table = table();
+			final Entry<V> entry = next;
 
 			if(entry == null) {
 				throw new NoSuchElementException();
 			}
 
 			if((next = entry.getNext()) == null) {
-				while(index < table.length && (next = table[index++]) == null);
+				while(index < table.length && (next = table[index++]) == null) {
+					;
+				}
 			}
 
 			current = entry;
@@ -201,7 +205,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 				throw new IllegalStateException();
 			}
 
-			int key = current.getKey();
+			final int key = current.getKey();
 			current = null;
 
 			removeEntryForKey(key);
@@ -226,12 +230,12 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 		this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
 	}
 
-	protected FastIntegerTable(float loadFactor) {
+	protected FastIntegerTable(final float loadFactor) {
 		this(loadFactor, DEFAULT_INITIAL_CAPACITY);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected FastIntegerTable(float loadFactor, int initCapacity) {
+	protected FastIntegerTable(final float loadFactor, final int initCapacity) {
 		this.loadFactor = loadFactor;
 		this.threshold = (int) (initCapacity * loadFactor);
 		this.size = 0;
@@ -239,7 +243,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 		this.entryPool = PoolFactory.newFoldablePool(Entry.class);
 	}
 
-	protected FastIntegerTable(int initCapacity) {
+	protected FastIntegerTable(final int initCapacity) {
 		this(DEFAULT_LOAD_FACTOR, initCapacity);
 	}
 
@@ -251,12 +255,12 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	 * @param value значение по ключу.
 	 * @param index индекс ячейки.
 	 */
-	private final void addEntry(int hash, int key, V value, int index) {
+	private final void addEntry(final int hash, final int key, final V value, final int index) {
 
-		FoldablePool<Entry<V>> entryPool = getEntryPool();
+		final FoldablePool<Entry<V>> entryPool = getEntryPool();
 
-		Entry<V>[] table = table();
-		Entry<V> entry = table[index];
+		final Entry<V>[] table = table();
+		final Entry<V> entry = table[index];
 		Entry<V> newEntry = entryPool.take();
 
 		if(newEntry == null) {
@@ -273,7 +277,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public void apply(Function<? super V, V> function) {
+	public void apply(final Function<? super V, V> function) {
 		for(Entry<V> entry : table()) {
 			while(entry != null) {
 				entry.setValue(function.apply(entry.getValue()));
@@ -285,8 +289,8 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	@Override
 	public final void clear() {
 
-		FoldablePool<Entry<V>> entryPool = getEntryPool();
-		Entry<V>[] table = table();
+		final FoldablePool<Entry<V>> entryPool = getEntryPool();
+		final Entry<V>[] table = table();
 		Entry<V> next = null;
 
 		for(Entry<V> entry : table) {
@@ -303,18 +307,18 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public final boolean containsKey(int key) {
+	public final boolean containsKey(final int key) {
 		return getEntry(key) != null;
 	}
 
 	@Override
-	public final boolean containsValue(V value) {
+	public final boolean containsValue(final V value) {
 
 		if(value == null) {
 			throw new NullPointerException("value is null.");
 		}
 
-		for(Entry<V> element : table()) {
+		for(final Entry<V> element : table()) {
 			for(Entry<V> entry = element; entry != null; entry = entry.getNext()) {
 				if(value.equals(entry.getValue())) {
 					return true;
@@ -333,7 +337,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public void forEach(Consumer<? super V> consumer) {
+	public void forEach(final Consumer<? super V> consumer) {
 		for(Entry<V> entry : table()) {
 			while(entry != null) {
 				consumer.accept(entry.getValue());
@@ -343,8 +347,8 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public final V get(int key) {
-		Entry<V> entry = getEntry(key);
+	public final V get(final int key) {
+		final Entry<V> entry = getEntry(key);
 		return entry == null ? null : entry.getValue();
 	}
 
@@ -354,11 +358,11 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	 * @param key ключ ячейки.
 	 * @return ячейка.
 	 */
-	private final Entry<V> getEntry(int key) {
+	private final Entry<V> getEntry(final int key) {
 
-		int hash = hash(key);
+		final int hash = hash(key);
 
-		Entry<V>[] table = table();
+		final Entry<V>[] table = table();
 
 		for(Entry<V> entry = table[indexFor(hash, table.length)]; entry != null; entry = entry.getNext()) {
 			if(entry.getHash() == hash && key == entry.getKey()) {
@@ -387,7 +391,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public IntegerArray keyIntegerArray(IntegerArray container) {
+	public IntegerArray keyIntegerArray(final IntegerArray container) {
 
 		for(Entry<V> entry : table()) {
 			while(entry != null) {
@@ -400,7 +404,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public void moveTo(Table<? super IntKey, ? super V> table) {
+	public void moveTo(final Table<? super IntKey, ? super V> table) {
 
 		if(isEmpty()) {
 			return;
@@ -417,13 +421,13 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public final V put(int key, V value) {
+	public final V put(final int key, final V value) {
 
-		int hash = hash(key);
+		final int hash = hash(key);
 
-		Entry<V>[] table = table();
+		final Entry<V>[] table = table();
 
-		int i = indexFor(hash, table.length);
+		final int i = indexFor(hash, table.length);
 
 		for(Entry<V> entry = table[i]; entry != null; entry = entry.getNext()) {
 			if(entry.getHash() == hash && key == entry.getKey()) {
@@ -437,12 +441,12 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public final V remove(int key) {
+	public final V remove(final int key) {
 
-		Entry<V> old = removeEntryForKey(key);
-		V value = old == null ? null : old.getValue();
+		final Entry<V> old = removeEntryForKey(key);
+		final V value = old == null ? null : old.getValue();
 
-		FoldablePool<Entry<V>> entryPool = getEntryPool();
+		final FoldablePool<Entry<V>> entryPool = getEntryPool();
 		entryPool.put(old);
 
 		return value;
@@ -454,20 +458,20 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	 * @param key ключ ячейки.
 	 * @return удаленная ячейка.
 	 */
-	private final Entry<V> removeEntryForKey(int key) {
+	private final Entry<V> removeEntryForKey(final int key) {
 
-		int hash = hash(key);
+		final int hash = hash(key);
 
-		Entry<V>[] table = table();
+		final Entry<V>[] table = table();
 
-		int i = indexFor(hash, table.length);
+		final int i = indexFor(hash, table.length);
 
 		Entry<V> prev = table[i];
 		Entry<V> entry = prev;
 
 		while(entry != null) {
 
-			Entry<V> next = entry.getNext();
+			final Entry<V> next = entry.getNext();
 
 			if(entry.getHash() == hash && key == entry.getKey()) {
 
@@ -495,18 +499,18 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	 * @param newLength новый размер.
 	 */
 	@SuppressWarnings("unchecked")
-	private final void resize(int newLength) {
+	private final void resize(final int newLength) {
 
-		Entry<V>[] oldTable = table();
+		final Entry<V>[] oldTable = table();
 
-		int oldLength = oldTable.length;
+		final int oldLength = oldTable.length;
 
 		if(oldLength >= DEFAULT_MAXIMUM_CAPACITY) {
 			threshold = Integer.MAX_VALUE;
 			return;
 		}
 
-		Entry<V>[] newTable = new Entry[newLength];
+		final Entry<V>[] newTable = new Entry[newLength];
 		transfer(newTable);
 
 		this.table = newTable;
@@ -528,12 +532,12 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	@Override
 	public final String toString() {
 
-		int size = size();
+		final int size = size();
 
-		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
 		builder.append(" size = ").append(size).append(" : ");
 
-		Entry<V>[] table = table();
+		final Entry<V>[] table = table();
 
 		for(int i = 0, length = table.length; i < length; i++) {
 
@@ -559,11 +563,11 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	 *
 	 * @param newTable новая таблица.
 	 */
-	private final void transfer(Entry<V>[] newTable) {
+	private final void transfer(final Entry<V>[] newTable) {
 
-		Entry<V>[] original = table();
+		final Entry<V>[] original = table();
 
-		int newCapacity = newTable.length;
+		final int newCapacity = newTable.length;
 
 		for(int j = 0, length = original.length; j < length; j++) {
 
@@ -572,9 +576,9 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 			if(entry != null) {
 				do {
 
-					Entry<V> next = entry.getNext();
+					final Entry<V> next = entry.getNext();
 
-					int i = indexFor(entry.getHash(), newCapacity);
+					final int i = indexFor(entry.getHash(), newCapacity);
 
 					entry.setNext(newTable[i]);
 					newTable[i] = entry;
@@ -586,7 +590,7 @@ public class FastIntegerTable<V> extends AbstractTable<IntKey, V> {
 	}
 
 	@Override
-	public Array<V> values(Array<V> container) {
+	public Array<V> values(final Array<V> container) {
 
 		for(Entry<V> entry : table()) {
 			while(entry != null) {

@@ -31,14 +31,14 @@ public class Ray implements Foldable {
 	/**
 	 * @param direction точка направления луча.
 	 */
-	public final void setDirection(Vector direction) {
+	public final void setDirection(final Vector direction) {
 		this.direction = direction;
 	}
 
 	/**
 	 * @param start точка старта луча.
 	 */
-	public final void setStart(Vector start) {
+	public final void setStart(final Vector start) {
 		this.start = start;
 	}
 }

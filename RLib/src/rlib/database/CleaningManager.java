@@ -28,14 +28,14 @@ public abstract class CleaningManager {
 	 * @param name название таблицы.
 	 * @param squery запрос для очистки.
 	 */
-	public static void addQuery(String name, String squery) {
+	public static void addQuery(final String name, final String squery) {
 		QUERY.add(new CleaningQuery(name, squery));
 	}
 
 	/**
 	 * Очистка БД.
 	 */
-	public static void cleaning(ConnectFactory connects) {
+	public static void cleaning(final ConnectFactory connects) {
 
 		Connection con = null;
 		Statement statement = null;
@@ -45,11 +45,11 @@ public abstract class CleaningManager {
 			con = connects.getConnection();
 			statement = con.createStatement();
 
-			for(CleaningQuery clean : QUERY) {
+			for(final CleaningQuery clean : QUERY) {
 				LOGGER.info(clean.getName().replace("{count}", String.valueOf(statement.executeUpdate(clean.getQuery()))) + ".");
 			}
 
-		} catch(SQLException e) {
+		} catch(final SQLException e) {
 			LOGGER.warning(e);
 		} finally {
 			DBUtils.closeDatabaseCS(con, statement);

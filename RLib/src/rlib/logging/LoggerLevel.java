@@ -19,7 +19,7 @@ public enum LoggerLevel {
 	/** активен ли уровень */
 	private boolean enabled;
 
-	private LoggerLevel(String title) {
+	private LoggerLevel(final String title) {
 		this.title = title;
 	}
 
@@ -28,13 +28,6 @@ public enum LoggerLevel {
 	 */
 	public String getTitle() {
 		return title;
-	}
-
-	/**
-	 * @param title титул сообщения.
-	 */
-	public void setTitle(String title) {
-		this.title = title;
 	}
 
 	/**
@@ -47,8 +40,15 @@ public enum LoggerLevel {
 	/**
 	 * @param enabled активен ли уровень.
 	 */
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	/**
+	 * @param title титул сообщения.
+	 */
+	public void setTitle(final String title) {
+		this.title = title;
 	}
 
 	@Override

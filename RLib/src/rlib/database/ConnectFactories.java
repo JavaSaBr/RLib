@@ -13,12 +13,12 @@ import com.jolbox.bonecp.BoneCPConfig;
  */
 public final class ConnectFactories {
 
-	public static final ConnectFactory newBoneCPConnectFactory(BoneCPConfig config, String driver) {
+	public static final ConnectFactory newBoneCPConnectFactory(final BoneCPConfig config, final String driver) {
 		try {
-			BoneCPConnectFactory factory = new BoneCPConnectFactory();
+			final BoneCPConnectFactory factory = new BoneCPConnectFactory();
 			factory.init(config, driver);
 			return factory;
-		} catch(SQLException e) {
+		} catch(final SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

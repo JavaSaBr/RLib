@@ -42,7 +42,9 @@ public final class InitializeManager {
 
 				iterator.remove();
 
-			} catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch(final InvocationTargetException e) {
+				LOGGER.warning(e.getTargetException());
+			} catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException e) {
 				LOGGER.warning(e);
 			}
 		}
@@ -51,7 +53,7 @@ public final class InitializeManager {
 	/**
 	 * Регистрация класса, имеющего статический метод getInstance().
 	 */
-	public synchronized static void register(Class<?> cs) {
+	public synchronized static void register(final Class<?> cs) {
 		QUEUE.add(cs);
 	}
 
@@ -60,7 +62,7 @@ public final class InitializeManager {
 	 * 
 	 * @param cs проверяемый класс.
 	 */
-	public static void valid(Class<?> cs) {
+	public static void valid(final Class<?> cs) {
 		if(QUEUE.getFirst() != cs) {
 			Thread.dumpStack();
 		}

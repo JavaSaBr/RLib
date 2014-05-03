@@ -16,14 +16,6 @@ public interface SqlOperator {
 	public boolean isReady();
 
 	/**
-	 * Сформировать условие WHERE для оператора запроса.
-	 * 
-	 * @param args аргументы к условию.
-	 * @return конструктора условия.
-	 */
-	public WhereSqlCondition where(WhereSqlConditionArgs args);
-
-	/**
 	 * Указание лимита записей, на который может быть применят оператор.
 	 * 
 	 * @param limit лимит записей для примиения.
@@ -37,4 +29,12 @@ public interface SqlOperator {
 	 * @param offset кол-во пропущенных записей.
 	 */
 	public void offset(long offset);
+
+	/**
+	 * Сформировать условие WHERE для оператора запроса.
+	 * 
+	 * @param args аргументы к условию.
+	 * @return конструктора условия.
+	 */
+	public WhereSqlCondition where(WhereSqlConditionArgs args);
 }

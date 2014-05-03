@@ -110,7 +110,7 @@ public abstract class Util {
 	 * @param port стартовый порт.
 	 * @return свободный порт или -1, если такого нет.
 	 */
-	public static int getFreePort(int port) {
+	public static int getFreePort(final int port) {
 
 		final int limit = Short.MAX_VALUE * 2;
 
@@ -166,7 +166,7 @@ public abstract class Util {
 			// замена сепараторов
 			if(File.separatorChar != '/') {
 
-				StringBuilder pathBuilder = new StringBuilder();
+				final StringBuilder pathBuilder = new StringBuilder();
 
 				for(int i = 0, length = path.length(); i < length; i++) {
 
@@ -309,39 +309,39 @@ public abstract class Util {
 	/**
 	 * Безопасное выполнение задачи.
 	 * 
-	 * @param runnable выполняемая задача.
-	 */
-	public static void safeExecute(Runnable runnable) {
-		try {
-			runnable.run();
-		} catch(Throwable e) {
-			LOGGER.warning(e);
-		}
-	}
-
-	/**
-	 * Безопасное выполнение задачи.
-	 * 
 	 * @param callable выполняемая задача.
 	 */
-	public static <V> V safeExecute(Callable<V> callable) {
+	public static <V> V safeExecute(final Callable<V> callable) {
 
 		try {
 			return callable.call();
-		} catch(Throwable e) {
+		} catch(final Throwable e) {
 			LOGGER.warning(e);
 		}
 
 		return null;
 	}
 
-	public static String toString(Throwable throwable) {
+	/**
+	 * Безопасное выполнение задачи.
+	 * 
+	 * @param runnable выполняемая задача.
+	 */
+	public static void safeExecute(final Runnable runnable) {
+		try {
+			runnable.run();
+		} catch(final Throwable e) {
+			LOGGER.warning(e);
+		}
+	}
 
-		StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
+	public static String toString(final Throwable throwable) {
+
+		final StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
 
 		builder.append(" : stack trace:\n");
 
-		for(StackTraceElement stack : throwable.getStackTrace()) {
+		for(final StackTraceElement stack : throwable.getStackTrace()) {
 			builder.append(stack).append("\n");
 		}
 

@@ -35,8 +35,8 @@ public final class ThreadAtomicLock implements Lock {
 	@Override
 	public void lock() {
 
-		Thread thread = Thread.currentThread();
-		AtomicReference<Thread> status = getStatus();
+		final Thread thread = Thread.currentThread();
+		final AtomicReference<Thread> status = getStatus();
 
 		try {
 
@@ -44,7 +44,9 @@ public final class ThreadAtomicLock implements Lock {
 				return;
 			}
 
-			while(!status.compareAndSet(null, thread));
+			while(!status.compareAndSet(null, thread)) {
+				;
+			}
 
 		} finally {
 			level.incrementAndGet();
@@ -57,20 +59,25 @@ public final class ThreadAtomicLock implements Lock {
 	}
 
 	@Override
+	public Condition newCondition() {
+		throw new RuntimeException("not supperted.");
+	}
+
+	@Override
 	public boolean tryLock() {
 		throw new RuntimeException("not supperted.");
 	}
 
 	@Override
-	public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+	public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
 		throw new RuntimeException("not supperted.");
 	}
 
 	@Override
 	public void unlock() {
 
-		Thread thread = Thread.currentThread();
-		AtomicReference<Thread> status = getStatus();
+		final Thread thread = Thread.currentThread();
+		final AtomicReference<Thread> status = getStatus();
 
 		if(status.get() != thread) {
 			return;
@@ -79,10 +86,5 @@ public final class ThreadAtomicLock implements Lock {
 		if(level.decrementAndGet() == 0) {
 			status.getAndSet(null);
 		}
-	}
-
-	@Override
-	public Condition newCondition() {
-		throw new RuntimeException("not supperted.");
 	}
 }

@@ -46,9 +46,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 *
 	 * @param function применяемая функция.
 	 */
-	public default void apply(Function<? super E, ? extends E> function) {
+	public default void apply(final Function<? super E, ? extends E> function) {
 
-		E[] array = array();
+		final E[] array = array();
 
 		for(int i = 0, length = size(); i < length; i++) {
 			array[i] = function.apply(array[i]);
@@ -73,9 +73,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param object искомый объект.
 	 * @return содержит ли.
 	 */
-	public default boolean contains(Object object) {
+	public default boolean contains(final Object object) {
 
-		for(E element : array()) {
+		for(final E element : array()) {
 
 			if(element == null) {
 				break;
@@ -96,9 +96,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param array массив элементов.
 	 * @return содержит ли.
 	 */
-	public default boolean containsAll(Array<?> array) {
+	public default boolean containsAll(final Array<?> array) {
 
-		for(Object element : array.array()) {
+		for(final Object element : array.array()) {
 
 			if(element == null) {
 				break;
@@ -119,9 +119,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param array массив элементов.
 	 * @return содержит ли.
 	 */
-	public default boolean containsAll(Object[] array) {
+	public default boolean containsAll(final Object[] array) {
 
-		for(Object element : array) {
+		for(final Object element : array) {
 			if(!contains(element)) {
 				return false;
 			}
@@ -144,7 +144,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param object удаляемый объект.
 	 * @return удален ли объект.
 	 */
-	public default boolean fastRemove(Object object) {
+	public default boolean fastRemove(final Object object) {
 		return fastRemove(indexOf(object)) != null;
 	}
 
@@ -161,9 +161,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	}
 
 	@Override
-	public default void forEach(Consumer<? super E> consumer) {
+	public default void forEach(final Consumer<? super E> consumer) {
 
-		for(E element : array()) {
+		for(final E element : array()) {
 
 			if(element == null) {
 				break;
@@ -187,7 +187,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param object искомый объект.
 	 * @return первый индекс объекта.
 	 */
-	public default int indexOf(Object object) {
+	public default int indexOf(final Object object) {
 
 		if(object == null) {
 			return -1;
@@ -195,7 +195,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 
 		int index = 0;
 
-		for(E element : array()) {
+		for(final E element : array()) {
 
 			if(element == null) {
 				break;
@@ -229,7 +229,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 */
 	public default E last() {
 
-		int size = size();
+		final int size = size();
 
 		if(size < 1) {
 			return null;
@@ -244,19 +244,19 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param object искомый объект.
 	 * @return последний индекс искомого объекта.
 	 */
-	public default int lastIndexOf(Object object) {
+	public default int lastIndexOf(final Object object) {
 
 		if(object == null) {
 			return -1;
 		}
 
-		E[] array = array();
+		final E[] array = array();
 
 		int last = -1;
 
 		for(int i = 0, length = size(); i < length; i++) {
 
-			E element = array[i];
+			final E element = array[i];
 
 			if(element.equals(object)) {
 				last = i;
@@ -298,13 +298,13 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param array массив с элементами.
 	 * @return удалены ли все указанные объекты.
 	 */
-	public default boolean removeAll(Array<?> target) {
+	public default boolean removeAll(final Array<?> target) {
 
 		if(target.isEmpty()) {
 			return true;
 		}
 
-		for(Object element : target.array()) {
+		for(final Object element : target.array()) {
 
 			if(element == null) {
 				break;
@@ -322,9 +322,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param array массив с элементами.
 	 * @return удалены ли все объекты.
 	 */
-	public default boolean retainAll(Array<?> target) {
+	public default boolean retainAll(final Array<?> target) {
 
-		E[] array = array();
+		final E[] array = array();
 
 		for(int i = 0, length = size(); i < length; i++) {
 			if(!target.contains(array[i])) {
@@ -343,13 +343,13 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param search поисковик подходящего объекта.
 	 * @return искомый объект.
 	 */
-	public default E search(E required, Search<E> search) {
+	public default E search(final E required, final Search<E> search) {
 
-		E[] array = array();
+		final E[] array = array();
 
 		for(int i = 0, length = size(); i < length; i++) {
 
-			E element = array[i];
+			final E element = array[i];
 
 			if(search.compare(required, element)) {
 				return element;
@@ -394,7 +394,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param comparator компаратор для сортировки.
 	 * @return this.
 	 */
-	public default Array<E> sort(Comparator<E> comparator) {
+	public default Array<E> sort(final Comparator<E> comparator) {
 		ArrayUtils.sort(array(), comparator);
 		return this;
 	}
@@ -406,9 +406,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @param newArray массив, в который нужно перенести.
 	 */
 	@SuppressWarnings("unchecked")
-	public default <T> T[] toArray(T[] newArray) {
+	public default <T> T[] toArray(final T[] newArray) {
 
-		E[] array = array();
+		final E[] array = array();
 
 		if(newArray.length >= size()) {
 

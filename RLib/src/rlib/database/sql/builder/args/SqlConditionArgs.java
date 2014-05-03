@@ -14,7 +14,7 @@ public interface SqlConditionArgs<T extends SqlCondition> {
 	 * 
 	 * @param condition условия SQL оператора.
 	 */
-	public default void applyArgs(T condition) {
+	public default void applyArgs(final T condition) {
 
 		applyArgsImpl(condition);
 

@@ -7,7 +7,7 @@ package rlib.util.ref;
  */
 public final class ReferenceFactory {
 
-	public static Reference newByteReference(byte value, boolean usePool) {
+	public static Reference newByteReference(final byte value, final boolean usePool) {
 
 		Reference reference = null;
 
@@ -23,7 +23,7 @@ public final class ReferenceFactory {
 		return reference;
 	}
 
-	public static Reference newCharReference(char value, boolean usePool) {
+	public static Reference newCharReference(final char value, final boolean usePool) {
 
 		Reference reference = null;
 
@@ -39,7 +39,7 @@ public final class ReferenceFactory {
 		return reference;
 	}
 
-	public static Reference newDoubleReference(double value, boolean usePool) {
+	public static Reference newDoubleReference(final double value, final boolean usePool) {
 
 		Reference reference = null;
 
@@ -55,7 +55,7 @@ public final class ReferenceFactory {
 		return reference;
 	}
 
-	public static Reference newFloatReference(float value, boolean usePool) {
+	public static Reference newFloatReference(final float value, final boolean usePool) {
 
 		Reference reference = null;
 
@@ -71,7 +71,7 @@ public final class ReferenceFactory {
 		return reference;
 	}
 
-	public static Reference newIntegerReference(int value, boolean usePool) {
+	public static Reference newIntegerReference(final int value, final boolean usePool) {
 
 		Reference reference = null;
 
@@ -87,7 +87,7 @@ public final class ReferenceFactory {
 		return reference;
 	}
 
-	public static Reference newLongReference(long value, boolean usePool) {
+	public static Reference newLongReference(final long value, final boolean usePool) {
 
 		Reference reference = null;
 
@@ -103,7 +103,7 @@ public final class ReferenceFactory {
 		return reference;
 	}
 
-	public static Reference newObjectReference(Object object, boolean usePool) {
+	public static Reference newObjectReference(final Object object, final boolean usePool) {
 
 		Reference reference = null;
 
@@ -119,7 +119,7 @@ public final class ReferenceFactory {
 		return reference;
 	}
 
-	public static Reference newShortReference(short value, boolean usePool) {
+	public static Reference newShortReference(final short value, final boolean usePool) {
 
 		Reference reference = null;
 

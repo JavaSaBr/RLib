@@ -13,7 +13,7 @@ public class FastPool<E> implements Pool<E> {
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected FastPool(int size, Class<?> type) {
+	protected FastPool(final int size, final Class<?> type) {
 		this.pool = ArrayFactory.newArray(type, size);
 	}
 
@@ -23,7 +23,7 @@ public class FastPool<E> implements Pool<E> {
 	}
 
 	@Override
-	public void put(E object) {
+	public void put(final E object) {
 
 		if(object == null) {
 			return;
@@ -33,14 +33,14 @@ public class FastPool<E> implements Pool<E> {
 	}
 
 	@Override
-	public void remove(E object) {
+	public void remove(final E object) {
 		pool.fastRemove(object);
 	}
 
 	@Override
 	public E take() {
 
-		E object = pool.pop();
+		final E object = pool.pop();
 
 		if(object == null) {
 			return null;

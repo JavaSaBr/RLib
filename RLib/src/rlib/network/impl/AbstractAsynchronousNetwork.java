@@ -27,7 +27,7 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	/** конфигурация сети */
 	protected final NetworkConfig config;
 
-	protected AbstractAsynchronousNetwork(NetworkConfig config) {
+	protected AbstractAsynchronousNetwork(final NetworkConfig config) {
 		this.config = config;
 		this.readBufferPool = ArrayFactory.newArray(ByteBuffer.class);
 		this.writeBufferPool = ArrayFactory.newArray(ByteBuffer.class);
@@ -48,7 +48,7 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	@Override
 	public ByteBuffer getReadByteBuffer() {
 
-		Array<ByteBuffer> pool = getReadBufferPool();
+		final Array<ByteBuffer> pool = getReadBufferPool();
 
 		ByteBuffer buffer = null;
 
@@ -73,7 +73,7 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	@Override
 	public ByteBuffer getWriteByteBuffer() {
 
-		Array<ByteBuffer> pool = getWriteBufferPool();
+		final Array<ByteBuffer> pool = getWriteBufferPool();
 		ByteBuffer buffer = null;
 
 		synchronized(pool) {
@@ -88,13 +88,13 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	}
 
 	@Override
-	public void putReadByteBuffer(ByteBuffer buffer) {
+	public void putReadByteBuffer(final ByteBuffer buffer) {
 
 		if(buffer == null) {
 			return;
 		}
 
-		Array<ByteBuffer> pool = getReadBufferPool();
+		final Array<ByteBuffer> pool = getReadBufferPool();
 
 		synchronized(pool) {
 			pool.add(buffer);
@@ -102,13 +102,13 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	}
 
 	@Override
-	public void putWriteByteBuffer(ByteBuffer buffer) {
+	public void putWriteByteBuffer(final ByteBuffer buffer) {
 
 		if(buffer == null) {
 			return;
 		}
 
-		Array<ByteBuffer> pool = getWriteBufferPool();
+		final Array<ByteBuffer> pool = getWriteBufferPool();
 
 		synchronized(pool) {
 			pool.add(buffer);

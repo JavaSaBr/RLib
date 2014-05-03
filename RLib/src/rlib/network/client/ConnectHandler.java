@@ -11,12 +11,12 @@ import java.nio.channels.CompletionHandler;
 public interface ConnectHandler extends CompletionHandler<Void, AsynchronousSocketChannel> {
 
 	@Override
-	public default void completed(Void result, AsynchronousSocketChannel attachment) {
+	public default void completed(final Void result, final AsynchronousSocketChannel attachment) {
 		onConnect(attachment);
 	}
 
 	@Override
-	public default void failed(Throwable exc, AsynchronousSocketChannel attachment) {
+	public default void failed(final Throwable exc, final AsynchronousSocketChannel attachment) {
 		onFailed(exc);
 	}
 

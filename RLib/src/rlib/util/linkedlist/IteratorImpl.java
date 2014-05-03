@@ -29,7 +29,7 @@ class IteratorImpl<E> implements Iterator<E> {
 	/** следующий индекс */
 	private int nextIndex;
 
-	protected IteratorImpl(LinkedList<E> list, final int mode) {
+	protected IteratorImpl(final LinkedList<E> list, final int mode) {
 		this.nextIndex = 0;
 		this.mode = mode;
 		this.list = list;

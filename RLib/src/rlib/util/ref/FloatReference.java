@@ -21,7 +21,7 @@ final class FloatReference extends AbstractReference {
 	}
 
 	@Override
-	public void setFloat(float value) {
+	public void setFloat(final float value) {
 		this.value = value;
 	}
 

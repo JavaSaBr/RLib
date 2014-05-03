@@ -54,7 +54,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 	/** список извлекаемых таблиц и полей */
 	private final String[][] tables;
 
-	public BitSetIdGenerator(ConnectFactory connects, ScheduledExecutorService executor, String[][] tables) {
+	public BitSetIdGenerator(final ConnectFactory connects, final ScheduledExecutorService executor, final String[][] tables) {
 		this.executor = executor;
 		this.connects = connects;
 		this.tables = tables;
@@ -63,7 +63,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 	@Override
 	public synchronized int getNextId() {
 
-		int newID = nextFreeId.get();
+		final int newID = nextFreeId.get();
 
 		freeIds.set(newID);
 		freeIdCount.decrementAndGet();
@@ -92,7 +92,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 	 */
 	protected synchronized void increaseBitSetCapacity() {
 
-		BitSet newBitSet = new BitSet(PrimeFinder.nextPrime(usedIds() * 11 / 10));
+		final BitSet newBitSet = new BitSet(PrimeFinder.nextPrime(usedIds() * 11 / 10));
 		newBitSet.or(freeIds);
 
 		freeIds = newBitSet;
@@ -110,10 +110,10 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 
 			if(tables != null) {
 
-				Table<IntKey, String> useIds = TableFactory.newIntegerTable();
+				final Table<IntKey, String> useIds = TableFactory.newIntegerTable();
 
-				IntegerArray clearIds = ArrayFactory.newIntegerArray();
-				IntegerArray extractedIds = ArrayFactory.newIntegerArray();
+				final IntegerArray clearIds = ArrayFactory.newIntegerArray();
+				final IntegerArray extractedIds = ArrayFactory.newIntegerArray();
 
 				Connection con = null;
 				Statement statement = null;
@@ -124,13 +124,13 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 					con = connects.getConnection();
 					statement = con.createStatement();
 
-					for(String[] table : tables) {
+					for(final String[] table : tables) {
 
 						rset = statement.executeQuery("SELECT " + table[1] + " FROM " + table[0]);
 
 						while(rset.next()) {
 
-							int objectId = rset.getInt(1);
+							final int objectId = rset.getInt(1);
 
 							if(!useIds.containsKey(objectId)) {
 								extractedIds.add(objectId);
@@ -145,7 +145,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 
 							DBUtils.closeResultSet(rset);
 
-							for(int id : clearIds.array()) {
+							for(final int id : clearIds.array()) {
 								statement.executeUpdate("DELETE FROM " + table[0] + " WHERE " + table[1] + " = " + id + " LIMIT 1");
 							}
 						}
@@ -154,7 +154,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 					DBUtils.closeDatabaseCSR(con, statement, rset);
 				}
 
-				int[] extracted = new int[extractedIds.size()];
+				final int[] extracted = new int[extractedIds.size()];
 
 				for(int i = 0, length = extractedIds.size(); i < length; i++) {
 					extracted[i] = extractedIds.get(i);
@@ -164,9 +164,9 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 
 				ArrayUtils.sort(extracted);
 
-				for(int objectId : extracted) {
+				for(final int objectId : extracted) {
 
-					int id = objectId - FIRST_ID;
+					final int id = objectId - FIRST_ID;
 
 					if(id < 0) {
 						LOGGER.warning("objectId " + objectId + " in DB is less than minimum ID of " + FIRST_ID + ".");
@@ -177,7 +177,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 					freeIdCount.decrementAndGet();
 				}
 			}
-		} catch(Exception e) {
+		} catch(final Exception e) {
 			LOGGER.warning(e);
 		}
 
@@ -191,7 +191,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 	}
 
 	@Override
-	public synchronized void releaseId(int objectId) {
+	public synchronized void releaseId(final int objectId) {
 		if(objectId - FIRST_ID < 0) {
 			LOGGER.warning("release objectID " + objectId + " failed (< " + FIRST_ID + ")");
 		} else {

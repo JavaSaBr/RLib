@@ -24,13 +24,8 @@ public class MySqlSelectSqlOperator implements SelectSqlOperator {
 	}
 
 	@Override
-	public boolean isReady() {
-		return !tables.isEmpty();
-	}
-
-	@Override
-	public void fields(String... fieldNames) {
-		for(String fieldName : fieldNames) {
+	public void fields(final String... fieldNames) {
+		for(final String fieldName : fieldNames) {
 
 			if(fieldName.contains("*")) {
 				throw new IllegalArgumentException("incorrect field name \"" + fieldName + "\"");
@@ -41,25 +36,30 @@ public class MySqlSelectSqlOperator implements SelectSqlOperator {
 	}
 
 	@Override
-	public void from(String... tableNames) {
+	public void from(final String... tableNames) {
 		tables.addAll(tableNames);
 	}
 
 	@Override
-	public WhereSqlCondition where(WhereSqlConditionArgs args) {
+	public boolean isReady() {
+		return !tables.isEmpty();
+	}
+
+	@Override
+	public void limit(final long limit) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void offset(final long offset) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public WhereSqlCondition where(final WhereSqlConditionArgs args) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void limit(long limit) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void offset(long offset) {
-		// TODO Auto-generated method stub
-
 	}
 }

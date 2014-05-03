@@ -34,7 +34,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	}
 
 	@Override
-	public void accept(Consumer<? super E> consumer) {
+	public void accept(final Consumer<? super E> consumer) {
 		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 			consumer.accept(node.getItem());
 		}
@@ -62,7 +62,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	}
 
 	@Override
-	public void apply(Function<? super E, ? extends E> function) {
+	public void apply(final Function<? super E, ? extends E> function) {
 		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 			node.setItem(function.apply(node.getItem()));
 		}
@@ -218,7 +218,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 		return -1;
 	}
 
-	protected final void insertAfter(Node<E> node, final E item) {
+	protected final void insertAfter(final Node<E> node, final E item) {
 
 		final Node<E> next = node.getNext();
 		final Node<E> newNode = getNewNode(node, item, next);
@@ -232,7 +232,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 		node.setNext(newNode);
 	}
 
-	protected final void insertBefore(Node<E> node, final E item) {
+	protected final void insertBefore(final Node<E> node, final E item) {
 
 		final Node<E> prev = node.getPrev();
 		final Node<E> newNode = getNewNode(prev, item, node);
@@ -358,11 +358,12 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 			throw new NullPointerException("object is null.");
 		}
 
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext())
+		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 			if(object.equals(node.getItem())) {
 				unlink(node);
 				return true;
 			}
+		}
 
 		return false;
 	}
@@ -386,11 +387,12 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 			throw new NullPointerException("not fond object.");
 		}
 
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext())
+		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 			if(object.equals(node.getItem())) {
 				unlink(node);
 				return true;
 			}
+		}
 
 		return false;
 	}
@@ -414,11 +416,12 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 			throw new NullPointerException("not fond object.");
 		}
 
-		for(Node<E> node = getLastNode(); node != null; node = node.getPrev())
+		for(Node<E> node = getLastNode(); node != null; node = node.getPrev()) {
 			if(object.equals(node.getItem())) {
 				unlink(node);
 				return true;
 			}
+		}
 
 		return false;
 	}

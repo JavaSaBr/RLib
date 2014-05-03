@@ -65,13 +65,6 @@ public interface Reference extends Foldable {
 	}
 
 	/**
-	 * @return целое число, на которое ссылается ссылка.
-	 */
-	public default short getShort() {
-		throw new RuntimeException("not implemented.");
-	}
-
-	/**
 	 * @return тип ссылки.
 	 */
 	public default ReferenceType getReferenceType() {
@@ -79,58 +72,65 @@ public interface Reference extends Foldable {
 	}
 
 	/**
+	 * @return целое число, на которое ссылается ссылка.
+	 */
+	public default short getShort() {
+		throw new RuntimeException("not implemented.");
+	}
+
+	/**
 	 * @param value байт, на который нужно сослаться.
 	 */
-	public default void setByte(byte value) {
+	public default void setByte(final byte value) {
 		throw new RuntimeException("not implemented.");
 	}
 
 	/**
 	 * @param value символ, на который нужно сослаться.
 	 */
-	public default void setChar(char value) {
+	public default void setChar(final char value) {
 		throw new RuntimeException("not implemented.");
 	}
 
 	/**
 	 * @param value дробное число, на которое нужно сослаться.
 	 */
-	public default void setDouble(double value) {
+	public default void setDouble(final double value) {
 		throw new RuntimeException("not implemented.");
 	}
 
 	/**
 	 * @param value дробное число, на которое нужно сослаться.
 	 */
-	public default void setFloat(float value) {
+	public default void setFloat(final float value) {
 		throw new RuntimeException("not implemented.");
 	}
 
 	/**
 	 * @param value целое число, на которое нужно сослаться.
 	 */
-	public default void setInt(int value) {
+	public default void setInt(final int value) {
 		throw new RuntimeException("not implemented.");
 	}
 
 	/**
 	 * @param value целое число, на которое нужно сослаться.
 	 */
-	public default void setLong(long value) {
+	public default void setLong(final long value) {
 		throw new RuntimeException("not implemented.");
 	}
 
 	/**
 	 * @param object объект, на который нужно сослаться.
 	 */
-	public default void setObject(Object object) {
+	public default void setObject(final Object object) {
 		throw new RuntimeException("not implemented.");
 	}
 
 	/**
 	 * @param value целое число, на которое нужно сослаться.
 	 */
-	public default void setShort(short value) {
+	public default void setShort(final short value) {
 		throw new RuntimeException("not implemented.");
 	}
 }

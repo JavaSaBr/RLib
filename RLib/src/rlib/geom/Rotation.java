@@ -40,15 +40,15 @@ public class Rotation {
 		return new Rotation();
 	}
 
-	public static Rotation newInstance(float angleX, float angleY, float angleZ) {
+	public static Rotation newInstance(final float angleX, final float angleY, final float angleZ) {
 		return newInstance().fromAngles(angleX, angleY, angleZ);
 	}
 
-	public static Rotation newInstance(float x, float y, float z, float w) {
+	public static Rotation newInstance(final float x, final float y, final float z, final float w) {
 		return new Rotation(x, y, z, w);
 	}
 
-	public static Rotation newInstance(float[] vals) {
+	public static Rotation newInstance(final float[] vals) {
 		return new Rotation(vals[0], vals[1], vals[2], vals[3]);
 	}
 
@@ -61,14 +61,14 @@ public class Rotation {
 		w = 1;
 	}
 
-	private Rotation(float x, float y, float z, float w) {
+	private Rotation(final float x, final float y, final float z, final float w) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.w = w;
 	}
 
-	public Rotation addLocal(Rotation rotation) {
+	public Rotation addLocal(final Rotation rotation) {
 		this.x += rotation.x;
 		this.y += rotation.y;
 		this.z += rotation.z;
@@ -82,12 +82,12 @@ public class Rotation {
 	 * @param rotation сверяемый разворот.
 	 * @return косинус угла между 2мя разворотами.
 	 */
-	public float dot(Rotation rotation) {
+	public float dot(final Rotation rotation) {
 		return w * rotation.w + x * rotation.x + y * rotation.y + z * rotation.z;
 	}
 
 	@Override
-	public final boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 
 		if(this == obj) {
 			return true;
@@ -101,7 +101,7 @@ public class Rotation {
 			return false;
 		}
 
-		Rotation other = (Rotation) obj;
+		final Rotation other = (Rotation) obj;
 
 		if(Float.floatToIntBits(w) != Float.floatToIntBits(other.w)) {
 			return false;
@@ -126,32 +126,32 @@ public class Rotation {
 	 * @param yAngle угол по оси Y.
 	 * @param zAngle угол по оси Z.
 	 */
-	public final Rotation fromAngles(float angleX, float yAngle, float zAngle) {
+	public final Rotation fromAngles(final float angleX, final float yAngle, final float zAngle) {
 
 		float angle = zAngle * 0.5f;
 
-		float sinZ = ExtMath.sin(angle);
-		float cosZ = ExtMath.cos(angle);
+		final float sinZ = ExtMath.sin(angle);
+		final float cosZ = ExtMath.cos(angle);
 
 		angle = yAngle * 0.5f;
 
-		float sinY = ExtMath.sin(angle);
-		float cosY = ExtMath.cos(angle);
+		final float sinY = ExtMath.sin(angle);
+		final float cosY = ExtMath.cos(angle);
 
 		angle = angleX * 0.5f;
 
-		float sinX = ExtMath.sin(angle);
-		float cosX = ExtMath.cos(angle);
+		final float sinX = ExtMath.sin(angle);
+		final float cosX = ExtMath.cos(angle);
 
-		float cosYXcosZ = cosY * cosZ;
-		float sinYXsinZ = sinY * sinZ;
-		float cosYXsinZ = cosY * sinZ;
-		float sinYXcosZ = sinY * cosZ;
+		final float cosYXcosZ = cosY * cosZ;
+		final float sinYXsinZ = sinY * sinZ;
+		final float cosYXsinZ = cosY * sinZ;
+		final float sinYXcosZ = sinY * cosZ;
 
-		w = (cosYXcosZ * cosX - sinYXsinZ * sinX);
-		x = (cosYXcosZ * sinX + sinYXsinZ * cosX);
-		y = (sinYXcosZ * cosX + cosYXsinZ * sinX);
-		z = (cosYXsinZ * cosX - sinYXcosZ * sinX);
+		w = cosYXcosZ * cosX - sinYXsinZ * sinX;
+		x = cosYXcosZ * sinX + sinYXsinZ * cosX;
+		y = sinYXcosZ * cosX + cosYXsinZ * sinX;
+		z = cosYXsinZ * cosX - sinYXcosZ * sinX;
 
 		normalizeLocal();
 
@@ -163,7 +163,7 @@ public class Rotation {
 	 * 
 	 * @param angles угол наклона по осям.
 	 */
-	public final Rotation fromAngles(float[] angles) {
+	public final Rotation fromAngles(final float[] angles) {
 		return fromAngles(angles[0], angles[1], angles[2]);
 	}
 
@@ -179,13 +179,14 @@ public class Rotation {
 	 * @param axisY vector representing the y-axis of the coordinate system.
 	 * @param axisZ vector representing the z-axis of the coordinate system.
 	 */
-	public Rotation fromAxes(Vector axisX, Vector axisY, Vector axisZ) {
+	public Rotation fromAxes(final Vector axisX, final Vector axisY, final Vector axisZ) {
 		return fromRotationMatrix(axisX.getX(), axisY.getX(), axisZ.getX(), axisX.getY(), axisY.getY(), axisZ.getY(), axisX.getZ(), axisY.getZ(), axisZ.getZ());
 	}
 
-	public Rotation fromRotationMatrix(float val_0_0, float val_0_1, float val_0_2, float val_1_0, float val_1_1, float val_1_2, float val_2_0, float val_2_1, float val_2_2) {
+	public Rotation fromRotationMatrix(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0,
+			final float val_2_1, final float val_2_2) {
 
-		float t = val_0_0 + val_1_1 + val_2_2;
+		final float t = val_0_0 + val_1_1 + val_2_2;
 
 		// we protect the division by s by ensuring that s>=1
 		if(t >= 0) { // |w| >= .5
@@ -195,7 +196,7 @@ public class Rotation {
 			x = (val_2_1 - val_1_2) * s;
 			y = (val_0_2 - val_2_0) * s;
 			z = (val_1_0 - val_0_1) * s;
-		} else if((val_0_0 > val_1_1) && (val_0_0 > val_2_2)) {
+		} else if(val_0_0 > val_1_1 && val_0_0 > val_2_2) {
 			float s = ExtMath.sqrt(1.0f + val_0_0 - val_1_1 - val_2_2); // |s|>=1
 			x = s * 0.5f; // |x| >= .5
 			s = 0.5f / s;
@@ -228,7 +229,7 @@ public class Rotation {
 	 * @param store контейнер.
 	 * @return вычисленный вектор.
 	 */
-	public Vector getVectorDirection(DirectionType type, Vector store) {
+	public Vector getVectorDirection(final DirectionType type, Vector store) {
 
 		if(store == null) {
 			store = Vector.newInstance();
@@ -240,15 +241,15 @@ public class Rotation {
 			norm = ExtMath.invSqrt(norm);
 		}
 
-		float xx = x * x * norm;
-		float xy = x * y * norm;
-		float xz = x * z * norm;
-		float xw = x * w * norm;
-		float yy = y * y * norm;
-		float yz = y * z * norm;
-		float yw = y * w * norm;
-		float zz = z * z * norm;
-		float zw = z * w * norm;
+		final float xx = x * x * norm;
+		final float xy = x * y * norm;
+		final float xz = x * z * norm;
+		final float xw = x * w * norm;
+		final float yy = y * y * norm;
+		final float yz = y * z * norm;
+		final float yw = y * w * norm;
+		final float zz = z * z * norm;
+		final float zw = z * w * norm;
 
 		switch(type) {
 			case LEFT: {
@@ -322,15 +323,15 @@ public class Rotation {
 	 * @param up вектор для ориаентации где верх а где низ.
 	 * @param buffer буффер векторов для рассчета.
 	 */
-	public void lookAt(Vector direction, Vector up, VectorBuffer buffer) {
+	public void lookAt(final Vector direction, final Vector up, final VectorBuffer buffer) {
 
-		Vector first = buffer.getNextVector();
+		final Vector first = buffer.getNextVector();
 		first.set(direction).normalizeLocal();
 
-		Vector second = buffer.getNextVector();
+		final Vector second = buffer.getNextVector();
 		second.set(up).crossLocal(direction).normalizeLocal();
 
-		Vector thrid = buffer.getNextVector();
+		final Vector thrid = buffer.getNextVector();
 		thrid.set(direction).crossLocal(second).normalizeLocal();
 
 		fromAxes(second, thrid, first);
@@ -343,16 +344,16 @@ public class Rotation {
 	 * @param vector вектор, который надо развернуть.
 	 * @return полученный вектор.
 	 */
-	public final Vector multLocal(Vector vector) {
+	public final Vector multLocal(final Vector vector) {
 
-		float vectorX = vector.getX();
-		float vectorY = vector.getY();
-		float vectorZ = vector.getZ();
+		final float vectorX = vector.getX();
+		final float vectorY = vector.getY();
+		final float vectorZ = vector.getZ();
 
-		float x = getX();
-		float y = getY();
-		float z = getZ();
-		float w = getW();
+		final float x = getX();
+		final float y = getY();
+		final float z = getZ();
+		final float w = getW();
 
 		vector.setX(w * w * vectorX + 2 * y * w * vectorZ - 2 * z * w * vectorY + x * x * vectorX + 2 * y * x * vectorY + 2 * z * x * vectorZ - z * z * vectorX - y * y * vectorX);
 		vector.setY(2 * x * y * vectorX + y * y * vectorY + 2 * z * y * vectorZ + 2 * w * z * vectorX - z * z * vectorY + w * w * vectorY - 2 * x * w * vectorZ - x * x * vectorY);
@@ -384,7 +385,7 @@ public class Rotation {
 	 */
 	public final Rotation normalizeLocal() {
 
-		float norm = ExtMath.invSqrt(norm());
+		final float norm = ExtMath.invSqrt(norm());
 
 		x *= norm;
 		y *= norm;
@@ -404,16 +405,16 @@ public class Rotation {
 	/**
 	 * Создание случайного разворота.
 	 */
-	public void random(Random random) {
+	public void random(final Random random) {
 
-		float x = AngleUtils.degreeToRadians(random.nextInt(0, 360));
-		float y = AngleUtils.degreeToRadians(random.nextInt(0, 360));
-		float z = AngleUtils.degreeToRadians(random.nextInt(0, 360));
+		final float x = AngleUtils.degreeToRadians(random.nextInt(0, 360));
+		final float y = AngleUtils.degreeToRadians(random.nextInt(0, 360));
+		final float z = AngleUtils.degreeToRadians(random.nextInt(0, 360));
 
 		fromAngles(x, y, z);
 	}
 
-	public Rotation set(Rotation rotation) {
+	public Rotation set(final Rotation rotation) {
 		this.x = rotation.x;
 		this.y = rotation.y;
 		this.z = rotation.z;
@@ -424,18 +425,18 @@ public class Rotation {
 	/**
 	 * @param степень разворота по оси w.
 	 */
-	public final void setW(float w) {
+	public final void setW(final float w) {
 		this.w = w;
 	}
 
 	/**
 	 * @param степень разворота по оси х.
 	 */
-	public final void setX(float x) {
+	public final void setX(final float x) {
 		this.x = x;
 	}
 
-	public void setXYZW(float x, float y, float z, float w) {
+	public void setXYZW(final float x, final float y, final float z, final float w) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -445,14 +446,14 @@ public class Rotation {
 	/**
 	 * @param степень разворота по оси y.
 	 */
-	public final void setY(float y) {
+	public final void setY(final float y) {
 		this.y = y;
 	}
 
 	/**
 	 * @param степень разворота по оси z.
 	 */
-	public final void setZ(float z) {
+	public final void setZ(final float z) {
 		this.z = z;
 	}
 
@@ -463,13 +464,13 @@ public class Rotation {
 	 * @param end конечный разворот.
 	 * @param percent % разворота от текущего к конечному.
 	 */
-	public void slerp(Rotation end, float percent) {
+	public void slerp(final Rotation end, final float percent) {
 
 		if(x == end.x && y == end.y && z == end.z && w == end.w) {
 			return;
 		}
 
-		float result = (x * end.x) + (y * end.y) + (z * end.z) + (w * end.w);
+		float result = x * end.x + y * end.y + z * end.z + w * end.w;
 
 		if(result < 0.0f) {
 			end.x = -end.x;
@@ -482,19 +483,19 @@ public class Rotation {
 		float scale0 = 1 - percent;
 		float scale1 = percent;
 
-		if((1 - result) > 0.1f) {
+		if(1 - result > 0.1f) {
 
-			float theta = ExtMath.acos(result);
-			float invSinTheta = 1f / ExtMath.sin(theta);
+			final float theta = ExtMath.acos(result);
+			final float invSinTheta = 1f / ExtMath.sin(theta);
 
 			scale0 = ExtMath.sin((1 - percent) * theta) * invSinTheta;
-			scale1 = ExtMath.sin((percent * theta)) * invSinTheta;
+			scale1 = ExtMath.sin(percent * theta) * invSinTheta;
 		}
 
-		x = (scale0 * x) + (scale1 * end.x);
-		y = (scale0 * y) + (scale1 * end.y);
-		z = (scale0 * z) + (scale1 * end.z);
-		w = (scale0 * w) + (scale1 * end.w);
+		x = scale0 * x + scale1 * end.x;
+		y = scale0 * y + scale1 * end.y;
+		z = scale0 * z + scale1 * end.z;
+		w = scale0 * w + scale1 * end.w;
 	}
 
 	/**
@@ -505,7 +506,7 @@ public class Rotation {
 	 * @param end конечный разворот.
 	 * @param percent % разворота от стартового до конечного.
 	 */
-	public Rotation slerp(Rotation start, Rotation end, float percent) {
+	public Rotation slerp(final Rotation start, final Rotation end, final float percent) {
 		return slerp(start, end, percent, false);
 	}
 
@@ -518,7 +519,7 @@ public class Rotation {
 	 * @param percent % разворота от стартового до конечного.
 	 * @param forceLinear принудительное использование линейной интерполяции.
 	 */
-	public final Rotation slerp(Rotation start, Rotation end, float percent, boolean forceLinear) {
+	public final Rotation slerp(final Rotation start, final Rotation end, final float percent, final boolean forceLinear) {
 
 		if(start.equals(end)) {
 			set(start);
@@ -535,24 +536,24 @@ public class Rotation {
 		float startScale = 1 - percent;
 		float endScale = percent;
 
-		if(!forceLinear && (1 - result) > 0.1f) {
+		if(!forceLinear && 1 - result > 0.1f) {
 
-			float theta = ExtMath.acos(result);
-			float invSinTheta = 1f / ExtMath.sin(theta);
+			final float theta = ExtMath.acos(result);
+			final float invSinTheta = 1f / ExtMath.sin(theta);
 
 			startScale = ExtMath.sin((1 - percent) * theta) * invSinTheta;
-			endScale = ExtMath.sin((percent * theta)) * invSinTheta;
+			endScale = ExtMath.sin(percent * theta) * invSinTheta;
 		}
 
-		this.x = (startScale * start.getX()) + (endScale * end.getX());
-		this.y = (startScale * start.getY()) + (endScale * end.getY());
-		this.z = (startScale * start.getZ()) + (endScale * end.getZ());
-		this.w = (startScale * start.getW()) + (endScale * end.getW());
+		this.x = startScale * start.getX() + endScale * end.getX();
+		this.y = startScale * start.getY() + endScale * end.getY();
+		this.z = startScale * start.getZ() + endScale * end.getZ();
+		this.w = startScale * start.getW() + endScale * end.getW();
 
 		return this;
 	}
 
-	public Rotation subtractLocal(Rotation rotation) {
+	public Rotation subtractLocal(final Rotation rotation) {
 		this.x -= rotation.x;
 		this.y -= rotation.y;
 		this.z -= rotation.z;
@@ -560,9 +561,9 @@ public class Rotation {
 		return this;
 	}
 
-	public final float toAngleAxis(Vector axisStore) {
+	public final float toAngleAxis(final Vector axisStore) {
 
-		float sqrLength = x * x + y * y + z * z;
+		final float sqrLength = x * x + y * y + z * z;
 		float angle;
 
 		if(sqrLength == 0.0f) {
@@ -577,11 +578,11 @@ public class Rotation {
 
 		} else {
 
-			angle = (2.0f * ExtMath.acos(w));
+			angle = 2.0f * ExtMath.acos(w);
 
 			if(axisStore != null) {
 
-				float invLength = (1.0f / ExtMath.sqrt(sqrLength));
+				final float invLength = 1.0f / ExtMath.sqrt(sqrLength);
 
 				axisStore.setX(x * invLength);
 				axisStore.setY(y * invLength);
@@ -598,29 +599,29 @@ public class Rotation {
 	 * @param result матрица, в которую занести нужно результат.
 	 * @return результат в виде матрицы.
 	 */
-	public final Matrix3f toRotationMatrix(Matrix3f result) {
+	public final Matrix3f toRotationMatrix(final Matrix3f result) {
 
-		float norm = norm();
+		final float norm = norm();
 
-		float s = (norm == 1f) ? 2f : (norm > 0f) ? 2f / norm : 0;
+		final float s = norm == 1f ? 2f : norm > 0f ? 2f / norm : 0;
 
-		float x = getX();
-		float y = getY();
-		float z = getZ();
-		float w = getW();
+		final float x = getX();
+		final float y = getY();
+		final float z = getZ();
+		final float w = getW();
 
-		float xs = x * s;
-		float ys = y * s;
-		float zs = z * s;
-		float xx = x * xs;
-		float xy = x * ys;
-		float xz = x * zs;
-		float xw = w * xs;
-		float yy = y * ys;
-		float yz = y * zs;
-		float yw = w * ys;
-		float zz = z * zs;
-		float zw = w * zs;
+		final float xs = x * s;
+		final float ys = y * s;
+		final float zs = z * s;
+		final float xx = x * xs;
+		final float xy = x * ys;
+		final float xz = x * zs;
+		final float xw = w * xs;
+		final float yy = y * ys;
+		final float yz = y * zs;
+		final float yw = w * ys;
+		final float zz = z * zs;
+		final float zw = w * zs;
 
 		result.set(1 - (yy + zz), xy - zw, xz + yw, xy + zw, 1 - (xx + zz), yz - xw, xz - yw, yz + xw, 1 - (xx + yy));
 		return result;

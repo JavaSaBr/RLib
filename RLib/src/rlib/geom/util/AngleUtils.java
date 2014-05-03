@@ -19,7 +19,7 @@ public final class AngleUtils {
 	 * @param targetY целевая координата.
 	 * @return нужный разворот.
 	 */
-	public static int calcHeading(float x, float y, float targetX, float targetY) {
+	public static int calcHeading(final float x, final float y, final float targetX, final float targetY) {
 		return (int) (Math.atan2(y - targetY, x - targetX) * HEADINGS_IN_PI) + 32768;
 	}
 
@@ -33,7 +33,7 @@ public final class AngleUtils {
 	 * @param targetY целевая координата.
 	 * @return нужный разворот.
 	 */
-	public static int calcHeadingTo(float x, float y, int heading, float targetX, float targetY) {
+	public static int calcHeadingTo(final float x, final float y, final int heading, final float targetX, final float targetY) {
 
 		int newHeading = calcHeading(x, y, targetX, targetY);
 
@@ -69,7 +69,7 @@ public final class AngleUtils {
 	 * @param angle кол-во градусов.
 	 * @return кол-во радианов.
 	 */
-	public static float degreeToRadians(float angle) {
+	public static float degreeToRadians(final float angle) {
 		return angle * PI / 180F;
 	}
 
@@ -82,7 +82,7 @@ public final class AngleUtils {
 	 * @param endY у координата второй точки.
 	 * @return кол-во градусов.
 	 */
-	public static float getAngleFrom(float startX, float startY, float endX, float endY) {
+	public static float getAngleFrom(final float startX, final float startY, final float endX, final float endY) {
 
 		float angle = (float) Math.toDegrees(Math.atan2(startY - endY, startX - endX));
 
@@ -99,7 +99,7 @@ public final class AngleUtils {
 	 * @param heading направление разворота.
 	 * @return кол-во градусов.
 	 */
-	public static float headingToDegree(int heading) {
+	public static float headingToDegree(final int heading) {
 
 		float angle = heading / 182.044444444f;
 
@@ -116,7 +116,7 @@ public final class AngleUtils {
 	 * @param heading направление разворота.
 	 * @return кол-во радианов.
 	 */
-	public static float headingToRadians(int heading) {
+	public static float headingToRadians(final int heading) {
 
 		float angle = heading / 182.044444444f;
 
@@ -138,10 +138,10 @@ public final class AngleUtils {
 	 * @param width ширина области.
 	 * @return входит ли.
 	 */
-	public static boolean isInDegree(float x, float y, int heading, float targetX, float targetY, int width) {
+	public static boolean isInDegree(final float x, final float y, final int heading, final float targetX, final float targetY, final int width) {
 
 		int angle = (int) AngleUtils.headingToDegree(calcHeadingTo(x, y, heading, targetX, targetY));
-		int degree = (int) headingToDegree(heading);
+		final int degree = (int) headingToDegree(heading);
 
 		int min = degree - width;
 		int max = degree + width;
@@ -154,7 +154,7 @@ public final class AngleUtils {
 			max += 360;
 		}
 
-		boolean flag = angle - degree > 180;
+		final boolean flag = angle - degree > 180;
 
 		if(flag) {
 			angle -= 360;
@@ -175,7 +175,7 @@ public final class AngleUtils {
 	 * @param radians угол в радианах.
 	 * @return угол в градусах.
 	 */
-	public static float radiansToDegree(float radians) {
+	public static float radiansToDegree(final float radians) {
 		return radians * 180F / PI;
 	}
 }

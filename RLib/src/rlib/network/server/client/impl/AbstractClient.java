@@ -32,7 +32,7 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	/** закрыт ли клиент */
 	protected boolean closed;
 
-	public AbstractClient(C connection, T crypt) {
+	public AbstractClient(final C connection, final T crypt) {
 		this.connection = connection;
 		this.crypt = crypt;
 	}
@@ -40,7 +40,7 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	@Override
 	public void close() {
 
-		C connection = getConnection();
+		final C connection = getConnection();
 
 		if(connection != null) {
 			connection.close();
@@ -50,12 +50,12 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	}
 
 	@Override
-	public void decrypt(ByteBuffer data, int offset, int length) {
+	public void decrypt(final ByteBuffer data, final int offset, final int length) {
 		crypt.decrypt(data.array(), offset, length);
 	}
 
 	@Override
-	public void encrypt(ByteBuffer data, int offset, int length) {
+	public void encrypt(final ByteBuffer data, final int offset, final int length) {
 		crypt.encrypt(data.array(), offset, length);
 	}
 
@@ -79,11 +79,6 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 		return owner;
 	}
 
-	@Override
-	public final boolean isConnected() {
-		return !isClosed() && connection != null && !connection.isClosed();
-	}
-
 	/**
 	 * @return закрыт ли клиент.
 	 */
@@ -92,8 +87,13 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	}
 
 	@Override
+	public final boolean isConnected() {
+		return !isClosed() && connection != null && !connection.isClosed();
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
-	public final void readPacket(ReadeablePacket packet, ByteBuffer buffer) {
+	public final void readPacket(final ReadeablePacket packet, final ByteBuffer buffer) {
 
 		if(packet != null) {
 
@@ -109,13 +109,13 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void sendPacket(SendablePacket packet) {
+	public final void sendPacket(final SendablePacket packet) {
 
 		if(isClosed()) {
 			return;
 		}
 
-		C connection = getConnection();
+		final C connection = getConnection();
 
 		if(connection != null) {
 			connection.sendPacket(packet);
@@ -123,19 +123,19 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	}
 
 	@Override
-	public final void setAccount(A account) {
+	public final void setAccount(final A account) {
 		this.account = account;
 	}
 
 	/**
 	 * @param closed закрыт ли клиент.
 	 */
-	private void setClosed(boolean closed) {
+	private void setClosed(final boolean closed) {
 		this.closed = closed;
 	}
 
 	@Override
-	public final void setOwner(O owner) {
+	public final void setOwner(final O owner) {
 		this.owner = owner;
 	}
 

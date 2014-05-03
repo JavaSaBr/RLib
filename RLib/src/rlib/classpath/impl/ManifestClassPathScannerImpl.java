@@ -26,22 +26,22 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 	/** ключ, по которому будет извлекаться дополнительный classpath */
 	private final String classPathKey;
 
-	public ManifestClassPathScannerImpl(Class<?> rootClass, String classPathKey) {
+	public ManifestClassPathScannerImpl(final Class<?> rootClass, final String classPathKey) {
 		this.rootClass = rootClass;
 		this.classPathKey = classPathKey;
 	}
 
 	public String[] getManifestClassPath() {
 
-		File rootFolder = Util.getRootFolderFromClass(rootClass);
+		final File rootFolder = Util.getRootFolderFromClass(rootClass);
 
 		if(rootFolder == null) {
 			return new String[0];
 		}
 
-		Array<String> result = ArrayFactory.newArray(String.class);
+		final Array<String> result = ArrayFactory.newArray(String.class);
 
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
 		Enumeration<URL> urls;
 
@@ -53,26 +53,26 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 
 				try {
 
-					URL url = urls.nextElement();
+					final URL url = urls.nextElement();
 
-					InputStream is = url.openStream();
+					final InputStream is = url.openStream();
 
 					if(is != null) {
 
-						Manifest manifest = new Manifest(is);
-						Attributes attributes = manifest.getMainAttributes();
+						final Manifest manifest = new Manifest(is);
+						final Attributes attributes = manifest.getMainAttributes();
 
-						String value = attributes.getValue(classPathKey);
+						final String value = attributes.getValue(classPathKey);
 
 						if(value == null) {
 							continue;
 						}
 
-						String[] classpath = value.split(" ");
+						final String[] classpath = value.split(" ");
 
-						for(String path : classpath) {
+						for(final String path : classpath) {
 
-							File file = new File(rootFolder.getAbsolutePath() + File.separator + path);
+							final File file = new File(rootFolder.getAbsolutePath() + File.separator + path);
 
 							if(file.exists()) {
 								result.add(file.getAbsolutePath());
@@ -80,11 +80,11 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 						}
 					}
 
-				} catch(Exception e) {
+				} catch(final Exception e) {
 					LOGGER.warning(e);
 				}
 			}
-		} catch(IOException e1) {
+		} catch(final IOException e1) {
 			LOGGER.warning(e1);
 		}
 
@@ -95,7 +95,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 	@Override
 	protected String[] getPaths() {
 
-		Array<String> result = ArrayFactory.newArraySet(String.class);
+		final Array<String> result = ArrayFactory.newArraySet(String.class);
 		result.addAll(super.getPaths());
 		result.addAll(getManifestClassPath());
 		result.trimToSize();

@@ -27,11 +27,11 @@ public final class NetworkFactory {
 	 * @param connectHandler обработчик подключения к серверу.
 	 * @return ссылка на новую модель.
 	 */
-	public static ClientNetwork newDefaultAsynchronousClientNetwork(NetworkConfig config, ConnectHandler connectHandler) {
+	public static ClientNetwork newDefaultAsynchronousClientNetwork(final NetworkConfig config, final ConnectHandler connectHandler) {
 
 		try {
 			return new DefaultClientNetwork(config, connectHandler);
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			LOGGER.warning(e);
 		}
 
@@ -45,11 +45,11 @@ public final class NetworkFactory {
 	 * @param acceptHandler обработчик новых подключений.
 	 * @return ссылка на новую модель.
 	 */
-	public static ServerNetwork newDefaultAsynchronousServerNetwork(NetworkConfig config, AcceptHandler acceptHandler) {
+	public static ServerNetwork newDefaultAsynchronousServerNetwork(final NetworkConfig config, final AcceptHandler acceptHandler) {
 
 		try {
 			return new DefaultServerNetwork(config, acceptHandler);
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			LOGGER.warning(e);
 		}
 

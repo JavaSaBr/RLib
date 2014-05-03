@@ -35,7 +35,7 @@ public class CompileListener implements DiagnosticListener<JavaFileObject> {
 	}
 
 	@Override
-	public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
+	public void report(final Diagnostic<? extends JavaFileObject> diagnostic) {
 		diagnostics.add(diagnostic);
 	}
 }

@@ -79,7 +79,7 @@ public class DeadLockDetector implements SafeTask {
 			return;
 		}
 
-		Array<DeadLockListener> listeners = getListeners();
+		final Array<DeadLockListener> listeners = getListeners();
 
 		for(int i = 0, length = threadIds.length; i < length; i++) {
 
@@ -94,7 +94,7 @@ public class DeadLockDetector implements SafeTask {
 			listeners.readLock();
 			try {
 
-				for(DeadLockListener listener : listeners.array()) {
+				for(final DeadLockListener listener : listeners.array()) {
 
 					if(listener == null) {
 						break;

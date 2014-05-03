@@ -21,7 +21,7 @@ final class CharReference extends AbstractReference {
 	}
 
 	@Override
-	public void setChar(char value) {
+	public void setChar(final char value) {
 		this.value = value;
 	}
 

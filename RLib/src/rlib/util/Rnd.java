@@ -29,8 +29,9 @@ public abstract class Rnd {
 
 		final byte[] result = new byte[size];
 
-		for(int i = 0; i < size; i++)
+		for(int i = 0; i < size; i++) {
 			result[i] = (byte) nextInt(256);
+		}
 
 		return result;
 	}
@@ -43,11 +44,13 @@ public abstract class Rnd {
 	 */
 	public static boolean chance(final float chance) {
 
-		if(chance < 0F)
+		if(chance < 0F) {
 			return false;
+		}
 
-		if(chance > 99.999999F)
+		if(chance > 99.999999F) {
 			return true;
+		}
 
 		return nextFloat() * nextInt(100) <= chance;
 	}
@@ -60,11 +63,13 @@ public abstract class Rnd {
 	 */
 	public static boolean chance(final int chance) {
 
-		if(chance < 1)
+		if(chance < 1) {
 			return false;
+		}
 
-		if(chance > 99)
+		if(chance > 99) {
 			return true;
+		}
 
 		return nextInt(99) <= chance;
 	}
@@ -128,12 +133,13 @@ public abstract class Rnd {
 	 */
 	public static byte[] safeByteArray(final int size) {
 
-		Random rnd = LOCAL_RANDOM.get();
+		final Random rnd = LOCAL_RANDOM.get();
 
 		final byte[] result = new byte[size];
 
-		for(int i = 0; i < size; i++)
+		for(int i = 0; i < size; i++) {
 			result[i] = (byte) rnd.nextInt(256);
+		}
 
 		return result;
 	}
@@ -146,13 +152,15 @@ public abstract class Rnd {
 	 */
 	public static boolean safeChance(final float chance) {
 
-		if(chance < 0F)
+		if(chance < 0F) {
 			return false;
+		}
 
-		if(chance > 99.999999F)
+		if(chance > 99.999999F) {
 			return true;
+		}
 
-		Random rnd = LOCAL_RANDOM.get();
+		final Random rnd = LOCAL_RANDOM.get();
 
 		return rnd.nextFloat() * rnd.nextInt(100) <= chance;
 	}

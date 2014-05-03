@@ -15,7 +15,7 @@ public final class ConcurrentUtils {
 	/**
 	 * Отпускание ожидающих потоков на этом объекте.
 	 */
-	public static void notifyAll(Object object) {
+	public static void notifyAll(final Object object) {
 		synchronized(object) {
 			object.notifyAll();
 		}
@@ -24,7 +24,7 @@ public final class ConcurrentUtils {
 	/**
 	 * Отпускание ожидающих потоков на этом объекте.
 	 */
-	public static void notifyAllInSynchronize(Object object) {
+	public static void notifyAllInSynchronize(final Object object) {
 		object.notifyAll();
 	}
 
@@ -32,7 +32,7 @@ public final class ConcurrentUtils {
 	 * Отпускание ожидающих потоков на этом объекте и становится самому в
 	 * ожидание.
 	 */
-	public static void notifyAndWait(Object object) {
+	public static void notifyAndWait(final Object object) {
 		synchronized(object) {
 			notifyAllInSynchronize(object);
 			waitInSynchronize(object);
@@ -42,11 +42,11 @@ public final class ConcurrentUtils {
 	/**
 	 * Ождивать на этом объекте.
 	 */
-	public static void wait(Object object) {
+	public static void wait(final Object object) {
 		synchronized(object) {
 			try {
 				object.wait();
-			} catch(InterruptedException e) {
+			} catch(final InterruptedException e) {
 				LOGGER.warning(e);
 			}
 		}
@@ -55,11 +55,11 @@ public final class ConcurrentUtils {
 	/**
 	 * Ожидать определнное время на этом объекте.
 	 */
-	public static void wait(Object object, long time) {
+	public static void wait(final Object object, final long time) {
 		synchronized(object) {
 			try {
 				object.wait(time);
-			} catch(InterruptedException e) {
+			} catch(final InterruptedException e) {
 				LOGGER.warning(e);
 			}
 		}
@@ -68,10 +68,10 @@ public final class ConcurrentUtils {
 	/**
 	 * Ождивать на этом объекте.
 	 */
-	public static void waitInSynchronize(Object object) {
+	public static void waitInSynchronize(final Object object) {
 		try {
 			object.wait();
-		} catch(InterruptedException e) {
+		} catch(final InterruptedException e) {
 			LOGGER.warning(e);
 		}
 	}

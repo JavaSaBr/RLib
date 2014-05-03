@@ -12,7 +12,7 @@ public class PathBuilder {
 	/** итоговый путь */
 	private final StringBuilder builder;
 
-	public PathBuilder(String fullpath) {
+	public PathBuilder(final String fullpath) {
 		this.builder = new StringBuilder(fullpath);
 	}
 
@@ -21,7 +21,7 @@ public class PathBuilder {
 	 * 
 	 * @param path добавочный кусок пути.
 	 */
-	public PathBuilder append(String path) {
+	public PathBuilder append(final String path) {
 
 		if(StringUtils.isEmpty(path)) {
 			throw new RuntimeException("incorrect path.");

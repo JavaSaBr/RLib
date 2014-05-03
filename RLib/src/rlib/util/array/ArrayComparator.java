@@ -10,7 +10,7 @@ import java.util.Comparator;
 public interface ArrayComparator<T> extends Comparator<T> {
 
 	@Override
-	public default int compare(T first, T second) {
+	public default int compare(final T first, final T second) {
 
 		if(first == null) {
 			return 1;

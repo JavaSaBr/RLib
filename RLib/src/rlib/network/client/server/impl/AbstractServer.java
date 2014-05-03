@@ -28,7 +28,7 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 	/** закрыт ли клиент */
 	protected boolean closed;
 
-	protected AbstractServer(C connection, T crypt) {
+	protected AbstractServer(final C connection, final T crypt) {
 		this.connection = connection;
 		this.crypt = crypt;
 	}
@@ -36,7 +36,7 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 	@Override
 	public void close() {
 
-		C connection = getConnection();
+		final C connection = getConnection();
 
 		if(connection != null) {
 			connection.close();
@@ -44,12 +44,12 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 	}
 
 	@Override
-	public void decrypt(ByteBuffer data, int offset, int length) {
+	public void decrypt(final ByteBuffer data, final int offset, final int length) {
 		crypt.decrypt(data.array(), offset, length);
 	}
 
 	@Override
-	public void encrypt(ByteBuffer data, int offset, int length) {
+	public void encrypt(final ByteBuffer data, final int offset, final int length) {
 		crypt.encrypt(data.array(), offset, length);
 	}
 
@@ -65,6 +65,13 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 		return connection;
 	}
 
+	/**
+	 * @return закрыт ли клиент.
+	 */
+	public boolean isClosed() {
+		return closed;
+	}
+
 	@Override
 	public boolean isConnected() {
 		return !isClosed() && connection != null && !connection.isClosed();
@@ -72,7 +79,7 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void readPacket(ReadeablePacket packet, ByteBuffer buffer) {
+	public final void readPacket(final ReadeablePacket packet, final ByteBuffer buffer) {
 
 		if(packet != null) {
 
@@ -86,22 +93,15 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 		}
 	}
 
-	/**
-	 * @return закрыт ли клиент.
-	 */
-	public boolean isClosed() {
-		return closed;
-	}
-
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void sendPacket(SendablePacket packet) {
+	public final void sendPacket(final SendablePacket packet) {
 
 		if(isClosed()) {
 			return;
 		}
 
-		C connection = getConnection();
+		final C connection = getConnection();
 
 		if(connection == null || connection.isClosed()) {
 			LOGGER.warning(this, new Exception("not found connection"));

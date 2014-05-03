@@ -43,27 +43,27 @@ public class CompilerImpl implements Compiler {
 	/**
 	 * @param showDiagnostic отображать ли ошибки компиляции.
 	 */
-	public CompilerImpl(boolean showDiagnostic) {
+	public CompilerImpl(final boolean showDiagnostic) {
 		this.compiler = ToolProvider.getSystemJavaCompiler();
 		this.listener = new CompileListener();
 		this.loader = new CompileClassLoader();
 
-		StandardJavaFileManager standardJavaFileManager = compiler.getStandardFileManager(listener, null, null);
+		final StandardJavaFileManager standardJavaFileManager = compiler.getStandardFileManager(listener, null, null);
 
 		this.fileManager = new CompileJavaFileManager(standardJavaFileManager, loader);
 		this.showDiagnostic = showDiagnostic;
 	}
 
 	@Override
-	public Class<?>[] compile(File... files) {
+	public Class<?>[] compile(final File... files) {
 
 		if(files.length < 1) {
 			return null;
 		}
 
-		Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class, files.length);
+		final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class, files.length);
 
-		for(File file : files) {
+		for(final File file : files) {
 			javaSource.add(new JavaFileSource(file));
 		}
 
@@ -77,39 +77,39 @@ public class CompilerImpl implements Compiler {
 	 * @param source список исходников.
 	 * @return список скомпиленых классов.
 	 */
-	protected synchronized Class<?>[] compile(Iterable<String> options, Iterable<? extends JavaFileObject> source) {
+	protected synchronized Class<?>[] compile(final Iterable<String> options, final Iterable<? extends JavaFileObject> source) {
 
-		JavaCompiler compiler = getCompiler();
+		final JavaCompiler compiler = getCompiler();
 
-		CompileJavaFileManager fileManager = getFileManager();
-		CompileListener listener = getListener();
-		CompileClassLoader loader = getLoader();
+		final CompileJavaFileManager fileManager = getFileManager();
+		final CompileListener listener = getListener();
+		final CompileClassLoader loader = getLoader();
 
 		try {
 
-			CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, source);
+			final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, source);
 			task.call();
 
-			Diagnostic<JavaFileObject>[] diagnostics = listener.getDiagnostics();
+			final Diagnostic<JavaFileObject>[] diagnostics = listener.getDiagnostics();
 
 			if(isShowDiagnostic() && diagnostics.length > 1) {
 
 				LOGGER.warning("errors:");
 
-				for(Diagnostic<JavaFileObject> diagnostic : diagnostics) {
+				for(final Diagnostic<JavaFileObject> diagnostic : diagnostics) {
 					LOGGER.warning(String.valueOf(diagnostic));
 				}
 			}
 
-			Array<Class<?>> result = ArrayFactory.newArray(Class.class);
+			final Array<Class<?>> result = ArrayFactory.newArray(Class.class);
 
-			String[] classNames = fileManager.getClassNames();
+			final String[] classNames = fileManager.getClassNames();
 
-			for(String className : classNames) {
+			for(final String className : classNames) {
 				try {
-					Class<?> cs = Class.forName(className, false, loader);
+					final Class<?> cs = Class.forName(className, false, loader);
 					result.add(cs);
-				} catch(ClassNotFoundException e) {
+				} catch(final ClassNotFoundException e) {
 					LOGGER.warning(e);
 				}
 			}
@@ -127,11 +127,11 @@ public class CompilerImpl implements Compiler {
 	 * @param container контейнер классов.
 	 * @param directory дериктория.
 	 */
-	private void compileDirectory(Array<Class<?>> container, File directory) {
+	private void compileDirectory(final Array<Class<?>> container, final File directory) {
 
-		File[] files = directory.listFiles();
+		final File[] files = directory.listFiles();
 
-		for(File file : files) {
+		for(final File file : files) {
 			if(file.isDirectory()) {
 				compileDirectory(container, file);
 			} else if(file.getName().endsWith(Compiler.SOURCE_EXTENSION)) {
@@ -141,11 +141,11 @@ public class CompilerImpl implements Compiler {
 	}
 
 	@Override
-	public Class<?>[] compileDirectory(File... files) {
+	public Class<?>[] compileDirectory(final File... files) {
 
-		Array<Class<?>> container = ArrayFactory.newArray(Class.class);
+		final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
-		for(File directory : files) {
+		for(final File directory : files) {
 
 			if(!directory.exists() || !directory.isDirectory()) {
 				continue;

@@ -23,7 +23,7 @@ public class FolderFileListener implements LoggerListener {
 	/** записчик лога в фаил */
 	private Writer writer;
 
-	public FolderFileListener(File folder) {
+	public FolderFileListener(final File folder) {
 
 		if(!folder.isDirectory()) {
 			throw new IllegalArgumentException("file is not directory.");
@@ -44,7 +44,7 @@ public class FolderFileListener implements LoggerListener {
 	public Writer getWriter() throws IOException {
 
 		if(writer == null) {
-			DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyy-MM-dd_HH-mm-ss");
+			final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyy-MM-dd_HH-mm-ss");
 			writer = new FileWriter(new File(folder, timeFormat.format(LocalDateTime.now()) + ".log"));
 		}
 
@@ -52,13 +52,13 @@ public class FolderFileListener implements LoggerListener {
 	}
 
 	@Override
-	public void println(String text) {
+	public void println(final String text) {
 		try {
-			Writer writer = getWriter();
+			final Writer writer = getWriter();
 			writer.append(text);
 			writer.append('\n');
 			writer.flush();
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			e.printStackTrace();
 		}
 	}

@@ -9,12 +9,12 @@ public class SortedLinkedList<E extends Comparable<E>> extends FastLinkedList<E>
 
 	private static final long serialVersionUID = -8115760928469233254L;
 
-	public SortedLinkedList(Class<?> type) {
+	public SortedLinkedList(final Class<?> type) {
 		super(type);
 	}
 
 	@Override
-	public boolean add(E element) {
+	public boolean add(final E element) {
 
 		if(element == null) {
 			throw new RuntimeException("element is null.");
@@ -22,7 +22,7 @@ public class SortedLinkedList<E extends Comparable<E>> extends FastLinkedList<E>
 
 		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 
-			E item = node.getItem();
+			final E item = node.getItem();
 
 			if(element.compareTo(item) < 0) {
 				insertBefore(node, element);

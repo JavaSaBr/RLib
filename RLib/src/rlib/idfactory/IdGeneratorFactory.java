@@ -21,7 +21,7 @@ public class IdGeneratorFactory {
 	 * @param tables таблицы извлекаемых ид из БД.
 	 * @return новый генератор.
 	 */
-	public static IdGenerator newBitSetIdGeneratoe(ConnectFactory connects, ScheduledExecutorService executor, String[][] tables) {
+	public static IdGenerator newBitSetIdGeneratoe(final ConnectFactory connects, final ScheduledExecutorService executor, final String[][] tables) {
 		return new BitSetIdGenerator(connects, executor, tables);
 	}
 
@@ -32,7 +32,7 @@ public class IdGeneratorFactory {
 	 * @param end конечный ид.
 	 * @return новый генератор.
 	 */
-	public static IdGenerator newSimpleIdGenerator(int start, int end) {
+	public static IdGenerator newSimpleIdGenerator(final int start, final int end) {
 		return new SimpleIdGenerator(start, end);
 	}
 

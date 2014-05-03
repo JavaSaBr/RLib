@@ -21,14 +21,14 @@ public class CompileClassLoader extends ClassLoader {
 	/**
 	 * Добавить байткод класса.
 	 */
-	public void addByteCode(ByteSource byteSource) {
+	public void addByteCode(final ByteSource byteSource) {
 		byteCode.add(byteSource);
 	}
 
 	@Override
-	protected Class<?> findClass(String name) throws ClassNotFoundException {
+	protected Class<?> findClass(final String name) throws ClassNotFoundException {
 
-		Array<ByteSource> byteCode = getByteCode();
+		final Array<ByteSource> byteCode = getByteCode();
 
 		if(byteCode.isEmpty()) {
 			return null;
@@ -36,9 +36,9 @@ public class CompileClassLoader extends ClassLoader {
 
 		synchronized(byteCode) {
 
-			for(ByteSource byteSource : byteCode) {
+			for(final ByteSource byteSource : byteCode) {
 
-				byte[] bytes = byteSource.getByteSource();
+				final byte[] bytes = byteSource.getByteSource();
 
 				Class<?> result = null;
 

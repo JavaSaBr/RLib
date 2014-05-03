@@ -25,14 +25,14 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reade
 	/** сервер */
 	protected T server;
 
-	public AbstractServerConnection(ClientNetwork network, AsynchronousSocketChannel channel, Class<S> sendableType) {
+	public AbstractServerConnection(final ClientNetwork network, final AsynchronousSocketChannel channel, final Class<S> sendableType) {
 		super(network, channel, sendableType);
 	}
 
 	@Override
 	protected void finish() {
 
-		T server = getServer();
+		final T server = getServer();
 
 		if(server != null) {
 			server.close();
@@ -47,11 +47,11 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reade
 	}
 
 	@Override
-	protected void onWrited(S packet) {
+	protected void onWrited(final S packet) {
 	}
 
 	@Override
-	public void setServer(T server) {
+	public void setServer(final T server) {
 		this.server = server;
 	}
 }

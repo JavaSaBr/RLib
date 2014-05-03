@@ -17,7 +17,7 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 	/**
 	 * @param type тип элементов в массиве.
 	 */
-	public SortedArray(Class<E> type) {
+	public SortedArray(final Class<E> type) {
 		super(type);
 	}
 
@@ -25,22 +25,22 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 	 * @param type тип элементов в массиве.
 	 * @param size размер массива.
 	 */
-	public SortedArray(Class<E> type, int size) {
+	public SortedArray(final Class<E> type, final int size) {
 		super(type, size);
 	}
 
 	@Override
-	public SortedArray<E> add(E element) {
+	public SortedArray<E> add(final E element) {
 
 		if(size == array.length) {
 			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
 		}
 
-		E[] array = array();
+		final E[] array = array();
 
 		for(int i = 0, length = array.length; i < length; i++) {
 
-			E old = array[i];
+			final E old = array[i];
 
 			if(old == null) {
 				array[i] = element;
@@ -52,7 +52,7 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 
 				size++;
 
-				int numMoved = size - i - 1;
+				final int numMoved = size - i - 1;
 
 				System.arraycopy(array, i, array, i + 1, numMoved);
 

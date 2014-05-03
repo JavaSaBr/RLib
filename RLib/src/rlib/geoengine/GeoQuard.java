@@ -5,18 +5,17 @@ package rlib.geoengine;
  *
  * @author Ronn
  */
-public final class GeoQuard
-{
+public final class GeoQuard {
+
 	/** индекс квадрата по X */
-	private int x;
+	private final int x;
 	/** индекс квадрата по Y */
-	private int y;
+	private final int y;
 
 	/** высота квадрата */
 	private float height;
 
-	public GeoQuard(int x, int y, float height)
-	{
+	public GeoQuard(final int x, final int y, final float height) {
 		this.x = x;
 		this.y = y;
 		this.height = height;
@@ -25,38 +24,33 @@ public final class GeoQuard
 	/**
 	 * @return высота квадрата.
 	 */
-	public final float getHeight()
-	{
+	public final float getHeight() {
 		return height;
 	}
-	
+
 	/**
 	 * @return индекс квадрата по X.
 	 */
-	public final int getX()
-	{
+	public final int getX() {
 		return x;
 	}
 
 	/**
 	 * @return индекс квадрата по Y.
 	 */
-	public final int getY()
-	{
+	public final int getY() {
 		return y;
 	}
 
 	/**
 	 * @param height высота квадрата.
 	 */
-	public final void setHeight(float height)
-	{
+	public final void setHeight(final float height) {
 		this.height = height;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "GeoQuard [x = " + x + ", y = " + y + ", height = " + height + "]";
 	}
 }

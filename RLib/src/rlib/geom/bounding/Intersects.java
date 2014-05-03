@@ -7,24 +7,25 @@ import static java.lang.Math.abs;
  */
 public class Intersects {
 
-	public static boolean intersects(float start, float dir, float min, float max, float enter, float exit) {
+	public static boolean intersects(final float start, final float dir, final float min, final float max, final float enter, final float exit) {
 
 		if(abs(dir) < 1.0E-8) {
-			return (start >= min && start <= max);
+			return start >= min && start <= max;
 		}
 
-		float ooDir = 1.0f / dir;
+		final float ooDir = 1.0f / dir;
 		float t0 = (min - start) * ooDir;
 		float t1 = (max - start) * ooDir;
 
 		if(t0 > t1) {
-			float temp = t1;
+			final float temp = t1;
 			t1 = t0;
 			t0 = temp;
 		}
 
-		if(t0 > exit || t1 < enter)
+		if(t0 > exit || t1 < enter) {
 			return false;
+		}
 
 		return true;
 	}

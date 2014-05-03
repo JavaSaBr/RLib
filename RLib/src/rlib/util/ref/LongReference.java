@@ -21,7 +21,7 @@ final class LongReference extends AbstractReference {
 	}
 
 	@Override
-	public void setLong(long value) {
+	public void setLong(final long value) {
 		this.value = value;
 	}
 

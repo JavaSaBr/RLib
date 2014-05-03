@@ -17,7 +17,8 @@ public final class Matrix3f implements Foldable {
 		return new Matrix3f();
 	}
 
-	public static Matrix3f newInstance(float val_0_0, float val_0_1, float val_0_2, float val_1_0, float val_1_1, float val_1_2, float val_2_0, float val_2_1, float val_2_2) {
+	public static Matrix3f newInstance(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0,
+			final float val_2_1, final float val_2_2) {
 		return new Matrix3f(val_0_0, val_0_1, val_0_2, val_1_0, val_1_1, val_1_2, val_2_0, val_2_1, val_2_2);
 	}
 
@@ -31,7 +32,8 @@ public final class Matrix3f implements Foldable {
 		val_0_0 = val_1_1 = val_2_2 = 1;
 	}
 
-	private Matrix3f(float val_0_0, float val_0_1, float val_0_2, float val_1_0, float val_1_1, float val_1_2, float val_2_0, float val_2_1, float val_2_2) {
+	private Matrix3f(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0, final float val_2_1,
+			final float val_2_2) {
 		this.val_0_0 = val_0_0;
 		this.val_0_1 = val_0_1;
 		this.val_0_2 = val_0_2;
@@ -65,11 +67,11 @@ public final class Matrix3f implements Foldable {
 	 * @param result контейнер результата.
 	 * @return результат приминения матрицы.
 	 */
-	public Vector mult(Vector vector, Vector result) {
+	public Vector mult(final Vector vector, final Vector result) {
 
-		float x = vector.x;
-		float y = vector.y;
-		float z = vector.z;
+		final float x = vector.x;
+		final float y = vector.y;
+		final float z = vector.z;
 
 		result.x = val_0_0 * x + val_0_1 * y + val_0_2 * z;
 		result.y = val_1_0 * x + val_1_1 * y + val_1_2 * z;
@@ -78,7 +80,8 @@ public final class Matrix3f implements Foldable {
 		return result;
 	}
 
-	public void set(float val_0_0, float val_0_1, float val_0_2, float val_1_0, float val_1_1, float val_1_2, float val_2_0, float val_2_1, float val_2_2) {
+	public void set(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0, final float val_2_1,
+			final float val_2_2) {
 		this.val_0_0 = val_0_0;
 		this.val_0_1 = val_0_1;
 		this.val_0_2 = val_0_2;
@@ -96,7 +99,7 @@ public final class Matrix3f implements Foldable {
 	 * @param rotation целевой разворот.
 	 * @return соответствующая матрица.
 	 */
-	public Matrix3f set(Rotation rotation) {
+	public Matrix3f set(final Rotation rotation) {
 		return rotation.toRotationMatrix(this);
 	}
 }

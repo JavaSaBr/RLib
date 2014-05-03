@@ -190,7 +190,9 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V> {
 			}
 
 			if((next = entry.getNext()) == null) {
-				while(index < table.length && (next = table[index++]) == null);
+				while(index < table.length && (next = table[index++]) == null) {
+					;
+				}
 			}
 
 			current = entry;
@@ -555,7 +557,7 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V> {
 	@Override
 	public final String toString() {
 
-		int size = size();
+		final int size = size();
 
 		final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
 		builder.append(" size = ").append(size).append(" : ");

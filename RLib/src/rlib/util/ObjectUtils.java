@@ -55,6 +55,10 @@ public final class ObjectUtils {
 		return (T) newObject;
 	}
 
+	public static boolean equals(final Object first, final Object second) {
+		return first == second || first != null && first.equals(second);
+	}
+
 	/**
 	 * Рассчет хэша флага.
 	 * 
@@ -181,9 +185,5 @@ public final class ObjectUtils {
 				LOGGER.warning(e);
 			}
 		}
-	}
-
-	public static boolean equals(Object first, Object second) {
-		return (first == second) || (first != null && first.equals(second));
 	}
 }

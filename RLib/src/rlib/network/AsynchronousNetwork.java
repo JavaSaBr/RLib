@@ -2,8 +2,6 @@ package rlib.network;
 
 import java.nio.ByteBuffer;
 
-import rlib.network.NetworkConfig;
-
 /**
  * Интерфейс для реализации модели асинхронной сети.
  * 

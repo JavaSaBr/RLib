@@ -25,13 +25,6 @@ public class LockFactory {
 	}
 
 	/**
-	 * @return новый блокировщик.
-	 */
-	public static final ReadWriteLock newRWLock() {
-		return new FinalReadWriteLock();
-	}
-
-	/**
 	 * Примитивный атомик блокер, не поддерживает рекурсивное использованиЕ,
 	 * зато для примитивных блокировок он самый легковесный.
 	 * 
@@ -39,6 +32,13 @@ public class LockFactory {
 	 */
 	public static final Lock newPrimitiveAtomicLoc() {
 		return new PrimitiveAtomicLock();
+	}
+
+	/**
+	 * @return новый блокировщик.
+	 */
+	public static final ReadWriteLock newRWLock() {
+		return new FinalReadWriteLock();
 	}
 
 	/**

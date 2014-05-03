@@ -21,7 +21,7 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 	}
 
 	@Override
-	public void accept(Consumer<? super E> consumer) {
+	public void accept(final Consumer<? super E> consumer) {
 		for(final E element : this) {
 			consumer.accept(element);
 		}

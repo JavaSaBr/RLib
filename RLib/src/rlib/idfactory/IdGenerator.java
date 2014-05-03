@@ -25,7 +25,7 @@ public interface IdGenerator {
 	 * 
 	 * @param id освободившийся ид.
 	 */
-	public default void releaseId(int id) {
+	public default void releaseId(final int id) {
 	}
 
 	/**

@@ -9,16 +9,16 @@ public class ConcurrentArraySet<E> extends ConcurrentArray<E> {
 
 	private static final long serialVersionUID = 1L;
 
-	public ConcurrentArraySet(Class<E> type) {
+	public ConcurrentArraySet(final Class<E> type) {
 		super(type);
 	}
 
-	public ConcurrentArraySet(Class<E> type, int size) {
+	public ConcurrentArraySet(final Class<E> type, final int size) {
 		super(type, size);
 	}
 
 	@Override
-	public ConcurrentArray<E> add(E element) {
+	public ConcurrentArray<E> add(final E element) {
 
 		if(contains(element)) {
 			return this;

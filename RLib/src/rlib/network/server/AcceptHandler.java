@@ -17,13 +17,13 @@ public abstract class AcceptHandler implements CompletionHandler<AsynchronousSoc
 	protected static final Logger LOGGER = LoggerManager.getLogger(AcceptHandler.class);
 
 	@Override
-	public void completed(AsynchronousSocketChannel result, AsynchronousServerSocketChannel serverChannel) {
+	public void completed(final AsynchronousSocketChannel result, final AsynchronousServerSocketChannel serverChannel) {
 		serverChannel.accept(serverChannel, this);
 		onAccept(result);
 	}
 
 	@Override
-	public void failed(Throwable exc, AsynchronousServerSocketChannel serverChannel) {
+	public void failed(final Throwable exc, final AsynchronousServerSocketChannel serverChannel) {
 		serverChannel.accept(serverChannel, this);
 		onFailed(exc);
 	}

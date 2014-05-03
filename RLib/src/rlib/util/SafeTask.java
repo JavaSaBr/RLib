@@ -16,7 +16,7 @@ public interface SafeTask extends Runnable {
 		try {
 			runImpl();
 		} catch(final Exception e) {
-			Logger logger = LoggerManager.getDefaultLogger();
+			final Logger logger = LoggerManager.getDefaultLogger();
 			logger.warning(this, e);
 		}
 	}

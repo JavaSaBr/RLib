@@ -19,13 +19,7 @@ public class RedirectImageOutputStream extends ImageOutputStreamImpl {
 	private InputStream in;
 
 	@Override
-	public void write(int b) throws IOException {
-		out.write(b);
-	}
-
-	@Override
-	public void write(byte[] b, int off, int len) throws IOException {
-		out.write(b, off, len);
+	public void close() throws IOException {
 	}
 
 	@Override
@@ -34,25 +28,31 @@ public class RedirectImageOutputStream extends ImageOutputStreamImpl {
 	}
 
 	@Override
-	public int read(byte[] b, int off, int len) throws IOException {
+	public int read(final byte[] b, final int off, final int len) throws IOException {
 		return in.read(b, off, len);
 	}
 
 	/**
 	 * @param in перенаправляющий входящий поток.
 	 */
-	public void setIn(InputStream in) {
+	public void setIn(final InputStream in) {
 		this.in = in;
 	}
 
 	/**
 	 * @param out перенаправляющий выходящий поток.
 	 */
-	public void setOut(OutputStream out) {
+	public void setOut(final OutputStream out) {
 		this.out = out;
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void write(final byte[] b, final int off, final int len) throws IOException {
+		out.write(b, off, len);
+	}
+
+	@Override
+	public void write(final int b) throws IOException {
+		out.write(b);
 	}
 }

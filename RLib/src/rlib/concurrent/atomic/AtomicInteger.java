@@ -15,7 +15,7 @@ public class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger imp
 		super();
 	}
 
-	public AtomicInteger(int initialValue) {
+	public AtomicInteger(final int initialValue) {
 		super(initialValue);
 	}
 
@@ -25,12 +25,12 @@ public class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger imp
 	 * @param delta разница между текущим и новым значением.
 	 * @return новое значение.
 	 */
-	public final int subAndGet(int delta) {
+	public final int subAndGet(final int delta) {
 
 		while(true) {
 
-			int current = get();
-			int next = current - delta;
+			final int current = get();
+			final int next = current - delta;
 
 			if(compareAndSet(current, next)) {
 				return next;

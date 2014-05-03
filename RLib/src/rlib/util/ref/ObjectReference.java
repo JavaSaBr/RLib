@@ -21,7 +21,7 @@ final class ObjectReference extends AbstractReference {
 	}
 
 	@Override
-	public void setObject(Object object) {
+	public void setObject(final Object object) {
 		this.object = object;
 	}
 

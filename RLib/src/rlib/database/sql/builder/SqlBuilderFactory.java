@@ -16,13 +16,9 @@ public final class SqlBuilderFactory {
 		return new MySqlBuilder();
 	}
 
-	private SqlBuilderFactory() {
-		throw new RuntimeException();
-	}
-
 	static void s() {
 
-		PrepareSqlBuilder builder = newMySqlBuilder();
+		final PrepareSqlBuilder builder = newMySqlBuilder();
 		builder.select(operator -> {
 			operator.fields("item_id", "order");
 			operator.from("table_name");
@@ -32,6 +28,10 @@ public final class SqlBuilderFactory {
 			operator.limit(1);
 		});
 
-		String SQL = builder.toString();
+		final String SQL = builder.toString();
+	}
+
+	private SqlBuilderFactory() {
+		throw new RuntimeException();
 	}
 }

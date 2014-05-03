@@ -32,7 +32,7 @@ public class StringGameLogger implements GameLogger {
 	/** средство записи в фаил */
 	private final Writer out;
 
-	protected StringGameLogger(File outFile) throws IOException {
+	protected StringGameLogger(final File outFile) throws IOException {
 		this.timeFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		this.date = new Date();
 
@@ -56,7 +56,7 @@ public class StringGameLogger implements GameLogger {
 	}
 
 	@Override
-	public void write(String text) {
+	public void write(final String text) {
 		lock.lock();
 		try {
 
@@ -76,7 +76,7 @@ public class StringGameLogger implements GameLogger {
 	public void writeCache() {
 		try {
 
-			String[] array = cache.array();
+			final String[] array = cache.array();
 
 			for(int i = 0, length = cache.size(); i < length; i++) {
 				out.write(array[i]);
@@ -85,7 +85,7 @@ public class StringGameLogger implements GameLogger {
 			cache.clear();
 			out.flush();
 
-		} catch(IOException e) {
+		} catch(final IOException e) {
 			LOGGER.warning(e);
 		}
 	}

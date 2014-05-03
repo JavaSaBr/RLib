@@ -11,10 +11,10 @@ import java.io.FileNotFoundException;
  */
 public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> {
 
-	public AbstractFileDocument(File file) {
+	public AbstractFileDocument(final File file) {
 		try {
 			setStream(new FileInputStream(file));
-		} catch(FileNotFoundException e) {
+		} catch(final FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
 	}

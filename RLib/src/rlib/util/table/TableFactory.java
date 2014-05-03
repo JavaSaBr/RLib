@@ -22,7 +22,7 @@ public final class TableFactory {
 	 * @param loadFactor фактор загруженности таблицы.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <V> Table<IntKey, V> newConcurrentIntegerTable(float loadFactor) {
+	public static final <V> Table<IntKey, V> newConcurrentIntegerTable(final float loadFactor) {
 		return new ConcurrentIntegerTable<V>(loadFactor);
 	}
 
@@ -32,7 +32,7 @@ public final class TableFactory {
 	 * @param initCapacity начальный размер таблицы ячеяк.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <V> Table<IntKey, V> newConcurrentIntegerTable(int initCapacity) {
+	public static final <V> Table<IntKey, V> newConcurrentIntegerTable(final int initCapacity) {
 		return new ConcurrentIntegerTable<V>(initCapacity);
 	}
 
@@ -51,7 +51,7 @@ public final class TableFactory {
 	 * @param loadFactor фактор загруженности таблицы.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <V> Table<LongKey, V> newConcurrentLongTable(float loadFactor) {
+	public static final <V> Table<LongKey, V> newConcurrentLongTable(final float loadFactor) {
 		return new ConcurrentLongTable<V>(loadFactor);
 	}
 
@@ -61,7 +61,7 @@ public final class TableFactory {
 	 * @param initCapacity начальный размер таблицы ячеяк.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <V> Table<LongKey, V> newConcurrentLongTable(int initCapacity) {
+	public static final <V> Table<LongKey, V> newConcurrentLongTable(final int initCapacity) {
 		return new ConcurrentLongTable<V>(initCapacity);
 	}
 
@@ -80,7 +80,7 @@ public final class TableFactory {
 	 * @param loadFactor фактор загруженности таблицы.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <K, V> Table<K, V> newConcurrentObjectTable(float loadFactor) {
+	public static final <K, V> Table<K, V> newConcurrentObjectTable(final float loadFactor) {
 		return new ConcurrentObjectTable<K, V>(loadFactor);
 	}
 
@@ -90,7 +90,7 @@ public final class TableFactory {
 	 * @param initCapacity начальный размер таблицы ячеяк.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <K, V> Table<K, V> newConcurrentObjectTable(int initCapacity) {
+	public static final <K, V> Table<K, V> newConcurrentObjectTable(final int initCapacity) {
 		return new ConcurrentObjectTable<K, V>(initCapacity);
 	}
 
@@ -109,7 +109,7 @@ public final class TableFactory {
 	 * @param loadFactor фактор загруженности таблицы.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <V> Table<IntKey, V> newIntegerTable(float loadFactor) {
+	public static final <V> Table<IntKey, V> newIntegerTable(final float loadFactor) {
 		return new FastIntegerTable<V>(loadFactor);
 	}
 
@@ -119,7 +119,7 @@ public final class TableFactory {
 	 * @param initCapacity начальный размер таблицы ячеяк.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <V> Table<IntKey, V> newIntegerTable(int initCapacity) {
+	public static final <V> Table<IntKey, V> newIntegerTable(final int initCapacity) {
 		return new FastIntegerTable<V>(initCapacity);
 	}
 
@@ -138,7 +138,7 @@ public final class TableFactory {
 	 * @param loadFactor фактор загруженности таблицы.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <V> Table<LongKey, V> newLongTable(float loadFactor) {
+	public static final <V> Table<LongKey, V> newLongTable(final float loadFactor) {
 		return new FastLongTable<V>(loadFactor);
 	}
 
@@ -148,7 +148,7 @@ public final class TableFactory {
 	 * @param initCapacity начальный размер таблицы ячеяк.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <V> Table<LongKey, V> newLongTable(int initCapacity) {
+	public static final <V> Table<LongKey, V> newLongTable(final int initCapacity) {
 		return new FastLongTable<V>(initCapacity);
 	}
 
@@ -167,7 +167,7 @@ public final class TableFactory {
 	 * @param loadFactor фактор загруженности таблицы.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <K, V> Table<K, V> newObjectTable(float loadFactor) {
+	public static final <K, V> Table<K, V> newObjectTable(final float loadFactor) {
 		return new FastObjectTable<K, V>(loadFactor);
 	}
 
@@ -177,7 +177,7 @@ public final class TableFactory {
 	 * @param initCapacity начальный размер таблицы ячеяк.
 	 * @return новая таблица с объектным ключем.
 	 */
-	public static final <K, V> Table<K, V> newObjectTable(int initCapacity) {
+	public static final <K, V> Table<K, V> newObjectTable(final int initCapacity) {
 		return new FastObjectTable<K, V>(initCapacity);
 	}
 
