@@ -1,10 +1,12 @@
-package rlib.util.pools;
+package rlib.util.pools.impl;
 
 import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.lock.LockFactory;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.pools.Foldable;
+import rlib.util.pools.FoldablePool;
 
 /**
  * Реализация потокобезопасного {@link FoldablePool} с помощью атомарного
@@ -19,7 +21,7 @@ public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	/** блокировщик */
 	private final Lock lock;
 
-	protected AtomicFoldablePool(final Class<?> type) {
+	public AtomicFoldablePool(final Class<?> type) {
 		this.pool = ArrayFactory.newArray(type);
 		this.lock = LockFactory.newPrimitiveAtomicLock();
 	}

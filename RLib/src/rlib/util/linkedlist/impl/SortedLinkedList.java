@@ -1,7 +1,7 @@
-package rlib.util.linkedlist;
+package rlib.util.linkedlist.impl;
 
 /**
- * Реализация отсортированного связанного списка.
+ * Реализация {@link FastLinkedList} с сортировкой при вставке нового элемента.
  * 
  * @author Ronn
  */

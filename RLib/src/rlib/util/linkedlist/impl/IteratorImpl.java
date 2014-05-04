@@ -1,19 +1,21 @@
-package rlib.util.linkedlist;
+package rlib.util.linkedlist.impl;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import rlib.util.linkedlist.LinkedList;
+
 /**
- * Реализация итератара для связанных списков.
+ * Реализация итератара для {@link LinkedList}
  * 
  * @author Ronn
  */
-class IteratorImpl<E> implements Iterator<E> {
+public class IteratorImpl<E> implements Iterator<E> {
 
 	/** режим итерирования с начала в конец */
-	protected static final int NEXT = 1;
+	public static final int NEXT = 1;
 	/** режим итерирования с конца в начало */
-	protected static final int PREV = 2;
+	public static final int PREV = 2;
 
 	/** итерируемый список */
 	private final LinkedList<E> list;
@@ -68,6 +70,7 @@ class IteratorImpl<E> implements Iterator<E> {
 
 			return lastReturned.getItem();
 		} else if(mode == PREV) {
+
 			final Node<E> next = getNext();
 			final Node<E> lastReturned = next;
 

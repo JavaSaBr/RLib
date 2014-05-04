@@ -1,15 +1,15 @@
-package rlib.util.linkedlist;
+package rlib.util.linkedlist.impl;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
+import rlib.util.linkedlist.LinkedList;
 import rlib.util.pools.FoldablePool;
 import rlib.util.pools.PoolFactory;
 
 /**
- * Реадизация быстрого связанного списка.
+ * Реадизация не потокобезопасного {@link LinkedList}.
  * 
  * @author Ronn
  */
@@ -31,13 +31,6 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	public FastLinkedList(final Class<?> type) {
 		super(type);
 		this.pool = PoolFactory.newFoldablePool(Node.class);
-	}
-
-	@Override
-	public void accept(final Consumer<? super E> consumer) {
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-			consumer.accept(node.getItem());
-		}
 	}
 
 	@Override
@@ -84,35 +77,13 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	}
 
 	@Override
-	public boolean contains(final Object object) {
-		return indexOf(object) != -1;
-	}
-
-	@Override
 	public Iterator<E> descendingIterator() {
 		return new IteratorImpl<E>(this, IteratorImpl.PREV);
 	}
 
 	@Override
-	public E element() {
-		return getFirst();
-	}
-
-	@Override
 	public E get(final int index) {
 		return index < size() >> 1 ? getFirst(index) : getLast(index);
-	}
-
-	@Override
-	public E getFirst() {
-
-		final Node<E> first = getFirstNode();
-
-		if(first == null) {
-			throw new NoSuchElementException();
-		}
-
-		return first.getItem();
 	}
 
 	protected final E getFirst(final int index) {
@@ -134,18 +105,6 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	@Override
 	public final Node<E> getFirstNode() {
 		return first;
-	}
-
-	@Override
-	public E getLast() {
-
-		final Node<E> last = getLastNode();
-
-		if(last == null) {
-			throw new NoSuchElementException();
-		}
-
-		return last.getItem();
 	}
 
 	protected final E getLast(final int index) {
@@ -195,27 +154,8 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	/**
 	 * @return пул узлов.
 	 */
-	public FoldablePool<Node<E>> getPool() {
+	protected FoldablePool<Node<E>> getPool() {
 		return pool;
-	}
-
-	@Override
-	public int indexOf(final Object object) {
-
-		int index = 0;
-
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-
-			final E item = node.getItem();
-
-			if(item.equals(object)) {
-				return index;
-			}
-
-			index++;
-		}
-
-		return -1;
 	}
 
 	protected final void insertAfter(final Node<E> node, final E item) {
@@ -284,41 +224,6 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	}
 
 	@Override
-	public boolean offer(final E element) {
-		return add(element);
-	}
-
-	@Override
-	public boolean offerFirst(final E element) {
-		addFirst(element);
-		return true;
-	}
-
-	@Override
-	public boolean offerLast(final E element) {
-		addLast(element);
-		return true;
-	}
-
-	@Override
-	public E peek() {
-		final Node<E> first = getFirstNode();
-		return first == null ? null : first.getItem();
-	}
-
-	@Override
-	public E peekFirst() {
-		final Node<E> first = getFirstNode();
-		return first == null ? null : first.getItem();
-	}
-
-	@Override
-	public E peekLast() {
-		final Node<E> last = getLastNode();
-		return last == null ? null : last.getItem();
-	}
-
-	@Override
 	public E poll() {
 		final Node<E> first = getFirstNode();
 		return first == null ? null : unlinkFirst(first);
@@ -337,38 +242,6 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	}
 
 	@Override
-	public E pop() {
-		return removeFirst();
-	}
-
-	@Override
-	public void push(final E element) {
-		addFirst(element);
-	}
-
-	@Override
-	public E remove() {
-		return removeFirst();
-	}
-
-	@Override
-	public boolean remove(final Object object) {
-
-		if(object == null) {
-			throw new NullPointerException("object is null.");
-		}
-
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-			if(object.equals(node.getItem())) {
-				unlink(node);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	@Override
 	public E removeFirst() {
 
 		final Node<E> first = getFirstNode();
@@ -381,23 +254,6 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 	}
 
 	@Override
-	public boolean removeFirstOccurrence(final Object object) {
-
-		if(object == null) {
-			throw new NullPointerException("not fond object.");
-		}
-
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-			if(object.equals(node.getItem())) {
-				unlink(node);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	@Override
 	public E removeLast() {
 
 		final Node<E> last = getLastNode();
@@ -407,23 +263,6 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 		}
 
 		return unlinkLast(last);
-	}
-
-	@Override
-	public boolean removeLastOccurrence(final Object object) {
-
-		if(object == null) {
-			throw new NullPointerException("not fond object.");
-		}
-
-		for(Node<E> node = getLastNode(); node != null; node = node.getPrev()) {
-			if(object.equals(node.getItem())) {
-				unlink(node);
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**

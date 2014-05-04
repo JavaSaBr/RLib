@@ -1,9 +1,10 @@
-package rlib.util.linkedlist;
+package rlib.util.linkedlist.impl;
 
+import rlib.util.linkedlist.LinkedList;
 import rlib.util.pools.Foldable;
 
 /**
- * Реазилация узла для связанного списка.
+ * Реализация узла для {@link LinkedList}.
  * 
  * @author Ronn
  */
@@ -43,10 +44,6 @@ public final class Node<E> implements Foldable {
 	 */
 	public Node<E> getPrev() {
 		return prev;
-	}
-
-	@Override
-	public void reinit() {
 	}
 
 	/**

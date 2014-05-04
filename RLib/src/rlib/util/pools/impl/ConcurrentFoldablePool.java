@@ -1,8 +1,10 @@
-package rlib.util.pools;
+package rlib.util.pools.impl;
 
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.impl.ConcurrentArray;
+import rlib.util.pools.Foldable;
+import rlib.util.pools.FoldablePool;
 
 /**
  * Реализация потокобезопасного {@link FoldablePool} с помощью потокобезопасного
@@ -15,7 +17,7 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 	/** массив объектов */
 	private final Array<E> pool;
 
-	protected ConcurrentFoldablePool(final Class<?> type) {
+	public ConcurrentFoldablePool(final Class<?> type) {
 		this.pool = ArrayFactory.newConcurrentArray(type);
 	}
 

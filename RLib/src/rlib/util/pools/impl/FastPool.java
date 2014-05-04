@@ -1,7 +1,8 @@
-package rlib.util.pools;
+package rlib.util.pools.impl;
 
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.pools.Pool;
 
 /**
  * Реализация не потокобезопасного легковесного {@link Pool}.
@@ -13,7 +14,7 @@ public class FastPool<E> implements Pool<E> {
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected FastPool(final Class<?> type) {
+	public FastPool(final Class<?> type) {
 		this.pool = ArrayFactory.newArray(type);
 	}
 

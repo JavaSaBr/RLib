@@ -5,34 +5,52 @@ import java.util.Deque;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import rlib.util.linkedlist.impl.Node;
 import rlib.util.pools.Foldable;
 
 /**
- * Интерфей с для реализации связанного списка.
+ * Интерфей с для реализации связанного списка. Главное преймущество, это
+ * переиспользование узлов списка и быстрая итерация с уменьшением нагрузки на
+ * GC. Создаются с помощью {@link LinkedListFactory}.
+ * 
+ * <pre>
+ * for(Node&lt;E&gt; node = getFirstNode(); node != null; node = node.getNext()) {
+ * 	? item = node.getItem();
+ * 	// handle item
+ * }
+ * </pre>
  * 
  * @author Ronn
  */
 public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldable {
 
 	/**
-	 * Применить функцию на все элементы в массиве.
+	 * Применить функцию на все элементы в списке.
 	 *
 	 * @param consumer применяемая функция.
 	 */
-	public void accept(Consumer<? super E> consumer);
+	public default void accept(Consumer<? super E> consumer) {
+		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+			consumer.accept(node.getItem());
+		}
+	}
 
 	/**
 	 * Применить функцию замены всех элементов.
 	 *
 	 * @param function применяемая функция.
 	 */
-	public void apply(Function<? super E, ? extends E> function);
+	public default void apply(Function<? super E, ? extends E> function) {
+		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+			node.setItem(function.apply(node.getItem()));
+		}
+	}
 
 	/**
 	 * Получение элемента по номеру в списке.
 	 * 
 	 * @param index номер в списке.
-	 * @return элемент.
+	 * @return искомый элемент.
 	 */
 	public E get(int index);
 
@@ -55,12 +73,14 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	/**
 	 * Блокировка изменения массива на время чтения его.
 	 */
-	public void readLock();
+	public default void readLock() {
+	}
 
 	/**
 	 * Разблокировка изменения массива.
 	 */
-	public void readUnlock();
+	public default void readUnlock() {
+	}
 
 	/**
 	 * Получание с удалением первого элемента.
@@ -80,10 +100,12 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	/**
 	 * Блокировка чтений для изменения массива.
 	 */
-	public void writeLock();
+	public default void writeLock() {
+	}
 
 	/**
 	 * Разблокировка чтения массива.
 	 */
-	public void writeUnlock();
+	public default void writeUnlock() {
+	}
 }

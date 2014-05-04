@@ -1,20 +1,21 @@
-package rlib.util.pools;
+package rlib.util.pools.impl;
 
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.pools.Foldable;
+import rlib.util.pools.FoldablePool;
 
 /**
- * Реализация потокобезопасного {@link FoldablePool} за счет синхронизации на
- * коллекции объектов.
+ * Реализация не потокобезопасного легковесного {@link FoldablePool}.
  * 
  * @author Ronn
  */
-public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePool<E> {
+public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected SynchronizedFoldablePool(final Class<?> type) {
+	public FastFoldablePool(final Class<?> type) {
 		this.pool = ArrayFactory.newArray(type);
 	}
 
@@ -31,27 +32,18 @@ public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePoo
 		}
 
 		object.finalyze();
-
-		synchronized(pool) {
-			pool.add(object);
-		}
+		pool.add(object);
 	}
 
 	@Override
 	public void remove(final E object) {
-		synchronized(pool) {
-			pool.fastRemove(object);
-		}
+		pool.fastRemove(object);
 	}
 
 	@Override
 	public E take() {
 
-		E object = null;
-
-		synchronized(pool) {
-			object = pool.pop();
-		}
+		final E object = pool.pop();
 
 		if(object == null) {
 			return null;

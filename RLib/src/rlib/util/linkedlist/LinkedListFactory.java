@@ -1,5 +1,8 @@
 package rlib.util.linkedlist;
 
+import rlib.util.linkedlist.impl.FastLinkedList;
+import rlib.util.linkedlist.impl.SortedLinkedList;
+
 /**
  * Утильный класс по работе со связанными списками.
  * 

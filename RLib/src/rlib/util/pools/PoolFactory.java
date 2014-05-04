@@ -1,5 +1,11 @@
 package rlib.util.pools;
 
+import rlib.util.pools.impl.AtomicFoldablePool;
+import rlib.util.pools.impl.ConcurrentFoldablePool;
+import rlib.util.pools.impl.FastFoldablePool;
+import rlib.util.pools.impl.FastPool;
+import rlib.util.pools.impl.SynchronizedFoldablePool;
+
 /**
  * Фабрика пулов.
  * 
