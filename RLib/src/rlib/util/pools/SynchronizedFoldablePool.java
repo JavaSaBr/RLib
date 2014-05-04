@@ -4,7 +4,8 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Синхронизированный объектный пул.
+ * Реализация потокобезопасного {@link FoldablePool} за счет синхронизации на
+ * коллекции объектов.
  * 
  * @author Ronn
  */

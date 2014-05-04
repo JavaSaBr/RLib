@@ -7,7 +7,8 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Синхронизированный объектный пул.
+ * Реализация потокобезопасного {@link FoldablePool} с помощью атомарного
+ * блокировщика.
  * 
  * @author Ronn
  */

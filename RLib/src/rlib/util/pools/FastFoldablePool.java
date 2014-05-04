@@ -4,7 +4,7 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Не потокобезопасный пул.
+ * Реализация не потокобезопасного легковесного {@link FoldablePool}.
  * 
  * @author Ronn
  */

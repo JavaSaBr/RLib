@@ -2,9 +2,11 @@ package rlib.util.pools;
 
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.array.impl.ConcurrentArray;
 
 /**
- * Потокобезопасный объектный пул.
+ * Реализация потокобезопасного {@link FoldablePool} с помощью потокобезопасного
+ * массива {@link ConcurrentArray}
  * 
  * @author Ronn
  */

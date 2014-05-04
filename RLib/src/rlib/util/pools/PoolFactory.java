@@ -8,9 +8,9 @@ package rlib.util.pools;
 public final class PoolFactory {
 
 	/**
-	 * Создание нового атомак объектного пула, синхронизированный через атомик
-	 * переменные.
+	 * Создание нового потокобезопасного объектного пула.
 	 * 
+	 * @see AtomicFoldablePool
 	 * @param type тип объектов пула.
 	 * @return новый объектный пул.
 	 */
@@ -19,8 +19,9 @@ public final class PoolFactory {
 	}
 
 	/**
-	 * Создание нового быстрого объектного пула.
+	 * Создание нового потокобезопасного объектного пула.
 	 * 
+	 * @see ConcurrentFoldablePool
 	 * @param type тип объектов пула.
 	 * @return новый объектный пул.
 	 */
@@ -29,8 +30,9 @@ public final class PoolFactory {
 	}
 
 	/**
-	 * Создание нового быстрого объектного пула.
+	 * Создание нового не потокобезопасного объектного пула.
 	 * 
+	 * @see FastFoldablePool
 	 * @param type тип объектов пула.
 	 * @return новый объектный пул.
 	 */
@@ -39,18 +41,9 @@ public final class PoolFactory {
 	}
 
 	/**
-	 * Создание нового мульти конкурентного объектного пула.
+	 * Создание нового не потокобезопасного объектного пула.
 	 * 
-	 * @param type тип объектов пула.
-	 * @return новый объектный пул.
-	 */
-	public static final <T extends Foldable> FoldablePool<T> newMultiConcurrentFoldablePool(final int size, final Class<? extends Foldable> type) {
-		return new MultiConcurrentFoldablePool<T>(size, type);
-	}
-
-	/**
-	 * Создание нового быстрого объектного пула.
-	 * 
+	 * @see FastPool
 	 * @param type тип объектов пула.
 	 * @return новый объектный пул.
 	 */
@@ -59,8 +52,9 @@ public final class PoolFactory {
 	}
 
 	/**
-	 * Создание нового синхронизированного объектного пула.
+	 * Создание нового потокобезопасного объектного пула.
 	 * 
+	 * @see SynchronizedFoldablePool
 	 * @param type тип объектов пула.
 	 * @return новый объектный пул.
 	 */
