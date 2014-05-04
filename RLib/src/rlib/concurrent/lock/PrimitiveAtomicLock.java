@@ -33,36 +33,32 @@ public final class PrimitiveAtomicLock implements Lock {
 	@Override
 	public void lock() {
 		final AtomicInteger status = getStatus();
-		while(!status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED)) {
-			;
-		}
+		while(!status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED));
 	}
 
 	@Override
 	public void lockInterruptibly() throws InterruptedException {
-		throw new RuntimeException("not supperted.");
+		throw new RuntimeException("not supported.");
 	}
 
 	@Override
 	public Condition newCondition() {
-		throw new RuntimeException("not supperted.");
+		throw new RuntimeException("not supported.");
 	}
 
 	@Override
 	public boolean tryLock() {
-		throw new RuntimeException("not supperted.");
+		throw new RuntimeException("not supported.");
 	}
 
 	@Override
 	public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
-		throw new RuntimeException("not supperted.");
+		throw new RuntimeException("not supported.");
 	}
 
 	@Override
 	public void unlock() {
 		final AtomicInteger status = getStatus();
-		while(!status.compareAndSet(STATUS_LOCKED, STATUS_UNLOCKED)) {
-			;
-		}
+		while(!status.compareAndSet(STATUS_LOCKED, STATUS_UNLOCKED));
 	}
 }

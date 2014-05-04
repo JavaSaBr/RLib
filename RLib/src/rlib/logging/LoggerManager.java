@@ -29,7 +29,7 @@ public class LoggerManager {
 	/** список записчиков лога */
 	private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
 	/** синхронизатор записи лога */
-	private static final Lock SYNC = LockFactory.newPrimitiveAtomicLoc();
+	private static final Lock SYNC = LockFactory.newPrimitiveAtomicLock();
 
 	/** формат записи времени */
 	private static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");

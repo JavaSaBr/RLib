@@ -1,20 +1,22 @@
-package rlib.util.array;
+package rlib.util.array.impl;
 
 import rlib.util.ArrayUtils;
+import rlib.util.array.ArrayIterator;
+import rlib.util.array.LongArray;
 
 /**
- * Быстрый динамический массив примитивных int.
+ * Быстрый динамический массив примитивных long.
  *
  * @author Ronn
  */
-public class FastIntegerArray implements IntegerArray {
+public class FastLongArray implements LongArray {
 
 	/**
 	 * Быстрый итератор массива.
 	 *
 	 * @author Ronn
 	 */
-	private final class FastIterator implements ArrayIterator<Integer> {
+	private final class FastIterator implements ArrayIterator<Long> {
 
 		/** текущая позиция в массиве */
 		private int ordinal;
@@ -25,7 +27,7 @@ public class FastIntegerArray implements IntegerArray {
 
 		@Override
 		public void fastRemove() {
-			FastIntegerArray.this.fastRemove(--ordinal);
+			FastLongArray.this.fastRemove(--ordinal);
 		}
 
 		@Override
@@ -39,23 +41,23 @@ public class FastIntegerArray implements IntegerArray {
 		}
 
 		@Override
-		public Integer next() {
+		public Long next() {
 			return array[ordinal++];
 		}
 
 		@Override
 		public void remove() {
-			FastIntegerArray.this.fastRemove(--ordinal);
+			FastLongArray.this.fastRemove(--ordinal);
 		}
 
 		@Override
 		public void slowRemove() {
-			FastIntegerArray.this.slowRemove(--ordinal);
+			FastLongArray.this.slowRemove(--ordinal);
 		}
 	}
 
 	/** массив элементов */
-	protected int[] array;
+	protected long[] array;
 
 	/** кол-во элементов в колекции */
 	protected int size;
@@ -63,17 +65,17 @@ public class FastIntegerArray implements IntegerArray {
 	/**
 	 * @param type тип элементов в массиве.
 	 */
-	public FastIntegerArray() {
+	public FastLongArray() {
 		this(10);
 	}
 
-	public FastIntegerArray(final int size) {
-		this.array = new int[size];
+	public FastLongArray(final int size) {
+		this.array = new long[size];
 		this.size = 0;
 	}
 
 	@Override
-	public FastIntegerArray add(final int element) {
+	public FastLongArray add(final long element) {
 
 		if(size == array.length) {
 			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
@@ -85,7 +87,7 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final FastIntegerArray addAll(final int[] elements) {
+	public final FastLongArray addAll(final long[] elements) {
 
 		if(elements == null || elements.length < 1) {
 			return this;
@@ -105,7 +107,7 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final FastIntegerArray addAll(final IntegerArray elements) {
+	public final FastLongArray addAll(final LongArray elements) {
 
 		if(elements == null || elements.isEmpty()) {
 			return this;
@@ -127,20 +129,20 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final int[] array() {
+	public final long[] array() {
 		return array;
 	}
 
 	@Override
-	public final FastIntegerArray clear() {
+	public final FastLongArray clear() {
 		size = 0;
 		return this;
 	}
 
 	@Override
-	public final boolean contains(final int element) {
+	public final boolean contains(final long element) {
 
-		final int[] array = array();
+		final long[] array = array();
 
 		for(int i = 0, length = size; i < length; i++) {
 			if(array[i] == element) {
@@ -152,7 +154,7 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean containsAll(final int[] array) {
+	public final boolean containsAll(final long[] array) {
 
 		for(int i = 0, length = array.length; i < length; i++) {
 			if(!contains(array[i])) {
@@ -164,9 +166,9 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean containsAll(final IntegerArray array) {
+	public final boolean containsAll(final LongArray array) {
 
-		final int[] elements = array.array();
+		final long[] elements = array.array();
 
 		for(int i = 0, length = array.size(); i < length; i++) {
 			if(!contains(elements[i])) {
@@ -178,25 +180,13 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public boolean fastRemove(final int element) {
-
-		final int index = indexOf(element);
-
-		if(index > -1) {
-			fastRemoveByIndex(index);
-		}
-
-		return index > -1;
-	}
-
-	@Override
-	public final boolean fastRemoveByIndex(final int index) {
+	public final boolean fastRemove(final int index) {
 
 		if(index < 0 || size < 1 || index >= size) {
 			return false;
 		}
 
-		final int[] array = array();
+		final long[] array = array();
 
 		size -= 1;
 
@@ -207,7 +197,19 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final int first() {
+	public boolean fastRemove(final long element) {
+
+		final int index = indexOf(element);
+
+		if(index > -1) {
+			fastRemove(index);
+		}
+
+		return index > -1;
+	}
+
+	@Override
+	public final long first() {
 
 		if(size < 1) {
 			return 0;
@@ -217,18 +219,18 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final int get(final int index) {
+	public final long get(final int index) {
 		return array[index];
 	}
 
 	@Override
-	public final int indexOf(final int element) {
+	public final int indexOf(final long element) {
 
-		final int[] array = array();
+		final long[] array = array();
 
 		for(int i = 0, length = size; i < length; i++) {
 
-			final int val = array[i];
+			final long val = array[i];
 
 			if(element == val) {
 				return i;
@@ -244,12 +246,12 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final ArrayIterator<Integer> iterator() {
+	public final ArrayIterator<Long> iterator() {
 		return new FastIterator();
 	}
 
 	@Override
-	public final int last() {
+	public final long last() {
 
 		if(size < 1) {
 			return 0;
@@ -259,15 +261,15 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final int lastIndexOf(final int element) {
+	public final int lastIndexOf(final long element) {
 
-		final int[] array = array();
+		final long[] array = array();
 
 		int last = -1;
 
 		for(int i = 0, length = size; i < length; i++) {
 
-			final int val = array[i];
+			final long val = array[i];
 
 			if(element == val) {
 				last = i;
@@ -278,27 +280,27 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final int poll() {
-		final int val = first();
-		slowRemoveByIndex(0);
+	public final long poll() {
+		final long val = first();
+		slowRemove(0);
 		return val;
 	}
 
 	@Override
-	public final int pop() {
-		final int last = last();
-		fastRemoveByIndex(size - 1);
+	public final long pop() {
+		final long last = last();
+		fastRemove(size - 1);
 		return last;
 	}
 
 	@Override
-	public final boolean removeAll(final IntegerArray target) {
+	public final boolean removeAll(final LongArray target) {
 
 		if(target.isEmpty()) {
 			return true;
 		}
 
-		final int[] array = target.array();
+		final long[] array = target.array();
 
 		for(int i = 0, length = target.size(); i < length; i++) {
 			fastRemove(array[i]);
@@ -308,13 +310,13 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final boolean retainAll(final IntegerArray target) {
+	public final boolean retainAll(final LongArray target) {
 
-		final int[] array = array();
+		final long[] array = array();
 
 		for(int i = 0, length = size; i < length; i++) {
 			if(!target.contains(array[i])) {
-				fastRemoveByIndex(i--);
+				fastRemove(i--);
 				length--;
 			}
 		}
@@ -328,25 +330,13 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public boolean slowRemove(final int element) {
-
-		final int index = indexOf(element);
-
-		if(index > -1) {
-			slowRemoveByIndex(index);
-		}
-
-		return index > -1;
-	}
-
-	@Override
-	public final boolean slowRemoveByIndex(final int index) {
+	public final boolean slowRemove(final int index) {
 
 		if(index < 0 || size < 1) {
 			return false;
 		}
 
-		final int[] array = array();
+		final long[] array = array();
 
 		final int numMoved = size - index - 1;
 
@@ -355,22 +345,33 @@ public class FastIntegerArray implements IntegerArray {
 		}
 
 		size -= 1;
-
 		array[size] = 0;
 
 		return true;
 	}
 
 	@Override
-	public final FastIntegerArray sort() {
+	public boolean slowRemove(final long element) {
+
+		final int index = indexOf(element);
+
+		if(index > -1) {
+			slowRemove(index);
+		}
+
+		return index > -1;
+	}
+
+	@Override
+	public final FastLongArray sort() {
 		ArrayUtils.sort(array, 0, size);
 		return this;
 	}
 
 	@Override
-	public final int[] toArray(final int[] container) {
+	public final long[] toArray(final long[] container) {
 
-		final int[] array = array();
+		final long[] array = array();
 
 		if(container.length >= size) {
 
@@ -390,9 +391,9 @@ public class FastIntegerArray implements IntegerArray {
 	}
 
 	@Override
-	public final FastIntegerArray trimToSize() {
+	public final FastLongArray trimToSize() {
 
-		int[] array = array();
+		long[] array = array();
 
 		if(size == array.length) {
 			return this;

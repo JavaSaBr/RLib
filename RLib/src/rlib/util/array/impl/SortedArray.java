@@ -1,4 +1,4 @@
-package rlib.util.array;
+package rlib.util.array.impl;
 
 import rlib.util.ArrayUtils;
 

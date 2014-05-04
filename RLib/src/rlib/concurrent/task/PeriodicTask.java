@@ -8,9 +8,9 @@ package rlib.concurrent.task;
 public interface PeriodicTask<L> extends CallableTask<Boolean, L> {
 
 	@Override
-	public default Boolean call(final L localObjects, final long currentTime) {
+	public default Boolean call(final L local, final long currentTime) {
 
-		if(update(localObjects, currentTime)) {
+		if(update(local, currentTime)) {
 			return Boolean.TRUE;
 		}
 
@@ -22,15 +22,15 @@ public interface PeriodicTask<L> extends CallableTask<Boolean, L> {
 	 * 
 	 * @param localObjects контейнер локальных объектов.
 	 */
-	public default void onFinish(final L localObjets) {
+	public default void onFinish(final L local) {
 	}
 
 	/**
 	 * Реализация процесса обновления задачи.
 	 * 
-	 * @param localObjects контейнер локальных объектов.
+	 * @param local контейнер локальных объектов.
 	 * @param currentTime текущее время.
 	 * @return завершена ли работа задачи.
 	 */
-	public boolean update(L localObjects, long currentTime);
+	public boolean update(L local, long currentTime);
 }

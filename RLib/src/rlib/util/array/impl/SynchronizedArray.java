@@ -1,11 +1,9 @@
-package rlib.util.array;
-
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
+package rlib.util.array.impl;
 
 import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.lock.LockFactory;
 import rlib.util.ArrayUtils;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayIterator;
 
 /**
  * Реализация динамического массива с возможностью использовать потокобезопасную
@@ -13,7 +11,7 @@ import rlib.util.ArrayUtils;
  *
  * @author Ronn
  */
-public class ConcurrentArray<E> extends AbstractArray<E> {
+public class SynchronizedArray<E> extends AbstractArray<E> {
 
 	/**
 	 * Быстрый итератор по массиву.
@@ -27,7 +25,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 
 		@Override
 		public void fastRemove() {
-			ConcurrentArray.this.fastRemove(--ordinal);
+			SynchronizedArray.this.fastRemove(--ordinal);
 		}
 
 		@Override
@@ -52,21 +50,17 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 
 		@Override
 		public void remove() {
-			ConcurrentArray.this.fastRemove(--ordinal);
+			SynchronizedArray.this.fastRemove(--ordinal);
 		}
 
 		@Override
 		public void slowRemove() {
-			ConcurrentArray.this.slowRemove(--ordinal);
+			SynchronizedArray.this.slowRemove(--ordinal);
 		}
 	}
 
 	private static final long serialVersionUID = 1L;
 
-	/** блокировщик на чтение */
-	private final Lock readLock;
-	/** блокировщик на запись */
-	private final Lock writeLock;
 	/** кол-во элементов в колекции */
 	private final AtomicInteger size;
 
@@ -76,7 +70,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	/**
 	 * @param type тип элементов в массиве.
 	 */
-	public ConcurrentArray(final Class<E> type) {
+	public SynchronizedArray(final Class<E> type) {
 		this(type, 10);
 	}
 
@@ -84,18 +78,14 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	 * @param type тип элементов в массиве.
 	 * @param size размер массива.
 	 */
-	public ConcurrentArray(final Class<E> type, final int size) {
+	public SynchronizedArray(final Class<E> type, final int size) {
 		super(type, size);
 
-		final ReadWriteLock readWriteLock = LockFactory.newRWLock();
-
 		this.size = new AtomicInteger();
-		this.readLock = readWriteLock.readLock();
-		this.writeLock = readWriteLock.writeLock();
 	}
 
 	@Override
-	public ConcurrentArray<E> add(final E element) {
+	public synchronized SynchronizedArray<E> add(final E element) {
 
 		if(size() == array.length) {
 			array = ArrayUtils.copyOf(array, array.length >> 1);
@@ -107,7 +97,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final ConcurrentArray<E> addAll(final Array<? extends E> elements) {
+	public synchronized final SynchronizedArray<E> addAll(final Array<? extends E> elements) {
 
 		if(elements == null || elements.isEmpty()) {
 			return this;
@@ -132,7 +122,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final Array<E> addAll(final E[] elements) {
+	public synchronized final Array<E> addAll(final E[] elements) {
 
 		if(elements == null || elements.length < 1) {
 			return this;
@@ -157,7 +147,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E fastRemove(final int index) {
+	public synchronized final E fastRemove(final int index) {
 
 		if(index < 0) {
 			return null;
@@ -193,17 +183,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final void readLock() {
-		readLock.lock();
-	}
-
-	@Override
-	public final void readUnlock() {
-		readLock.unlock();
-	}
-
-	@Override
-	public final void set(final int index, final E element) {
+	public synchronized final void set(final int index, final E element) {
 
 		if(index < 0 || index >= size() || element == null) {
 			return;
@@ -236,7 +216,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E slowRemove(final int index) {
+	public synchronized final E slowRemove(final int index) {
 
 		final int length = size();
 
@@ -262,7 +242,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final ConcurrentArray<E> trimToSize() {
+	public final SynchronizedArray<E> trimToSize() {
 
 		final int size = size();
 
@@ -272,15 +252,5 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 
 		array = ArrayUtils.copyOfRange(array, 0, size);
 		return this;
-	}
-
-	@Override
-	public final void writeLock() {
-		writeLock.lock();
-	}
-
-	@Override
-	public final void writeUnlock() {
-		writeLock.unlock();
 	}
 }

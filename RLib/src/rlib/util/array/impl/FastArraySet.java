@@ -1,4 +1,4 @@
-package rlib.util.array;
+package rlib.util.array.impl;
 
 /**
  * Модель уникального множества на основе быстрго массива.

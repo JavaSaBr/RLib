@@ -20,7 +20,7 @@ public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 
 	protected AtomicFoldablePool(final int size, final Class<?> type) {
 		this.pool = ArrayFactory.newArray(type, size);
-		this.lock = LockFactory.newPrimitiveAtomicLoc();
+		this.lock = LockFactory.newPrimitiveAtomicLock();
 	}
 
 	@Override

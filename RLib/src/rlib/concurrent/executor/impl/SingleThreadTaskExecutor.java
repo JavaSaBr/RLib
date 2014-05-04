@@ -44,7 +44,7 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, S
 		this.waitTasks = ArrayFactory.newArray(CallableTask.class);
 		this.executeTasks = ArrayFactory.newArray(CallableTask.class);
 		this.wait = new AtomicBoolean();
-		this.lock = LockFactory.newPrimitiveAtomicLoc();
+		this.lock = LockFactory.newPrimitiveAtomicLock();
 		this.localObjects = localObjects;
 
 		final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);

@@ -1,5 +1,15 @@
 package rlib.util.array;
 
+import rlib.util.array.impl.ConcurrentArray;
+import rlib.util.array.impl.ConcurrentArraySet;
+import rlib.util.array.impl.ConcurrentAtomicArray;
+import rlib.util.array.impl.FastArray;
+import rlib.util.array.impl.FastArraySet;
+import rlib.util.array.impl.FastIntegerArray;
+import rlib.util.array.impl.FastLongArray;
+import rlib.util.array.impl.SortedArray;
+import rlib.util.array.impl.SynchronizedArray;
+
 /**
  * Реализация фабрики различных массивов.
  * 
@@ -60,17 +70,6 @@ public class ArrayFactory {
 	 * @return новый массив.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newAtomicArray(final Class<?> type) {
-		return new AtomicArray<E>((Class<E>) type);
-	}
-
-	/**
-	 * Создать потокобезопасный новый массив указанного типа.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
 	public static <E> Array<E> newConcurrentArray(final Class<?> type) {
 		return new ConcurrentArray<E>((Class<E>) type);
 	}
@@ -108,6 +107,18 @@ public class ArrayFactory {
 	@SuppressWarnings("unchecked")
 	public static <E> Array<E> newConcurrentArraySet(final Class<?> type, final int size) {
 		return new ConcurrentArraySet<E>((Class<E>) type, size);
+	}
+
+	/**
+	 * Создание нового потокобезопасного динамического массива.
+	 * 
+	 * @see ConcurrentAtomicArray
+	 * @param type тип элементов в массиве.
+	 * @return новый экземпляр массива.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <E> Array<E> newConcurrentAtomicArray(final Class<?> type) {
+		return new ConcurrentAtomicArray<E>((Class<E>) type);
 	}
 
 	/**

@@ -1,6 +1,8 @@
-package rlib.util.array;
+package rlib.util.array.impl;
 
 import rlib.util.ArrayUtils;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayIterator;
 
 /**
  * Быстрый динамический массив. Использовать только в неконкурентных местах.
@@ -98,16 +100,20 @@ public class FastArray<E> extends AbstractArray<E> {
 			return this;
 		}
 
-		final int diff = size + elements.size() - array.length;
+		final int current = array.length;
+		final int diff = size() + elements.size() - current;
 
 		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
-		final E[] array = elements.array();
+		for(final E element : elements.array()) {
 
-		for(int i = 0, length = elements.size(); i < length; i++) {
-			add(array[i]);
+			if(element == null) {
+				break;
+			}
+
+			add(element);
 		}
 
 		return this;
@@ -120,14 +126,15 @@ public class FastArray<E> extends AbstractArray<E> {
 			return this;
 		}
 
-		final int diff = size + elements.length - array.length;
+		final int current = array.length;
+		final int diff = size() + elements.length - current;
 
 		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
-		for(int i = 0, length = elements.length; i < length; i++) {
-			add(elements[i]);
+		for(final E element : elements) {
+			add(element);
 		}
 
 		return this;

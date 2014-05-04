@@ -1,6 +1,7 @@
-package rlib.util.array;
+package rlib.util.array.impl;
 
 import rlib.util.ArrayUtils;
+import rlib.util.array.Array;
 
 /**
  * Базовая реализация массивов.

@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import rlib.concurrent.executor.PeriodicTaskExecutor;
 import rlib.concurrent.lock.LockFactory;
-import rlib.concurrent.task.CallableTask;
 import rlib.concurrent.task.PeriodicTask;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.concurrent.util.ThreadUtils;
@@ -50,12 +49,12 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
 	/** интервал обновлений */
 	private final int interval;
 
-	public SingleThreadPeriodicTaskExecutor(final Class<? extends Thread> threadClass, final int priority, final int interval, final String name, final L localObjects) {
-		this.waitTasks = ArrayFactory.newArray(CallableTask.class);
-		this.executeTasks = ArrayFactory.newArray(CallableTask.class);
-		this.finishedTasks = ArrayFactory.newArray(CallableTask.class);
+	public SingleThreadPeriodicTaskExecutor(final Class<? extends Thread> threadClass, final int priority, final int interval, final String name, final Class<?> taskClass, final L localObjects) {
+		this.waitTasks = ArrayFactory.newArray(taskClass);
+		this.executeTasks = ArrayFactory.newArray(taskClass);
+		this.finishedTasks = ArrayFactory.newArray(taskClass);
 		this.wait = new AtomicBoolean();
-		this.lock = LockFactory.newPrimitiveAtomicLoc();
+		this.lock = LockFactory.newPrimitiveAtomicLock();
 		this.interval = interval;
 
 		final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);

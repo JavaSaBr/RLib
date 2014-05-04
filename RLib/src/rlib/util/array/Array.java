@@ -10,8 +10,23 @@ import rlib.util.ObjectUtils;
 import rlib.util.pools.Foldable;
 
 /**
- * Интерфейс для реализации динамических массивов.
- *
+ * Интерфейс для реализации динамических массивов. Главное преймущество по
+ * сравнению с ArrayList, возможность итерировать самым быстрым способом и без
+ * ущерба для GC:
+ * 
+ * <pre>
+ * for(? element : array.array()) {
+ * 	
+ * 	if(element == null)	{
+ * 		break;
+ * 	}
+ * 	
+ * 	// handle element
+ * }
+ * </pre>
+ * 
+ * Для создания использовать ArrayFactory.
+ * 
  * @author Ronn
  * @created 27.02.2012
  */
@@ -283,13 +298,13 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	/**
 	 * Блокировка изменения массива на время чтения его.
 	 */
-	default public void readLock() {
+	public default void readLock() {
 	}
 
 	/**
 	 * Разблокировка изменения массива.
 	 */
-	default public void readUnlock() {
+	public default void readUnlock() {
 	}
 
 	/**
@@ -437,12 +452,12 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	/**
 	 * Блокировка чтений для изменения массива.
 	 */
-	default public void writeLock() {
+	public default void writeLock() {
 	}
 
 	/**
 	 * Разблокировка чтения массива.
 	 */
-	default public void writeUnlock() {
+	public default void writeUnlock() {
 	}
 }

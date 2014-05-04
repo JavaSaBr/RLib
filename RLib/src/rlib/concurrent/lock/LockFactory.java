@@ -4,13 +4,16 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
 /**
- * Реализация фабрики для созжание различных блокировщиков.
+ * Реализация фабрики для создание различных блокировщиков.
  * 
  * @author Ronn
  */
 public class LockFactory {
 
 	/**
+	 * Создание обернутого блокировщика ReentrantReadWriteLock для синхронной
+	 * записи и асинхронного чтения.
+	 * 
 	 * @return новый блокировщик.
 	 */
 	public static final AsynReadSynWriteLock newARSWLock() {
@@ -18,6 +21,8 @@ public class LockFactory {
 	}
 
 	/**
+	 * Создание финализированного наследника ReentrantLock.
+	 * 
 	 * @return новый блокировщик.
 	 */
 	public static final Lock newLock() {
@@ -25,16 +30,28 @@ public class LockFactory {
 	}
 
 	/**
-	 * Примитивный атомик блокер, не поддерживает рекурсивное использованиЕ,
-	 * зато для примитивных блокировок он самый легковесный.
+	 * Создание нового блокировщика для синхронной записи и асинхронного чтения
+	 * на основе Atomic без поддержки рекурсивного блокирования.
 	 * 
-	 * @return новый примитивный атомикб локер.
+	 * @return новый блокировщик.
 	 */
-	public static final Lock newPrimitiveAtomicLoc() {
+	public static final AsynReadSynWriteLock newPrimitiveAtomicARSWLock() {
+		return new PrimitiveAtomicReadWriteLock();
+	}
+
+	/**
+	 * Создание примитивного блокировщика на основе Atomic без поддержки
+	 * рекурсивной блокировки.
+	 * 
+	 * @return новый блокировщик.
+	 */
+	public static final Lock newPrimitiveAtomicLock() {
 		return new PrimitiveAtomicLock();
 	}
 
 	/**
+	 * Создание финализированного наследника ReentrantReadWriteLock.
+	 * 
 	 * @return новый блокировщик.
 	 */
 	public static final ReadWriteLock newRWLock() {
@@ -42,10 +59,10 @@ public class LockFactory {
 	}
 
 	/**
-	 * Простоя реализация блокера на основе атомика и ссылки на поток с учетом
-	 * повторных вызовов.
+	 * Создание простой реализации блокировщика на основе Atomic с поддержкой
+	 * рекурсивной блокировки.
 	 * 
-	 * @return новый примитивный блокер.
+	 * @return новый блокировщик.
 	 */
 	public static final Lock newThreadAtomicLock() {
 		return new ThreadAtomicLock();
