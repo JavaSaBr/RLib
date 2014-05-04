@@ -5,7 +5,7 @@ import rlib.util.array.ArrayIterator;
 import rlib.util.array.LongArray;
 
 /**
- * Быстрый динамический массив примитивных long.
+ * Реализация не потокобезопасного динамического массива примитивов long.
  *
  * @author Ronn
  */
@@ -78,7 +78,7 @@ public class FastLongArray implements LongArray {
 	public FastLongArray add(final long element) {
 
 		if(size == array.length) {
-			array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
+			array = ArrayUtils.copyOf(array, array.length >> 1);
 		}
 
 		array[size++] = element;
@@ -93,10 +93,11 @@ public class FastLongArray implements LongArray {
 			return this;
 		}
 
-		final int diff = size + elements.length - array.length;
+		final int current = array.length;
+		final int diff = size() + elements.length - current;
 
 		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
 		for(int i = 0, length = elements.length; i < length; i++) {
@@ -113,13 +114,14 @@ public class FastLongArray implements LongArray {
 			return this;
 		}
 
-		final int diff = size + elements.size() - array.length;
+		final int current = array.length;
+		final int diff = size() + elements.size() - current;
 
 		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
-		array = elements.array();
+		long[] array = elements.array();
 
 		for(int i = 0, length = elements.size(); i < length; i++) {
 			add(array[i]);
@@ -140,46 +142,6 @@ public class FastLongArray implements LongArray {
 	}
 
 	@Override
-	public final boolean contains(final long element) {
-
-		final long[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			if(array[i] == element) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	@Override
-	public final boolean containsAll(final long[] array) {
-
-		for(int i = 0, length = array.length; i < length; i++) {
-			if(!contains(array[i])) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public final boolean containsAll(final LongArray array) {
-
-		final long[] elements = array.array();
-
-		for(int i = 0, length = array.size(); i < length; i++) {
-			if(!contains(elements[i])) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Override
 	public final boolean fastRemove(final int index) {
 
 		if(index < 0 || size < 1 || index >= size) {
@@ -194,18 +156,6 @@ public class FastLongArray implements LongArray {
 		array[size] = 0;
 
 		return true;
-	}
-
-	@Override
-	public boolean fastRemove(final long element) {
-
-		final int index = indexOf(element);
-
-		if(index > -1) {
-			fastRemove(index);
-		}
-
-		return index > -1;
 	}
 
 	@Override
@@ -261,25 +211,6 @@ public class FastLongArray implements LongArray {
 	}
 
 	@Override
-	public final int lastIndexOf(final long element) {
-
-		final long[] array = array();
-
-		int last = -1;
-
-		for(int i = 0, length = size; i < length; i++) {
-
-			final long val = array[i];
-
-			if(element == val) {
-				last = i;
-			}
-		}
-
-		return last;
-	}
-
-	@Override
 	public final long poll() {
 		final long val = first();
 		slowRemove(0);
@@ -291,37 +222,6 @@ public class FastLongArray implements LongArray {
 		final long last = last();
 		fastRemove(size - 1);
 		return last;
-	}
-
-	@Override
-	public final boolean removeAll(final LongArray target) {
-
-		if(target.isEmpty()) {
-			return true;
-		}
-
-		final long[] array = target.array();
-
-		for(int i = 0, length = target.size(); i < length; i++) {
-			fastRemove(array[i]);
-		}
-
-		return true;
-	}
-
-	@Override
-	public final boolean retainAll(final LongArray target) {
-
-		final long[] array = array();
-
-		for(int i = 0, length = size; i < length; i++) {
-			if(!target.contains(array[i])) {
-				fastRemove(i--);
-				length--;
-			}
-		}
-
-		return true;
 	}
 
 	@Override
@@ -351,38 +251,9 @@ public class FastLongArray implements LongArray {
 	}
 
 	@Override
-	public boolean slowRemove(final long element) {
-
-		final int index = indexOf(element);
-
-		if(index > -1) {
-			slowRemove(index);
-		}
-
-		return index > -1;
-	}
-
-	@Override
 	public final FastLongArray sort() {
 		ArrayUtils.sort(array, 0, size);
 		return this;
-	}
-
-	@Override
-	public final long[] toArray(final long[] container) {
-
-		final long[] array = array();
-
-		if(container.length >= size) {
-
-			for(int i = 0, j = 0, length = array.length, newLength = container.length; i < length && j < newLength; i++) {
-				container[j++] = array[i];
-			}
-
-			return container;
-		}
-
-		return array;
 	}
 
 	@Override
@@ -403,4 +274,5 @@ public class FastLongArray implements LongArray {
 
 		return this;
 	}
+
 }

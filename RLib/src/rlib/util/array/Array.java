@@ -25,7 +25,7 @@ import rlib.util.pools.Foldable;
  * }
  * </pre>
  * 
- * Для создания использовать ArrayFactory.
+ * Для создания использовать {@link ArrayFactory}.
  * 
  * @author Ronn
  * @created 27.02.2012

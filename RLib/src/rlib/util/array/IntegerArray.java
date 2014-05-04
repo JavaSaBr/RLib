@@ -1,7 +1,22 @@
 package rlib.util.array;
 
+import rlib.util.ArrayUtils;
+
 /**
- * Интерфейс для реализации динамического массива примитивного int.
+ * Интерфейс для реализации динамического массива примитивного int. Главное
+ * преймущество по сравнению с ArrayList, возможность работать с примитивами без
+ * ущерба для GC:
+ * 
+ * <pre>
+ * for(int i = 0, length = elements.size(); i &lt; length; i++) {
+ * 
+ * 	int value = elements.get(i);
+ * 	// handle element
+ * }
+ * </pre>
+ * 
+ * Для создания использовать {@link ArrayFactory}.
+ * 
  * 
  * @author Ronn
  */
@@ -49,7 +64,18 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * @param element искомый элемент.
 	 * @return содержит ли.
 	 */
-	public boolean contains(int element);
+	public default boolean contains(int element) {
+
+		final int[] array = array();
+
+		for(int i = 0, length = size(); i < length; i++) {
+			if(array[i] == element) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	/**
 	 * Проверяет, содержатся ли все элементы с указанного массива в этом
@@ -58,7 +84,16 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * @param array массив элементов.
 	 * @return содержит ли.
 	 */
-	public boolean containsAll(int[] array);
+	public default boolean containsAll(int[] array) {
+
+		for(int i = 0, length = array.length; i < length; i++) {
+			if(!contains(array[i])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * Проверяет, содержатся ли все элементы с указанного массива в этом
@@ -67,7 +102,18 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * @param array массив элементов.
 	 * @return содержит ли.
 	 */
-	public boolean containsAll(IntegerArray array);
+	public default boolean containsAll(IntegerArray array) {
+
+		final int[] elements = array.array();
+
+		for(int i = 0, length = array.size(); i < length; i++) {
+			if(!contains(elements[i])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * Удаляет элемент с установкой последнего элемента на месте его.
@@ -75,7 +121,16 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * @param element удаляемый элемент.
 	 * @return удален ли объект.
 	 */
-	public boolean fastRemove(int element);
+	public default boolean fastRemove(int element) {
+
+		final int index = indexOf(element);
+
+		if(index > -1) {
+			fastRemoveByIndex(index);
+		}
+
+		return index > -1;
+	}
 
 	/**
 	 * Удаляет элемент по индексу с установкой последнего элемента на месте его.
@@ -104,12 +159,25 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * @param element искомый элемент.
 	 * @return первый индекс объекта.
 	 */
-	public int indexOf(int element);
+	public default int indexOf(int element) {
+
+		final int[] array = array();
+
+		for(int i = 0, length = size(); i < length; i++) {
+			if(element == array[i]) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
 
 	/**
 	 * @return является ли массив пустым.
 	 */
-	public boolean isEmpty();
+	public default boolean isEmpty() {
+		return size() < 1;
+	}
 
 	@Override
 	public ArrayIterator<Integer> iterator();
@@ -125,7 +193,20 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * @param element искомый элемент.
 	 * @return последний индекс искомого элемента.
 	 */
-	public int lastIndexOf(int element);
+	public default int lastIndexOf(int element) {
+
+		final int[] array = array();
+
+		int last = -1;
+
+		for(int i = 0, length = size(); i < length; i++) {
+			if(element == array[i]) {
+				last = i;
+			}
+		}
+
+		return last;
+	}
 
 	/**
 	 * @return первый элемент массива.
@@ -152,18 +233,43 @@ public interface IntegerArray extends Iterable<Integer> {
 	/**
 	 * Удаляет из массива все элементы из указанного массива.
 	 *
-	 * @param array массив с элементами.
+	 * @param target массив с элементами.
 	 * @return удалены ли все указанные объекты.
 	 */
-	public boolean removeAll(IntegerArray array);
+	public default boolean removeAll(IntegerArray target) {
+
+		if(target.isEmpty()) {
+			return true;
+		}
+
+		final int[] array = target.array();
+
+		for(int i = 0, length = target.size(); i < length; i++) {
+			fastRemove(array[i]);
+		}
+
+		return true;
+	}
 
 	/**
 	 * Удаляет все элементы массива, которые отсутствуют в указанном массиве.
 	 *
-	 * @param array массив с элементами.
+	 * @param target массив с элементами.
 	 * @return удалены ли все объекты.
 	 */
-	public boolean retainAll(IntegerArray array);
+	public default boolean retainAll(IntegerArray target) {
+
+		final int[] array = array();
+
+		for(int i = 0, length = size(); i < length; i++) {
+			if(!target.contains(array[i])) {
+				fastRemoveByIndex(i--);
+				length--;
+			}
+		}
+
+		return true;
+	}
 
 	/**
 	 * @return кол-во элементов в массиве.
@@ -176,7 +282,16 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * @param element удаляемый элемент.
 	 * @return удален ли элемент.
 	 */
-	public boolean slowRemove(int element);
+	public default boolean slowRemove(int element) {
+
+		final int index = indexOf(element);
+
+		if(index > -1) {
+			slowRemoveByIndex(index);
+		}
+
+		return index > -1;
+	}
 
 	/**
 	 * Удаляет элемент по индексу со сдвигом всех элементов после него.
@@ -200,7 +315,21 @@ public interface IntegerArray extends Iterable<Integer> {
 	 *
 	 * @param newArray массив, в который нужно перенести.
 	 */
-	public int[] toArray(int[] newArray);
+	public default int[] toArray(int[] newArray) {
+
+		final int[] array = array();
+
+		if(newArray.length >= size()) {
+
+			for(int i = 0, j = 0, length = array.length, newLength = newArray.length; i < length && j < newLength; i++) {
+				newArray[j++] = array[i];
+			}
+
+			return newArray;
+		}
+
+		return ArrayUtils.copyOf(array, 0);
+	}
 
 	/**
 	 * Уменьшает массив до текущего набора реальных элементов.

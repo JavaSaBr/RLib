@@ -104,18 +104,12 @@ public class ArrayFactory {
 	}
 
 	/**
-	 * @return новый динамический массив примтивного инт.
+	 * Создание не потокобезопасного динамического массива примитивов int.
+	 * 
+	 * @return новый экземпляр массива.
 	 */
 	public static IntegerArray newIntegerArray() {
 		return new FastIntegerArray();
-	}
-
-	/**
-	 * @param size начальный размер массива.
-	 * @return новый динамический массив примтивного инт.
-	 */
-	public static IntegerArray newIntegerArray(final int size) {
-		return new FastIntegerArray(size);
 	}
 
 	/**
@@ -129,18 +123,12 @@ public class ArrayFactory {
 	}
 
 	/**
-	 * @return новый динамический массив примтивного инт.
+	 * Создание не потокобезопасного динамического массива примитивов long.
+	 * 
+	 * @return новый экземпляр массива.
 	 */
 	public static LongArray newLongArray() {
 		return new FastLongArray();
-	}
-
-	/**
-	 * @param size начальный размер массива.
-	 * @return новый динамический массив примтивного инт.
-	 */
-	public static LongArray newLongArray(final int size) {
-		return new FastLongArray(size);
 	}
 
 	/**
