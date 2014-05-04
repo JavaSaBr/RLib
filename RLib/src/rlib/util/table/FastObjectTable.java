@@ -419,7 +419,7 @@ public class FastObjectTable<K, V> extends AbstractTable<K, V> {
 
 	@Override
 	public Array<K> keyArray(final Class<K> type) {
-		return keyArray(ArrayFactory.newArray(type, size()));
+		return keyArray(ArrayFactory.newArray(type));
 	}
 
 	@Override

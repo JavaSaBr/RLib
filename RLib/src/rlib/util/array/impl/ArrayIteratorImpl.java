@@ -4,7 +4,7 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 
 /**
- * Реализация обычного итератора динамического массива.
+ * Реализация итератора динамического массива.
  * 
  * @author Ronn
  */

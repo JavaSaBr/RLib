@@ -1,8 +1,10 @@
 package rlib.util.array.impl;
 
 /**
- * Модель уникального множества на основе быстрго массива.
+ * Реализация {@link FastArray} с проверкой на уникальность элемента при
+ * вставке.
  * 
+ * @see FastArray
  * @author Ronn
  */
 public class FastArraySet<E> extends FastArray<E> {

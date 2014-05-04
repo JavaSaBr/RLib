@@ -33,6 +33,7 @@ public class LockFactory {
 	 * Создание нового блокировщика для синхронной записи и асинхронного чтения
 	 * на основе Atomic без поддержки рекурсивного блокирования.
 	 * 
+	 * @see PrimitiveAtomicReadWriteLock
 	 * @return новый блокировщик.
 	 */
 	public static final AsynReadSynWriteLock newPrimitiveAtomicARSWLock() {

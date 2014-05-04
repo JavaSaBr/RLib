@@ -1,13 +1,15 @@
 package rlib.util.array.impl;
 
 /**
- * Модель уникального множества на основе конкурентного массива.
+ * Реализация {@link ConcurrentArray} с проверкой на уникальность вставляемых
+ * элементов.
  * 
+ * @see ConcurrentArray
  * @author Ronn
  */
 public class ConcurrentArraySet<E> extends ConcurrentArray<E> {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -3394386864246350866L;
 
 	public ConcurrentArraySet(final Class<E> type) {
 		super(type);

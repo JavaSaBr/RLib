@@ -6,60 +6,27 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 
 /**
- * Реализация динамического массива с возможностью использовать потокобезопасную
- * запись и чтение.
- *
+ * Реализация частично-потокобезопасного динамического массива с
+ * синхронизированной записью, для чтения нужно делать блок синхронизации.
+ * 
+ * <pre>
+ * synchronize(array) {
+ * 	for(? element : array.array()) {
+ * 		
+ * 		if(element == null) {
+ * 			break;
+ * 		}
+ * 
+ * 		// handle
+ * 	}
+ * }
+ * </pre>
+ * 
  * @author Ronn
  */
 public class SynchronizedArray<E> extends AbstractArray<E> {
 
-	/**
-	 * Быстрый итератор по массиву.
-	 *
-	 * @author Ronn
-	 */
-	private final class FastIterator implements ArrayIterator<E> {
-
-		/** текущая позиция в массиве */
-		private int ordinal;
-
-		@Override
-		public void fastRemove() {
-			SynchronizedArray.this.fastRemove(--ordinal);
-		}
-
-		@Override
-		public boolean hasNext() {
-			return ordinal < size();
-		}
-
-		@Override
-		public int index() {
-			return ordinal - 1;
-		}
-
-		@Override
-		public E next() {
-
-			if(ordinal >= array.length) {
-				return null;
-			}
-
-			return array[ordinal++];
-		}
-
-		@Override
-		public void remove() {
-			SynchronizedArray.this.fastRemove(--ordinal);
-		}
-
-		@Override
-		public void slowRemove() {
-			SynchronizedArray.this.slowRemove(--ordinal);
-		}
-	}
-
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -7288153859732883548L;
 
 	/** кол-во элементов в колекции */
 	private final AtomicInteger size;
@@ -103,10 +70,11 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
 			return this;
 		}
 
-		final int diff = size() + elements.size() - array.length;
+		final int current = array.length;
+		final int diff = size() + elements.size() - current;
 
 		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
 		for(final E element : elements.array()) {
@@ -128,10 +96,11 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
 			return this;
 		}
 
-		final int diff = size() + elements.length - array.length;
+		final int current = array.length;
+		final int diff = size() + elements.length - current;
 
 		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
 		for(final E element : elements) {
@@ -161,8 +130,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
 			return null;
 		}
 
-		size.decrementAndGet();
-		length = size();
+		length = size.decrementAndGet();
 
 		final E old = array[index];
 
@@ -179,7 +147,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
 
 	@Override
 	public final ArrayIterator<E> iterator() {
-		return new FastIterator();
+		return new ArrayIteratorImpl<>(this);
 	}
 
 	@Override
@@ -234,9 +202,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
 			System.arraycopy(array, index + 1, array, index, numMoved);
 		}
 
-		size.decrementAndGet();
-
-		array[size.get()] = null;
+		array[size.decrementAndGet()] = null;
 
 		return old;
 	}

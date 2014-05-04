@@ -13,8 +13,8 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 	/** массив объектов */
 	private final Array<E> pool;
 
-	protected ConcurrentFoldablePool(final int size, final Class<?> type) {
-		this.pool = ArrayFactory.newConcurrentArray(type, size);
+	protected ConcurrentFoldablePool(final Class<?> type) {
+		this.pool = ArrayFactory.newConcurrentArray(type);
 	}
 
 	/**

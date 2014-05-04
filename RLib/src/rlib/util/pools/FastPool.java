@@ -13,8 +13,8 @@ public class FastPool<E> implements Pool<E> {
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected FastPool(final int size, final Class<?> type) {
-		this.pool = ArrayFactory.newArray(type, size);
+	protected FastPool(final Class<?> type) {
+		this.pool = ArrayFactory.newArray(type);
 	}
 
 	@Override

@@ -18,10 +18,11 @@ import rlib.util.array.impl.SynchronizedArray;
 public class ArrayFactory {
 
 	/**
-	 * Создать быстрый новый массив указанного типа.
+	 * Создание нового не потокобезопасного динамического массива.
 	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
+	 * @see FastArray
+	 * @param type тип элементов в массиве.
+	 * @return новый экземпляр массива.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> Array<E> newArray(final Class<?> type) {
@@ -29,22 +30,12 @@ public class ArrayFactory {
 	}
 
 	/**
-	 * Создать быстрый новый массив указанного типа.
+	 * Создание нового не потокобезопасного динамического массива с проверкой на
+	 * уникальность элементов при вставке.
 	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newArray(final Class<?> type, final int size) {
-		return new FastArray<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создать уникальное множество на основе быстрого массива.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
+	 * @see FastArraySet
+	 * @param type тип элементов в массиве.
+	 * @return новый экземпляр массива.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> Array<E> newArraySet(final Class<?> type) {
@@ -52,22 +43,12 @@ public class ArrayFactory {
 	}
 
 	/**
-	 * Создать уникальное множество на основе быстрого массива.
+	 * Создание нового потокобезопасного динамического массива с возможностью
+	 * синхронно записывать и асинхронно читать.
 	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newArraySet(final Class<?> type, final int size) {
-		return new FastArraySet<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создать потокобезопасный новый массив указанного типа.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
+	 * @see ConcurrentArray
+	 * @param type тип элементов в массиве.
+	 * @return новый экземпляр массива.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> Array<E> newConcurrentArray(final Class<?> type) {
@@ -75,22 +56,13 @@ public class ArrayFactory {
 	}
 
 	/**
-	 * Создать потокобезопасный новый массив указанного типа.
+	 * Создание нового потокобезопасного динамического массива с проверкой на
+	 * уникальность элемента при вставке и с возможностью синхронно записывать и
+	 * асинхронно читать.
 	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newConcurrentArray(final Class<?> type, final int size) {
-		return new ConcurrentArray<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создать уникальное множество на основе конкурентного массива.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
+	 * @see ConcurrentArraySet
+	 * @param type тип элементов в массиве.
+	 * @return новый экземпляр массива.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> Array<E> newConcurrentArraySet(final Class<?> type) {
@@ -98,19 +70,8 @@ public class ArrayFactory {
 	}
 
 	/**
-	 * Создать уникальное множество на основе конкурентного массива.
-	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E> Array<E> newConcurrentArraySet(final Class<?> type, final int size) {
-		return new ConcurrentArraySet<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создание нового потокобезопасного динамического массива.
+	 * Создание нового потокобезопасного динамического массива с возможностью
+	 * синхронно записывать и асинхронно читать.
 	 * 
 	 * @see ConcurrentAtomicArray
 	 * @param type тип элементов в массиве.
@@ -183,10 +144,12 @@ public class ArrayFactory {
 	}
 
 	/**
-	 * Создать сортируемый новый массив указанного типа.
+	 * Создание нового не потокобезопасного сортированного динамического
+	 * массива.
 	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
+	 * @see SortedArray
+	 * @param type тип элементов массива.
+	 * @return новый экземпляр массива.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E extends Comparable<E>> Array<E> newSortedArray(final Class<?> type) {
@@ -194,22 +157,12 @@ public class ArrayFactory {
 	}
 
 	/**
-	 * Создать сортируемый новый массив указанного типа.
+	 * Создание нового синхронизированного динамического массива с
+	 * синхронизированной записью.
 	 * 
-	 * @param type тип массива.
-	 * @param size базовый размер массива.
-	 * @return новый массив.
-	 */
-	@SuppressWarnings("unchecked")
-	public static <E extends Comparable<E>> Array<E> newSortedArray(final Class<?> type, final int size) {
-		return new SortedArray<E>((Class<E>) type, size);
-	}
-
-	/**
-	 * Создать синхронизированный новый массив указанного типа.
-	 * 
-	 * @param type тип массива.
-	 * @return новый массив.
+	 * @see SynchronizedArray
+	 * @param type тип элементов в массиве.
+	 * @return новый экземпляр массива.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> Array<E> newSynchronizedArray(final Class<?> type) {

@@ -13,8 +13,8 @@ public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePoo
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected SynchronizedFoldablePool(final int size, final Class<?> type) {
-		this.pool = ArrayFactory.newArray(type, size);
+	protected SynchronizedFoldablePool(final Class<?> type) {
+		this.pool = ArrayFactory.newArray(type);
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 
 /**
- * Базовая реализация массивов.
+ * Базовая реализация динамических массивов.
  *
  * @author Ronn
  */

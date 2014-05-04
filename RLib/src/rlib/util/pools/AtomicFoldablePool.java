@@ -18,8 +18,8 @@ public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	/** блокировщик */
 	private final Lock lock;
 
-	protected AtomicFoldablePool(final int size, final Class<?> type) {
-		this.pool = ArrayFactory.newArray(type, size);
+	protected AtomicFoldablePool(final Class<?> type) {
+		this.pool = ArrayFactory.newArray(type);
 		this.lock = LockFactory.newPrimitiveAtomicLock();
 	}
 

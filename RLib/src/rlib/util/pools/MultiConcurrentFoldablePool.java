@@ -22,7 +22,7 @@ public final class MultiConcurrentFoldablePool<E extends Foldable> implements Fo
 		this.limit = size;
 
 		for(int i = 0; i < size; i++) {
-			pools[i] = new ConcurrentFoldablePool<E>(10, type);
+			pools[i] = new ConcurrentFoldablePool<E>(type);
 		}
 	}
 

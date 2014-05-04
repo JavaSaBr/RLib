@@ -5,58 +5,12 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 
 /**
- * Быстрый динамический массив. Использовать только в неконкурентных местах.
+ * Реализация не потокобезопасного динамического массива для работы с локальными
+ * данными.
  *
  * @author Ronn
  */
 public class FastArray<E> extends AbstractArray<E> {
-
-	/**
-	 * Быстрый итератор массива.
-	 *
-	 * @author Ronn
-	 */
-	private final class FastIterator implements ArrayIterator<E> {
-
-		/** текущая позиция в массиве */
-		private int ordinal;
-
-		public FastIterator() {
-			super();
-
-			ordinal = 0;
-		}
-
-		@Override
-		public void fastRemove() {
-			FastArray.this.fastRemove(--ordinal);
-		}
-
-		@Override
-		public boolean hasNext() {
-			return ordinal < size;
-		}
-
-		@Override
-		public int index() {
-			return ordinal - 1;
-		}
-
-		@Override
-		public E next() {
-			return array[ordinal++];
-		}
-
-		@Override
-		public void remove() {
-			FastArray.this.fastRemove(--ordinal);
-		}
-
-		@Override
-		public void slowRemove() {
-			FastArray.this.slowRemove(--ordinal);
-		}
-	}
 
 	private static final long serialVersionUID = -8477384427415127978L;
 
@@ -171,7 +125,7 @@ public class FastArray<E> extends AbstractArray<E> {
 
 	@Override
 	public final ArrayIterator<E> iterator() {
-		return new FastIterator();
+		return new ArrayIteratorImpl<>(this);
 	}
 
 	@Override

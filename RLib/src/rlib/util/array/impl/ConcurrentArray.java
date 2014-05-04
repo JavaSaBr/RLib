@@ -2,6 +2,7 @@ package rlib.util.array.impl;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.lock.LockFactory;
@@ -10,60 +11,29 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 
 /**
- * Реализация динамического массива с возможностью использовать потокобезопасную
- * запись и чтение.
+ * Реализация динамического массива с возможностью потокобезопасно асинхронно
+ * читать и синхронно записывать. Поддерживается рекурсивный вызов
+ * readLock/writeLock. Используется реализация блокировщика
+ * {@link ReentrantReadWriteLock}, так что отлично подходит и для мест где мало
+ * записей и много чтений так и на оборот, единственный минус в нагрузке на GC,
+ * так как создает много временных объектов при активном использовании.
+ * 
+ * Все операции по чтению/записи массива производить в блоке
+ * 
+ * <pre>
+ * array.readLock()/writeLock();
+ * try {
+ * 	// handle
+ * } finally {
+ * 	array.readUnlock()/writeUnlock();
+ * }
+ * </pre>
  *
  * @author Ronn
  */
 public class ConcurrentArray<E> extends AbstractArray<E> {
 
-	/**
-	 * Быстрый итератор по массиву.
-	 *
-	 * @author Ronn
-	 */
-	private final class FastIterator implements ArrayIterator<E> {
-
-		/** текущая позиция в массиве */
-		private int ordinal;
-
-		@Override
-		public void fastRemove() {
-			ConcurrentArray.this.fastRemove(--ordinal);
-		}
-
-		@Override
-		public boolean hasNext() {
-			return ordinal < size();
-		}
-
-		@Override
-		public int index() {
-			return ordinal - 1;
-		}
-
-		@Override
-		public E next() {
-
-			if(ordinal >= array.length) {
-				return null;
-			}
-
-			return array[ordinal++];
-		}
-
-		@Override
-		public void remove() {
-			ConcurrentArray.this.fastRemove(--ordinal);
-		}
-
-		@Override
-		public void slowRemove() {
-			ConcurrentArray.this.slowRemove(--ordinal);
-		}
-	}
-
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -7985171224116955303L;
 
 	/** блокировщик на чтение */
 	private final Lock readLock;
@@ -115,10 +85,11 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 			return this;
 		}
 
-		final int diff = size() + elements.size() - array.length;
+		final int current = array.length;
+		final int diff = size() + elements.size() - current;
 
 		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
 		for(final E element : elements.array()) {
@@ -140,10 +111,11 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 			return this;
 		}
 
-		final int diff = size() + elements.length - array.length;
+		final int current = array.length;
+		final int diff = size() + elements.length - current;
 
 		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, diff);
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
 		for(final E element : elements) {
@@ -191,7 +163,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 
 	@Override
 	public final ArrayIterator<E> iterator() {
-		return new FastIterator();
+		return new ArrayIteratorImpl<>(this);
 	}
 
 	@Override

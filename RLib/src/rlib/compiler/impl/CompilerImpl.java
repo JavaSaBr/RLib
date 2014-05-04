@@ -61,7 +61,7 @@ public class CompilerImpl implements Compiler {
 			return null;
 		}
 
-		final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class, files.length);
+		final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
 
 		for(final File file : files) {
 			javaSource.add(new JavaFileSource(file));

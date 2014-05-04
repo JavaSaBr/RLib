@@ -13,8 +13,8 @@ public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 	/** пул объектов */
 	private final Array<E> pool;
 
-	protected FastFoldablePool(final int size, final Class<?> type) {
-		this.pool = ArrayFactory.newArray(type, size);
+	protected FastFoldablePool(final Class<?> type) {
+		this.pool = ArrayFactory.newArray(type);
 	}
 
 	@Override
