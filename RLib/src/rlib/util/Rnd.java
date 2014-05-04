@@ -7,6 +7,7 @@ import java.util.Random;
  * 
  * @author Ronn
  */
+@Deprecated
 public abstract class Rnd {
 
 	private static final ThreadLocal<Random> LOCAL_RANDOM = new ThreadLocal<Random>() {

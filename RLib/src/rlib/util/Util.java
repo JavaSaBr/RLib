@@ -15,14 +15,18 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Класс различных дополнительных статик методов.
+ * Утильный класс с набором статических вспомогательных методов.
  * 
  * @author Ronn
  * @created 27.03.2012
  */
-public abstract class Util {
+public final class Util {
 
 	private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
+
+	private Util() {
+		throw new RuntimeException();
+	}
 
 	private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
 

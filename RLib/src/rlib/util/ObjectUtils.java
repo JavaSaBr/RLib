@@ -49,7 +49,6 @@ public final class ObjectUtils {
 		}
 
 		final Object newObject = newInstance(original.getClass());
-
 		reload(newObject, original);
 
 		return (T) newObject;

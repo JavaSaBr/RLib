@@ -8,7 +8,7 @@ import rlib.util.table.Table;
 import rlib.util.table.TableFactory;
 
 /**
- * Таблица параметров.
+ * Реализация таблицы разнородных параметров.
  * 
  * @author Ronn
  * @created 29.02.2012
@@ -49,22 +49,44 @@ public class VarTable {
 	}
 
 	/**
-	 * @param key название параметра.
-	 * @return значение параметра.
+	 * Получение значение параметра по ключу.
 	 */
-	public Object get(final String key) {
-		return values.get(key);
+	@SuppressWarnings("unchecked")
+	public <T> T get(final String key) {
+		return (T) values.get(key);
 	}
 
 	/**
-	 * Получить значение параметра по его названию.
+	 * Получение значение параметра по ключу.
 	 * 
-	 * @param key название параметра.
+	 * @param key ключ параметра.
+	 * @param type тип параметра.
+	 * @return значение параметра.
+	 */
+	public <T> T get(final String key, final Class<T> type) {
+
+		final Object object = values.get(key);
+
+		if(object == null) {
+			throw new IllegalArgumentException();
+		}
+
+		if(type.isInstance(object)) {
+			return type.cast(object);
+		}
+
+		throw new IllegalArgumentException("not found " + key);
+	}
+
+	/**
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
 	 * @param type тип параметра.
 	 * @param def значение по умолчанию.
-	 * @return текущее значение.
+	 * @return значение параметра.
 	 */
-	public <T extends Object, E extends T> T get(final String key, final Class<T> type, final E def) {
+	public <T, E extends T> T get(final String key, final Class<T> type, final E def) {
 
 		final Object object = values.get(key);
 
@@ -80,11 +102,11 @@ public class VarTable {
 	}
 
 	/**
-	 * Получить значение ключа типа указанного по умолчанию значения.
+	 * Получение значение параметра по ключу.
 	 * 
-	 * @param key название параметра.
+	 * @param key ключ параметра.
 	 * @param def значение по умолчанию.
-	 * @return найденное значение.
+	 * @return значение параметра.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T get(final String key, final T def) {
@@ -105,10 +127,57 @@ public class VarTable {
 	}
 
 	/**
-	 * Получить значение по ключу.
+	 * Получение массива значений параметра по ключу.
 	 * 
-	 * @param key название параметра.
-	 * @return найденное начение.
+	 * @param key ключ параметра.
+	 * @param type тип значений параметра.
+	 * @return массив значений параметра.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T[] getArray(final String key, final Class<T[]> type) {
+
+		final Object object = values.get(key);
+
+		if(object == null) {
+			throw new IllegalArgumentException("not found " + key);
+		}
+
+		if(type.isInstance(object)) {
+			return (T[]) object;
+		}
+
+		throw new IllegalArgumentException("not found " + key);
+	}
+
+	/**
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param type тип значений параметра.
+	 * @param def список значений по умолчанию.
+	 * @return массив значений параметра.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T[] getArray(final String key, final Class<T[]> type, final T... def) {
+
+		final Object object = values.get(key);
+
+		if(object == null) {
+			return def;
+		}
+
+		if(type.isInstance(object)) {
+			return (T[]) object;
+		}
+
+		throw new IllegalArgumentException("not found " + key);
+	}
+
+	/**
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public boolean getBoolean(final String key) {
 
@@ -119,7 +188,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Boolean) {
-			return (boolean) object;
+			return ((Boolean) object).booleanValue();
 		}
 
 		if(object instanceof String) {
@@ -130,11 +199,11 @@ public class VarTable {
 	}
 
 	/**
-	 * Получить значение по ключу.
+	 * Получение значение параметра по ключу.
 	 * 
-	 * @param key название параметра.
+	 * @param key ключ параметра.
 	 * @param def значение по умолчанию.
-	 * @return найденное значение.
+	 * @return значение параметра.
 	 */
 	public boolean getBoolean(final String key, final boolean def) {
 
@@ -145,7 +214,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Boolean) {
-			return (boolean) object;
+			return ((Boolean) object).booleanValue();
 		}
 
 		if(object instanceof String) {
@@ -156,11 +225,12 @@ public class VarTable {
 	}
 
 	/**
-	 * Получить массив значений по ключу.
+	 * Получение массива значений параметра по ключу.
 	 * 
-	 * @param key название параметра.
-	 * @param regex строка разбиения, если значение строка.
-	 * @return найденный массив.
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	public boolean[] getBooleanArray(final String key, final String regex) {
 
@@ -191,12 +261,13 @@ public class VarTable {
 	}
 
 	/**
-	 * Получение массив значений по ключу.
+	 * Получение массива значений параметра по ключу.
 	 * 
-	 * @param key название параметра.
-	 * @param regex строка разбиения, если значение строка.
-	 * @param def значение по умолчанию.
-	 * @return найденное значение
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	public boolean[] getBooleanArray(final String key, final String regex, final boolean... def) {
 
@@ -227,7 +298,10 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public byte getByte(final String key) {
 
@@ -238,7 +312,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Byte) {
-			return (byte) object;
+			return ((Byte) object).byteValue();
 		}
 
 		if(object instanceof String) {
@@ -249,7 +323,11 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
 	 */
 	public byte getByte(final String key, final byte def) {
 
@@ -260,7 +338,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Byte) {
-			return (byte) object;
+			return ((Byte) object).byteValue();
 		}
 
 		if(object instanceof String) {
@@ -271,7 +349,12 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	public byte[] getByteArray(final String key, final String regex) {
 
@@ -302,7 +385,13 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	public byte[] getByteArray(final String key, final String regex, final byte... def) {
 
@@ -333,7 +422,10 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public double getDouble(final String key) {
 
@@ -344,7 +436,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Double) {
-			return (double) object;
+			return ((Double) object).doubleValue();
 		}
 
 		if(object instanceof String) {
@@ -355,7 +447,11 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
 	 */
 	public double getDouble(final String key, final double def) {
 
@@ -366,7 +462,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Double) {
-			return (double) object;
+			return ((Double) object).doubleValue();
 		}
 
 		if(object instanceof String) {
@@ -377,7 +473,12 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	public double[] getDoubleArray(final String key, final String regex) {
 
@@ -408,7 +509,13 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	public double[] getDoubleArray(final String key, final String regex, final double... def) {
 
@@ -439,7 +546,11 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param type тип параметра.
+	 * @return значение параметра.
 	 */
 	public <T extends Enum<T>> T getEnum(final String key, final Class<T> type) {
 
@@ -461,7 +572,12 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param type тип параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
 	 */
 	public <T extends Enum<T>> T getEnum(final String key, final Class<T> type, final T def) {
 
@@ -483,7 +599,13 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param type тип значений параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex) {
@@ -515,7 +637,14 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param type тип значений параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex, final T... def) {
@@ -547,7 +676,10 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public float getFloat(final String key) {
 
@@ -558,7 +690,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Float) {
-			return (float) object;
+			return ((Float) object).floatValue();
 		}
 
 		if(object instanceof String) {
@@ -569,7 +701,11 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
 	 */
 	public float getFloat(final String key, final float def) {
 
@@ -580,7 +716,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Float) {
-			return (float) object;
+			return ((Float) object).floatValue();
 		}
 
 		if(object instanceof String) {
@@ -591,7 +727,12 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	public float[] getFloatArray(final String key, final String regex) {
 
@@ -622,7 +763,13 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	public float[] getFloatArray(final String key, final String regex, final float... def) {
 
@@ -653,63 +800,10 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
-	 */
-	public <T extends Object> T getGeneric(final String key, final Class<T> type) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException();
-		}
-
-		if(type.isInstance(object)) {
-			return type.cast(object);
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * @return найденное значение.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T[] getGenericArray(final String key, final Class<T[]> type) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
-
-		if(type.isInstance(object)) {
-			return (T[]) object;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * @return найденное значение.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T[] getGenericArray(final String key, final Class<T[]> type, final T... def) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			return def;
-		}
-
-		if(type.isInstance(object)) {
-			return (T[]) object;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public int getInteger(final String key) {
 
@@ -720,7 +814,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Integer) {
-			return (int) object;
+			return ((Integer) object).intValue();
 		}
 
 		if(object instanceof String) {
@@ -731,7 +825,11 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
 	 */
 	public int getInteger(final String key, final int def) {
 
@@ -742,7 +840,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Integer) {
-			return (int) object;
+			return ((Integer) object).intValue();
 		}
 
 		if(object instanceof String) {
@@ -753,7 +851,12 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	public int[] getIntegerArray(final String key, final String regex) {
 
@@ -784,7 +887,13 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	public int[] getIntegerArray(final String key, final String regex, final int... def) {
 
@@ -815,7 +924,10 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public long getLong(final String key) {
 
@@ -826,7 +938,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Long) {
-			return (long) object;
+			return ((Long) object).longValue();
 		}
 
 		if(object instanceof String) {
@@ -837,7 +949,11 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
 	 */
 	public long getLong(final String key, final long def) {
 
@@ -848,7 +964,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Long) {
-			return (long) object;
+			return ((Long) object).longValue();
 		}
 
 		if(object instanceof String) {
@@ -859,7 +975,12 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	public long[] getLongArray(final String key, final String regex) {
 
@@ -890,7 +1011,13 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	public long[] getLongArray(final String key, final String regex, final long... def) {
 
@@ -921,7 +1048,10 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public short getShort(final String key) {
 
@@ -932,7 +1062,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Short) {
-			return (short) object;
+			return ((Short) object).shortValue();
 		}
 
 		if(object instanceof String) {
@@ -943,7 +1073,11 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
 	 */
 	public short getShort(final String key, final short def) {
 
@@ -954,7 +1088,7 @@ public class VarTable {
 		}
 
 		if(object instanceof Short) {
-			return (short) object;
+			return ((Short) object).shortValue();
 		}
 
 		if(object instanceof String) {
@@ -965,7 +1099,12 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	public short[] getShortArray(final String key, final String regex) {
 
@@ -996,7 +1135,13 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	public short[] getShortArray(final String key, final String regex, final short... def) {
 
@@ -1027,7 +1172,10 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public String getString(final String key) {
 
@@ -1038,14 +1186,18 @@ public class VarTable {
 		}
 
 		if(object instanceof String) {
-			return (String) object;
+			return object.toString();
 		}
 
 		throw new IllegalArgumentException("not found " + key);
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
 	 */
 	public String getString(final String key, final String def) {
 
@@ -1056,14 +1208,19 @@ public class VarTable {
 		}
 
 		if(object instanceof String) {
-			return (String) object;
+			return object.toString();
 		}
 
 		return def;
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @return массив значений параметра.
 	 */
 	public String[] getStringArray(final String key, final String regex) {
 
@@ -1085,7 +1242,13 @@ public class VarTable {
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Получение массива значений параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param regex регулярное выражение для разбития строки значения параметра
+	 * на массив нужных значений.
+	 * @param def набор значений параметра по умолчанию.
+	 * @return массив значений параметра.
 	 */
 	public String[] getStringArray(final String key, final String regex, final String... def) {
 		final Object object = values.get(key);
@@ -1113,7 +1276,10 @@ public class VarTable {
 	}
 
 	/**
-	 * @return вектор по ключу.
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
 	 */
 	public Vector getVector(final String key) {
 
@@ -1141,6 +1307,13 @@ public class VarTable {
 		throw new IllegalArgumentException("not found " + key);
 	}
 
+	/**
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
+	 */
 	public Vector getVector(final String key, final Vector def) {
 
 		final Object object = values.get(key);
@@ -1168,29 +1341,26 @@ public class VarTable {
 	}
 
 	/**
-	 * Парс атрибутов хмл узла.
+	 * Очистка таблицы и внесение в нее значений атрибутов элемента XML
+	 * документа.
 	 * 
-	 * @param node хмл узел.
-	 * @return таблица параметров с атрибутами хмл узла.
+	 * @param node узел из XML документа с атрибутами.
 	 */
 	public VarTable parse(final Node node) {
-
 		values.clear();
 
 		if(node == null) {
 			return this;
 		}
 
-		final NamedNodeMap attrs = node.getAttributes();
+		final NamedNodeMap attributes = node.getAttributes();
 
-		if(attrs == null) {
+		if(attributes == null) {
 			return this;
 		}
 
-		for(int i = 0, length = attrs.getLength(); i < length; i++) {
-
-			final Node item = attrs.item(i);
-
+		for(int i = 0, length = attributes.getLength(); i < length; i++) {
+			final Node item = attributes.item(i);
 			set(item.getNodeName(), item.getNodeValue());
 		}
 
@@ -1198,16 +1368,26 @@ public class VarTable {
 	}
 
 	/**
-	 * Парс хмл узла.
+	 * Очистка таблицы и внесенее в нее параметров из дочерних элементов
+	 * указанного узла с указанными именами атрибутов и узлов.
 	 * 
-	 * @param node узел, который парсим.
-	 * @param childName название узла, который задает параметр.
+	 * <pre>
+	 * 	< element > 
+	 * 		< child name="name" valu="value" />
+	 * 		< child name="name" valu="value" />
+	 * 		< child name="name" valu="value" />
+	 * 		< child name="name" valu="value" />
+	 * 	< /element >
+	 * 
+	 * vars.parse(node, "child", "name", "value")
+	 * </pre>
+	 * 
+	 * @param node узел, который надо отпарсить.
+	 * @param childName название элемента, у которого будет браться параметр.
 	 * @param nameType название атрибута, задающее название параметра.
 	 * @param nameValue название атрибута, задающее значение параметра.
-	 * @return
 	 */
 	public VarTable parse(final Node node, final String childName, final String nameType, final String nameValue) {
-
 		values.clear();
 
 		if(node == null) {
@@ -1216,37 +1396,43 @@ public class VarTable {
 
 		for(Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
 
-			if(!childName.equals(child.getNodeName())) {
+			if(child.getNodeType() != Node.ELEMENT_NODE || !childName.equals(child.getNodeName())) {
 				continue;
 			}
 
-			final NamedNodeMap attrs = child.getAttributes();
+			final NamedNodeMap attributes = child.getAttributes();
 
-			final Node name = attrs.getNamedItem(nameType);
-			final Node val = attrs.getNamedItem(nameValue);
+			final Node nameNode = attributes.getNamedItem(nameType);
+			final Node valueNode = attributes.getNamedItem(nameValue);
 
-			if(name == null || val == null) {
+			if(nameNode == null || valueNode == null) {
 				continue;
 			}
 
-			set(name.getNodeValue(), val.getNodeValue());
+			set(nameNode.getNodeValue(), valueNode.getNodeValue());
 		}
 
 		return this;
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Вставка значения параметра в таблицу.
+	 * 
+	 * @param key название параметра.
+	 * @param value значение параметра.
 	 */
 	public void set(final String key, final Object value) {
 		values.put(key, value);
 	}
 
 	/**
-	 * @return найденное значение.
+	 * Копирование параметров из указанной таблицы в эту, текущие параметры не
+	 * очищаются.
+	 * 
+	 * @param vars копируемая таблица параметров.
 	 */
-	public VarTable set(final VarTable set) {
-		values.put(set.getValues());
+	public VarTable set(final VarTable vars) {
+		values.put(vars.getValues());
 		return this;
 	}
 

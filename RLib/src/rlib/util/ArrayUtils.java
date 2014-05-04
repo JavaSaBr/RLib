@@ -14,6 +14,10 @@ import rlib.util.array.LongArray;
  */
 public final class ArrayUtils {
 
+	private ArrayUtils() {
+		throw new RuntimeException();
+	}
+
 	/**
 	 * Добавляет элемент в массив с расширением массива на +1.
 	 * 

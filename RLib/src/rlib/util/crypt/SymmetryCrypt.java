@@ -1,4 +1,4 @@
-package rlib.util;
+package rlib.util.crypt;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;

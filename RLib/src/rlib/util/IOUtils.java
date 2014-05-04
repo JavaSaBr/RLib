@@ -7,7 +7,7 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Набор утильных методов по работе с i/o.
+ * Набор утильных методов по работе с I/O.
  * 
  * @author Ronn
  */
