@@ -34,25 +34,16 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 
 	/**
 	 * Добавление элемента в массив.
-	 *
-	 * @param object добавляемый элемент.
-	 * @return ссылка на этот же массив.
 	 */
 	public Array<E> add(E object);
 
 	/**
 	 * Добавление набора элементов массива в этот массив.
-	 *
-	 * @param array добавляемый массив.
-	 * @return ссылка на этот же массив.
 	 */
 	public Array<E> addAll(Array<? extends E> array);
 
 	/**
 	 * Добавление всех элементов массива в этот массив..
-	 *
-	 * @param array добавляемый массив.
-	 * @return ссылка на этот же массив.
 	 */
 	public Array<E> addAll(E[] array);
 
@@ -77,8 +68,6 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 
 	/**
 	 * Очистить массив путем зануления элементов.
-	 *
-	 * @return ссылка на этот же массив.
 	 */
 	public Array<E> clear();
 

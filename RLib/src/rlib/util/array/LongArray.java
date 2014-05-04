@@ -24,37 +24,26 @@ public interface LongArray extends Iterable<Long> {
 
 	/**
 	 * Добавление элемента в массив.
-	 *
-	 * @param element добавляемый элемент.
-	 * @return this.
 	 */
 	public LongArray add(long element);
 
 	/**
-	 * Добавление всех элементов массива.
-	 *
-	 * @param array добавляемый массив.
-	 * @return this.
+	 * Добавление всех элементов массива в этот массив.
 	 */
 	public LongArray addAll(long[] array);
 
 	/**
-	 * Добавление всех элементов массива.
-	 *
-	 * @param array добавляемый массив.
-	 * @return this.
+	 * Добавление всех элементов массива в этот массив.
 	 */
 	public LongArray addAll(LongArray array);
 
 	/**
-	 * @return возвращает массив элементов.
+	 * @return обернутый реализацией массив элементов.
 	 */
 	public long[] array();
 
 	/**
-	 * Очистить массив путем зануления элементов.
-	 *
-	 * @return this.
+	 * Очистить массив.
 	 */
 	public LongArray clear();
 
@@ -81,8 +70,8 @@ public interface LongArray extends Iterable<Long> {
 	 * Проверяет, содержатся ли все элементы с указанного массива в этом
 	 * массиве.
 	 *
-	 * @param array массив элементов.
-	 * @return содержит ли.
+	 * @param array проверяемый массив элементов.
+	 * @return содержит ли все элементы проверяемого массива.
 	 */
 	public default boolean containsAll(long[] array) {
 
@@ -99,8 +88,8 @@ public interface LongArray extends Iterable<Long> {
 	 * Проверяет, содержатся ли все элементы с указанного массива в этом
 	 * массиве.
 	 *
-	 * @param array массив элементов.
-	 * @return содержит ли.
+	 * @param array проверяемый массив элементов.
+	 * @return содержит ли все элементы проверяемого массива.
 	 */
 	public default boolean containsAll(LongArray array) {
 
@@ -118,25 +107,16 @@ public interface LongArray extends Iterable<Long> {
 	/**
 	 * Удаляет элемент по индексу с установкой последнего элемента на месте его.
 	 *
-	 * @param element индекс удаляемого элемента.
-	 * @return удален ли объект.
+	 * @param index индекс удаляемого элемента.
+	 * @return удален ли элемент.
 	 */
-	public default boolean fastRemove(int element) {
-
-		final int index = indexOf(element);
-
-		if(index > -1) {
-			fastRemove(index);
-		}
-
-		return index > -1;
-	}
+	public boolean fastRemove(int index);
 
 	/**
 	 * Удаляет элемент с установкой последнего элемента на месте его.
 	 *
 	 * @param element удаляемый элемент.
-	 * @return удален ли объект.
+	 * @return удален ли элемент.
 	 */
 	public default boolean fastRemove(long element) {
 
@@ -163,10 +143,10 @@ public interface LongArray extends Iterable<Long> {
 	public long get(int index);
 
 	/**
-	 * Найти первый индекс указанного объекта.
+	 * Найти первый индекс указанного элемента в массиве.
 	 *
 	 * @param element искомый элемент.
-	 * @return первый индекс объекта.
+	 * @return первый индекс элемента в массиве.
 	 */
 	public default int indexOf(long element) {
 
@@ -195,10 +175,10 @@ public interface LongArray extends Iterable<Long> {
 	public long last();
 
 	/**
-	 * Найти последний индекс указанного элемента.
+	 * Найти последний индекс указанного элемента в массиве.
 	 *
 	 * @param element искомый элемент.
-	 * @return последний индекс искомого элемента.
+	 * @return последний индекс искомого элемента в массиве.
 	 */
 	public default int lastIndexOf(long element) {
 
@@ -241,7 +221,7 @@ public interface LongArray extends Iterable<Long> {
 	 * Удаляет из массива все элементы из указанного массива.
 	 *
 	 * @param target массив с элементами.
-	 * @return удалены ли все указанные объекты.
+	 * @return удалены ли все указанные элементы.
 	 */
 	public default boolean removeAll(LongArray target) {
 
@@ -262,7 +242,7 @@ public interface LongArray extends Iterable<Long> {
 	 * Удаляет все элементы массива, которые отсутствуют в указанном массиве.
 	 *
 	 * @param target массив с элементами.
-	 * @return удалены ли все объекты.
+	 * @return удалены ли все элементы.
 	 */
 	public default boolean retainAll(LongArray target) {
 
@@ -309,10 +289,7 @@ public interface LongArray extends Iterable<Long> {
 	}
 
 	/**
-	 * Сортировка колекции компаратором.
-	 *
-	 * @param comparator компаратор для сортировки.
-	 * @return this.
+	 * Сортировка массива компаратором.
 	 */
 	public LongArray sort();
 

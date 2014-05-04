@@ -3,7 +3,8 @@ package rlib.util.array;
 import java.util.Iterator;
 
 /**
- * Интерфейс для реализации итератора массива.
+ * Интерфейс для реализации расширенного итератора динамического массива
+ * {@link Array}.
  * 
  * @author Ronn
  */

@@ -3,7 +3,7 @@ package rlib.util.array;
 import java.util.Comparator;
 
 /**
- * Базовая модель компаратора для динамических массивов.
+ * Интерфейс для реализации компаратора для динамических массивов {@link Array}
  *
  * @author Ronn
  */

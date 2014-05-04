@@ -24,37 +24,26 @@ public interface IntegerArray extends Iterable<Integer> {
 
 	/**
 	 * Добавление элемента в массив.
-	 *
-	 * @param element добавляемый элемент.
-	 * @return this.
 	 */
 	public IntegerArray add(int element);
 
 	/**
-	 * Добавление всех элементов массива.
-	 *
-	 * @param array добавляемый массив.
-	 * @return this.
+	 * Добавление всех элементов массива в этот массив.
 	 */
 	public IntegerArray addAll(int[] array);
 
 	/**
-	 * Добавление всех элементов массива.
-	 *
-	 * @param array добавляемый массив.
-	 * @return this.
+	 * Добавление всех элементов массива в этот массив.
 	 */
 	public IntegerArray addAll(IntegerArray array);
 
 	/**
-	 * @return возвращает массив элементов.
+	 * @return обернутый реализацией массив элементов.
 	 */
 	public int[] array();
 
 	/**
-	 * Очистить массив путем зануления элементов.
-	 *
-	 * @return this.
+	 * Очистить массив.
 	 */
 	public IntegerArray clear();
 
@@ -81,8 +70,8 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * Проверяет, содержатся ли все элементы с указанного массива в этом
 	 * массиве.
 	 *
-	 * @param array массив элементов.
-	 * @return содержит ли.
+	 * @param array проверяемый массив элементов.
+	 * @return содержит ли все элементы проверяемого массива.
 	 */
 	public default boolean containsAll(int[] array) {
 
@@ -99,8 +88,8 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * Проверяет, содержатся ли все элементы с указанного массива в этом
 	 * массиве.
 	 *
-	 * @param array массив элементов.
-	 * @return содержит ли.
+	 * @param array проверяемый массив элементов.
+	 * @return содержит ли все элементы проверяемого массива.
 	 */
 	public default boolean containsAll(IntegerArray array) {
 
@@ -119,7 +108,7 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * Удаляет элемент с установкой последнего элемента на месте его.
 	 *
 	 * @param element удаляемый элемент.
-	 * @return удален ли объект.
+	 * @return удален ли элемент.
 	 */
 	public default boolean fastRemove(int element) {
 
@@ -136,7 +125,7 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * Удаляет элемент по индексу с установкой последнего элемента на месте его.
 	 *
 	 * @param index индекс удаляемого элемента.
-	 * @return удален ли объект.
+	 * @return удален ли элемент.
 	 */
 	public boolean fastRemoveByIndex(int index);
 
@@ -154,10 +143,10 @@ public interface IntegerArray extends Iterable<Integer> {
 	public int get(int index);
 
 	/**
-	 * Найти первый индекс указанного объекта.
+	 * Найти первый индекс указанного элемента в массиве.
 	 *
 	 * @param element искомый элемент.
-	 * @return первый индекс объекта.
+	 * @return первый индекс элемента в массиве.
 	 */
 	public default int indexOf(int element) {
 
@@ -188,10 +177,10 @@ public interface IntegerArray extends Iterable<Integer> {
 	public int last();
 
 	/**
-	 * Найти последний индекс указанного элемента.
+	 * Найти последний индекс указанного элемента в массиве.
 	 *
 	 * @param element искомый элемент.
-	 * @return последний индекс искомого элемента.
+	 * @return последний индекс искомого элемента в массиве.
 	 */
 	public default int lastIndexOf(int element) {
 
@@ -234,7 +223,7 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * Удаляет из массива все элементы из указанного массива.
 	 *
 	 * @param target массив с элементами.
-	 * @return удалены ли все указанные объекты.
+	 * @return удалены ли все указанные элементы.
 	 */
 	public default boolean removeAll(IntegerArray target) {
 
@@ -255,7 +244,7 @@ public interface IntegerArray extends Iterable<Integer> {
 	 * Удаляет все элементы массива, которые отсутствуют в указанном массиве.
 	 *
 	 * @param target массив с элементами.
-	 * @return удалены ли все объекты.
+	 * @return удалены ли все элементы.
 	 */
 	public default boolean retainAll(IntegerArray target) {
 
@@ -302,10 +291,7 @@ public interface IntegerArray extends Iterable<Integer> {
 	public boolean slowRemoveByIndex(int index);
 
 	/**
-	 * Сортировка колекции компаратором.
-	 *
-	 * @param comparator компаратор для сортировки.
-	 * @return this.
+	 * Сортировка массива компаратором.
 	 */
 	public IntegerArray sort();
 
