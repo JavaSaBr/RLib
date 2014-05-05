@@ -40,19 +40,23 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, S
 	/** блокировщик */
 	private final Lock lock;
 
-	public SingleThreadTaskExecutor(final Class<? extends Thread> threadClass, final int priority, final String name, final L localObjects) {
-		this.waitTasks = ArrayFactory.newArray(CallableTask.class);
-		this.executeTasks = ArrayFactory.newArray(CallableTask.class);
+	public SingleThreadTaskExecutor(final Class<? extends Thread> threadClass, final int priority, final String name, final L local) {
+		this.waitTasks = ArrayFactory.newArray(SimpleTask.class);
+		this.executeTasks = ArrayFactory.newArray(SimpleTask.class);
 		this.wait = new AtomicBoolean();
 		this.lock = LockFactory.newPrimitiveAtomicLock();
-		this.localObjects = localObjects;
 
 		final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
 
 		this.thread = ClassUtils.newInstance(constructor, this, name);
 		this.thread.setPriority(priority);
 		this.thread.setDaemon(true);
+		this.localObjects = check(local, thread);
 		this.thread.start();
+	}
+
+	protected L check(L local, Thread thread) {
+		return local;
 	}
 
 	@Override
@@ -171,8 +175,7 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, S
 
 	@Override
 	public <R> Future<R> submit(final CallableTask<R, L> task) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("not implemented.");
 	}
 
 	@Override
