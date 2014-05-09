@@ -11,7 +11,7 @@ import rlib.network.packet.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public interface Server<C extends ServerConnection> {
+public interface Server<C extends ServerConnection, RP extends ReadeablePacket, SP extends SendablePacket> {
 
 	/**
 	 * Отключиться от сервера.
@@ -52,12 +52,12 @@ public interface Server<C extends ServerConnection> {
 	 * @param packet читаемый пакет.
 	 * @param buffer читаемый буффер данных.
 	 */
-	public void readPacket(ReadeablePacket packet, ByteBuffer buffer);
+	public void readPacket(RP packet, ByteBuffer buffer);
 
 	/**
 	 * Отправка пакета серверу.
 	 * 
 	 * @param packet отпраляемый пакет.
 	 */
-	public void sendPacket(SendablePacket packet);
+	public void sendPacket(SP packet);
 }

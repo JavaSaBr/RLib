@@ -1,6 +1,7 @@
 package rlib.util.pools;
 
 import rlib.util.pools.impl.AtomicFoldablePool;
+import rlib.util.pools.impl.AtomicPool;
 import rlib.util.pools.impl.ConcurrentFoldablePool;
 import rlib.util.pools.impl.FastFoldablePool;
 import rlib.util.pools.impl.FastPool;
@@ -22,6 +23,17 @@ public final class PoolFactory {
 	 */
 	public static final <T extends Foldable> FoldablePool<T> newAtomicFoldablePool(final Class<? extends Foldable> type) {
 		return new AtomicFoldablePool<T>(type);
+	}
+
+	/**
+	 * Создание нового потокобезопасного объектного пула.
+	 * 
+	 * @see AtomicPool
+	 * @param type тип объектов пула.
+	 * @return новый объектный пул.
+	 */
+	public static final <T> Pool<T> newAtomicPool(final Class<?> type) {
+		return new AtomicPool<T>(type);
 	}
 
 	/**

@@ -7,11 +7,11 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.AsynchronousNetwork;
 import rlib.network.NetworkConfig;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
+import rlib.util.pools.Pool;
+import rlib.util.pools.PoolFactory;
 
 /**
- * Базовая модель асинхронной сети.
+ * Базовая реализация асинхронной сети.
  * 
  * @author Ronn
  */
@@ -20,17 +20,17 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	protected static final Logger LOGGER = LoggerManager.getLogger(AsynchronousNetwork.class);
 
 	/** пул буфферов для чтения */
-	protected final Array<ByteBuffer> readBufferPool;
+	protected final Pool<ByteBuffer> readBufferPool;
 	/** пул буфферов для записи */
-	protected final Array<ByteBuffer> writeBufferPool;
+	protected final Pool<ByteBuffer> writeBufferPool;
 
 	/** конфигурация сети */
 	protected final NetworkConfig config;
 
 	protected AbstractAsynchronousNetwork(final NetworkConfig config) {
 		this.config = config;
-		this.readBufferPool = ArrayFactory.newArray(ByteBuffer.class);
-		this.writeBufferPool = ArrayFactory.newArray(ByteBuffer.class);
+		this.readBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
+		this.writeBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
 	}
 
 	@Override
@@ -41,22 +41,20 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	/**
 	 * @return пул буфферов для чтения.
 	 */
-	private Array<ByteBuffer> getReadBufferPool() {
+	private Pool<ByteBuffer> getReadBufferPool() {
 		return readBufferPool;
 	}
 
 	@Override
 	public ByteBuffer getReadByteBuffer() {
 
-		final Array<ByteBuffer> pool = getReadBufferPool();
+		final Pool<ByteBuffer> pool = getReadBufferPool();
 
-		ByteBuffer buffer = null;
+		ByteBuffer buffer = pool.take();
 
-		synchronized(pool) {
-			buffer = pool.pop();
-		}
-
-		if(buffer == null) {
+		if(buffer != null) {
+			buffer.clear();
+		} else {
 			buffer = ByteBuffer.allocate(config.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
 		}
 
@@ -66,22 +64,20 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	/**
 	 * @return пул буфферов для записи.
 	 */
-	private Array<ByteBuffer> getWriteBufferPool() {
+	private Pool<ByteBuffer> getWriteBufferPool() {
 		return writeBufferPool;
 	}
 
 	@Override
 	public ByteBuffer getWriteByteBuffer() {
 
-		final Array<ByteBuffer> pool = getWriteBufferPool();
+		final Pool<ByteBuffer> pool = getWriteBufferPool();
 
-		ByteBuffer buffer = null;
+		ByteBuffer buffer = pool.take();
 
-		synchronized(pool) {
-			buffer = pool.pop();
-		}
-
-		if(buffer == null) {
+		if(buffer != null) {
+			buffer.clear();
+		} else {
 			buffer = ByteBuffer.allocate(config.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
 		}
 
@@ -95,11 +91,8 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 			return;
 		}
 
-		final Array<ByteBuffer> pool = getReadBufferPool();
-
-		synchronized(pool) {
-			pool.add(buffer);
-		}
+		final Pool<ByteBuffer> pool = getReadBufferPool();
+		pool.put(buffer);
 	}
 
 	@Override
@@ -109,11 +102,8 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 			return;
 		}
 
-		final Array<ByteBuffer> pool = getWriteBufferPool();
-
-		synchronized(pool) {
-			pool.add(buffer);
-		}
+		final Pool<ByteBuffer> pool = getWriteBufferPool();
+		pool.put(buffer);
 	}
 
 	@Override

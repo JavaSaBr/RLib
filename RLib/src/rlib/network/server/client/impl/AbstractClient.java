@@ -60,9 +60,9 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	}
 
 	/**
-	 * @param packet обрабатываемый пакет.
+	 * @param packet выполняемый пакет.
 	 */
-	protected abstract void executePacket(ReadeablePacket packet);
+	protected abstract void executePacket(RP packet);
 
 	@Override
 	public final A getAccount() {

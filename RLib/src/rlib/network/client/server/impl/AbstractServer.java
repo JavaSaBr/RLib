@@ -16,7 +16,7 @@ import rlib.network.packet.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt> implements Server<C> {
+public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt, RP extends ReadeablePacket, SP extends SendablePacket> implements Server<C, RP, SP> {
 
 	protected static final Logger LOGGER = LoggerManager.getLogger(Server.class);
 
@@ -58,7 +58,7 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 	 * 
 	 * @param packet выполняемый пакет.
 	 */
-	protected abstract void execute(ReadeablePacket packet);
+	protected abstract void execute(RP packet);
 
 	@Override
 	public C getConnection() {
@@ -79,23 +79,28 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void readPacket(final ReadeablePacket packet, final ByteBuffer buffer) {
+	public void readPacket(final RP packet, final ByteBuffer buffer) {
 
-		if(packet != null) {
+		if(packet == null) {
+			return;
+		}
 
-			packet.setBuffer(buffer);
-			packet.setOwner(this);
+		packet.setOwner(this);
+		packet.setBuffer(buffer);
+		try {
 
 			if(packet.read()) {
-				packet.setBuffer(null);
 				execute(packet);
 			}
+
+		} finally {
+			packet.setBuffer(null);
 		}
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void sendPacket(final SendablePacket packet) {
+	public void sendPacket(final SP packet) {
 
 		if(isClosed()) {
 			return;
@@ -109,5 +114,10 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 		}
 
 		connection.sendPacket(packet);
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractServer [connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
 	}
 }

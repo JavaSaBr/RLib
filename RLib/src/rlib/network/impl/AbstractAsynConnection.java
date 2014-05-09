@@ -33,7 +33,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	private final CompletionHandler<Integer, AbstractAsynConnection> readHandler = new CompletionHandler<Integer, AbstractAsynConnection>() {
 
 		@Override
-		public void completed(final Integer result, final AbstractAsynConnection attachment) {
+		public void completed(final Integer result, final AbstractAsynConnection connection) {
 
 			if(result.intValue() == -1) {
 				finish();
@@ -57,7 +57,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 			}
 
 			final AsynchronousSocketChannel channel = getChannel();
-			channel.read(buffer, attachment, this);
+			channel.read(buffer, connection, this);
 		}
 
 		@Override
