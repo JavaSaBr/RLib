@@ -354,6 +354,11 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	}
 
 	@Override
+	public String toString() {
+		return "AbstractAsynConnection [network=" + network + ", channel=" + channel + ", closed=" + closed + ", lastActive=" + lastActive + "]";
+	}
+
+	@Override
 	public void unlock() {
 		lock.unlock();
 	}

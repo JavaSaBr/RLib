@@ -1,6 +1,4 @@
-package rlib.network.packets;
-
-import java.nio.ByteBuffer;
+package rlib.network.packet;
 
 /**
  * Интерфейс для реализации сетевого пакета на стороне сервера.
@@ -8,11 +6,6 @@ import java.nio.ByteBuffer;
  * @author Ronn
  */
 public interface Packet<C> {
-
-	/**
-	 * @return буффер данных.
-	 */
-	public ByteBuffer getBuffer();
 
 	/**
 	 * @return тип пакета.
@@ -23,11 +16,6 @@ public interface Packet<C> {
 	 * @return владелец пакета.
 	 */
 	public C getOwner();
-
-	/**
-	 * @param buffer буффер данных.
-	 */
-	public void setBuffer(ByteBuffer buffer);
 
 	/**
 	 * Установка владельца пакета.

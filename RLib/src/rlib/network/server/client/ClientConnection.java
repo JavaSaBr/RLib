@@ -1,8 +1,8 @@
 package rlib.network.server.client;
 
 import rlib.network.AsynConnection;
-import rlib.network.packets.ReadeablePacket;
-import rlib.network.packets.SendablePacket;
+import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.SendablePacket;
 
 /**
  * Интерфейс для реализации асинхронного коннекта к игровому клиенту.

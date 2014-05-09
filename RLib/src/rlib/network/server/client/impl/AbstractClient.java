@@ -6,8 +6,8 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.AsynConnection;
 import rlib.network.GameCrypt;
-import rlib.network.packets.ReadeablePacket;
-import rlib.network.packets.SendablePacket;
+import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.SendablePacket;
 import rlib.network.server.client.Client;
 
 /**
@@ -130,7 +130,7 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	/**
 	 * @param closed закрыт ли клиент.
 	 */
-	private void setClosed(final boolean closed) {
+	protected void setClosed(final boolean closed) {
 		this.closed = closed;
 	}
 
@@ -142,5 +142,30 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	@Override
 	public void successfulConnection() {
 		LOGGER.info(this, getHostAddress() + " successful connection.");
+	}
+
+	/**
+	 * Смена сетевого подключения для этого клиента.
+	 * 
+	 * @param connection сетевое подключение.
+	 */
+	protected void switchTo(final C connection) {
+
+		final C current = getConnection();
+
+		if(current == connection) {
+			return;
+		}
+
+		if(!current.isClosed()) {
+			current.close();
+		}
+
+		this.connection = connection;
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractClient [owner=" + owner + ", account=" + account + ", connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
 	}
 }

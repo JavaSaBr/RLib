@@ -48,4 +48,9 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
 		channel.bind(address);
 		channel.accept(channel, acceptHandler);
 	}
+
+	@Override
+	public String toString() {
+		return "DefaultServerNetwork [group=" + group + ", channel=" + channel + ", acceptHandler=" + acceptHandler + ", config=" + config + "]";
+	}
 }

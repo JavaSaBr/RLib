@@ -8,8 +8,8 @@ import rlib.network.client.ClientNetwork;
 import rlib.network.client.server.Server;
 import rlib.network.client.server.ServerConnection;
 import rlib.network.impl.AbstractAsynConnection;
-import rlib.network.packets.ReadeablePacket;
-import rlib.network.packets.SendablePacket;
+import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.SendablePacket;
 
 /**
  * Базовая модель асинхронного конекта к серверу.

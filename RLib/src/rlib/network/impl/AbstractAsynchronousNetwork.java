@@ -74,6 +74,7 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 	public ByteBuffer getWriteByteBuffer() {
 
 		final Array<ByteBuffer> pool = getWriteBufferPool();
+
 		ByteBuffer buffer = null;
 
 		synchronized(pool) {
@@ -113,5 +114,10 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 		synchronized(pool) {
 			pool.add(buffer);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractAsynchronousNetwork [config=" + config + "]";
 	}
 }

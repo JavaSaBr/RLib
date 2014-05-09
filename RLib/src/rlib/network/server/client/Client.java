@@ -3,8 +3,8 @@ package rlib.network.server.client;
 import java.nio.ByteBuffer;
 
 import rlib.network.AsynConnection;
-import rlib.network.packets.ReadeablePacket;
-import rlib.network.packets.SendablePacket;
+import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.SendablePacket;
 
 /**
  * Интерфейс для реализации игрового клиента в ММО играх.
