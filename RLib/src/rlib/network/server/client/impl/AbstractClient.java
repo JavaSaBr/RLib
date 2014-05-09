@@ -62,7 +62,7 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 	/**
 	 * @param packet выполняемый пакет.
 	 */
-	protected abstract void executePacket(RP packet);
+	protected abstract void execute(RP packet);
 
 	@Override
 	public final A getAccount() {
@@ -104,7 +104,7 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 		try {
 
 			if(packet.read()) {
-				executePacket(packet);
+				execute(packet);
 			}
 
 		} finally {
