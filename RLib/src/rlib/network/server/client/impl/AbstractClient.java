@@ -11,12 +11,12 @@ import rlib.network.packet.SendablePacket;
 import rlib.network.server.client.Client;
 
 /**
- * Базовая модель серверного клиента.
+ * Базовая реализация клиента для сервера.
  * 
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractClient<A, O, C extends AsynConnection, T extends GameCrypt> implements Client<A, O, C> {
+public abstract class AbstractClient<A, O, C extends AsynConnection, T extends GameCrypt, RP extends ReadeablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
 
 	protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
 
@@ -93,17 +93,22 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public final void readPacket(final ReadeablePacket packet, final ByteBuffer buffer) {
+	public final void readPacket(final RP packet, final ByteBuffer buffer) {
 
-		if(packet != null) {
+		if(packet == null) {
+			return;
+		}
 
-			packet.setBuffer(buffer);
-			packet.setOwner(this);
+		packet.setOwner(this);
+		packet.setBuffer(buffer);
+		try {
 
 			if(packet.read()) {
-				packet.setBuffer(null);
 				executePacket(packet);
 			}
+
+		} finally {
+			packet.setBuffer(null);
 		}
 	}
 

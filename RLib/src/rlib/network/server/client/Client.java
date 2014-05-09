@@ -12,7 +12,7 @@ import rlib.network.packet.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public interface Client<A, P, C extends AsynConnection> {
+public interface Client<A, P, C extends AsynConnection, RP extends ReadeablePacket, SP extends SendablePacket> {
 
 	/**
 	 * Закрыть клиент.
@@ -68,14 +68,14 @@ public interface Client<A, P, C extends AsynConnection> {
 	 * @param packet читаемый пакет.
 	 * @param buffer читаемый буффер данных.
 	 */
-	public void readPacket(ReadeablePacket packet, ByteBuffer buffer);
+	public void readPacket(RP packet, ByteBuffer buffer);
 
 	/**
 	 * Отправка пакета клиенту.
 	 * 
 	 * @param packet отпраляемый пакет.
 	 */
-	public void sendPacket(SendablePacket packet);
+	public void sendPacket(SP packet);
 
 	/**
 	 * @param account аккаунт клиента.

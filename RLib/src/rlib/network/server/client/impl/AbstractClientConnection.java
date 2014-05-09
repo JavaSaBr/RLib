@@ -10,7 +10,7 @@ import rlib.network.server.client.Client;
 import rlib.network.server.client.ClientConnection;
 
 /**
- * Базовая модель асинхронного конекта.
+ * Базовая реализация асинхронного клиентского подключения.
  * 
  * @author Ronn
  */
@@ -18,7 +18,7 @@ import rlib.network.server.client.ClientConnection;
 public abstract class AbstractClientConnection<T extends Client, R extends ReadeablePacket<T>, S extends SendablePacket<T>> extends AbstractAsynConnection<ServerNetwork, R, S> implements
 		ClientConnection<T, R, S> {
 
-	/** клиент пользователя */
+	/** подключенный клиент */
 	protected T client;
 
 	public AbstractClientConnection(final ServerNetwork network, final AsynchronousSocketChannel channel, final Class<S> sendableType) {
