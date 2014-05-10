@@ -160,10 +160,10 @@ public class MemoryMonitoring {
 		final MemoryUsage memoryUsage = memoryMXBean.getHeapMemoryUsage();
 
 		final StringBuilder builder = new StringBuilder();
-		builder.append("HeapMaxSize:").append(getHeapMaxSize(memoryUsage) / 1024 / 1024).append(" MiB.\n");
-		builder.append("HeapSize:").append(getHeapSize(memoryUsage) / 1024 / 1024).append(" MiB.\n");
-		builder.append("HeapUsedSize:").append(getHeapUsedSize(memoryUsage) / 1024 / 1024).append(" MiB.\n");
-		builder.append("HeapUsagePercent:").append(getHeapUsagePercent(memoryUsage)).append("%.");
+		builder.append("HeapMaxSize:		").append(getHeapMaxSize(memoryUsage) / 1024 / 1024).append(" MiB.\n");
+		builder.append("HeapSize:		").append(getHeapSize(memoryUsage) / 1024 / 1024).append(" MiB.\n");
+		builder.append("HeapUsedSize:		").append(getHeapUsedSize(memoryUsage) / 1024 / 1024).append(" MiB.\n");
+		builder.append("HeapUsagePercent:	").append(getHeapUsagePercent(memoryUsage)).append("%.");
 
 		if(!memoryPoolMXBeens.isEmpty()) {
 			builder.append('\n').append("Memory Pools:");
@@ -174,10 +174,10 @@ public class MemoryMonitoring {
 			final MemoryUsage usage = mxBeen.getUsage();
 
 			builder.append('\n').append(mxBeen.getName()).append(":\n");
-			builder.append("	").append("MemoryType:").append(' ').append(mxBeen.getType()).append('\n');
-			builder.append("	").append("MemoryMaxSize:").append(' ').append(usage.getMax() / 1024 / 1024).append(" MiB.\n");
-			builder.append("	").append("MemorySize:").append(' ').append(usage.getCommitted() / 1024 / 1024).append(" MiB.\n");
-			builder.append("	").append("MemoryUsed:").append(' ').append(usage.getUsed() / 1024 / 1024).append(" MiB.");
+			builder.append("	").append("MemoryType:	").append(mxBeen.getType()).append('\n');
+			builder.append("	").append("MemoryMaxSize:	").append(usage.getMax() / 1024 / 1024).append(" MiB.\n");
+			builder.append("	").append("MemorySize:	").append(usage.getCommitted() / 1024 / 1024).append(" MiB.\n");
+			builder.append("	").append("MemoryUsed:	").append(usage.getUsed() / 1024 / 1024).append(" MiB.");
 		}
 
 		return builder.toString();

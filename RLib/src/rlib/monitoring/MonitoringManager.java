@@ -64,8 +64,8 @@ public final class MonitoringManager {
 		builder.append('\n').append(getMemoryMonitoring()).append('\n');
 		builder.append("#============Runtime Info=============#");
 		builder.append('\n').append(getRuntimeMonitoring()).append('\n');
-		builder.append("#============Current state============#");
-		builder.append('\n').append(getThreadMonitoring()).append('\n');
+		// builder.append("#============Current state============#");
+		// builder.append('\n').append(getThreadMonitoring()).append('\n');
 		builder.append("#=====================================#");
 
 		return builder.toString();
