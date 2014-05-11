@@ -12,12 +12,15 @@ import rlib.concurrent.atomic.AtomicReference;
  * 
  * @author Ronn
  */
+@SuppressWarnings("restriction")
 public final class ThreadAtomicLock implements Lock {
 
 	/** статус блокировки */
+	@sun.misc.Contended
 	private final AtomicReference<Thread> status;
 
 	/** уровень повторного вхождения */
+	@sun.misc.Contended
 	private final AtomicInteger level;
 
 	protected ThreadAtomicLock() {
@@ -44,9 +47,7 @@ public final class ThreadAtomicLock implements Lock {
 				return;
 			}
 
-			while(!status.compareAndSet(null, thread)) {
-				;
-			}
+			while(!status.compareAndSet(null, thread));
 
 		} finally {
 			level.incrementAndGet();

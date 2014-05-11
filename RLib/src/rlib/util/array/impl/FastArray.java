@@ -14,6 +14,9 @@ public class FastArray<E> extends AbstractArray<E> {
 
 	private static final long serialVersionUID = -8477384427415127978L;
 
+	/** размер массива, который считается большим */
+	protected static final int SIZE_BIG_ARRAY = 10;
+
 	/** массив элементов */
 	protected E[] array;
 
@@ -36,62 +39,116 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public FastArray<E> add(final E element) {
+	public FastArray<E> add(final E object) {
 
 		if(size == array.length) {
 			array = ArrayUtils.copyOf(array, array.length >> 1);
 		}
 
-		array[size++] = element;
-
+		array[size++] = object;
 		return this;
 	}
 
 	@Override
-	public final FastArray<E> addAll(final Array<? extends E> elements) {
+	public void checkSize(int size) {
 
-		if(elements == null || elements.isEmpty()) {
+		final int current = array.length;
+		final int selfSize = size();
+		final int diff = selfSize + size - current;
+
+		if(diff > 0) {
+			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+		}
+	}
+
+	@Override
+	public FastArray<E> unsafeAdd(E object) {
+		array[size++] = object;
+		return this;
+	}
+
+	@Override
+	public FastArray<E> addAll(final Array<? extends E> elements) {
+
+		if(elements.isEmpty()) {
 			return this;
 		}
 
 		final int current = array.length;
-		final int diff = size() + elements.size() - current;
+		final int selfSize = size();
+		final int targetSize = elements.size();
+		final int diff = selfSize + targetSize - current;
 
 		if(diff > 0) {
 			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
-		for(final E element : elements.array()) {
-
-			if(element == null) {
-				break;
-			}
-
-			add(element);
-		}
+		processAdd(elements, selfSize, targetSize);
 
 		return this;
 	}
 
+	protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
+
+		// если надо срау большой массив добавить, то лучше черзе нативный метод
+		if(targetSize > SIZE_BIG_ARRAY) {
+			System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
+			size = selfSize + targetSize;
+		} else {
+
+			// если добавляемый массив небольшой, можно и обычным способом
+			// внести
+			for(final E element : elements.array()) {
+
+				if(element == null) {
+					break;
+				}
+
+				add(element);
+			}
+		}
+	}
+
 	@Override
-	public final Array<E> addAll(final E[] elements) {
+	public Array<E> addAll(final E[] elements) {
 
 		if(elements == null || elements.length < 1) {
 			return this;
 		}
 
 		final int current = array.length;
-		final int diff = size() + elements.length - current;
+		final int selfSize = size();
+		final int targetSize = elements.length;
+		final int diff = selfSize + targetSize - current;
 
 		if(diff > 0) {
 			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
-		for(final E element : elements) {
-			add(element);
-		}
+		processAdd(elements, selfSize, targetSize);
 
 		return this;
+	}
+
+	protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
+
+		// если надо срау большой массив добавить, то лучше черзе нативный метод
+		if(targetSize > SIZE_BIG_ARRAY) {
+			System.arraycopy(elements, 0, array, selfSize, targetSize);
+			size = selfSize + targetSize;
+		} else {
+
+			// если добавляемый массив небольшой, можно и обычным способом
+			// внести
+			for(final E element : elements) {
+
+				if(element == null) {
+					break;
+				}
+
+				add(element);
+			}
+		}
 	}
 
 	@Override

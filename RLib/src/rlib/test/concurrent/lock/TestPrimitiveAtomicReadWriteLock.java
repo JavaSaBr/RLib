@@ -74,7 +74,7 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 					lock.synUnlock();
 				}
 
-				ThreadUtils.sleep(50);
+				ThreadUtils.sleep(10);
 
 				lock.synLock();
 				try {
@@ -87,7 +87,7 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 					lock.synUnlock();
 				}
 
-				ThreadUtils.sleep(50);
+				ThreadUtils.sleep(10);
 			}
 		};
 

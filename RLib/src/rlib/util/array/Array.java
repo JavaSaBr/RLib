@@ -33,6 +33,21 @@ import rlib.util.pools.Foldable;
 public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 
 	/**
+	 * Небезопасное добавления элемента без проверок.
+	 */
+	public default Array<E> unsafeAdd(E object) {
+		return add(object);
+	}
+
+	/**
+	 * Проверка и при необходимости подготовка для расширения до указанного
+	 * размера.
+	 */
+	public default void checkSize(int size) {
+		throw new RuntimeException("not supported.");
+	}
+
+	/**
 	 * Добавление элемента в массив.
 	 */
 	public Array<E> add(E object);

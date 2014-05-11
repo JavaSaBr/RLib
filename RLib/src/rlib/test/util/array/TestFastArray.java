@@ -33,12 +33,20 @@ public class TestFastArray extends Assert {
 		System.gc();
 
 		Array<Integer> array = ArrayFactory.newArray(Integer.class);
+		Array<Integer> added = ArrayFactory.newArray(Integer.class);
+
+		for(int i = 999_000, length = 1_000_000; i < length; i++) {
+			added.add(i);
+		}
+
 		List<Integer> list = new ArrayList<Integer>();
 
 		long time = System.currentTimeMillis();
 
+		array.checkSize(1_000_000);
+
 		for(int i = 0, length = 1_000_000; i < length; i++) {
-			array.add(i);
+			array.unsafeAdd(i);
 		}
 
 		System.out.println(head + "test add to FastArray " + (System.currentTimeMillis() - time));
@@ -81,7 +89,7 @@ public class TestFastArray extends Assert {
 			array.fastRemove(Integer.valueOf(i));
 		}
 
-		System.out.println(head + "test slow remove to FastArray " + (System.currentTimeMillis() - time));
+		System.out.println(head + "test fast remove to FastArray " + (System.currentTimeMillis() - time));
 
 		time = System.currentTimeMillis();
 
@@ -90,6 +98,17 @@ public class TestFastArray extends Assert {
 		}
 
 		System.out.println(head + "test remove to ArrayList " + (System.currentTimeMillis() - time));
+
+		array.clear();
+		array.add(1).add(1).add(1).add(2);
+		array.addAll(added);
+		array.addAll(added.trimToSize().array());
+
+		assertTrue(array.size() == (added.size() * 2 + 4));
+
+		for(int i = 0; i < array.size(); i++) {
+			array.get(i).intValue();
+		}
 
 		System.out.println(head + "====================");
 	}

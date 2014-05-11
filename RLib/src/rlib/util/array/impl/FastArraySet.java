@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import rlib.util.array.Array;
+
 /**
  * Реализация {@link FastArray} с проверкой на уникальность элемента при
  * вставке.
@@ -27,5 +29,29 @@ public class FastArraySet<E> extends FastArray<E> {
 		}
 
 		return super.add(element);
+	}
+
+	@Override
+	protected void processAdd(Array<? extends E> elements, int selfSize, int targetSize) {
+		for(final E element : elements.array()) {
+
+			if(element == null) {
+				break;
+			}
+
+			add(element);
+		}
+	}
+
+	@Override
+	protected void processAdd(E[] elements, int selfSize, int targetSize) {
+		for(final E element : elements) {
+
+			if(element == null) {
+				break;
+			}
+
+			add(element);
+		}
 	}
 }
