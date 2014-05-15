@@ -1,4 +1,4 @@
-package rlib.concurrent.lock;
+package rlib.concurrent.lock.impl;
 
 import java.util.concurrent.locks.ReentrantLock;
 

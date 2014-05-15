@@ -1,10 +1,11 @@
-package rlib.concurrent.lock;
+package rlib.concurrent.lock.impl;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.lock.AsynReadSynWriteLock;
 
 /**
  * Реализация блокировщика с возможность асинхронного чтения и синхронной записи
@@ -29,18 +30,17 @@ public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock,
 	public static final int STATUS_WRITE_UNLOCKED = 0;
 
 	public static final int STATUS_READ_UNLOCKED = 0;
-	public static final int STATUS_READ_LOCKED = -2;
+	public static final int STATUS_READ_LOCKED = -200000;
 	public static final int STATUS_READ_POST_INCREMENT_LOCKED = STATUS_READ_LOCKED + 1;
 
 	/** статус блокировки на запись */
-	@sun.misc.Contended
+	@sun.misc.Contended("status")
 	private final AtomicInteger writeStatus;
-
 	/** кол-во ожидающих потоков на запись */
-	@sun.misc.Contended
+	@sun.misc.Contended("status")
 	private final AtomicInteger writeCount;
 	/** кол-во читающих потоков */
-	@sun.misc.Contended
+	@sun.misc.Contended("status")
 	private final AtomicInteger readCount;
 
 	/** простой счетчик для выполнения простых операций в цикле CAS */
@@ -79,10 +79,10 @@ public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock,
 	 */
 	private boolean tryReadLock() {
 
-		// ожидаем отсутствия желающих записать потоков
+		// проверем отсутствия желающих записать потоков
 		final AtomicInteger writeCount = getWriteCount();
-		while(writeCount.get() != 0) {
-			localCalculate();
+		if(writeCount.get() != 0) {
+			return false;
 		}
 
 		final AtomicInteger readCount = getReadCount();
@@ -90,12 +90,13 @@ public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock,
 		// добавляемся к читающим потокам и если после добавления оказалось что
 		// мы добавились после начало записи, возвращаем в исходную позицию
 		// счетчик и пробуем еще раз.
-		if(readCount.incrementAndGet() == STATUS_READ_POST_INCREMENT_LOCKED) {
-			readCount.set(STATUS_READ_LOCKED);
+		int value = readCount.get();
+
+		if(value == STATUS_READ_LOCKED) {
 			return false;
 		}
 
-		return true;
+		return readCount.compareAndSet(value, value + 1);
 	}
 
 	@Override

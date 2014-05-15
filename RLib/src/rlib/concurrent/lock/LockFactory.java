@@ -3,6 +3,14 @@ package rlib.concurrent.lock;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.lock.impl.FinalLock;
+import rlib.concurrent.lock.impl.FinalReadWriteLock;
+import rlib.concurrent.lock.impl.PrimitiveAtomicLock;
+import rlib.concurrent.lock.impl.PrimitiveAtomicReadWriteLock;
+import rlib.concurrent.lock.impl.ReentrantAtomicLock;
+import rlib.concurrent.lock.impl.SimpleReadWriteLock;
+
 /**
  * Реализация фабрики для создание различных блокировщиков.
  * 
@@ -31,7 +39,7 @@ public class LockFactory {
 
 	/**
 	 * Создание нового блокировщика для синхронной записи и асинхронного чтения
-	 * на основе Atomic без поддержки рекурсивного блокирования.
+	 * на основе {@link AtomicInteger} без поддержки рекурсивного блокирования.
 	 * 
 	 * @see PrimitiveAtomicReadWriteLock
 	 * @return новый блокировщик.
@@ -41,9 +49,10 @@ public class LockFactory {
 	}
 
 	/**
-	 * Создание примитивного блокировщика на основе Atomic без поддержки
-	 * рекурсивной блокировки.
+	 * Создание примитивного блокировщика на основе {@link AtomicInteger} без
+	 * поддержки рекурсивной блокировки.
 	 * 
+	 * @see PrimitiveAtomicLock
 	 * @return новый блокировщик.
 	 */
 	public static final Lock newPrimitiveAtomicLock() {
@@ -60,12 +69,13 @@ public class LockFactory {
 	}
 
 	/**
-	 * Создание простой реализации блокировщика на основе Atomic с поддержкой
-	 * рекурсивной блокировки.
+	 * Создание блокировщика на {@link AtomicInteger} с поддержкой рекурсивной
+	 * блокировки.
 	 * 
+	 * @see ReentrantAtomicLock
 	 * @return новый блокировщик.
 	 */
-	public static final Lock newThreadAtomicLock() {
-		return new ThreadAtomicLock();
+	public static final Lock newReentrantAtomicLock() {
+		return new ReentrantAtomicLock();
 	}
 }

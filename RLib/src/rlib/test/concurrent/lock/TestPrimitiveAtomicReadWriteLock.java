@@ -12,8 +12,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import rlib.concurrent.lock.AsynReadSynWriteLock;
-import rlib.concurrent.lock.PrimitiveAtomicReadWriteLock;
-import rlib.concurrent.lock.SimpleReadWriteLock;
+import rlib.concurrent.lock.impl.PrimitiveAtomicReadWriteLock;
+import rlib.concurrent.lock.impl.SimpleReadWriteLock;
 import rlib.concurrent.util.ThreadUtils;
 
 /**

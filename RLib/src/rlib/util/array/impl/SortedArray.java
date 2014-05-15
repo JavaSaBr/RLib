@@ -1,6 +1,7 @@
 package rlib.util.array.impl;
 
 import rlib.util.ArrayUtils;
+import rlib.util.array.Array;
 
 /**
  * Реализация сортированного {@link FastArray}, где сортировка происходит при
@@ -62,5 +63,29 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 		}
 
 		return this;
+	}
+
+	@Override
+	protected void processAdd(Array<? extends E> elements, int selfSize, int targetSize) {
+		for(final E element : elements.array()) {
+
+			if(element == null) {
+				break;
+			}
+
+			add(element);
+		}
+	}
+
+	@Override
+	protected void processAdd(E[] elements, int selfSize, int targetSize) {
+		for(final E element : elements) {
+
+			if(element == null) {
+				break;
+			}
+
+			add(element);
+		}
 	}
 }

@@ -39,7 +39,9 @@ public class FastArraySet<E> extends FastArray<E> {
 				break;
 			}
 
-			add(element);
+			if(!contains(element)) {
+				unsafeAdd(element);
+			}
 		}
 	}
 
@@ -51,7 +53,9 @@ public class FastArraySet<E> extends FastArray<E> {
 				break;
 			}
 
-			add(element);
+			if(!contains(element)) {
+				unsafeAdd(element);
+			}
 		}
 	}
 }

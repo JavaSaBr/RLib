@@ -1,10 +1,15 @@
-package rlib.concurrent.lock;
+package rlib.concurrent.lock.impl;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import rlib.concurrent.lock.AsynReadSynWriteLock;
+import rlib.concurrent.lock.LockFactory;
 
 /**
- * Удобная обертка над асинхронно читающего и синхронно записывающего блокера.
+ * Реализация обертки {@link ReentrantReadWriteLock} для реализации интерфейса
+ * {@link AsynReadSynWriteLock}.
  * 
  * @author Ronn
  */

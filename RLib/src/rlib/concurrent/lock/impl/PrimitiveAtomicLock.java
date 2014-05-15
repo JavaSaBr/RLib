@@ -1,4 +1,4 @@
-package rlib.concurrent.lock;
+package rlib.concurrent.lock.impl;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -8,7 +8,9 @@ import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.util.ThreadUtils;
 
 /**
- * Примитвная реализация блокировщика на основе атомика.
+ * Реализация примитивного блокировщика при помощи {@link AtomicInteger} без
+ * поддержки рекурсивной блокировки. Рекамендуется приминется в местах с не
+ * более чем средней конкурнции и с короткими секциями блокировки.
  * 
  * @author Ronn
  */
@@ -25,7 +27,7 @@ public final class PrimitiveAtomicLock implements Lock {
 	/** простой счетчик для выполнения простых операций в цикле CAS */
 	private int counter;
 
-	protected PrimitiveAtomicLock() {
+	public PrimitiveAtomicLock() {
 		this.status = new AtomicInteger();
 	}
 
@@ -56,9 +58,11 @@ public final class PrimitiveAtomicLock implements Lock {
 
 			newValue = currentCounter >>> 1;
 			newValue = currentCounter & newValue;
+			newValue = currentCounter ^ newValue;
+			newValue = newValue << currentCounter;
+			newValue = newValue | currentCounter;
 
 			setCounter(newValue);
-			setCounter(currentCounter);
 		}
 	}
 
@@ -86,12 +90,20 @@ public final class PrimitiveAtomicLock implements Lock {
 
 	@Override
 	public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
+
+		final AtomicInteger status = getStatus();
+
 		if(status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED)) {
 			return true;
-		} else {
-			ThreadUtils.sleep(unit.toMillis(time));
-			return status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED);
 		}
+
+		final long resultTime = unit.toMillis(time);
+
+		if(resultTime > 1) {
+			ThreadUtils.sleep(resultTime);
+		}
+
+		return status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED);
 	}
 
 	@Override

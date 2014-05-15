@@ -45,8 +45,7 @@ public class FastArray<E> extends AbstractArray<E> {
 			array = ArrayUtils.copyOf(array, array.length >> 1);
 		}
 
-		array[size++] = object;
-		return this;
+		return unsafeAdd(object);
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class FastArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public FastArray<E> addAll(final Array<? extends E> elements) {
+	public final FastArray<E> addAll(final Array<? extends E> elements) {
 
 		if(elements.isEmpty()) {
 			return this;
@@ -104,13 +103,13 @@ public class FastArray<E> extends AbstractArray<E> {
 					break;
 				}
 
-				add(element);
+				unsafeAdd(element);
 			}
 		}
 	}
 
 	@Override
-	public Array<E> addAll(final E[] elements) {
+	public final Array<E> addAll(final E[] elements) {
 
 		if(elements == null || elements.length < 1) {
 			return this;
@@ -146,7 +145,7 @@ public class FastArray<E> extends AbstractArray<E> {
 					break;
 				}
 
-				add(element);
+				unsafeAdd(element);
 			}
 		}
 	}
