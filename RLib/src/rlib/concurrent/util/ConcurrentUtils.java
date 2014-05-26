@@ -10,8 +10,6 @@ import rlib.logging.LoggerManager;
  */
 public final class ConcurrentUtils {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(ConcurrentUtils.class);
-
 	/**
 	 * Отпускание ожидающих потоков на этом объекте.
 	 */
@@ -75,6 +73,8 @@ public final class ConcurrentUtils {
 			LOGGER.warning(e);
 		}
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(ConcurrentUtils.class);
 
 	private ConcurrentUtils() {
 		throw new RuntimeException();

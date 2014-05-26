@@ -34,17 +34,17 @@ public final class ReentrantAtomicLock implements Lock {
 	}
 
 	/**
-	 * @return статус блокировки.
-	 */
-	private AtomicReference<Thread> getStatus() {
-		return status;
-	}
-
-	/**
 	 * @return получение и инкрементирования счетчика.
 	 */
 	private int getAndIncrementCounter() {
 		return counter++;
+	}
+
+	/**
+	 * @return статус блокировки.
+	 */
+	private AtomicReference<Thread> getStatus() {
+		return status;
 	}
 
 	@Override
@@ -80,13 +80,6 @@ public final class ReentrantAtomicLock implements Lock {
 		}
 	}
 
-	/**
-	 * Обновление счетчика.
-	 */
-	public void setCounter(final int counter) {
-		this.counter = counter;
-	}
-
 	@Override
 	public void lockInterruptibly() throws InterruptedException {
 		throw new RuntimeException("not supperted.");
@@ -95,6 +88,13 @@ public final class ReentrantAtomicLock implements Lock {
 	@Override
 	public Condition newCondition() {
 		throw new RuntimeException("not supperted.");
+	}
+
+	/**
+	 * Обновление счетчика.
+	 */
+	public void setCounter(final int counter) {
+		this.counter = counter;
 	}
 
 	@Override

@@ -18,8 +18,6 @@ import rlib.network.server.impl.DefaultServerNetwork;
  */
 public final class NetworkFactory {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(NetworkFactory.class);
-
 	/**
 	 * Создание модели клиентской сети.
 	 * 
@@ -55,6 +53,8 @@ public final class NetworkFactory {
 
 		return null;
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(NetworkFactory.class);
 
 	private NetworkFactory() throws Exception {
 		throw new Exception("КУДА ТЫ ЛЕЗЕШЬ");

@@ -9,24 +9,6 @@ import rlib.util.ExtMath;
  */
 public final class Vector implements GamePoint {
 
-	/** нулнвой вектор */
-	public final static Vector ZERO = new Vector(0, 0, 0);
-	/** вектор в бесконечность */
-	public final static Vector NAN = new Vector(Float.NaN, Float.NaN, Float.NaN);
-
-	/** вектор в сторону оси X */
-	public final static Vector UNIT_X = new Vector(1, 0, 0);
-	/** вектор в сторону оси Y */
-	public final static Vector UNIT_Y = new Vector(0, 1, 0);
-	/** вектор в сторону оси Z */
-	public final static Vector UNIT_Z = new Vector(0, 0, 1);
-
-	/** вектор в сторону XYZ */
-	public final static Vector UNIT_XYZ = new Vector(1, 1, 1);
-
-	public final static Vector POSITIVE_INFINITY = new Vector(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-	public final static Vector NEGATIVE_INFINITY = new Vector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
-
 	/**
 	 * Проверка на валидность вектора.
 	 * 
@@ -61,6 +43,27 @@ public final class Vector implements GamePoint {
 	public static Vector newInstance(final float[] vals) {
 		return new Vector(vals[0], vals[1], vals[2]);
 	}
+
+	/** нулнвой вектор */
+	public final static Vector ZERO = new Vector(0, 0, 0);
+
+	/** вектор в бесконечность */
+	public final static Vector NAN = new Vector(Float.NaN, Float.NaN, Float.NaN);
+
+	/** вектор в сторону оси X */
+	public final static Vector UNIT_X = new Vector(1, 0, 0);
+	/** вектор в сторону оси Y */
+	public final static Vector UNIT_Y = new Vector(0, 1, 0);
+
+	/** вектор в сторону оси Z */
+	public final static Vector UNIT_Z = new Vector(0, 0, 1);
+
+	/** вектор в сторону XYZ */
+	public final static Vector UNIT_XYZ = new Vector(1, 1, 1);
+
+	public final static Vector POSITIVE_INFINITY = new Vector(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+
+	public final static Vector NEGATIVE_INFINITY = new Vector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
 	/** координаты */
 	protected float x;

@@ -16,8 +16,6 @@ import rlib.logging.LoggerManager;
  */
 public final class DBUtils {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(DBUtils.class);
-
 	/**
 	 * Завершение использования указанного подключения.
 	 * 
@@ -106,6 +104,8 @@ public final class DBUtils {
 			LOGGER.warning(e);
 		}
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(DBUtils.class);
 
 	private DBUtils() {
 		throw new IllegalArgumentException();

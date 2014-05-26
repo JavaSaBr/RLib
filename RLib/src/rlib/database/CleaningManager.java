@@ -17,11 +17,6 @@ import rlib.util.array.ArrayFactory;
  */
 public abstract class CleaningManager {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(CleaningManager.class);
-
-	/** список запросов для очистки */
-	public static final Array<CleaningQuery> QUERY = ArrayFactory.newArray(CleaningQuery.class);
-
 	/**
 	 * Добавление запроса для очистки БД.
 	 * 
@@ -55,4 +50,9 @@ public abstract class CleaningManager {
 			DBUtils.closeDatabaseCS(con, statement);
 		}
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(CleaningManager.class);
+
+	/** список запросов для очистки */
+	public static final Array<CleaningQuery> QUERY = ArrayFactory.newArray(CleaningQuery.class);
 }

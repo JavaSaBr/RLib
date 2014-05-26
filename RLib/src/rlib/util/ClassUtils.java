@@ -13,8 +13,6 @@ import rlib.logging.LoggerManager;
  */
 public final class ClassUtils {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
-
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> getClass(final String name) {
 		try {
@@ -105,6 +103,8 @@ public final class ClassUtils {
 			throw new RuntimeException(e);
 		}
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
 
 	private ClassUtils() {
 		throw new RuntimeException();

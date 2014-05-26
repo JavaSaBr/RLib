@@ -10,16 +10,6 @@ import java.util.Random;
 @Deprecated
 public abstract class Rnd {
 
-	private static final ThreadLocal<Random> LOCAL_RANDOM = new ThreadLocal<Random>() {
-
-		@Override
-		protected Random initialValue() {
-			return new Random();
-		}
-	};
-
-	private static final Random rnd = new Random();
-
 	/**
 	 * Генерирование байтового массива со случайными значениями.
 	 * 
@@ -218,4 +208,14 @@ public abstract class Rnd {
 	public static long safeNextLong(final long min, final long max) {
 		return min + Math.round(safeNextFloat() * Math.abs(max - min) + 1);
 	}
+
+	private static final ThreadLocal<Random> LOCAL_RANDOM = new ThreadLocal<Random>() {
+
+		@Override
+		protected Random initialValue() {
+			return new Random();
+		}
+	};
+
+	private static final Random rnd = new Random();
 }

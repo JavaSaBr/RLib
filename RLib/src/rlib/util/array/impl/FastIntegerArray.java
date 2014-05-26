@@ -95,7 +95,7 @@ public class FastIntegerArray implements IntegerArray {
 			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
-		for(int value : elements) {
+		for(final int value : elements) {
 			add(value);
 		}
 
@@ -116,7 +116,7 @@ public class FastIntegerArray implements IntegerArray {
 			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
 		}
 
-		int[] array = elements.array();
+		final int[] array = elements.array();
 
 		for(int i = 0, length = elements.size(); i < length; i++) {
 			add(array[i]);

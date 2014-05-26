@@ -16,12 +16,6 @@ import rlib.util.linkedlist.LinkedListFactory;
  */
 public final class InitializeManager {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(InitializeManager.class);
-
-	private static final String METHOD_NAME = "getInstance";
-
-	private static final LinkedList<Class<?>> QUEUE = LinkedListFactory.newLinkedList(Class.class);
-
 	/**
 	 * Инициализация зарегестрированных классов.
 	 */
@@ -67,6 +61,12 @@ public final class InitializeManager {
 			Thread.dumpStack();
 		}
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(InitializeManager.class);
+
+	private static final String METHOD_NAME = "getInstance";
+
+	private static final LinkedList<Class<?>> QUEUE = LinkedListFactory.newLinkedList(Class.class);
 
 	private InitializeManager() {
 		throw new RuntimeException();

@@ -10,8 +10,6 @@ import rlib.logging.LoggerManager;
  */
 public class ThreadUtils {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(ThreadUtils.class);
-
 	public static void sleep(final long time) {
 		try {
 			Thread.sleep(time);
@@ -19,4 +17,6 @@ public class ThreadUtils {
 			LOGGER.warning(e);
 		}
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(ThreadUtils.class);
 }

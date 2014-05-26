@@ -7,15 +7,6 @@ package rlib.util.table;
  */
 public abstract class AbstractTable<K, V> implements Table<K, V> {
 
-	/** размер таблицы по умолчанию */
-	protected static final int DEFAULT_INITIAL_CAPACITY = 16;
-
-	/** максимальный размер таблицы */
-	protected static final int DEFAULT_MAXIMUM_CAPACITY = 1 << 30;
-
-	/** фактор загружености таблицы, для определения момента ее расширения */
-	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
-
 	/**
 	 * Детализированный рассчет хэша.
 	 * 
@@ -49,4 +40,13 @@ public abstract class AbstractTable<K, V> implements Table<K, V> {
 	protected final static int indexFor(final int hash, final int length) {
 		return hash & length - 1;
 	}
+
+	/** размер таблицы по умолчанию */
+	protected static final int DEFAULT_INITIAL_CAPACITY = 16;
+
+	/** максимальный размер таблицы */
+	protected static final int DEFAULT_MAXIMUM_CAPACITY = 1 << 30;
+
+	/** фактор загружености таблицы, для определения момента ее расширения */
+	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 }

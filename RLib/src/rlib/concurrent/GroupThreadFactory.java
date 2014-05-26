@@ -3,20 +3,18 @@ package rlib.concurrent;
 import java.lang.reflect.Constructor;
 import java.util.concurrent.ThreadFactory;
 
+import rlib.concurrent.atomic.AtomicInteger;
 import rlib.util.ClassUtils;
 
 /**
- * Модель формирования группы потоков.
+ * Реализация группированной фабрики потоков.
  * 
  * @author Ronn
  */
 public class GroupThreadFactory implements ThreadFactory {
 
-	/** приоритет потоков */
-	private final int priority;
 	/** номер следующего потока */
-	private int ordinal;
-
+	private final AtomicInteger ordinal;
 	/** имя группы потоков */
 	private final String name;
 	/** группа потоков */
@@ -25,21 +23,20 @@ public class GroupThreadFactory implements ThreadFactory {
 	/** конструктор потока */
 	private final Constructor<? extends Thread> constructor;
 
-	/**
-	 * @param name название группы потоков.
-	 * @param cs класс потока, который будет использоваться.
-	 * @param priority приоритет потоков в группе.
-	 */
+	/** приоритет потоков */
+	private final int priority;
+
 	public GroupThreadFactory(final String name, final Class<? extends Thread> cs, final int priority) {
+		this.constructor = ClassUtils.getConstructor(cs, ThreadGroup.class, Runnable.class, String.class);
 		this.priority = priority;
 		this.name = name;
-		this.constructor = ClassUtils.getConstructor(cs, ThreadGroup.class, Runnable.class, String.class);
 		this.group = new ThreadGroup(name);
+		this.ordinal = new AtomicInteger();
 	}
 
 	@Override
 	public Thread newThread(final Runnable runnable) {
-		final Thread thread = ClassUtils.newInstance(constructor, group, runnable, name + "-" + ordinal++);
+		final Thread thread = ClassUtils.newInstance(constructor, group, runnable, name + "-" + ordinal.incrementAndGet());
 		thread.setPriority(priority);
 		return thread;
 	}

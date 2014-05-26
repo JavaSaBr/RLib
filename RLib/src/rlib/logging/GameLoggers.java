@@ -15,14 +15,6 @@ import rlib.util.array.ArrayFactory;
  */
 public abstract class GameLoggers {
 
-	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-
-	/** директория лога */
-	private static String directory;
-
-	/** списоксозданных логеров */
-	private static Array<GameLogger> loggers;
-
 	/**
 	 * Завершение работы всех логгеров.
 	 */
@@ -97,4 +89,12 @@ public abstract class GameLoggers {
 		GameLoggers.directory = directory;
 		GameLoggers.loggers = ArrayFactory.newConcurrentArray(GameLogger.class);
 	}
+
+	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+
+	/** директория лога */
+	private static String directory;
+
+	/** списоксозданных логеров */
+	private static Array<GameLogger> loggers;
 }

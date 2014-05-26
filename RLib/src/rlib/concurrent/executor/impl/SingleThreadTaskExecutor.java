@@ -55,7 +55,7 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, S
 		this.thread.start();
 	}
 
-	protected L check(L local, Thread thread) {
+	protected L check(final L local, final Thread thread) {
 		return local;
 	}
 

@@ -29,7 +29,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	 *
 	 * @param consumer применяемая функция.
 	 */
-	public default void accept(Consumer<? super E> consumer) {
+	public default void accept(final Consumer<? super E> consumer) {
 		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 			consumer.accept(node.getItem());
 		}
@@ -40,7 +40,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	 *
 	 * @param function применяемая функция.
 	 */
-	public default void apply(Function<? super E, ? extends E> function) {
+	public default void apply(final Function<? super E, ? extends E> function) {
 		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 			node.setItem(function.apply(node.getItem()));
 		}

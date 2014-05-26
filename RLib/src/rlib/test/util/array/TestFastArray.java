@@ -19,7 +19,7 @@ public class TestFastArray extends Assert {
 	@Test
 	public void test() {
 
-		String head = TestFastArray.class.getSimpleName() + ": ";
+		final String head = TestFastArray.class.getSimpleName() + ": ";
 
 		System.out.println(head + "start test FastArray VS ArrayList...");
 
@@ -28,18 +28,18 @@ public class TestFastArray extends Assert {
 		testImpl(head);
 	}
 
-	private void testImpl(String head) {
+	private void testImpl(final String head) {
 
 		System.gc();
 
-		Array<Integer> array = ArrayFactory.newArray(Integer.class);
-		Array<Integer> added = ArrayFactory.newArray(Integer.class);
+		final Array<Integer> array = ArrayFactory.newArray(Integer.class);
+		final Array<Integer> added = ArrayFactory.newArray(Integer.class);
 
 		for(int i = 999_000, length = 1_000_000; i < length; i++) {
 			added.add(i);
 		}
 
-		List<Integer> list = new ArrayList<Integer>();
+		final List<Integer> list = new ArrayList<Integer>();
 
 		long time = System.currentTimeMillis();
 
@@ -64,7 +64,7 @@ public class TestFastArray extends Assert {
 
 		time = System.currentTimeMillis();
 
-		for(Integer val : array.array()) {
+		for(final Integer val : array.array()) {
 
 			if(val == null) {
 				break;
@@ -77,7 +77,7 @@ public class TestFastArray extends Assert {
 
 		time = System.currentTimeMillis();
 
-		for(Integer val : list) {
+		for(final Integer val : list) {
 			count += val.intValue();
 		}
 
@@ -104,7 +104,7 @@ public class TestFastArray extends Assert {
 		array.addAll(added);
 		array.addAll(added.trimToSize().array());
 
-		assertTrue(array.size() == (added.size() * 2 + 4));
+		assertTrue(array.size() == added.size() * 2 + 4);
 
 		for(int i = 0; i < array.size(); i++) {
 			array.get(i).intValue();

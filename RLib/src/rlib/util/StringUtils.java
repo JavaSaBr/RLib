@@ -17,26 +17,6 @@ import rlib.logging.LoggerManager;
  */
 public class StringUtils {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(StringUtils.class);
-
-	/** экземпляр пустой строки */
-	public static final String EMPTY = "".intern();
-
-	/** экземпляр пустого массива строк */
-	public static final String[] EMPTY_ARRAY = new String[0];
-
-	/** создаем регулярку для проверки почты */
-	public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE
-			| Pattern.MULTILINE);
-
-	private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = new ThreadLocal<MessageDigest>() {
-
-		@Override
-		protected MessageDigest initialValue() {
-			return getHashMD5();
-		}
-	};
-
 	/**
 	 * Рассчет длинны строки для пакета
 	 * 
@@ -157,4 +137,24 @@ public class StringUtils {
 
 		return new BigInteger(1, hashMD5.digest()).toString(16);
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(StringUtils.class);
+
+	/** экземпляр пустой строки */
+	public static final String EMPTY = "".intern();
+
+	/** экземпляр пустого массива строк */
+	public static final String[] EMPTY_ARRAY = new String[0];
+
+	/** создаем регулярку для проверки почты */
+	public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE
+			| Pattern.MULTILINE);
+
+	private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = new ThreadLocal<MessageDigest>() {
+
+		@Override
+		protected MessageDigest initialValue() {
+			return getHashMD5();
+		}
+	};
 }

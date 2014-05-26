@@ -22,23 +22,6 @@ import rlib.util.table.TableFactory;
  */
 public class LoggerManager {
 
-	/** таблица всех логгерров */
-	private static final Table<String, Logger> LOGGERS = TableFactory.newObjectTable();
-	/** список слушателей логирования */
-	private static final Array<LoggerListener> LISTENERS = ArrayFactory.newArray(LoggerListener.class);
-	/** список записчиков лога */
-	private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
-	/** синхронизатор записи лога */
-	private static final Lock SYNC = LockFactory.newPrimitiveAtomicLock();
-
-	/** формат записи времени */
-	private static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
-	/** класс реализации логгера */
-	private static Class<? extends Logger> implementedClass = LoggerImpl.class;
-
-	/** главный логгер */
-	private static final Logger LOGGER = getLogger(LoggerManager.class);
-
 	/**
 	 * Добавление слушателя логирования.
 	 * 
@@ -200,4 +183,25 @@ public class LoggerManager {
 			SYNC.unlock();
 		}
 	}
+
+	/** таблица всех логгерров */
+	private static final Table<String, Logger> LOGGERS = TableFactory.newObjectTable();
+
+	/** список слушателей логирования */
+	private static final Array<LoggerListener> LISTENERS = ArrayFactory.newArray(LoggerListener.class);
+
+	/** список записчиков лога */
+	private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
+
+	/** синхронизатор записи лога */
+	private static final Lock SYNC = LockFactory.newPrimitiveAtomicLock();
+
+	/** формат записи времени */
+	private static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
+
+	/** класс реализации логгера */
+	private static Class<? extends Logger> implementedClass = LoggerImpl.class;
+
+	/** главный логгер */
+	private static final Logger LOGGER = getLogger(LoggerManager.class);
 }

@@ -18,8 +18,6 @@ import rlib.util.array.ArrayFactory;
  */
 public final class ObjectUtils {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(ObjectUtils.class);
-
 	/**
 	 * Клонирует объект, крайне медленная функция.
 	 * 
@@ -185,4 +183,6 @@ public final class ObjectUtils {
 			}
 		}
 	}
+
+	private static final Logger LOGGER = LoggerManager.getLogger(ObjectUtils.class);
 }

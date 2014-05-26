@@ -33,21 +33,6 @@ import rlib.util.pools.Foldable;
 public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 
 	/**
-	 * Небезопасное добавления элемента без проверок.
-	 */
-	public default Array<E> unsafeAdd(E object) {
-		return add(object);
-	}
-
-	/**
-	 * Проверка и при необходимости подготовка для расширения до указанного
-	 * размера.
-	 */
-	public default void checkSize(int size) {
-		throw new RuntimeException("not supported.");
-	}
-
-	/**
 	 * Добавление элемента в массив.
 	 */
 	public Array<E> add(E object);
@@ -80,6 +65,14 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @return возвращает массив элементов.
 	 */
 	public E[] array();
+
+	/**
+	 * Проверка и при необходимости подготовка для расширения до указанного
+	 * размера.
+	 */
+	public default void checkSize(final int size) {
+		throw new RuntimeException("not supported.");
+	}
 
 	/**
 	 * Очистить массив путем зануления элементов.
@@ -452,6 +445,13 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 	 * @return this.
 	 */
 	public Array<E> trimToSize();
+
+	/**
+	 * Небезопасное добавления элемента без проверок.
+	 */
+	public default Array<E> unsafeAdd(final E object) {
+		return add(object);
+	}
 
 	/**
 	 * Блокировка чтений для изменения массива.

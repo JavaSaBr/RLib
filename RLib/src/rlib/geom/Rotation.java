@@ -13,22 +13,6 @@ import rlib.util.random.RandomFactory;
  */
 public class Rotation {
 
-	private static final ThreadLocal<Rotation> ROTATION_LOCAL = new ThreadLocal<Rotation>() {
-
-		@Override
-		protected Rotation initialValue() {
-			return newInstance();
-		};
-	};
-
-	private static final ThreadLocal<Random> RANDOM_LOCAL = new ThreadLocal<Random>() {
-
-		@Override
-		protected Random initialValue() {
-			return RandomFactory.newFastRandom();
-		};
-	};
-
 	/**
 	 * @return локалый для потока экземпляр разворота.
 	 */
@@ -51,6 +35,22 @@ public class Rotation {
 	public static Rotation newInstance(final float[] vals) {
 		return new Rotation(vals[0], vals[1], vals[2], vals[3]);
 	}
+
+	private static final ThreadLocal<Rotation> ROTATION_LOCAL = new ThreadLocal<Rotation>() {
+
+		@Override
+		protected Rotation initialValue() {
+			return newInstance();
+		};
+	};
+
+	private static final ThreadLocal<Random> RANDOM_LOCAL = new ThreadLocal<Random>() {
+
+		@Override
+		protected Random initialValue() {
+			return RandomFactory.newFastRandom();
+		};
+	};
 
 	private float x;
 	private float y;

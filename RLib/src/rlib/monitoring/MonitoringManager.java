@@ -10,8 +10,6 @@ import javax.management.MXBean;
  */
 public final class MonitoringManager {
 
-	private static MonitoringManager instance;
-
 	public static MonitoringManager getInstance() {
 
 		if(instance == null) {
@@ -20,6 +18,8 @@ public final class MonitoringManager {
 
 		return instance;
 	}
+
+	private static MonitoringManager instance;
 
 	/** мониторинг использования памяти в Java процессе */
 	private final MemoryMonitoring memoryMonitoring;
@@ -58,7 +58,7 @@ public final class MonitoringManager {
 	@Override
 	public String toString() {
 
-		StringBuilder builder = new StringBuilder("\n");
+		final StringBuilder builder = new StringBuilder("\n");
 		builder.append("#==========Java Process Info==========#").append('\n');
 		builder.append("#=============Memory Info=============#");
 		builder.append('\n').append(getMemoryMonitoring()).append('\n');

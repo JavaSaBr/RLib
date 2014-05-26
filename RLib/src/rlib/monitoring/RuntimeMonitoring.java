@@ -47,7 +47,7 @@ public class RuntimeMonitoring {
 
 		final SimpleDateFormat format = LOCAL_DATE_FORMAT.get();
 
-		StringBuilder builder = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		builder.append("Operating System:").append('\n');
 		builder.append("	").append("OS Name:				").append(operatingSystemMXBean.getName()).append('\n');
 		builder.append("	").append("OS Arch:				").append(operatingSystemMXBean.getArch()).append('\n');

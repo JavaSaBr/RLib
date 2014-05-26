@@ -7,9 +7,6 @@ package rlib.util;
  */
 public final class ExtMath {
 
-	/** конвертированное в float число PI */
-	public static final float PI = (float) Math.PI;
-
 	/**
 	 * Получение арккосинуса указанного значения. Если указанное значение меньше
 	 * -1, то возвратиться число ПИ, если же больше 1, то вернеться 0.
@@ -50,7 +47,7 @@ public final class ExtMath {
 	 * @return 1 / sqrt(value).
 	 */
 	public static float invSqrt(final float value) {
-		return (1.0F / sqrt(value));
+		return 1.0F / sqrt(value);
 	}
 
 	/**
@@ -75,6 +72,9 @@ public final class ExtMath {
 	public static float sqrt(final float value) {
 		return (float) Math.sqrt(value);
 	}
+
+	/** конвертированное в float число PI */
+	public static final float PI = (float) Math.PI;
 
 	private ExtMath() {
 		throw new RuntimeException();

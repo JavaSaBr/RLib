@@ -12,28 +12,12 @@ import rlib.util.pools.FoldablePool;
  */
 public abstract class AbstractTaskReadeablePacket<C, L> extends AbstractReadeablePacket<C> implements SimpleTask<L> {
 
-	/**
-	 * Можно переопределить метод и отдавать пул для автоматического складывания
-	 * этого пакета в него после выполнения.
-	 * 
-	 * @return пулл для складывания этого пакета. может быть <code>null</code>.
-	 */
-	@SuppressWarnings("rawtypes")
-	protected abstract FoldablePool getPool();
-
-	/**
-	 * @return нужно ли выполнять синхронно пакет.
-	 */
-	public boolean isSynchronized() {
-		return false;
-	}
-
 	@SuppressWarnings({
 		"unchecked",
 		"rawtypes"
 	})
 	@Override
-	public void execute(L local, long currentTime) {
+	public void execute(final L local, final long currentTime) {
 		try {
 			executeImpl(local, currentTime);
 		} catch(final Exception e) {
@@ -52,5 +36,21 @@ public abstract class AbstractTaskReadeablePacket<C, L> extends AbstractReadeabl
 	 * Процесс выполнение пакета.
 	 */
 	protected abstract void executeImpl(L local, long currentTime);
+
+	/**
+	 * Можно переопределить метод и отдавать пул для автоматического складывания
+	 * этого пакета в него после выполнения.
+	 * 
+	 * @return пулл для складывания этого пакета. может быть <code>null</code>.
+	 */
+	@SuppressWarnings("rawtypes")
+	protected abstract FoldablePool getPool();
+
+	/**
+	 * @return нужно ли выполнять синхронно пакет.
+	 */
+	public boolean isSynchronized() {
+		return false;
+	}
 
 }

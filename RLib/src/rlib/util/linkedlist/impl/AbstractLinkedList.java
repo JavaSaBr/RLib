@@ -35,6 +35,11 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 	}
 
 	@Override
+	public boolean contains(final Object object) {
+		return indexOf(object) != -1;
+	}
+
+	@Override
 	public boolean containsAll(final Collection<?> collection) {
 
 		for(final Object object : collection) {
@@ -47,77 +52,13 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 	}
 
 	@Override
-	public void finalyze() {
-		clear();
-	}
-
-	/**
-	 * @return тип элементов в коллекции.
-	 */
-	protected Class<E> getType() {
-		return type;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return size() < 1;
-	}
-
-	@Override
-	public boolean removeAll(final Collection<?> collection) {
-
-		for(final Object object : collection) {
-			if(!remove(object)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public boolean retainAll(final Collection<?> collection) {
-
-		for(final E object : this) {
-			if(!collection.contains(object) && !remove(object)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	public String toString() {
-
-		final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
-
-		builder.append(" size = ").append(size()).append(" : [");
-
-		if(!isEmpty()) {
-
-			for(final E element : this) {
-				builder.append(element).append(", ");
-			}
-
-			if(builder.indexOf(",") != -1) {
-				builder.delete(builder.length() - 2, builder.length());
-			}
-		}
-
-		builder.append("]");
-
-		return builder.toString();
-	}
-
-	@Override
-	public boolean contains(final Object object) {
-		return indexOf(object) != -1;
-	}
-
-	@Override
 	public E element() {
 		return getFirst();
+	}
+
+	@Override
+	public void finalyze() {
+		clear();
 	}
 
 	@Override
@@ -144,6 +85,13 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 		return last.getItem();
 	}
 
+	/**
+	 * @return тип элементов в коллекции.
+	 */
+	protected Class<E> getType() {
+		return type;
+	}
+
 	@Override
 	public int indexOf(final Object object) {
 
@@ -161,6 +109,11 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 		}
 
 		return -1;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return size() < 1;
 	}
 
 	@Override
@@ -231,6 +184,18 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 	}
 
 	@Override
+	public boolean removeAll(final Collection<?> collection) {
+
+		for(final Object object : collection) {
+			if(!remove(object)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
 	public boolean removeFirstOccurrence(final Object object) {
 
 		if(object == null) {
@@ -262,5 +227,40 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean retainAll(final Collection<?> collection) {
+
+		for(final E object : this) {
+			if(!collection.contains(object) && !remove(object)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public String toString() {
+
+		final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+
+		builder.append(" size = ").append(size()).append(" : [");
+
+		if(!isEmpty()) {
+
+			for(final E element : this) {
+				builder.append(element).append(", ");
+			}
+
+			if(builder.indexOf(",") != -1) {
+				builder.delete(builder.length() - 2, builder.length());
+			}
+		}
+
+		builder.append("]");
+
+		return builder.toString();
 	}
 }

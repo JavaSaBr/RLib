@@ -9,10 +9,6 @@ import rlib.util.pools.Foldable;
  */
 public final class Matrix3f implements Foldable {
 
-	public static final Matrix3f ZERO = new Matrix3f(0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-	public static final Matrix3f IDENTITY = new Matrix3f();
-
 	public static Matrix3f newInstance() {
 		return new Matrix3f();
 	}
@@ -21,6 +17,10 @@ public final class Matrix3f implements Foldable {
 			final float val_2_1, final float val_2_2) {
 		return new Matrix3f(val_0_0, val_0_1, val_0_2, val_1_0, val_1_1, val_1_2, val_2_0, val_2_1, val_2_2);
 	}
+
+	public static final Matrix3f ZERO = new Matrix3f(0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+	public static final Matrix3f IDENTITY = new Matrix3f();
 
 	/** значения матрицы */
 	protected float val_0_0, val_0_1, val_0_2;

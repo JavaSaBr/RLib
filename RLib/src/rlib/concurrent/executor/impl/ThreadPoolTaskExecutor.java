@@ -45,7 +45,7 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Syn
 	/** размер пакета выполняемых задач на поток */
 	private final int packetSize;
 
-	public ThreadPoolTaskExecutor(GroupThreadFactory threadFactory, final int poolSize, final int packetSize) {
+	public ThreadPoolTaskExecutor(final GroupThreadFactory threadFactory, final int poolSize, final int packetSize) {
 		this.waitTasks = LinkedListFactory.newLinkedList(CallableTask.class);
 		this.wait = new AtomicBoolean();
 		this.lock = LockFactory.newPrimitiveAtomicLock();
@@ -60,16 +60,6 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Syn
 
 			threads.add(thread);
 		}
-	}
-
-	/**
-	 * Получение контейнера локальных объектов для указанного потока.
-	 * 
-	 * @param thread интересуемый поток.
-	 * @return контейнер локальных объектов для него.
-	 */
-	protected L getLocalObjects(Thread thread) {
-		return null;
 	}
 
 	@Override
@@ -93,6 +83,23 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Syn
 		} finally {
 			unlock();
 		}
+	}
+
+	/**
+	 * Получение контейнера локальных объектов для указанного потока.
+	 * 
+	 * @param thread интересуемый поток.
+	 * @return контейнер локальных объектов для него.
+	 */
+	protected L getLocalObjects(final Thread thread) {
+		return null;
+	}
+
+	/**
+	 * @return размера пакета исполняемых задач.
+	 */
+	public int getPacketSize() {
+		return packetSize;
 	}
 
 	/**
@@ -185,12 +192,5 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Syn
 	@Override
 	public void unlock() {
 		lock.unlock();
-	}
-
-	/**
-	 * @return размера пакета исполняемых задач.
-	 */
-	public int getPacketSize() {
-		return packetSize;
 	}
 }

@@ -60,15 +60,6 @@ public class LockFactory {
 	}
 
 	/**
-	 * Создание финализированного наследника ReentrantReadWriteLock.
-	 * 
-	 * @return новый блокировщик.
-	 */
-	public static final ReadWriteLock newRWLock() {
-		return new FinalReadWriteLock();
-	}
-
-	/**
 	 * Создание блокировщика на {@link AtomicInteger} с поддержкой рекурсивной
 	 * блокировки.
 	 * 
@@ -77,5 +68,14 @@ public class LockFactory {
 	 */
 	public static final Lock newReentrantAtomicLock() {
 		return new ReentrantAtomicLock();
+	}
+
+	/**
+	 * Создание финализированного наследника ReentrantReadWriteLock.
+	 * 
+	 * @return новый блокировщик.
+	 */
+	public static final ReadWriteLock newRWLock() {
+		return new FinalReadWriteLock();
 	}
 }

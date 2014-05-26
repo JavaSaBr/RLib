@@ -32,7 +32,7 @@ public class FastArraySet<E> extends FastArray<E> {
 	}
 
 	@Override
-	protected void processAdd(Array<? extends E> elements, int selfSize, int targetSize) {
+	protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
 		for(final E element : elements.array()) {
 
 			if(element == null) {
@@ -46,7 +46,7 @@ public class FastArraySet<E> extends FastArray<E> {
 	}
 
 	@Override
-	protected void processAdd(E[] elements, int selfSize, int targetSize) {
+	protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
 		for(final E element : elements) {
 
 			if(element == null) {

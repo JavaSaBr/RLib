@@ -7,7 +7,6 @@ import rlib.concurrent.GroupThreadFactory;
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.executor.TaskExecutor;
 import rlib.concurrent.executor.impl.ThreadPoolTaskExecutor;
-import rlib.concurrent.task.SimpleTask;
 import rlib.concurrent.util.ThreadUtils;
 
 /**
@@ -26,21 +25,17 @@ public class TestThreadPoolTaskExecutor extends Assert {
 
 		System.out.println(header + " start test executor...");
 
-		GroupThreadFactory factory = new GroupThreadFactory("test_executor", Thread.class, Thread.NORM_PRIORITY);
+		final GroupThreadFactory factory = new GroupThreadFactory("test_executor", Thread.class, Thread.NORM_PRIORITY);
 
-		TaskExecutor<Void> executor = new ThreadPoolTaskExecutor<>(factory, 5, 5);
+		final TaskExecutor<Void> executor = new ThreadPoolTaskExecutor<>(factory, 5, 5);
 
 		final AtomicInteger counter = new AtomicInteger();
 
 		for(int i = 0, length = TASK_LIMIT; i < length; i++) {
 
-			executor.execute(new SimpleTask<Void>() {
-
-				@Override
-				public void execute(Void local, long currentTime) {
-					counter.incrementAndGet();
-					ThreadUtils.sleep(1);
-				}
+			executor.execute((local, currentTime) -> {
+				counter.incrementAndGet();
+				ThreadUtils.sleep(1);
 			});
 		}
 

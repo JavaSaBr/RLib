@@ -59,46 +59,6 @@ public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock,
 		}
 	}
 
-	/**
-	 * Выполнение локальных вычислений для занятия потока.
-	 */
-	protected void localCalculate() {
-
-		final int currentCounter = getAndIncrementCounter();
-		int newValue = currentCounter ^ currentCounter;
-
-		newValue = currentCounter >>> 1;
-		newValue = currentCounter & newValue;
-
-		setCounter(newValue);
-		setCounter(currentCounter);
-	}
-
-	/**
-	 * Попытка добавиться к читающим потокам.
-	 */
-	private boolean tryReadLock() {
-
-		// проверем отсутствия желающих записать потоков
-		final AtomicInteger writeCount = getWriteCount();
-		if(writeCount.get() != 0) {
-			return false;
-		}
-
-		final AtomicInteger readCount = getReadCount();
-
-		// добавляемся к читающим потокам и если после добавления оказалось что
-		// мы добавились после начало записи, возвращаем в исходную позицию
-		// счетчик и пробуем еще раз.
-		int value = readCount.get();
-
-		if(value == STATUS_READ_LOCKED) {
-			return false;
-		}
-
-		return readCount.compareAndSet(value, value + 1);
-	}
-
 	@Override
 	public void asynUnlock() {
 		readCount.decrementAndGet();
@@ -130,6 +90,21 @@ public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock,
 	 */
 	protected AtomicInteger getWriteStatus() {
 		return writeStatus;
+	}
+
+	/**
+	 * Выполнение локальных вычислений для занятия потока.
+	 */
+	protected void localCalculate() {
+
+		final int currentCounter = getAndIncrementCounter();
+		int newValue = currentCounter ^ currentCounter;
+
+		newValue = currentCounter >>> 1;
+		newValue = currentCounter & newValue;
+
+		setCounter(newValue);
+		setCounter(currentCounter);
 	}
 
 	@Override
@@ -198,6 +173,31 @@ public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock,
 	@Override
 	public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
 		throw new RuntimeException("not supported.");
+	}
+
+	/**
+	 * Попытка добавиться к читающим потокам.
+	 */
+	private boolean tryReadLock() {
+
+		// проверем отсутствия желающих записать потоков
+		final AtomicInteger writeCount = getWriteCount();
+		if(writeCount.get() != 0) {
+			return false;
+		}
+
+		final AtomicInteger readCount = getReadCount();
+
+		// добавляемся к читающим потокам и если после добавления оказалось что
+		// мы добавились после начало записи, возвращаем в исходную позицию
+		// счетчик и пробуем еще раз.
+		final int value = readCount.get();
+
+		if(value == STATUS_READ_LOCKED) {
+			return false;
+		}
+
+		return readCount.compareAndSet(value, value + 1);
 	}
 
 	@Override

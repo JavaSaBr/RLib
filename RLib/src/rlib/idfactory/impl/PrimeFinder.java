@@ -4,6 +4,20 @@ import java.util.Arrays;
 
 public final class PrimeFinder {
 
+	/**
+	 * @return следующее простое число.
+	 */
+	public static final int nextPrime(final int desiredCapacity) {
+
+		int i = Arrays.binarySearch(PRIME_CAPACITIES, desiredCapacity);
+
+		if(i < 0) {
+			i = -i - 1;
+		}
+
+		return PRIME_CAPACITIES[i];
+	}
+
 	public static final int LARGEST_PRIME = Integer.MAX_VALUE;
 
 	/** набор простых чисел */
@@ -257,19 +271,5 @@ public final class PrimeFinder {
 
 	static {
 		Arrays.sort(PRIME_CAPACITIES);
-	}
-
-	/**
-	 * @return следующее простое число.
-	 */
-	public static final int nextPrime(final int desiredCapacity) {
-
-		int i = Arrays.binarySearch(PRIME_CAPACITIES, desiredCapacity);
-
-		if(i < 0) {
-			i = -i - 1;
-		}
-
-		return PRIME_CAPACITIES[i];
 	}
 }

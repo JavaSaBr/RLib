@@ -7,9 +7,6 @@ package rlib.geom.util;
  */
 public final class AngleUtils {
 
-	public static final float HEADINGS_IN_PI = 10430.378350470452724949566316381F;
-	public static final float PI = 3.14159265358979323846F;
-
 	/**
 	 * Расчет разворота в указанные координаты.
 	 * 
@@ -178,4 +175,8 @@ public final class AngleUtils {
 	public static float radiansToDegree(final float radians) {
 		return radians * 180F / PI;
 	}
+
+	public static final float HEADINGS_IN_PI = 10430.378350470452724949566316381F;
+
+	public static final float PI = 3.14159265358979323846F;
 }
