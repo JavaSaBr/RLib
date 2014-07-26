@@ -42,7 +42,7 @@ public class FastArray<E> extends AbstractArray<E> {
 	public FastArray<E> add(final E object) {
 
 		if(size == array.length) {
-			array = ArrayUtils.copyOf(array, array.length >> 1);
+			array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
 		}
 
 		return unsafeAdd(object);

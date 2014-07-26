@@ -1,5 +1,6 @@
 package rlib.geom;
 
+import static java.lang.Float.floatToIntBits;
 import rlib.util.ExtMath;
 
 /**
@@ -219,6 +220,30 @@ public final class Vector implements GamePoint {
 	}
 
 	@Override
+	public boolean equals(final Object obj) {
+
+		if(this == obj) {
+			return true;
+		} else if(obj == null) {
+			return false;
+		} else if(getClass() != obj.getClass()) {
+			return false;
+		}
+
+		final Vector other = (Vector) obj;
+
+		if(floatToIntBits(x) != floatToIntBits(other.x)) {
+			return false;
+		} else if(floatToIntBits(y) != floatToIntBits(other.y)) {
+			return false;
+		} else if(floatToIntBits(z) != floatToIntBits(other.z)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
 	public int getHeading() {
 		return 0;
 	}
@@ -236,6 +261,16 @@ public final class Vector implements GamePoint {
 	@Override
 	public float getZ() {
 		return z;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Float.floatToIntBits(x);
+		result = prime * result + Float.floatToIntBits(y);
+		result = prime * result + Float.floatToIntBits(z);
+		return result;
 	}
 
 	/**

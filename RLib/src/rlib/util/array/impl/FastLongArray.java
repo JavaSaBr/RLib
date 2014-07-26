@@ -78,7 +78,7 @@ public class FastLongArray implements LongArray {
 	public FastLongArray add(final long element) {
 
 		if(size == array.length) {
-			array = ArrayUtils.copyOf(array, array.length >> 1);
+			array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
 		}
 
 		array[size++] = element;
