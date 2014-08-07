@@ -68,6 +68,38 @@ public class StringUtils {
 	}
 
 	/**
+	 * Сравнение 2х строк с учетом регистра с прооверками на <code>null</code>.
+	 */
+	public static int compare(String first, String second) {
+
+		if(first == null) {
+			return 1;
+		}
+
+		if(second == null) {
+			return -1;
+		}
+
+		return first.compareTo(second);
+	}
+
+	/**
+	 * Сравнение 2х строк без учета регистра с прооверками на <code>null</code>.
+	 */
+	public static int compareIgonoreCase(String first, String second) {
+
+		if(first == null) {
+			return 1;
+		}
+
+		if(second == null) {
+			return -1;
+		}
+
+		return first.compareToIgnoreCase(second);
+	}
+
+	/**
 	 * Конверктация эксепшена в строку.
 	 * 
 	 * @param throwable полученный эксепшен.

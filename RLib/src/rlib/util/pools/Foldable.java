@@ -20,4 +20,10 @@ public interface Foldable {
 	 */
 	public default void reinit() {
 	}
+
+	/**
+	 * Завершение испольозвания объекта.
+	 */
+	public default void release() {
+	}
 }
