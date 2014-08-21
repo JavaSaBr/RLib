@@ -8,29 +8,39 @@ package rlib.util.table;
 public final class TableFactory {
 
 	/**
-	 * Создание таблицы с int ключем.
+	 * Создание обычной конкурентной таблицы с <code>int</code> ключем.
 	 * 
-	 * @return новая таблица с объектным ключем.
+	 * @return новая таблица с <code>int</code> ключем.
 	 */
 	public static final <V> Table<IntKey, V> newConcurrentIntegerTable() {
 		return new ConcurrentIntegerTable<V>();
 	}
 
 	/**
-	 * Создание таблицы с int ключем.
+	 * Создание конкуретной таблицы с <code>int</code> ключем с использованием
+	 * примитивного атомарного синхронизатора, не поддерживающего рекурсию.
+	 * 
+	 * @return новая таблица с <code>int</code> ключем.
+	 */
+	public static final <V> Table<IntKey, V> newAtomicConcurrentIntegerTable() {
+		return new ConcurrentIntegerTable<V>();
+	}
+
+	/**
+	 * Создание таблицы с <code>int</code> ключем.
 	 * 
 	 * @param loadFactor фактор загруженности таблицы.
-	 * @return новая таблица с объектным ключем.
+	 * @return новая таблица с <code>int</code> ключем.
 	 */
 	public static final <V> Table<IntKey, V> newConcurrentIntegerTable(final float loadFactor) {
 		return new ConcurrentIntegerTable<V>(loadFactor);
 	}
 
 	/**
-	 * Создание таблицы с int ключем.
+	 * Создание таблицы с <code>int</code> ключем.
 	 * 
 	 * @param initCapacity начальный размер таблицы ячеяк.
-	 * @return новая таблица с объектным ключем.
+	 * @return новая таблица с <code>int</code> ключем.
 	 */
 	public static final <V> Table<IntKey, V> newConcurrentIntegerTable(final int initCapacity) {
 		return new ConcurrentIntegerTable<V>(initCapacity);
