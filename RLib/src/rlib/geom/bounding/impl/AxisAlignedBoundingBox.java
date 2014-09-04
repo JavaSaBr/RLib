@@ -157,9 +157,9 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 	@Override
 	public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
 
-		final float divX = 1.0F / (direction.getX() == 0 ? 0.00001F : direction.getX());
-		final float divY = 1.0F / (direction.getY() == 0 ? 0.00001F : direction.getY());
-		final float divZ = 1.0F / (direction.getZ() == 0 ? 0.00001F : direction.getZ());
+		final float divX = 1.0F / (Float.compare(direction.getX(), 0) == 0 ? 0.00001F : direction.getX());
+		final float divY = 1.0F / (Float.compare(direction.getY(), 0) == 0 ? 0.00001F : direction.getY());
+		final float divZ = 1.0F / (Float.compare(direction.getZ(), 0) == 0 ? 0.00001F : direction.getZ());
 
 		final float sizeX = getSizeX() * 0.5F;
 		final float sizeY = getSizeY() * 0.5F;

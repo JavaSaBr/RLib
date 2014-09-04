@@ -1,8 +1,11 @@
 package rlib.util;
 
+import static java.lang.Float.parseFloat;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import rlib.geom.Rotation;
 import rlib.geom.Vector;
 import rlib.util.table.Table;
 import rlib.util.table.TableFactory;
@@ -1295,11 +1298,10 @@ public class VarTable {
 
 		if(object instanceof String) {
 
-			final String[] vals = object.toString().split(",");
+			final String[] vals = ((String) object).split(",");
 
 			final Vector vector = Vector.newInstance();
-
-			vector.setXYZ(Float.parseFloat(vals[0]), Float.parseFloat(vals[1]), Float.parseFloat(vals[2]));
+			vector.setXYZ(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
 
 			return vector;
 		}
@@ -1328,13 +1330,75 @@ public class VarTable {
 
 		if(object instanceof String) {
 
-			final String[] vals = object.toString().split(",");
+			final String[] vals = ((String) object).split(",");
 
 			final Vector vector = Vector.newInstance();
-
-			vector.setXYZ(Float.parseFloat(vals[0]), Float.parseFloat(vals[1]), Float.parseFloat(vals[2]));
+			vector.setXYZ(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
 
 			return vector;
+		}
+
+		return def;
+	}
+
+	/**
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @return значение параметра.
+	 */
+	public Rotation getRotation(final String key) {
+
+		final Object object = values.get(key);
+
+		if(object == null) {
+			throw new IllegalArgumentException("not found " + key);
+		}
+
+		if(object instanceof Rotation) {
+			return (Rotation) object;
+		}
+
+		if(object instanceof String) {
+
+			final String[] vals = ((String) object).split(",");
+
+			final Rotation rotation = Rotation.newInstance();
+			rotation.setXYZW(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3]));
+
+			return rotation;
+		}
+
+		throw new IllegalArgumentException("not found " + key);
+	}
+
+	/**
+	 * Получение значение параметра по ключу.
+	 * 
+	 * @param key ключ параметра.
+	 * @param def значение по умолчанию.
+	 * @return значение параметра.
+	 */
+	public Rotation getRotation(final String key, final Rotation def) {
+
+		final Object object = values.get(key);
+
+		if(object == null) {
+			throw new IllegalArgumentException("not found " + key);
+		}
+
+		if(object instanceof Rotation) {
+			return (Rotation) object;
+		}
+
+		if(object instanceof String) {
+
+			final String[] vals = ((String) object).split(",");
+
+			final Rotation rotation = Rotation.newInstance();
+			rotation.setXYZW(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3]));
+
+			return rotation;
 		}
 
 		return def;
