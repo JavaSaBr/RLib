@@ -173,13 +173,13 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 
 				setClosed(true);
 
+				finished = false;
+
 				final AsynchronousSocketChannel channel = getChannel();
 
 				if(channel.isOpen()) {
 					channel.close();
 				}
-
-				finished = false;
 			}
 
 		} catch(final IOException e) {
@@ -192,12 +192,18 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 			return;
 		}
 
-		final LinkedList<S> waitPackets = getWaitPackets();
-		waitPackets.clear();
+		clearPackets(getWaitPackets());
 
 		final N network = getNetwork();
 		network.putReadByteBuffer(getReadBuffer());
 		network.putWriteByteBuffer(getWriteBuffer());
+	}
+
+	/**
+	 * Очистка от ожидающих отправки пакетов.
+	 */
+	protected void clearPackets(final LinkedList<S> waitPackets) {
+		waitPackets.clear();
 	}
 
 	/**

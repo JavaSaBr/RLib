@@ -7,6 +7,11 @@ package rlib.util;
  */
 public final class ExtMath {
 
+	/** конвертированное в float число PI */
+	public static final float PI = (float) Math.PI;
+	/** The value PI/2 as a float. (90 degrees) */
+	public static final float HALF_PI = 0.5f * PI;
+
 	/**
 	 * Получение арккосинуса указанного значения. Если указанное значение меньше
 	 * -1, то возвратиться число ПИ, если же больше 1, то вернеться 0.
@@ -73,8 +78,33 @@ public final class ExtMath {
 		return (float) Math.sqrt(value);
 	}
 
-	/** конвертированное в float число PI */
-	public static final float PI = (float) Math.PI;
+	public static float atan2(float fY, float fX) {
+		return (float) Math.atan2(fY, fX);
+	}
+
+	/**
+	 * Returns the arc sine of a value.<br>
+	 * Special cases:
+	 * <ul>
+	 * <li>If fValue is smaller than -1, then the result is -HALF_PI.
+	 * <li>If the argument is greater than 1, then the result is HALF_PI.
+	 * </ul>
+	 * 
+	 * @param fValue The value to arc sine.
+	 * @return the angle in radians.
+	 * @see java.lang.Math#asin(double)
+	 */
+	public static float asin(float fValue) {
+		if(-1.0f < fValue) {
+			if(fValue < 1.0f) {
+				return (float) Math.asin(fValue);
+			}
+
+			return HALF_PI;
+		}
+
+		return -HALF_PI;
+	}
 
 	private ExtMath() {
 		throw new RuntimeException();

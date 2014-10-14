@@ -594,6 +594,55 @@ public class Rotation {
 	}
 
 	/**
+	 * <code>toAngles</code> returns this quaternion converted to Euler rotation
+	 * angles (yaw,roll,pitch).<br/>
+	 * Note that the result is not always 100% accurate due to the implications
+	 * of euler angles.
+	 * 
+	 * @see <a
+	 * href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm">http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm</a>
+	 * 
+	 * @param angles the float[] in which the angles should be stored, or null
+	 * if you want a new float[] to be created
+	 * @return the float[] in which the angles are stored.
+	 */
+	public float[] toAngles(float[] angles) {
+
+		if(angles == null) {
+			angles = new float[3];
+		} else if(angles.length != 3) {
+			throw new IllegalArgumentException("Angles array must have three elements");
+		}
+
+		float sqw = w * w;
+		float sqx = x * x;
+		float sqy = y * y;
+		float sqz = z * z;
+		float unit = sqx + sqy + sqz + sqw; // if normalized is one, otherwise
+
+		// is correction factor
+		float test = x * y + z * w;
+		if(test > 0.499 * unit) { // singularity at north pole
+			angles[1] = 2 * ExtMath.atan2(x, w);
+			angles[2] = ExtMath.HALF_PI;
+			angles[0] = 0;
+		} else if(test < -0.499 * unit) { // singularity at south pole
+			angles[1] = -2 * ExtMath.atan2(x, w);
+			angles[2] = -ExtMath.HALF_PI;
+			angles[0] = 0;
+		} else {
+			angles[1] = ExtMath.atan2(2 * y * w - 2 * x * z, sqx - sqy - sqz + sqw); // roll
+																						// or
+																						// heading
+			angles[2] = ExtMath.asin(2 * test / unit); // pitch or attitude
+			angles[0] = ExtMath.atan2(2 * x * w - 2 * y * z, -sqx + sqy - sqz + sqw); // yaw
+																						// or
+																						// bank
+		}
+		return angles;
+	}
+
+	/**
 	 * Конвектирование квантерниона в матрицу 3х3
 	 * 
 	 * @param result матрица, в которую занести нужно результат.

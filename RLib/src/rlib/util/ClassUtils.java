@@ -13,6 +13,8 @@ import rlib.logging.LoggerManager;
  */
 public final class ClassUtils {
 
+	private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
+
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> getClass(final String name) {
 		try {
@@ -87,8 +89,8 @@ public final class ClassUtils {
 			return (T) constructor.newInstance(objects);
 		} catch(final InvocationTargetException e) {
 			LOGGER.error(e.getTargetException());
-			throw new RuntimeException(e);
-		} catch(InstantiationException | IllegalAccessException | IllegalArgumentException e) {
+			throw new RuntimeException(e.getTargetException());
+		} catch(final InstantiationException | IllegalAccessException | IllegalArgumentException e) {
 			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
@@ -103,8 +105,6 @@ public final class ClassUtils {
 			throw new RuntimeException(e);
 		}
 	}
-
-	private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
 
 	private ClassUtils() {
 		throw new RuntimeException();

@@ -71,6 +71,35 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	public int indexOf(Object object);
 
 	/**
+	 * Returns the (non-null) Node at the specified element index.
+	 */
+	public default Node<E> node(int index) {
+
+		final int size = size();
+
+		if(index < (size >> 1)) {
+
+			Node<E> node = getFirstNode();
+
+			for(int i = 0; i < index; i++) {
+				node = node.getNext();
+			}
+
+			return node;
+
+		} else {
+
+			Node<E> node = getLastNode();
+
+			for(int i = size() - 1; i > index; i--) {
+				node = node.getPrev();
+			}
+
+			return node;
+		}
+	}
+
+	/**
 	 * Блокировка изменения массива на время чтения его.
 	 */
 	public default void readLock() {
@@ -80,6 +109,16 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldab
 	 * Разблокировка изменения массива.
 	 */
 	public default void readUnlock() {
+	}
+
+	/**
+	 * Удаление элемента из списка по индексу.
+	 * 
+	 * @param index индекс элемента.
+	 * @return удаленный элемент.
+	 */
+	public default E remove(int index) {
+		return unlink(node(index));
 	}
 
 	/**

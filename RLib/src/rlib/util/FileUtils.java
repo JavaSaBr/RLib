@@ -25,6 +25,28 @@ import rlib.util.table.TableFactory;
  */
 public class FileUtils {
 
+	private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
+
+	/** кэш текста файлов */
+	private static final Table<String, String> cache = TableFactory.newObjectTable();
+	/** кэш файлов */
+	private static final Table<String, File> cacheFiles = TableFactory.newObjectTable();
+
+	public static final String getNameWithoutExtension(String path) {
+
+		if(StringUtils.isEmpty(path)) {
+			return path;
+		}
+
+		final int index = path.lastIndexOf('.');
+
+		if(index == -1) {
+			return path;
+		}
+
+		return path.substring(0, index);
+	}
+
 	/**
 	 * Очистка кэша файлов.
 	 */
@@ -277,12 +299,4 @@ public class FileUtils {
 		cache.put(path, content.toString());
 		return content.toString();
 	}
-
-	private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
-
-	/** кэш текста файлов */
-	private static final Table<String, String> cache = TableFactory.newObjectTable();
-
-	/** кэш файлов */
-	private static final Table<String, File> cacheFiles = TableFactory.newObjectTable();
 }
