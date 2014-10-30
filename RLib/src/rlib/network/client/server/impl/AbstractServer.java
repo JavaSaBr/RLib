@@ -87,14 +87,11 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
 		packet.setOwner(this);
 		packet.setBuffer(buffer);
-		try {
+		boolean needExecute = packet.read();
+		packet.setBuffer(null);
 
-			if(packet.read()) {
-				execute(packet);
-			}
-
-		} finally {
-			packet.setBuffer(null);
+		if(needExecute) {
+			execute(packet);
 		}
 	}
 

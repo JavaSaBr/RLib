@@ -16,6 +16,7 @@ public class TestFileUtils extends Assert {
 	public void test() {
 
 		final String result = FileUtils.getNameWithoutExtension("test/test.olooo/test/file.extension");
+		final String result2 = FileUtils.getExtension("test/test.olooo/test/file.extension");
 		System.out.println();
 	}
 }

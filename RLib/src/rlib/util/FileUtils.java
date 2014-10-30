@@ -47,6 +47,21 @@ public class FileUtils {
 		return path.substring(0, index);
 	}
 
+	public static final String getExtension(String path) {
+
+		if(StringUtils.isEmpty(path)) {
+			return path;
+		}
+
+		final int index = path.lastIndexOf('.');
+
+		if(index == -1) {
+			return path;
+		}
+
+		return path.substring(index + 1, path.length());
+	}
+
 	/**
 	 * Очистка кэша файлов.
 	 */

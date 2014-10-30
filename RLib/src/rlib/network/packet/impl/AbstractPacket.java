@@ -14,10 +14,10 @@ public abstract class AbstractPacket<C> implements Packet<C> {
 	protected static final Logger LOGGER = LoggerManager.getLogger(Packet.class);
 
 	/** владелец пакета */
-	protected C owner;
+	protected volatile C owner;
 
 	/** название пакета */
-	protected String name;
+	protected volatile String name;
 
 	@Override
 	public final String getName() {

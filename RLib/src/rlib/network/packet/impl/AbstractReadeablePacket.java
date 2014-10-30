@@ -14,7 +14,7 @@ import rlib.util.pools.Foldable;
 public abstract class AbstractReadeablePacket<C> extends AbstractPacket<C> implements ReadeablePacket<C>, Foldable {
 
 	/** буффер данных читаемого пакета */
-	protected ByteBuffer buffer;
+	protected volatile ByteBuffer buffer;
 
 	@Override
 	public final int getAvaliableBytes() {
