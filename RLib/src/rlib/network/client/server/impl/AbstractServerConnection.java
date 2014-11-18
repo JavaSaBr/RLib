@@ -57,6 +57,6 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reade
 
 	@Override
 	public String toString() {
-		return "AbstractServerConnection [network=" + network + ", channel=" + channel + ", closed=" + closed + ", config=" + config + ", lastActive=" + lastActive + "]";
+		return getClass().getSimpleName() + " [network=" + network + ", channel=" + channel + ", closed=" + closed + ", config=" + config + ", lastActive=" + lastActive + "]";
 	}
 }

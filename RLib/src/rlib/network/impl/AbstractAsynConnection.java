@@ -142,7 +142,6 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 
 	/** конфиг сети */
 	protected final NetworkConfig config;
-
 	/** блокировщик */
 	protected final Lock lock;
 

@@ -35,12 +35,13 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 
 	private static final long serialVersionUID = -7985171224116955303L;
 
+	/** кол-во элементов в колекции */
+	private final AtomicInteger size;
+
 	/** блокировщик на чтение */
 	private final Lock readLock;
 	/** блокировщик на запись */
 	private final Lock writeLock;
-	/** кол-во элементов в колекции */
-	private final AtomicInteger size;
 
 	/** массив элементов */
 	private volatile E[] array;

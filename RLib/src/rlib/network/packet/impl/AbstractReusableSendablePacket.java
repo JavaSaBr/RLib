@@ -55,7 +55,7 @@ public abstract class AbstractReusableSendablePacket<C> extends AbstractSendable
 	/**
 	 * Увеличить кол-во отправок этого пакета на 1.
 	 */
-	public final void increaseSends() {
+	public void increaseSends() {
 		counter.incrementAndGet();
 	}
 
@@ -67,27 +67,18 @@ public abstract class AbstractReusableSendablePacket<C> extends AbstractSendable
 	}
 
 	@Override
-	public void reinit() {
-		counter.getAndSet(0);
-	}
-
-	@Override
 	public String toString() {
-		return "AbstractReusableSendablePacket [counter=" + counter + ", owner=" + owner + ", name=" + name + "]";
+		return getClass().getSimpleName() + " [counter=" + counter + ", owner=" + owner + ", name=" + name + "]";
 	}
 
 	@Override
 	public void write(final ByteBuffer buffer) {
 
 		if(counter.get() < 1) {
-			LOGGER.warning(this, "write finished packet.");
+			LOGGER.warning(this, "write finished packet " + this + " on thread " + Thread.currentThread().getName());
 			return;
 		}
 
-		try {
-			super.write(buffer);
-		} finally {
-			complete();
-		}
+		super.write(buffer);
 	}
 }
