@@ -167,8 +167,13 @@ public class FileUtils {
 	 */
 	public static File[] getFiles(final File dir, final String... formats) {
 
-		final Array<File> array = ArrayFactory.newArray(File.class);
 		final File[] files = dir.listFiles();
+
+		if(files == null) {
+			return new File[0];
+		}
+
+		final Array<File> array = ArrayFactory.newArray(File.class);
 
 		for(int i = 0, length = files.length; i < length; i++) {
 

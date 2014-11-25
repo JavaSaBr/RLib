@@ -87,6 +87,23 @@ public final class Util {
 	}
 
 	/**
+	 * Метод конвертирования HEX представления строки в обычную.
+	 */
+	public static String fromHEX(final String string) {
+
+		final char[] array = string.toCharArray();
+
+		final StringBuilder builder = new StringBuilder(string.length() * 2);
+
+		for(int i = 0, length = array.length - 4; i < length; i += 4) {
+			final String element = String.valueOf(array, i, 4);
+			builder.append((char) Integer.parseInt(element, 16));
+		}
+
+		return builder.toString();
+	}
+
+	/**
 	 * Получение ближайшего свободного порта от указанного.
 	 * 
 	 * @param port стартовый порт.
@@ -315,6 +332,33 @@ public final class Util {
 		} catch(final Throwable e) {
 			LOGGER.warning(e);
 		}
+	}
+
+	/**
+	 * Метод конвертирования строки в HEX представление.
+	 */
+	public static String toHEX(final String string) {
+
+		final StringBuilder builder = new StringBuilder(string.length() * 2);
+
+		for(int i = 0, length = string.length(); i < length; i++) {
+
+			final char charAt = string.charAt(i);
+
+			String element = Integer.toHexString(charAt);
+
+			if(element.length() == 1) {
+				element = "000" + element;
+			} else if(element.length() == 2) {
+				element = "00" + element;
+			} else if(element.length() == 3) {
+				element = "0" + element;
+			}
+
+			builder.append(element);
+		}
+
+		return builder.toString();
 	}
 
 	public static String toString(final Throwable throwable) {
