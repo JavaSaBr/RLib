@@ -95,7 +95,7 @@ public final class Util {
 
 		final StringBuilder builder = new StringBuilder(string.length() * 2);
 
-		for(int i = 0, length = array.length - 4; i < length; i += 4) {
+		for(int i = 0, length = array.length - 3; i < length; i += 4) {
 			final String element = String.valueOf(array, i, 4);
 			builder.append((char) Integer.parseInt(element, 16));
 		}
