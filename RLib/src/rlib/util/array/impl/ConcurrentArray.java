@@ -146,8 +146,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
 			return null;
 		}
 
-		size.decrementAndGet();
-		length = size();
+		length = size.decrementAndGet();
 
 		final E old = array[index];
 

@@ -3,8 +3,7 @@ package rlib.util.array;
 import java.util.Iterator;
 
 /**
- * Интерфейс для реализации расширенного итератора динамического массива
- * {@link Array}.
+ * Интерфейс для реализации расширенного итератора {@link Array}.
  * 
  * @author Ronn
  */
@@ -16,7 +15,7 @@ public interface ArrayIterator<E> extends Iterator<E> {
 	public void fastRemove();
 
 	/**
-	 * @return позиция элемента в массиве.
+	 * @return позиция элемента в {@link Array}.
 	 */
 	public int index();
 

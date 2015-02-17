@@ -3,7 +3,7 @@ package rlib.util.array;
 import java.util.Comparator;
 
 /**
- * Интерфейс для реализации компаратора для динамических массивов {@link Array}
+ * Интерфейс для реализации компаратора для {@link Array}
  *
  * @author Ronn
  */
@@ -14,9 +14,7 @@ public interface ArrayComparator<T> extends Comparator<T> {
 
 		if(first == null) {
 			return 1;
-		}
-
-		if(second == null) {
+		} else if(second == null) {
 			return -1;
 		}
 
