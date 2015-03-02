@@ -1,5 +1,14 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.BYTE;
+import static rlib.util.ref.ReferenceType.CHAR;
+import static rlib.util.ref.ReferenceType.DOUBLE;
+import static rlib.util.ref.ReferenceType.FLOAT;
+import static rlib.util.ref.ReferenceType.INTEGER;
+import static rlib.util.ref.ReferenceType.LONG;
+import static rlib.util.ref.ReferenceType.OBJECT;
+import static rlib.util.ref.ReferenceType.SHORT;
+
 /**
  * Фабрика ссылок на разные виды данных.
  * 
@@ -12,7 +21,7 @@ public final class ReferenceFactory {
 		Reference reference = null;
 
 		if(usePool) {
-			reference = ReferenceType.BYTE.take();
+			reference = BYTE.take();
 		}
 
 		if(reference == null) {
@@ -28,7 +37,7 @@ public final class ReferenceFactory {
 		Reference reference = null;
 
 		if(usePool) {
-			reference = ReferenceType.CHAR.take();
+			reference = CHAR.take();
 		}
 
 		if(reference == null) {
@@ -44,7 +53,7 @@ public final class ReferenceFactory {
 		Reference reference = null;
 
 		if(usePool) {
-			reference = ReferenceType.DOUBLE.take();
+			reference = DOUBLE.take();
 		}
 
 		if(reference == null) {
@@ -60,7 +69,7 @@ public final class ReferenceFactory {
 		Reference reference = null;
 
 		if(usePool) {
-			reference = ReferenceType.FLOAT.take();
+			reference = FLOAT.take();
 		}
 
 		if(reference == null) {
@@ -76,7 +85,7 @@ public final class ReferenceFactory {
 		Reference reference = null;
 
 		if(usePool) {
-			reference = ReferenceType.INTEGER.take();
+			reference = INTEGER.take();
 		}
 
 		if(reference == null) {
@@ -92,7 +101,7 @@ public final class ReferenceFactory {
 		Reference reference = null;
 
 		if(usePool) {
-			reference = ReferenceType.LONG.take();
+			reference = LONG.take();
 		}
 
 		if(reference == null) {
@@ -108,7 +117,7 @@ public final class ReferenceFactory {
 		Reference reference = null;
 
 		if(usePool) {
-			reference = ReferenceType.OBJECT.take();
+			reference = OBJECT.take();
 		}
 
 		if(reference == null) {
@@ -124,7 +133,7 @@ public final class ReferenceFactory {
 		Reference reference = null;
 
 		if(usePool) {
-			reference = ReferenceType.SHORT.take();
+			reference = SHORT.take();
 		}
 
 		if(reference == null) {

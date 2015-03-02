@@ -10,41 +10,6 @@ import rlib.util.ExtMath;
  */
 public final class Vector implements GamePoint {
 
-	/**
-	 * Проверка на валидность вектора.
-	 * 
-	 * @param vector проверяемый вектор.
-	 * @return валиден ли вектор.
-	 */
-	public static boolean isValidVector(final Vector vector) {
-
-		if(vector == null) {
-			return false;
-		}
-
-		if(Float.isNaN(vector.getX()) || Float.isNaN(vector.getY()) || Float.isNaN(vector.getZ())) {
-			return false;
-		}
-
-		if(Float.isInfinite(vector.getX()) || Float.isInfinite(vector.getY()) || Float.isInfinite(vector.getZ())) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public static Vector newInstance() {
-		return new Vector();
-	}
-
-	public static Vector newInstance(final float x, final float y, final float z) {
-		return new Vector(x, y, z);
-	}
-
-	public static Vector newInstance(final float[] vals) {
-		return new Vector(vals[0], vals[1], vals[2]);
-	}
-
 	/** нулнвой вектор */
 	public final static Vector ZERO = new Vector(0, 0, 0);
 
@@ -63,8 +28,38 @@ public final class Vector implements GamePoint {
 	public final static Vector UNIT_XYZ = new Vector(1, 1, 1);
 
 	public final static Vector POSITIVE_INFINITY = new Vector(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-
 	public final static Vector NEGATIVE_INFINITY = new Vector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+
+	/**
+	 * Проверка на валидность вектора.
+	 * 
+	 * @param vector проверяемый вектор.
+	 * @return валиден ли вектор.
+	 */
+	public static boolean isValidVector(final Vector vector) {
+
+		if(vector == null) {
+			return false;
+		} else if(Float.isNaN(vector.getX()) || Float.isNaN(vector.getY()) || Float.isNaN(vector.getZ())) {
+			return false;
+		} else if(Float.isInfinite(vector.getX()) || Float.isInfinite(vector.getY()) || Float.isInfinite(vector.getZ())) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static Vector newInstance() {
+		return new Vector();
+	}
+
+	public static Vector newInstance(final float x, final float y, final float z) {
+		return new Vector(x, y, z);
+	}
+
+	public static Vector newInstance(final float[] vals) {
+		return new Vector(vals[0], vals[1], vals[2]);
+	}
 
 	/** координаты */
 	protected float x;

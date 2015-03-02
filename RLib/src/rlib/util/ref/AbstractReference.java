@@ -1,5 +1,6 @@
 package rlib.util.ref;
 
+
 /**
  * Базовая реализация ссылки..
  * 
@@ -12,7 +13,8 @@ public abstract class AbstractReference implements Reference {
 	}
 
 	@Override
-	public final void fold() {
-		getReferenceType().put(this);
+	public void release() {
+		final ReferenceType referenceType = getReferenceType();
+		referenceType.put(this);
 	}
 }

@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.INTEGER;
+
 /**
  * Ссылка на тип данных int.
  * 
@@ -17,7 +19,7 @@ final class IntegerReference extends AbstractReference {
 
 	@Override
 	public ReferenceType getReferenceType() {
-		return ReferenceType.INTEGER;
+		return INTEGER;
 	}
 
 	@Override
@@ -27,6 +29,6 @@ final class IntegerReference extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return "IntegerReference [value=" + value + "]";
+		return getClass().getSimpleName() + " [value=" + value + "]";
 	}
 }

@@ -18,6 +18,8 @@ import rlib.util.array.ArrayFactory;
  */
 public final class ObjectUtils {
 
+	private static final Logger LOGGER = LoggerManager.getLogger(ObjectUtils.class);
+
 	/**
 	 * Клонирует объект, крайне медленная функция.
 	 * 
@@ -37,6 +39,7 @@ public final class ObjectUtils {
 
 				final Method method = original.getClass().getMethod("clone");
 				method.setAccessible(true);
+
 				return (T) method.invoke(original);
 
 			} catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -183,6 +186,4 @@ public final class ObjectUtils {
 			}
 		}
 	}
-
-	private static final Logger LOGGER = LoggerManager.getLogger(ObjectUtils.class);
 }

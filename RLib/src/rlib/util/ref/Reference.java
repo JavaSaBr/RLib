@@ -10,12 +10,6 @@ import rlib.util.pools.Foldable;
 public interface Reference extends Foldable {
 
 	/**
-	 * Сложить в пул ссылку.
-	 */
-	public default void fold() {
-	}
-
-	/**
 	 * @return байт, на который ссылается ссылка.
 	 */
 	public default byte getByte() {

@@ -51,6 +51,6 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
 
 	@Override
 	public String toString() {
-		return "DefaultServerNetwork [group=" + group + ", channel=" + channel + ", acceptHandler=" + acceptHandler + ", config=" + config + "]";
+		return getClass().getSimpleName() + " [group=" + group + ", channel=" + channel + ", acceptHandler=" + acceptHandler + ", config=" + config + "]";
 	}
 }

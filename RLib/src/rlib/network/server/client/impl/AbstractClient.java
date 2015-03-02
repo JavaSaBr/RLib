@@ -20,17 +20,17 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 
 	protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
 
-	/** владелец коннекта */
-	protected O owner;
-	/** аккаунт клиента */
-	protected A account;
 	/** коннект клиента к серверу */
-	protected C connection;
+	protected volatile C connection;
+	/** владелец коннекта */
+	protected volatile O owner;
+	/** аккаунт клиента */
+	protected volatile A account;
 	/** криптор клиента */
-	protected T crypt;
+	protected volatile T crypt;
 
 	/** закрыт ли клиент */
-	protected boolean closed;
+	protected volatile boolean closed;
 
 	public AbstractClient(final C connection, final T crypt) {
 		this.connection = connection;
@@ -171,6 +171,6 @@ public abstract class AbstractClient<A, O, C extends AsynConnection, T extends G
 
 	@Override
 	public String toString() {
-		return "AbstractClient [owner=" + owner + ", account=" + account + ", connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
+		return getClass().getSimpleName() + " [owner=" + owner + ", account=" + account + ", connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
 	}
 }

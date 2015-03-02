@@ -10,15 +10,18 @@ public interface Loadable {
 	/**
 	 * Загруть данные.
 	 */
-	public void load();
+	public default void load() {
+	}
 
 	/**
 	 * Перезагрузить данные.
 	 */
-	public void reload();
+	public default void reload() {
+	}
 
 	/**
 	 * Выгрузить даные.
 	 */
-	public void unload();
+	public default void unload() {
+	}
 }

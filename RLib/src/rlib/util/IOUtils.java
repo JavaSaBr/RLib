@@ -13,6 +13,8 @@ import rlib.logging.LoggerManager;
  */
 public final class IOUtils {
 
+	private static final Logger LOGGER = LoggerManager.getLogger(IOUtils.class);
+
 	public static final void close(final Closeable stream) {
 		try {
 			stream.close();
@@ -20,8 +22,6 @@ public final class IOUtils {
 			LOGGER.warning(e);
 		}
 	}
-
-	private static final Logger LOGGER = LoggerManager.getLogger(IOUtils.class);
 
 	private IOUtils() {
 		throw new RuntimeException();

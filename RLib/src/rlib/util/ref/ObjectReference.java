@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.OBJECT;
+
 /**
  * Ссылка на тип данных Object.
  * 
@@ -17,7 +19,7 @@ final class ObjectReference extends AbstractReference {
 
 	@Override
 	public ReferenceType getReferenceType() {
-		return ReferenceType.OBJECT;
+		return OBJECT;
 	}
 
 	@Override
@@ -27,6 +29,6 @@ final class ObjectReference extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return "ObjectReference [object=" + object + "]";
+		return getClass().getSimpleName() + " [object=" + object + "]";
 	}
 }

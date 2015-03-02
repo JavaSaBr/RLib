@@ -108,6 +108,6 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 
 	@Override
 	public String toString() {
-		return "AbstractAsynchronousNetwork [config=" + config + "]";
+		return getClass().getSimpleName() + " [config=" + config + "]";
 	}
 }

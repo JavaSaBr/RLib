@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.FLOAT;
+
 /**
  * Ссылка на тип данных float.
  * 
@@ -17,7 +19,7 @@ final class FloatReference extends AbstractReference {
 
 	@Override
 	public ReferenceType getReferenceType() {
-		return ReferenceType.FLOAT;
+		return FLOAT;
 	}
 
 	@Override
@@ -27,6 +29,6 @@ final class FloatReference extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return "FloatReference [value=" + value + "]";
+		return getClass().getSimpleName() + " [value=" + value + "]";
 	}
 }

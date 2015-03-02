@@ -52,14 +52,14 @@ public interface NetworkConfig {
 	/**
 	 * @return отображать ли ошибки при чтении из сети.
 	 */
-	public default boolean isVesibleReadException() {
+	public default boolean isVisibleReadException() {
 		return false;
 	}
 
 	/**
 	 * @return отображать ли ошибки при записи в сеть.
 	 */
-	public default boolean isVesibleWriteException() {
+	public default boolean isVisibleWriteException() {
 		return false;
 	}
 }

@@ -8,6 +8,7 @@ import java.security.SecureRandom;
  * 
  * @author Ronn
  */
+@Deprecated
 public final class RealRandom implements Random {
 
 	/** генератор чисел */

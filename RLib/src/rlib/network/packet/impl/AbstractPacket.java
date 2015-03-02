@@ -41,6 +41,6 @@ public abstract class AbstractPacket<C> implements Packet<C> {
 
 	@Override
 	public String toString() {
-		return "AbstractPacket [owner=" + owner + ", name=" + name + "]";
+		return getClass().getSimpleName() + " [owner=" + owner + ", name=" + name + "]";
 	}
 }

@@ -1,8 +1,5 @@
 package rlib.util.pools.impl;
 
-import java.util.concurrent.locks.Lock;
-
-import rlib.concurrent.lock.LockFactory;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Foldable;
@@ -16,19 +13,23 @@ import rlib.util.pools.FoldablePool;
  */
 public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 
-	/** пул объектов */
+	/** контейнер объектов */
 	private final Array<E> pool;
-	/** блокировщик */
-	private final Lock lock;
 
 	public AtomicFoldablePool(final Class<?> type) {
-		this.pool = ArrayFactory.newArray(type);
-		this.lock = LockFactory.newPrimitiveAtomicLock();
+		this.pool = ArrayFactory.newConcurrentAtomicArray(type);
 	}
 
 	@Override
 	public boolean isEmpty() {
 		return pool.isEmpty();
+	}
+
+	/**
+	 * @return контейнер объектов.
+	 */
+	private Array<E> getPool() {
+		return pool;
 	}
 
 	@Override
@@ -40,34 +41,43 @@ public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 
 		object.finalyze();
 
-		lock.lock();
+		final Array<E> pool = getPool();
+		pool.writeLock();
 		try {
 			pool.add(object);
 		} finally {
-			lock.unlock();
+			pool.writeUnlock();
 		}
 	}
 
 	@Override
 	public void remove(final E object) {
-		lock.lock();
+
+		final Array<E> pool = getPool();
+		pool.writeLock();
 		try {
 			pool.fastRemove(object);
 		} finally {
-			lock.unlock();
+			pool.writeUnlock();
 		}
 	}
 
 	@Override
 	public E take() {
 
+		final Array<E> pool = getPool();
+
+		if(pool.isEmpty()) {
+			return null;
+		}
+
 		E object = null;
 
-		lock.lock();
+		pool.writeLock();
 		try {
 			object = pool.pop();
 		} finally {
-			lock.unlock();
+			pool.writeUnlock();
 		}
 
 		if(object == null) {

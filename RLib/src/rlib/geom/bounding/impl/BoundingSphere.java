@@ -121,6 +121,6 @@ public final class BoundingSphere extends AbstractBounding {
 
 	@Override
 	public String toString() {
-		return "BoundingSphere [radius=" + radius + ", squareRadius=" + squareRadius + "]";
+		return getClass().getSimpleName() + " [radius=" + radius + ", squareRadius=" + squareRadius + "]";
 	}
 }

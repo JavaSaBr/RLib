@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.DOUBLE;
+
 /**
  * Ссылка на тип данных double.
  * 
@@ -17,7 +19,7 @@ final class DoubleReference extends AbstractReference {
 
 	@Override
 	public ReferenceType getReferenceType() {
-		return ReferenceType.DOUBLE;
+		return DOUBLE;
 	}
 
 	@Override
@@ -27,6 +29,6 @@ final class DoubleReference extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return "DoubleReference [value=" + value + "]";
+		return getClass().getSimpleName() + " [value=" + value + "]";
 	}
 }

@@ -60,6 +60,7 @@ public class SynchronizedFoldablePool<E extends Foldable> implements FoldablePoo
 		}
 
 		object.reinit();
+
 		return object;
 	}
 

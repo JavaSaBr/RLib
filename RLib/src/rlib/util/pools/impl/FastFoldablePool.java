@@ -32,6 +32,7 @@ public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 		}
 
 		object.finalyze();
+
 		pool.add(object);
 	}
 

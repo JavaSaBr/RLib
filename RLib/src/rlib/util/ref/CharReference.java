@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.CHAR;
+
 /**
  * Ссылка на тип данных char.
  * 
@@ -17,7 +19,7 @@ final class CharReference extends AbstractReference {
 
 	@Override
 	public ReferenceType getReferenceType() {
-		return ReferenceType.CHAR;
+		return CHAR;
 	}
 
 	@Override
@@ -27,6 +29,6 @@ final class CharReference extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return "CharReference [value=" + value + "]";
+		return getClass().getSimpleName() + " [value=" + value + "]";
 	}
 }

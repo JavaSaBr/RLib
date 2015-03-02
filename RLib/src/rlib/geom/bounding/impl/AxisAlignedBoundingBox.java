@@ -190,7 +190,7 @@ public final class AxisAlignedBoundingBox extends AbstractBounding {
 
 	@Override
 	public String toString() {
-		return "BoundingBox size = " + size + ", sizeX = " + sizeX + ", sizeY = " + sizeY + ", sizeZ = " + sizeZ + ", center = " + center + ", offset = " + offset;
+		return getClass().getSimpleName() + " size = " + size + ", sizeX = " + sizeX + ", sizeY = " + sizeY + ", sizeZ = " + sizeZ + ", center = " + center + ", offset = " + offset;
 	}
 
 	@Override

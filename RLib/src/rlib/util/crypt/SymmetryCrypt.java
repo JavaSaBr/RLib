@@ -12,19 +12,19 @@ import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 
 /**
- * Модель симметричного криптора.
+ * Модель симметричного криптора с использованием RC4 алгоритма.
  * 
  * @author Ronn
  */
 public class SymmetryCrypt {
 
 	/** криптовщик */
-	private Cipher ecipher;
+	private volatile Cipher ecipher;
 	/** декриптовщик */
-	private Cipher dcipher;
+	private volatile Cipher dcipher;
 
 	/** ключ шифрования */
-	private SecretKey secretKey;
+	private volatile SecretKey secretKey;
 
 	/**
 	 * @param key 8 символов.

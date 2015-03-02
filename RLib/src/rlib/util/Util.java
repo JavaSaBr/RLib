@@ -22,6 +22,24 @@ import rlib.logging.LoggerManager;
  */
 public final class Util {
 
+	private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
+
+	private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("HH:mm:ss:SSS");
+		}
+	};
+
+	private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
+
+		@Override
+		protected Date initialValue() {
+			return new Date();
+		}
+	};
+
 	/**
 	 * Добавение параметров, указывающих что бы соединение к БД работало с UTF-8
 	 * кодировкой.
@@ -373,24 +391,6 @@ public final class Util {
 
 		return builder.toString();
 	}
-
-	private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
-
-	private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-
-		@Override
-		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("HH:mm:ss:SSS");
-		}
-	};
-
-	private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
-
-		@Override
-		protected Date initialValue() {
-			return new Date();
-		}
-	};
 
 	private Util() {
 		throw new RuntimeException();

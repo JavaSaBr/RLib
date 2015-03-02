@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.BYTE;
+
 /**
  * Ссылка на тип данных byte.
  * 
@@ -17,7 +19,7 @@ final class ByteReference extends AbstractReference {
 
 	@Override
 	public ReferenceType getReferenceType() {
-		return ReferenceType.BYTE;
+		return BYTE;
 	}
 
 	@Override
@@ -27,6 +29,6 @@ final class ByteReference extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return "ByteReference [value=" + value + "]";
+		return getClass().getSimpleName() + " [value=" + value + "]";
 	}
 }

@@ -26,7 +26,7 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 	protected final T crypt;
 
 	/** закрыт ли клиент */
-	protected boolean closed;
+	protected volatile boolean closed;
 
 	protected AbstractServer(final C connection, final T crypt) {
 		this.connection = connection;
@@ -115,6 +115,6 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
 	@Override
 	public String toString() {
-		return "AbstractServer [connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
+		return getClass().getSimpleName() + " [connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
 	}
 }

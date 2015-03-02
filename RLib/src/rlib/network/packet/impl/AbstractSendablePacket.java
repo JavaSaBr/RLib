@@ -13,11 +13,6 @@ import rlib.util.Util;
 public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implements SendablePacket<C> {
 
 	@Override
-	public String toString() {
-		return "AbstractSendablePacket [owner=" + owner + ", name=" + name + "]";
-	}
-
-	@Override
 	public void write(final ByteBuffer buffer) {
 		try {
 			writeImpl(buffer);

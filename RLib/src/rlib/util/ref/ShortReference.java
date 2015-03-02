@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.SHORT;
+
 /**
  * Ссылка на тип данных short.
  * 
@@ -12,7 +14,7 @@ final class ShortReference extends AbstractReference {
 
 	@Override
 	public ReferenceType getReferenceType() {
-		return ReferenceType.SHORT;
+		return SHORT;
 	}
 
 	@Override
@@ -27,6 +29,6 @@ final class ShortReference extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return "ShortReference [value=" + value + "]";
+		return getClass().getSimpleName() + " [value=" + value + "]";
 	}
 }

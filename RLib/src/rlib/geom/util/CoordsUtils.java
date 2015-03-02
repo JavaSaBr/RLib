@@ -12,6 +12,8 @@ import rlib.util.Rnd;
  */
 public final class CoordsUtils {
 
+	private static final Logger LOGGER = LoggerManager.getLogger(CoordsUtils.class);
+
 	/**
 	 * Генерация дуговых позиций.
 	 * 
@@ -251,6 +253,4 @@ public final class CoordsUtils {
 
 		return loc;
 	}
-
-	private static final Logger LOGGER = LoggerManager.getLogger(CoordsUtils.class);
 }

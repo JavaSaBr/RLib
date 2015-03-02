@@ -63,7 +63,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 		@Override
 		public void failed(final Throwable exc, final AbstractAsynConnection attachment) {
 
-			if(config.isVesibleReadException()) {
+			if(config.isVisibleReadException()) {
 				LOGGER.warning(this, exc);
 			}
 
@@ -106,7 +106,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 		@Override
 		public void failed(final Throwable exc, final S packet) {
 
-			if(config.isVesibleWriteException()) {
+			if(config.isVisibleWriteException()) {
 				LOGGER.warning(this, new Exception("incorrect write packet " + packet, exc));
 			}
 
@@ -146,7 +146,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	protected final Lock lock;
 
 	/** время последней активности конекта */
-	protected long lastActive;
+	protected volatile long lastActive;
 
 	public AbstractAsynConnection(final N network, final AsynchronousSocketChannel channel, final Class<S> sendableType) {
 		this.lock = LockFactory.newLock();
@@ -163,32 +163,29 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	@Override
 	public void close() {
 
-		boolean finished = true;
+		if(isClosed()) {
+			return;
+		}
 
 		lock();
 		try {
 
-			if(!isClosed()) {
+			if(isClosed()) {
+				return;
+			}
 
-				setClosed(true);
+			setClosed(true);
 
-				finished = false;
+			final AsynchronousSocketChannel channel = getChannel();
 
-				final AsynchronousSocketChannel channel = getChannel();
-
-				if(channel.isOpen()) {
-					channel.close();
-				}
+			if(channel.isOpen()) {
+				channel.close();
 			}
 
 		} catch(final IOException e) {
 			LOGGER.warning(this, e);
 		} finally {
 			unlock();
-		}
-
-		if(finished) {
-			return;
 		}
 
 		clearPackets(getWaitPackets());
@@ -324,6 +321,10 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	@Override
 	public final void sendPacket(final S packet) {
 
+		if(isClosed()) {
+			return;
+		}
+
 		lock();
 		try {
 
@@ -331,7 +332,8 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 				return;
 			}
 
-			getWaitPackets().add(packet);
+			final LinkedList<S> waitPackets = getWaitPackets();
+			waitPackets.add(packet);
 
 		} finally {
 			unlock();
@@ -360,7 +362,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 
 	@Override
 	public String toString() {
-		return "AbstractAsynConnection [network=" + network + ", channel=" + channel + ", closed=" + closed + ", lastActive=" + lastActive + "]";
+		return getClass().getSimpleName() + " [network=" + network + ", channel=" + channel + ", closed=" + closed + ", lastActive=" + lastActive + "]";
 	}
 
 	@Override
@@ -373,8 +375,11 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 	 */
 	protected final void writeNextPacket() {
 
+		if(isClosed()) {
+			return;
+		}
+
 		final CompletionHandler<Integer, S> writeHandler = getWriteHandler();
-		final LinkedList<S> waitPackets = getWaitPackets();
 		final AtomicInteger writeCounter = getWriteCounter();
 
 		lock();
@@ -384,6 +389,7 @@ public abstract class AbstractAsynConnection<N extends AsynchronousNetwork, R, S
 				return;
 			}
 
+			final LinkedList<S> waitPackets = getWaitPackets();
 			final S waitPacket = waitPackets.poll();
 
 			if(waitPacket == null) {

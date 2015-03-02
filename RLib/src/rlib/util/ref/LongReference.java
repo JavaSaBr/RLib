@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.LONG;
+
 /**
  * Ссылка на тип данных long.
  * 
@@ -17,7 +19,7 @@ final class LongReference extends AbstractReference {
 
 	@Override
 	public ReferenceType getReferenceType() {
-		return ReferenceType.LONG;
+		return LONG;
 	}
 
 	@Override
@@ -27,6 +29,6 @@ final class LongReference extends AbstractReference {
 
 	@Override
 	public String toString() {
-		return "LongReference [value=" + value + "]";
+		return getClass().getSimpleName() + " [value=" + value + "]";
 	}
 }
