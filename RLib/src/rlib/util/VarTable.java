@@ -7,8 +7,9 @@ import org.w3c.dom.Node;
 
 import rlib.geom.Rotation;
 import rlib.geom.Vector;
-import rlib.util.table.Table;
-import rlib.util.table.TableFactory;
+import rlib.util.dictionary.Dictionary;
+import rlib.util.dictionary.DictionaryFactory;
+import rlib.util.dictionary.ObjectDictionary;
 
 /**
  * Реализация таблицы разнородных параметров.
@@ -38,10 +39,10 @@ public class VarTable {
 	}
 
 	/** таблица параметров */
-	private final Table<String, Object> values;
+	private final ObjectDictionary<String, Object> values;
 
 	public VarTable() {
-		this.values = TableFactory.newObjectTable();
+		this.values = DictionaryFactory.newObjectDictionary();
 	}
 
 	/**
@@ -1274,7 +1275,7 @@ public class VarTable {
 	/**
 	 * @return все пропаршенные параметры.
 	 */
-	public Table<String, Object> getValues() {
+	public Dictionary<String, Object> getValues() {
 		return values;
 	}
 

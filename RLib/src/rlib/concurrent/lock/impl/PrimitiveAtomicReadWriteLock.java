@@ -102,6 +102,10 @@ public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock,
 
 		newValue = currentCounter >>> 1;
 		newValue = currentCounter & newValue;
+		newValue = currentCounter >>> 1;
+		newValue = currentCounter & newValue;
+		newValue = currentCounter >>> 1;
+		newValue = currentCounter & newValue;
 
 		setCounter(newValue);
 		setCounter(currentCounter);
@@ -182,6 +186,7 @@ public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock,
 
 		// проверем отсутствия желающих записать потоков
 		final AtomicInteger writeCount = getWriteCount();
+
 		if(writeCount.get() != 0) {
 			return false;
 		}

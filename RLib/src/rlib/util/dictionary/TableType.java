@@ -1,4 +1,4 @@
-package rlib.util.table;
+package rlib.util.dictionary;
 
 /**
  * Перечисление типов таблиц по возможным ключам.

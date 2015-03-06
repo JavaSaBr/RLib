@@ -1,11 +1,20 @@
-package rlib.util.table;
+package rlib.util.dictionary;
 
 /**
- * Базовая модель таблицы.
+ * Базовая реализация слваря.
  * 
  * @author Ronn
  */
-public abstract class AbstractTable<K, V> implements Table<K, V> {
+public abstract class AbstractDictionary<K, V> implements Dictionary<K, V> {
+
+	/** размер таблицы по умолчанию */
+	protected static final int DEFAULT_INITIAL_CAPACITY = 16;
+
+	/** максимальный размер таблицы */
+	protected static final int DEFAULT_MAXIMUM_CAPACITY = 1 << 30;
+
+	/** фактор загружености таблицы, для определения момента ее расширения */
+	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
 	/**
 	 * Детализированный рассчет хэша.
@@ -41,12 +50,7 @@ public abstract class AbstractTable<K, V> implements Table<K, V> {
 		return hash & length - 1;
 	}
 
-	/** размер таблицы по умолчанию */
-	protected static final int DEFAULT_INITIAL_CAPACITY = 16;
+	protected abstract int incrementSizeAndGet();
 
-	/** максимальный размер таблицы */
-	protected static final int DEFAULT_MAXIMUM_CAPACITY = 1 << 30;
-
-	/** фактор загружености таблицы, для определения момента ее расширения */
-	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
+	protected abstract int decrementSizeAndGet();
 }

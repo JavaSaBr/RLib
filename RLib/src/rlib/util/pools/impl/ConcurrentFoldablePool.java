@@ -65,9 +65,14 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 	@Override
 	public E take() {
 
+		final Array<E> pool = getPool();
+
+		if(pool.isEmpty()) {
+			return null;
+		}
+
 		E object = null;
 
-		final Array<E> pool = getPool();
 		pool.writeLock();
 		try {
 			object = pool.pop();
@@ -80,6 +85,7 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
 		}
 
 		object.reinit();
+
 		return object;
 	}
 }

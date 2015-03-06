@@ -11,8 +11,8 @@ import rlib.logging.impl.LoggerImpl;
 import rlib.util.ClassUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-import rlib.util.table.Table;
-import rlib.util.table.TableFactory;
+import rlib.util.dictionary.DictionaryFactory;
+import rlib.util.dictionary.ObjectDictionary;
 
 /**
  * Менеджер логгирования, служит для получения, конфигурирования и записывания
@@ -26,11 +26,9 @@ public class LoggerManager {
 	private static final Logger LOGGER = getLogger(LoggerManager.class);
 
 	/** таблица всех логгерров */
-	private static final Table<String, Logger> LOGGERS = TableFactory.newObjectTable();
-
+	private static final ObjectDictionary<String, Logger> LOGGERS = DictionaryFactory.newObjectDictionary();
 	/** список слушателей логирования */
 	private static final Array<LoggerListener> LISTENERS = ArrayFactory.newArray(LoggerListener.class);
-
 	/** список записчиков лога */
 	private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
 

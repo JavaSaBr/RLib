@@ -14,8 +14,8 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-import rlib.util.table.Table;
-import rlib.util.table.TableFactory;
+import rlib.util.dictionary.DictionaryFactory;
+import rlib.util.dictionary.ObjectDictionary;
 
 /**
  * Класс для работы с файлами.
@@ -28,9 +28,9 @@ public class FileUtils {
 	private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
 
 	/** кэш текста файлов */
-	private static final Table<String, String> cache = TableFactory.newObjectTable();
+	private static final ObjectDictionary<String, String> cache = DictionaryFactory.newObjectDictionary();
 	/** кэш файлов */
-	private static final Table<String, File> cacheFiles = TableFactory.newObjectTable();
+	private static final ObjectDictionary<String, File> cacheFiles = DictionaryFactory.newObjectDictionary();
 
 	public static final String getNameWithoutExtension(String path) {
 

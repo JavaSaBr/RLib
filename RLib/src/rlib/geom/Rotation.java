@@ -91,13 +91,9 @@ public class Rotation {
 
 		if(this == obj) {
 			return true;
-		}
-
-		if(obj == null) {
+		} else if(obj == null) {
 			return false;
-		}
-
-		if(getClass() != obj.getClass()) {
+		} else if(getClass() != obj.getClass()) {
 			return false;
 		}
 
@@ -105,14 +101,11 @@ public class Rotation {
 
 		if(Float.floatToIntBits(w) != Float.floatToIntBits(other.w)) {
 			return false;
-		}
-		if(Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
+		} else if(Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
 			return false;
-		}
-		if(Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
+		} else if(Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
 			return false;
-		}
-		if(Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
+		} else if(Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
 			return false;
 		}
 

@@ -1,35 +1,35 @@
-package rlib.util.table;
+package rlib.util.dictionary;
 
 import java.util.Objects;
 
 import rlib.util.pools.Foldable;
 
 /**
- * Реализация элемента для конкурентных таблиц.
+ * Реализация ячейки для словарей с ключем примитива int.
  * 
  * @author Ronn
  */
-public class ConcurrentIntegerTableEntry<V> implements Foldable {
+public class IntegerDictionaryEntry<V> implements Foldable {
 
 	/** следующая ячейка */
-	private volatile ConcurrentIntegerTableEntry<V> next;
+	private IntegerDictionaryEntry<V> next;
 
 	/** значение */
-	private volatile V value;
+	private V value;
 
 	/** хэш ключа */
-	private volatile int hash;
+	private int hash;
 	/** ключ */
-	private volatile int key;
+	private int key;
 
 	@Override
 	public boolean equals(final Object object) {
 
-		if(object == null || object.getClass() != ConcurrentIntegerTableEntry.class) {
+		if(object == null || object.getClass() != IntegerDictionaryEntry.class) {
 			return false;
 		}
 
-		final ConcurrentIntegerTableEntry<?> entry = (ConcurrentIntegerTableEntry<?>) object;
+		final IntegerDictionaryEntry<?> entry = (IntegerDictionaryEntry<?>) object;
 
 		final int firstKey = getKey();
 		final int secondKey = entry.getKey();
@@ -70,7 +70,7 @@ public class ConcurrentIntegerTableEntry<V> implements Foldable {
 	/**
 	 * @return следующая ячейка.
 	 */
-	public ConcurrentIntegerTableEntry<V> getNext() {
+	public IntegerDictionaryEntry<V> getNext() {
 		return next;
 	}
 
@@ -91,7 +91,7 @@ public class ConcurrentIntegerTableEntry<V> implements Foldable {
 		hash = 0;
 	}
 
-	public void set(final int hash, final int key, final V value, final ConcurrentIntegerTableEntry<V> next) {
+	public void set(final int hash, final int key, final V value, final IntegerDictionaryEntry<V> next) {
 		this.value = value;
 		this.next = next;
 		this.key = key;
@@ -99,9 +99,9 @@ public class ConcurrentIntegerTableEntry<V> implements Foldable {
 	}
 
 	/**
-	 * @param next следующая цепочка.
+	 * @param next следующая ячейка.
 	 */
-	public void setNext(final ConcurrentIntegerTableEntry<V> next) {
+	public void setNext(final IntegerDictionaryEntry<V> next) {
 		this.next = next;
 	}
 

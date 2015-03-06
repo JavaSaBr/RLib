@@ -49,6 +49,7 @@ public final class PrimitiveAtomicLock implements Lock {
 	public void lock() {
 
 		final AtomicInteger status = getStatus();
+
 		while(!status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED)) {
 
 			// выполняем пачку элементарных бессмысленных операций для

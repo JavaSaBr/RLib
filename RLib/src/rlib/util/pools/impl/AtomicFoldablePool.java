@@ -85,6 +85,7 @@ public class AtomicFoldablePool<E extends Foldable> implements FoldablePool<E> {
 		}
 
 		object.reinit();
+
 		return object;
 	}
 

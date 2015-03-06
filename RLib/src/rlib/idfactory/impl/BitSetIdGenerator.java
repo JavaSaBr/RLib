@@ -17,9 +17,8 @@ import rlib.util.ArrayUtils;
 import rlib.util.SafeTask;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.IntegerArray;
-import rlib.util.table.IntKey;
-import rlib.util.table.Table;
-import rlib.util.table.TableFactory;
+import rlib.util.dictionary.DictionaryFactory;
+import rlib.util.dictionary.IntegerDictionary;
 
 /**
  * Модель фабрики ид основаной на BitSet
@@ -110,7 +109,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 
 			if(tables != null) {
 
-				final Table<IntKey, String> useIds = TableFactory.newIntegerTable();
+				final IntegerDictionary<String> useIds = DictionaryFactory.newIntegerDictionary();
 
 				final IntegerArray clearIds = ArrayFactory.newIntegerArray();
 				final IntegerArray extractedIds = ArrayFactory.newIntegerArray();

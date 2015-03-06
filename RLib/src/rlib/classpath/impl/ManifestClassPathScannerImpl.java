@@ -14,7 +14,7 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Реализация сканера, который еще умеет из манифеста класспаз доставать.
+ * Реализация сканера, который еще умеет из манифеста classpath доставать.
  * 
  * @author Ronn
  */
@@ -41,7 +41,8 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 
 		final Array<String> result = ArrayFactory.newArray(String.class);
 
-		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		final Thread currentThread = Thread.currentThread();
+		final ClassLoader loader = currentThread.getContextClassLoader();
 
 		Enumeration<URL> urls;
 
@@ -84,11 +85,13 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 					LOGGER.warning(e);
 				}
 			}
+
 		} catch(final IOException e1) {
 			LOGGER.warning(e1);
 		}
 
 		result.trimToSize();
+
 		return result.array();
 	}
 

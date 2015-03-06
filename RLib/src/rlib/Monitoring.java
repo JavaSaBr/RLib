@@ -16,6 +16,25 @@ import java.util.Date;
  */
 public abstract class Monitoring {
 
+	/** менеджер распределения памяти */
+	private static MemoryMXBean memoryMXBean;
+	/** менеджер ОС на которой запущена программа */
+	private static OperatingSystemMXBean operatingSystemMXBean;
+	/** менеджер запущенного процесса */
+	private static RuntimeMXBean runtimeMxBean;
+	/** менеджер потоков */
+	private static ThreadMXBean threadMXBean;
+
+	/**
+	 * Иницилазиация.
+	 */
+	public static final void init() {
+		memoryMXBean = ManagementFactory.getMemoryMXBean();
+		operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+		runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+		threadMXBean = ManagementFactory.getThreadMXBean();
+	}
+
 	/**
 	 * @return кол-во демон потоков.
 	 */
@@ -107,25 +126,4 @@ public abstract class Monitoring {
 		return runtimeMxBean.getVmName();
 	}
 
-	/**
-	 * Иницилазиация.
-	 */
-	public static final void init() {
-		memoryMXBean = ManagementFactory.getMemoryMXBean();
-		operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-		runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-		threadMXBean = ManagementFactory.getThreadMXBean();
-	}
-
-	/** менеджер распределения памяти */
-	private static MemoryMXBean memoryMXBean;
-
-	/** менеджер ОС на которой запущена программа */
-	private static OperatingSystemMXBean operatingSystemMXBean;
-
-	/** менеджер запущенного процесса */
-	private static RuntimeMXBean runtimeMxBean;
-
-	/** менеджер потоков */
-	private static ThreadMXBean threadMXBean;
 }

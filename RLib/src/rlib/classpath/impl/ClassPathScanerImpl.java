@@ -86,6 +86,9 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 		container.addAll(getClasses());
 	}
 
+	/**
+	 * @return найденные классы.
+	 */
 	private Class<?>[] getClasses() {
 		return classes;
 	}
@@ -97,6 +100,9 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 		return loader;
 	}
 
+	/**
+	 * @return список путей к классам.
+	 */
 	protected String[] getPaths() {
 		return CLASS_PATH.split(PATH_SEPARATOR);
 	}
@@ -133,6 +139,7 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 			}
 
 			className = result.toString();
+
 		} catch(final Exception e) {
 			LOGGER.info("incorrect replace " + name + " to java path, separator " + File.separator);
 			return;
@@ -140,10 +147,7 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 
 		try {
 			container.add(getLoader().loadClass(className));
-		} catch(final NoClassDefFoundError ex) {
-		} catch(final VerifyError error) {
-		} catch(final ClassNotFoundException e) {
-
+		} catch(final Exception e) {
 			LOGGER.warning(e);
 		}
 	}
@@ -179,6 +183,7 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 						}
 
 						loadClass(path, container);
+
 					} catch(final Exception e) {
 						LOGGER.info("incorrect replace " + file.getAbsolutePath() + " from root " + rootPath);
 					}
@@ -249,6 +254,7 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 		}
 
 		classes = container.toArray(new Class[container.size()]);
+
 		LOGGER.info("scanned for " + classes.length + " classes.");
 	}
 }
