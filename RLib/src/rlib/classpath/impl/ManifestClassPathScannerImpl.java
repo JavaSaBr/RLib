@@ -1,9 +1,10 @@
 package rlib.classpath.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -33,9 +34,9 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 
 	public String[] getManifestClassPath() {
 
-		final File rootFolder = Util.getRootFolderFromClass(rootClass);
+		final Path root = Util.getRootFolderFromClass(rootClass);
 
-		if(rootFolder == null) {
+		if(root == null) {
 			return new String[0];
 		}
 
@@ -73,10 +74,10 @@ public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
 
 						for(final String path : classpath) {
 
-							final File file = new File(rootFolder.getAbsolutePath() + File.separator + path);
+							final Path file = root.resolve(path);
 
-							if(file.exists()) {
-								result.add(file.getAbsolutePath());
+							if(Files.exists(file)) {
+								result.add(file.toString());
 							}
 						}
 					}

@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 
 import rlib.logging.Logger;
@@ -32,7 +35,7 @@ public class FileUtils {
 	/** кэш файлов */
 	private static final ObjectDictionary<String, File> cacheFiles = DictionaryFactory.newObjectDictionary();
 
-	public static final String getNameWithoutExtension(String path) {
+	public static final String getNameWithoutExtension(final String path) {
 
 		if(StringUtils.isEmpty(path)) {
 			return path;
@@ -47,7 +50,7 @@ public class FileUtils {
 		return path.substring(0, index);
 	}
 
-	public static final String getExtension(String path) {
+	public static final String getExtension(final String path) {
 
 		if(StringUtils.isEmpty(path)) {
 			return path;
@@ -78,6 +81,17 @@ public class FileUtils {
 	 */
 	public static boolean containsFormat(final String[] formats, final File file) {
 		return containsFormat(formats, file.getName());
+	}
+
+	/**
+	 * Определят, подходит ли по формату фаил.
+	 * 
+	 * @param formats набор форматов.
+	 * @param file проверяемый фаил.
+	 * @return подходит ли.
+	 */
+	public static boolean containsFormat(final String[] formats, final Path path) {
+		return containsFormat(formats, path.toString());
 	}
 
 	/**
@@ -189,6 +203,50 @@ public class FileUtils {
 		array.trimToSize();
 
 		return array.array();
+	}
+
+	/**
+	 * Рекурсивное получение всех файлов в папке с учетом расширения.
+	 * 
+	 * @param dir папка.
+	 * @param extensions набор нужных расширений.
+	 * @return список всех найденных файлов.
+	 */
+	public static Array<Path> getFiles(final Path dir, final String... extensions) {
+		final Array<Path> result = ArrayFactory.newArray(Path.class);
+		addFilesTo(dir, result, extensions);
+		result.trimToSize();
+		return result;
+	}
+
+	/**
+	 * Рекурсивное получение всех файлов в папке с учетом расширения.
+	 * 
+	 * @param dir папка.
+	 * @param container контейнер файлов.
+	 * @param extensions набор нужных расширений.
+	 * @return список всех найденных файлов.
+	 */
+	public static void addFilesTo(final Path dir, final Array<Path> container, final String... extendsions) {
+
+		if(!Files.exists(dir)) {
+			LOGGER.warning("not found folder " + dir);
+			return;
+		}
+
+		try(DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+
+			for(final Path path : stream) {
+				if(Files.isDirectory(path)) {
+					addFilesTo(path, container, extendsions);
+				} else if(extendsions == StringUtils.EMPTY_ARRAY || containsFormat(extendsions, path.getFileName())) {
+					container.add(path);
+				}
+			}
+
+		} catch(final IOException e) {
+			LOGGER.warning(e);
+		}
 	}
 
 	/**

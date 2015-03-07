@@ -1,6 +1,10 @@
 package rlib.compiler.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaCompiler;
@@ -24,6 +28,8 @@ import rlib.util.array.ArrayFactory;
 public class CompilerImpl implements Compiler {
 
 	private static final Logger LOGGER = LoggerManager.getLogger(Compiler.class);
+
+	public static final Class<?>[] EMPTY_CLASSES = new Class[0];
 
 	/** слушатель ошибок компиляций */
 	private final CompileListener listener;
@@ -58,13 +64,29 @@ public class CompilerImpl implements Compiler {
 	public Class<?>[] compile(final File... files) {
 
 		if(files.length < 1) {
-			return null;
+			return EMPTY_CLASSES;
 		}
 
 		final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
 
 		for(final File file : files) {
 			javaSource.add(new JavaFileSource(file));
+		}
+
+		return compile(null, javaSource);
+	}
+
+	@Override
+	public Class<?>[] compile(final Path... paths) {
+
+		if(paths.length < 1) {
+			return EMPTY_CLASSES;
+		}
+
+		final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
+
+		for(final Path path : paths) {
+			javaSource.add(new JavaFileSource(path));
 		}
 
 		return compile(null, javaSource);
@@ -155,6 +177,46 @@ public class CompilerImpl implements Compiler {
 		}
 
 		return container.toArray(new Class[container.size()]);
+	}
+
+	/**
+	 * Скомпилировать классы в дериктории.
+	 * 
+	 * @param container контейнер классов.
+	 * @param directory дериктория.
+	 */
+	private void compileDirectory(final Array<Class<?>> container, final Path directory) {
+		try(DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+
+			for(final Path path : stream) {
+				if(Files.isDirectory(path)) {
+					compileDirectory(container, path);
+				} else if(path.toString().endsWith(Compiler.SOURCE_EXTENSION)) {
+					container.addAll(compile(path));
+				}
+			}
+
+		} catch(IOException e) {
+			LOGGER.warning(e);
+		}
+	}
+
+	@Override
+	public Class<?>[] compileDirectory(Path... paths) {
+
+		final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
+
+		for(final Path path : paths) {
+
+			if(!Files.exists(path) || !Files.isDirectory(path)) {
+				continue;
+			}
+
+			compileDirectory(container, path);
+		}
+
+		return container.toArray(new Class[container.size()]);
+
 	}
 
 	/**

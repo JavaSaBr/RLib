@@ -2,10 +2,11 @@ package rlib.compiler.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.tools.SimpleJavaFileObject;
-
-import rlib.util.FileUtils;
 
 /**
  * Объект исходного java кода.
@@ -16,6 +17,10 @@ public class JavaFileSource extends SimpleJavaFileObject {
 
 	protected JavaFileSource(final File file) {
 		super(file.toURI(), Kind.SOURCE);
+	}
+
+	protected JavaFileSource(final Path path) {
+		super(path.toUri(), Kind.SOURCE);
 	}
 
 	@Override
@@ -44,8 +49,8 @@ public class JavaFileSource extends SimpleJavaFileObject {
 
 	@Override
 	public CharSequence getCharContent(final boolean ignoreEncodingErrors) throws IOException {
-		final File file = new File(uri);
-		final String content = new String(FileUtils.getContent(file), "UTF-8");
+		final Path path = Paths.get(uri);
+		final String content = new String(Files.readAllBytes(path), "UTF-8");
 		return content;
 	}
 

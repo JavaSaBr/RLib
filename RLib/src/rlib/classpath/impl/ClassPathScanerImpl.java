@@ -3,6 +3,10 @@ package rlib.classpath.impl;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -147,7 +151,9 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 
 		try {
 			container.add(getLoader().loadClass(className));
-		} catch(final Exception e) {
+		} catch(NoClassDefFoundError error) {
+			LOGGER.warning("can't load class: " + error.getMessage());
+		} catch(final Throwable e) {
 			LOGGER.warning(e);
 		}
 	}
@@ -158,25 +164,25 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 	 * @param container контейнер загружаемых классов.
 	 * @param directory сканируемая папка.
 	 */
-	private void scaningDirectory(final String rootPath, final Array<Class<?>> container, final File directory) {
+	private void scaningDirectory(final Path rootPath, final Array<Class<?>> container, final Path directory) {
 
-		final File[] files = directory.listFiles();
+		try(DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
 
-		for(final File file : files) {
+			for(final Path file : stream) {
 
-			if(file.isDirectory()) {
-				scaningDirectory(rootPath, container, file);
-			} else if(file.isFile()) {
+				if(Files.isDirectory(file)) {
+					scaningDirectory(rootPath, container, file);
+					continue;
+				}
 
-				final String name = file.getName();
+				final String name = file.toString();
 
 				if(name.endsWith(Compiler.SOURCE_EXTENSION)) {
 					scaningJar(container, file);
 				} else if(name.endsWith(CLASS_EXTENSION)) {
 					try {
 
-						String path = file.getAbsolutePath();
-						path = path.substring(rootPath.length(), path.length());
+						String path = file.subpath(rootPath.getNameCount(), file.getNameCount()).toString();
 
 						if(path.startsWith(File.separator)) {
 							path = path.substring(1, path.length());
@@ -185,10 +191,13 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 						loadClass(path, container);
 
 					} catch(final Exception e) {
-						LOGGER.info("incorrect replace " + file.getAbsolutePath() + " from root " + rootPath);
+						LOGGER.info("incorrect replace " + file + " from root " + rootPath);
 					}
 				}
 			}
+
+		} catch(IOException e1) {
+			LOGGER.warning(e1);
 		}
 	}
 
@@ -198,14 +207,14 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 	 * @param container контейнер подгруженных классов.
 	 * @param jarFile ссылка на .jar фаил.
 	 */
-	private void scaningJar(final Array<Class<?>> container, final File jarFile) {
+	private void scaningJar(final Array<Class<?>> container, final Path jarFile) {
 
-		if(!jarFile.exists()) {
+		if(!Files.exists(jarFile)) {
 			LOGGER.warning("not exists " + jarFile);
 			return;
 		}
 
-		try(JarFile jar = new JarFile(jarFile)) {
+		try(JarFile jar = new JarFile(jarFile.toFile())) {
 
 			for(final Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
 
@@ -219,7 +228,7 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 			}
 
 		} catch(final ZipException e) {
-			LOGGER.warning("can't open zip file " + jarFile.getAbsolutePath());
+			LOGGER.warning("can't open zip file " + jarFile);
 		} catch(final IOException e) {
 			LOGGER.warning(e);
 		}
@@ -238,17 +247,17 @@ public class ClassPathScanerImpl implements ClassPathScaner {
 
 		for(final String path : paths) {
 
-			final File file = new File(path);
+			final Path file = Paths.get(path);
 
 			LOGGER.info("scanning " + file);
 
-			if(!file.exists()) {
+			if(!Files.exists(file)) {
 				continue;
 			}
 
-			if(file.isDirectory()) {
-				scaningDirectory(path, container, file);
-			} else if(file.isFile() && file.getName().endsWith(JAR_EXTENSION)) {
+			if(Files.isDirectory(file)) {
+				scaningDirectory(file, container, file);
+			} else if(file.toString().endsWith(JAR_EXTENSION)) {
 				scaningJar(container, file);
 			}
 		}

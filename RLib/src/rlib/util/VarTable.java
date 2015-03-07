@@ -7,7 +7,6 @@ import org.w3c.dom.Node;
 
 import rlib.geom.Rotation;
 import rlib.geom.Vector;
-import rlib.util.dictionary.Dictionary;
 import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
@@ -1275,7 +1274,7 @@ public class VarTable {
 	/**
 	 * @return все пропаршенные параметры.
 	 */
-	public Dictionary<String, Object> getValues() {
+	public ObjectDictionary<String, Object> getValues() {
 		return values;
 	}
 

@@ -1,6 +1,7 @@
 package rlib.compiler;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import javax.tools.JavaFileObject.Kind;
 
@@ -23,10 +24,26 @@ public interface Compiler {
 	public Class<?>[] compile(File... files);
 
 	/**
+	 * Скомпилировать указанные файлы.
+	 * 
+	 * @param paths список файлов исходников.
+	 * @return список полученных классов.
+	 */
+	public Class<?>[] compile(Path... paths);
+
+	/**
 	 * Скомпилировать все классы в указанных дерикториях.
 	 * 
 	 * @param files список дерикторий.
 	 * @return скомпилированные классы.
 	 */
 	public Class<?>[] compileDirectory(File... files);
+
+	/**
+	 * Скомпилировать все классы в указанных дерикториях.
+	 * 
+	 * @param paths список дерикторий.
+	 * @return скомпилированные классы.
+	 */
+	public Class<?>[] compileDirectory(Path... paths);
 }

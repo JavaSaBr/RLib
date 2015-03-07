@@ -6,6 +6,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -146,7 +149,7 @@ public final class Util {
 	 * @param cs класс, для котого ищем папку с джаркой.
 	 * @return адресс папки с джаркой.
 	 */
-	public static File getRootFolderFromClass(final Class<?> cs) {
+	public static Path getRootFolderFromClass(final Class<?> cs) {
 
 		String className = cs.getName();
 
@@ -203,11 +206,11 @@ public final class Util {
 				path = pathBuilder.toString();
 			}
 
-			File file = new File(path);
+			Path file = Paths.get(path);
 
-			while(path.lastIndexOf(File.separatorChar) != -1 && !file.exists()) {
+			while(path.lastIndexOf(File.separatorChar) != -1 && !Files.exists(file)) {
 				path = path.substring(0, path.lastIndexOf(File.separatorChar));
-				file = new File(path);
+				file = Paths.get(uri);
 			}
 
 			return file;

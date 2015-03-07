@@ -22,11 +22,9 @@ import rlib.util.dictionary.ObjectDictionary;
  */
 public class LoggerManager {
 
-	/** главный логгер */
-	private static final Logger LOGGER = getLogger(LoggerManager.class);
-
 	/** таблица всех логгерров */
 	private static final ObjectDictionary<String, Logger> LOGGERS = DictionaryFactory.newObjectDictionary();
+
 	/** список слушателей логирования */
 	private static final Array<LoggerListener> LISTENERS = ArrayFactory.newArray(LoggerListener.class);
 	/** список записчиков лога */
@@ -40,6 +38,9 @@ public class LoggerManager {
 
 	/** класс реализации логгера */
 	private static Class<? extends Logger> implementedClass = LoggerImpl.class;
+
+	/** главный логгер */
+	private static volatile Logger logger = getLogger(LoggerManager.class);
 
 	/**
 	 * Добавление слушателя логирования.
@@ -73,7 +74,7 @@ public class LoggerManager {
 	 * @return стандартный логгер.
 	 */
 	public static Logger getDefaultLogger() {
-		return LOGGER;
+		return logger;
 	}
 
 	/**
@@ -141,6 +142,10 @@ public class LoggerManager {
 		}
 
 		LoggerManager.implementedClass = implementedClass;
+
+		LOGGERS.remove(LoggerManager.class.getName());
+
+		logger = getLogger(LoggerManager.class);
 	}
 
 	/**

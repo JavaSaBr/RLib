@@ -479,6 +479,87 @@ public final class ArrayUtils {
 		return builder.toString();
 	}
 
+	/**
+	 * Добавление элемента в массив в блоке {@link Array#writeLock()}.
+	 * 
+	 * @param array массив, в который надо добавить элемент.
+	 * @param object добавляемый элемент.
+	 */
+	public static <T, V extends T> void addInWriteLockTo(Array<T> array, V object) {
+		array.writeLock();
+		try {
+			array.add(object);
+		} finally {
+			array.writeUnlock();
+		}
+	}
+
+	/**
+	 * Быстрое удаление элемента из массива в блоке {@link Array#writeLock()}.
+	 * 
+	 * @param array массив, в котором надо удалить элемент.
+	 * @param object удаляемый элемент.
+	 */
+	public static <T, V extends T> void fastRemoveInWriteLockTo(Array<T> array, V object) {
+		array.writeLock();
+		try {
+			array.fastRemove(object);
+		} finally {
+			array.writeUnlock();
+		}
+	}
+
+	/**
+	 * Добавление элементов в массив в блоке {@link Array#writeLock()}.
+	 * 
+	 * @param array массив, в который надо добавить элемент.
+	 * @param objects добавляемые элементы.
+	 */
+	public static <T, V extends T> void addInWriteLockTo(Array<T> array, V[] objects) {
+		array.writeLock();
+		try {
+			array.addAll(objects);
+		} finally {
+			array.writeUnlock();
+		}
+	}
+
+	/**
+	 * Быстрое удаление элементов их массива в блоке {@link Array#writeLock()}.
+	 * 
+	 * @param array массив, в котором надо удалить элементы.
+	 * @param objects удаляемый элементы.
+	 */
+	public static <T, V extends T> void fastRemoveInWriteLockTo(Array<T> array, V[] objects) {
+		array.writeLock();
+		try {
+
+			for(V object : objects) {
+				array.fastRemove(object);
+			}
+
+		} finally {
+			array.writeUnlock();
+		}
+	}
+
+	/**
+	 * Копирование содержимого source в destination в блоке
+	 * {@link Array#readLock()}.
+	 * 
+	 * @param source копируемый массив.
+	 * @param destination массив в который копируем данные.
+	 */
+	public static <T> void copyInReadLock(Array<T> source, Array<T> destination) {
+
+		source.readLock();
+		try {
+			destination.addAll(source);
+		} finally {
+			source.readUnlock();
+		}
+	}
+
 	private ArrayUtils() {
 		throw new RuntimeException();
 	}
