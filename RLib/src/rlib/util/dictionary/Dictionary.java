@@ -61,7 +61,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Foldable {
 	/**
 	 * @return тип словаря по возможным ключам.
 	 */
-	public default TableType getType() {
+	public default DictionaryType getType() {
 		throw new RuntimeException("not supported.");
 	}
 

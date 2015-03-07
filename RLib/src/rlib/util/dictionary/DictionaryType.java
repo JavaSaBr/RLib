@@ -5,7 +5,7 @@ package rlib.util.dictionary;
  * 
  * @author Ronn
  */
-public enum TableType {
+public enum DictionaryType {
 	DEPRECATED,
 	OBJECT,
 	INTEGER,

@@ -164,8 +164,8 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 	}
 
 	@Override
-	public TableType getType() {
-		return TableType.INTEGER;
+	public DictionaryType getType() {
+		return DictionaryType.INTEGER;
 	}
 
 	@Override

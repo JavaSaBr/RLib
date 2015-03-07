@@ -9,7 +9,7 @@ import rlib.concurrent.lock.LockFactory;
  *
  * @author Ronn
  */
-public class ConcurrentAtomicLongDictionary<V> extends ConcurrentLongDictionary<V> {
+public class ConcurrentAtomicLongDictionary<V> extends ConcurrentLockLongDictionary<V> {
 
 	protected ConcurrentAtomicLongDictionary() {
 		this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);

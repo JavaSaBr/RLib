@@ -9,7 +9,7 @@ import rlib.concurrent.lock.LockFactory;
  *
  * @author Ronn
  */
-public class ConcurrentAtomicIntegerDictionary<V> extends ConcurrentIntegerDictionary<V> {
+public class ConcurrentAtomicIntegerDictionary<V> extends ConcurrentLockIntegerDictionary<V> {
 
 	public ConcurrentAtomicIntegerDictionary() {
 		super();

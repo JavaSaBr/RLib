@@ -173,8 +173,8 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
 	}
 
 	@Override
-	public TableType getType() {
-		return TableType.LONG;
+	public DictionaryType getType() {
+		return DictionaryType.LONG;
 	}
 
 	@Override

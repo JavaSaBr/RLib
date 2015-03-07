@@ -188,8 +188,8 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 	}
 
 	@Override
-	public TableType getType() {
-		return TableType.OBJECT;
+	public DictionaryType getType() {
+		return DictionaryType.OBJECT;
 	}
 
 	@Override
