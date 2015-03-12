@@ -12,7 +12,6 @@ public class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger imp
 	private static final long serialVersionUID = -624766818867950719L;
 
 	public AtomicInteger() {
-		super();
 	}
 
 	public AtomicInteger(final int initialValue) {

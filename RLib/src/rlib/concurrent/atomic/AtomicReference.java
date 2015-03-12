@@ -10,7 +10,6 @@ public class AtomicReference<V> extends java.util.concurrent.atomic.AtomicRefere
 	private static final long serialVersionUID = -4058945159519762615L;
 
 	public AtomicReference() {
-		super();
 	}
 
 	public AtomicReference(final V initialValue) {

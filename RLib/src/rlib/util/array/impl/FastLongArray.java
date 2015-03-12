@@ -270,7 +270,7 @@ public class FastLongArray implements LongArray {
 			return this;
 		}
 
-		array = ArrayUtils.copyOfRange(array, 0, size);
+		this.array = ArrayUtils.copyOfRange(array, 0, size);
 
 		return this;
 	}

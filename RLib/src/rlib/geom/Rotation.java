@@ -459,7 +459,7 @@ public class Rotation {
 	 */
 	public void slerp(final Rotation end, final float percent) {
 
-		if(x == end.x && y == end.y && z == end.z && w == end.w) {
+		if(equals(end)) {
 			return;
 		}
 

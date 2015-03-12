@@ -91,6 +91,11 @@ public class FileUtils {
 	 * @return подходит ли.
 	 */
 	public static boolean containsFormat(final String[] formats, final Path path) {
+
+		if(path == null) {
+			return false;
+		}
+
 		return containsFormat(formats, path.toString());
 	}
 

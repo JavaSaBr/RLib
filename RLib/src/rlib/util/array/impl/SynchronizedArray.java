@@ -141,7 +141,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
 	}
 
 	@Override
-	public final E get(final int index) {
+	public synchronized final E get(final int index) {
 		return array[index];
 	}
 

@@ -1265,7 +1265,7 @@ public class VarTable {
 		}
 
 		if(object instanceof String) {
-			return (String[]) object;
+			return ((String) object).split(regex);
 		}
 
 		throw new IllegalArgumentException("no found " + key);

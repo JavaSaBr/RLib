@@ -237,7 +237,7 @@ public class FastIntegerArray implements IntegerArray {
 			return this;
 		}
 
-		array = ArrayUtils.copyOfRange(array, 0, size);
+		this.array = ArrayUtils.copyOfRange(array, 0, size);
 
 		return this;
 	}

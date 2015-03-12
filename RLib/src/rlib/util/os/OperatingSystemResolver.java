@@ -70,7 +70,7 @@ public class OperatingSystemResolver {
 
 		final File[] files = dir.listFiles((FilenameFilter) (directory, filename) -> filename.endsWith(postfix));
 
-		if(files.length > 0) {
+		if(files != null && files.length > 0) {
 			return files[0].getAbsolutePath();
 		}
 

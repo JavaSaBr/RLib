@@ -153,6 +153,10 @@ public class CompilerImpl implements Compiler {
 
 		final File[] files = directory.listFiles();
 
+		if(files == null || files.length < 1) {
+			return;
+		}
+
 		for(final File file : files) {
 			if(file.isDirectory()) {
 				compileDirectory(container, file);
