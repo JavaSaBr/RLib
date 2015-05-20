@@ -67,6 +67,69 @@ public final class ReflectionUtils {
 		return container;
 	}
 
+	/**
+	 * Получение значение поля объекта по названию поля.
+	 * 
+	 * @param object объект, чье поле хотим прочитать.
+	 * @param fieldName название поле объекта.
+	 * @return значение поля объекта.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T getFieldValue(Object object, String fieldName) {
+
+		try {
+
+			final Field field = object.getClass().getDeclaredField(fieldName);
+			field.setAccessible(true);
+
+			return (T) field.get(object);
+
+		} catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Получение значение статического поля класса.
+	 * 
+	 * @param type интересуемый класс в котором хотим прочитать статическое
+	 * поле.
+	 * @param fieldName название статического поля.
+	 * @return значение статического поля.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T getStaticFieldValue(Class<?> type, String fieldName) {
+
+		try {
+
+			final Field field = type.getDeclaredField(fieldName);
+			field.setAccessible(true);
+
+			return (T) field.get(null);
+
+		} catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Изменение значения статического поля класса.
+	 * 
+	 * @param type класс в котором меняем статическое поле.
+	 * @param fieldName название статического поля.
+	 * @param value новое значение статического поля.
+	 */
+	public static void setStaticFieldValue(Class<?> type, String fieldName, Object value) {
+
+		try {
+			final Field field = type.getDeclaredField(fieldName);
+			field.setAccessible(true);
+			field.set(null, value);
+		} catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private ReflectionUtils() {
 		throw new IllegalArgumentException();
 	}

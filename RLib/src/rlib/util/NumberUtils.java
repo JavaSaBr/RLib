@@ -36,6 +36,14 @@ public final class NumberUtils {
 		return (byte4 & 0xFF) << 24 | (byte3 & 0xFF) << 16 | (byte2 & 0xFF) << 8 | byte1 & 0xFF;
 	}
 
+	public static boolean equals(float first, float second) {
+		return Float.floatToIntBits(first) == Float.floatToIntBits(second);
+	}
+
+	public static boolean equals(double first, double second) {
+		return Double.doubleToLongBits(first) == Double.doubleToLongBits(second);
+	}
+
 	private NumberUtils() {
 		throw new IllegalArgumentException();
 	}

@@ -9,8 +9,11 @@ import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Enumeration;
 
 import rlib.logging.Logger;
@@ -29,6 +32,21 @@ import rlib.util.dictionary.ObjectDictionary;
 public class FileUtils {
 
 	private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
+
+	private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<Path>() {
+
+		@Override
+		public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+			Files.delete(file);
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+			Files.delete(dir);
+			return FileVisitResult.CONTINUE;
+		}
+	};
 
 	/** кэш текста файлов */
 	private static final ObjectDictionary<String, String> cache = DictionaryFactory.newObjectDictionary();
@@ -381,5 +399,22 @@ public class FileUtils {
 
 		cache.put(path, content.toString());
 		return content.toString();
+	}
+
+	public static void delete(final Path path) {
+		try {
+			deleteImpl(path);
+		} catch(final IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static void deleteImpl(final Path path) throws IOException {
+
+		if(!Files.isDirectory(path)) {
+			Files.delete(path);
+		} else {
+			Files.walkFileTree(path, DELETE_FOLDER_VISITOR);
+		}
 	}
 }
