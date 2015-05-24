@@ -1,13 +1,13 @@
 package rlib.util;
 
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
 
 /**
  * Набор методов для работы со строками.
@@ -188,5 +188,15 @@ public class StringUtils {
 		hashMD5.update(password.getBytes(), 0, password.length());
 
 		return new BigInteger(1, hashMD5.digest()).toString(16);
+	}
+
+	/**
+	 * Получение длинны указанной строки.
+	 *
+	 * @param string интересуемая строка.
+	 * @return длинна строки или же 0 в случае если она пуста или <code>null</code>
+	 */
+	public static int length(String string) {
+		return string == null? 0 : string.length();
 	}
 }
