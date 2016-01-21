@@ -8,7 +8,8 @@ import java.io.Serializable;
 public final class ColorRGBA implements Cloneable, Serializable {
 
 	private static final long serialVersionUID = -3342702659372723983L;
-	public float r;
+
+    public float r;
 	public float g;
 	public float b;
 	public float a;
@@ -62,27 +63,25 @@ public final class ColorRGBA implements Cloneable, Serializable {
 
 	@Override
 	public boolean equals(final Object o) {
-		if(!(o instanceof ColorRGBA)) {
-			return false;
-		}
 
-		if(this == o) {
+        if(!(o instanceof ColorRGBA)) {
+			return false;
+		} else if(this == o) {
 			return true;
 		}
 
 		final ColorRGBA comp = (ColorRGBA) o;
+
 		if(Float.compare(r, comp.r) != 0) {
 			return false;
-		}
-		if(Float.compare(g, comp.g) != 0) {
+		} else if(Float.compare(g, comp.g) != 0) {
+			return false;
+		} else if(Float.compare(b, comp.b) != 0) {
+			return false;
+		} else if(Float.compare(a, comp.a) != 0) {
 			return false;
 		}
-		if(Float.compare(b, comp.b) != 0) {
-			return false;
-		}
-		if(Float.compare(a, comp.a) != 0) {
-			return false;
-		}
+
 		return true;
 	}
 

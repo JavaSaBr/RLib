@@ -1,6 +1,6 @@
 package rlib.util.dictionary;
 
-import rlib.concurrent.lock.AsynReadSynWriteLock;
+import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.LockFactory;
 
 /**
@@ -11,24 +11,24 @@ import rlib.concurrent.lock.LockFactory;
  */
 public class ConcurrentAtomicLongDictionary<V> extends ConcurrentLockLongDictionary<V> {
 
-	protected ConcurrentAtomicLongDictionary() {
-		this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
-	}
+    protected ConcurrentAtomicLongDictionary() {
+        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+    }
 
-	protected ConcurrentAtomicLongDictionary(final float loadFactor) {
-		this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
-	}
+    protected ConcurrentAtomicLongDictionary(final float loadFactor) {
+        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+    }
 
-	protected ConcurrentAtomicLongDictionary(final float loadFactor, final int initCapacity) {
-		super(loadFactor, initCapacity);
-	}
+    protected ConcurrentAtomicLongDictionary(final float loadFactor, final int initCapacity) {
+        super(loadFactor, initCapacity);
+    }
 
-	protected ConcurrentAtomicLongDictionary(final int initCapacity) {
-		this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
-	}
+    protected ConcurrentAtomicLongDictionary(final int initCapacity) {
+        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
+    }
 
-	@Override
-	protected AsynReadSynWriteLock createLocker() {
-		return LockFactory.newPrimitiveAtomicARSWLock();
-	}
+    @Override
+    protected AsyncReadSyncWriteLock createLocker() {
+        return LockFactory.newPrimitiveAtomicARSWLock();
+    }
 }

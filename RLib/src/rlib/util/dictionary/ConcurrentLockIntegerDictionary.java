@@ -1,10 +1,10 @@
 package rlib.util.dictionary;
 
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.lock.AsynReadSynWriteLock;
+import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.LockFactory;
+
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Реализация конкурентнго словаря с примитивным ключем int, где миханизм
@@ -14,71 +14,76 @@ import rlib.concurrent.lock.LockFactory;
  */
 public class ConcurrentLockIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements ConcurrentIntegerDictionary<V> {
 
-	/** блокировщик */
-	private final AsynReadSynWriteLock locker;
-	/** кол-во элементов в словаре */
-	private final AtomicInteger size;
+    /**
+     * Блокировщик.
+     */
+    private final AsyncReadSyncWriteLock locker;
 
-	protected ConcurrentLockIntegerDictionary() {
-		this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
-	}
+    /**
+     * Кол-во элементов в словаре.
+     */
+    private final AtomicInteger size;
 
-	protected ConcurrentLockIntegerDictionary(final float loadFactor) {
-		this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
-	}
+    protected ConcurrentLockIntegerDictionary() {
+        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+    }
 
-	protected ConcurrentLockIntegerDictionary(final float loadFactor, final int initCapacity) {
-		super(loadFactor, initCapacity);
-		this.size = new AtomicInteger();
-		this.locker = createLocker();
-	}
+    protected ConcurrentLockIntegerDictionary(final float loadFactor) {
+        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+    }
 
-	protected ConcurrentLockIntegerDictionary(final int initCapacity) {
-		this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
-	}
+    protected ConcurrentLockIntegerDictionary(final float loadFactor, final int initCapacity) {
+        super(loadFactor, initCapacity);
+        this.size = new AtomicInteger();
+        this.locker = createLocker();
+    }
 
-	@Override
-	public void clear() {
-		super.clear();
-		size.set(0);
-	}
+    protected ConcurrentLockIntegerDictionary(final int initCapacity) {
+        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
+    }
 
-	protected AsynReadSynWriteLock createLocker() {
-		return LockFactory.newARSWLock();
-	}
+    @Override
+    public void clear() {
+        super.clear();
+        size.set(0);
+    }
 
-	@Override
-	protected int decrementSizeAndGet() {
-		return size.decrementAndGet();
-	}
+    protected AsyncReadSyncWriteLock createLocker() {
+        return LockFactory.newARSWLock();
+    }
 
-	@Override
-	protected int incrementSizeAndGet() {
-		return size.incrementAndGet();
-	}
+    @Override
+    protected int decrementSizeAndGet() {
+        return size.decrementAndGet();
+    }
 
-	@Override
-	public void readLock() {
-		locker.asynLock();
-	}
+    @Override
+    protected int incrementSizeAndGet() {
+        return size.incrementAndGet();
+    }
 
-	@Override
-	public void readUnlock() {
-		locker.asynUnlock();
-	}
+    @Override
+    public void readLock() {
+        locker.asyncLock();
+    }
 
-	@Override
-	public final int size() {
-		return size.get();
-	}
+    @Override
+    public void readUnlock() {
+        locker.asyncUnlock();
+    }
 
-	@Override
-	public void writeLock() {
-		locker.synLock();
-	}
+    @Override
+    public final int size() {
+        return size.get();
+    }
 
-	@Override
-	public void writeUnlock() {
-		locker.synUnlock();
-	}
+    @Override
+    public void writeLock() {
+        locker.syncLock();
+    }
+
+    @Override
+    public void writeUnlock() {
+        locker.syncUnlock();
+    }
 }

@@ -2,181 +2,180 @@ package rlib.geom.util;
 
 /**
  * Реализация утильного класса с методами по работе с углами.
- * 
+ *
  * @author Ronn
  */
 public final class AngleUtils {
 
-	/**
-	 * Расчет разворота в указанные координаты.
-	 * 
-	 * @param x начальная координата.
-	 * @param y начальная координата.
-	 * @param targetX целевая координата.
-	 * @param targetY целевая координата.
-	 * @return нужный разворот.
-	 */
-	public static int calcHeading(final float x, final float y, final float targetX, final float targetY) {
-		return (int) (Math.atan2(y - targetY, x - targetX) * HEADINGS_IN_PI) + 32768;
-	}
+    public static final float HEADINGS_IN_PI = 10430.378350470452724949566316381F;
+    public static final float PI = 3.14159265358979323846F;
 
-	/**
-	 * Расчет относительного положения.
-	 * 
-	 * @param x начальная координата.
-	 * @param y начальная координата.
-	 * @param heading разворот.
-	 * @param targetX целевая координата.
-	 * @param targetY целевая координата.
-	 * @return нужный разворот.
-	 */
-	public static int calcHeadingTo(final float x, final float y, final int heading, final float targetX, final float targetY) {
+    /**
+     * Расчет разворота в указанные координаты.
+     *
+     * @param x       начальная координата.
+     * @param y       начальная координата.
+     * @param targetX целевая координата.
+     * @param targetY целевая координата.
+     * @return нужный разворот.
+     */
+    public static int calcHeading(final float x, final float y, final float targetX, final float targetY) {
+        return (int) (Math.atan2(y - targetY, x - targetX) * HEADINGS_IN_PI) + 32768;
+    }
 
-		int newHeading = calcHeading(x, y, targetX, targetY);
+    /**
+     * Расчет относительного положения.
+     *
+     * @param x       начальная координата.
+     * @param y       начальная координата.
+     * @param heading разворот.
+     * @param targetX целевая координата.
+     * @param targetY целевая координата.
+     * @return нужный разворот.
+     */
+    public static int calcHeadingTo(final float x, final float y, final int heading, final float targetX, final float targetY) {
 
-		newHeading = heading - newHeading;
+        int newHeading = calcHeading(x, y, targetX, targetY);
 
-		if(newHeading < 0) {
-			newHeading = newHeading + 1 + Integer.MAX_VALUE & 0xFFFF;
-		} else if(newHeading > 0xFFFF) {
-			newHeading &= 0xFFFF;
-		}
+        newHeading = heading - newHeading;
 
-		return newHeading;
-	}
+        if (newHeading < 0) {
+            newHeading = newHeading + 1 + Integer.MAX_VALUE & 0xFFFF;
+        } else if (newHeading > 0xFFFF) {
+            newHeading &= 0xFFFF;
+        }
 
-	/**
-	 * Конвектирует градус в heading.
-	 * 
-	 * @param degree кол-во градусов.
-	 * @return heading направление разворота.
-	 */
-	public static int degreeToHeading(float degree) {
+        return newHeading;
+    }
 
-		if(degree < 0) {
-			degree += 360f;
-		}
+    /**
+     * Конвектирует градус в heading.
+     *
+     * @param degree кол-во градусов.
+     * @return heading направление разворота.
+     */
+    public static int degreeToHeading(float degree) {
 
-		return (int) (degree * 182.044444444f);
-	}
+        if (degree < 0) {
+            degree += 360f;
+        }
 
-	/**
-	 * Конвектирование градусы в радианы.
-	 * 
-	 * @param angle кол-во градусов.
-	 * @return кол-во радианов.
-	 */
-	public static float degreeToRadians(final float angle) {
-		return angle * PI / 180F;
-	}
+        return (int) (degree * 182.044444444f);
+    }
 
-	/**
-	 * Получаем относительный градус между 2 точками.
-	 * 
-	 * @param startX х координата первой точки.
-	 * @param startY у координата второй точки.
-	 * @param endX х координата второй точки.
-	 * @param endY у координата второй точки.
-	 * @return кол-во градусов.
-	 */
-	public static float getAngleFrom(final float startX, final float startY, final float endX, final float endY) {
+    /**
+     * Конвектирование градусы в радианы.
+     *
+     * @param angle кол-во градусов.
+     * @return кол-во радианов.
+     */
+    public static float degreeToRadians(final float angle) {
+        return angle * PI / 180F;
+    }
 
-		float angle = (float) Math.toDegrees(Math.atan2(startY - endY, startX - endX));
+    /**
+     * Получаем относительный градус между 2 точками.
+     *
+     * @param startX х координата первой точки.
+     * @param startY у координата второй точки.
+     * @param endX   х координата второй точки.
+     * @param endY   у координата второй точки.
+     * @return кол-во градусов.
+     */
+    public static float getAngleFrom(final float startX, final float startY, final float endX, final float endY) {
 
-		if(angle <= 0F) {
-			angle += 360F;
-		}
+        float angle = (float) Math.toDegrees(Math.atan2(startY - endY, startX - endX));
 
-		return angle;
-	}
+        if (angle <= 0F) {
+            angle += 360F;
+        }
 
-	/**
-	 * Конвектирование heading в градусы.
-	 * 
-	 * @param heading направление разворота.
-	 * @return кол-во градусов.
-	 */
-	public static float headingToDegree(final int heading) {
+        return angle;
+    }
 
-		float angle = heading / 182.044444444f;
+    /**
+     * Конвектирование heading в градусы.
+     *
+     * @param heading направление разворота.
+     * @return кол-во градусов.
+     */
+    public static float headingToDegree(final int heading) {
 
-		if(angle == 0) {
-			angle = 360f;
-		}
+        float angle = heading / 182.044444444f;
 
-		return angle;
-	}
+        if (angle == 0) {
+            angle = 360f;
+        }
 
-	/**
-	 * Конвектирование heading в радианы.
-	 * 
-	 * @param heading направление разворота.
-	 * @return кол-во радианов.
-	 */
-	public static float headingToRadians(final int heading) {
+        return angle;
+    }
 
-		float angle = heading / 182.044444444f;
+    /**
+     * Конвектирование heading в радианы.
+     *
+     * @param heading направление разворота.
+     * @return кол-во радианов.
+     */
+    public static float headingToRadians(final int heading) {
 
-		if(angle == 0) {
-			angle = 360f;
-		}
+        float angle = heading / 182.044444444f;
 
-		return angle * 3.141592653f / 180f;
-	}
+        if (angle == 0) {
+            angle = 360f;
+        }
 
-	/**
-	 * Рассчет вхождения в относительную область перед точкой точки.
-	 * 
-	 * @param x координата первой точки.
-	 * @param y координата первой точки.
-	 * @param heading направление области.
-	 * @param targetX координата второй точки.
-	 * @param targetY координата второй точки.
-	 * @param width ширина области.
-	 * @return входит ли.
-	 */
-	public static boolean isInDegree(final float x, final float y, final int heading, final float targetX, final float targetY, final int width) {
+        return angle * 3.141592653f / 180f;
+    }
 
-		int angle = (int) AngleUtils.headingToDegree(calcHeadingTo(x, y, heading, targetX, targetY));
-		final int degree = (int) headingToDegree(heading);
+    /**
+     * Рассчет вхождения в относительную область перед точкой точки.
+     *
+     * @param x       координата первой точки.
+     * @param y       координата первой точки.
+     * @param heading направление области.
+     * @param targetX координата второй точки.
+     * @param targetY координата второй точки.
+     * @param width   ширина области.
+     * @return входит ли.
+     */
+    public static boolean isInDegree(final float x, final float y, final int heading, final float targetX, final float targetY, final int width) {
 
-		int min = degree - width;
-		int max = degree + width;
+        int angle = (int) AngleUtils.headingToDegree(calcHeadingTo(x, y, heading, targetX, targetY));
+        final int degree = (int) headingToDegree(heading);
 
-		if(min < 0) {
-			min += 360;
-		}
+        int min = degree - width;
+        int max = degree + width;
 
-		if(max < 0) {
-			max += 360;
-		}
+        if (min < 0) {
+            min += 360;
+        }
 
-		final boolean flag = angle - degree > 180;
+        if (max < 0) {
+            max += 360;
+        }
 
-		if(flag) {
-			angle -= 360;
-		}
+        final boolean flag = angle - degree > 180;
 
-		if(angle > max) {
-			return false;
-		}
+        if (flag) {
+            angle -= 360;
+        }
 
-		angle += 360;
+        if (angle > max) {
+            return false;
+        }
 
-		return angle > min;
-	}
+        angle += 360;
 
-	/**
-	 * Конвектироввание радианов в градусы.
-	 * 
-	 * @param radians угол в радианах.
-	 * @return угол в градусах.
-	 */
-	public static float radiansToDegree(final float radians) {
-		return radians * 180F / PI;
-	}
+        return angle > min;
+    }
 
-	public static final float HEADINGS_IN_PI = 10430.378350470452724949566316381F;
-
-	public static final float PI = 3.14159265358979323846F;
+    /**
+     * Конвектироввание радианов в градусы.
+     *
+     * @param radians угол в радианах.
+     * @return угол в градусах.
+     */
+    public static float radiansToDegree(final float radians) {
+        return radians * 180F / PI;
+    }
 }

@@ -7,56 +7,58 @@ import rlib.util.pools.FoldablePool;
 
 /**
  * Реализация не потокобезопасного легковесного {@link FoldablePool}.
- * 
+ *
  * @author Ronn
  */
 public class FastFoldablePool<E extends Foldable> implements FoldablePool<E> {
 
-	/** пул объектов */
-	private final Array<E> pool;
+    /**
+     * Пул объектов.
+     */
+    private final Array<E> pool;
 
-	public FastFoldablePool(final Class<?> type) {
-		this.pool = ArrayFactory.newArray(type);
-	}
+    public FastFoldablePool(final Class<?> type) {
+        this.pool = ArrayFactory.newArray(type);
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return pool.isEmpty();
-	}
+    @Override
+    public boolean isEmpty() {
+        return pool.isEmpty();
+    }
 
-	@Override
-	public void put(final E object) {
+    @Override
+    public void put(final E object) {
 
-		if(object == null) {
-			return;
-		}
+        if (object == null) {
+            return;
+        }
 
-		object.finalyze();
+        object.finalyze();
 
-		pool.add(object);
-	}
+        pool.add(object);
+    }
 
-	@Override
-	public void remove(final E object) {
-		pool.fastRemove(object);
-	}
+    @Override
+    public void remove(final E object) {
+        pool.fastRemove(object);
+    }
 
-	@Override
-	public E take() {
+    @Override
+    public E take() {
 
-		final E object = pool.pop();
+        final E object = pool.pop();
 
-		if(object == null) {
-			return null;
-		}
+        if (object == null) {
+            return null;
+        }
 
-		object.reinit();
+        object.reinit();
 
-		return object;
-	}
+        return object;
+    }
 
-	@Override
-	public String toString() {
-		return pool.toString();
-	}
+    @Override
+    public String toString() {
+        return pool.toString();
+    }
 }

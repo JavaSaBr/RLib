@@ -1,65 +1,79 @@
 package rlib.logging.impl;
 
-import java.io.File;
-import java.io.FileWriter;
+import rlib.logging.LoggerListener;
+
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import rlib.logging.LoggerListener;
 
 /**
  * Реализация слушателя логирования с записью в создаваемый файл в указанной
  * папке.
- * 
+ *
  * @author Ronn
  */
 public class FolderFileListener implements LoggerListener {
 
-	/** ссылка на папку, где нужно создать фаил для лога */
-	private final File folder;
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyy-MM-dd_HH-mm-ss");
 
-	/** записчик лога в фаил */
-	private Writer writer;
+    /**
+     * Ссылка на папку, где нужно создать фаил для лога.
+     */
+    private final Path folder;
 
-	public FolderFileListener(final File folder) {
+    /**
+     * Записчик лога в фаил.
+     */
+    private Writer writer;
 
-		if(!folder.isDirectory()) {
-			throw new IllegalArgumentException("file is not directory.");
-		}
+    public FolderFileListener(final Path folder) {
 
-		if(!folder.exists()) {
-			folder.mkdirs();
-		}
+        if (!Files.isDirectory(folder)) {
+            throw new IllegalArgumentException("file is not directory.");
+        }
 
-		this.folder = folder;
+        if (!Files.exists(folder)) {
+            try {
+                Files.createDirectories(folder);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
-	}
+        this.folder = folder;
 
-	/**
-	 * @return записчик в фаил.
-	 * @throws IOException
-	 */
-	public Writer getWriter() throws IOException {
+    }
 
-		if(writer == null) {
-			final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyy-MM-dd_HH-mm-ss");
-			writer = new FileWriter(new File(folder, timeFormat.format(LocalDateTime.now()) + ".log"));
-		}
+    /**
+     * @return записчик в фаил.
+     * @throws IOException
+     */
+    public Writer getWriter() throws IOException {
 
-		return writer;
-	}
+        if (writer == null) {
 
-	@Override
-	public void println(final String text) {
-		try {
-			final Writer writer = getWriter();
-			writer.append(text);
-			writer.append('\n');
-			writer.flush();
-		} catch(final IOException e) {
-			e.printStackTrace();
-		}
-	}
+            final LocalDateTime dateTime = LocalDateTime.now();
+            final String filename = TIME_FORMATTER.format(dateTime) + ".log";
+
+            writer = Files.newBufferedWriter(folder.resolve(filename), Charset.forName("UTF-8"));
+        }
+
+        return writer;
+    }
+
+    @Override
+    public void println(final String text) {
+        try {
+            final Writer writer = getWriter();
+            writer.append(text);
+            writer.append('\n');
+            writer.flush();
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

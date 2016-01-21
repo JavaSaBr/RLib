@@ -5,56 +5,63 @@ import rlib.util.array.ArrayIterator;
 
 /**
  * Реализация итератора динамического массива.
- * 
+ *
  * @author Ronn
  */
 public class ArrayIteratorImpl<E> implements ArrayIterator<E> {
 
-	/** итерируемая коллекция */
-	private final Array<E> collection;
-	/** итерируемый массив */
-	private final E[] array;
+    /**
+     * Итерируемая коллекция.
+     */
+    private final Array<E> collection;
 
-	/** текущая позиция в массиве */
-	private int ordinal;
+    /**
+     * Итерируемый массив.
+     */
+    private final E[] array;
 
-	public ArrayIteratorImpl(final Array<E> collection) {
-		this.collection = collection;
-		this.array = collection.array();
-	}
+    /**
+     * Текущая позиция в массиве.
+     */
+    private int ordinal;
 
-	@Override
-	public void fastRemove() {
-		collection.fastRemove(--ordinal);
-	}
+    public ArrayIteratorImpl(final Array<E> collection) {
+        this.collection = collection;
+        this.array = collection.array();
+    }
 
-	@Override
-	public boolean hasNext() {
-		return ordinal < collection.size();
-	}
+    @Override
+    public void fastRemove() {
+        collection.fastRemove(--ordinal);
+    }
 
-	@Override
-	public int index() {
-		return ordinal - 1;
-	}
+    @Override
+    public boolean hasNext() {
+        return ordinal < collection.size();
+    }
 
-	@Override
-	public E next() {
+    @Override
+    public int index() {
+        return ordinal - 1;
+    }
 
-		if(ordinal >= array.length) {
-			return null;
-		}
+    @Override
+    public E next() {
 
-		return array[ordinal++];
-	}
+        if (ordinal >= array.length) {
+            return null;
+        }
 
-	@Override
-	public void remove() {
-		collection.fastRemove(--ordinal);
-	}
+        return array[ordinal++];
+    }
 
-	@Override
-	public void slowRemove() {
-		collection.fastRemove(--ordinal);
-	}
+    @Override
+    public void remove() {
+        collection.fastRemove(--ordinal);
+    }
+
+    @Override
+    public void slowRemove() {
+        collection.fastRemove(--ordinal);
+    }
 }

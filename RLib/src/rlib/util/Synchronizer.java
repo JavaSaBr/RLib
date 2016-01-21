@@ -1,45 +1,49 @@
 package rlib.util;
 
-import java.util.concurrent.locks.Lock;
-
 import rlib.concurrent.lock.LockFactory;
+
+import java.util.concurrent.locks.Lock;
 
 /**
  * @author Ronn
  */
 public final class Synchronizer implements Synchronized {
 
-	/** блокировщик */
-	private final Lock sync;
+    /**
+     * Блокировщик.
+     */
+    private final Lock sync;
 
-	/** флаг блокировки */
-	public volatile boolean locked;
+    /**
+     * Флаг блокировки.
+     */
+    public volatile boolean locked;
 
-	public Synchronizer() {
-		this.sync = LockFactory.newLock();
-	}
+    public Synchronizer() {
+        this.sync = LockFactory.newLock();
+    }
 
-	/**
-	 * @return the locked
-	 */
-	public final boolean isLocked() {
-		return locked;
-	}
+    /**
+     * @return the locked
+     */
+    public final boolean isLocked() {
+        return locked;
+    }
 
-	@Override
-	public void lock() {
-		sync.lock();
-	}
+    /**
+     * @param locked the locked to set
+     */
+    public final void setLocked(final boolean locked) {
+        this.locked = locked;
+    }
 
-	/**
-	 * @param locked the locked to set
-	 */
-	public final void setLocked(final boolean locked) {
-		this.locked = locked;
-	}
+    @Override
+    public void lock() {
+        sync.lock();
+    }
 
-	@Override
-	public void unlock() {
-		sync.unlock();
-	}
+    @Override
+    public void unlock() {
+        sync.unlock();
+    }
 }

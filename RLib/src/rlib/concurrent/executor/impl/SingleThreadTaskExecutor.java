@@ -1,10 +1,5 @@
 package rlib.concurrent.executor.impl;
 
-import java.lang.reflect.Constructor;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-
 import rlib.concurrent.executor.TaskExecutor;
 import rlib.concurrent.lock.LockFactory;
 import rlib.concurrent.task.CallableTask;
@@ -17,169 +12,190 @@ import rlib.util.Synchronized;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
+import java.lang.reflect.Constructor;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+
 /**
  * Реализация однопоточного исполнителя задач.
- * 
+ *
  * @author Ronn
  */
 public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, Synchronized {
 
-	protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadTaskExecutor.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadTaskExecutor.class);
 
-	/** список ожидающих исполнение задач */
-	private final Array<CallableTask<?, L>> waitTasks;
-	/** список задач которые будут исполнены */
-	private final Array<CallableTask<?, L>> executeTasks;
-	/** поток, в котором происходит исполнение задач */
-	private final Thread thread;
-	/** локальные объекты */
-	private final L localObjects;
+    /**
+     * Список ожидающих исполнение задач.
+     */
+    private final Array<CallableTask<?, L>> waitTasks;
 
-	/** находится ли исполнитель в ожидании */
-	private final AtomicBoolean wait;
-	/** блокировщик */
-	private final Lock lock;
+    /**
+     * Список задач которые будут исполнены.
+     */
+    private final Array<CallableTask<?, L>> executeTasks;
 
-	public SingleThreadTaskExecutor(final Class<? extends Thread> threadClass, final int priority, final String name, final L local) {
-		this.waitTasks = ArrayFactory.newArray(SimpleTask.class);
-		this.executeTasks = ArrayFactory.newArray(SimpleTask.class);
-		this.wait = new AtomicBoolean();
-		this.lock = LockFactory.newPrimitiveAtomicLock();
+    /**
+     * Поток, в котором происходит исполнение задач.
+     */
+    private final Thread thread;
 
-		final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
+    /**
+     * Локальные объекты.
+     */
+    private final L localObjects;
 
-		this.thread = ClassUtils.newInstance(constructor, this, name);
-		this.thread.setPriority(priority);
-		this.thread.setDaemon(true);
-		this.localObjects = check(local, thread);
-		this.thread.start();
-	}
+    /**
+     * Находится ли исполнитель в ожидании.
+     */
+    private final AtomicBoolean wait;
 
-	protected L check(final L local, final Thread thread) {
-		return local;
-	}
+    /**
+     * Блокировщик.
+     */
+    private final Lock lock;
 
-	@Override
-	public void execute(final SimpleTask<L> task) {
-		lock();
-		try {
+    public SingleThreadTaskExecutor(final Class<? extends Thread> threadClass, final int priority, final String name, final L local) {
+        this.waitTasks = ArrayFactory.newArray(SimpleTask.class);
+        this.executeTasks = ArrayFactory.newArray(SimpleTask.class);
+        this.wait = new AtomicBoolean();
+        this.lock = LockFactory.newPrimitiveAtomicLock();
 
-			final Array<CallableTask<?, L>> waitTasks = getWaitTasks();
-			waitTasks.add(task);
+        final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
 
-			final AtomicBoolean wait = getWait();
+        this.thread = ClassUtils.newInstance(constructor, this, name);
+        this.thread.setPriority(priority);
+        this.thread.setDaemon(true);
+        this.localObjects = check(local, thread);
+        this.thread.start();
+    }
 
-			if(wait.get()) {
-				synchronized(wait) {
-					if(wait.compareAndSet(true, false)) {
-						ConcurrentUtils.notifyAllInSynchronize(wait);
-					}
-				}
-			}
+    protected L check(final L local, final Thread thread) {
+        return local;
+    }
 
-		} finally {
-			unlock();
-		}
-	}
+    @Override
+    public void execute(final SimpleTask<L> task) {
+        lock();
+        try {
 
-	/**
-	 * @return список задач которые будут исполнены.
-	 */
-	protected Array<CallableTask<?, L>> getExecuteTasks() {
-		return executeTasks;
-	}
+            final Array<CallableTask<?, L>> waitTasks = getWaitTasks();
+            waitTasks.add(task);
 
-	/**
-	 * @return локальные объекты.
-	 */
-	protected L getLocalObjects() {
-		return localObjects;
-	}
+            final AtomicBoolean wait = getWait();
 
-	/**
-	 * @return находится ли исполнитель в ожидании.
-	 */
-	public AtomicBoolean getWait() {
-		return wait;
-	}
+            if (wait.get()) {
+                synchronized (wait) {
+                    if (wait.compareAndSet(true, false)) {
+                        ConcurrentUtils.notifyAllInSynchronize(wait);
+                    }
+                }
+            }
 
-	/**
-	 * @return список ожидающих исполнение задач.
-	 */
-	protected Array<CallableTask<?, L>> getWaitTasks() {
-		return waitTasks;
-	}
+        } finally {
+            unlock();
+        }
+    }
 
-	@Override
-	public void lock() {
-		lock.lock();
-	}
+    /**
+     * @return список задач которые будут исполнены.
+     */
+    protected Array<CallableTask<?, L>> getExecuteTasks() {
+        return executeTasks;
+    }
 
-	@Override
-	public void run() {
+    /**
+     * @return локальные объекты.
+     */
+    protected L getLocalObjects() {
+        return localObjects;
+    }
 
-		final Array<CallableTask<?, L>> waitTasks = getWaitTasks();
-		final Array<CallableTask<?, L>> executeTasks = getExecuteTasks();
+    /**
+     * @return находится ли исполнитель в ожидании.
+     */
+    public AtomicBoolean getWait() {
+        return wait;
+    }
 
-		final L local = getLocalObjects();
-		final AtomicBoolean wait = getWait();
+    /**
+     * @return список ожидающих исполнение задач.
+     */
+    protected Array<CallableTask<?, L>> getWaitTasks() {
+        return waitTasks;
+    }
 
-		while(true) {
+    @Override
+    public void lock() {
+        lock.lock();
+    }
 
-			executeTasks.clear();
+    @Override
+    public void run() {
 
-			lock();
-			try {
+        final Array<CallableTask<?, L>> waitTasks = getWaitTasks();
+        final Array<CallableTask<?, L>> executeTasks = getExecuteTasks();
 
-				if(waitTasks.isEmpty()) {
-					wait.getAndSet(true);
-				} else {
-					executeTasks.addAll(waitTasks);
-					waitTasks.clear();
-				}
+        final L local = getLocalObjects();
+        final AtomicBoolean wait = getWait();
 
-			} finally {
-				unlock();
-			}
+        while (true) {
 
-			if(wait.get()) {
-				synchronized(wait) {
-					if(wait.get()) {
-						ConcurrentUtils.waitInSynchronize(wait);
-					}
-				}
-			}
+            executeTasks.clear();
 
-			if(executeTasks.isEmpty()) {
-				continue;
-			}
+            lock();
+            try {
 
-			try {
+                if (waitTasks.isEmpty()) {
+                    wait.getAndSet(true);
+                } else {
+                    executeTasks.addAll(waitTasks);
+                    waitTasks.clear();
+                }
 
-				final long currentTime = System.currentTimeMillis();
+            } finally {
+                unlock();
+            }
 
-				for(final CallableTask<?, L> task : executeTasks.array()) {
+            if (wait.get()) {
+                synchronized (wait) {
+                    if (wait.get()) {
+                        ConcurrentUtils.waitInSynchronize(wait);
+                    }
+                }
+            }
 
-					if(task == null) {
-						break;
-					}
+            if (executeTasks.isEmpty()) {
+                continue;
+            }
 
-					task.call(local, currentTime);
-				}
+            try {
 
-			} catch(final Exception e) {
-				LOGGER.warning(e);
-			}
-		}
-	}
+                final long currentTime = System.currentTimeMillis();
 
-	@Override
-	public <R> Future<R> submit(final CallableTask<R, L> task) {
-		throw new RuntimeException("not implemented.");
-	}
+                for (final CallableTask<?, L> task : executeTasks.array()) {
 
-	@Override
-	public void unlock() {
-		lock.unlock();
-	}
+                    if (task == null) {
+                        break;
+                    }
+
+                    task.call(local, currentTime);
+                }
+
+            } catch (final Exception e) {
+                LOGGER.warning(e);
+            }
+        }
+    }
+
+    @Override
+    public <R> Future<R> submit(final CallableTask<R, L> task) {
+        throw new RuntimeException("not implemented.");
+    }
+
+    @Override
+    public void unlock() {
+        lock.unlock();
+    }
 }

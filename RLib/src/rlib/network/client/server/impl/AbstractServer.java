@@ -1,7 +1,5 @@
 package rlib.network.client.server.impl;
 
-import java.nio.ByteBuffer;
-
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.GameCrypt;
@@ -10,111 +8,120 @@ import rlib.network.client.server.ServerConnection;
 import rlib.network.packet.ReadeablePacket;
 import rlib.network.packet.SendablePacket;
 
+import java.nio.ByteBuffer;
+
 /**
  * Базовая реализация сервера, к которому подключается клиент.
- * 
+ *
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
 public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt, RP extends ReadeablePacket, SP extends SendablePacket> implements Server<C, RP, SP> {
 
-	protected static final Logger LOGGER = LoggerManager.getLogger(Server.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(Server.class);
 
-	/** коннект к логин серверу */
-	protected final C connection;
-	/** криптор пакетов */
-	protected final T crypt;
+    /**
+     * Соединение с логин сервером..
+     */
+    protected final C connection;
 
-	/** закрыт ли клиент */
-	protected volatile boolean closed;
+    /**
+     * Криптор пакетов.
+     */
+    protected final T crypt;
 
-	protected AbstractServer(final C connection, final T crypt) {
-		this.connection = connection;
-		this.crypt = crypt;
-	}
+    /**
+     * Закрыт ли клиент.
+     */
+    protected volatile boolean closed;
 
-	@Override
-	public void close() {
+    protected AbstractServer(final C connection, final T crypt) {
+        this.connection = connection;
+        this.crypt = crypt;
+    }
 
-		final C connection = getConnection();
+    @Override
+    public void close() {
 
-		if(connection != null) {
-			connection.close();
-		}
-	}
+        final C connection = getConnection();
 
-	@Override
-	public void decrypt(final ByteBuffer data, final int offset, final int length) {
-		crypt.decrypt(data.array(), offset, length);
-	}
+        if (connection != null) {
+            connection.close();
+        }
+    }
 
-	@Override
-	public void encrypt(final ByteBuffer data, final int offset, final int length) {
-		crypt.encrypt(data.array(), offset, length);
-	}
+    @Override
+    public void decrypt(final ByteBuffer data, final int offset, final int length) {
+        crypt.decrypt(data.array(), offset, length);
+    }
 
-	/**
-	 * Отправка на выполнение пакета.
-	 * 
-	 * @param packet выполняемый пакет.
-	 */
-	protected abstract void execute(RP packet);
+    @Override
+    public void encrypt(final ByteBuffer data, final int offset, final int length) {
+        crypt.encrypt(data.array(), offset, length);
+    }
 
-	@Override
-	public C getConnection() {
-		return connection;
-	}
+    /**
+     * Отправка на выполнение пакета.
+     *
+     * @param packet выполняемый пакет.
+     */
+    protected abstract void execute(RP packet);
 
-	/**
-	 * @return закрыт ли клиент.
-	 */
-	public boolean isClosed() {
-		return closed;
-	}
+    @Override
+    public C getConnection() {
+        return connection;
+    }
 
-	@Override
-	public boolean isConnected() {
-		return !isClosed() && connection != null && !connection.isClosed();
-	}
+    /**
+     * @return закрыт ли клиент.
+     */
+    public boolean isClosed() {
+        return closed;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public void readPacket(final RP packet, final ByteBuffer buffer) {
+    @Override
+    public boolean isConnected() {
+        return !isClosed() && connection != null && !connection.isClosed();
+    }
 
-		if(packet == null) {
-			return;
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    public void readPacket(final RP packet, final ByteBuffer buffer) {
 
-		packet.setOwner(this);
-		packet.setBuffer(buffer);
-		boolean needExecute = packet.read();
-		packet.setBuffer(null);
+        if (packet == null) {
+            return;
+        }
 
-		if(needExecute) {
-			execute(packet);
-		}
-	}
+        packet.setOwner(this);
+        packet.setBuffer(buffer);
+        boolean needExecute = packet.read();
+        packet.setBuffer(null);
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public void sendPacket(final SP packet) {
+        if (needExecute) {
+            execute(packet);
+        }
+    }
 
-		if(isClosed()) {
-			return;
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    public void sendPacket(final SP packet) {
 
-		final C connection = getConnection();
+        if (isClosed()) {
+            return;
+        }
 
-		if(connection == null || connection.isClosed()) {
-			LOGGER.warning(this, new Exception("not found connection"));
-			return;
-		}
+        final C connection = getConnection();
 
-		connection.sendPacket(packet);
-	}
+        if (connection == null || connection.isClosed()) {
+            LOGGER.warning(this, new Exception("not found connection"));
+            return;
+        }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " [connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
-	}
+        connection.sendPacket(packet);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
+    }
 }

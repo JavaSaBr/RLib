@@ -1,20 +1,19 @@
 package rlib.util.ref;
 
-
 /**
- * Базовая реализация ссылки..
- * 
+ * Базовая реализация ссылки.
+ *
  * @author Ronn
  */
 public abstract class AbstractReference implements Reference {
 
-	protected AbstractReference() {
-		super();
-	}
+    protected AbstractReference() {
+        super();
+    }
 
-	@Override
-	public void release() {
-		final ReferenceType referenceType = getReferenceType();
-		referenceType.put(this);
-	}
+    @Override
+    public void release() {
+        final ReferenceType referenceType = getReferenceType();
+        referenceType.put(this);
+    }
 }

@@ -8,11 +8,11 @@ package rlib.util.array;
  */
 public interface Search<E> {
 
-	/**
-	 * Проверка, подходит ли элемент к указанному
-	 * 
-	 * @param required
-	 * @param target
-	 */
-	public boolean compare(E required, E target);
+    /**
+     * Проверка, подходит ли элемент к указанному
+     *
+     * @param required
+     * @param target
+     */
+    public boolean compare(E required, E target);
 }

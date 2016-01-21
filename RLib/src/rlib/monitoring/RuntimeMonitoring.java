@@ -8,61 +8,66 @@ import java.util.Date;
 
 /**
  * Реализация мониторинга работы Java процесса и его окружения.
- * 
+ *
  * @author Ronn
  */
 public class RuntimeMonitoring {
 
-	private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
 
-		@Override
-		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat();
-		}
-	};
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat();
+        }
+    };
 
-	private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
+    private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
 
-		@Override
-		protected Date initialValue() {
-			return new Date();
-		}
-	};
+        @Override
+        protected Date initialValue() {
+            return new Date();
+        }
+    };
 
-	/** менеджер по анализу работы ОС, на которой запущен Java процесс */
-	private final OperatingSystemMXBean operatingSystemMXBean;
-	/** менеджер по работе процесса */
-	private final RuntimeMXBean runtimeMXBean;
+    /**
+     * Менеджер по анализу работы ОС, на которой запущен Java процесс.
+     */
+    private final OperatingSystemMXBean operatingSystemMXBean;
 
-	public RuntimeMonitoring() {
-		this.operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-		this.runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-	}
+    /**
+     * Менеджер по работе процесса.
+     */
+    private final RuntimeMXBean runtimeMXBean;
 
-	@Override
-	public String toString() {
+    public RuntimeMonitoring() {
+        this.operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        this.runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+    }
 
-		final Date date = LOCAL_DATE.get();
-		date.setTime(runtimeMXBean.getStartTime());
+    @Override
+    public String toString() {
 
-		final SimpleDateFormat format = LOCAL_DATE_FORMAT.get();
+        final Date date = LOCAL_DATE.get();
+        date.setTime(runtimeMXBean.getStartTime());
 
-		final StringBuilder builder = new StringBuilder();
-		builder.append("Operating System:").append('\n');
-		builder.append("	").append("OS Name:				").append(operatingSystemMXBean.getName()).append('\n');
-		builder.append("	").append("OS Arch:				").append(operatingSystemMXBean.getArch()).append('\n');
-		builder.append("	").append("OS Version:				").append(operatingSystemMXBean.getVersion()).append('\n');
-		builder.append("	").append("OS System Load:				").append(operatingSystemMXBean.getSystemLoadAverage()).append('\n');
-		builder.append("	").append("OS Available Processors:		").append(operatingSystemMXBean.getAvailableProcessors()).append('\n');
-		builder.append("Runtime:").append('\n');
-		builder.append("	").append("JVM StartTime:				").append(format.format(date)).append('\n');
-		builder.append("	").append("JVM UpTime:				").append(runtimeMXBean.getUptime() / 1000 / 60).append(" minuts").append('\n');
-		builder.append("	").append("JVM Name:				").append(runtimeMXBean.getVmName()).append('\n');
-		builder.append("	").append("JVM Vendor:				").append(runtimeMXBean.getVmVendor()).append('\n');
-		builder.append("	").append("JVM Version:				").append(runtimeMXBean.getVmVersion()).append('\n');
-		builder.append("	").append("JVM Java Version:			").append(runtimeMXBean.getSpecVersion());
+        final SimpleDateFormat format = LOCAL_DATE_FORMAT.get();
 
-		return builder.toString();
-	}
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Operating System:").append('\n');
+        builder.append("	").append("OS Name:				").append(operatingSystemMXBean.getName()).append('\n');
+        builder.append("	").append("OS Arch:				").append(operatingSystemMXBean.getArch()).append('\n');
+        builder.append("	").append("OS Version:				").append(operatingSystemMXBean.getVersion()).append('\n');
+        builder.append("	").append("OS System Load:				").append(operatingSystemMXBean.getSystemLoadAverage()).append('\n');
+        builder.append("	").append("OS Available Processors:		").append(operatingSystemMXBean.getAvailableProcessors()).append('\n');
+        builder.append("Runtime:").append('\n');
+        builder.append("	").append("JVM StartTime:				").append(format.format(date)).append('\n');
+        builder.append("	").append("JVM UpTime:				").append(runtimeMXBean.getUptime() / 1000 / 60).append(" minuts").append('\n');
+        builder.append("	").append("JVM Name:				").append(runtimeMXBean.getVmName()).append('\n');
+        builder.append("	").append("JVM Vendor:				").append(runtimeMXBean.getVmVendor()).append('\n');
+        builder.append("	").append("JVM Version:				").append(runtimeMXBean.getVmVersion()).append('\n');
+        builder.append("	").append("JVM Java Version:			").append(runtimeMXBean.getSpecVersion());
+
+        return builder.toString();
+    }
 
 }

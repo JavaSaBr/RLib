@@ -5,83 +5,91 @@ import java.util.NoSuchElementException;
 
 /**
  * Реализация итератора для словарей с примитивным ключем int.
- * 
+ *
  * @author Ronn
  */
 public class IntegerDictionaryIterator<V> implements Iterator<V> {
 
-	/** итерируемый словарь */
-	private final UnsafeIntegerDictionary<V> dictionary;
+    /**
+     * итерируемый словарь
+     */
+    private final UnsafeIntegerDictionary<V> dictionary;
 
-	/** следующая ячейка */
-	private IntegerDictionaryEntry<V> next;
-	/** текущая ячейка */
-	private IntegerDictionaryEntry<V> current;
+    /**
+     * следующая ячейка
+     */
+    private IntegerDictionaryEntry<V> next;
+    /**
+     * текущая ячейка
+     */
+    private IntegerDictionaryEntry<V> current;
 
-	/** текущий индекс в массиве */
-	private int index;
+    /**
+     * текущий индекс в массиве
+     */
+    private int index;
 
-	public IntegerDictionaryIterator(final UnsafeIntegerDictionary<V> dictionary) {
-		this.dictionary = dictionary;
+    public IntegerDictionaryIterator(final UnsafeIntegerDictionary<V> dictionary) {
+        this.dictionary = dictionary;
 
-		final IntegerDictionaryEntry<V>[] content = dictionary.content();
+        final IntegerDictionaryEntry<V>[] content = dictionary.content();
 
-		if(dictionary.size() > 0) {
-			while(index < content.length && (next = content[index++]) == null);
-		}
-	}
+        if (dictionary.size() > 0) {
+            while (index < content.length && (next = content[index++]) == null) ;
+        }
+    }
 
-	@Override
-	public boolean hasNext() {
-		return next != null;
-	}
+    /**
+     * @return итерируемый словарь.
+     */
+    private UnsafeIntegerDictionary<V> getDictionary() {
+        return dictionary;
+    }
 
-	@Override
-	public V next() {
-		return nextEntry().getValue();
-	}
+    @Override
+    public boolean hasNext() {
+        return next != null;
+    }
 
-	/**
-	 * @return итерируемый словарь.
-	 */
-	private UnsafeIntegerDictionary<V> getDictionary() {
-		return dictionary;
-	}
+    @Override
+    public V next() {
+        return nextEntry().getValue();
+    }
 
-	/**
-	 * @return следующая занятая ячейка.
-	 */
-	private IntegerDictionaryEntry<V> nextEntry() {
+    /**
+     * @return следующая занятая ячейка.
+     */
+    private IntegerDictionaryEntry<V> nextEntry() {
 
-		final UnsafeIntegerDictionary<V> dictionary = getDictionary();
+        final UnsafeIntegerDictionary<V> dictionary = getDictionary();
 
-		final IntegerDictionaryEntry<V>[] content = dictionary.content();
-		final IntegerDictionaryEntry<V> entry = next;
+        final IntegerDictionaryEntry<V>[] content = dictionary.content();
+        final IntegerDictionaryEntry<V> entry = next;
 
-		if(entry == null) {
-			throw new NoSuchElementException();
-		}
+        if (entry == null) {
+            throw new NoSuchElementException();
+        }
 
-		if((next = entry.getNext()) == null) {
-			while(index < content.length && (next = content[index++]) == null);
-		}
+        if ((next = entry.getNext()) == null) {
+            while (index < content.length && (next = content[index++]) == null) ;
+        }
 
-		current = entry;
-		return entry;
-	}
+        current = entry;
+        return entry;
+    }
 
-	@Override
-	public void remove() {
+    @Override
+    public void remove() {
 
-		if(current == null) {
-			throw new IllegalStateException();
-		}
+        if (current == null) {
+            throw new IllegalStateException();
+        }
 
-		final int key = current.getKey();
+        final int key = current.getKey();
 
-		current = null;
+        current = null;
 
-		final UnsafeIntegerDictionary<V> dictionary = getDictionary();
-		dictionary.removeEntryForKey(key);
-	}
+        final UnsafeIntegerDictionary<V> dictionary = getDictionary();
+        dictionary.removeEntryForKey(key);
+    }
 }

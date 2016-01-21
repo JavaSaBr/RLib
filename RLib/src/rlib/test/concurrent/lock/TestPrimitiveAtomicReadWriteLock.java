@@ -11,7 +11,7 @@ import java.util.concurrent.Future;
 import org.junit.Assert;
 import org.junit.Test;
 
-import rlib.concurrent.lock.AsynReadSynWriteLock;
+import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.impl.PrimitiveAtomicReadWriteLock;
 import rlib.concurrent.lock.impl.SimpleReadWriteLock;
 import rlib.concurrent.util.ThreadUtils;
@@ -30,8 +30,8 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 
 		System.out.println(header + "start test...");
 
-		final AsynReadSynWriteLock atomicLock = new PrimitiveAtomicReadWriteLock();
-		final AsynReadSynWriteLock reentrantLock = new SimpleReadWriteLock();
+		final AsyncReadSyncWriteLock atomicLock = new PrimitiveAtomicReadWriteLock();
+		final AsyncReadSyncWriteLock reentrantLock = new SimpleReadWriteLock();
 
 		final ExecutorService service = Executors.newFixedThreadPool(10);
 
@@ -51,7 +51,7 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 	}
 
 	@SuppressWarnings("unused")
-	private long testImpl(final ExecutorService service, final AsynReadSynWriteLock lock) throws InterruptedException, ExecutionException {
+	private long testImpl(final ExecutorService service, final AsyncReadSyncWriteLock lock) throws InterruptedException, ExecutionException {
 
 		System.gc();
 
@@ -63,7 +63,7 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 
 			for(int i = 0, length = 15; i < length; i++) {
 
-				lock.synLock();
+				lock.syncLock();
 				try {
 
 					for(int g = 0; g < 5; g++) {
@@ -71,12 +71,12 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 					}
 
 				} finally {
-					lock.synUnlock();
+					lock.syncUnlock();
 				}
 
 				ThreadUtils.sleep(10);
 
-				lock.synLock();
+				lock.syncLock();
 				try {
 
 					for(int g = 0; g < 5; g++) {
@@ -84,7 +84,7 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 					}
 
 				} finally {
-					lock.synUnlock();
+					lock.syncUnlock();
 				}
 
 				ThreadUtils.sleep(10);
@@ -95,7 +95,7 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 
 			for(int i = 0, length = 500; i < length; i++) {
 
-				lock.asynLock();
+				lock.asyncLock();
 				try {
 
 					int sum = 0;
@@ -105,12 +105,12 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 					}
 
 				} finally {
-					lock.asynUnlock();
+					lock.asyncUnlock();
 				}
 
 				ThreadUtils.sleep(1);
 
-				lock.asynLock();
+				lock.asyncLock();
 				try {
 
 					int sum = 0;
@@ -120,7 +120,7 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 					}
 
 				} finally {
-					lock.asynUnlock();
+					lock.asyncUnlock();
 				}
 
 				ThreadUtils.sleep(1);

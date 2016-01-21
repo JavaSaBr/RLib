@@ -1,87 +1,132 @@
 package rlib.util.random;
 
+import rlib.util.NumberUtils;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.round;
+
 /**
  * Реализация медленного рандоминайзера с очень естественным рандомом.
- * 
+ *
  * @author Ronn
  */
-@Deprecated
 public final class RealRandom implements Random {
 
-	/** генератор чисел */
-	private final SecureRandom random;
+    private final ThreadLocal<byte[]> LOCAL_BUFFER = new ThreadLocal<byte[]>() {
 
-	public RealRandom() {
-		try {
-			random = SecureRandom.getInstance("SHA1PRNG");
-		} catch(final NoSuchAlgorithmException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
+        @Override
+        protected byte[] initialValue() {
+            return new byte[8];
+        }
+    };
 
-	@Override
-	public void byteArray(final byte[] array, final int offset, int length) {
+    /**
+     * Генератор чисел.
+     */
+    private final SecureRandom secureRandom;
 
-		length += offset;
+    /**
+     * Генератор чисел.
+     */
+    private final java.util.Random random;
 
-		for(int i = offset; i < length; i++) {
-			array[i] = (byte) nextInt(256);
-		}
-	}
+    /**
+     * Счетчик использований.
+     */
+    private volatile int counter;
 
-	@Override
-	public boolean chance(final float chance) {
+    public RealRandom() {
+        this.random = new java.util.Random();
 
-		if(chance < 0F) {
-			return false;
-		}
+        try {
+            this.secureRandom = SecureRandom.getInstance("SHA1PRNG");
+        } catch (final NoSuchAlgorithmException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
 
-		if(chance > 99.999999F) {
-			return true;
-		}
+    @Override
+    public void byteArray(final byte[] array, final int offset, int length) {
 
-		return nextFloat() * nextInt(100) <= chance;
-	}
+        length += offset;
 
-	@Override
-	public boolean chance(final int chance) {
+        for (int i = offset; i < length; i++) {
+            array[i] = (byte) nextInt(256);
+        }
+    }
 
-		if(chance < 1) {
-			return false;
-		}
+    @Override
+    public boolean chance(final float chance) {
 
-		if(chance > 99) {
-			return true;
-		}
+        if (chance < 0F) {
+            return false;
+        } else if (chance > 99.999999F) {
+            return true;
+        }
 
-		return nextInt(99) <= chance;
-	}
+        return nextFloat() * nextInt(100) <= chance;
+    }
 
-	@Override
-	public float nextFloat() {
-		return random.nextFloat();
-	}
+    @Override
+    public boolean chance(final int chance) {
 
-	@Override
-	public int nextInt() {
-		return random.nextInt();
-	}
+        if (chance < 1) {
+            return false;
+        } else if (chance > 99) {
+            return true;
+        }
 
-	@Override
-	public int nextInt(final int max) {
-		return random.nextInt(max);
-	}
+        return nextInt(99) <= chance;
+    }
 
-	@Override
-	public int nextInt(final int min, final int max) {
-		return min + nextInt(Math.abs(max - min) + 1);
-	}
+    @Override
+    public float nextFloat() {
+        increaseUse();
+        return random.nextFloat();
+    }
 
-	@Override
-	public long nextLong(final long min, final long max) {
-		return min + Math.round(nextFloat() * Math.abs(max - min) + 1);
-	}
+    @Override
+    public int nextInt() {
+        increaseUse();
+        return random.nextInt();
+    }
+
+    @Override
+    public int nextInt(final int max) {
+        increaseUse();
+        return random.nextInt(max);
+    }
+
+    @Override
+    public int nextInt(final int min, final int max) {
+        increaseUse();
+        return min + nextInt(abs(max - min) + 1);
+    }
+
+    @Override
+    public long nextLong(final long min, final long max) {
+        increaseUse();
+        return min + round(nextFloat() * abs(max - min) + 1);
+    }
+
+    public void increaseUse() {
+        counter++;
+
+        if(counter < 8) {
+            return;
+        }
+
+        counter = 0;
+
+        final byte[] bytes = LOCAL_BUFFER.get();
+
+        secureRandom.nextBytes(bytes);
+
+        final long makeLong = NumberUtils.makeLong(bytes);
+
+        random.setSeed(makeLong);
+    }
 }

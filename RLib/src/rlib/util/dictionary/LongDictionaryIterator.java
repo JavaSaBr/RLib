@@ -5,84 +5,93 @@ import java.util.NoSuchElementException;
 
 /**
  * Реализация итератора для словаря с примитивным ключем long.
- * 
+ *
  * @author Ronn
  */
 public class LongDictionaryIterator<V> implements Iterator<V> {
 
-	/** итерируемый словарь */
-	private final UnsafeLongDictionary<V> dictionary;
+    /**
+     * Мтерируемый словарь.
+     */
+    private final UnsafeLongDictionary<V> dictionary;
 
-	/** следующий entry */
-	private LongEntry<V> next;
-	/** текущий entry */
-	private LongEntry<V> current;
+    /**
+     * Следующий entry.
+     */
+    private LongEntry<V> next;
 
-	/** текущий индекс в таблице */
-	private int index;
+    /**
+     * Текущий entry.
+     */
+    private LongEntry<V> current;
 
-	public LongDictionaryIterator(final UnsafeLongDictionary<V> dictionary) {
-		this.dictionary = dictionary;
+    /**
+     * Текущий индекс в таблице.
+     */
+    private int index;
 
-		final LongEntry<V>[] content = dictionary.content();
+    public LongDictionaryIterator(final UnsafeLongDictionary<V> dictionary) {
+        this.dictionary = dictionary;
 
-		if(dictionary.size() > 0) {
-			while(index < content.length && (next = content[index++]) == null);
-		}
-	}
+        final LongEntry<V>[] content = dictionary.content();
 
-	/**
-	 * @return итерируемый словарь.
-	 */
-	private UnsafeLongDictionary<V> getDictionary() {
-		return dictionary;
-	}
+        if (dictionary.size() > 0) {
+            while (index < content.length && (next = content[index++]) == null) ;
+        }
+    }
 
-	@Override
-	public boolean hasNext() {
-		return next != null;
-	}
+    /**
+     * @return итерируемый словарь.
+     */
+    private UnsafeLongDictionary<V> getDictionary() {
+        return dictionary;
+    }
 
-	@Override
-	public V next() {
-		return nextEntry().getValue();
-	}
+    @Override
+    public boolean hasNext() {
+        return next != null;
+    }
 
-	/**
-	 * @return следующая занятая ячейка.
-	 */
-	private LongEntry<V> nextEntry() {
+    @Override
+    public V next() {
+        return nextEntry().getValue();
+    }
 
-		final UnsafeLongDictionary<V> dictionary = getDictionary();
+    /**
+     * @return следующая занятая ячейка.
+     */
+    private LongEntry<V> nextEntry() {
 
-		final LongEntry<V>[] content = dictionary.content();
-		final LongEntry<V> entry = next;
+        final UnsafeLongDictionary<V> dictionary = getDictionary();
 
-		if(entry == null) {
-			throw new NoSuchElementException();
-		}
+        final LongEntry<V>[] content = dictionary.content();
+        final LongEntry<V> entry = next;
 
-		if((next = entry.getNext()) == null) {
-			while(index < content.length && (next = content[index++]) == null);
-		}
+        if (entry == null) {
+            throw new NoSuchElementException();
+        }
 
-		current = entry;
+        if ((next = entry.getNext()) == null) {
+            while (index < content.length && (next = content[index++]) == null) ;
+        }
 
-		return entry;
-	}
+        current = entry;
 
-	@Override
-	public void remove() {
+        return entry;
+    }
 
-		if(current == null) {
-			throw new IllegalStateException();
-		}
+    @Override
+    public void remove() {
 
-		final long key = current.getKey();
+        if (current == null) {
+            throw new IllegalStateException();
+        }
 
-		current = null;
+        final long key = current.getKey();
 
-		final UnsafeLongDictionary<V> dictionary = getDictionary();
-		dictionary.removeEntryForKey(key);
-	}
+        current = null;
+
+        final UnsafeLongDictionary<V> dictionary = getDictionary();
+        dictionary.removeEntryForKey(key);
+    }
 }

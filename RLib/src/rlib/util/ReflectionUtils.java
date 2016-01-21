@@ -1,9 +1,9 @@
 package rlib.util;
 
-import java.lang.reflect.Field;
-
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+
+import java.lang.reflect.Field;
 
 /**
  * Набор утильных методов по работе с рефлексией.

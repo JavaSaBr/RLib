@@ -4,7 +4,7 @@
     <output url="file://$MODULE_DIR$/RLib/bin" />
     <output-test url="file://$MODULE_DIR$/RLib/bin/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$">
+    <content url="file://$MODULE_DIR$/RLib">
       <sourceFolder url="file://$MODULE_DIR$/RLib/src" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />

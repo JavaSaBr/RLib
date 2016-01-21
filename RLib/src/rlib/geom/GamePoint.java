@@ -2,69 +2,69 @@ package rlib.geom;
 
 /**
  * Интерфейс для реализации позиции с вещесвенным координатами.
- * 
+ *
  * @author Ronn
  */
 public interface GamePoint {
 
-	/**
-	 * @return направление позиции.
-	 */
-	public int getHeading();
+    /**
+     * @return направление позиции.
+     */
+    public int getHeading();
 
-	/**
-	 * @return х координата.
-	 */
-	public float getX();
+    /**
+     * @param heading направление позиции.
+     * @return this.
+     */
+    public GamePoint setHeading(int heading);
 
-	/**
-	 * @return y координата.
-	 */
-	public float getY();
+    /**
+     * @return х координата.
+     */
+    public float getX();
 
-	/**
-	 * @return z координата.
-	 */
-	public float getZ();
+    /**
+     * @param x координата.
+     * @return this.
+     */
+    public GamePoint setX(float x);
 
-	/**
-	 * @param heading направление позиции.
-	 * @return this.
-	 */
-	public GamePoint setHeading(int heading);
+    /**
+     * @return y координата.
+     */
+    public float getY();
 
-	/**
-	 * @param x координата.
-	 * @return this.
-	 */
-	public GamePoint setX(float x);
+    /**
+     * @param y координата.
+     * @return this.
+     */
+    public GamePoint setY(float y);
 
-	/**
-	 * @param x координата.
-	 * @param y координата.
-	 * @param z координата.
-	 * @return this.
-	 */
-	public GamePoint setXYZ(float x, float y, float z);
+    /**
+     * @return z координата.
+     */
+    public float getZ();
 
-	/**
-	 * @param x координата.
-	 * @param y координата.
-	 * @param z координата.
-	 * @param heading направление разварота.
-	 * @return this.
-	 */
-	public GamePoint setXYZH(float x, float y, float z, int heading);
+    /**
+     * @param z координата.
+     * @return this.
+     */
+    public GamePoint setZ(float z);
 
-	/**
-	 * @param y координата.
-	 * @return this.
-	 */
-	public GamePoint setY(float y);
+    /**
+     * @param x координата.
+     * @param y координата.
+     * @param z координата.
+     * @return this.
+     */
+    public GamePoint setXYZ(float x, float y, float z);
 
-	/**
-	 * @param z координата.
-	 * @return this.
-	 */
-	public GamePoint setZ(float z);
+    /**
+     * @param x       координата.
+     * @param y       координата.
+     * @param z       координата.
+     * @param heading направление разварота.
+     * @return this.
+     */
+    public GamePoint setXYZH(float x, float y, float z, int heading);
 }

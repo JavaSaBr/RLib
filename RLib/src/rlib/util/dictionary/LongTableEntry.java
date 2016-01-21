@@ -4,121 +4,130 @@ import rlib.util.pools.Foldable;
 
 /**
  * Реализация чеяки таблицы для таблиц с примитивным long ключем.
- * 
+ *
  * @author Ronn
  */
 public class LongTableEntry<V> implements Foldable {
 
-	/** следующая ячейка */
-	private LongTableEntry<V> next;
+    /**
+     * Следующая ячейка.
+     */
+    private LongTableEntry<V> next;
 
-	/** значение */
-	private V value;
+    /**
+     * Значение.
+     */
+    private V value;
 
-	/** ключ */
-	private long key;
-	/** хэш ключа */
-	private int hash;
+    /**
+     * Ключ.
+     */
+    private long key;
 
-	@Override
-	public boolean equals(final Object object) {
+    /**
+     * Хэш ключа.
+     */
+    private int hash;
 
-		if(object == null || object.getClass() != LongTableEntry.class) {
-			return false;
-		}
+    @Override
+    public boolean equals(final Object object) {
 
-		final LongTableEntry<?> entry = (LongTableEntry<?>) object;
+        if (object == null || object.getClass() != LongTableEntry.class) {
+            return false;
+        }
 
-		final long firstKey = getKey();
-		final long secondKey = entry.getKey();
+        final LongTableEntry<?> entry = (LongTableEntry<?>) object;
 
-		if(firstKey == secondKey) {
+        final long firstKey = getKey();
+        final long secondKey = entry.getKey();
 
-			final Object firstValue = getValue();
-			final Object secondValue = entry.getValue();
+        if (firstKey == secondKey) {
 
-			if(firstValue == secondValue || firstValue != null && firstValue.equals(secondValue)) {
-				return true;
-			}
-		}
+            final Object firstValue = getValue();
+            final Object secondValue = entry.getValue();
 
-		return false;
-	}
+            if (firstValue == secondValue || firstValue != null && firstValue.equals(secondValue)) {
+                return true;
+            }
+        }
 
-	@Override
-	public void finalyze() {
-		value = null;
-		next = null;
-		key = 0;
-		hash = 0;
-	}
+        return false;
+    }
 
-	/**
-	 * @return хэш ячейки.
-	 */
-	public int getHash() {
-		return hash;
-	}
+    @Override
+    public void finalyze() {
+        value = null;
+        next = null;
+        key = 0;
+        hash = 0;
+    }
 
-	/**
-	 * @return ключ ячейки.
-	 */
-	public long getKey() {
-		return key;
-	}
+    /**
+     * @return хэш ячейки.
+     */
+    public int getHash() {
+        return hash;
+    }
 
-	/**
-	 * @return следующая ячейка.
-	 */
-	public LongTableEntry<V> getNext() {
-		return next;
-	}
+    /**
+     * @return ключ ячейки.
+     */
+    public long getKey() {
+        return key;
+    }
 
-	/**
-	 * @return значение ячейки.
-	 */
-	public V getValue() {
-		return value;
-	}
+    /**
+     * @return следующая ячейка.
+     */
+    public LongTableEntry<V> getNext() {
+        return next;
+    }
 
-	@Override
-	public final int hashCode() {
-		return (int) (key ^ (value == null ? 0 : value.hashCode()));
-	}
+    /**
+     * @param next следующая цепочка.
+     */
+    public void setNext(final LongTableEntry<V> next) {
+        this.next = next;
+    }
 
-	@Override
-	public void reinit() {
-		hash = 0;
-	}
+    /**
+     * @return значение ячейки.
+     */
+    public V getValue() {
+        return value;
+    }
 
-	public void set(final int hash, final long key, final V value, final LongTableEntry<V> next) {
-		this.value = value;
-		this.next = next;
-		this.key = key;
-		this.hash = hash;
-	}
+    @Override
+    public final int hashCode() {
+        return (int) (key ^ (value == null ? 0 : value.hashCode()));
+    }
 
-	/**
-	 * @param next следующая цепочка.
-	 */
-	public void setNext(final LongTableEntry<V> next) {
-		this.next = next;
-	}
+    @Override
+    public void reinit() {
+        hash = 0;
+    }
 
-	/**
-	 * Установка нового значения.
-	 * 
-	 * @param value новое значение.
-	 * @return старое значение.
-	 */
-	public V setValue(final V value) {
-		final V old = getValue();
-		this.value = value;
-		return old;
-	}
+    public void set(final int hash, final long key, final V value, final LongTableEntry<V> next) {
+        this.value = value;
+        this.next = next;
+        this.key = key;
+        this.hash = hash;
+    }
 
-	@Override
-	public final String toString() {
-		return "Entry : " + key + " = " + value;
-	}
+    /**
+     * Установка нового значения.
+     *
+     * @param value новое значение.
+     * @return старое значение.
+     */
+    public V setValue(final V value) {
+        final V old = getValue();
+        this.value = value;
+        return old;
+    }
+
+    @Override
+    public final String toString() {
+        return "Entry : " + key + " = " + value;
+    }
 }

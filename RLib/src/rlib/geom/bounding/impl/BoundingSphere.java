@@ -5,122 +5,129 @@ import rlib.geom.VectorBuffer;
 import rlib.geom.bounding.Bounding;
 import rlib.geom.bounding.BoundingType;
 
+import static java.lang.Math.abs;
+
 /**
  * Реализация формы сферы.
- * 
+ *
  * @author Ronn
  */
 public final class BoundingSphere extends AbstractBounding {
 
-	/** радиус сферы */
-	protected float radius;
-	/** квадрат радиуса сферы */
-	protected float squareRadius;
+    /**
+     * Радиус сферы.
+     */
+    protected float radius;
 
-	public BoundingSphere(final Vector center, final Vector offset, final float radius) {
-		super(center, offset);
+    /**
+     * Квадрат радиуса сферы.
+     */
+    protected float squareRadius;
 
-		this.radius = radius;
-		this.squareRadius = radius * radius;
-	}
+    public BoundingSphere(final Vector center, final Vector offset, final float radius) {
+        super(center, offset);
 
-	@Override
-	public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
-		final Vector center = getResultCenter(buffer);
-		return center.distanceSquared(x, y, z) < squareRadius;
-	}
+        this.radius = radius;
+        this.squareRadius = radius * radius;
+    }
 
-	@Override
-	public BoundingType getBoundingType() {
-		return BoundingType.SPHERE;
-	}
+    @Override
+    public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
+        final Vector center = getResultCenter(buffer);
+        return center.distanceSquared(x, y, z) < squareRadius;
+    }
 
-	/**
-	 * @return радиус сферы.
-	 */
-	public float getRadius() {
-		return radius;
-	}
+    @Override
+    public BoundingType getBoundingType() {
+        return BoundingType.SPHERE;
+    }
 
-	@Override
-	public Vector getResultCenter(final VectorBuffer buffer) {
+    /**
+     * @return радиус сферы.
+     */
+    public float getRadius() {
+        return radius;
+    }
 
-		final Vector vector = buffer.getNextVector();
-		vector.set(center);
+    @Override
+    public Vector getResultCenter(final VectorBuffer buffer) {
 
-		if(offset == Vector.ZERO) {
-			return vector;
-		}
+        final Vector vector = buffer.getNextVector();
+        vector.set(center);
 
-		return vector.addLocal(offset);
-	}
+        if (offset == Vector.ZERO) {
+            return vector;
+        }
 
-	@Override
-	public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
-		switch(bounding.getBoundingType()) {
-			case EMPTY: {
-				return false;
-			}
-			case SPHERE: {
+        return vector.addLocal(offset);
+    }
 
-				final BoundingSphere sphere = (BoundingSphere) bounding;
+    @Override
+    public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
+        switch (bounding.getBoundingType()) {
+            case EMPTY: {
+                return false;
+            }
+            case SPHERE: {
 
-				final Vector diff = getResultCenter(buffer);
-				diff.subtractLocal(sphere.getResultCenter(buffer));
+                final BoundingSphere sphere = (BoundingSphere) bounding;
 
-				final float rsum = getRadius() + sphere.getRadius();
+                final Vector diff = getResultCenter(buffer);
+                diff.subtractLocal(sphere.getResultCenter(buffer));
 
-				return diff.dot(diff) <= rsum * rsum;
-			}
-			case AXIS_ALIGNED_BOX: {
+                final float rsum = getRadius() + sphere.getRadius();
 
-				final AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
+                return diff.dot(diff) <= rsum * rsum;
+            }
+            case AXIS_ALIGNED_BOX: {
 
-				final Vector center = getResultCenter(buffer);
-				final Vector target = box.getResultCenter(buffer);
+                final AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
 
-				if(!(Math.abs(target.getX() - center.getX()) < getRadius() + box.getSizeX())) {
-					return false;
-				}
+                final Vector center = getResultCenter(buffer);
+                final Vector target = box.getResultCenter(buffer);
 
-				if(!(Math.abs(target.getY() - center.getY()) < getRadius() + box.getSizeY())) {
-					return false;
-				}
+                if (!(abs(target.getX() - center.getX()) < getRadius() + box.getSizeX())) {
+                    return false;
+                }
 
-				if(!(Math.abs(target.getZ() - center.getZ()) < getRadius() + box.getSizeZ())) {
-					return false;
-				}
+                if (!(abs(target.getY() - center.getY()) < getRadius() + box.getSizeY())) {
+                    return false;
+                }
 
-				return true;
-			}
-		}
+                if (!(abs(target.getZ() - center.getZ()) < getRadius() + box.getSizeZ())) {
+                    return false;
+                }
 
-		return false;
-	}
+                return true;
+            }
+        }
 
-	@Override
-	public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
+        return false;
+    }
 
-		final Vector diff = buffer.getNextVector();
-		diff.set(start).subtractLocal(getResultCenter(buffer));
+    @Override
+    public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
 
-		final float a = start.dot(diff) - squareRadius;
+        final Vector diff = buffer.getNextVector();
+        diff.set(start).subtractLocal(getResultCenter(buffer));
 
-		if(a <= 0.0) {
-			return true;
-		}
+        final float a = start.dot(diff) - squareRadius;
 
-		final float b = direction.dot(diff);
+        if (a <= 0.0) {
+            return true;
+        }
 
-		if(b >= 0.0) {
-			return false;
-		}
+        final float b = direction.dot(diff);
 
-		return b * b >= a;
-	}
+        if (b >= 0.0) {
+            return false;
+        }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " [radius=" + radius + ", squareRadius=" + squareRadius + "]";
-	}
+        return b * b >= a;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [radius=" + radius + ", squareRadius=" + squareRadius + "]";
+    }
 }

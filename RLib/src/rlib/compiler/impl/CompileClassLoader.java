@@ -6,61 +6,63 @@ import rlib.util.array.ArrayFactory;
 
 /**
  * Загрузчик откомпиленных классов в рантайме.
- * 
+ *
  * @author Ronn
  */
 public class CompileClassLoader extends ClassLoader {
 
-	/** байткод загруженных классов */
-	private final Array<ByteSource> byteCode;
+    /**
+     * Байткод загруженных классов.
+     */
+    private final Array<ByteSource> byteCode;
 
-	public CompileClassLoader() {
-		this.byteCode = ArrayFactory.newArray(ByteSource.class);
-	}
+    public CompileClassLoader() {
+        this.byteCode = ArrayFactory.newArray(ByteSource.class);
+    }
 
-	/**
-	 * Добавить байткод класса.
-	 */
-	public void addByteCode(final ByteSource byteSource) {
-		byteCode.add(byteSource);
-	}
+    /**
+     * Добавить байткод класса.
+     */
+    public void addByteCode(final ByteSource byteSource) {
+        byteCode.add(byteSource);
+    }
 
-	@Override
-	protected Class<?> findClass(final String name) throws ClassNotFoundException {
+    @Override
+    protected Class<?> findClass(final String name) throws ClassNotFoundException {
 
-		final Array<ByteSource> byteCode = getByteCode();
+        final Array<ByteSource> byteCode = getByteCode();
 
-		if(byteCode.isEmpty()) {
-			return null;
-		}
+        if (byteCode.isEmpty()) {
+            return null;
+        }
 
-		synchronized(byteCode) {
+        synchronized (byteCode) {
 
-			for(final ByteSource byteSource : byteCode) {
+            for (final ByteSource byteSource : byteCode) {
 
-				final byte[] bytes = byteSource.getByteSource();
+                final byte[] bytes = byteSource.getByteSource();
 
-				Class<?> result = null;
+                Class<?> result = null;
 
-				try {
-					result = defineClass(name, bytes, 0, bytes.length);
-				} catch(ClassFormatError | NoClassDefFoundError e) {
-					continue;
-				}
+                try {
+                    result = defineClass(name, bytes, 0, bytes.length);
+                } catch (ClassFormatError | NoClassDefFoundError e) {
+                    continue;
+                }
 
-				if(result != null) {
-					return result;
-				}
-			}
-		}
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * @return байт код загруженных классов.
-	 */
-	private Array<ByteSource> getByteCode() {
-		return byteCode;
-	}
+    /**
+     * @return байт код загруженных классов.
+     */
+    private Array<ByteSource> getByteCode() {
+        return byteCode;
+    }
 }

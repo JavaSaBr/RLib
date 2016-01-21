@@ -1,163 +1,170 @@
 package rlib.concurrent.lock.impl;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.atomic.AtomicReference;
 import rlib.concurrent.util.ThreadUtils;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Реализация примитивного блокировщика при помощи {@link AtomicInteger} но с
  * поддержкой рекурсивной блокировки. Рекамендуется приминется в местах с не
  * более чем средней конкурнции и с короткими секциями блокировки.
- * 
+ *
  * @author Ronn
  */
 @SuppressWarnings("restriction")
 public final class ReentrantAtomicLock implements Lock {
 
-	/** статус блокировки */
-	@sun.misc.Contended("lock")
-	private final AtomicReference<Thread> status;
-	/** уровень повторного вхождения */
-	@sun.misc.Contended("lock")
-	private final AtomicInteger level;
+    /**
+     * Статус блокировки.
+     */
+    @sun.misc.Contended("lock")
+    private final AtomicReference<Thread> status;
 
-	/** простой счетчик для выполнения простых операций в цикле CAS */
-	private int counter;
+    /**
+     * Уровень повторного вхождения.
+     */
+    @sun.misc.Contended("lock")
+    private final AtomicInteger level;
 
-	public ReentrantAtomicLock() {
-		this.status = new AtomicReference<>();
-		this.level = new AtomicInteger();
-	}
+    /**
+     * Простой счетчик для выполнения простых операций в цикле CAS.
+     */
+    private int counter;
 
-	/**
-	 * @return получение и инкрементирования счетчика.
-	 */
-	private int getAndIncrementCounter() {
-		return counter++;
-	}
+    public ReentrantAtomicLock() {
+        this.status = new AtomicReference<>();
+        this.level = new AtomicInteger();
+    }
 
-	/**
-	 * @return статус блокировки.
-	 */
-	private AtomicReference<Thread> getStatus() {
-		return status;
-	}
+    /**
+     * @return получение и инкрементирования счетчика.
+     */
+    private int getAndIncrementCounter() {
+        return counter++;
+    }
 
-	@Override
-	public void lock() {
+    /**
+     * @return статус блокировки.
+     */
+    private AtomicReference<Thread> getStatus() {
+        return status;
+    }
 
-		final Thread thread = Thread.currentThread();
-		final AtomicReference<Thread> status = getStatus();
+    @Override
+    public void lock() {
 
-		try {
+        final Thread thread = Thread.currentThread();
+        final AtomicReference<Thread> status = getStatus();
 
-			if(status.get() == thread) {
-				return;
-			}
+        try {
 
-			while(!status.compareAndSet(null, thread)) {
+            if (status.get() == thread) {
+                return;
+            }
 
-				// выполняем пачку элементарных бессмысленных операций для
-				// обеспечения интервала между проверками
-				final int currentCounter = getAndIncrementCounter();
-				int newValue = currentCounter ^ currentCounter;
+            while (!status.compareAndSet(null, thread)) {
 
-				newValue = currentCounter >>> 1;
-				newValue = currentCounter & newValue;
-				newValue = currentCounter ^ newValue;
-				newValue = newValue << currentCounter;
-				newValue = newValue | currentCounter;
+                // выполняем пачку элементарных бессмысленных операций для
+                // обеспечения интервала между проверками
+                final int currentCounter = getAndIncrementCounter();
+                int newValue = currentCounter ^ currentCounter;
 
-				setCounter(newValue);
-			}
+                newValue = currentCounter >>> 1;
+                newValue = currentCounter & newValue;
+                newValue = currentCounter ^ newValue;
+                newValue = newValue << currentCounter;
+                newValue = newValue | currentCounter;
 
-		} finally {
-			level.incrementAndGet();
-		}
-	}
+                setCounter(newValue);
+            }
 
-	@Override
-	public void lockInterruptibly() throws InterruptedException {
-		throw new RuntimeException("not supperted.");
-	}
+        } finally {
+            level.incrementAndGet();
+        }
+    }
 
-	@Override
-	public Condition newCondition() {
-		throw new RuntimeException("not supperted.");
-	}
+    @Override
+    public void lockInterruptibly() throws InterruptedException {
+        throw new RuntimeException("not supperted.");
+    }
 
-	/**
-	 * Обновление счетчика.
-	 */
-	public void setCounter(final int counter) {
-		this.counter = counter;
-	}
+    @Override
+    public Condition newCondition() {
+        throw new RuntimeException("not supperted.");
+    }
 
-	@Override
-	public boolean tryLock() {
+    /**
+     * Обновление счетчика.
+     */
+    public void setCounter(final int counter) {
+        this.counter = counter;
+    }
 
-		final Thread currentThread = Thread.currentThread();
-		final AtomicReference<Thread> status = getStatus();
+    @Override
+    public boolean tryLock() {
 
-		if(status.get() == currentThread) {
-			level.incrementAndGet();
-			return true;
-		}
+        final Thread currentThread = Thread.currentThread();
+        final AtomicReference<Thread> status = getStatus();
 
-		if(status.compareAndSet(null, currentThread)) {
-			level.incrementAndGet();
-			return true;
-		}
+        if (status.get() == currentThread) {
+            level.incrementAndGet();
+            return true;
+        }
 
-		return false;
-	}
+        if (status.compareAndSet(null, currentThread)) {
+            level.incrementAndGet();
+            return true;
+        }
 
-	@Override
-	public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
+        return false;
+    }
 
-		final Thread currentThread = Thread.currentThread();
-		final AtomicReference<Thread> status = getStatus();
+    @Override
+    public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
 
-		if(status.get() == currentThread) {
-			level.incrementAndGet();
-			return true;
-		}
+        final Thread currentThread = Thread.currentThread();
+        final AtomicReference<Thread> status = getStatus();
 
-		if(status.compareAndSet(null, currentThread)) {
-			level.incrementAndGet();
-			return true;
-		}
+        if (status.get() == currentThread) {
+            level.incrementAndGet();
+            return true;
+        }
 
-		final long resultTime = unit.toMillis(time);
+        if (status.compareAndSet(null, currentThread)) {
+            level.incrementAndGet();
+            return true;
+        }
 
-		if(resultTime > 1) {
-			ThreadUtils.sleep(resultTime);
-		}
+        final long resultTime = unit.toMillis(time);
 
-		if(status.compareAndSet(null, currentThread)) {
-			level.incrementAndGet();
-			return true;
-		}
+        if (resultTime > 1) {
+            ThreadUtils.sleep(resultTime);
+        }
 
-		return false;
-	}
+        if (status.compareAndSet(null, currentThread)) {
+            level.incrementAndGet();
+            return true;
+        }
 
-	@Override
-	public void unlock() {
+        return false;
+    }
 
-		final Thread thread = Thread.currentThread();
-		final AtomicReference<Thread> status = getStatus();
+    @Override
+    public void unlock() {
 
-		if(status.get() != thread) {
-			return;
-		}
+        final Thread thread = Thread.currentThread();
+        final AtomicReference<Thread> status = getStatus();
 
-		if(level.decrementAndGet() == 0) {
-			status.set(null);
-		}
-	}
+        if (status.get() != thread) {
+            return;
+        }
+
+        if (level.decrementAndGet() == 0) {
+            status.set(null);
+        }
+    }
 }

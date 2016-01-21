@@ -5,82 +5,91 @@ import java.util.NoSuchElementException;
 
 /**
  * Реализация итератора для словаря с обхектным ключем.
- * 
+ *
  * @author Ronn
  */
 public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
 
-	/** итерируемый словарь */
-	private final UnsafeObjectDictionary<K, V> dictionary;
+    /**
+     * Итерируемый словарь.
+     */
+    private final UnsafeObjectDictionary<K, V> dictionary;
 
-	/** следующая ячейка */
-	private ObjectDictionaryEntry<K, V> next;
-	/** текущая ячейка */
-	private ObjectDictionaryEntry<K, V> current;
+    /**
+     * Следующая ячейка.
+     */
+    private ObjectDictionaryEntry<K, V> next;
 
-	/** текущий индекс в массиве */
-	private int index;
+    /**
+     * Текущая ячейка.
+     */
+    private ObjectDictionaryEntry<K, V> current;
 
-	public ObjectDictionaryIterator(UnsafeObjectDictionary<K, V> dictionary) {
-		this.dictionary = dictionary;
+    /**
+     * Текущий индекс в массиве.
+     */
+    private int index;
 
-		final ObjectDictionaryEntry<K, V>[] content = dictionary.content();
+    public ObjectDictionaryIterator(UnsafeObjectDictionary<K, V> dictionary) {
+        this.dictionary = dictionary;
 
-		if(dictionary.size() > 0) {
-			while(index < content.length && (next = content[index++]) == null);
-		}
-	}
+        final ObjectDictionaryEntry<K, V>[] content = dictionary.content();
 
-	@Override
-	public boolean hasNext() {
-		return next != null;
-	}
+        if (dictionary.size() > 0) {
+            while (index < content.length && (next = content[index++]) == null) ;
+        }
+    }
 
-	@Override
-	public V next() {
-		return nextEntry().getValue();
-	}
+    /**
+     * @return итерируемый словарь.
+     */
+    private UnsafeObjectDictionary<K, V> getDictionary() {
+        return dictionary;
+    }
 
-	/**
-	 * @return итерируемый словарь.
-	 */
-	private UnsafeObjectDictionary<K, V> getDictionary() {
-		return dictionary;
-	}
+    @Override
+    public boolean hasNext() {
+        return next != null;
+    }
 
-	/**
-	 * @return следующая занятая ячейка.
-	 */
-	private ObjectDictionaryEntry<K, V> nextEntry() {
+    @Override
+    public V next() {
+        return nextEntry().getValue();
+    }
 
-		final UnsafeObjectDictionary<K, V> dictionary = getDictionary();
+    /**
+     * @return следующая занятая ячейка.
+     */
+    private ObjectDictionaryEntry<K, V> nextEntry() {
 
-		final ObjectDictionaryEntry<K, V>[] content = dictionary.content();
-		final ObjectDictionaryEntry<K, V> entry = next;
+        final UnsafeObjectDictionary<K, V> dictionary = getDictionary();
 
-		if(entry == null) {
-			throw new NoSuchElementException();
-		}
+        final ObjectDictionaryEntry<K, V>[] content = dictionary.content();
+        final ObjectDictionaryEntry<K, V> entry = next;
 
-		if((next = entry.getNext()) == null) {
-			while(index < content.length && (next = content[index++]) == null);
-		}
+        if (entry == null) {
+            throw new NoSuchElementException();
+        }
 
-		current = entry;
-		return entry;
-	}
+        if ((next = entry.getNext()) == null) {
+            while (index < content.length && (next = content[index++]) == null) ;
+        }
 
-	@Override
-	public void remove() {
+        current = entry;
+        return entry;
+    }
 
-		if(current == null) {
-			throw new IllegalStateException();
-		}
+    @Override
+    public void remove() {
 
-		final K key = current.getKey();
-		current = null;
+        if (current == null) {
+            throw new IllegalStateException();
+        }
 
-		final UnsafeObjectDictionary<K, V> dictionary = getDictionary();
-		dictionary.removeEntryForKey(key);
-	}
+        final K key = current.getKey();
+        current = null;
+
+        final UnsafeObjectDictionary<K, V> dictionary = getDictionary();
+        dictionary.removeEntryForKey(key);
+    }
 }

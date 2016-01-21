@@ -1,6 +1,6 @@
 package rlib.util.dictionary;
 
-import rlib.concurrent.lock.AsynReadSynWriteLock;
+import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.LockFactory;
 
 /**
@@ -11,24 +11,24 @@ import rlib.concurrent.lock.LockFactory;
  */
 public class ConcurrentAtomicIntegerDictionary<V> extends ConcurrentLockIntegerDictionary<V> {
 
-	public ConcurrentAtomicIntegerDictionary() {
-		super();
-	}
+    public ConcurrentAtomicIntegerDictionary() {
+        super();
+    }
 
-	public ConcurrentAtomicIntegerDictionary(float loadFactor, int initCapacity) {
-		super(loadFactor, initCapacity);
-	}
+    public ConcurrentAtomicIntegerDictionary(float loadFactor, int initCapacity) {
+        super(loadFactor, initCapacity);
+    }
 
-	public ConcurrentAtomicIntegerDictionary(float loadFactor) {
-		super(loadFactor);
-	}
+    public ConcurrentAtomicIntegerDictionary(float loadFactor) {
+        super(loadFactor);
+    }
 
-	public ConcurrentAtomicIntegerDictionary(int initCapacity) {
-		super(initCapacity);
-	}
+    public ConcurrentAtomicIntegerDictionary(int initCapacity) {
+        super(initCapacity);
+    }
 
-	@Override
-	protected AsynReadSynWriteLock createLocker() {
-		return LockFactory.newPrimitiveAtomicARSWLock();
-	}
+    @Override
+    protected AsyncReadSyncWriteLock createLocker() {
+        return LockFactory.newPrimitiveAtomicARSWLock();
+    }
 }

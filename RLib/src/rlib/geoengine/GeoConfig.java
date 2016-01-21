@@ -7,28 +7,28 @@ package rlib.geoengine;
  */
 public interface GeoConfig {
 
-	/**
-	 * @return отступ по X.
-	 */
-	public int getOffsetX();
+    /**
+     * @return отступ по X.
+     */
+    public int getOffsetX();
 
-	/**
-	 * @return отступ по Y.
-	 */
-	public int getOffsetY();
+    /**
+     * @return отступ по Y.
+     */
+    public int getOffsetY();
 
-	/**
-	 * @return размер в высоту гео квадрата.
-	 */
-	public int getQuardHeight();
+    /**
+     * @return размер в высоту гео квадрата.
+     */
+    public int getQuadHeight();
 
-	/**
-	 * @return размер гео квадрата.
-	 */
-	public int getQuardSize();
+    /**
+     * @return размер гео квадрата.
+     */
+    public int getQuadSize();
 
-	/**
-	 * @return разделитель квадратов в файле.
-	 */
-	public int getSplit();
+    /**
+     * @return разделитель квадратов в файле.
+     */
+    public int getSplit();
 }

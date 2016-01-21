@@ -1,176 +1,189 @@
 package rlib.network.server.client.impl;
 
-import java.nio.ByteBuffer;
-
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-import rlib.network.AsynConnection;
+import rlib.network.AsyncConnection;
 import rlib.network.GameCrypt;
 import rlib.network.packet.ReadeablePacket;
 import rlib.network.packet.SendablePacket;
 import rlib.network.server.client.Client;
 
+import java.nio.ByteBuffer;
+
 /**
  * Базовая реализация клиента для сервера.
- * 
+ *
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractClient<A, O, C extends AsynConnection, T extends GameCrypt, RP extends ReadeablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
+public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends GameCrypt, RP extends ReadeablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
 
-	protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
 
-	/** коннект клиента к серверу */
-	protected volatile C connection;
-	/** владелец коннекта */
-	protected volatile O owner;
-	/** аккаунт клиента */
-	protected volatile A account;
-	/** криптор клиента */
-	protected volatile T crypt;
+    /**
+     * Подкючение клиента к серверу
+     */
+    protected volatile C connection;
 
-	/** закрыт ли клиент */
-	protected volatile boolean closed;
+    /**
+     * Владелец подключения.
+     */
+    protected volatile O owner;
 
-	public AbstractClient(final C connection, final T crypt) {
-		this.connection = connection;
-		this.crypt = crypt;
-	}
+    /**
+     * Аккаунт клиента.
+     */
+    protected volatile A account;
 
-	@Override
-	public void close() {
+    /**
+     * Криптор клиента.
+     */
+    protected volatile T crypt;
 
-		final C connection = getConnection();
+    /**
+     * Закрыт ли клиент.
+     */
+    protected volatile boolean closed;
 
-		if(connection != null) {
-			connection.close();
-		}
+    public AbstractClient(final C connection, final T crypt) {
+        this.connection = connection;
+        this.crypt = crypt;
+    }
 
-		setClosed(true);
-	}
+    @Override
+    public void close() {
 
-	@Override
-	public void decrypt(final ByteBuffer data, final int offset, final int length) {
-		crypt.decrypt(data.array(), offset, length);
-	}
+        final C connection = getConnection();
 
-	@Override
-	public void encrypt(final ByteBuffer data, final int offset, final int length) {
-		crypt.encrypt(data.array(), offset, length);
-	}
+        if (connection != null) {
+            connection.close();
+        }
 
-	/**
-	 * @param packet выполняемый пакет.
-	 */
-	protected abstract void execute(RP packet);
+        setClosed(true);
+    }
 
-	@Override
-	public final A getAccount() {
-		return account;
-	}
+    @Override
+    public void decrypt(final ByteBuffer data, final int offset, final int length) {
+        crypt.decrypt(data.array(), offset, length);
+    }
 
-	@Override
-	public final C getConnection() {
-		return connection;
-	}
+    @Override
+    public void encrypt(final ByteBuffer data, final int offset, final int length) {
+        crypt.encrypt(data.array(), offset, length);
+    }
 
-	@Override
-	public final O getOwner() {
-		return owner;
-	}
+    /**
+     * @param packet выполняемый пакет.
+     */
+    protected abstract void execute(RP packet);
 
-	/**
-	 * @return закрыт ли клиент.
-	 */
-	public boolean isClosed() {
-		return closed;
-	}
+    @Override
+    public final A getAccount() {
+        return account;
+    }
 
-	@Override
-	public final boolean isConnected() {
-		return !isClosed() && connection != null && !connection.isClosed();
-	}
+    @Override
+    public final void setAccount(final A account) {
+        this.account = account;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public final void readPacket(final RP packet, final ByteBuffer buffer) {
+    @Override
+    public final C getConnection() {
+        return connection;
+    }
 
-		if(packet == null) {
-			return;
-		}
+    @Override
+    public final O getOwner() {
+        return owner;
+    }
 
-		packet.setOwner(this);
-		packet.setBuffer(buffer);
-		try {
+    @Override
+    public final void setOwner(final O owner) {
+        this.owner = owner;
+    }
 
-			if(packet.read()) {
-				execute(packet);
-			}
+    /**
+     * @return закрыт ли клиент.
+     */
+    public boolean isClosed() {
+        return closed;
+    }
 
-		} finally {
-			packet.setBuffer(null);
-		}
-	}
+    /**
+     * @param closed закрыт ли клиент.
+     */
+    protected void setClosed(final boolean closed) {
+        this.closed = closed;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public final void sendPacket(final SendablePacket packet) {
+    @Override
+    public final boolean isConnected() {
+        return !isClosed() && connection != null && !connection.isClosed();
+    }
 
-		if(isClosed()) {
-			return;
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    public final void readPacket(final RP packet, final ByteBuffer buffer) {
 
-		final C connection = getConnection();
+        if (packet == null) {
+            return;
+        }
 
-		if(connection != null) {
-			connection.sendPacket(packet);
-		}
-	}
+        packet.setOwner(this);
+        packet.setBuffer(buffer);
+        try {
 
-	@Override
-	public final void setAccount(final A account) {
-		this.account = account;
-	}
+            if (packet.read()) {
+                execute(packet);
+            }
 
-	/**
-	 * @param closed закрыт ли клиент.
-	 */
-	protected void setClosed(final boolean closed) {
-		this.closed = closed;
-	}
+        } finally {
+            packet.setBuffer(null);
+        }
+    }
 
-	@Override
-	public final void setOwner(final O owner) {
-		this.owner = owner;
-	}
+    @Override
+    @SuppressWarnings("unchecked")
+    public final void sendPacket(final SendablePacket packet) {
 
-	@Override
-	public void successfulConnection() {
-		LOGGER.info(this, getHostAddress() + " successful connection.");
-	}
+        if (isClosed()) {
+            return;
+        }
 
-	/**
-	 * Смена сетевого подключения для этого клиента.
-	 * 
-	 * @param connection сетевое подключение.
-	 */
-	protected void switchTo(final C connection) {
+        final C connection = getConnection();
 
-		final C current = getConnection();
+        if (connection != null) {
+            connection.sendPacket(packet);
+        }
+    }
 
-		if(current == connection) {
-			return;
-		}
+    @Override
+    public void successfulConnection() {
+        LOGGER.info(this, getHostAddress() + " successful connection.");
+    }
 
-		if(!current.isClosed()) {
-			current.close();
-		}
+    /**
+     * Смена сетевого подключения для этого клиента.
+     *
+     * @param connection сетевое подключение.
+     */
+    protected void switchTo(final C connection) {
 
-		this.connection = connection;
-	}
+        final C current = getConnection();
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " [owner=" + owner + ", account=" + account + ", connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
-	}
+        if (current == connection) {
+            return;
+        }
+
+        if (!current.isClosed()) {
+            current.close();
+        }
+
+        this.connection = connection;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [owner=" + owner + ", account=" + account + ", connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
+    }
 }

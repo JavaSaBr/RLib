@@ -1,13 +1,5 @@
 package rlib.idfactory.impl;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.BitSet;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import rlib.database.ConnectFactory;
 import rlib.database.DBUtils;
 import rlib.idfactory.IdGenerator;
@@ -20,201 +12,230 @@ import rlib.util.array.IntegerArray;
 import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.IntegerDictionary;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.BitSet;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Модель фабрики ид основаной на BitSet
- * 
+ *
  * @author Ronn
  */
 public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 
-	/** логгер */
-	private static final Logger LOGGER = LoggerManager.getLogger(BitSetIdGenerator.class);
+    private static final Logger LOGGER = LoggerManager.getLogger(BitSetIdGenerator.class);
 
-	/** первый ид */
-	public static final int FIRST_ID = 0x10000000;
-	/** последний ид */
-	public static final int LAST_ID = 0x7FFFFFFF;
-	/** кол-во свободных ид */
-	public static final int FREE_ID_SIZE = LAST_ID - FIRST_ID;
+    /**
+     * Первый ид.
+     */
+    public static final int FIRST_ID = 0x10000000;
 
-	/** серв для отложенного исполнения */
-	private final ScheduledExecutorService executor;
-	/** фабрика подключений к БД */
-	private final ConnectFactory connects;
+    /**
+     * Последний ид.
+     */
+    public static final int LAST_ID = 0x7FFFFFFF;
 
-	/** свободные иды */
-	private volatile BitSet freeIds;
+    /**
+     * Кол-во свободных ид.
+     */
+    public static final int FREE_ID_SIZE = LAST_ID - FIRST_ID;
 
-	/** кол-во свободных ид */
-	private AtomicInteger freeIdCount;
-	/** следующие свободные ид */
-	private AtomicInteger nextFreeId;
+    /**
+     * Сервис для отложенного исполнения.
+     */
+    private final ScheduledExecutorService executor;
 
-	/** список извлекаемых таблиц и полей */
-	private final String[][] tables;
+    /**
+     * Фабрика подключений к БД.
+     */
+    private final ConnectFactory connects;
 
-	public BitSetIdGenerator(final ConnectFactory connects, final ScheduledExecutorService executor, final String[][] tables) {
-		this.executor = executor;
-		this.connects = connects;
-		this.tables = tables;
-	}
+    /**
+     * Свободные иды.
+     */
+    private volatile BitSet freeIds;
 
-	@Override
-	public synchronized int getNextId() {
+    /**
+     * Кол-во свободных ид.
+     */
+    private AtomicInteger freeIdCount;
 
-		final int newID = nextFreeId.get();
+    /**
+     * Следующие свободные ид.
+     */
+    private AtomicInteger nextFreeId;
 
-		freeIds.set(newID);
-		freeIdCount.decrementAndGet();
+    /**
+     * Список извлекаемых таблиц и полей.
+     */
+    private final String[][] tables;
 
-		int nextFree = freeIds.nextClearBit(newID);
+    public BitSetIdGenerator(final ConnectFactory connects, final ScheduledExecutorService executor, final String[][] tables) {
+        this.executor = executor;
+        this.connects = connects;
+        this.tables = tables;
+    }
 
-		if(nextFree < 0) {
-			nextFree = freeIds.nextClearBit(0);
-		}
+    @Override
+    public synchronized int getNextId() {
 
-		if(nextFree < 0) {
-			if(freeIds.size() < FREE_ID_SIZE) {
-				increaseBitSetCapacity();
-			} else {
-				throw new NullPointerException("Ran out of valid Id's.");
-			}
-		}
+        final int newID = nextFreeId.get();
 
-		nextFreeId.set(nextFree);
+        freeIds.set(newID);
+        freeIdCount.decrementAndGet();
 
-		return newID + FIRST_ID;
-	}
+        int nextFree = freeIds.nextClearBit(newID);
 
-	/**
-	 * Увеличение и обновление бит сета.
-	 */
-	protected synchronized void increaseBitSetCapacity() {
+        if (nextFree < 0) {
+            nextFree = freeIds.nextClearBit(0);
+        }
 
-		final BitSet newBitSet = new BitSet(PrimeFinder.nextPrime(usedIds() * 11 / 10));
-		newBitSet.or(freeIds);
+        if (nextFree < 0) {
+            if (freeIds.size() < FREE_ID_SIZE) {
+                increaseBitSetCapacity();
+            } else {
+                throw new NullPointerException("Ran out of valid Id's.");
+            }
+        }
 
-		freeIds = newBitSet;
-	}
+        nextFreeId.set(nextFree);
 
-	@Override
-	public void prepare() {
+        return newID + FIRST_ID;
+    }
 
-		try {
+    /**
+     * Увеличение и обновление бит сета.
+     */
+    protected synchronized void increaseBitSetCapacity() {
 
-			freeIds = new BitSet(PrimeFinder.nextPrime(100000));
-			freeIds.clear();
+        final BitSet newBitSet = new BitSet(PrimeFinder.nextPrime(usedIds() * 11 / 10));
+        newBitSet.or(freeIds);
 
-			freeIdCount = new AtomicInteger(FREE_ID_SIZE);
+        freeIds = newBitSet;
+    }
 
-			if(tables != null) {
+    @Override
+    public void prepare() {
 
-				final IntegerDictionary<String> useIds = DictionaryFactory.newIntegerDictionary();
+        try {
 
-				final IntegerArray clearIds = ArrayFactory.newIntegerArray();
-				final IntegerArray extractedIds = ArrayFactory.newIntegerArray();
+            freeIds = new BitSet(PrimeFinder.nextPrime(100000));
+            freeIds.clear();
 
-				Connection con = null;
-				Statement statement = null;
-				ResultSet rset = null;
+            freeIdCount = new AtomicInteger(FREE_ID_SIZE);
 
-				try {
+            if (tables != null) {
 
-					con = connects.getConnection();
-					statement = con.createStatement();
+                final IntegerDictionary<String> useIds = DictionaryFactory.newIntegerDictionary();
 
-					for(final String[] table : tables) {
+                final IntegerArray clearIds = ArrayFactory.newIntegerArray();
+                final IntegerArray extractedIds = ArrayFactory.newIntegerArray();
 
-						rset = statement.executeQuery("SELECT " + table[1] + " FROM " + table[0]);
+                Connection con = null;
+                Statement statement = null;
+                ResultSet rset = null;
 
-						while(rset.next()) {
+                try {
 
-							final int objectId = rset.getInt(1);
+                    con = connects.getConnection();
+                    statement = con.createStatement();
 
-							if(!useIds.containsKey(objectId)) {
-								extractedIds.add(objectId);
-								useIds.put(objectId, table[0]);
-							} else {
-								clearIds.add(objectId);
-								LOGGER.warning("recurrence was found and '" + objectId + "' in the table `" + table[0] + "`, which is already in the table `" + useIds.get(objectId) + "`.");
-							}
-						}
+                    for (final String[] table : tables) {
 
-						if(!clearIds.isEmpty()) {
+                        rset = statement.executeQuery("SELECT " + table[1] + " FROM " + table[0]);
 
-							DBUtils.closeResultSet(rset);
+                        while (rset.next()) {
 
-							for(final int id : clearIds.array()) {
-								statement.executeUpdate("DELETE FROM " + table[0] + " WHERE " + table[1] + " = " + id + " LIMIT 1");
-							}
-						}
-					}
-				} finally {
-					DBUtils.closeDatabaseCSR(con, statement, rset);
-				}
+                            final int objectId = rset.getInt(1);
 
-				final int[] extracted = new int[extractedIds.size()];
+                            if (!useIds.containsKey(objectId)) {
+                                extractedIds.add(objectId);
+                                useIds.put(objectId, table[0]);
+                            } else {
+                                clearIds.add(objectId);
+                                LOGGER.warning("recurrence was found and '" + objectId + "' in the table `" + table[0] + "`, which is already in the table `" + useIds.get(objectId) + "`.");
+                            }
+                        }
 
-				for(int i = 0, length = extractedIds.size(); i < length; i++) {
-					extracted[i] = extractedIds.get(i);
-				}
+                        if (!clearIds.isEmpty()) {
 
-				LOGGER.info("extracted " + extracted.length + " ids.");
+                            DBUtils.closeResultSet(rset);
 
-				ArrayUtils.sort(extracted);
+                            for (final int id : clearIds.array()) {
+                                statement.executeUpdate("DELETE FROM " + table[0] + " WHERE " + table[1] + " = " + id + " LIMIT 1");
+                            }
+                        }
+                    }
+                } finally {
+                    DBUtils.closeDatabaseCSR(con, statement, rset);
+                }
 
-				for(final int objectId : extracted) {
+                final int[] extracted = new int[extractedIds.size()];
 
-					final int id = objectId - FIRST_ID;
+                for (int i = 0, length = extractedIds.size(); i < length; i++) {
+                    extracted[i] = extractedIds.get(i);
+                }
 
-					if(id < 0) {
-						LOGGER.warning("objectId " + objectId + " in DB is less than minimum ID of " + FIRST_ID + ".");
-						continue;
-					}
+                LOGGER.info("extracted " + extracted.length + " ids.");
 
-					freeIds.set(objectId - FIRST_ID);
-					freeIdCount.decrementAndGet();
-				}
-			}
-		} catch(final Exception e) {
-			LOGGER.warning(e);
-		}
+                ArrayUtils.sort(extracted);
 
-		nextFreeId = new AtomicInteger(freeIds.nextClearBit(0));
-		executor.scheduleAtFixedRate(this, 300000, 300000, TimeUnit.MILLISECONDS);
-		LOGGER.info(freeIds.size() + " id's available.");
-	}
+                for (final int objectId : extracted) {
 
-	protected synchronized boolean reachingBitSetCapacity() {
-		return PrimeFinder.nextPrime(usedIds() * 11 / 10) > freeIds.size();
-	}
+                    final int id = objectId - FIRST_ID;
 
-	@Override
-	public synchronized void releaseId(final int objectId) {
-		if(objectId - FIRST_ID < 0) {
-			LOGGER.warning("release objectID " + objectId + " failed (< " + FIRST_ID + ")");
-		} else {
-			freeIds.clear(objectId - FIRST_ID);
-			freeIdCount.incrementAndGet();
-		}
-	}
+                    if (id < 0) {
+                        LOGGER.warning("objectId " + objectId + " in DB is less than minimum ID of " + FIRST_ID + ".");
+                        continue;
+                    }
 
-	@Override
-	public void runImpl() {
-		if(reachingBitSetCapacity()) {
-			increaseBitSetCapacity();
-		}
-	}
+                    freeIds.set(objectId - FIRST_ID);
+                    freeIdCount.decrementAndGet();
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.warning(e);
+        }
 
-	/**
-	 * @return уол-во свободных ид.
-	 */
-	public synchronized int size() {
-		return freeIdCount.get();
-	}
+        nextFreeId = new AtomicInteger(freeIds.nextClearBit(0));
+        executor.scheduleAtFixedRate(this, 300000, 300000, TimeUnit.MILLISECONDS);
+        LOGGER.info(freeIds.size() + " id's available.");
+    }
 
-	@Override
-	public int usedIds() {
-		return size() - FIRST_ID;
-	}
+    protected synchronized boolean reachingBitSetCapacity() {
+        return PrimeFinder.nextPrime(usedIds() * 11 / 10) > freeIds.size();
+    }
+
+    @Override
+    public synchronized void releaseId(final int objectId) {
+        if (objectId - FIRST_ID < 0) {
+            LOGGER.warning("release objectID " + objectId + " failed (< " + FIRST_ID + ")");
+        } else {
+            freeIds.clear(objectId - FIRST_ID);
+            freeIdCount.incrementAndGet();
+        }
+    }
+
+    @Override
+    public void runImpl() {
+        if (reachingBitSetCapacity()) {
+            increaseBitSetCapacity();
+        }
+    }
+
+    /**
+     * @return уол-во свободных ид.
+     */
+    public synchronized int size() {
+        return freeIdCount.get();
+    }
+
+    @Override
+    public int usedIds() {
+        return size() - FIRST_ID;
+    }
 }

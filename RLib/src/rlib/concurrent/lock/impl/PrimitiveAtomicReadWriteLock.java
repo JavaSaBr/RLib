@@ -1,212 +1,222 @@
 package rlib.concurrent.lock.impl;
 
+import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.lock.AsyncReadSyncWriteLock;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
-
-import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.lock.AsynReadSynWriteLock;
 
 /**
  * Реализация блокировщика с возможность асинхронного чтения и синхронной записи
  * на основе атомиков, без возможности использования вложенных вызовов с
  * приоритетом на запись.
- * 
+ * <p>
  * Выгодно использовать посравнению с ReentrantReadWriteLock в случае, когда
  * записи намного реже чтения и в случае если необходимо уменьшить нагрузку на
  * GC.
- * 
+ * <p>
  * Смысл этой реализации в создании легковесного блокировщика, который для
  * синхронизации не создает временных объектов.
- * 
+ *
  * @author Ronn
  */
 @SuppressWarnings("restriction")
-public final class PrimitiveAtomicReadWriteLock implements AsynReadSynWriteLock, Lock {
+public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLock, Lock {
 
-	public static final int STATUS_WRITE_COUNT_LOCKED = -1;
-	public static final int STATUS_NOT_WRITE = 0;
-	public static final int STATUS_WRITE_LOCKED = 1;
-	public static final int STATUS_WRITE_UNLOCKED = 0;
+    public static final int STATUS_WRITE_COUNT_LOCKED = -1;
+    public static final int STATUS_NOT_WRITE = 0;
+    public static final int STATUS_WRITE_LOCKED = 1;
+    public static final int STATUS_WRITE_UNLOCKED = 0;
 
-	public static final int STATUS_READ_UNLOCKED = 0;
-	public static final int STATUS_READ_LOCKED = -200000;
-	public static final int STATUS_READ_POST_INCREMENT_LOCKED = STATUS_READ_LOCKED + 1;
+    public static final int STATUS_READ_UNLOCKED = 0;
+    public static final int STATUS_READ_LOCKED = -200000;
+    public static final int STATUS_READ_POST_INCREMENT_LOCKED = STATUS_READ_LOCKED + 1;
 
-	/** статус блокировки на запись */
-	@sun.misc.Contended("status")
-	private final AtomicInteger writeStatus;
-	/** кол-во ожидающих потоков на запись */
-	@sun.misc.Contended("status")
-	private final AtomicInteger writeCount;
-	/** кол-во читающих потоков */
-	@sun.misc.Contended("status")
-	private final AtomicInteger readCount;
+    /**
+     * Статус блокировки на запись.
+     */
+    @sun.misc.Contended("status")
+    private final AtomicInteger writeStatus;
 
-	/** простой счетчик для выполнения простых операций в цикле CAS */
-	private int counter;
+    /**
+     * Кол-во ожидающих потоков на запись.
+     */
+    @sun.misc.Contended("status")
+    private final AtomicInteger writeCount;
 
-	public PrimitiveAtomicReadWriteLock() {
-		this.writeCount = new AtomicInteger(0);
-		this.writeStatus = new AtomicInteger(0);
-		this.readCount = new AtomicInteger(0);
-	}
+    /**
+     * Кол-во читающих потоков.
+     */
+    @sun.misc.Contended("status")
+    private final AtomicInteger readCount;
 
-	@Override
-	public void asynLock() {
-		while(!tryReadLock()) {
-			localCalculate();
-		}
-	}
+    /**
+     * Простой счетчик для выполнения простых операций в цикле CAS.
+     */
+    private int counter;
 
-	@Override
-	public void asynUnlock() {
-		readCount.decrementAndGet();
-	}
+    public PrimitiveAtomicReadWriteLock() {
+        this.writeCount = new AtomicInteger(0);
+        this.writeStatus = new AtomicInteger(0);
+        this.readCount = new AtomicInteger(0);
+    }
 
-	/**
-	 * @return получение и инкрементирования счетчика.
-	 */
-	private int getAndIncrementCounter() {
-		return counter++;
-	}
+    @Override
+    public void asyncLock() {
+        while (!tryReadLock()) {
+            localCalculate();
+        }
+    }
 
-	/**
-	 * @return кол-во читающих потоков.
-	 */
-	protected AtomicInteger getReadCount() {
-		return readCount;
-	}
+    @Override
+    public void asyncUnlock() {
+        readCount.decrementAndGet();
+    }
 
-	/**
-	 * @return кол-во ожидающих потоков на запись.
-	 */
-	protected AtomicInteger getWriteCount() {
-		return writeCount;
-	}
+    /**
+     * @return получение и инкрементирования счетчика.
+     */
+    private int getAndIncrementCounter() {
+        return counter++;
+    }
 
-	/**
-	 * @return статус блокировки на запись.
-	 */
-	protected AtomicInteger getWriteStatus() {
-		return writeStatus;
-	}
+    /**
+     * @return кол-во читающих потоков.
+     */
+    protected AtomicInteger getReadCount() {
+        return readCount;
+    }
 
-	/**
-	 * Выполнение локальных вычислений для занятия потока.
-	 */
-	protected void localCalculate() {
+    /**
+     * @return кол-во ожидающих потоков на запись.
+     */
+    protected AtomicInteger getWriteCount() {
+        return writeCount;
+    }
 
-		final int currentCounter = getAndIncrementCounter();
-		int newValue = currentCounter ^ currentCounter;
+    /**
+     * @return статус блокировки на запись.
+     */
+    protected AtomicInteger getWriteStatus() {
+        return writeStatus;
+    }
 
-		newValue = currentCounter >>> 1;
-		newValue = currentCounter & newValue;
-		newValue = currentCounter >>> 1;
-		newValue = currentCounter & newValue;
-		newValue = currentCounter >>> 1;
-		newValue = currentCounter & newValue;
+    /**
+     * Выполнение локальных вычислений для занятия потока.
+     */
+    protected void localCalculate() {
 
-		setCounter(newValue);
-		setCounter(currentCounter);
-	}
+        final int currentCounter = getAndIncrementCounter();
+        int newValue = currentCounter ^ currentCounter;
 
-	@Override
-	public void lock() {
-		synLock();
-	}
+        newValue = currentCounter >>> 1;
+        newValue = currentCounter & newValue;
+        newValue = currentCounter >>> 1;
+        newValue = currentCounter & newValue;
+        newValue = currentCounter >>> 1;
+        newValue = currentCounter & newValue;
 
-	@Override
-	public void lockInterruptibly() throws InterruptedException {
-		throw new RuntimeException("not supported.");
-	}
+        setCounter(newValue);
+        setCounter(currentCounter);
+    }
 
-	@Override
-	public Condition newCondition() {
-		throw new RuntimeException("not supported.");
-	}
+    @Override
+    public void lock() {
+        syncLock();
+    }
 
-	/**
-	 * Обновление счетчика.
-	 */
-	public void setCounter(final int counter) {
-		this.counter = counter;
-	}
+    @Override
+    public void lockInterruptibly() throws InterruptedException {
+        throw new RuntimeException("not supported.");
+    }
 
-	@Override
-	public void synLock() {
+    @Override
+    public Condition newCondition() {
+        throw new RuntimeException("not supported.");
+    }
 
-		// добавляемся в счетчик ожидающих записи потоков
-		final AtomicInteger writeCount = getWriteCount();
-		writeCount.incrementAndGet();
+    /**
+     * Обновление счетчика.
+     */
+    public void setCounter(final int counter) {
+        this.counter = counter;
+    }
 
-		// ждем завершения чтения другими потоками потоков и блокируем чтение
-		final AtomicInteger readCount = getReadCount();
-		while(readCount.get() != STATUS_READ_UNLOCKED || !readCount.compareAndSet(STATUS_READ_UNLOCKED, STATUS_READ_LOCKED)) {
-			localCalculate();
-		}
+    @Override
+    public void syncLock() {
 
-		// помечаем блокировку на процесс записи этим потоком
-		final AtomicInteger writeStatus = getWriteStatus();
-		while(writeStatus.get() != STATUS_WRITE_UNLOCKED || !writeStatus.compareAndSet(STATUS_WRITE_UNLOCKED, STATUS_WRITE_LOCKED)) {
-			localCalculate();
-		}
-	}
+        // добавляемся в счетчик ожидающих записи потоков
+        final AtomicInteger writeCount = getWriteCount();
+        writeCount.incrementAndGet();
 
-	@Override
-	public void synUnlock() {
+        // ждем завершения чтения другими потоками потоков и блокируем чтение
+        final AtomicInteger readCount = getReadCount();
+        while (readCount.get() != STATUS_READ_UNLOCKED || !readCount.compareAndSet(STATUS_READ_UNLOCKED, STATUS_READ_LOCKED)) {
+            localCalculate();
+        }
 
-		// помечаем завершение записи этим потоком
-		final AtomicInteger writeStatus = getWriteStatus();
-		writeStatus.set(STATUS_WRITE_UNLOCKED);
+        // помечаем блокировку на процесс записи этим потоком
+        final AtomicInteger writeStatus = getWriteStatus();
+        while (writeStatus.get() != STATUS_WRITE_UNLOCKED || !writeStatus.compareAndSet(STATUS_WRITE_UNLOCKED, STATUS_WRITE_LOCKED)) {
+            localCalculate();
+        }
+    }
 
-		// разблокируем возможность читать другими потоками
-		final AtomicInteger readCount = getReadCount();
-		readCount.set(STATUS_READ_UNLOCKED);
+    @Override
+    public void syncUnlock() {
 
-		// отмечаемся из счетчика ожидающих запись потоков
-		final AtomicInteger writeCount = getWriteCount();
-		writeCount.decrementAndGet();
-	}
+        // помечаем завершение записи этим потоком
+        final AtomicInteger writeStatus = getWriteStatus();
+        writeStatus.set(STATUS_WRITE_UNLOCKED);
 
-	@Override
-	public boolean tryLock() {
-		throw new RuntimeException("not supported.");
-	}
+        // разблокируем возможность читать другими потоками
+        final AtomicInteger readCount = getReadCount();
+        readCount.set(STATUS_READ_UNLOCKED);
 
-	@Override
-	public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
-		throw new RuntimeException("not supported.");
-	}
+        // отмечаемся из счетчика ожидающих запись потоков
+        final AtomicInteger writeCount = getWriteCount();
+        writeCount.decrementAndGet();
+    }
 
-	/**
-	 * Попытка добавиться к читающим потокам.
-	 */
-	private boolean tryReadLock() {
+    @Override
+    public boolean tryLock() {
+        throw new RuntimeException("not supported.");
+    }
 
-		// проверем отсутствия желающих записать потоков
-		final AtomicInteger writeCount = getWriteCount();
+    @Override
+    public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
+        throw new RuntimeException("not supported.");
+    }
 
-		if(writeCount.get() != 0) {
-			return false;
-		}
+    /**
+     * Попытка добавиться к читающим потокам.
+     */
+    private boolean tryReadLock() {
 
-		final AtomicInteger readCount = getReadCount();
+        // проверем отсутствия желающих записать потоков
+        final AtomicInteger writeCount = getWriteCount();
 
-		// добавляемся к читающим потокам и если после добавления оказалось что
-		// мы добавились после начало записи, возвращаем в исходную позицию
-		// счетчик и пробуем еще раз.
-		final int value = readCount.get();
+        if (writeCount.get() != 0) {
+            return false;
+        }
 
-		if(value == STATUS_READ_LOCKED) {
-			return false;
-		}
+        final AtomicInteger readCount = getReadCount();
 
-		return readCount.compareAndSet(value, value + 1);
-	}
+        // добавляемся к читающим потокам и если после добавления оказалось что
+        // мы добавились после начало записи, возвращаем в исходную позицию
+        // счетчик и пробуем еще раз.
+        final int value = readCount.get();
 
-	@Override
-	public void unlock() {
-		synUnlock();
-	}
+        if (value == STATUS_READ_LOCKED) {
+            return false;
+        }
+
+        return readCount.compareAndSet(value, value + 1);
+    }
+
+    @Override
+    public void unlock() {
+        syncUnlock();
+    }
 }

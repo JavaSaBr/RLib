@@ -1,8 +1,5 @@
 package rlib.network.impl;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.AsynchronousNetwork;
@@ -10,104 +7,114 @@ import rlib.network.NetworkConfig;
 import rlib.util.pools.Pool;
 import rlib.util.pools.PoolFactory;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 /**
  * Базовая реализация асинхронной сети.
- * 
+ *
  * @author Ronn
  */
 public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork {
 
-	protected static final Logger LOGGER = LoggerManager.getLogger(AsynchronousNetwork.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(AsynchronousNetwork.class);
 
-	/** пул буфферов для чтения */
-	protected final Pool<ByteBuffer> readBufferPool;
-	/** пул буфферов для записи */
-	protected final Pool<ByteBuffer> writeBufferPool;
+    /**
+     * Пул буфферов для чтения.
+     */
+    protected final Pool<ByteBuffer> readBufferPool;
 
-	/** конфигурация сети */
-	protected final NetworkConfig config;
+    /**
+     * Пул буфферов для записи.
+     */
+    protected final Pool<ByteBuffer> writeBufferPool;
 
-	protected AbstractAsynchronousNetwork(final NetworkConfig config) {
-		this.config = config;
-		this.readBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
-		this.writeBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
-	}
+    /**
+     * Конфигурация сети.
+     */
+    protected final NetworkConfig config;
 
-	@Override
-	public NetworkConfig getConfig() {
-		return config;
-	}
+    protected AbstractAsynchronousNetwork(final NetworkConfig config) {
+        this.config = config;
+        this.readBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
+        this.writeBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
+    }
 
-	/**
-	 * @return пул буфферов для чтения.
-	 */
-	private Pool<ByteBuffer> getReadBufferPool() {
-		return readBufferPool;
-	}
+    @Override
+    public NetworkConfig getConfig() {
+        return config;
+    }
 
-	@Override
-	public ByteBuffer getReadByteBuffer() {
+    /**
+     * @return пул буфферов для чтения.
+     */
+    private Pool<ByteBuffer> getReadBufferPool() {
+        return readBufferPool;
+    }
 
-		final Pool<ByteBuffer> pool = getReadBufferPool();
+    @Override
+    public ByteBuffer getReadByteBuffer() {
 
-		ByteBuffer buffer = pool.take();
+        final Pool<ByteBuffer> pool = getReadBufferPool();
 
-		if(buffer != null) {
-			buffer.clear();
-		} else {
-			buffer = ByteBuffer.allocate(config.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
-		}
+        ByteBuffer buffer = pool.take();
 
-		return buffer;
-	}
+        if (buffer != null) {
+            buffer.clear();
+        } else {
+            buffer = ByteBuffer.allocate(config.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
+        }
 
-	/**
-	 * @return пул буфферов для записи.
-	 */
-	private Pool<ByteBuffer> getWriteBufferPool() {
-		return writeBufferPool;
-	}
+        return buffer;
+    }
 
-	@Override
-	public ByteBuffer getWriteByteBuffer() {
+    /**
+     * @return пул буфферов для записи.
+     */
+    private Pool<ByteBuffer> getWriteBufferPool() {
+        return writeBufferPool;
+    }
 
-		final Pool<ByteBuffer> pool = getWriteBufferPool();
+    @Override
+    public ByteBuffer getWriteByteBuffer() {
 
-		ByteBuffer buffer = pool.take();
+        final Pool<ByteBuffer> pool = getWriteBufferPool();
 
-		if(buffer != null) {
-			buffer.clear();
-		} else {
-			buffer = ByteBuffer.allocate(config.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
-		}
+        ByteBuffer buffer = pool.take();
 
-		return buffer;
-	}
+        if (buffer != null) {
+            buffer.clear();
+        } else {
+            buffer = ByteBuffer.allocate(config.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
+        }
 
-	@Override
-	public void putReadByteBuffer(final ByteBuffer buffer) {
+        return buffer;
+    }
 
-		if(buffer == null) {
-			return;
-		}
+    @Override
+    public void putReadByteBuffer(final ByteBuffer buffer) {
 
-		final Pool<ByteBuffer> pool = getReadBufferPool();
-		pool.put(buffer);
-	}
+        if (buffer == null) {
+            return;
+        }
 
-	@Override
-	public void putWriteByteBuffer(final ByteBuffer buffer) {
+        final Pool<ByteBuffer> pool = getReadBufferPool();
+        pool.put(buffer);
+    }
 
-		if(buffer == null) {
-			return;
-		}
+    @Override
+    public void putWriteByteBuffer(final ByteBuffer buffer) {
 
-		final Pool<ByteBuffer> pool = getWriteBufferPool();
-		pool.put(buffer);
-	}
+        if (buffer == null) {
+            return;
+        }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " [config=" + config + "]";
-	}
+        final Pool<ByteBuffer> pool = getWriteBufferPool();
+        pool.put(buffer);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [config=" + config + "]";
+    }
 }

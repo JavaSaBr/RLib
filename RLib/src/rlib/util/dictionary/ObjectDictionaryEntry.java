@@ -1,124 +1,133 @@
 package rlib.util.dictionary;
 
-import java.util.Objects;
-
 import rlib.util.pools.Foldable;
+
+import java.util.Objects;
 
 /**
  * Реализация элемента словаря с объектным ключем.
- * 
+ *
  * @author Ronn
  */
 public class ObjectDictionaryEntry<K, V> implements Foldable {
 
-	/** следующая ячейка */
-	private ObjectDictionaryEntry<K, V> next;
+    /**
+     * Следующая ячейка.
+     */
+    private ObjectDictionaryEntry<K, V> next;
 
-	/** ключ */
-	private K key;
-	/** значение */
-	private V value;
+    /**
+     * Ключ.
+     */
+    private K key;
 
-	/** хэш ключа */
-	private int hash;
+    /**
+     * Значение.
+     */
+    private V value;
 
-	@Override
-	public boolean equals(final Object object) {
+    /**
+     * Хэш ключа.
+     */
+    private int hash;
 
-		if(object == null || object.getClass() != ObjectDictionaryEntry.class) {
-			return false;
-		}
+    @Override
+    public boolean equals(final Object object) {
 
-		final ObjectDictionaryEntry<?, ?> entry = (ObjectDictionaryEntry<?, ?>) object;
+        if (object == null || object.getClass() != ObjectDictionaryEntry.class) {
+            return false;
+        }
 
-		final Object firstKey = getKey();
-		final Object secondKey = entry.getKey();
+        final ObjectDictionaryEntry<?, ?> entry = (ObjectDictionaryEntry<?, ?>) object;
 
-		if(Objects.equals(firstKey, secondKey)) {
+        final Object firstKey = getKey();
+        final Object secondKey = entry.getKey();
 
-			final Object firstValue = getValue();
-			final Object secondValue = entry.getValue();
+        if (Objects.equals(firstKey, secondKey)) {
 
-			return Objects.equals(firstValue, secondValue);
-		}
+            final Object firstValue = getValue();
+            final Object secondValue = entry.getValue();
 
-		return false;
-	}
+            return Objects.equals(firstValue, secondValue);
+        }
 
-	@Override
-	public void finalyze() {
-		key = null;
-		value = null;
-		next = null;
-		hash = 0;
-	}
+        return false;
+    }
 
-	/**
-	 * @return хэш ячейки.
-	 */
-	public int getHash() {
-		return hash;
-	}
+    @Override
+    public void finalyze() {
+        key = null;
+        value = null;
+        next = null;
+        hash = 0;
+    }
 
-	/**
-	 * @return ключ ячейки.
-	 */
-	public K getKey() {
-		return key;
-	}
+    /**
+     * @return хэш ячейки.
+     */
+    public int getHash() {
+        return hash;
+    }
 
-	/**
-	 * @return следующая ячейка.
-	 */
-	public ObjectDictionaryEntry<K, V> getNext() {
-		return next;
-	}
+    /**
+     * @return ключ ячейки.
+     */
+    public K getKey() {
+        return key;
+    }
 
-	/**
-	 * @return значение ячейки.
-	 */
-	public V getValue() {
-		return value;
-	}
+    /**
+     * @return следующая ячейка.
+     */
+    public ObjectDictionaryEntry<K, V> getNext() {
+        return next;
+    }
 
-	@Override
-	public final int hashCode() {
-		return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
-	}
+    /**
+     * @param next следующая цепочка.
+     */
+    public void setNext(final ObjectDictionaryEntry<K, V> next) {
+        this.next = next;
+    }
 
-	@Override
-	public void reinit() {
-		hash = 0;
-	}
+    /**
+     * @return значение ячейки.
+     */
+    public V getValue() {
+        return value;
+    }
 
-	public void set(final int hash, final K key, final V value, final ObjectDictionaryEntry<K, V> next) {
-		this.value = value;
-		this.next = next;
-		this.key = key;
-		this.hash = hash;
-	}
+    @Override
+    public final int hashCode() {
+        return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+    }
 
-	/**
-	 * @param next следующая цепочка.
-	 */
-	public void setNext(final ObjectDictionaryEntry<K, V> next) {
-		this.next = next;
-	}
+    @Override
+    public void reinit() {
+        hash = 0;
+    }
 
-	/**
-	 * Установка нового значения.
-	 *
-	 * @param value новое значение.
-	 * @return старое значение.
-	 */
-	public V setValue(final V value) {
-		final V old = getValue();
-		this.value = value;
-		return old;
-	}
+    public void set(final int hash, final K key, final V value, final ObjectDictionaryEntry<K, V> next) {
+        this.value = value;
+        this.next = next;
+        this.key = key;
+        this.hash = hash;
+    }
 
-	@Override
-	public final String toString() {
-		return "Entry : " + key + " = " + value;
-	}
+    /**
+     * Установка нового значения.
+     *
+     * @param value новое значение.
+     * @return старое значение.
+     */
+    public V setValue(final V value) {
+        final V old = getValue();
+        this.value = value;
+        return old;
+    }
+
+    @Override
+    public final String toString() {
+        return "Entry : " + key + " = " + value;
+    }
 }

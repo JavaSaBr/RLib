@@ -4,132 +4,132 @@ import java.nio.ByteBuffer;
 
 /**
  * Интерфейс для реализации читаемого пакета.
- * 
+ *
  * @author Ronn
  */
 public interface ReadeablePacket<C> extends Packet<C> {
 
-	/**
-	 * @return кол-во не прочитанных байтов.
-	 */
-	public int getAvaliableBytes();
+    /**
+     * @return кол-во не прочитанных байтов.
+     */
+    public int getAvailableBytes();
 
-	/**
-	 * @return буффер данных.
-	 */
-	public ByteBuffer getBuffer();
+    /**
+     * @return буффер данных.
+     */
+    public ByteBuffer getBuffer();
 
-	/**
-	 * Прочитать присланную информацию.
-	 * 
-	 * @return успешно ли прочитано.
-	 */
-	public boolean read();
+    /**
+     * @param buffer буффер данных.
+     */
+    public void setBuffer(ByteBuffer buffer);
 
-	/**
-	 * Чтение одного байта из буфера.
-	 */
-	public default int readByte() {
-		final ByteBuffer buffer = getBuffer();
-		return buffer.get() & 0xFF;
-	}
+    /**
+     * Прочитать присланную информацию.
+     *
+     * @return успешно ли прочитано.
+     */
+    public boolean read();
 
-	/**
-	 * Наполнение указанного массива байтов, байтами из буфера.
-	 * 
-	 * @param array наполняемый массив байтов.
-	 */
-	public default void readBytes(final byte[] array) {
-		final ByteBuffer buffer = getBuffer();
-		buffer.get(array);
-	}
+    /**
+     * Чтение одного байта из буфера.
+     */
+    public default int readByte() {
+        final ByteBuffer buffer = getBuffer();
+        return buffer.get() & 0xFF;
+    }
 
-	/**
-	 * Наполнение указанного массива байтов, байтами из буфера.
-	 * 
-	 * @param array наполняемый массив байтов.
-	 * @param offset отступ в массиве байтов.
-	 * @param length кол-во записываемых байтов в массив.
-	 */
-	public default void readBytes(final byte[] array, final int offset, final int length) {
-		final ByteBuffer buffer = getBuffer();
-		buffer.get(array, offset, length);
-	}
+    /**
+     * Наполнение указанного массива байтов, байтами из буфера.
+     *
+     * @param array наполняемый массив байтов.
+     */
+    public default void readBytes(final byte[] array) {
+        final ByteBuffer buffer = getBuffer();
+        buffer.get(array);
+    }
 
-	/**
-	 * Чтение 4х байтов в виде float из буфера.
-	 */
-	public default float readFloat() {
-		final ByteBuffer buffer = getBuffer();
-		return buffer.getFloat();
-	}
+    /**
+     * Наполнение указанного массива байтов, байтами из буфера.
+     *
+     * @param array  наполняемый массив байтов.
+     * @param offset отступ в массиве байтов.
+     * @param length кол-во записываемых байтов в массив.
+     */
+    public default void readBytes(final byte[] array, final int offset, final int length) {
+        final ByteBuffer buffer = getBuffer();
+        buffer.get(array, offset, length);
+    }
 
-	/**
-	 * Чтение 4х байтов в виде int из буфера.
-	 */
-	public default int readInt() {
-		final ByteBuffer buffer = getBuffer();
-		return buffer.getInt();
-	}
+    /**
+     * Чтение 4х байтов в виде float из буфера.
+     */
+    public default float readFloat() {
+        final ByteBuffer buffer = getBuffer();
+        return buffer.getFloat();
+    }
 
-	/**
-	 * Чтение 8ми байтов в виде long из буфера.
-	 */
-	public default long readLong() {
-		final ByteBuffer buffer = getBuffer();
-		return buffer.getLong();
-	}
+    /**
+     * Чтение 4х байтов в виде int из буфера.
+     */
+    public default int readInt() {
+        final ByteBuffer buffer = getBuffer();
+        return buffer.getInt();
+    }
 
-	/**
-	 * Чтение 2х байтов в виде short из буфера.
-	 */
-	public default int readShort() {
-		final ByteBuffer buffer = getBuffer();
-		return buffer.getShort() & 0xFFFF;
-	}
+    /**
+     * Чтение 8ми байтов в виде long из буфера.
+     */
+    public default long readLong() {
+        final ByteBuffer buffer = getBuffer();
+        return buffer.getLong();
+    }
 
-	/**
-	 * Чтение строки из буфера по ближайшего нулевого символа.
-	 */
-	public default String readString() {
+    /**
+     * Чтение 2х байтов в виде short из буфера.
+     */
+    public default int readShort() {
+        final ByteBuffer buffer = getBuffer();
+        return buffer.getShort() & 0xFFFF;
+    }
 
-		final StringBuilder builder = new StringBuilder();
-		final ByteBuffer buffer = getBuffer();
+    /**
+     * Чтение строки из буфера по ближайшего нулевого символа.
+     */
+    public default String readString() {
 
-		char cha;
+        final StringBuilder builder = new StringBuilder();
+        final ByteBuffer buffer = getBuffer();
 
-		while(buffer.remaining() > 1) {
+        char cha;
 
-			cha = buffer.getChar();
+        while (buffer.remaining() > 1) {
 
-			if(cha == 0) {
-				break;
-			}
+            cha = buffer.getChar();
 
-			builder.append(cha);
-		}
+            if (cha == 0) {
+                break;
+            }
 
-		return builder.toString();
-	}
+            builder.append(cha);
+        }
 
-	/**
-	 * Чтение строки из буфера указанной длинны.
-	 */
-	public default String readString(final int length) {
+        return builder.toString();
+    }
 
-		final ByteBuffer buffer = getBuffer();
+    /**
+     * Чтение строки из буфера указанной длинны.
+     */
+    public default String readString(final int length) {
 
-		final char[] array = new char[length];
+        final ByteBuffer buffer = getBuffer();
 
-		for(int i = 0; i < length && buffer.remaining() > 1; i++) {
-			array[i] = buffer.getChar();
-		}
+        final char[] array = new char[length];
 
-		return new String(array);
-	}
+        for (int i = 0; i < length && buffer.remaining() > 1; i++) {
+            array[i] = buffer.getChar();
+        }
 
-	/**
-	 * @param buffer буффер данных.
-	 */
-	public void setBuffer(ByteBuffer buffer);
+        return new String(array);
+    }
 }

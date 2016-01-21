@@ -1,10 +1,10 @@
 package rlib.util;
 
-import java.util.Comparator;
-
 import rlib.util.array.Array;
 import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
+
+import java.util.Comparator;
 
 /**
  * Набор утильных методов для работы с массивами.
@@ -485,7 +485,7 @@ public final class ArrayUtils {
 	 * @param array массив, в который надо добавить элемент.
 	 * @param object добавляемый элемент.
 	 */
-	public static <T, V extends T> void addInWriteLockTo(Array<T> array, V object) {
+	public static <T, V extends T> void addInWriteLockTo(final Array<T> array, final V object) {
 		array.writeLock();
 		try {
 			array.add(object);
@@ -494,13 +494,25 @@ public final class ArrayUtils {
 		}
 	}
 
+    /**
+     * Добавление элемента в массив в блоке synchronized.
+     *
+     * @param array массив, в который надо добавить элемент.
+     * @param object добавляемый элемент.
+     */
+    public static <T, V extends T> void addInSynchronizeTo(final Array<T> array, final V object) {
+        synchronized (array) {
+            array.add(object);
+        }
+    }
+
 	/**
 	 * Быстрое удаление элемента из массива в блоке {@link Array#writeLock()}.
 	 * 
 	 * @param array массив, в котором надо удалить элемент.
 	 * @param object удаляемый элемент.
 	 */
-	public static <T, V extends T> void fastRemoveInWriteLockTo(Array<T> array, V object) {
+	public static <T, V extends T> void fastRemoveInWriteLockTo(final Array<T> array, final V object) {
 		array.writeLock();
 		try {
 			array.fastRemove(object);
@@ -508,6 +520,18 @@ public final class ArrayUtils {
 			array.writeUnlock();
 		}
 	}
+
+    /**
+     * Быстрое удаление элемента из массива в блоке synchronized.
+     *
+     * @param array массив, в котором надо удалить элемент.
+     * @param object удаляемый элемент.
+     */
+    public static <T, V extends T> void fastRemoveInSynchronizeTo(final Array<T> array, final V object) {
+        synchronized (array) {
+            array.fastRemove(object);
+        }
+    }
 
 	/**
 	 * Добавление элементов в массив в блоке {@link Array#writeLock()}.

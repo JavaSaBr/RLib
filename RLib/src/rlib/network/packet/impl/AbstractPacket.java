@@ -6,41 +6,45 @@ import rlib.network.packet.Packet;
 
 /**
  * Базовая реализация сетевого пакета.
- * 
+ *
  * @author Ronn
  */
 public abstract class AbstractPacket<C> implements Packet<C> {
 
-	protected static final Logger LOGGER = LoggerManager.getLogger(Packet.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(Packet.class);
 
-	/** владелец пакета */
-	protected volatile C owner;
+    /**
+     * Владелец пакета.
+     */
+    protected volatile C owner;
 
-	/** название пакета */
-	protected volatile String name;
+    /**
+     * Название пакета.
+     */
+    protected volatile String name;
 
-	@Override
-	public final String getName() {
+    @Override
+    public final String getName() {
 
-		if(name == null) {
-			name = getClass().getSimpleName();
-		}
+        if (name == null) {
+            name = getClass().getSimpleName();
+        }
 
-		return name;
-	}
+        return name;
+    }
 
-	@Override
-	public C getOwner() {
-		return owner;
-	}
+    @Override
+    public C getOwner() {
+        return owner;
+    }
 
-	@Override
-	public void setOwner(final C owner) {
-		this.owner = owner;
-	}
+    @Override
+    public void setOwner(final C owner) {
+        this.owner = owner;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " [owner=" + owner + ", name=" + name + "]";
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [owner=" + owner + ", name=" + name + "]";
+    }
 }

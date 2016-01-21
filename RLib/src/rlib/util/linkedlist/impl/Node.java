@@ -5,65 +5,72 @@ import rlib.util.pools.Foldable;
 
 /**
  * Реализация узла для {@link LinkedList}.
- * 
+ *
  * @author Ronn
  */
 public final class Node<E> implements Foldable {
 
-	/** содержимый итем */
-	private E item;
+    /**
+     * Содержимый элемент.
+     */
+    private E item;
 
-	/** ссылка на предыдущий узел */
-	private Node<E> prev;
-	/** ссылка на след. узел */
-	private Node<E> next;
+    /**
+     * Ссылка на предыдущий узел.
+     */
+    private Node<E> prev;
 
-	@Override
-	public void finalyze() {
-		item = null;
-		prev = null;
-		next = null;
-	}
+    /**
+     * Ссылка на след. узел.
+     */
+    private Node<E> next;
 
-	/**
-	 * @return хранимый итем.
-	 */
-	public E getItem() {
-		return item;
-	}
+    @Override
+    public void finalyze() {
+        item = null;
+        prev = null;
+        next = null;
+    }
 
-	/**
-	 * @return следующий узел.
-	 */
-	public Node<E> getNext() {
-		return next;
-	}
+    /**
+     * @return хранимый элемент.
+     */
+    public E getItem() {
+        return item;
+    }
 
-	/**
-	 * @return предыдущий узел.
-	 */
-	public Node<E> getPrev() {
-		return prev;
-	}
+    /**
+     * @param item хранимый элемент.
+     */
+    public void setItem(final E item) {
+        this.item = item;
+    }
 
-	/**
-	 * @param item хранимый итем.
-	 */
-	public void setItem(final E item) {
-		this.item = item;
-	}
+    /**
+     * @return следующий узел.
+     */
+    public Node<E> getNext() {
+        return next;
+    }
 
-	/**
-	 * @param next следующий узел.
-	 */
-	public void setNext(final Node<E> next) {
-		this.next = next;
-	}
+    /**
+     * @param next следующий узел.
+     */
+    public void setNext(final Node<E> next) {
+        this.next = next;
+    }
 
-	/**
-	 * @param prev предыдущий узел.
-	 */
-	public void setPrev(final Node<E> prev) {
-		this.prev = prev;
-	}
+    /**
+     * @return предыдущий узел.
+     */
+    public Node<E> getPrev() {
+        return prev;
+    }
+
+    /**
+     * @param prev предыдущий узел.
+     */
+    public void setPrev(final Node<E> prev) {
+        this.prev = prev;
+    }
 }

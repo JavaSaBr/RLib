@@ -1,5 +1,13 @@
 package rlib.geoengine.impl;
 
+import rlib.geoengine.GeoConfig;
+import rlib.geoengine.GeoMap;
+import rlib.geoengine.GeoQuad;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+import rlib.util.ArrayUtils;
+import rlib.util.array.Array;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,14 +16,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
-import rlib.geoengine.GeoConfig;
-import rlib.geoengine.GeoMap;
-import rlib.geoengine.GeoQuard;
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-import rlib.util.ArrayUtils;
-import rlib.util.array.Array;
-
 /**
  * Модель 3х мерной геокарты.
  *
@@ -23,444 +23,456 @@ import rlib.util.array.Array;
  */
 public final class GeoMap3D implements GeoMap {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(GeoMap3D.class);
-
-	/** отступ по X */
-	private final int offsetX;
-	/** отступ по Y */
-	private final int offsetY;
-	/** размер квадрата гео */
-	private final int quardSize;
-	/** размер гео квадрата в высоту */
-	private final int quardHeight;
-	/** разделитель квадратов в файле */
-	private final int split;
-
-	/** массив всех гео квадратов */
-	private GeoQuard[][][] quards;
-
-	/** кол-во квадратов в карте */
-	private int size;
-
-	public GeoMap3D(final GeoConfig config) {
-		this.quardSize = config.getQuardSize();
-		this.quardHeight = config.getQuardHeight();
-		this.split = config.getSplit();
-		this.offsetX = config.getOffsetX();
-		this.offsetY = config.getOffsetY();
-		this.quards = new GeoQuard[0][][];
-	}
-
-	@Override
-	public void addQuard(final GeoQuard quard) {
-
-		if(quard.getX() >= quards.length) {
-			quards = ArrayUtils.copyOf(quards, quard.getX() + 1);
-		}
-
-		GeoQuard[][] yQuards = quards[quard.getX()];
-
-		if(yQuards == null) {
-			yQuards = new GeoQuard[quard.getY() + 1][];
-			quards[quard.getX()] = yQuards;
-		} else if(quard.getY() >= yQuards.length) {
-			yQuards = ArrayUtils.copyOf(yQuards, quard.getY() + 1 - yQuards.length);
-			quards[quard.getX()] = yQuards;
-		}
+    private static final Logger LOGGER = LoggerManager.getLogger(GeoMap3D.class);
+
+    /**
+     * Отступ по X.
+     */
+    private final int offsetX;
+
+    /**
+     * Отступ по Y.
+     */
+    private final int offsetY;
+
+    /**
+     * Размер квадрата гео.
+     */
+    private final int quadSize;
+
+    /**
+     * Размер гео квадрата в высоту.
+     */
+    private final int quadHeight;
+
+    /**
+     * Разделитель квадратов в файле.
+     */
+    private final int split;
+
+    /**
+     * Массив всех гео квадратов.
+     */
+    private GeoQuad[][][] quads;
+
+    /**
+     * Кол-во квадратов в карте.
+     */
+    private int size;
+
+    public GeoMap3D(final GeoConfig config) {
+        this.quadSize = config.getQuadSize();
+        this.quadHeight = config.getQuadHeight();
+        this.split = config.getSplit();
+        this.offsetX = config.getOffsetX();
+        this.offsetY = config.getOffsetY();
+        this.quads = new GeoQuad[0][][];
+    }
+
+    @Override
+    public void addQuad(final GeoQuad quad) {
+
+        if (quad.getX() >= quads.length) {
+            quads = ArrayUtils.copyOf(quads, quad.getX() + 1);
+        }
+
+        GeoQuad[][] yQuads = quads[quad.getX()];
+
+        if (yQuads == null) {
+            yQuads = new GeoQuad[quad.getY() + 1][];
+            quads[quad.getX()] = yQuads;
+        } else if (quad.getY() >= yQuads.length) {
+            yQuads = ArrayUtils.copyOf(yQuads, quad.getY() + 1 - yQuads.length);
+            quads[quad.getX()] = yQuads;
+        }
+
+        GeoQuad[] zQuads = yQuads[quad.getY()];
 
-		GeoQuard[] zQuards = yQuards[quard.getY()];
+        if (zQuads == null) {
+            zQuads = new GeoQuad[1];
+            zQuads[0] = quad;
+            yQuads[quad.getY()] = zQuads;
+            size++;
+        } else {
 
-		if(zQuards == null) {
-			zQuards = new GeoQuard[1];
-			zQuards[0] = quard;
-			yQuards[quard.getY()] = zQuards;
-			size++;
-		} else {
+            final int z = (int) quad.getHeight() / quadHeight;
 
-			final int z = (int) quard.getHeight() / quardHeight;
+            for (int i = 0, length = zQuads.length; i < length; i++) {
 
-			for(int i = 0, length = zQuards.length; i < length; i++) {
+                final GeoQuad target = zQuads[i];
 
-				final GeoQuard target = zQuards[i];
+                final int targetZ = (int) target.getHeight() / quadHeight;
 
-				final int targetZ = (int) target.getHeight() / quardHeight;
+                if (z == targetZ) {
+                    if (target.getHeight() > quad.getHeight()) {
+                        return;
+                    } else {
+                        zQuads[i] = quad;
+                        return;
+                    }
+                }
+            }
 
-				if(z == targetZ) {
-					if(target.getHeight() > quard.getHeight()) {
-						return;
-					} else {
-						zQuards[i] = quard;
-						return;
-					}
-				}
-			}
+            yQuads[quad.getY()] = ArrayUtils.addToArray(zQuads, quad, GeoQuad.class);
+            size++;
+        }
+    }
 
-			yQuards[quard.getY()] = ArrayUtils.addToArray(zQuards, quard, GeoQuard.class);
-			size++;
-		}
-	}
+    @Override
+    public void addQuad(final int x, final int y, final float height) {
 
-	@Override
-	public void addQuard(final int x, final int y, final float height) {
+        if (x >= quads.length) {
+            quads = ArrayUtils.copyOf(quads, x + 1);
+        }
 
-		if(x >= quards.length) {
-			quards = ArrayUtils.copyOf(quards, x + 1);
-		}
+        GeoQuad[][] yQuads = quads[x];
 
-		GeoQuard[][] yQuards = quards[x];
+        if (yQuads == null) {
+            yQuads = new GeoQuad[y + 1][];
+            quads[x] = yQuads;
+        } else if (y >= yQuads.length) {
+            yQuads = ArrayUtils.copyOf(yQuads, y + 1 - yQuads.length);
+            quads[x] = yQuads;
+        }
 
-		if(yQuards == null) {
-			yQuards = new GeoQuard[y + 1][];
-			quards[x] = yQuards;
-		} else if(y >= yQuards.length) {
-			yQuards = ArrayUtils.copyOf(yQuards, y + 1 - yQuards.length);
-			quards[x] = yQuards;
-		}
+        GeoQuad[] zQuads = yQuads[y];
 
-		GeoQuard[] zQuards = yQuards[y];
+        if (zQuads == null) {
+            zQuads = new GeoQuad[1];
+            zQuads[0] = new GeoQuad(x, y, height);
+            yQuads[y] = zQuads;
+            size++;
+        } else {
 
-		if(zQuards == null) {
-			zQuards = new GeoQuard[1];
-			zQuards[0] = new GeoQuard(x, y, height);
-			yQuards[y] = zQuards;
-			size++;
-		} else {
+            final int z = (int) height / quadHeight;
 
-			final int z = (int) height / quardHeight;
+            for (int i = 0, length = zQuads.length; i < length; i++) {
 
-			for(int i = 0, length = zQuards.length; i < length; i++) {
+                final GeoQuad target = zQuads[i];
 
-				final GeoQuard target = zQuards[i];
+                final int targetZ = (int) target.getHeight() / quadHeight;
 
-				final int targetZ = (int) target.getHeight() / quardHeight;
+                if (z == targetZ) {
+                    if (target.getHeight() > height) {
+                        return;
+                    } else {
+                        zQuads[i] = new GeoQuad(x, y, height);
+                        return;
+                    }
+                }
+            }
 
-				if(z == targetZ) {
-					if(target.getHeight() > height) {
-						return;
-					} else {
-						zQuards[i] = new GeoQuard(x, y, height);
-						return;
-					}
-				}
-			}
+            yQuads[y] = ArrayUtils.addToArray(zQuads, new GeoQuad(x, y, height), GeoQuad.class);
+            size++;
+        }
+    }
 
-			yQuards[y] = ArrayUtils.addToArray(zQuards, new GeoQuard(x, y, height), GeoQuard.class);
-			size++;
-		}
-	}
+    @Override
+    public void exportTo(final File file) {
 
-	@Override
-	public void exportTo(final File file) {
+        try (FileOutputStream out = new FileOutputStream(file)) {
 
-		try(FileOutputStream out = new FileOutputStream(file)) {
+            final FileChannel channel = out.getChannel();
+            final ByteBuffer buffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN);
 
-			final FileChannel channel = out.getChannel();
-			final ByteBuffer buffer = ByteBuffer.allocate(16).order(ByteOrder.LITTLE_ENDIAN);
+            final byte split = (byte) getSplit();
 
-			final byte split = (byte) getSplit();
+            final GeoQuad[][][] quads = getQuads();
 
-			final GeoQuard[][][] quards = getQuards();
+            for (int x = quads.length - 1; x >= 0; x--) {
 
-			for(int x = quards.length - 1; x >= 0; x--) {
+                final GeoQuad[][] yQuads = quads[x];
 
-				final GeoQuard[][] yQuards = quards[x];
+                if (yQuads == null) {
+                    continue;
+                }
 
-				if(yQuards == null) {
-					continue;
-				}
+                for (int y = yQuads.length - 1; y >= 0; y--) {
 
-				for(int y = yQuards.length - 1; y >= 0; y--) {
+                    final GeoQuad[] zQuads = yQuads[y];
 
-					final GeoQuard[] zQuards = yQuards[y];
+                    if (zQuads == null) {
+                        continue;
+                    }
 
-					if(zQuards == null) {
-						continue;
-					}
+                    for (int z = zQuads.length - 1; z >= 0; z--) {
 
-					for(int z = zQuards.length - 1; z >= 0; z--) {
+                        final GeoQuad quad = zQuads[z];
 
-						final GeoQuard quard = zQuards[z];
+                        buffer.clear();
+                        buffer.put(split);
+                        buffer.putInt(quad.getX());
+                        buffer.putInt(quad.getY());
+                        buffer.putFloat(quad.getHeight());
+                        buffer.flip();
 
-						buffer.clear();
-						buffer.put(split);
-						buffer.putInt(quard.getX());
-						buffer.putInt(quard.getY());
-						buffer.putFloat(quard.getHeight());
-						buffer.flip();
+                        channel.write(buffer);
+                    }
+                }
+            }
 
-						channel.write(buffer);
-					}
-				}
-			}
+        } catch (final IOException e) {
+            LOGGER.warning(e);
+        }
+    }
 
-		} catch(final IOException e) {
-			LOGGER.warning(e);
-		}
-	}
+    @Override
+    public Array<GeoQuad> getAllQuads(final Array<GeoQuad> container) {
 
-	@Override
-	public Array<GeoQuard> getAllQuards(final Array<GeoQuard> container) {
+        for (final GeoQuad[][] yQuads : quads) {
 
-		for(int x = 0, lengthX = quards.length; x < lengthX; x++) {
+            if (yQuads == null) {
+                continue;
+            }
 
-			final GeoQuard[][] yQuards = quards[x];
+            for (final GeoQuad[] zQuads : yQuads) {
 
-			if(yQuards == null) {
-				continue;
-			}
+                if (zQuads == null) {
+                    continue;
+                }
 
-			for(int y = 0, lengthY = yQuards.length; y < lengthY; y++) {
+                for (final GeoQuad zQuad : zQuads) {
+                    container.add(zQuad);
+                }
+            }
+        }
 
-				final GeoQuard[] zQuards = yQuards[y];
+        return container;
+    }
 
-				if(zQuards == null) {
-					continue;
-				}
+    @Override
+    public GeoQuad getGeoQuad(final float x, final float y, final float z) {
 
-				for(int z = 0, lengthZ = zQuards.length; z < lengthZ; z++) {
-					container.add(zQuards[z]);
-				}
-			}
-		}
+        final int newX = toIndex(x) + offsetX;
+        final int newY = toIndex(y) + offsetY;
 
-		return container;
-	}
+        GeoQuad[] quads = getQuads(newX, newY);
 
-	@Override
-	public GeoQuard getGeoQuard(final float x, final float y, final float z) {
+        if (quads == null) {
+            for (int i = -2; i <= 2; i++) {
+                for (int j = -2; j <= 2; j++) {
 
-		final int newX = toIndex(x) + offsetX;
-		final int newY = toIndex(y) + offsetY;
+                    if (i == 0 && j == 0) {
+                        continue;
+                    }
 
-		GeoQuard[] quards = getQuards(newX, newY);
+                    quads = getQuads(Math.max(newX + i, 0), Math.max(newY + j, 0));
 
-		if(quards == null) {
-			for(int i = -2; i <= 2; i++) {
-				for(int j = -2; j <= 2; j++) {
+                    if (quads != null) {
+                        break;
+                    }
+                }
+            }
+        }
 
-					if(i == 0 && j == 0) {
-						continue;
-					}
+        if (quads == null) {
+            return null;
+        } else if (quads.length == 1) {
+            return quads[0];
+        } else {
 
-					quards = getQuards(Math.max(newX + i, 0), Math.max(newY + j, 0));
+            GeoQuad target = null;
 
-					if(quards != null) {
-						break;
-					}
-				}
-			}
-		}
+            float min = 0;
 
-		if(quards == null) {
-			return null;
-		} else if(quards.length == 1) {
-			return quards[0];
-		} else {
+            for (final GeoQuad quad : quads) {
 
-			GeoQuard target = null;
+                if (target == null) {
+                    target = quad;
+                    min = Math.abs(quad.getHeight() - z);
+                    continue;
+                }
 
-			float min = 0;
+                final float diff = Math.abs(quad.getHeight() - z);
 
-			for(int i = 0, length = quards.length; i < length; i++) {
+                if (diff < min) {
+                    min = diff;
+                    target = quad;
+                }
+            }
 
-				final GeoQuard quard = quards[i];
+            return target;
+        }
+    }
 
-				if(target == null) {
-					target = quard;
-					min = Math.abs(quard.getHeight() - z);
-					continue;
-				}
+    @Override
+    public float getHeight(final float x, final float y, final float z) {
 
-				final float diff = Math.abs(quard.getHeight() - z);
+        final GeoQuad quad = getGeoQuad(x, y, z);
 
-				if(diff < min) {
-					min = diff;
-					target = quard;
-				}
-			}
+        if (quad == null) {
+            return z;
+        }
 
-			return target;
-		}
-	}
+        return Math.abs(quad.getHeight() - z) > quadHeight ? z : quad.getHeight();
+    }
 
-	@Override
-	public float getHeight(final float x, final float y, final float z) {
+    private GeoQuad[][][] getQuads() {
+        return quads;
+    }
 
-		final GeoQuard quard = getGeoQuard(x, y, z);
+    /**
+     * Получение массива квадратов по X и Y.
+     *
+     * @param x индекс квадрата по X.
+     * @param y индекс квадрата по Y.
+     * @return массив квадратов.
+     */
+    public GeoQuad[] getQuads(final int x, final int y) {
 
-		if(quard == null) {
-			return z;
-		}
+        if (quads.length <= x) {
+            return null;
+        }
 
-		return Math.abs(quard.getHeight() - z) > quardHeight ? z : quard.getHeight();
-	}
+        final GeoQuad[][] yQuads = quads[x];
 
-	private GeoQuard[][][] getQuards() {
-		return quards;
-	}
+        if (yQuads == null || yQuads.length <= y) {
+            return null;
+        }
 
-	/**
-	 * Получение массива квадратов по X и Y.
-	 *
-	 * @param x индекс квадрата по X.
-	 * @param y индекс квадрата по Y.
-	 * @return массив квадратов.
-	 */
-	public GeoQuard[] getQuards(final int x, final int y) {
+        return yQuads[y];
+    }
 
-		if(quards.length <= x) {
-			return null;
-		}
+    /**
+     * @return разделитель квадратов в файле.
+     */
+    private int getSplit() {
+        return split;
+    }
 
-		final GeoQuard[][] yQuards = quards[x];
+    @Override
+    public GeoMap3D importTo(final File file) {
 
-		if(yQuards == null || yQuards.length <= y) {
-			return null;
-		}
+        try (FileInputStream in = new FileInputStream(file)) {
 
-		return yQuards[y];
-	}
+            final FileChannel channel = in.getChannel();
 
-	/**
-	 * @return разделитель квадратов в файле.
-	 */
-	private int getSplit() {
-		return split;
-	}
+            if (channel.size() < 100000000) {
 
-	@Override
-	public GeoMap3D importTo(final File file) {
+                if (LOGGER.isEnabledInfo()) {
+                    LOGGER.info("start fast import " + file.getName());
+                }
 
-		try(FileInputStream in = new FileInputStream(file)) {
+                final ByteBuffer buffer = ByteBuffer.allocate((int) channel.size()).order(ByteOrder.LITTLE_ENDIAN);
 
-			final FileChannel channel = in.getChannel();
+                final byte split = (byte) getSplit();
 
-			if(channel.size() < 100000000) {
+                buffer.clear();
+                channel.read(buffer);
+                buffer.flip();
 
-				if(LOGGER.isEnabledInfo()) {
-					LOGGER.info("start fast import " + file.getName());
-				}
+                while (buffer.remaining() > 12) {
 
-				final ByteBuffer buffer = ByteBuffer.allocate((int) channel.size()).order(ByteOrder.LITTLE_ENDIAN);
+                    final byte val = buffer.get();
 
-				final byte split = (byte) getSplit();
+                    if (val != split) {
+                        LOGGER.warning("incorrect import file.");
+                        break;
+                    }
 
-				buffer.clear();
-				channel.read(buffer);
-				buffer.flip();
+                    final GeoQuad quard = new GeoQuad(buffer.getInt(), buffer.getInt(), buffer.getFloat());
 
-				while(buffer.remaining() > 12) {
+                    if (quard.getX() < 0 || quard.getY() < 0) {
+                        LOGGER.warning("incorrect quard " + quard);
+                        continue;
+                    }
 
-					final byte val = buffer.get();
+                    addQuad(quard);
+                }
 
-					if(val != split) {
-						LOGGER.warning("incorrect import file.");
-						break;
-					}
+            } else {
 
-					final GeoQuard quard = new GeoQuard(buffer.getInt(), buffer.getInt(), buffer.getFloat());
+                if (LOGGER.isEnabledInfo()) {
+                    LOGGER.info("start slow import " + file.getName());
+                }
 
-					if(quard.getX() < 0 || quard.getY() < 0) {
-						LOGGER.warning("incorrect quard " + quard);
-						continue;
-					}
+                final ByteBuffer buffer = ByteBuffer.allocate(13).order(ByteOrder.LITTLE_ENDIAN);
 
-					addQuard(quard);
-				}
+                final byte split = (byte) getSplit();
 
-			} else {
+                while (channel.size() - channel.position() > 12) {
 
-				if(LOGGER.isEnabledInfo()) {
-					LOGGER.info("start slow import " + file.getName());
-				}
+                    buffer.clear();
+                    channel.read(buffer);
+                    buffer.flip();
 
-				final ByteBuffer buffer = ByteBuffer.allocate(13).order(ByteOrder.LITTLE_ENDIAN);
+                    final byte val = buffer.get();
 
-				final byte split = (byte) getSplit();
+                    if (val != split) {
+                        LOGGER.warning("incorrect import file.");
+                        break;
+                    }
 
-				while(channel.size() - channel.position() > 12) {
+                    final GeoQuad quard = new GeoQuad(buffer.getInt(), buffer.getInt(), buffer.getFloat());
 
-					buffer.clear();
-					channel.read(buffer);
-					buffer.flip();
+                    if (quard.getX() < 0 || quard.getY() < 0) {
+                        LOGGER.warning("incorrect quard " + quard);
+                        continue;
+                    }
 
-					final byte val = buffer.get();
+                    addQuad(quard);
+                }
+            }
 
-					if(val != split) {
-						LOGGER.warning("incorrect import file.");
-						break;
-					}
+        } catch (final Exception e) {
+            LOGGER.warning(e);
+        }
 
-					final GeoQuard quard = new GeoQuard(buffer.getInt(), buffer.getInt(), buffer.getFloat());
+        if (LOGGER.isEnabledInfo()) {
+            LOGGER.info("import ended. load " + size() + " quads.");
+        }
 
-					if(quard.getX() < 0 || quard.getY() < 0) {
-						LOGGER.warning("incorrect quard " + quard);
-						continue;
-					}
+        return this;
+    }
 
-					addQuard(quard);
-				}
-			}
+    /**
+     * @param quad удаляемый квадрат.
+     */
+    public void remove(final GeoQuad quad) {
 
-		} catch(final Exception e) {
-			LOGGER.warning(e);
-		}
+        if (quads.length <= quad.getX()) {
+            return;
+        }
 
-		if(LOGGER.isEnabledInfo()) {
-			LOGGER.info("import ended. load " + size() + " quards.");
-		}
+        final GeoQuad[][] yQuads = quads[quad.getX()];
 
-		return this;
-	}
+        if (yQuads == null || yQuads.length <= quad.getY()) {
+            return;
+        }
 
-	/**
-	 * @param quard удаляемый квадрат.
-	 */
-	public void remove(final GeoQuard quard) {
+        final GeoQuad[] quads = yQuads[quad.getY()];
 
-		if(quards.length <= quard.getX()) {
-			return;
-		}
+        if (quads == null || quads.length < 2) {
+            yQuads[quad.getY()] = null;
+        } else {
 
-		final GeoQuard[][] yQuards = quards[quard.getX()];
+            final GeoQuad[] result = new GeoQuad[quads.length - 1];
 
-		if(yQuards == null || yQuards.length <= quard.getY()) {
-			return;
-		}
+            for (int i = 0, j = 0, length = quads.length; i < length; i++) {
 
-		final GeoQuard[] quards = yQuards[quard.getY()];
+                final GeoQuad item = quads[i];
 
-		if(quards == null || quards.length < 2) {
-			yQuards[quard.getY()] = null;
-		} else {
+                if (item == quad) {
+                    continue;
+                }
 
-			final GeoQuard[] result = new GeoQuard[quards.length - 1];
+                result[j++] = item;
+            }
 
-			for(int i = 0, j = 0, length = quards.length; i < length; i++) {
+            yQuads[quad.getY()] = result;
+        }
+    }
 
-				final GeoQuard item = quards[i];
+    @Override
+    public int size() {
+        return size;
+    }
 
-				if(item == quard) {
-					continue;
-				}
-
-				result[j++] = item;
-			}
-
-			yQuards[quard.getY()] = result;
-		}
-	}
-
-	@Override
-	public int size() {
-		return size;
-	}
-
-	/**
-	 * @param coord координата.
-	 * @return индекс для той координаты.
-	 */
-	private int toIndex(final float coord) {
-		return (int) coord / quardSize;
-	}
+    /**
+     * @param coord координата.
+     * @return индекс для той координаты.
+     */
+    private int toIndex(final float coord) {
+        return (int) coord / quadSize;
+    }
 }

@@ -1,210 +1,227 @@
 package rlib.logging;
 
+import rlib.concurrent.lock.LockFactory;
+import rlib.logging.impl.LoggerImpl;
+import rlib.util.ClassUtils;
+import rlib.util.StringUtils;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
+import rlib.util.dictionary.DictionaryFactory;
+import rlib.util.dictionary.ObjectDictionary;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.locks.Lock;
 
-import rlib.concurrent.lock.LockFactory;
-import rlib.logging.impl.LoggerImpl;
-import rlib.util.ClassUtils;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
-import rlib.util.dictionary.DictionaryFactory;
-import rlib.util.dictionary.ObjectDictionary;
-
 /**
  * Менеджер логгирования, служит для получения, конфигурирования и записывания
  * лога.
- * 
+ *
  * @author Ronn
  */
 public class LoggerManager {
 
-	/** таблица всех логгерров */
-	private static final ObjectDictionary<String, Logger> LOGGERS = DictionaryFactory.newObjectDictionary();
+    /**
+     * таблица всех логгерров
+     */
+    private static final ObjectDictionary<String, Logger> LOGGERS = DictionaryFactory.newObjectDictionary();
 
-	/** список слушателей логирования */
-	private static final Array<LoggerListener> LISTENERS = ArrayFactory.newArray(LoggerListener.class);
-	/** список записчиков лога */
-	private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
+    /**
+     * список слушателей логирования
+     */
+    private static final Array<LoggerListener> LISTENERS = ArrayFactory.newArray(LoggerListener.class);
 
-	/** синхронизатор записи лога */
-	private static final Lock SYNC = LockFactory.newPrimitiveAtomicLock();
+    /**
+     * список записчиков лога
+     */
+    private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
 
-	/** формат записи времени */
-	private static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
+    /**
+     * синхронизатор записи лога
+     */
+    private static final Lock SYNC = LockFactory.newPrimitiveAtomicLock();
 
-	/** класс реализации логгера */
-	private static Class<? extends Logger> implementedClass = LoggerImpl.class;
+    /**
+     * формат записи времени
+     */
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
 
-	/** главный логгер */
-	private static volatile Logger logger = getLogger(LoggerManager.class);
+    /**
+     * класс реализации логгера
+     */
+    private static Class<? extends Logger> implementedClass = LoggerImpl.class;
 
-	/**
-	 * Добавление слушателя логирования.
-	 * 
-	 * @param listener добавляемый слушатель.
-	 */
-	public static void addListener(final LoggerListener listener) {
+    /**
+     * главный логгер
+     */
+    private static final Logger LOGGER;
 
-		if(listener == null) {
-			throw new IllegalArgumentException("ilistener is null.");
-		}
+    static {
 
-		LISTENERS.add(listener);
-	}
+        final String className = System.getProperty(LoggerManager.class.getName() + "_impl");
 
-	/**
-	 * Добавление записчика лога.
-	 * 
-	 * @param writer записчик лога.
-	 */
-	public static void addWriter(final Writer writer) {
+        if(!StringUtils.isEmpty(className)) {
+            try {
+                implementedClass = (Class<? extends Logger>) Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 
-		if(writer == null) {
-			throw new IllegalArgumentException("writer is null.");
-		}
+        if(implementedClass == null) {
+            implementedClass = LoggerImpl.class;
+        }
 
-		WRITERS.add(writer);
-	}
+        LOGGER = getLogger(LoggerManager.class);
+    }
 
-	/**
-	 * @return стандартный логгер.
-	 */
-	public static Logger getDefaultLogger() {
-		return logger;
-	}
+    /**
+     * Добавление слушателя логирования.
+     *
+     * @param listener добавляемый слушатель.
+     */
+    public static void addListener(final LoggerListener listener) {
 
-	/**
-	 * @return список слушателей логирования.
-	 */
-	private static Array<LoggerListener> getListeners() {
-		return LISTENERS;
-	}
+        if (listener == null) {
+            throw new IllegalArgumentException("listener is null.");
+        }
 
-	/**
-	 * Получение логера для указанного класса.
-	 * 
-	 * @param cs класс, который запрашивает логгер
-	 * @return индивидуальный логер для указанного класса.
-	 */
-	public static final Logger getLogger(final Class<?> cs) {
+        LISTENERS.add(listener);
+    }
 
-		Logger logger = LOGGERS.get(cs.getName());
+    /**
+     * Добавление записчика лога.
+     *
+     * @param writer записчик лога.
+     */
+    public static void addWriter(final Writer writer) {
 
-		if(logger != null) {
-			return logger;
-		}
+        if (writer == null) {
+            throw new IllegalArgumentException("writer is null.");
+        }
 
-		logger = ClassUtils.newInstance(implementedClass);
-		logger.setName(cs.getSimpleName());
+        WRITERS.add(writer);
+    }
 
-		LOGGERS.put(cs.getSimpleName(), logger);
-		return logger;
-	}
+    /**
+     * @return стандартный логгер.
+     */
+    public static Logger getDefaultLogger() {
+        return LOGGER;
+    }
 
-	/**
-	 * @return список дополнительных записчиков лога.
-	 */
-	private static Array<Writer> getWriters() {
-		return WRITERS;
-	}
+    /**
+     * @return список слушателей логирования.
+     */
+    private static Array<LoggerListener> getListeners() {
+        return LISTENERS;
+    }
 
-	/**
-	 * Удаления слушателя логирования.
-	 * 
-	 * @param listener удаляемый слушатель.
-	 */
-	public static void removeListener(final LoggerListener listener) {
-		LISTENERS.slowRemove(listener);
-	}
+    /**
+     * Получение логера для указанного класса.
+     *
+     * @param cs класс, который запрашивает логгер
+     * @return индивидуальный логер для указанного класса.
+     */
+    public static final Logger getLogger(final Class<?> cs) {
 
-	/**
-	 * Удаление записчика лога.
-	 * 
-	 * @param writer записчик лога.
-	 */
-	public static void removeWriter(final Writer writer) {
-		WRITERS.slowRemove(writer);
-	}
+        Logger logger = LOGGERS.get(cs.getName());
 
-	/**
-	 * Указание новой реализации логера.
-	 * 
-	 * @param implementedClass класс реализации логера.
-	 */
-	public static void setImplementedClass(final Class<? extends Logger> implementedClass) {
+        if (logger != null) {
+            return logger;
+        }
 
-		if(implementedClass == null) {
-			throw new IllegalArgumentException("implemented class is null.");
-		}
+        logger = ClassUtils.newInstance(implementedClass);
+        logger.setName(cs.getSimpleName());
 
-		LoggerManager.implementedClass = implementedClass;
+        LOGGERS.put(cs.getSimpleName(), logger);
+        return logger;
+    }
 
-		LOGGERS.remove(LoggerManager.class.getName());
+    /**
+     * @return список дополнительных записчиков лога.
+     */
+    private static Array<Writer> getWriters() {
+        return WRITERS;
+    }
 
-		logger = getLogger(LoggerManager.class);
-	}
+    /**
+     * Удаления слушателя логирования.
+     *
+     * @param listener удаляемый слушатель.
+     */
+    public static void removeListener(final LoggerListener listener) {
+        LISTENERS.slowRemove(listener);
+    }
 
-	/**
-	 * Процесс вывода сообщения в консоль и по возможности в фаил
-	 * 
-	 * @param message содержание сообщения
-	 */
-	public static final void write(final LoggerLevel level, final String name, final String message) {
+    /**
+     * Удаление записчика лога.
+     *
+     * @param writer записчик лога.
+     */
+    public static void removeWriter(final Writer writer) {
+        WRITERS.slowRemove(writer);
+    }
 
-		if(!level.isEnabled()) {
-			return;
-		}
+    /**
+     * Процесс вывода сообщения в консоль и по возможности в фаил
+     *
+     * @param message содержание сообщения
+     */
+    public static final void write(final LoggerLevel level, final String name, final String message) {
 
-		SYNC.lock();
-		try {
+        if (!level.isEnabled()) {
+            return;
+        }
 
-			final StringBuilder builder = new StringBuilder(level.getTitle());
-			builder.append(' ').append(timeFormat.format(LocalTime.now()));
-			builder.append(' ').append(name).append(": ").append(message);
+        SYNC.lock();
+        try {
 
-			final String result = builder.toString();
+            final StringBuilder builder = new StringBuilder(level.getTitle());
+            builder.append(' ').append(TIME_FORMATTER.format(LocalTime.now()));
+            builder.append(' ').append(name).append(": ").append(message);
 
-			final Array<LoggerListener> listeners = getListeners();
+            final String result = builder.toString();
 
-			if(!listeners.isEmpty()) {
+            final Array<LoggerListener> listeners = getListeners();
 
-				for(final LoggerListener listener : listeners.array()) {
+            if (!listeners.isEmpty()) {
 
-					if(listener == null) {
-						break;
-					}
+                for (final LoggerListener listener : listeners.array()) {
 
-					listener.println(result);
-				}
-			}
+                    if (listener == null) {
+                        break;
+                    }
 
-			final Array<Writer> writers = getWriters();
+                    listener.println(result);
+                }
+            }
 
-			if(!writers.isEmpty()) {
-				for(final Writer writer : writers.array()) {
+            final Array<Writer> writers = getWriters();
 
-					if(writer == null) {
-						continue;
-					}
+            if (!writers.isEmpty()) {
+                for (final Writer writer : writers.array()) {
 
-					try {
-						writer.append(result);
-						writer.append('\n');
-						writer.flush();
-					} catch(final IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+                    if (writer == null) {
+                        continue;
+                    }
 
-			System.err.println(result);
+                    try {
+                        writer.append(result);
+                        writer.append('\n');
+                        writer.flush();
+                    } catch (final IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
 
-		} finally {
-			SYNC.unlock();
-		}
-	}
+            System.err.println(result);
+
+        } finally {
+            SYNC.unlock();
+        }
+    }
 }

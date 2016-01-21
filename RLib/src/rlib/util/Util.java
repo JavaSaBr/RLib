@@ -1,5 +1,8 @@
 package rlib.util;
 
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,9 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.Callable;
-
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
+import java.util.function.Consumer;
 
 /**
  * Утильный класс с набором статических вспомогательных методов.
@@ -49,7 +50,7 @@ public final class Util {
 	 * 
 	 * @param properties проперти соединения к БД.
 	 */
-	public static final void addUTFToSQLConnectionProperties(final Properties properties) {
+	public static final void addUTFToMySQLConnectionProperties(final Properties properties) {
 		properties.setProperty("useUnicode", "true");
 		properties.setProperty("characterEncoding", "UTF-8");
 	}
@@ -58,7 +59,7 @@ public final class Util {
 	 * Проверяет, занят ли указанный порт на указанном хосте.
 	 * 
 	 * @param host проверяемый хост.
-	 * @param ports проверяемый порт.
+	 * @param port проверяемый порт.
 	 * @return свободен ли порт.
 	 */
 	public static boolean checkFreePort(final String host, final int port) {
@@ -342,18 +343,49 @@ public final class Util {
 		return null;
 	}
 
-	/**
-	 * Безопасное выполнение задачи.
-	 * 
-	 * @param runnable выполняемая задача.
-	 */
-	public static void safeExecute(final Runnable runnable) {
-		try {
-			runnable.run();
-		} catch(final Throwable e) {
-			LOGGER.warning(e);
-		}
-	}
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param callable выполняемая задача.
+     * @param errorHandler обработчик ошибки.
+     */
+    public static <V> V safeExecute(final Callable<V> callable, final Consumer<Throwable> errorHandler) {
+
+        try {
+            return callable.call();
+        } catch(final Throwable e) {
+            errorHandler.accept(e);
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param runnable выполняемая задача.
+     */
+    public static void safeExecute(final Runnable runnable) {
+        try {
+            runnable.run();
+        } catch(final Throwable e) {
+            LOGGER.warning(e);
+        }
+    }
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param runnable выполняемая задача.
+     */
+    public static void safeExecute(final Runnable runnable, final Consumer<Throwable> errorHandler) {
+        try {
+            runnable.run();
+        } catch(final Throwable e) {
+            errorHandler.accept(e);
+        }
+    }
 
 	/**
 	 * Метод конвертирования строки в HEX представление.

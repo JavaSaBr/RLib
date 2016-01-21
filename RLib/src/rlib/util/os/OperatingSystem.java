@@ -2,83 +2,99 @@ package rlib.util.os;
 
 /**
  * Класс для описание ОС.
- * 
+ *
  * @author Ronn
  */
 public class OperatingSystem {
 
-	/** название ОС */
-	private String name;
-	/** версия ОС */
-	private String version;
-	/** архитектура ОС */
-	private String arch;
-	/** название дистрибутива ОС */
-	private String distribution;
+    /**
+     * Название ОС.
+     */
+    private String name;
 
-	public OperatingSystem() {
-		final OperatingSystemResolver resolver = new OperatingSystemResolver();
-		resolver.resolve(this);
-	}
+    /**
+     * Версия ОС.
+     */
+    private String version;
 
-	/**
-	 * @return архитектура ОС.
-	 */
-	public String getArch() {
-		return arch;
-	}
+    /**
+     * Архитектура ОС.
+     */
+    private String arch;
 
-	/**
-	 * @return название дистрибутива ОС.
-	 */
-	public String getDistribution() {
-		return distribution;
-	}
+    /**
+     * Название дистрибутива ОС.
+     */
+    private String distribution;
 
-	/**
-	 * @return название ОС.
-	 */
-	public String getName() {
-		return name;
-	}
+    public OperatingSystem() {
+        final OperatingSystemResolver resolver = new OperatingSystemResolver();
+        resolver.resolve(this);
+    }
 
-	/**
-	 * @return версия ОС.
-	 */
-	public String getVersion() {
-		return version;
-	}
+    /**
+     * @return архитектура ОС.
+     */
+    public String getArch() {
+        return arch;
+    }
 
-	/**
-	 * @param arch архитектура ОС.
-	 */
-	public void setArch(final String arch) {
-		this.arch = arch;
-	}
+    /**
+     * @param arch архитектура ОС.
+     */
+    public void setArch(final String arch) {
+        this.arch = arch;
+    }
 
-	/**
-	 * @param platform название дистрибутива ОС.
-	 */
-	public void setDistribution(final String platform) {
-		this.distribution = platform;
-	}
+    /**
+     * @return название дистрибутива ОС.
+     */
+    public String getDistribution() {
+        return distribution;
+    }
 
-	/**
-	 * @param name название ОС.
-	 */
-	public void setName(final String name) {
-		this.name = name;
-	}
+    /**
+     * @param platform название дистрибутива ОС.
+     */
+    public void setDistribution(final String platform) {
+        this.distribution = platform;
+    }
 
-	/**
-	 * @param version версия ОС.
-	 */
-	public void setVersion(final String version) {
-		this.version = version;
-	}
+    /**
+     * @return название ОС.
+     */
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " [name=" + name + ", version=" + version + ", arch=" + arch + ", distribution=" + distribution + "]";
-	}
+    /**
+     * @param name название ОС.
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return версия ОС.
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * @param version версия ОС.
+     */
+    public void setVersion(final String version) {
+        this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "OperatingSystem{" +
+                "name='" + name + '\'' +
+                ", version='" + version + '\'' +
+                ", arch='" + arch + '\'' +
+                ", distribution='" + distribution + '\'' +
+                '}';
+    }
 }
