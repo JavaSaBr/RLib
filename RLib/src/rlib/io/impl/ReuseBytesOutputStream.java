@@ -1,11 +1,11 @@
 package rlib.io.impl;
 
-import rlib.io.ReusableStream;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+
+import rlib.io.ReusableStream;
 
 /**
  * Реализация переиспользуемого выходного стрима на массиве байтов.
@@ -15,12 +15,12 @@ import java.util.Arrays;
 public final class ReuseBytesOutputStream extends OutputStream implements ReusableStream {
 
     /**
-     * данные стрима
+     * Данные стрима.
      */
     protected byte[] data;
 
     /**
-     * размер записи в стрим
+     * Размер записи в стрим.
      */
     protected int size;
 
@@ -33,7 +33,19 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
         if (size < 0) {
             throw new IllegalArgumentException("Negative initial size: " + size);
         }
+
         data = new byte[size];
+    }
+
+    @Override
+    public void initFor(byte[] buffer, int offset, int length) {
+
+        if(offset != 0) {
+            throw  new IllegalArgumentException("don't support offset.");
+        }
+
+        this.data = buffer;
+        this.size = length;
     }
 
     /**
@@ -71,8 +83,8 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
      */
     private void resizeData(final int minCapacity) {
 
-        // overflow-conscious code
         final int oldCapacity = data.length;
+
         int newCapacity = oldCapacity << 1;
 
         if (newCapacity - minCapacity < 0) {
@@ -81,7 +93,7 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
 
         if (newCapacity < 0) {
 
-            if (minCapacity < 0) { // overflow
+            if (minCapacity < 0) {
                 throw new OutOfMemoryError();
             }
 

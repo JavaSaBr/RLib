@@ -1,5 +1,7 @@
 package rlib.classpath;
 
+import java.util.function.Function;
+
 import rlib.util.array.Array;
 
 /**
@@ -7,7 +9,7 @@ import rlib.util.array.Array;
  * 
  * @author Ronn
  */
-public interface ClassPathScaner {
+public interface ClassPathScanner {
 
 	public static final String JAR_EXTENSION = ".jar";
 
@@ -17,6 +19,8 @@ public interface ClassPathScaner {
 	 * @param added добавляемые классы.
 	 */
 	public void addClasses(Array<Class<?>> added);
+
+    public void addResources(Array<String> added);
 
 	/**
 	 * Найти все реализации указанного интерфейса.
@@ -41,8 +45,10 @@ public interface ClassPathScaner {
 	 */
 	public void getAll(Array<Class<?>> container);
 
+	public void getAllResources(Array<String> container);
+
 	/**
 	 * Запустить сканирование classpath.
 	 */
-	public void scanning();
+	public void scanning(Function<String, Boolean> filter);
 }

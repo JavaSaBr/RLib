@@ -1,6 +1,5 @@
 package rlib.compiler;
 
-import javax.tools.JavaFileObject.Kind;
 import java.io.File;
 import java.nio.file.Path;
 
@@ -11,8 +10,8 @@ import java.nio.file.Path;
  */
 public interface Compiler {
 
-    public static final String SOURCE_EXTENSION = Kind.SOURCE.extension;
-    public static final String CLASS_EXTENSION = Kind.CLASS.extension;
+    public static final String SOURCE_EXTENSION = ".java";
+    public static final String CLASS_EXTENSION = ".class";
 
     /**
      * Скомпилировать указанные файлы.

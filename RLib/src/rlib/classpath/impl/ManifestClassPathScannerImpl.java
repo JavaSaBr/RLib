@@ -1,9 +1,5 @@
 package rlib.classpath.impl;
 
-import rlib.util.Util;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -14,12 +10,16 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import rlib.util.Util;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
+
 /**
  * Реализация сканера, который еще умеет из манифеста classpath доставать.
  *
  * @author Ronn
  */
-public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
+public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
 
     /**
      * Рутовый класс для приложения.
