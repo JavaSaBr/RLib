@@ -1,13 +1,13 @@
 package rlib.network.server.client.impl;
 
+import java.nio.channels.AsynchronousSocketChannel;
+
 import rlib.network.impl.AbstractAsyncConnection;
 import rlib.network.packet.ReadeablePacket;
 import rlib.network.packet.SendablePacket;
 import rlib.network.server.ServerNetwork;
 import rlib.network.server.client.Client;
 import rlib.network.server.client.ClientConnection;
-
-import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * Базовая реализация асинхронного клиентского подключения.

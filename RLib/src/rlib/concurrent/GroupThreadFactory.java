@@ -1,10 +1,10 @@
 package rlib.concurrent;
 
-import rlib.concurrent.atomic.AtomicInteger;
-import rlib.util.ClassUtils;
-
 import java.lang.reflect.Constructor;
 import java.util.concurrent.ThreadFactory;
+
+import rlib.concurrent.atomic.AtomicInteger;
+import rlib.util.ClassUtils;
 
 /**
  * Реализация группированной фабрики потоков.

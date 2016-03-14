@@ -1,5 +1,12 @@
 package rlib.network.server.impl;
 
+import java.io.IOException;
+import java.net.SocketAddress;
+import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+
 import rlib.concurrent.GroupThreadFactory;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
@@ -7,13 +14,6 @@ import rlib.network.NetworkConfig;
 import rlib.network.impl.AbstractAsynchronousNetwork;
 import rlib.network.server.AcceptHandler;
 import rlib.network.server.ServerNetwork;
-
-import java.io.IOException;
-import java.net.SocketAddress;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.nio.channels.AsynchronousServerSocketChannel;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
 
 /**
  * Базовая модель асинхронной сети.

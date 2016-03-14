@@ -1,18 +1,17 @@
 package rlib.util.linkedlist;
 
-import rlib.util.linkedlist.impl.Node;
-import rlib.util.pools.Foldable;
-
 import java.io.Serializable;
 import java.util.Deque;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import rlib.util.linkedlist.impl.Node;
+import rlib.util.pools.Foldable;
+
 /**
- * Интерфей с для реализации связанного списка. Главное преймущество, это
- * переиспользование узлов списка и быстрая итерация с уменьшением нагрузки на
- * GC. Создаются с помощью {@link LinkedListFactory}.
- * <p>
+ * Интерфей с для реализации связанного списка. Главное преймущество, это переиспользование узлов
+ * списка и быстрая итерация с уменьшением нагрузки на GC. Создаются с помощью {@link
+ * LinkedListFactory}. <p>
  * <pre>
  * for(Node&lt;E&gt; node = getFirstNode(); node != null; node = node.getNext()) {
  * 	? item = node.getItem();

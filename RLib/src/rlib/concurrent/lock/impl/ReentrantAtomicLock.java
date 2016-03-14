@@ -1,17 +1,17 @@
 package rlib.concurrent.lock.impl;
 
-import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.atomic.AtomicReference;
-import rlib.concurrent.util.ThreadUtils;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
+import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.atomic.AtomicReference;
+import rlib.concurrent.util.ThreadUtils;
+
 /**
- * Реализация примитивного блокировщика при помощи {@link AtomicInteger} но с
- * поддержкой рекурсивной блокировки. Рекамендуется приминется в местах с не
- * более чем средней конкурнции и с короткими секциями блокировки.
+ * Реализация примитивного блокировщика при помощи {@link AtomicInteger} но с поддержкой рекурсивной
+ * блокировки. Рекамендуется приминется в местах с не более чем средней конкурнции и с короткими
+ * секциями блокировки.
  *
  * @author Ronn
  */

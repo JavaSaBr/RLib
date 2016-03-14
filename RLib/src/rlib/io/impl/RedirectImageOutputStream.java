@@ -1,9 +1,10 @@
 package rlib.io.impl;
 
-import javax.imageio.stream.ImageOutputStreamImpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import javax.imageio.stream.ImageOutputStreamImpl;
 
 /**
  * Реализация перенаправителя стрима.

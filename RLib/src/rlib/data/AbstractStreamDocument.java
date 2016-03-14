@@ -2,15 +2,17 @@ package rlib.data;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-import rlib.util.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
+
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+import rlib.util.IOUtils;
 
 /**
  * Базовая модель для парсера данных с xml файла.

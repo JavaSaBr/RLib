@@ -1,19 +1,17 @@
 package rlib.util.array;
 
-import rlib.util.ArrayUtils;
-import rlib.util.ObjectUtils;
-import rlib.util.pools.Foldable;
-
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import rlib.util.ArrayUtils;
+import rlib.util.ObjectUtils;
+import rlib.util.pools.Foldable;
+
 /**
- * Интерфейс для реализации динамических массивов. Главное преймущество по
- * сравнению с ArrayList, возможность итерировать самым быстрым способом и без
- * ущерба для GC:
- * <p>
+ * Интерфейс для реализации динамических массивов. Главное преймущество по сравнению с ArrayList,
+ * возможность итерировать самым быстрым способом и без ущерба для GC: <p>
  * <pre>
  * for(? element : array.array()) {
  *
@@ -24,8 +22,7 @@ import java.util.function.Function;
  * 	// handle element
  * }
  * </pre>
- * <p>
- * Для создания использовать {@link ArrayFactory}.
+ * <p> Для создания использовать {@link ArrayFactory}.
  *
  * @author Ronn
  * @created 27.02.2012
@@ -67,8 +64,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     public E[] array();
 
     /**
-     * Проверка и при необходимости подготовка для расширения до указанного
-     * размера.
+     * Проверка и при необходимости подготовка для расширения до указанного размера.
      */
     public default void checkSize(final int size) {
         throw new RuntimeException("not supported.");
@@ -83,8 +79,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
      * Проверяет, содержит ли {@link Array} указанный объект.
      *
      * @param object проверяемый объект.
-     * @return вернется <code>false</code> в случае если переданный объект
-     * содержится в {@link Array} либо он <code>null</code>.
+     * @return вернется <code>false</code> в случае если переданный объект содержится в {@link
+     * Array} либо он <code>null</code>.
      */
     public default boolean contains(final Object object) {
 
@@ -107,12 +103,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     }
 
     /**
-     * Проверяет, содержатся ли все элементы с указанного {@link Array} в этом
-     * {@link Array}.
+     * Проверяет, содержатся ли все элементы с указанного {@link Array} в этом {@link Array}.
      *
      * @param array набор проверяемых элементов.
-     * @return <code>false</code> в случае если {@link Array} <code>null</code>
-     * или пуст или не всего его элементы есть в этом {@link Array}.
+     * @return <code>false</code> в случае если {@link Array} <code>null</code> или пуст или не
+     * всего его элементы есть в этом {@link Array}.
      */
     public default boolean containsAll(final Array<?> array) {
 
@@ -135,12 +130,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     }
 
     /**
-     * Проверяет, содержатся ли все элементы с указанного массива в этом
-     * {@link Array}.
+     * Проверяет, содержатся ли все элементы с указанного массива в этом {@link Array}.
      *
      * @param array массив элементов.
-     * @return вернет <code>false</code> в случае когда массив <code>null</code>
-     * либо пуст либо не все его элементы есть в этом {@link Array}.
+     * @return вернет <code>false</code> в случае когда массив <code>null</code> либо пуст либо не
+     * все его элементы есть в этом {@link Array}.
      */
     public default boolean containsAll(final Object[] array) {
 
@@ -166,8 +160,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     public E fastRemove(int index);
 
     /**
-     * Удаляет указанный элемент с установкой последнего элемента в
-     * {@link Array} на месте удаленного.
+     * Удаляет указанный элемент с установкой последнего элемента в {@link Array} на месте
+     * удаленного.
      *
      * @param object удаляемый объект.
      * @return <code>true</code> если такой объект был в {@link Array}.
@@ -177,8 +171,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     }
 
     /**
-     * @return первый элемент в {@link Array} либо <code>null</code>, если он
-     * пуст.
+     * @return первый элемент в {@link Array} либо <code>null</code>, если он пуст.
      */
     public default E first() {
 
@@ -214,8 +207,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
      * Поиск индекса расположения указанного объекта в этом {@link Array}.
      *
      * @param object искомый объект.
-     * @return <code>-1</code> в случае если такой объект небыл найден или если
-     * передоваемый объект <code>null</code>.
+     * @return <code>-1</code> в случае если такой объект небыл найден или если передоваемый объект
+     * <code>null</code>.
      */
     public default int indexOf(final Object object) {
 
@@ -252,8 +245,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     public ArrayIterator<E> iterator();
 
     /**
-     * @return последний элемент в этом {@link Array} либо <code>null</code>,
-     * если он пуст.
+     * @return последний элемент в этом {@link Array} либо <code>null</code>, если он пуст.
      */
     public default E last() {
 
@@ -267,12 +259,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     }
 
     /**
-     * Поиск последнего индекса расположения указанного объекта в этом
-     * {@link Array}.
+     * Поиск последнего индекса расположения указанного объекта в этом {@link Array}.
      *
      * @param object искомый объект.
-     * @return <code>-1</code> в случае если такой объект не содержится в этом
-     * {@link Array}.
+     * @return <code>-1</code> в случае если такой объект не содержится в этом {@link Array}.
      */
     public default int lastIndexOf(final Object object) {
 
@@ -308,8 +298,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     /**
      * Удаляет последний элеметн из {@link Array}.
      *
-     * @return последний элемент этого {@link Array} либо <code>null</code> если
-     * он пуст.
+     * @return последний элемент этого {@link Array} либо <code>null</code> если он пуст.
      */
     public default E pop() {
         return fastRemove(size() - 1);
@@ -331,8 +320,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
      * Удаляет из {@link Array} все элементы из указанного {@link Array}.
      *
      * @param array {@link Array} с удаляемыми элементами.
-     * @return <code>true</code> если переданный {@link Array} был не пуст и все
-     * в нем элементы находились в этом {@link Array}.
+     * @return <code>true</code> если переданный {@link Array} был не пуст и все в нем элементы
+     * находились в этом {@link Array}.
      */
     public default boolean removeAll(final Array<?> target) {
 
@@ -357,8 +346,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     }
 
     /**
-     * Удаляет все элементы {@link Array}, которые отсутствуют в указанном
-     * {@link Array}.
+     * Удаляет все элементы {@link Array}, которые отсутствуют в указанном {@link Array}.
      *
      * @param array {@link Array} с элементами.
      * @return удалены ли все объекты.
@@ -440,8 +428,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     }
 
     /**
-     * Копирует элементы {@link Array} в указаный массив, либо возвращает
-     * исходный в указанном типе.
+     * Копирует элементы {@link Array} в указаный массив, либо возвращает исходный в указанном
+     * типе.
      *
      * @param newArray массив, в который нужно перенести.
      */

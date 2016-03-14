@@ -1,8 +1,5 @@
 package rlib.util;
 
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -18,342 +15,343 @@ import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+
 /**
  * Утильный класс с набором статических вспомогательных методов.
- * 
+ *
  * @author Ronn
  * @created 27.03.2012
  */
 public final class Util {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
-
-	private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-
-		@Override
-		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("HH:mm:ss:SSS");
-		}
-	};
-
-	private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
-
-		@Override
-		protected Date initialValue() {
-			return new Date();
-		}
-	};
-
-	/**
-	 * Добавение параметров, указывающих что бы соединение к БД работало с UTF-8
-	 * кодировкой.
-	 * 
-	 * @param properties проперти соединения к БД.
-	 */
-	public static final void addUTFToMySQLConnectionProperties(final Properties properties) {
-		properties.setProperty("useUnicode", "true");
-		properties.setProperty("characterEncoding", "UTF-8");
-	}
-
-	/**
-	 * Проверяет, занят ли указанный порт на указанном хосте.
-	 * 
-	 * @param host проверяемый хост.
-	 * @param port проверяемый порт.
-	 * @return свободен ли порт.
-	 */
-	public static boolean checkFreePort(final String host, final int port) {
-
-		try {
-			final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
-			serverSocket.close();
-		} catch(final IOException e) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Проверяет, заняты ли указанные порты на указанном хосте.
-	 * 
-	 * @param host проверяемый хост.
-	 * @param ports проверяемые порты.
-	 * @return свободны ли все порты.
-	 * @throws InterruptedException
-	 */
-	public static boolean checkFreePorts(final String host, final int[] ports) throws InterruptedException {
-
-		for(final int port : ports) {
-			try {
-				final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
-				serverSocket.close();
-			} catch(final IOException e) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * форматирует время в секундах в дни/часы/минуты/секунды
-	 */
-	public static String formatTime(final long time) {
-
-		final Date date = LOCAL_DATE.get();
-		date.setTime(time);
-
-		final SimpleDateFormat format = LOCAL_DATE_FORMAT.get();
-		return format.format(date);
-	}
-
-	/**
-	 * Метод конвертирования HEX представления строки в обычную.
-	 */
-	public static String fromHEX(final String string) {
-
-		final char[] array = string.toCharArray();
+    private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
+
+    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("HH:mm:ss:SSS");
+        }
+    };
+
+    private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
+
+        @Override
+        protected Date initialValue() {
+            return new Date();
+        }
+    };
+
+    /**
+     * Добавение параметров, указывающих что бы соединение к БД работало с UTF-8 кодировкой.
+     *
+     * @param properties проперти соединения к БД.
+     */
+    public static final void addUTFToMySQLConnectionProperties(final Properties properties) {
+        properties.setProperty("useUnicode", "true");
+        properties.setProperty("characterEncoding", "UTF-8");
+    }
+
+    /**
+     * Проверяет, занят ли указанный порт на указанном хосте.
+     *
+     * @param host проверяемый хост.
+     * @param port проверяемый порт.
+     * @return свободен ли порт.
+     */
+    public static boolean checkFreePort(final String host, final int port) {
+
+        try {
+            final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
+            serverSocket.close();
+        } catch (final IOException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Проверяет, заняты ли указанные порты на указанном хосте.
+     *
+     * @param host  проверяемый хост.
+     * @param ports проверяемые порты.
+     * @return свободны ли все порты.
+     */
+    public static boolean checkFreePorts(final String host, final int[] ports) throws InterruptedException {
+
+        for (final int port : ports) {
+            try {
+                final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
+                serverSocket.close();
+            } catch (final IOException e) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * форматирует время в секундах в дни/часы/минуты/секунды
+     */
+    public static String formatTime(final long time) {
+
+        final Date date = LOCAL_DATE.get();
+        date.setTime(time);
+
+        final SimpleDateFormat format = LOCAL_DATE_FORMAT.get();
+        return format.format(date);
+    }
 
-		final StringBuilder builder = new StringBuilder(string.length() * 2);
-
-		for(int i = 0, length = array.length - 3; i < length; i += 4) {
-			final String element = String.valueOf(array, i, 4);
-			builder.append((char) Integer.parseInt(element, 16));
-		}
-
-		return builder.toString();
-	}
-
-	/**
-	 * Получение ближайшего свободного порта от указанного.
-	 * 
-	 * @param port стартовый порт.
-	 * @return свободный порт или -1, если такого нет.
-	 */
-	public static int getFreePort(final int port) {
+    /**
+     * Метод конвертирования HEX представления строки в обычную.
+     */
+    public static String fromHEX(final String string) {
 
-		final int limit = Short.MAX_VALUE * 2;
+        final char[] array = string.toCharArray();
 
-		for(int i = port; i < limit; i++) {
-			if(checkFreePort("*", i)) {
-				return i;
-			}
-		}
+        final StringBuilder builder = new StringBuilder(string.length() * 2);
 
-		return -1;
-	}
+        for (int i = 0, length = array.length - 3; i < length; i += 4) {
+            final String element = String.valueOf(array, i, 4);
+            builder.append((char) Integer.parseInt(element, 16));
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Получение ближайшего свободного порта от указанного.
+     *
+     * @param port стартовый порт.
+     * @return свободный порт или -1, если такого нет.
+     */
+    public static int getFreePort(final int port) {
 
-	/**
-	 * Получение папки, где лежит джарка указанного класса.
-	 * 
-	 * @param cs класс, для котого ищем папку с джаркой.
-	 * @return адресс папки с джаркой.
-	 */
-	public static Path getRootFolderFromClass(final Class<?> cs) {
-
-		String className = cs.getName();
-
-		final StringBuilder builder = new StringBuilder(className.length());
-		builder.append('/');
-
-		for(int i = 0, length = className.length(); i < length; i++) {
-
-			char ch = className.charAt(i);
-
-			if(ch == '.') {
-				ch = '/';
-			}
-
-			builder.append(ch);
-		}
-
-		builder.append(".class");
-
-		className = builder.toString();
-
-		try {
-
-			final URL url = Util.class.getResource(className);
-
-			String path = url.getPath();
-			path = path.substring(0, path.length() - className.length());
-			path = path.substring(0, path.lastIndexOf('/'));
-
-			final URI uri = new URI(path);
-			path = uri.getPath();
-			path = path.replaceAll("%20", " ");
-
-			// замена сепараторов
-			if(File.separatorChar != '/') {
+        final int limit = Short.MAX_VALUE * 2;
 
-				final StringBuilder pathBuilder = new StringBuilder();
+        for (int i = port; i < limit; i++) {
+            if (checkFreePort("*", i)) {
+                return i;
+            }
+        }
 
-				for(int i = 0, length = path.length(); i < length; i++) {
+        return -1;
+    }
 
-					char ch = path.charAt(i);
+    /**
+     * Получение папки, где лежит джарка указанного класса.
+     *
+     * @param cs класс, для котого ищем папку с джаркой.
+     * @return адресс папки с джаркой.
+     */
+    public static Path getRootFolderFromClass(final Class<?> cs) {
 
-					if(ch == '/' && i == 0) {
-						continue;
-					}
+        String className = cs.getName();
+
+        final StringBuilder builder = new StringBuilder(className.length());
+        builder.append('/');
+
+        for (int i = 0, length = className.length(); i < length; i++) {
+
+            char ch = className.charAt(i);
+
+            if (ch == '.') {
+                ch = '/';
+            }
+
+            builder.append(ch);
+        }
+
+        builder.append(".class");
+
+        className = builder.toString();
+
+        try {
+
+            final URL url = Util.class.getResource(className);
+
+            String path = url.getPath();
+            path = path.substring(0, path.length() - className.length());
+            path = path.substring(0, path.lastIndexOf('/'));
 
-					if(ch == '/') {
-						ch = File.separatorChar;
-					}
+            final URI uri = new URI(path);
+            path = uri.getPath();
+            path = path.replaceAll("%20", " ");
 
-					pathBuilder.append(ch);
-				}
+            // замена сепараторов
+            if (File.separatorChar != '/') {
 
-				path = pathBuilder.toString();
-			}
+                final StringBuilder pathBuilder = new StringBuilder();
 
-			Path file = Paths.get(path);
+                for (int i = 0, length = path.length(); i < length; i++) {
 
-			while(path.lastIndexOf(File.separatorChar) != -1 && !Files.exists(file)) {
-				path = path.substring(0, path.lastIndexOf(File.separatorChar));
-				file = Paths.get(uri);
-			}
+                    char ch = path.charAt(i);
 
-			return file;
-		} catch(final Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+                    if (ch == '/' && i == 0) {
+                        continue;
+                    }
 
-	/**
-	 * @return путь к корневому каталогу приложения.
-	 */
-	public static String getRootPath() {
-		return ".";
-	}
+                    if (ch == '/') {
+                        ch = File.separatorChar;
+                    }
 
-	/**
-	 * Получить short шы массива байтов.
-	 * 
-	 * @param bytes массив байтов.
-	 * @param offset отступ в массиве.
-	 * @return значение в short.
-	 */
-	public static short getShort(final byte[] bytes, final int offset) {
-		return (short) (bytes[offset + 1] << 8 | bytes[offset] & 0xff);
-	}
+                    pathBuilder.append(ch);
+                }
 
-	/**
-	 * Получение имя пользователя текущей системы.
-	 * 
-	 * @return имя пользователя системы.
-	 */
-	public static final String getUserName() {
-		return System.getProperty("user.name");
-	}
+                path = pathBuilder.toString();
+            }
 
-	/**
-	 * Формирования дампа байтов в хексе.
-	 * 
-	 * @param array массив байтов.
-	 * @return строка с дампом.
-	 */
-	public static String hexdump(final byte[] array, final int size) {
-		return hexdump(array, 0, size);
-	}
+            Path file = Paths.get(path);
 
-	/**
-	 * Формирования дампа байтов в хексе.
-	 * 
-	 * @param array массив байтов.
-	 * @return строка с дампом.
-	 */
-	public static String hexdump(final byte[] array, final int offset, final int size) {
+            while (path.lastIndexOf(File.separatorChar) != -1 && !Files.exists(file)) {
+                path = path.substring(0, path.lastIndexOf(File.separatorChar));
+                file = Paths.get(uri);
+            }
 
-		final StringBuilder builder = new StringBuilder();
+            return file;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-		int count = 0;
-		final int end = size - 1;
+    /**
+     * @return путь к корневому каталогу приложения.
+     */
+    public static String getRootPath() {
+        return ".";
+    }
 
-		final char[] chars = new char[16];
+    /**
+     * Получить short шы массива байтов.
+     *
+     * @param bytes  массив байтов.
+     * @param offset отступ в массиве.
+     * @return значение в short.
+     */
+    public static short getShort(final byte[] bytes, final int offset) {
+        return (short) (bytes[offset + 1] << 8 | bytes[offset] & 0xff);
+    }
 
-		for(int g = 0; g < 16; g++) {
-			chars[g] = '.';
-		}
+    /**
+     * Получение имя пользователя текущей системы.
+     *
+     * @return имя пользователя системы.
+     */
+    public static final String getUserName() {
+        return System.getProperty("user.name");
+    }
 
-		for(int i = offset; i < size; i++) {
+    /**
+     * Формирования дампа байтов в хексе.
+     *
+     * @param array массив байтов.
+     * @return строка с дампом.
+     */
+    public static String hexdump(final byte[] array, final int size) {
+        return hexdump(array, 0, size);
+    }
 
-			int val = array[i];
+    /**
+     * Формирования дампа байтов в хексе.
+     *
+     * @param array массив байтов.
+     * @return строка с дампом.
+     */
+    public static String hexdump(final byte[] array, final int offset, final int size) {
 
-			if(val < 0) {
-				val += 256;
-			}
+        final StringBuilder builder = new StringBuilder();
 
-			String text = Integer.toHexString(val).toUpperCase();
+        int count = 0;
+        final int end = size - 1;
 
-			if(text.length() == 1) {
-				text = "0" + text;
-			}
+        final char[] chars = new char[16];
 
-			char ch = (char) val;
+        for (int g = 0; g < 16; g++) {
+            chars[g] = '.';
+        }
 
-			if(ch < 33) {
-				ch = '.';
-			}
+        for (int i = offset; i < size; i++) {
 
-			if(i == end) {
+            int val = array[i];
 
-				chars[count] = ch;
+            if (val < 0) {
+                val += 256;
+            }
 
-				builder.append(text);
+            String text = Integer.toHexString(val).toUpperCase();
 
-				for(int j = 0; j < 15 - count; j++) {
-					builder.append("   ");
-				}
+            if (text.length() == 1) {
+                text = "0" + text;
+            }
 
-				builder.append("    ").append(chars).append('\n');
-			} else if(count < 15) {
-				chars[count++] = ch;
-				builder.append(text).append(' ');
-			} else {
+            char ch = (char) val;
 
-				chars[15] = ch;
+            if (ch < 33) {
+                ch = '.';
+            }
 
-				builder.append(text).append("    ").append(chars).append('\n');
+            if (i == end) {
 
-				count = 0;
+                chars[count] = ch;
 
-				for(int g = 0; g < 16; g++) {
-					chars[g] = 0x2E;
-				}
-			}
-		}
+                builder.append(text);
 
-		return builder.toString();
-	}
+                for (int j = 0; j < 15 - count; j++) {
+                    builder.append("   ");
+                }
 
-	/**
-	 * Безопасное выполнение задачи.
-	 * 
-	 * @param callable выполняемая задача.
-	 */
-	public static <V> V safeExecute(final Callable<V> callable) {
+                builder.append("    ").append(chars).append('\n');
+            } else if (count < 15) {
+                chars[count++] = ch;
+                builder.append(text).append(' ');
+            } else {
 
-		try {
-			return callable.call();
-		} catch(final Throwable e) {
-			LOGGER.warning(e);
-		}
+                chars[15] = ch;
 
-		return null;
-	}
+                builder.append(text).append("    ").append(chars).append('\n');
+
+                count = 0;
+
+                for (int g = 0; g < 16; g++) {
+                    chars[g] = 0x2E;
+                }
+            }
+        }
+
+        return builder.toString();
+    }
 
     /**
      * Безопасное выполнение задачи.
      *
      * @param callable выполняемая задача.
+     */
+    public static <V> V safeExecute(final Callable<V> callable) {
+
+        try {
+            return callable.call();
+        } catch (final Throwable e) {
+            LOGGER.warning(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param callable     выполняемая задача.
      * @param errorHandler обработчик ошибки.
      */
     public static <V> V safeExecute(final Callable<V> callable, final Consumer<Throwable> errorHandler) {
 
         try {
             return callable.call();
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             errorHandler.accept(e);
         }
 
@@ -369,7 +367,7 @@ public final class Util {
     public static void safeExecute(final Runnable runnable) {
         try {
             runnable.run();
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             LOGGER.warning(e);
         }
     }
@@ -382,52 +380,52 @@ public final class Util {
     public static void safeExecute(final Runnable runnable, final Consumer<Throwable> errorHandler) {
         try {
             runnable.run();
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             errorHandler.accept(e);
         }
     }
 
-	/**
-	 * Метод конвертирования строки в HEX представление.
-	 */
-	public static String toHEX(final String string) {
+    /**
+     * Метод конвертирования строки в HEX представление.
+     */
+    public static String toHEX(final String string) {
 
-		final StringBuilder builder = new StringBuilder(string.length() * 2);
+        final StringBuilder builder = new StringBuilder(string.length() * 2);
 
-		for(int i = 0, length = string.length(); i < length; i++) {
+        for (int i = 0, length = string.length(); i < length; i++) {
 
-			final char charAt = string.charAt(i);
+            final char charAt = string.charAt(i);
 
-			String element = Integer.toHexString(charAt);
+            String element = Integer.toHexString(charAt);
 
-			if(element.length() == 1) {
-				element = "000" + element;
-			} else if(element.length() == 2) {
-				element = "00" + element;
-			} else if(element.length() == 3) {
-				element = "0" + element;
-			}
+            if (element.length() == 1) {
+                element = "000" + element;
+            } else if (element.length() == 2) {
+                element = "00" + element;
+            } else if (element.length() == 3) {
+                element = "0" + element;
+            }
 
-			builder.append(element);
-		}
+            builder.append(element);
+        }
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 
-	public static String toString(final Throwable throwable) {
+    public static String toString(final Throwable throwable) {
 
-		final StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
+        final StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
 
-		builder.append(" : stack trace:\n");
+        builder.append(" : stack trace:\n");
 
-		for(final StackTraceElement stack : throwable.getStackTrace()) {
-			builder.append(stack).append("\n");
-		}
+        for (final StackTraceElement stack : throwable.getStackTrace()) {
+            builder.append(stack).append("\n");
+        }
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 
-	private Util() {
-		throw new RuntimeException();
-	}
+    private Util() {
+        throw new RuntimeException();
+    }
 }

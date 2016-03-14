@@ -2,12 +2,13 @@ package rlib.database.impl;
 
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
-import rlib.database.ConnectFactory;
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import rlib.database.ConnectFactory;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 
 /**
  * Фабрика подключений к БД.
@@ -42,7 +43,6 @@ public final class BoneCPConnectFactory implements ConnectFactory {
      *
      * @param config настройка пула подключений.
      * @param driver драйвер БД.
-     * @throws SQLException
      */
     public synchronized void init(final BoneCPConfig config, final String driver) throws SQLException {
         try {

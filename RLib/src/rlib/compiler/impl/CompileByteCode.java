@@ -1,12 +1,13 @@
 package rlib.compiler.impl;
 
-import rlib.compiler.ByteSource;
-import rlib.compiler.Compiler;
-
-import javax.tools.SimpleJavaFileObject;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
+
+import javax.tools.SimpleJavaFileObject;
+
+import rlib.compiler.ByteSource;
+import rlib.compiler.Compiler;
 
 /**
  * Контейнер байткода класса в памяти.

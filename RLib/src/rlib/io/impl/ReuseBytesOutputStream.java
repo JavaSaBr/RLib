@@ -40,8 +40,8 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     @Override
     public void initFor(byte[] buffer, int offset, int length) {
 
-        if(offset != 0) {
-            throw  new IllegalArgumentException("don't support offset.");
+        if (offset != 0) {
+            throw new IllegalArgumentException("don't support offset.");
         }
 
         this.data = buffer;
@@ -49,8 +49,7 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     /**
-     * Проверка и при необходиомсти увеличение размера массива данных под нужную
-     * длинну.
+     * Проверка и при необходиомсти увеличение размера массива данных под нужную длинну.
      *
      * @param minCapacity интересуемая длинна массива.
      */

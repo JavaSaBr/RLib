@@ -7,8 +7,7 @@ import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
 
 /**
- * Реализация потокобезопасного {@link FoldablePool} за счет синхронизации на
- * коллекции объектов.
+ * Реализация потокобезопасного {@link FoldablePool} за счет синхронизации на коллекции объектов.
  *
  * @author Ronn
  */

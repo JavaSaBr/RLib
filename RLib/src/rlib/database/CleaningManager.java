@@ -1,17 +1,16 @@
 package rlib.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 /**
- * Менеджер для очистки БД от ненужных записей. Хранит список запросов
- * необходимых для очистки БД.
+ * Менеджер для очистки БД от ненужных записей. Хранит список запросов необходимых для очистки БД.
  *
  * @author Ronn
  */
@@ -27,7 +26,7 @@ public abstract class CleaningManager {
     /**
      * Добавление запроса для очистки БД.
      *
-     * @param name   название таблицы.
+     * @param name  название таблицы.
      * @param query запрос для очистки.
      */
     public static void addQuery(final String name, final String query) {

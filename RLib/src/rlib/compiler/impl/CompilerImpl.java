@@ -1,22 +1,26 @@
 package rlib.compiler.impl;
 
-import rlib.compiler.Compiler;
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
-
-import javax.tools.*;
-import javax.tools.JavaCompiler.CompilationTask;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.tools.Diagnostic;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+
+import rlib.compiler.Compiler;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
+
 /**
- * Реализация обертки над java компилятором для удобной компиляции java кода в
- * runtime.
+ * Реализация обертки над java компилятором для удобной компиляции java кода в runtime.
  *
  * @author Ronn
  */

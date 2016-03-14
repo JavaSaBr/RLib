@@ -1,5 +1,10 @@
 package rlib.concurrent.executor.impl;
 
+import java.lang.reflect.Constructor;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.function.Consumer;
+
 import rlib.concurrent.executor.PeriodicTaskExecutor;
 import rlib.concurrent.lock.LockFactory;
 import rlib.concurrent.task.PeriodicTask;
@@ -11,11 +16,6 @@ import rlib.util.ClassUtils;
 import rlib.util.Synchronized;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-
-import java.lang.reflect.Constructor;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-import java.util.function.Consumer;
 
 /**
  * Реализация однопоточного исполнителя обновлений задач.
@@ -193,8 +193,8 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     /**
      * Выполнение действий после исполнения задач.
      *
-     * @param executeTasks     список задач, которые были исполнены, но не
-     *                         обязательно финишированы.
+     * @param executeTasks     список задач, которые были исполнены, но не обязательно
+     *                         финишированы.
      * @param local            контейнер локальных объектов.
      * @param startExecuteTime время начало исполнения задач.
      */

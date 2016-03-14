@@ -1,5 +1,10 @@
 package rlib.concurrent.executor.impl;
 
+import java.lang.reflect.Constructor;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+
 import rlib.concurrent.executor.TaskExecutor;
 import rlib.concurrent.lock.LockFactory;
 import rlib.concurrent.task.CallableTask;
@@ -11,11 +16,6 @@ import rlib.util.ClassUtils;
 import rlib.util.Synchronized;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-
-import java.lang.reflect.Constructor;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
 
 /**
  * Реализация однопоточного исполнителя задач.

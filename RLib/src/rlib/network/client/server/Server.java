@@ -1,9 +1,9 @@
 package rlib.network.client.server;
 
+import java.nio.ByteBuffer;
+
 import rlib.network.packet.ReadeablePacket;
 import rlib.network.packet.SendablePacket;
-
-import java.nio.ByteBuffer;
 
 /**
  * Интерфейс для реализации сервера для игрового клиента.

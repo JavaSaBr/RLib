@@ -10,48 +10,47 @@ import rlib.logging.LoggerManager;
 
 /**
  * Набор утильных методов по работе с I/O.
- * 
+ *
  * @author Ronn
  */
 public final class IOUtils {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(IOUtils.class);
+    private static final Logger LOGGER = LoggerManager.getLogger(IOUtils.class);
 
-	public static final void close(final Closeable stream) {
+    public static final void close(final Closeable stream) {
 
-        if(stream == null) {
+        if (stream == null) {
             return;
         }
 
-		try {
-			stream.close();
-		} catch(final IOException e) {
-			LOGGER.warning(e);
-		}
-	}
+        try {
+            stream.close();
+        } catch (final IOException e) {
+            LOGGER.warning(e);
+        }
+    }
 
-	/**
-	 * Копирование данных.
-	 *
-	 * @param in поток-источник данных.
-	 * @param out поток-место куда копировать.
-	 * @param buffer буффер для копирования.
-	 * @param needClose нужно ли закрыть потоки.
-	 * @throws IOException
-	 */
-	public static void copy(final InputStream in, final OutputStream out, final byte[] buffer, final boolean needClose) throws IOException {
+    /**
+     * Копирование данных.
+     *
+     * @param in        поток-источник данных.
+     * @param out       поток-место куда копировать.
+     * @param buffer    буффер для копирования.
+     * @param needClose нужно ли закрыть потоки.
+     */
+    public static void copy(final InputStream in, final OutputStream out, final byte[] buffer, final boolean needClose) throws IOException {
 
-		for(int i = in.read(buffer); i != -1; i = in.read(buffer)) {
-			out.write(buffer, 0, i);
-		}
+        for (int i = in.read(buffer); i != -1; i = in.read(buffer)) {
+            out.write(buffer, 0, i);
+        }
 
-		if(needClose) {
-			close(in);
-			close(out);
-		}
-	}
+        if (needClose) {
+            close(in);
+            close(out);
+        }
+    }
 
-	private IOUtils() {
-		throw new RuntimeException();
-	}
+    private IOUtils() {
+        throw new RuntimeException();
+    }
 }

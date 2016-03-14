@@ -1,9 +1,9 @@
 package rlib.util.linkedlist.impl;
 
-import rlib.util.linkedlist.LinkedList;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import rlib.util.linkedlist.LinkedList;
 
 /**
  * Реализация итератара для {@link LinkedList}

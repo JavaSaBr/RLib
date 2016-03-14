@@ -19,6 +19,7 @@ public final class Matrix3f implements Foldable {
     public static Matrix3f newInstance(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0, final float val_2_1, final float val_2_2) {
         return new Matrix3f(val_0_0, val_0_1, val_0_2, val_1_0, val_1_1, val_1_2, val_2_0, val_2_1, val_2_2);
     }
+
     /**
      * значения матрицы
      */

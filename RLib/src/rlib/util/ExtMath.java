@@ -18,8 +18,8 @@ public final class ExtMath {
     public static final float HALF_PI = 0.5f * PI;
 
     /**
-     * Получение арккосинуса указанного значения. Если указанное значение меньше
-     * -1, то возвратиться число ПИ, если же больше 1, то вернеться 0.
+     * Получение арккосинуса указанного значения. Если указанное значение меньше -1, то возвратиться
+     * число ПИ, если же больше 1, то вернеться 0.
      *
      * @param value интересуемое значение.
      * @return угол в радианах.
@@ -39,12 +39,9 @@ public final class ExtMath {
     }
 
     /**
-     * Returns the arc sine of a value.<br>
-     * Special cases:
-     * <ul>
-     * <li>If fValue is smaller than -1, then the result is -HALF_PI.
-     * <li>If the argument is greater than 1, then the result is HALF_PI.
-     * </ul>
+     * Returns the arc sine of a value.<br> Special cases: <ul> <li>If fValue is smaller than -1,
+     * then the result is -HALF_PI. <li>If the argument is greater than 1, then the result is
+     * HALF_PI. </ul>
      *
      * @param fValue The value to arc sine.
      * @return the angle in radians.
@@ -67,8 +64,7 @@ public final class ExtMath {
     }
 
     /**
-     * Возвращает косинус угла указанного значения. Прямой вызов
-     * {@link Math#cos(double)}
+     * Возвращает косинус угла указанного значения. Прямой вызов {@link Math#cos(double)}
      *
      * @param value значение угла для вычисление косинуса.
      * @return косинус указанного угла.
@@ -100,8 +96,7 @@ public final class ExtMath {
     }
 
     /**
-     * Получение корня указанного значения, прямой вызов
-     * {@link Math#sqrt(double)}.
+     * Получение корня указанного значения, прямой вызов {@link Math#sqrt(double)}.
      *
      * @param value интересуемое значение.
      * @return корень указанного значения.

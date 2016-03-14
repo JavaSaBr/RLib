@@ -1,10 +1,15 @@
 package rlib.concurrent.lock;
 
-import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.lock.impl.*;
-
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+
+import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.lock.impl.FinalLock;
+import rlib.concurrent.lock.impl.FinalReadWriteLock;
+import rlib.concurrent.lock.impl.PrimitiveAtomicLock;
+import rlib.concurrent.lock.impl.PrimitiveAtomicReadWriteLock;
+import rlib.concurrent.lock.impl.ReentrantAtomicLock;
+import rlib.concurrent.lock.impl.SimpleReadWriteLock;
 
 /**
  * Реализация фабрики для создание различных блокировщиков.
@@ -14,8 +19,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 public class LockFactory {
 
     /**
-     * Создание обернутого блокировщика ReentrantReadWriteLock для синхронной
-     * записи и асинхронного чтения.
+     * Создание обернутого блокировщика ReentrantReadWriteLock для синхронной записи и асинхронного
+     * чтения.
      *
      * @return новый блокировщик.
      */
@@ -33,8 +38,8 @@ public class LockFactory {
     }
 
     /**
-     * Создание нового блокировщика для синхронной записи и асинхронного чтения
-     * на основе {@link AtomicInteger} без поддержки рекурсивного блокирования.
+     * Создание нового блокировщика для синхронной записи и асинхронного чтения на основе {@link
+     * AtomicInteger} без поддержки рекурсивного блокирования.
      *
      * @return новый блокировщик.
      * @see PrimitiveAtomicReadWriteLock
@@ -44,8 +49,8 @@ public class LockFactory {
     }
 
     /**
-     * Создание примитивного блокировщика на основе {@link AtomicInteger} без
-     * поддержки рекурсивной блокировки.
+     * Создание примитивного блокировщика на основе {@link AtomicInteger} без поддержки рекурсивной
+     * блокировки.
      *
      * @return новый блокировщик.
      * @see PrimitiveAtomicLock
@@ -64,8 +69,7 @@ public class LockFactory {
     }
 
     /**
-     * Создание блокировщика на {@link AtomicInteger} с поддержкой рекурсивной
-     * блокировки.
+     * Создание блокировщика на {@link AtomicInteger} с поддержкой рекурсивной блокировки.
      *
      * @return новый блокировщик.
      * @see ReentrantAtomicLock

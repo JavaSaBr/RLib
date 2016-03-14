@@ -1,5 +1,7 @@
 package rlib.network;
 
+import java.io.IOException;
+
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.client.ClientNetwork;
@@ -8,8 +10,6 @@ import rlib.network.client.impl.DefaultClientNetwork;
 import rlib.network.server.AcceptHandler;
 import rlib.network.server.ServerNetwork;
 import rlib.network.server.impl.DefaultServerNetwork;
-
-import java.io.IOException;
 
 /**
  * Фабрика для создания серверной и клиетнской сети.

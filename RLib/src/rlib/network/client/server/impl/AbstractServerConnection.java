@@ -1,5 +1,7 @@
 package rlib.network.client.server.impl;
 
+import java.nio.channels.AsynchronousSocketChannel;
+
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.client.ClientNetwork;
@@ -8,8 +10,6 @@ import rlib.network.client.server.ServerConnection;
 import rlib.network.impl.AbstractAsyncConnection;
 import rlib.network.packet.ReadeablePacket;
 import rlib.network.packet.SendablePacket;
-
-import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * Базовая модель асинхронного конекта к серверу.

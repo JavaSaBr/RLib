@@ -6,8 +6,7 @@ import rlib.util.random.Random;
 import rlib.util.random.RandomFactory;
 
 /**
- * Модель описание направления объекта в 3D пространстве, реализовано в виде
- * кватерниона.
+ * Модель описание направления объекта в 3D пространстве, реализовано в виде кватерниона.
  *
  * @author Ronn
  */
@@ -165,11 +164,10 @@ public class Rotation {
     }
 
     /**
-     * <code>fromAxes</code> creates a <code>Quaternion</code> that represents
-     * the coordinate system defined by three axes. These axes are assumed to be
-     * orthogonal and no error checking is applied. Thus, the user must insure
-     * that the three axes being provided indeed represents a proper right
-     * handed coordinate system.
+     * <code>fromAxes</code> creates a <code>Quaternion</code> that represents the coordinate system
+     * defined by three axes. These axes are assumed to be orthogonal and no error checking is
+     * applied. Thus, the user must insure that the three axes being provided indeed represents a
+     * proper right handed coordinate system.
      *
      * @param axisX vector representing the x-axis of the coordinate system.
      * @param axisY vector representing the y-axis of the coordinate system.
@@ -453,8 +451,7 @@ public class Rotation {
     }
 
     /**
-     * Рассчитывает промежуточный разворот между текуим и указанным в
-     * зависимости от указанного %.
+     * Рассчитывает промежуточный разворот между текуим и указанным в зависимости от указанного %.
      *
      * @param end     конечный разворот.
      * @param percent % разворота от текущего к конечному.
@@ -494,8 +491,8 @@ public class Rotation {
     }
 
     /**
-     * Рассчитывает промежуточный разворот от указанного стартового, до
-     * указанного конечного в зависимости от указанного %.
+     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в
+     * зависимости от указанного %.
      *
      * @param start   стартовый разворот.
      * @param end     конечный разворот.
@@ -506,8 +503,8 @@ public class Rotation {
     }
 
     /**
-     * Рассчитывает промежуточный разворот от указанного стартового, до
-     * указанного конечного в зависимости от указанного %.
+     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в
+     * зависимости от указанного %.
      *
      * @param start       стартовый разворот.
      * @param end         конечный разворот.
@@ -589,16 +586,14 @@ public class Rotation {
     }
 
     /**
-     * <code>toAngles</code> returns this quaternion converted to Euler rotation
-     * angles (yaw,roll,pitch).<br/>
-     * Note that the result is not always 100% accurate due to the implications
-     * of euler angles.
+     * <code>toAngles</code> returns this quaternion converted to Euler rotation angles
+     * (yaw,roll,pitch).<br/> Note that the result is not always 100% accurate due to the
+     * implications of euler angles.
      *
-     * @param angles the float[] in which the angles should be stored, or null
-     *               if you want a new float[] to be created
+     * @param angles the float[] in which the angles should be stored, or null if you want a new
+     *               float[] to be created
      * @return the float[] in which the angles are stored.
-     * @see <a
-     * href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm">http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm</a>
+     * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm">http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm</a>
      */
     public float[] toAngles(float[] angles) {
 

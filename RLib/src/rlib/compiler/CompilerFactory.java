@@ -1,8 +1,8 @@
 package rlib.compiler;
 
-import rlib.compiler.impl.CompilerImpl;
-
 import javax.tools.ToolProvider;
+
+import rlib.compiler.impl.CompilerImpl;
 
 /**
  * Фабрика компиляторов java кода на рантайме.

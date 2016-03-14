@@ -1,11 +1,11 @@
 package rlib.compiler.impl;
 
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
-
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaFileObject;
+
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
 
 /**
  * @author Ronn

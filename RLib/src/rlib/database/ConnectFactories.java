@@ -1,9 +1,10 @@
 package rlib.database;
 
 import com.jolbox.bonecp.BoneCPConfig;
-import rlib.database.impl.BoneCPConnectFactory;
 
 import java.sql.SQLException;
+
+import rlib.database.impl.BoneCPConnectFactory;
 
 /**
  * Интерфейс для реализации фабрики подкюлчений к БД.

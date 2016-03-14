@@ -1,20 +1,20 @@
 package rlib.network.packet.impl;
 
-import rlib.util.pools.FoldablePool;
-
 import java.util.concurrent.ExecutorService;
 
+import rlib.util.pools.FoldablePool;
+
 /**
- * Базовая реализация читаемого пакета с реализацией интерфейса Runnable для
- * выполнения в {@link ExecutorService}.
+ * Базовая реализация читаемого пакета с реализацией интерфейса Runnable для выполнения в {@link
+ * ExecutorService}.
  *
  * @author Ronn
  */
 public abstract class AbstractRunnableReadablePacket<C> extends AbstractReadablePacket<C> implements Runnable {
 
     /**
-     * Можно переопределить метод и отдавать пул для автоматического складывания
-     * этого пакета в него после выполнения.
+     * Можно переопределить метод и отдавать пул для автоматического складывания этого пакета в него
+     * после выполнения.
      *
      * @return пулл для складывания этого пакета. может быть <code>null</code>.
      */

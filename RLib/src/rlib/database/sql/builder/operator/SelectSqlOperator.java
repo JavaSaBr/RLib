@@ -8,8 +8,7 @@ package rlib.database.sql.builder.operator;
 public interface SelectSqlOperator extends SqlOperator {
 
     /**
-     * Добавление полей в результат запрооса, если поля не указаны, будут
-     * браться ВСЕ.
+     * Добавление полей в результат запрооса, если поля не указаны, будут браться ВСЕ.
      *
      * @param fieldNames названия колонок в таблицах.
      */

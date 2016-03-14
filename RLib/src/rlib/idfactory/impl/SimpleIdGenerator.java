@@ -1,8 +1,8 @@
 package rlib.idfactory.impl;
 
-import rlib.idfactory.IdGenerator;
-
 import java.util.concurrent.atomic.AtomicInteger;
+
+import rlib.idfactory.IdGenerator;
 
 /**
  * Модель простого генератора ид.

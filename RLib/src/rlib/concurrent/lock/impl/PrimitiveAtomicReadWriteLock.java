@@ -1,23 +1,18 @@
 package rlib.concurrent.lock.impl;
 
-import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.lock.AsyncReadSyncWriteLock;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
+import rlib.concurrent.atomic.AtomicInteger;
+import rlib.concurrent.lock.AsyncReadSyncWriteLock;
+
 /**
- * Реализация блокировщика с возможность асинхронного чтения и синхронной записи
- * на основе атомиков, без возможности использования вложенных вызовов с
- * приоритетом на запись.
- * <p>
- * Выгодно использовать посравнению с ReentrantReadWriteLock в случае, когда
- * записи намного реже чтения и в случае если необходимо уменьшить нагрузку на
- * GC.
- * <p>
- * Смысл этой реализации в создании легковесного блокировщика, который для
- * синхронизации не создает временных объектов.
+ * Реализация блокировщика с возможность асинхронного чтения и синхронной записи на основе атомиков,
+ * без возможности использования вложенных вызовов с приоритетом на запись. <p> Выгодно использовать
+ * посравнению с ReentrantReadWriteLock в случае, когда записи намного реже чтения и в случае если
+ * необходимо уменьшить нагрузку на GC. <p> Смысл этой реализации в создании легковесного
+ * блокировщика, который для синхронизации не создает временных объектов.
  *
  * @author Ronn
  */

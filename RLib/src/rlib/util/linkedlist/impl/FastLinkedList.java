@@ -1,12 +1,12 @@
 package rlib.util.linkedlist.impl;
 
-import rlib.util.linkedlist.LinkedList;
-import rlib.util.pools.FoldablePool;
-import rlib.util.pools.PoolFactory;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+
+import rlib.util.linkedlist.LinkedList;
+import rlib.util.pools.FoldablePool;
+import rlib.util.pools.PoolFactory;
 
 /**
  * Реадизация не потокобезопасного {@link LinkedList}.

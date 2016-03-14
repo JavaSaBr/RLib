@@ -1,8 +1,8 @@
 package rlib.network.client;
 
-import rlib.network.AsynchronousNetwork;
-
 import java.net.InetSocketAddress;
+
+import rlib.network.AsynchronousNetwork;
 
 /**
  * Интерфейс для реализации модели клиентской асинхронной сети.

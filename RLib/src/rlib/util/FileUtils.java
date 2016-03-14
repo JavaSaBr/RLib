@@ -1,21 +1,30 @@
 package rlib.util;
 
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
-import rlib.util.dictionary.DictionaryFactory;
-import rlib.util.dictionary.ObjectDictionary;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
-import java.nio.file.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Enumeration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayComparator;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Класс для работы с файлами.
@@ -26,6 +35,38 @@ import java.util.Enumeration;
 public class FileUtils {
 
     private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
+
+    public static final ArrayComparator<Path> FILE_PATH_LENGTH_COMPARATOR = (first, second) -> {
+
+        final int firstLength = first.getNameCount();
+        final int secondLength = second.getNameCount();
+
+        if(firstLength == secondLength) {
+
+            final int firstLevel = Files.isDirectory(first)? 2 : 1;
+            final int secondLevel = Files.isDirectory(first)? 2 : 1;
+
+            return firstLevel - secondLevel;
+        }
+
+        return firstLength - secondLength;
+    };
+
+    private static final Pattern FILE_NAME_PATTERN = Pattern.compile(
+            "# Match a valid Windows filename (unspecified file system).          \n" +
+                    "^                                # Anchor to start of string.        \n" +
+                    "(?!                              # Assert filename is not: CON, PRN, \n" +
+                    "  (?:                            # AUX, NUL, COM1, COM2, COM3, COM4, \n" +
+                    "    CON|PRN|AUX|NUL|             # COM5, COM6, COM7, COM8, COM9,     \n" +
+                    "    COM[1-9]|LPT[1-9]            # LPT1, LPT2, LPT3, LPT4, LPT5,     \n" +
+                    "  )                              # LPT6, LPT7, LPT8, and LPT9...     \n" +
+                    "  (?:\\.[^.]*)?                  # followed by optional extension    \n" +
+                    "  $                              # and end of string                 \n" +
+                    ")                                # End negative lookahead assertion. \n" +
+                    "[^<>:\"/\\\\|?*\\x00-\\x1F]*     # Zero or more valid filename chars.\n" +
+                    "[^<>:\"/\\\\|?*\\x00-\\x1F\\ .]  # Last char is not a space or dot.  \n" +
+                    "$                                # Anchor to end of string.            ",
+            Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
 
     private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<Path>() {
 
@@ -43,24 +84,31 @@ public class FileUtils {
     };
 
     /**
-     * Кеш текста файлов.
+     * Проверка валидности названия файла.
+     *
+     * @param filename название файла.
+     * @return валидное ли название файла.
      */
-    private static final ObjectDictionary<String, String> CACHE = DictionaryFactory.newObjectDictionary();
-
-    /**
-     * Кэш файлов.
-     */
-    private static final ObjectDictionary<String, Path> CACHE_FILES = DictionaryFactory.newObjectDictionary();
+    public static boolean isValidName(final String filename) {
+        final Matcher matcher = FILE_NAME_PATTERN.matcher(filename);
+        final boolean isMatch = matcher.matches();
+        return isMatch;
+    }
 
     /**
      * Рекурсивное получение всех файлов в папке с учетом расширения.
      *
-     * @param dir        папка.
-     * @param container  контейнер файлов.
-     * @param extensions набор нужных расширений.
+     * @param container   контейнер файлов.
+     * @param dir         папка.
+     * @param withFolders добавлять ли папки в результат.
+     * @param extensions  набор нужных расширений.
      * @return список всех найденных файлов.
      */
-    public static void addFilesTo(final Path dir, final Array<Path> container, final String... extensions) {
+    public static void addFilesTo(final Array<Path> container, final Path dir, final boolean withFolders, final String... extensions) {
+
+        if(Files.isDirectory(dir) && withFolders) {
+            container.add(dir);
+        }
 
         if (!Files.exists(dir)) {
             LOGGER.warning("not found folder " + dir);
@@ -68,11 +116,10 @@ public class FileUtils {
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-
             for (final Path path : stream) {
                 if (Files.isDirectory(path)) {
-                    addFilesTo(path, container, extensions);
-                } else if (extensions == StringUtils.EMPTY_ARRAY || containsFormat(extensions, path.getFileName())) {
+                    addFilesTo(container, path, withFolders, extensions);
+                } else if (extensions == null || extensions.length < 1 || containsExtensions(extensions, path.getFileName())) {
                     container.add(path);
                 }
             }
@@ -83,39 +130,32 @@ public class FileUtils {
     }
 
     /**
-     * Очистка кэша файлов.
-     */
-    public static void clean() {
-        CACHE.clear();
-    }
-
-    /**
-     * Определят, подходит ли по формату фаил.
+     * Определят, подходит ли по расширению фаил.
      *
-     * @param formats набор форматов.
-     * @param path    проверяемый фаил.
+     * @param extensions набор расширений.
+     * @param path       проверяемый фаил.
      * @return подходит ли.
      */
-    public static boolean containsFormat(final String[] formats, final Path path) {
+    public static boolean containsExtensions(final String[] extensions, final Path path) {
 
         if (path == null) {
             return false;
         }
 
-        return containsFormat(formats, path.toString());
+        return containsExtensions(extensions, path.toString());
     }
 
     /**
-     * Определят, подходит ли по формату фаил.
+     * Определят, подходит ли по расширению фаил.
      *
-     * @param formats набор форматов.
-     * @param path    проверяемый фаил.
+     * @param extensions набор расширений.
+     * @param path       проверяемый фаил.
      * @return подходит ли.
      */
-    public static boolean containsFormat(final String[] formats, final String path) {
+    public static boolean containsExtensions(final String[] extensions, final String path) {
 
-        for (int i = 0, length = formats.length; i < length; i++) {
-            if (path.endsWith(formats[i])) {
+        for (int i = 0, length = extensions.length; i < length; i++) {
+            if (path.endsWith(extensions[i])) {
                 return true;
             }
         }
@@ -149,6 +189,9 @@ public class FileUtils {
         return false;
     }
 
+    /**
+     * Удаление файла.
+     */
     public static void delete(final Path path) {
         try {
             deleteImpl(path);
@@ -174,7 +217,7 @@ public class FileUtils {
      */
     public static byte[] getContent(final Path file) {
 
-        try (SeekableByteChannel channel = Files.newByteChannel(file)) {
+        try (final SeekableByteChannel channel = Files.newByteChannel(file)) {
 
             final byte[] content = new byte[(int) channel.size()];
             final ByteBuffer byteBuffer = ByteBuffer.wrap(content);
@@ -182,6 +225,7 @@ public class FileUtils {
             channel.read(byteBuffer);
 
             return content;
+
         } catch (final IOException e) {
             LOGGER.warning(e);
         }
@@ -189,7 +233,13 @@ public class FileUtils {
         return null;
     }
 
-    public static final String getExtension(final String path) {
+    /**
+     * Получение расширения файла.
+     *
+     * @param path путь файла чье расширение надо получить.
+     * @return расширение этого файла.
+     */
+    public static String getExtension(final String path) {
 
         if (StringUtils.isEmpty(path)) {
             return path;
@@ -205,6 +255,33 @@ public class FileUtils {
     }
 
     /**
+     * Получение расширения файла.
+     *
+     * @param file файл чье расширение надо получить.
+     * @return расширение этого файла.
+     */
+    public static final String getExtension(final Path file) {
+
+        if (Files.isDirectory(file)) {
+            return StringUtils.EMPTY;
+        }
+
+        final String filename = file.getFileName().toString();
+
+        if (StringUtils.isEmpty(filename)) {
+            return filename;
+        }
+
+        final int index = filename.lastIndexOf('.');
+
+        if (index == -1) {
+            return filename;
+        }
+
+        return filename.substring(index + 1, filename.length());
+    }
+
+    /**
      * Рекурсивное получение всех файлов в папке с учетом расширения.
      *
      * @param dir        папка.
@@ -212,8 +289,20 @@ public class FileUtils {
      * @return список всех найденных файлов.
      */
     public static Array<Path> getFiles(final Path dir, final String... extensions) {
+        return getFiles(dir, false, extensions);
+    }
+
+    /**
+     * Рекурсивное получение всех файлов в папке с учетом расширения.
+     *
+     * @param dir         папка.
+     * @param withFolders вместе с папками.
+     * @param extensions  набор нужных расширений.
+     * @return список всех найденных файлов.
+     */
+    public static Array<Path> getFiles(final Path dir, final boolean withFolders, final String... extensions) {
         final Array<Path> result = ArrayFactory.newArray(Path.class);
-        addFilesTo(dir, result, extensions);
+        addFilesTo(result, dir, withFolders, extensions);
         result.trimToSize();
         return result;
     }
@@ -257,7 +346,7 @@ public class FileUtils {
 
             if (Files.isDirectory(file)) {
                 files.addAll(getFiles(file, formats));
-            } else if (formats == StringUtils.EMPTY_ARRAY || containsFormat(formats, path)) {
+            } else if (formats == null || formats.length < 1 || containsExtensions(formats, path)) {
                 files.add(file);
             }
         }
@@ -267,19 +356,48 @@ public class FileUtils {
         return files.array();
     }
 
-    public static final String getNameWithoutExtension(final String path) {
+    /**
+     * Получение имени файла без расширения.
+     *
+     * @param filename имя файла.
+     * @return имя файла без расширения.
+     */
+    public static final String getNameWithoutExtension(final String filename) {
 
-        if (StringUtils.isEmpty(path)) {
-            return path;
+        if (StringUtils.isEmpty(filename)) {
+            return filename;
         }
 
-        final int index = path.lastIndexOf('.');
+        final int index = filename.lastIndexOf('.');
 
         if (index == -1) {
-            return path;
+            return filename;
         }
 
-        return path.substring(0, index);
+        return filename.substring(0, index);
+    }
+
+    /**
+     * Получение имени файла без расширения.
+     *
+     * @param file файл для получения имени.
+     * @return имя файла бе расширения.
+     */
+    public static final String getNameWithoutExtension(final Path file) {
+
+        final String filename = file.getFileName().toString();
+
+        if (StringUtils.isEmpty(filename)) {
+            return filename;
+        }
+
+        final int index = filename.lastIndexOf('.');
+
+        if (index == -1) {
+            return filename;
+        }
+
+        return filename.substring(0, index);
     }
 
     /**
@@ -293,24 +411,9 @@ public class FileUtils {
             return null;
         }
 
-        if (CACHE.containsKey(path)) {
-            return CACHE.get(path);
-        }
-
-        Path file = CACHE_FILES.get(path);
-
-        if (file == null) {
-            file = Paths.get(path);
-            CACHE_FILES.put(path, file);
-        }
-
-        if (!Files.exists(file)) {
-            return null;
-        }
-
         final StringBuilder content = new StringBuilder();
 
-        try (BufferedReader in = Files.newBufferedReader(file)) {
+        try (final BufferedReader in = Files.newBufferedReader(Paths.get(path))) {
 
             final CharBuffer buffer = CharBuffer.allocate(512);
 
@@ -327,7 +430,66 @@ public class FileUtils {
             LOGGER.warning(e);
         }
 
-        CACHE.put(path, content.toString());
         return content.toString();
+    }
+
+    /**
+     * Чтение текста из файла.
+     *
+     * @param file читаемый файл.
+     */
+    public static String read(final Path file) {
+
+        if (file == null) {
+            return null;
+        }
+
+        final StringBuilder content = new StringBuilder();
+
+        try (final BufferedReader in = Files.newBufferedReader(file)) {
+
+            final CharBuffer buffer = CharBuffer.allocate(512);
+
+            while (in.ready()) {
+
+                buffer.clear();
+                in.read(buffer);
+                buffer.flip();
+
+                content.append(buffer.array(), 0, buffer.limit());
+            }
+
+        } catch (final IOException e) {
+            LOGGER.warning(e);
+        }
+
+        return content.toString();
+    }
+
+    /**
+     * Получение свободного имени для указанного файла в указанной директории.
+     *
+     * @param directory проверяемая директория.
+     * @param file      проверяемый файл.
+     * @return свободное имя.
+     */
+    public static String getFirstFreeName(final Path directory, final Path file) {
+
+        String initFileName = file.getFileName().toString();
+
+        if (!Files.exists(directory.resolve(initFileName))) {
+            return initFileName;
+        }
+
+        final String extension = getExtension(initFileName);
+        final String nameWithoutExtension = getNameWithoutExtension(initFileName);
+
+        String result = nameWithoutExtension + "_1." + extension;
+
+        for (int i = 2; Files.exists(directory.resolve(result)); i++) {
+            result = nameWithoutExtension + "_" + i + "." + extension;
+        }
+
+        return result;
     }
 }

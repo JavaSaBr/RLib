@@ -8,8 +8,8 @@ import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
 
 /**
- * Реализация потокобезопасного {@link FoldablePool} с помощью потокобезопасного
- * массива {@link ConcurrentArray}
+ * Реализация потокобезопасного {@link FoldablePool} с помощью потокобезопасного массива {@link
+ * ConcurrentArray}
  *
  * @author Ronn
  */

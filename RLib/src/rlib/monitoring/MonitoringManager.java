@@ -3,8 +3,7 @@ package rlib.monitoring;
 import javax.management.MXBean;
 
 /**
- * Реализация менеджера по мониторингу состояния Java процесса с помощью
- * {@link MXBean}.
+ * Реализация менеджера по мониторингу состояния Java процесса с помощью {@link MXBean}.
  *
  * @author Ronn
  */

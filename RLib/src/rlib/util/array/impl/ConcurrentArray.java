@@ -1,25 +1,22 @@
 package rlib.util.array.impl;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.lock.LockFactory;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 /**
- * Реализация динамического массива с возможностью потокобезопасно асинхронно
- * читать и синхронно записывать. Поддерживается рекурсивный вызов
- * readLock/writeLock. Используется реализация блокировщика
- * {@link ReentrantReadWriteLock}, так что отлично подходит и для мест где мало
- * записей и много чтений так и на оборот, единственный минус в нагрузке на GC,
- * так как создает много временных объектов при активном использовании.
- * <p>
- * Все операции по чтению/записи массива производить в блоке
- * <p>
+ * Реализация динамического массива с возможностью потокобезопасно асинхронно читать и синхронно
+ * записывать. Поддерживается рекурсивный вызов readLock/writeLock. Используется реализация
+ * блокировщика {@link ReentrantReadWriteLock}, так что отлично подходит и для мест где мало записей
+ * и много чтений так и на оборот, единственный минус в нагрузке на GC, так как создает много
+ * временных объектов при активном использовании. <p> Все операции по чтению/записи массива
+ * производить в блоке <p>
  * <pre>
  * array.readLock()/writeLock();
  * try {

@@ -1,11 +1,11 @@
 package rlib.network.server;
 
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 
 /**
  * Базовая модель обработчика принятия подключений.

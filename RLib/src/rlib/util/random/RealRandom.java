@@ -1,9 +1,9 @@
 package rlib.util.random;
 
-import rlib.util.NumberUtils;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+
+import rlib.util.NumberUtils;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
@@ -115,7 +115,7 @@ public final class RealRandom implements Random {
     public void increaseUse() {
         counter++;
 
-        if(counter < 8) {
+        if (counter < 8) {
             return;
         }
 

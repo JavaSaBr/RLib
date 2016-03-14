@@ -1,14 +1,14 @@
 package rlib.util.dictionary;
 
+import java.util.Iterator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.IntegerArray;
 import rlib.util.pools.FoldablePool;
 import rlib.util.pools.PoolFactory;
-
-import java.util.Iterator;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Базовая реализация словаря с примитивным ключем int.

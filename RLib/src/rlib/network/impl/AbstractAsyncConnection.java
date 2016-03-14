@@ -1,5 +1,12 @@
 package rlib.network.impl;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.lock.LockFactory;
 import rlib.logging.Logger;
@@ -9,13 +16,6 @@ import rlib.network.AsynchronousNetwork;
 import rlib.network.NetworkConfig;
 import rlib.util.linkedlist.LinkedList;
 import rlib.util.linkedlist.LinkedListFactory;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
 
 /**
  * Базовая модель асинхронного конекта.

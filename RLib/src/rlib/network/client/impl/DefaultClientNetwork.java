@@ -1,15 +1,15 @@
 package rlib.network.client.impl;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.channels.AsynchronousSocketChannel;
+
 import rlib.concurrent.GroupThreadFactory;
 import rlib.network.NetworkConfig;
 import rlib.network.client.ClientNetwork;
 import rlib.network.client.ConnectHandler;
 import rlib.network.impl.AbstractAsynchronousNetwork;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * Базовая модель асинхронной клиентской сети.

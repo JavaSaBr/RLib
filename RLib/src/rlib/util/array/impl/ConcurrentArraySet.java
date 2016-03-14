@@ -1,8 +1,7 @@
 package rlib.util.array.impl;
 
 /**
- * Реализация {@link ConcurrentArray} с проверкой на уникальность вставляемых
- * элементов.
+ * Реализация {@link ConcurrentArray} с проверкой на уникальность вставляемых элементов.
  *
  * @author Ronn
  * @see ConcurrentArray

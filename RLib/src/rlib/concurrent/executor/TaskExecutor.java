@@ -1,9 +1,9 @@
 package rlib.concurrent.executor;
 
+import java.util.concurrent.Future;
+
 import rlib.concurrent.task.CallableTask;
 import rlib.concurrent.task.SimpleTask;
-
-import java.util.concurrent.Future;
 
 /**
  * Интерфейс для реализации исполнителя задач.

@@ -1,8 +1,8 @@
 package rlib.util.dictionary;
 
-import rlib.util.pools.Foldable;
-
 import java.util.Objects;
+
+import rlib.util.pools.Foldable;
 
 /**
  * Реализация элемента словаря с объектным ключем.

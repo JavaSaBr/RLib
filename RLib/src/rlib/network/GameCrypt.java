@@ -12,7 +12,7 @@ public interface GameCrypt {
      *
      * @param data   массив байтов.
      * @param offset отступ от начала масива.
-     * @param length   кол-во необходимых байтов.
+     * @param length кол-во необходимых байтов.
      */
     public void decrypt(byte[] data, int offset, int length);
 

@@ -1,14 +1,15 @@
 package rlib.compiler.impl;
 
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
+import java.io.IOException;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
-import java.io.IOException;
+
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Файловый менеджер по загрузке классов для компиляции.

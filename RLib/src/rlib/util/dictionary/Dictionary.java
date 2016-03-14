@@ -1,10 +1,10 @@
 package rlib.util.dictionary;
 
-import rlib.util.array.Array;
-import rlib.util.pools.Foldable;
-
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
+import rlib.util.array.Array;
+import rlib.util.pools.Foldable;
 
 /**
  * Интерфей для реализации словаря.

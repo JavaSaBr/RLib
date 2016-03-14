@@ -1,9 +1,9 @@
 package rlib.util.linkedlist.impl;
 
-import rlib.util.linkedlist.LinkedList;
-
 import java.util.Collection;
 import java.util.NoSuchElementException;
+
+import rlib.util.linkedlist.LinkedList;
 
 /**
  * Базовая реализация связанного списка.

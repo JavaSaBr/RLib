@@ -1,12 +1,12 @@
 package rlib.database;
 
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 
 /**
  * Набор утильных методов для работы с БД.

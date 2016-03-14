@@ -1,14 +1,14 @@
 package rlib.network.impl;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.AsynchronousNetwork;
 import rlib.network.NetworkConfig;
 import rlib.util.pools.Pool;
 import rlib.util.pools.PoolFactory;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * Базовая реализация асинхронной сети.

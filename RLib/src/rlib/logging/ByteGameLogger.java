@@ -1,8 +1,5 @@
 package rlib.logging;
 
-import rlib.concurrent.lock.LockFactory;
-import rlib.util.Synchronized;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +7,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.locks.Lock;
+
+import rlib.concurrent.lock.LockFactory;
+import rlib.util.Synchronized;
 
 /**
  * Модель логгера игровых событий.

@@ -1,14 +1,14 @@
 package rlib.util.dictionary;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.LockFactory;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 /**
- * Реализация конкурентного словая использующего примитивный ключ long,
- * используя механизм синхронизации через {@link ReentrantLock}.
+ * Реализация конкурентного словая использующего примитивный ключ long, используя механизм
+ * синхронизации через {@link ReentrantLock}.
  *
  * @author Ronn
  */

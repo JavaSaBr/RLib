@@ -1,8 +1,8 @@
 package rlib.geoengine;
 
-import rlib.util.array.Array;
-
 import java.io.File;
+
+import rlib.util.array.Array;
 
 /**
  * Интерфейс для реализации карты квадратов геодаты.

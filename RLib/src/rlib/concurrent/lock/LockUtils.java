@@ -1,8 +1,8 @@
 package rlib.concurrent.lock;
 
-import rlib.util.Synchronized;
-
 import java.util.concurrent.locks.Lock;
+
+import rlib.util.Synchronized;
 
 /**
  * Утильный класс для работы с блокерами.

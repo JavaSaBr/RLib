@@ -1,6 +1,13 @@
 package rlib.util.ref;
 
-import static rlib.util.ref.ReferenceType.*;
+import static rlib.util.ref.ReferenceType.BYTE;
+import static rlib.util.ref.ReferenceType.CHAR;
+import static rlib.util.ref.ReferenceType.DOUBLE;
+import static rlib.util.ref.ReferenceType.FLOAT;
+import static rlib.util.ref.ReferenceType.INTEGER;
+import static rlib.util.ref.ReferenceType.LONG;
+import static rlib.util.ref.ReferenceType.OBJECT;
+import static rlib.util.ref.ReferenceType.SHORT;
 
 /**
  * Фабрика ссылок на разные виды данных.

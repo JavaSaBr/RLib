@@ -246,9 +246,9 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     /**
      * Сканирование .jar для подгрузки классов.
      *
-     * @param classes контейнер подгруженных классов.
+     * @param classes   контейнер подгруженных классов.
      * @param resources контейнер ресурсов.
-     * @param jarFile ссылка на .jar фаил.
+     * @param jarFile   ссылка на .jar фаил.
      */
     private void scanningJar(final Array<Class<?>> classes, Array<String> resources, final Path jarFile) {
 
@@ -264,7 +264,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
         try (final JarInputStream jin = new JarInputStream(Files.newInputStream(jarFile))) {
 
-            for(JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
+            for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
 
                 if (entry.isDirectory()) {
                     continue;
@@ -272,14 +272,14 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
                 final String name = entry.getName();
 
-                if(name.endsWith(JAR_EXTENSION)) {
+                if (name.endsWith(JAR_EXTENSION)) {
                     rout.reset();
                     copy(jin, rout, buffer, false);
                     rin.initFor(rout.getData(), 0, rout.size());
                     scanningJar(classes, resources, rin);
-                } else if(name.endsWith(CLASS_EXTENSION)) {
+                } else if (name.endsWith(CLASS_EXTENSION)) {
                     loadClass(name, classes);
-                } else if(!name.endsWith(SOURCE_EXTENSION)) {
+                } else if (!name.endsWith(SOURCE_EXTENSION)) {
                     resources.add(name);
                 }
             }
@@ -294,9 +294,9 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     /**
      * Сканирование .jar для подгрузки классов.
      *
-     * @param classes контейнер подгруженных классов.
+     * @param classes   контейнер подгруженных классов.
      * @param resources контейнер ресурсов.
-     * @param jarFile содержимоей jar файла.
+     * @param jarFile   содержимоей jar файла.
      */
     private void scanningJar(final Array<Class<?>> classes, Array<String> resources, final InputStream jarFile) {
 
@@ -307,7 +307,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
         try (final JarInputStream jin = new JarInputStream(jarFile)) {
 
-            for(JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
+            for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
 
                 if (entry.isDirectory()) {
                     continue;
@@ -315,14 +315,14 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
                 final String name = entry.getName();
 
-                if(name.endsWith(JAR_EXTENSION)) {
+                if (name.endsWith(JAR_EXTENSION)) {
                     rout.reset();
                     copy(jin, rout, buffer, false);
                     rin.initFor(rout.getData(), 0, rout.size());
                     scanningJar(classes, resources, rin);
-                } else if(name.endsWith(CLASS_EXTENSION)) {
+                } else if (name.endsWith(CLASS_EXTENSION)) {
                     loadClass(name, classes);
-                } else if(!name.endsWith(SOURCE_EXTENSION)) {
+                } else if (!name.endsWith(SOURCE_EXTENSION)) {
                     resources.add(name);
                 }
             }
@@ -354,7 +354,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 continue;
             }
 
-            if(LOGGER.isEnabledInfo()) {
+            if (LOGGER.isEnabledInfo()) {
                 LOGGER.info("scanning " + file);
             }
 

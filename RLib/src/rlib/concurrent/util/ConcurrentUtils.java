@@ -29,8 +29,7 @@ public final class ConcurrentUtils {
     }
 
     /**
-     * Отпускание ожидающих потоков на этом объекте и становится самому в
-     * ожидание.
+     * Отпускание ожидающих потоков на этом объекте и становится самому в ожидание.
      */
     public static void notifyAndWait(final Object object) {
         synchronized (object) {

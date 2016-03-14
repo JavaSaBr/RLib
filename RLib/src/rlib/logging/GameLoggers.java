@@ -1,12 +1,12 @@
 package rlib.logging;
 
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Менеджер для создания игровых логгеров.

@@ -3,8 +3,7 @@ package rlib.util.array.impl;
 import rlib.util.array.Array;
 
 /**
- * Реализация {@link FastArray} с проверкой на уникальность элемента при
- * вставке.
+ * Реализация {@link FastArray} с проверкой на уникальность элемента при вставке.
  *
  * @author Ronn
  * @see FastArray

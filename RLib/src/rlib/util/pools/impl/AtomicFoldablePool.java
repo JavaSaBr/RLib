@@ -7,8 +7,7 @@ import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
 
 /**
- * Реализация потокобезопасного {@link FoldablePool} с помощью атомарного
- * блокировщика.
+ * Реализация потокобезопасного {@link FoldablePool} с помощью атомарного блокировщика.
  *
  * @author Ronn
  */

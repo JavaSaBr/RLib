@@ -1,11 +1,5 @@
 package rlib.concurrent.deadlock;
 
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-import rlib.util.SafeTask;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -13,6 +7,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+import rlib.util.SafeTask;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Модель поиска и обнаружения делоков.

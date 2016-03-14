@@ -1,9 +1,5 @@
 package rlib.logging;
 
-import rlib.concurrent.lock.LockFactory;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +7,10 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.locks.Lock;
+
+import rlib.concurrent.lock.LockFactory;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
 
 /**
  * Модель строкового логера игровых событий.

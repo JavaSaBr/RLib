@@ -1,7 +1,5 @@
 package rlib.logging.impl;
 
-import rlib.logging.LoggerListener;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
@@ -10,9 +8,10 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import rlib.logging.LoggerListener;
+
 /**
- * Реализация слушателя логирования с записью в создаваемый файл в указанной
- * папке.
+ * Реализация слушателя логирования с записью в создаваемый файл в указанной папке.
  *
  * @author Ronn
  */
@@ -50,7 +49,6 @@ public class FolderFileListener implements LoggerListener {
 
     /**
      * @return записчик в фаил.
-     * @throws IOException
      */
     public Writer getWriter() throws IOException {
 

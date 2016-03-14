@@ -1,9 +1,9 @@
 package rlib.network.packet.impl;
 
+import java.nio.ByteBuffer;
+
 import rlib.network.packet.SendablePacket;
 import rlib.util.Util;
-
-import java.nio.ByteBuffer;
 
 /**
  * Базовая реализация отправляемого пакета.

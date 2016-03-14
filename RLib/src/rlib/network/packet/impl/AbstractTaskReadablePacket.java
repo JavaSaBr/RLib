@@ -5,8 +5,8 @@ import rlib.concurrent.task.SimpleTask;
 import rlib.util.pools.FoldablePool;
 
 /**
- * Базовая реализация читаемого пакета с реализацией интерфейса
- * {@link SimpleTask} для выполнения в {@link TaskExecutor}.
+ * Базовая реализация читаемого пакета с реализацией интерфейса {@link SimpleTask} для выполнения в
+ * {@link TaskExecutor}.
  *
  * @author Ronn
  */
@@ -35,8 +35,8 @@ public abstract class AbstractTaskReadablePacket<C, L> extends AbstractReadableP
     protected abstract void executeImpl(L local, long currentTime);
 
     /**
-     * Можно переопределить метод и отдавать пул для автоматического складывания
-     * этого пакета в него после выполнения.
+     * Можно переопределить метод и отдавать пул для автоматического складывания этого пакета в него
+     * после выполнения.
      *
      * @return пулл для складывания этого пакета. может быть <code>null</code>.
      */

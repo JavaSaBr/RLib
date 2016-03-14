@@ -4,8 +4,7 @@ import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 
 /**
- * Реализация сортированного {@link FastArray}, где сортировка происходит при
- * вставке.
+ * Реализация сортированного {@link FastArray}, где сортировка происходит при вставке.
  *
  * @author Ronn
  * @created 28.02.2012

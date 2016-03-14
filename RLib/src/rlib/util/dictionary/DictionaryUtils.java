@@ -8,8 +8,8 @@ package rlib.util.dictionary;
 public class DictionaryUtils {
 
     /**
-     * Удаление из словаря значение по указанному ключу в блоке
-     * {@link ConcurrentDictionary#writeLock()}.
+     * Удаление из словаря значение по указанному ключу в блоке {@link
+     * ConcurrentDictionary#writeLock()}.
      *
      * @param dictionary словарь из которого надо удлаить значение.
      * @param key        ключ по которому надо удалить значение.

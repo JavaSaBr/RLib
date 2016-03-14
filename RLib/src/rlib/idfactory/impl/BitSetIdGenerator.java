@@ -1,5 +1,13 @@
 package rlib.idfactory.impl;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.BitSet;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import rlib.database.ConnectFactory;
 import rlib.database.DBUtils;
 import rlib.idfactory.IdGenerator;
@@ -11,14 +19,6 @@ import rlib.util.array.ArrayFactory;
 import rlib.util.array.IntegerArray;
 import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.IntegerDictionary;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.BitSet;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Модель фабрики ид основаной на BitSet

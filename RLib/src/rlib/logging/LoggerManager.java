@@ -1,5 +1,11 @@
 package rlib.logging;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.locks.Lock;
+
 import rlib.concurrent.lock.LockFactory;
 import rlib.logging.impl.LoggerImpl;
 import rlib.util.ClassUtils;
@@ -9,15 +15,8 @@ import rlib.util.array.ArrayFactory;
 import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.locks.Lock;
-
 /**
- * Менеджер логгирования, служит для получения, конфигурирования и записывания
- * лога.
+ * Менеджер логгирования, служит для получения, конфигурирования и записывания лога.
  *
  * @author Ronn
  */
@@ -62,7 +61,7 @@ public class LoggerManager {
 
         final String className = System.getProperty(LoggerManager.class.getName() + "_impl");
 
-        if(!StringUtils.isEmpty(className)) {
+        if (!StringUtils.isEmpty(className)) {
             try {
                 implementedClass = (Class<? extends Logger>) Class.forName(className);
             } catch (ClassNotFoundException e) {
@@ -70,7 +69,7 @@ public class LoggerManager {
             }
         }
 
-        if(implementedClass == null) {
+        if (implementedClass == null) {
             implementedClass = LoggerImpl.class;
         }
 

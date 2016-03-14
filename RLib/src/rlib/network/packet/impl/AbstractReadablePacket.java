@@ -1,10 +1,10 @@
 package rlib.network.packet.impl;
 
+import java.nio.ByteBuffer;
+
 import rlib.network.packet.ReadeablePacket;
 import rlib.util.Util;
 import rlib.util.pools.Foldable;
-
-import java.nio.ByteBuffer;
 
 /**
  * Базовая реализация читаемого пакета.

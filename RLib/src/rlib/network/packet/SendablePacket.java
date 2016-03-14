@@ -1,8 +1,8 @@
 package rlib.network.packet;
 
-import rlib.util.StringUtils;
-
 import java.nio.ByteBuffer;
+
+import rlib.util.StringUtils;
 
 /**
  * Интерфейс для реализации отправляемых пакетов.

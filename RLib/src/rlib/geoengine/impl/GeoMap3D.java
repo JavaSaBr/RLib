@@ -1,13 +1,5 @@
 package rlib.geoengine.impl;
 
-import rlib.geoengine.GeoConfig;
-import rlib.geoengine.GeoMap;
-import rlib.geoengine.GeoQuad;
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-import rlib.util.ArrayUtils;
-import rlib.util.array.Array;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +7,14 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+
+import rlib.geoengine.GeoConfig;
+import rlib.geoengine.GeoMap;
+import rlib.geoengine.GeoQuad;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+import rlib.util.ArrayUtils;
+import rlib.util.array.Array;
 
 /**
  * Модель 3х мерной геокарты.

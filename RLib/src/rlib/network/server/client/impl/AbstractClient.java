@@ -1,5 +1,7 @@
 package rlib.network.server.client.impl;
 
+import java.nio.ByteBuffer;
+
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.AsyncConnection;
@@ -7,8 +9,6 @@ import rlib.network.GameCrypt;
 import rlib.network.packet.ReadeablePacket;
 import rlib.network.packet.SendablePacket;
 import rlib.network.server.client.Client;
-
-import java.nio.ByteBuffer;
 
 /**
  * Базовая реализация клиента для сервера.

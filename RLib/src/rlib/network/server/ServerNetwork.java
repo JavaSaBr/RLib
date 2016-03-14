@@ -1,11 +1,11 @@
 package rlib.network.server;
 
-import rlib.network.AsynchronousNetwork;
-
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+
+import rlib.network.AsynchronousNetwork;
 
 /**
  * Интерфейс для реализации модели асинхронной серверной сети.
