@@ -5,18 +5,19 @@ import rlib.logging.LoggerManager;
 
 /**
  * Набор утильных методов по работе с потоками.
- * 
+ *
  * @author Ronn
  */
 public class ThreadUtils {
 
-	public static void sleep(final long time) {
-		try {
-			Thread.sleep(time);
-		} catch(final InterruptedException e) {
-			LOGGER.warning(e);
-		}
-	}
+    private static final Logger LOGGER = LoggerManager.getLogger(ThreadUtils.class);
 
-	private static final Logger LOGGER = LoggerManager.getLogger(ThreadUtils.class);
+    public static void sleep(final long time) {
+        try {
+            Thread.sleep(time);
+        } catch (final InterruptedException e) {
+            LOGGER.warning(e);
+        }
+    }
+
 }

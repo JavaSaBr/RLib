@@ -18,36 +18,43 @@ import rlib.network.impl.AbstractAsynchronousNetwork;
  */
 public final class DefaultClientNetwork extends AbstractAsynchronousNetwork implements ClientNetwork {
 
-	/** группа асинхронных каналов */
-	private final AsynchronousChannelGroup group;
-	/** обработчик подключения к серверу */
-	private final ConnectHandler connectHandler;
+    /**
+     * Группа асинхронных каналов.
+     */
+    private final AsynchronousChannelGroup group;
 
-	/** асинронный клиентский канал */
-	private AsynchronousSocketChannel channel;
+    /**
+     * Обработчик подключения к серверу.
+     */
+    private final ConnectHandler connectHandler;
 
-	public DefaultClientNetwork(final NetworkConfig config, final ConnectHandler connectHandler) throws IOException {
-		super(config);
+    /**
+     * Асинхронный клиентский канал.
+     */
+    private AsynchronousSocketChannel channel;
 
-		this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
-		this.connectHandler = connectHandler;
-	}
+    public DefaultClientNetwork(final NetworkConfig config, final ConnectHandler connectHandler) throws IOException {
+        super(config);
 
-	@Override
-	public void connect(final InetSocketAddress serverAddress) {
+        this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
+        this.connectHandler = connectHandler;
+    }
 
-		try {
+    @Override
+    public void connect(final InetSocketAddress serverAddress) {
 
-			if(channel != null) {
-				channel.close();
-			}
+        try {
 
-			channel = AsynchronousSocketChannel.open(group);
+            if (channel != null) {
+                channel.close();
+            }
 
-		} catch(final IOException e) {
-			LOGGER.warning(this, e);
-		}
+            channel = AsynchronousSocketChannel.open(group);
 
-		channel.connect(serverAddress, channel, connectHandler);
-	}
+        } catch (final IOException e) {
+            LOGGER.warning(this, e);
+        }
+
+        channel.connect(serverAddress, channel, connectHandler);
+    }
 }

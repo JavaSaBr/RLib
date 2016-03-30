@@ -10,391 +10,399 @@ import rlib.util.pools.PoolFactory;
 
 /**
  * Реадизация не потокобезопасного {@link LinkedList}.
- * 
+ *
  * @author Ronn
  */
 public class FastLinkedList<E> extends AbstractLinkedList<E> {
 
-	private static final long serialVersionUID = 6627882787737291879L;
+    private static final long serialVersionUID = 6627882787737291879L;
+
+    /**
+     * Пул узлов.
+     */
+    private final FoldablePool<Node<E>> pool;
+
+    /**
+     * Первый элемент списка.
+     */
+    private Node<E> first;
+    /**
+     * Последний элемент списка.
+     */
+    private Node<E> last;
 
-	/** пул узлов */
-	private final FoldablePool<Node<E>> pool;
+    /**
+     * Размер списка.
+     */
+    private int size;
 
-	/** первый элемент списка */
-	private Node<E> first;
-	/** последний элемент списка */
-	private Node<E> last;
+    public FastLinkedList(final Class<?> type) {
+        super(type);
+        this.pool = PoolFactory.newFoldablePool(Node.class);
+    }
 
-	/** размер списка */
-	private int size;
+    @Override
+    public boolean add(final E element) {
 
-	public FastLinkedList(final Class<?> type) {
-		super(type);
-		this.pool = PoolFactory.newFoldablePool(Node.class);
-	}
+        if (element == null) {
+            throw new NullPointerException("element is null.");
+        }
 
-	@Override
-	public boolean add(final E element) {
+        linkLast(element);
+        return true;
+    }
 
-		if(element == null) {
-			throw new NullPointerException("element is null.");
-		}
+    @Override
+    public void addFirst(final E element) {
+        linkFirst(element);
+    }
+
+    @Override
+    public void addLast(final E element) {
+        linkLast(element);
+    }
+
+    @Override
+    public void apply(final Function<? super E, ? extends E> function) {
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            node.setItem(function.apply(node.getItem()));
+        }
+    }
+
+    @Override
+    public void clear() {
+
+        final FoldablePool<Node<E>> pool = getPool();
+
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            pool.put(node);
+        }
+
+        setFirstNode(null);
+        setLastNode(null);
+
+        size = 0;
+    }
+
+    @Override
+    public Iterator<E> descendingIterator() {
+        return new IteratorImpl<E>(this, IteratorImpl.PREV);
+    }
+
+    @Override
+    public E get(final int index) {
+        return index < size() >> 1 ? getFirst(index) : getLast(index);
+    }
+
+    protected final E getFirst(final int index) {
+
+        int i = 0;
+
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 
-		linkLast(element);
-		return true;
-	}
+            if (i == index) {
+                return node.getItem();
+            }
+
+            i++;
+        }
+
+        return null;
+    }
+
+    @Override
+    public final Node<E> getFirstNode() {
+        return first;
+    }
+
+    /**
+     * @param first первый узел.
+     */
+    protected void setFirstNode(final Node<E> first) {
+        this.first = first;
+    }
 
-	@Override
-	public void addFirst(final E element) {
-		linkFirst(element);
-	}
+    protected final E getLast(final int index) {
 
-	@Override
-	public void addLast(final E element) {
-		linkLast(element);
-	}
+        int i = size() - 1;
+
+        for (Node<E> node = getLastNode(); node != null; node = node.getPrev()) {
 
-	@Override
-	public void apply(final Function<? super E, ? extends E> function) {
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-			node.setItem(function.apply(node.getItem()));
-		}
-	}
+            if (i == index) {
+                return node.getItem();
+            }
 
-	@Override
-	public void clear() {
+            i--;
+        }
 
-		final FoldablePool<Node<E>> pool = getPool();
+        return null;
+    }
 
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-			pool.put(node);
-		}
+    @Override
+    public final Node<E> getLastNode() {
+        return last;
+    }
 
-		setFirstNode(null);
-		setLastNode(null);
+    /**
+     * @param last последний узел.
+     */
+    protected void setLastNode(final Node<E> last) {
+        this.last = last;
+    }
 
-		size = 0;
-	}
+    /**
+     * Получение нового узла по указанным параметрам.
+     *
+     * @param prev предыдущий узел.
+     * @param item хранимый итем.
+     * @param next следующий узел.
+     * @return новый узел.
+     */
+    protected Node<E> getNewNode(final Node<E> prev, final E item, final Node<E> next) {
 
-	@Override
-	public Iterator<E> descendingIterator() {
-		return new IteratorImpl<E>(this, IteratorImpl.PREV);
-	}
+        Node<E> node = getPool().take();
+
+        if (node == null) {
+            node = new Node<E>();
+        }
+
+        node.setItem(item);
+        node.setNext(next);
+        node.setPrev(prev);
 
-	@Override
-	public E get(final int index) {
-		return index < size() >> 1 ? getFirst(index) : getLast(index);
-	}
+        return node;
+    }
 
-	protected final E getFirst(final int index) {
+    /**
+     * @return пул узлов.
+     */
+    protected FoldablePool<Node<E>> getPool() {
+        return pool;
+    }
 
-		int i = 0;
+    protected final void insertAfter(final Node<E> node, final E item) {
 
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+        final Node<E> next = node.getNext();
+        final Node<E> newNode = getNewNode(node, item, next);
 
-			if(i == index) {
-				return node.getItem();
-			}
+        if (next == null) {
+            setLastNode(newNode);
+        } else {
+            next.setPrev(newNode);
+        }
 
-			i++;
-		}
+        node.setNext(newNode);
+    }
 
-		return null;
-	}
+    protected final void insertBefore(final Node<E> node, final E item) {
 
-	@Override
-	public final Node<E> getFirstNode() {
-		return first;
-	}
+        final Node<E> prev = node.getPrev();
+        final Node<E> newNode = getNewNode(prev, item, node);
 
-	protected final E getLast(final int index) {
+        if (prev == null) {
+            setFirstNode(newNode);
+        } else {
+            prev.setNext(newNode);
+        }
 
-		int i = size() - 1;
+        node.setPrev(newNode);
+    }
 
-		for(Node<E> node = getLastNode(); node != null; node = node.getPrev()) {
+    @Override
+    public Iterator<E> iterator() {
+        return new IteratorImpl<E>(this, IteratorImpl.NEXT);
+    }
 
-			if(i == index) {
-				return node.getItem();
-			}
+    protected final void linkFirst(final E eitem) {
 
-			i--;
-		}
+        final Node<E> first = getFirstNode();
+        final Node<E> newNode = getNewNode(null, eitem, first);
 
-		return null;
-	}
+        setFirstNode(newNode);
 
-	@Override
-	public final Node<E> getLastNode() {
-		return last;
-	}
+        if (first == null) {
+            setLastNode(newNode);
+        } else {
+            first.setPrev(newNode);
+        }
 
-	/**
-	 * Получение нового узла по указанным параметрам.
-	 * 
-	 * @param prev предыдущий узел.
-	 * @param item хранимый итем.
-	 * @param next следующий узел.
-	 * @return новый узел.
-	 */
-	protected Node<E> getNewNode(final Node<E> prev, final E item, final Node<E> next) {
+        size++;
+    }
 
-		Node<E> node = getPool().take();
+    protected final void linkLast(final E item) {
 
-		if(node == null) {
-			node = new Node<E>();
-		}
+        final Node<E> last = getLastNode();
+        final Node<E> newNode = getNewNode(last, item, null);
 
-		node.setItem(item);
-		node.setNext(next);
-		node.setPrev(prev);
+        setLastNode(newNode);
 
-		return node;
-	}
+        if (last == null) {
+            setFirstNode(newNode);
+        } else {
+            last.setNext(newNode);
+        }
 
-	/**
-	 * @return пул узлов.
-	 */
-	protected FoldablePool<Node<E>> getPool() {
-		return pool;
-	}
+        size++;
+    }
 
-	protected final void insertAfter(final Node<E> node, final E item) {
+    @Override
+    public E poll() {
+        final Node<E> first = getFirstNode();
+        return first == null ? null : unlinkFirst(first);
+    }
 
-		final Node<E> next = node.getNext();
-		final Node<E> newNode = getNewNode(node, item, next);
+    @Override
+    public E pollFirst() {
+        final Node<E> first = getFirstNode();
+        return first == null ? null : unlinkFirst(first);
+    }
 
-		if(next == null) {
-			setLastNode(newNode);
-		} else {
-			next.setPrev(newNode);
-		}
+    @Override
+    public E pollLast() {
+        final Node<E> last = getLastNode();
+        return last == null ? null : unlinkLast(last);
+    }
 
-		node.setNext(newNode);
-	}
+    @Override
+    public E removeFirst() {
 
-	protected final void insertBefore(final Node<E> node, final E item) {
+        final Node<E> first = getFirstNode();
 
-		final Node<E> prev = node.getPrev();
-		final Node<E> newNode = getNewNode(prev, item, node);
+        if (first == null) {
+            throw new NoSuchElementException();
+        }
 
-		if(prev == null) {
-			setFirstNode(newNode);
-		} else {
-			prev.setNext(newNode);
-		}
+        return unlinkFirst(first);
+    }
 
-		node.setPrev(newNode);
-	}
+    @Override
+    public E removeLast() {
 
-	@Override
-	public Iterator<E> iterator() {
-		return new IteratorImpl<E>(this, IteratorImpl.NEXT);
-	}
+        final Node<E> last = getLastNode();
 
-	protected final void linkFirst(final E eitem) {
+        if (last == null) {
+            throw new NoSuchElementException();
+        }
 
-		final Node<E> first = getFirstNode();
-		final Node<E> newNode = getNewNode(null, eitem, first);
+        return unlinkLast(last);
+    }
 
-		setFirstNode(newNode);
+    @Override
+    public int size() {
+        return size;
+    }
 
-		if(first == null) {
-			setLastNode(newNode);
-		} else {
-			first.setPrev(newNode);
-		}
+    @Override
+    public E take() {
+        return removeFirst();
+    }
 
-		size++;
-	}
+    @Override
+    public Object[] toArray() {
 
-	protected final void linkLast(final E item) {
+        final Object[] array = (Object[]) java.lang.reflect.Array.newInstance(getType(), size());
 
-		final Node<E> last = getLastNode();
-		final Node<E> newNode = getNewNode(last, item, null);
+        int index = 0;
 
-		setLastNode(newNode);
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            array[index++] = node.getItem();
+        }
 
-		if(last == null) {
-			setFirstNode(newNode);
-		} else {
-			last.setNext(newNode);
-		}
+        return array;
+    }
 
-		size++;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T[] toArray(T[] array) {
 
-	@Override
-	public E poll() {
-		final Node<E> first = getFirstNode();
-		return first == null ? null : unlinkFirst(first);
-	}
+        final int size = size();
 
-	@Override
-	public E pollFirst() {
-		final Node<E> first = getFirstNode();
-		return first == null ? null : unlinkFirst(first);
-	}
+        if (array.length < size) {
+            array = (T[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
+        }
 
-	@Override
-	public E pollLast() {
-		final Node<E> last = getLastNode();
-		return last == null ? null : unlinkLast(last);
-	}
+        int i = 0;
 
-	@Override
-	public E removeFirst() {
+        final Object[] result = array;
 
-		final Node<E> first = getFirstNode();
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            result[i++] = node.getItem();
+        }
 
-		if(first == null) {
-			throw new NoSuchElementException();
-		}
+        return array;
+    }
 
-		return unlinkFirst(first);
-	}
+    @Override
+    public String toString() {
+        return super.toString() + "\n " + pool;
+    }
 
-	@Override
-	public E removeLast() {
+    @Override
+    public final E unlink(final Node<E> node) {
 
-		final Node<E> last = getLastNode();
+        final E element = node.getItem();
 
-		if(last == null) {
-			throw new NoSuchElementException();
-		}
+        final Node<E> next = node.getNext();
+        final Node<E> prev = node.getPrev();
 
-		return unlinkLast(last);
-	}
+        if (prev == null) {
+            setFirstNode(next);
+        } else {
+            prev.setNext(next);
+        }
 
-	/**
-	 * @param first первый узел.
-	 */
-	protected void setFirstNode(final Node<E> first) {
-		this.first = first;
-	}
+        if (next == null) {
+            setLastNode(prev);
+        } else {
+            next.setPrev(prev);
+        }
 
-	/**
-	 * @param last последний узел.
-	 */
-	protected void setLastNode(final Node<E> last) {
-		this.last = last;
-	}
+        size--;
 
-	@Override
-	public int size() {
-		return size;
-	}
+        getPool().put(node);
 
-	@Override
-	public E take() {
-		return removeFirst();
-	}
+        return element;
+    }
 
-	@Override
-	public Object[] toArray() {
+    protected final E unlinkFirst(final Node<E> node) {
 
-		final Object[] array = (Object[]) java.lang.reflect.Array.newInstance(getType(), size());
+        final E element = node.getItem();
 
-		int index = 0;
+        final Node<E> next = node.getNext();
 
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-			array[index++] = node.getItem();
-		}
+        setFirstNode(next);
 
-		return array;
-	}
+        if (next == null) {
+            setLastNode(null);
+        } else {
+            next.setPrev(null);
+        }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T[] toArray(T[] array) {
+        size--;
 
-		final int size = size();
+        getPool().put(node);
 
-		if(array.length < size) {
-			array = (T[]) java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), size);
-		}
+        return element;
+    }
 
-		int i = 0;
+    protected final E unlinkLast(final Node<E> node) {
 
-		final Object[] result = array;
+        final E element = node.getItem();
 
-		for(Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-			result[i++] = node.getItem();
-		}
+        final Node<E> prev = node.getPrev();
 
-		return array;
-	}
+        setLastNode(prev);
 
-	@Override
-	public String toString() {
-		return super.toString() + "\n " + pool;
-	}
+        if (prev == null) {
+            setFirstNode(null);
+        } else {
+            prev.setNext(null);
+        }
 
-	@Override
-	public final E unlink(final Node<E> node) {
+        size--;
 
-		final E element = node.getItem();
+        getPool().put(node);
 
-		final Node<E> next = node.getNext();
-		final Node<E> prev = node.getPrev();
-
-		if(prev == null) {
-			setFirstNode(next);
-		} else {
-			prev.setNext(next);
-		}
-
-		if(next == null) {
-			setLastNode(prev);
-		} else {
-			next.setPrev(prev);
-		}
-
-		size--;
-
-		getPool().put(node);
-
-		return element;
-	}
-
-	protected final E unlinkFirst(final Node<E> node) {
-
-		final E element = node.getItem();
-
-		final Node<E> next = node.getNext();
-
-		setFirstNode(next);
-
-		if(next == null) {
-			setLastNode(null);
-		} else {
-			next.setPrev(null);
-		}
-
-		size--;
-
-		getPool().put(node);
-
-		return element;
-	}
-
-	protected final E unlinkLast(final Node<E> node) {
-
-		final E element = node.getItem();
-
-		final Node<E> prev = node.getPrev();
-
-		setLastNode(prev);
-
-		if(prev == null) {
-			setFirstNode(null);
-		} else {
-			prev.setNext(null);
-		}
-
-		size--;
-
-		getPool().put(node);
-
-		return element;
-	}
+        return element;
+    }
 }

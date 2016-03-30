@@ -9,225 +9,238 @@ import rlib.geom.bounding.BoundingType;
 
 /**
  * Модель формы коробки.
- * 
+ *
  * @author Ronn
  */
 public final class OrientedBoundingBox extends AbstractBounding {
 
-	/** матрица для промежуточных вычислений */
-	private final Matrix3f matrix;
+    /**
+     * Матрица для промежуточных вычислений
+     */
+    private final Matrix3f matrix;
 
-	/** вектор, описывающий размер формы */
-	private final Vector size;
+    /**
+     * Вектор, описывающий размер формы
+     */
+    private final Vector size;
 
-	/** размер формы по x */
-	protected float sizeX;
-	/** размер формы по y */
-	protected float sizeY;
-	/** размер формы по z */
-	protected float sizeZ;
+    /**
+     * Размер формы по x.
+     */
+    protected float sizeX;
 
-	protected OrientedBoundingBox(final Vector center, final Vector offset, final float sizeX, final float sizeY, final float sizeZ) {
-		super(center, offset);
+    /**
+     * Размер формы по y.
+     */
+    protected float sizeY;
 
-		this.matrix = Matrix3f.newInstance();
-		this.size = Vector.newInstance(sizeX, sizeY, sizeZ);
+    /**
+     * Размер формы по z.
+     */
+    protected float sizeZ;
 
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
-		this.sizeZ = sizeZ;
-	}
+    protected OrientedBoundingBox(final Vector center, final Vector offset, final float sizeX, final float sizeY, final float sizeZ) {
+        super(center, offset);
 
-	@Override
-	public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
-		final Vector center = getResultCenter(buffer);
-		return Math.abs(center.getX() - x) < sizeX && Math.abs(center.getY() - y) < sizeY && Math.abs(center.getZ() - z) < sizeZ;
-	}
+        this.matrix = Matrix3f.newInstance();
+        this.size = Vector.newInstance(sizeX, sizeY, sizeZ);
 
-	@Override
-	public BoundingType getBoundingType() {
-		return BoundingType.AXIS_ALIGNED_BOX;
-	}
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+        this.sizeZ = sizeZ;
+    }
 
-	@Override
-	public Vector getResultCenter(final VectorBuffer buffer) {
+    @Override
+    public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
+        final Vector center = getResultCenter(buffer);
+        return Math.abs(center.getX() - x) < sizeX && Math.abs(center.getY() - y) < sizeY && Math.abs(center.getZ() - z) < sizeZ;
+    }
 
-		final Vector vector = buffer.getNextVector();
-		vector.set(center);
+    @Override
+    public BoundingType getBoundingType() {
+        return BoundingType.AXIS_ALIGNED_BOX;
+    }
 
-		if(offset == Vector.ZERO) {
-			return vector;
-		}
+    @Override
+    public Vector getResultCenter(final VectorBuffer buffer) {
 
-		return vector.addLocal(offset);
-	}
+        final Vector vector = buffer.getNextVector();
+        vector.set(center);
 
-	/**
-	 * @return размер формы по X.
-	 */
-	public final float getSizeX() {
-		return sizeX;
-	}
+        if (offset == Vector.ZERO) {
+            return vector;
+        }
 
-	/**
-	 * @return размер формы по Y.
-	 */
-	public final float getSizeY() {
-		return sizeY;
-	}
+        return vector.addLocal(offset);
+    }
 
-	/**
-	 * @return размер формы по Z.
-	 */
-	public final float getSizeZ() {
-		return sizeZ;
-	}
+    /**
+     * @return размер формы по X.
+     */
+    public final float getSizeX() {
+        return sizeX;
+    }
 
-	@Override
-	public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
-		switch(bounding.getBoundingType()) {
-			case EMPTY: {
-				return false;
-			}
-			case AXIS_ALIGNED_BOX: {
+    /**
+     * @return размер формы по Y.
+     */
+    public final float getSizeY() {
+        return sizeY;
+    }
 
-				final OrientedBoundingBox box = (OrientedBoundingBox) bounding;
+    /**
+     * @return размер формы по Z.
+     */
+    public final float getSizeZ() {
+        return sizeZ;
+    }
 
-				final Vector target = box.getResultCenter(buffer);
-				final Vector center = getResultCenter(buffer);
+    @Override
+    public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
+        switch (bounding.getBoundingType()) {
+            case EMPTY: {
+                return false;
+            }
+            case AXIS_ALIGNED_BOX: {
 
-				final float sizeX = getSizeX();
-				final float sizeY = getSizeY();
-				final float sizeZ = getSizeZ();
+                final OrientedBoundingBox box = (OrientedBoundingBox) bounding;
 
-				if(center.getX() + sizeX < target.getX() - box.getSizeX() || center.getX() - sizeX > target.getX() + box.getSizeX()) {
-					return false;
-				} else if(center.getY() + sizeY < target.getY() - box.getSizeY() || center.getY() - sizeY > target.getY() + box.getSizeY()) {
-					return false;
-				} else if(center.getZ() + sizeZ < target.getZ() - box.getSizeZ() || center.getZ() - sizeZ > target.getZ() + box.getSizeZ()) {
-					return false;
-				}
+                final Vector target = box.getResultCenter(buffer);
+                final Vector center = getResultCenter(buffer);
 
-				return true;
-			}
-			case SPHERE: {
+                final float sizeX = getSizeX();
+                final float sizeY = getSizeY();
+                final float sizeZ = getSizeZ();
 
-				final BoundingSphere sphere = (BoundingSphere) bounding;
+                if (center.getX() + sizeX < target.getX() - box.getSizeX() || center.getX() - sizeX > target.getX() + box.getSizeX()) {
+                    return false;
+                } else if (center.getY() + sizeY < target.getY() - box.getSizeY() || center.getY() - sizeY > target.getY() + box.getSizeY()) {
+                    return false;
+                } else if (center.getZ() + sizeZ < target.getZ() - box.getSizeZ() || center.getZ() - sizeZ > target.getZ() + box.getSizeZ()) {
+                    return false;
+                }
 
-				final Vector target = sphere.getResultCenter(buffer);
-				final Vector center = getResultCenter(buffer);
+                return true;
+            }
+            case SPHERE: {
 
-				final float radius = sphere.getRadius();
+                final BoundingSphere sphere = (BoundingSphere) bounding;
 
-				if(Math.abs(center.getX() - target.getX()) > radius + getSizeX()) {
-					return false;
-				}
+                final Vector target = sphere.getResultCenter(buffer);
+                final Vector center = getResultCenter(buffer);
 
-				if(Math.abs(center.getY() - target.getY()) > radius + getSizeY()) {
-					return false;
-				}
+                final float radius = sphere.getRadius();
 
-				if(Math.abs(center.getZ() - target.getZ()) > radius + getSizeZ()) {
-					return false;
-				}
+                if (Math.abs(center.getX() - target.getX()) > radius + getSizeX()) {
+                    return false;
+                }
 
-				return true;
-			}
-			default: {
-				LOGGER.warning(new IllegalArgumentException("incorrect bounding type " + bounding.getBoundingType()));
-			}
-		}
+                if (Math.abs(center.getY() - target.getY()) > radius + getSizeY()) {
+                    return false;
+                }
 
-		return false;
-	}
+                if (Math.abs(center.getZ() - target.getZ()) > radius + getSizeZ()) {
+                    return false;
+                }
 
-	@Override
-	public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
+                return true;
+            }
+            default: {
+                LOGGER.warning(new IllegalArgumentException("incorrect bounding type " + bounding.getBoundingType()));
+            }
+        }
 
-		float rhs;
+        return false;
+    }
 
-		final Vector diff = start.subtract(getResultCenter(buffer), buffer.getNextVector());
+    @Override
+    public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
 
-		final Vector fWdU = buffer.getNextVector();
-		final Vector fAWdU = buffer.getNextVector();
-		final Vector fDdU = buffer.getNextVector();;
-		final Vector fADdU = buffer.getNextVector();
-		final Vector fAWxDdU = buffer.getNextVector();
+        float rhs;
 
-		fWdU.setX(direction.dot(Vector.UNIT_X));
-		fAWdU.setX(Math.abs(fWdU.getX()));
-		fDdU.setX(diff.dot(Vector.UNIT_X));
-		fADdU.setX(Math.abs(fDdU.getX()));
+        final Vector diff = start.subtract(getResultCenter(buffer), buffer.getNextVector());
 
-		final float sizeX = getSizeX();
-		final float sizeY = getSizeY();
-		final float sizeZ = getSizeZ();
+        final Vector fWdU = buffer.getNextVector();
+        final Vector fAWdU = buffer.getNextVector();
+        final Vector fDdU = buffer.getNextVector();
+        ;
+        final Vector fADdU = buffer.getNextVector();
+        final Vector fAWxDdU = buffer.getNextVector();
 
-		if(fADdU.getX() > sizeX && fDdU.getX() * fWdU.getX() >= 0.0F) {
-			return false;
-		}
+        fWdU.setX(direction.dot(Vector.UNIT_X));
+        fAWdU.setX(Math.abs(fWdU.getX()));
+        fDdU.setX(diff.dot(Vector.UNIT_X));
+        fADdU.setX(Math.abs(fDdU.getX()));
 
-		fWdU.setY(direction.dot(Vector.UNIT_Y));
-		fAWdU.setY(Math.abs(fWdU.getY()));
-		fDdU.setY(diff.dot(Vector.UNIT_Y));
-		fADdU.setY(Math.abs(fDdU.getY()));
+        final float sizeX = getSizeX();
+        final float sizeY = getSizeY();
+        final float sizeZ = getSizeZ();
 
-		if(fADdU.getY() > sizeY && fDdU.getY() * fWdU.getY() >= 0.0F) {
-			return false;
-		}
+        if (fADdU.getX() > sizeX && fDdU.getX() * fWdU.getX() >= 0.0F) {
+            return false;
+        }
 
-		fWdU.setZ(direction.dot(Vector.UNIT_Z));
-		fAWdU.setZ(Math.abs(fWdU.getZ()));
-		fDdU.setZ(diff.dot(Vector.UNIT_Z));
-		fADdU.setZ(Math.abs(fDdU.getZ()));
+        fWdU.setY(direction.dot(Vector.UNIT_Y));
+        fAWdU.setY(Math.abs(fWdU.getY()));
+        fDdU.setY(diff.dot(Vector.UNIT_Y));
+        fADdU.setY(Math.abs(fDdU.getY()));
 
-		if(fADdU.getZ() > sizeZ && fDdU.getZ() * fWdU.getZ() >= 0.0F) {
-			return false;
-		}
+        if (fADdU.getY() > sizeY && fDdU.getY() * fWdU.getY() >= 0.0F) {
+            return false;
+        }
 
-		final Vector wCrossD = direction.cross(diff, buffer.getNextVector());
+        fWdU.setZ(direction.dot(Vector.UNIT_Z));
+        fAWdU.setZ(Math.abs(fWdU.getZ()));
+        fDdU.setZ(diff.dot(Vector.UNIT_Z));
+        fADdU.setZ(Math.abs(fDdU.getZ()));
 
-		fAWxDdU.setX(Math.abs(wCrossD.dot(Vector.UNIT_X)));
+        if (fADdU.getZ() > sizeZ && fDdU.getZ() * fWdU.getZ() >= 0.0F) {
+            return false;
+        }
 
-		rhs = sizeY * fAWdU.getZ() + sizeZ * fAWdU.getY();
+        final Vector wCrossD = direction.cross(diff, buffer.getNextVector());
 
-		if(fAWxDdU.getX() > rhs) {
-			return false;
-		}
+        fAWxDdU.setX(Math.abs(wCrossD.dot(Vector.UNIT_X)));
 
-		fAWxDdU.setY(Math.abs(wCrossD.dot(Vector.UNIT_Y)));
+        rhs = sizeY * fAWdU.getZ() + sizeZ * fAWdU.getY();
 
-		rhs = sizeX * fAWdU.getZ() + sizeZ * fAWdU.getZ();
+        if (fAWxDdU.getX() > rhs) {
+            return false;
+        }
 
-		if(fAWxDdU.getY() > rhs) {
-			return false;
-		}
+        fAWxDdU.setY(Math.abs(wCrossD.dot(Vector.UNIT_Y)));
 
-		fAWxDdU.setZ(Math.abs(wCrossD.dot(Vector.UNIT_Z)));
+        rhs = sizeX * fAWdU.getZ() + sizeZ * fAWdU.getZ();
 
-		rhs = sizeX * fAWdU.getY() + sizeY * fAWdU.getX();
+        if (fAWxDdU.getY() > rhs) {
+            return false;
+        }
 
-		return !(fAWxDdU.getZ() > rhs);
-	}
+        fAWxDdU.setZ(Math.abs(wCrossD.dot(Vector.UNIT_Z)));
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " size = " + size + ", sizeX = " + sizeX + ", sizeY = " + sizeY + ", sizeZ = " + sizeZ + ", center = " + center + ", offset = " + offset;
-	}
+        rhs = sizeX * fAWdU.getY() + sizeY * fAWdU.getX();
 
-	@Override
-	public void update(final Rotation rotation, final VectorBuffer buffer) {
+        return !(fAWxDdU.getZ() > rhs);
+    }
 
-		matrix.set(rotation);
-		matrix.absoluteLocal();
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " size = " + size + ", sizeX = " + sizeX + ", sizeY = " + sizeY + ", sizeZ = " + sizeZ + ", center = " + center + ", offset = " + offset;
+    }
 
-		final Vector vector = buffer.getNextVector();
-		vector.set(size);
+    @Override
+    public void update(final Rotation rotation, final VectorBuffer buffer) {
 
-		matrix.mult(vector, vector);
+        matrix.set(rotation);
+        matrix.absoluteLocal();
 
-		sizeX = Math.abs(vector.getX());
-		sizeY = Math.abs(vector.getY());
-		sizeZ = Math.abs(vector.getZ());
-	}
+        final Vector vector = buffer.getNextVector();
+        vector.set(size);
+
+        matrix.mult(vector, vector);
+
+        sizeX = Math.abs(vector.getX());
+        sizeY = Math.abs(vector.getY());
+        sizeZ = Math.abs(vector.getZ());
+    }
 }

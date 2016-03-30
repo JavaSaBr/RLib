@@ -3,71 +3,78 @@ package rlib.monitoring;
 import javax.management.MXBean;
 
 /**
- * Реализация менеджера по мониторингу состояния Java процесса с помощью
- * {@link MXBean}.
- * 
+ * Реализация менеджера по мониторингу состояния Java процесса с помощью {@link MXBean}.
+ *
  * @author Ronn
  */
 public final class MonitoringManager {
 
-	public static MonitoringManager getInstance() {
+    private static MonitoringManager instance;
 
-		if(instance == null) {
-			instance = new MonitoringManager();
-		}
+    public static MonitoringManager getInstance() {
 
-		return instance;
-	}
+        if (instance == null) {
+            instance = new MonitoringManager();
+        }
 
-	private static MonitoringManager instance;
+        return instance;
+    }
 
-	/** мониторинг использования памяти в Java процессе */
-	private final MemoryMonitoring memoryMonitoring;
-	/** мониторинг работы Java процесса */
-	private final RuntimeMonitoring runtimeMonitoring;
-	/** мониторинг состояния потоков Java процесса */
-	private final ThreadMonitoring threadMonitoring;
+    /**
+     * Мониторинг использования памяти в Java процессе.
+     */
+    private final MemoryMonitoring memoryMonitoring;
 
-	private MonitoringManager() {
-		this.memoryMonitoring = new MemoryMonitoring();
-		this.runtimeMonitoring = new RuntimeMonitoring();
-		this.threadMonitoring = new ThreadMonitoring();
-	}
+    /**
+     * Мониторинг работы Java процесса.
+     */
+    private final RuntimeMonitoring runtimeMonitoring;
 
-	/**
-	 * @return мониторинг использования памяти в Java процессе.
-	 */
-	public MemoryMonitoring getMemoryMonitoring() {
-		return memoryMonitoring;
-	}
+    /**
+     * Мониторинг состояния потоков Java процесса.
+     */
+    private final ThreadMonitoring threadMonitoring;
 
-	/**
-	 * @return мониторинг работы Java процесса.
-	 */
-	public RuntimeMonitoring getRuntimeMonitoring() {
-		return runtimeMonitoring;
-	}
+    private MonitoringManager() {
+        this.memoryMonitoring = new MemoryMonitoring();
+        this.runtimeMonitoring = new RuntimeMonitoring();
+        this.threadMonitoring = new ThreadMonitoring();
+    }
 
-	/**
-	 * @return мониторинг состояния потоков Java процесса.
-	 */
-	public ThreadMonitoring getThreadMonitoring() {
-		return threadMonitoring;
-	}
+    /**
+     * @return мониторинг использования памяти в Java процессе.
+     */
+    public MemoryMonitoring getMemoryMonitoring() {
+        return memoryMonitoring;
+    }
 
-	@Override
-	public String toString() {
+    /**
+     * @return мониторинг работы Java процесса.
+     */
+    public RuntimeMonitoring getRuntimeMonitoring() {
+        return runtimeMonitoring;
+    }
 
-		final StringBuilder builder = new StringBuilder("\n");
-		builder.append("#==========Java Process Info==========#").append('\n');
-		builder.append("#=============Memory Info=============#");
-		builder.append('\n').append(getMemoryMonitoring()).append('\n');
-		builder.append("#============Runtime Info=============#");
-		builder.append('\n').append(getRuntimeMonitoring()).append('\n');
-		// builder.append("#============Current state============#");
-		// builder.append('\n').append(getThreadMonitoring()).append('\n');
-		builder.append("#=====================================#");
+    /**
+     * @return мониторинг состояния потоков Java процесса.
+     */
+    public ThreadMonitoring getThreadMonitoring() {
+        return threadMonitoring;
+    }
 
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+
+        final StringBuilder builder = new StringBuilder("\n");
+        builder.append("#==========Java Process Info==========#").append('\n');
+        builder.append("#=============Memory Info=============#");
+        builder.append('\n').append(getMemoryMonitoring()).append('\n');
+        builder.append("#============Runtime Info=============#");
+        builder.append('\n').append(getRuntimeMonitoring()).append('\n');
+        // builder.append("#============Current state============#");
+        // builder.append('\n').append(getThreadMonitoring()).append('\n');
+        builder.append("#=====================================#");
+
+        return builder.toString();
+    }
 }

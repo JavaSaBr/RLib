@@ -7,109 +7,125 @@ import rlib.util.linkedlist.LinkedList;
 
 /**
  * Реализация итератара для {@link LinkedList}
- * 
+ *
  * @author Ronn
  */
 public class IteratorImpl<E> implements Iterator<E> {
 
-	/** режим итерирования с начала в конец */
-	public static final int NEXT = 1;
-	/** режим итерирования с конца в начало */
-	public static final int PREV = 2;
+    /**
+     * Режим итерирования с начала в конец.
+     */
+    public static final int NEXT = 1;
 
-	/** итерируемый список */
-	private final LinkedList<E> list;
+    /**
+     * Режим итерирования с конца в начало.
+     */
+    public static final int PREV = 2;
 
-	/** последний возвращаемый элемнт */
-	private Node<E> lastReturned;
-	/** следующий элемент */
-	private Node<E> next;
+    /**
+     * Итерируемый список.
+     */
+    private final LinkedList<E> list;
 
-	/** режим итератора */
-	private final int mode;
+    /**
+     * Последний возвращаемый элемент.
+     */
+    private Node<E> lastReturned;
 
-	/** следующий индекс */
-	private int nextIndex;
+    /**
+     * Следующий элемент.
+     */
+    private Node<E> next;
 
-	protected IteratorImpl(final LinkedList<E> list, final int mode) {
-		this.nextIndex = 0;
-		this.mode = mode;
-		this.list = list;
-		setNext(mode == NEXT ? list.getFirstNode() : mode == PREV ? list.getLastNode() : null);
-	}
+    /**
+     * Режим итератора.
+     */
+    private final int mode;
 
-	private Node<E> getLastReturned() {
-		return lastReturned;
-	}
+    /**
+     * Следующий индекс.
+     */
+    private int nextIndex;
 
-	private Node<E> getNext() {
-		return next;
-	}
+    protected IteratorImpl(final LinkedList<E> list, final int mode) {
+        this.nextIndex = 0;
+        this.mode = mode;
+        this.list = list;
+        setNext(mode == NEXT ? list.getFirstNode() : mode == PREV ? list.getLastNode() : null);
+    }
 
-	@Override
-	public boolean hasNext() {
-		return mode == NEXT ? nextIndex < list.size() : mode == PREV ? nextIndex > 0 : false;
-	}
+    private Node<E> getLastReturned() {
+        return lastReturned;
+    }
 
-	@Override
-	public E next() {
+    private void setLastReturned(final Node<E> lastReturned) {
+        this.lastReturned = lastReturned;
+    }
 
-		if(!hasNext()) {
-			throw new NoSuchElementException();
-		}
+    private Node<E> getNext() {
+        return next;
+    }
 
-		if(mode == NEXT) {
+    private void setNext(final Node<E> next) {
+        this.next = next;
+    }
 
-			final Node<E> next = getNext();
-			final Node<E> lastReturned = next;
+    @Override
+    public boolean hasNext() {
+        return mode == NEXT ? nextIndex < list.size() : mode == PREV && nextIndex > 0;
+    }
 
-			setNext(next.getNext());
-			setLastReturned(lastReturned);
+    @Override
+    public E next() {
 
-			nextIndex++;
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
 
-			return lastReturned.getItem();
-		} else if(mode == PREV) {
+        if (mode == NEXT) {
 
-			final Node<E> next = getNext();
-			final Node<E> lastReturned = next;
+            final Node<E> next = getNext();
+            final Node<E> lastReturned = next;
 
-			setNext(next.getPrev());
-			setLastReturned(lastReturned);
+            setNext(next.getNext());
+            setLastReturned(lastReturned);
 
-			nextIndex--;
+            nextIndex++;
 
-			return lastReturned.getItem();
-		}
+            return lastReturned.getItem();
+        } else if (mode == PREV) {
 
-		return null;
-	}
+            final Node<E> next = getNext();
+            final Node<E> lastReturned = next;
 
-	@Override
-	public void remove() {
+            setNext(next.getPrev());
+            setLastReturned(lastReturned);
 
-		final Node<E> lastReturned = getLastReturned();
+            nextIndex--;
 
-		if(lastReturned == null) {
-			throw new IllegalStateException();
-		}
+            return lastReturned.getItem();
+        }
 
-		list.unlink(lastReturned);
+        return null;
+    }
 
-		if(mode == NEXT) {
-			nextIndex--;
-		} else if(mode == PREV) {
-			nextIndex++;
-		}
+    @Override
+    public void remove() {
 
-		setLastReturned(null);
-	}
+        final Node<E> lastReturned = getLastReturned();
 
-	private void setLastReturned(final Node<E> lastReturned) {
-		this.lastReturned = lastReturned;
-	}
+        if (lastReturned == null) {
+            throw new IllegalStateException();
+        }
 
-	private void setNext(final Node<E> next) {
-		this.next = next;
-	}
+        list.unlink(lastReturned);
+
+        if (mode == NEXT) {
+            nextIndex--;
+        } else if (mode == PREV) {
+            nextIndex++;
+        }
+
+        setLastReturned(null);
+    }
 }

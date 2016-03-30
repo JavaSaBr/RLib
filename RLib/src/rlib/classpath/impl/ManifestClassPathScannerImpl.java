@@ -1,9 +1,10 @@
 package rlib.classpath.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -14,92 +15,99 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Реализация сканера, который еще умеет из манифеста класспаз доставать.
- * 
+ * Реализация сканера, который еще умеет из манифеста classpath доставать.
+ *
  * @author Ronn
  */
-public class ManifestClassPathScannerImpl extends ClassPathScanerImpl {
+public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
 
-	/** рутовый класс для приложения */
-	private final Class<?> rootClass;
+    /**
+     * Рутовый класс для приложения.
+     */
+    private final Class<?> rootClass;
 
-	/** ключ, по которому будет извлекаться дополнительный classpath */
-	private final String classPathKey;
+    /**
+     * Ключ, по которому будет извлекаться дополнительный classpath.
+     */
+    private final String classPathKey;
 
-	public ManifestClassPathScannerImpl(final Class<?> rootClass, final String classPathKey) {
-		this.rootClass = rootClass;
-		this.classPathKey = classPathKey;
-	}
+    public ManifestClassPathScannerImpl(final Class<?> rootClass, final String classPathKey) {
+        this.rootClass = rootClass;
+        this.classPathKey = classPathKey;
+    }
 
-	public String[] getManifestClassPath() {
+    public String[] getManifestClassPath() {
 
-		final File rootFolder = Util.getRootFolderFromClass(rootClass);
+        final Path root = Util.getRootFolderFromClass(rootClass);
 
-		if(rootFolder == null) {
-			return new String[0];
-		}
+        if (root == null) {
+            return new String[0];
+        }
 
-		final Array<String> result = ArrayFactory.newArray(String.class);
+        final Array<String> result = ArrayFactory.newArray(String.class);
 
-		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        final Thread currentThread = Thread.currentThread();
+        final ClassLoader loader = currentThread.getContextClassLoader();
 
-		Enumeration<URL> urls;
+        Enumeration<URL> urls;
 
-		try {
+        try {
 
-			urls = loader.getResources(JarFile.MANIFEST_NAME);
+            urls = loader.getResources(JarFile.MANIFEST_NAME);
 
-			while(urls.hasMoreElements()) {
+            while (urls.hasMoreElements()) {
 
-				try {
+                try {
 
-					final URL url = urls.nextElement();
+                    final URL url = urls.nextElement();
 
-					final InputStream is = url.openStream();
+                    final InputStream is = url.openStream();
 
-					if(is != null) {
+                    if (is != null) {
 
-						final Manifest manifest = new Manifest(is);
-						final Attributes attributes = manifest.getMainAttributes();
+                        final Manifest manifest = new Manifest(is);
+                        final Attributes attributes = manifest.getMainAttributes();
 
-						final String value = attributes.getValue(classPathKey);
+                        final String value = attributes.getValue(classPathKey);
 
-						if(value == null) {
-							continue;
-						}
+                        if (value == null) {
+                            continue;
+                        }
 
-						final String[] classpath = value.split(" ");
+                        final String[] classpath = value.split(" ");
 
-						for(final String path : classpath) {
+                        for (final String path : classpath) {
 
-							final File file = new File(rootFolder.getAbsolutePath() + File.separator + path);
+                            final Path file = root.resolve(path);
 
-							if(file.exists()) {
-								result.add(file.getAbsolutePath());
-							}
-						}
-					}
+                            if (Files.exists(file)) {
+                                result.add(file.toString());
+                            }
+                        }
+                    }
 
-				} catch(final Exception e) {
-					LOGGER.warning(e);
-				}
-			}
-		} catch(final IOException e1) {
-			LOGGER.warning(e1);
-		}
+                } catch (final Exception e) {
+                    LOGGER.warning(e);
+                }
+            }
 
-		result.trimToSize();
-		return result.array();
-	}
+        } catch (final IOException e1) {
+            LOGGER.warning(e1);
+        }
 
-	@Override
-	protected String[] getPaths() {
+        result.trimToSize();
 
-		final Array<String> result = ArrayFactory.newArraySet(String.class);
-		result.addAll(super.getPaths());
-		result.addAll(getManifestClassPath());
-		result.trimToSize();
+        return result.array();
+    }
 
-		return result.array();
-	}
+    @Override
+    protected String[] getPaths() {
+
+        final Array<String> result = ArrayFactory.newArraySet(String.class);
+        result.addAll(super.getPaths());
+        result.addAll(getManifestClassPath());
+        result.trimToSize();
+
+        return result.array();
+    }
 }

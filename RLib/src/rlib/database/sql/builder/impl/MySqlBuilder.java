@@ -10,33 +10,33 @@ import rlib.database.sql.builder.operator.impl.MySqlSelectSqlOperator;
 
 /**
  * Реализация конструктора SQL запроса под MySQL.
- * 
+ *
  * @author Ronn
  */
 public class MySqlBuilder implements PrepareSqlBuilder {
 
-	@Override
-	public DeleteSqlOperator delete() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public DeleteSqlOperator delete() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public InsertSqlOperator insert() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public InsertSqlOperator insert() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public SelectSqlOperator select(final SelectSqlOperatorArgs args) {
-		final MySqlSelectSqlOperator operator = new MySqlSelectSqlOperator();
-		args.applyArgs(operator);
-		return operator;
-	}
+    @Override
+    public SelectSqlOperator select(final SelectSqlOperatorArgs args) {
+        final MySqlSelectSqlOperator operator = new MySqlSelectSqlOperator();
+        args.applyArgs(operator);
+        return operator;
+    }
 
-	@Override
-	public UpdateSqlOperator update() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public UpdateSqlOperator update() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

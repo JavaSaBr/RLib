@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="rlib-sources">
+    <output-path>$PROJECT_DIR$/RLib/build</output-path>
+    <root id="archive" name="rlib-sources.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/RLib/src" />
+    </root>
+  </artifact>
+</component>

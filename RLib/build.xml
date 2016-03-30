@@ -8,13 +8,15 @@
     <property name="Game Client.location" value="../../space-shift/Game Client"/>
     <property name="ECLIPSE_HOME" value="../../../../../../home/ronn/eclipse"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+              	
     <path id="RLib.classpath">
         <pathelement location="bin"/>
         <pathelement location="libs/bonecp-0.7.1.RELEASE.jar"/>
         <pathelement location="libs/mysql-connector-java-5.1.17.jar"/>
     </path>
+              	
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
@@ -23,9 +25,11 @@
             </fileset>
         </copy>
     </target>
+              	
     <target name="clean">
         <delete dir="bin"/>
     </target>
+              	
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>

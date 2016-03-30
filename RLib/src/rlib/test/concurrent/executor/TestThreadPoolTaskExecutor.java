@@ -11,38 +11,38 @@ import rlib.concurrent.util.ThreadUtils;
 
 /**
  * Реализация теста многопоточного исполнителя задач.
- * 
+ *
  * @author Ronn
  */
 public class TestThreadPoolTaskExecutor extends Assert {
 
-	private static final int TASK_LIMIT = 100;
+    private static final int TASK_LIMIT = 100;
 
-	@Test
-	public void test() {
+    @Test
+    public void test() {
 
-		final String header = TestThreadPoolTaskExecutor.class.getSimpleName() + ": ";
+        final String header = TestThreadPoolTaskExecutor.class.getSimpleName() + ": ";
 
-		System.out.println(header + " start test executor...");
+        System.out.println(header + " start test executor...");
 
-		final GroupThreadFactory factory = new GroupThreadFactory("test_executor", Thread.class, Thread.NORM_PRIORITY);
+        final GroupThreadFactory factory = new GroupThreadFactory("test_executor", Thread.class, Thread.NORM_PRIORITY);
 
-		final TaskExecutor<Void> executor = new ThreadPoolTaskExecutor<>(factory, 5, 5);
+        final TaskExecutor<Void> executor = new ThreadPoolTaskExecutor<>(factory, 5, 5);
 
-		final AtomicInteger counter = new AtomicInteger();
+        final AtomicInteger counter = new AtomicInteger();
 
-		for(int i = 0, length = TASK_LIMIT; i < length; i++) {
+        for (int i = 0, length = TASK_LIMIT; i < length; i++) {
 
-			executor.execute((local, currentTime) -> {
-				counter.incrementAndGet();
-				ThreadUtils.sleep(1);
-			});
-		}
+            executor.execute((local, currentTime) -> {
+                counter.incrementAndGet();
+                ThreadUtils.sleep(1);
+            });
+        }
 
-		ThreadUtils.sleep(30);
+        ThreadUtils.sleep(30);
 
-		assertTrue(counter.get() == TASK_LIMIT);
+        assertTrue(counter.get() == TASK_LIMIT);
 
-		System.out.println(header + " test executor finished.");
-	}
+        System.out.println(header + " test executor finished.");
+    }
 }

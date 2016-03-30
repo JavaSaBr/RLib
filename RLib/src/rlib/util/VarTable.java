@@ -1,1507 +1,1506 @@
 package rlib.util;
 
-import static java.lang.Float.parseFloat;
-
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import rlib.geom.Rotation;
 import rlib.geom.Vector;
-import rlib.util.table.Table;
-import rlib.util.table.TableFactory;
+import rlib.util.dictionary.DictionaryFactory;
+import rlib.util.dictionary.ObjectDictionary;
+
+import static java.lang.Float.parseFloat;
 
 /**
  * Реализация таблицы разнородных параметров.
- * 
+ *
  * @author Ronn
  * @created 29.02.2012
  */
 public class VarTable {
 
-	/**
-	 * @return новый экземпляр таблицы.
-	 */
-	public static VarTable newInstance() {
-		return new VarTable();
-	}
-
-	/**
-	 * @param node хмл узел с атрибутами.
-	 * @return новая таблица с атрибутами узла.
-	 */
-	public static VarTable newInstance(final Node node) {
-		return newInstance().parse(node);
-	}
-
-	public static VarTable newInstance(final Node node, final String childName, final String nameType, final String nameValue) {
-		return newInstance().parse(node, childName, nameType, nameValue);
-	}
-
-	/** таблица параметров */
-	private final Table<String, Object> values;
-
-	public VarTable() {
-		this.values = TableFactory.newObjectTable();
-	}
-
-	/**
-	 * Очистка таблицы.
-	 */
-	public void clear() {
-		values.clear();
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T get(final String key) {
-		return (T) values.get(key);
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param type тип параметра.
-	 * @return значение параметра.
-	 */
-	public <T> T get(final String key, final Class<T> type) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException();
-		}
-
-		if(type.isInstance(object)) {
-			return type.cast(object);
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param type тип параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public <T, E extends T> T get(final String key, final Class<T> type, final E def) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			return def;
-		}
-
-		if(type.isInstance(object)) {
-			return type.cast(object);
-		}
-
-		return def;
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T get(final String key, final T def) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			return def;
-		}
-
-		final Class<? extends Object> type = def.getClass();
-
-		if(type.isInstance(object)) {
-			return (T) object;
-		}
-
-		return def;
-	}
-
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param type тип значений параметра.
-	 * @return массив значений параметра.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T[] getArray(final String key, final Class<T[]> type) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
-
-		if(type.isInstance(object)) {
-			return (T[]) object;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param type тип значений параметра.
-	 * @param def список значений по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T[] getArray(final String key, final Class<T[]> type, final T... def) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			return def;
-		}
-
-		if(type.isInstance(object)) {
-			return (T[]) object;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public boolean getBoolean(final String key) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
-
-		if(object instanceof Boolean) {
-			return ((Boolean) object).booleanValue();
-		}
-
-		if(object instanceof String) {
-			return Boolean.parseBoolean(object.toString());
-		}
+    /**
+     * @return новый экземпляр таблицы.
+     */
+    public static VarTable newInstance() {
+        return new VarTable();
+    }
+
+    /**
+     * @param node хмл узел с атрибутами.
+     * @return новая таблица с атрибутами узла.
+     */
+    public static VarTable newInstance(final Node node) {
+        return newInstance().parse(node);
+    }
+
+    public static VarTable newInstance(final Node node, final String childName, final String nameType, final String nameValue) {
+        return newInstance().parse(node, childName, nameType, nameValue);
+    }
+
+    /**
+     * Таблица параметров.
+     */
+    private final ObjectDictionary<String, Object> values;
+
+    public VarTable() {
+        this.values = DictionaryFactory.newObjectDictionary();
+    }
+
+    /**
+     * Очистка таблицы.
+     */
+    public void clear() {
+        values.clear();
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(final String key) {
+        return (T) values.get(key);
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key  ключ параметра.
+     * @param type тип параметра.
+     * @return значение параметра.
+     */
+    public <T> T get(final String key, final Class<T> type) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            throw new IllegalArgumentException();
+        }
+
+        if (type.isInstance(object)) {
+            return type.cast(object);
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key  ключ параметра.
+     * @param type тип параметра.
+     * @param def  значение по умолчанию.
+     * @return значение параметра.
+     */
+    public <T, E extends T> T get(final String key, final Class<T> type, final E def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        }
+
+        if (type.isInstance(object)) {
+            return type.cast(object);
+        }
+
+        return def;
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(final String key, final T def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        }
+
+        final Class<? extends Object> type = def.getClass();
+
+        if (type.isInstance(object)) {
+            return (T) object;
+        }
+
+        return def;
+    }
+
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key  ключ параметра.
+     * @param type тип значений параметра.
+     * @return массив значений параметра.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T[] getArray(final String key, final Class<T[]> type) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
+
+        if (type.isInstance(object)) {
+            return (T[]) object;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key  ключ параметра.
+     * @param type тип значений параметра.
+     * @param def  список значений по умолчанию.
+     * @return массив значений параметра.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T[] getArray(final String key, final Class<T[]> type, final T... def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        }
+
+        if (type.isInstance(object)) {
+            return (T[]) object;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public boolean getBoolean(final String key) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
+
+        if (object instanceof Boolean) {
+            return ((Boolean) object).booleanValue();
+        }
+
+        if (object instanceof String) {
+            return Boolean.parseBoolean(object.toString());
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public boolean getBoolean(final String key, final boolean def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        }
+
+        if (object instanceof Boolean) {
+            return ((Boolean) object).booleanValue();
+        }
+
+        if (object instanceof String) {
+            return Boolean.parseBoolean(object.toString());
+        }
+
+        return def;
+    }
+
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    public boolean[] getBooleanArray(final String key, final String regex) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
+
+        if (object instanceof boolean[]) {
+            return (boolean[]) object;
+        }
+
+        if (object instanceof String) {
+
+            final String[] strs = object.toString().split(regex);
+
+            final boolean[] result = new boolean[strs.length];
+
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Boolean.parseBoolean(strs[i]);
+            }
+
+            return result;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    public boolean[] getBooleanArray(final String key, final String regex, final boolean... def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        }
+
+        if (object instanceof boolean[]) {
+            return (boolean[]) object;
+        }
+
+        if (object instanceof String) {
+
+            final String[] strs = object.toString().split(regex);
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public boolean getBoolean(final String key, final boolean def) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			return def;
-		}
-
-		if(object instanceof Boolean) {
-			return ((Boolean) object).booleanValue();
-		}
-
-		if(object instanceof String) {
-			return Boolean.parseBoolean(object.toString());
-		}
-
-		return def;
-	}
+            final boolean[] result = new boolean[strs.length];
+
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Boolean.parseBoolean(strs[i]);
+            }
+
+            return result;
+        }
+
+        return def;
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public byte getByte(final String key) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
+
+        if (object instanceof Byte) {
+            return ((Byte) object).byteValue();
+        }
+
+        if (object instanceof String) {
+            return Byte.parseByte(object.toString());
+        }
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	public boolean[] getBooleanArray(final String key, final String regex) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
-
-		if(object instanceof boolean[]) {
-			return (boolean[]) object;
-		}
-
-		if(object instanceof String) {
-
-			final String[] strs = object.toString().split(regex);
-
-			final boolean[] result = new boolean[strs.length];
-
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Boolean.parseBoolean(strs[i]);
-			}
-
-			return result;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	public boolean[] getBooleanArray(final String key, final String regex, final boolean... def) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			return def;
-		}
-
-		if(object instanceof boolean[]) {
-			return (boolean[]) object;
-		}
-
-		if(object instanceof String) {
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-			final String[] strs = object.toString().split(regex);
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public byte getByte(final String key, final byte def) {
+
+        final Object object = values.get(key);
 
-			final boolean[] result = new boolean[strs.length];
+        if (object == null) {
+            return def;
+        }
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Boolean.parseBoolean(strs[i]);
-			}
-
-			return result;
-		}
-
-		return def;
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public byte getByte(final String key) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        if (object instanceof Byte) {
+            return ((Byte) object).byteValue();
+        }
 
-		if(object instanceof Byte) {
-			return ((Byte) object).byteValue();
-		}
+        if (object instanceof String) {
+            return Byte.parseByte(object.toString());
+        }
 
-		if(object instanceof String) {
-			return Byte.parseByte(object.toString());
-		}
+        return def;
+    }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    public byte[] getByteArray(final String key, final String regex) {
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public byte getByte(final String key, final byte def) {
+        final Object object = values.get(key);
+
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
+
+        if (object instanceof byte[]) {
+            return (byte[]) object;
+        }
+
+        if (object instanceof String) {
 
-		final Object object = values.get(key);
+            final String[] strs = object.toString().split(regex);
+
+            final byte[] result = new byte[strs.length];
 
-		if(object == null) {
-			return def;
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Byte.parseByte(strs[i]);
+            }
+
+            return result;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    public byte[] getByteArray(final String key, final String regex, final byte... def) {
+
+        final Object object = values.get(key);
 
-		if(object instanceof Byte) {
-			return ((Byte) object).byteValue();
-		}
+        if (object == null) {
+            return def;
+        }
 
-		if(object instanceof String) {
-			return Byte.parseByte(object.toString());
-		}
+        if (object instanceof byte[]) {
+            return (byte[]) object;
+        }
 
-		return def;
-	}
+        if (object instanceof String) {
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	public byte[] getByteArray(final String key, final String regex) {
+            final String[] strs = object.toString().split(regex);
 
-		final Object object = values.get(key);
+            final byte[] result = new byte[strs.length];
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Byte.parseByte(strs[i]);
+            }
+
+            return result;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public double getDouble(final String key) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-		if(object instanceof byte[]) {
-			return (byte[]) object;
-		}
+        if (object instanceof Double) {
+            return ((Double) object).doubleValue();
+        }
 
-		if(object instanceof String) {
+        if (object instanceof String) {
+            return Double.parseDouble(object.toString());
+        }
 
-			final String[] strs = object.toString().split(regex);
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-			final byte[] result = new byte[strs.length];
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public double getDouble(final String key, final double def) {
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Byte.parseByte(strs[i]);
-			}
-
-			return result;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	public byte[] getByteArray(final String key, final String regex, final byte... def) {
+        final Object object = values.get(key);
 
-		final Object object = values.get(key);
+        if (object == null) {
+            return def;
+        }
 
-		if(object == null) {
-			return def;
-		}
+        if (object instanceof Double) {
+            return ((Double) object).doubleValue();
+        }
 
-		if(object instanceof byte[]) {
-			return (byte[]) object;
-		}
+        if (object instanceof String) {
+            return Double.parseDouble(object.toString());
+        }
 
-		if(object instanceof String) {
+        return def;
+    }
 
-			final String[] strs = object.toString().split(regex);
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    public double[] getDoubleArray(final String key, final String regex) {
 
-			final byte[] result = new byte[strs.length];
+        final Object object = values.get(key);
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Byte.parseByte(strs[i]);
-			}
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-			return result;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public double getDouble(final String key) {
-
-		final Object object = values.get(key);
+        if (object instanceof double[]) {
+            return (double[]) object;
+        }
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        if (object instanceof String) {
 
-		if(object instanceof Double) {
-			return ((Double) object).doubleValue();
-		}
+            final String[] strs = object.toString().split(regex);
 
-		if(object instanceof String) {
-			return Double.parseDouble(object.toString());
-		}
+            final double[] result = new double[strs.length];
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Double.parseDouble(strs[i]);
+            }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public double getDouble(final String key, final double def) {
+            return result;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    public double[] getDoubleArray(final String key, final String regex, final double... def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof double[]) {
+            return (double[]) object;
+        }
 
-		if(object == null) {
-			return def;
-		}
+        if (object instanceof String) {
 
-		if(object instanceof Double) {
-			return ((Double) object).doubleValue();
-		}
+            final String[] strs = object.toString().split(regex);
 
-		if(object instanceof String) {
-			return Double.parseDouble(object.toString());
-		}
+            final double[] result = new double[strs.length];
 
-		return def;
-	}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Double.parseDouble(strs[i]);
+            }
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	public double[] getDoubleArray(final String key, final String regex) {
+            return result;
+        }
 
-		final Object object = values.get(key);
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key  ключ параметра.
+     * @param type тип параметра.
+     * @return значение параметра.
+     */
+    public <T extends Enum<T>> T getEnum(final String key, final Class<T> type) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
+
+        if (type.isInstance(object)) {
+            return type.cast(object);
+        }
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        if (object instanceof String) {
+            return Enum.valueOf(type, object.toString());
+        }
 
-		if(object instanceof double[]) {
-			return (double[]) object;
-		}
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		if(object instanceof String) {
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key  ключ параметра.
+     * @param type тип параметра.
+     * @param def  значение по умолчанию.
+     * @return значение параметра.
+     */
+    public <T extends Enum<T>> T getEnum(final String key, final Class<T> type, final T def) {
 
-			final String[] strs = object.toString().split(regex);
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        }
 
-			final double[] result = new double[strs.length];
+        if (type.isInstance(object)) {
+            return type.cast(object);
+        }
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Double.parseDouble(strs[i]);
-			}
+        if (object instanceof String) {
+            return Enum.valueOf(type, object.toString());
+        }
 
-			return result;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	public double[] getDoubleArray(final String key, final String regex, final double... def) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			return def;
-		}
+        return def;
+    }
 
-		if(object instanceof double[]) {
-			return (double[]) object;
-		}
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param type  тип значений параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex) {
 
-		if(object instanceof String) {
+        final Object object = values.get(key);
 
-			final String[] strs = object.toString().split(regex);
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-			final double[] result = new double[strs.length];
+        if (object instanceof Enum[]) {
+            return (T[]) object;
+        }
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Double.parseDouble(strs[i]);
-			}
+        if (object instanceof String) {
 
-			return result;
-		}
+            final String[] strs = object.toString().split(regex);
 
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param type тип параметра.
-	 * @return значение параметра.
-	 */
-	public <T extends Enum<T>> T getEnum(final String key, final Class<T> type) {
-
-		final Object object = values.get(key);
+            final T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Enum.valueOf(type, strs[i]);
+            }
 
-		if(type.isInstance(object)) {
-			return type.cast(object);
-		}
+            return result;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param type  тип значений параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex, final T... def) {
 
-		if(object instanceof String) {
-			return Enum.valueOf(type, object.toString());
-		}
+        final Object object = values.get(key);
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object == null) {
+            return def;
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param type тип параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public <T extends Enum<T>> T getEnum(final String key, final Class<T> type, final T def) {
+        if (object instanceof Enum[]) {
+            return (T[]) object;
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof String) {
 
-		if(object == null) {
-			return def;
-		}
+            final String[] strs = object.toString().split(regex);
 
-		if(type.isInstance(object)) {
-			return type.cast(object);
-		}
+            final T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
 
-		if(object instanceof String) {
-			return Enum.valueOf(type, object.toString());
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Enum.valueOf(type, strs[i]);
+            }
 
-		return def;
-	}
+            return result;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public float getFloat(final String key) {
+
+        final Object object = values.get(key);
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param type тип значений параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex) {
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof Float) {
+            return ((Float) object).floatValue();
+        }
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        if (object instanceof String) {
+            return Float.parseFloat(object.toString());
+        }
 
-		if(object instanceof Enum[]) {
-			return (T[]) object;
-		}
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		if(object instanceof String) {
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public float getFloat(final String key, final float def) {
 
-			final String[] strs = object.toString().split(regex);
+        final Object object = values.get(key);
 
-			final T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
+        if (object == null) {
+            return def;
+        }
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Enum.valueOf(type, strs[i]);
-			}
+        if (object instanceof Float) {
+            return ((Float) object).floatValue();
+        }
 
-			return result;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param type тип значений параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex, final T... def) {
+        if (object instanceof String) {
+            return Float.parseFloat(object.toString());
+        }
 
-		final Object object = values.get(key);
+        return def;
+    }
 
-		if(object == null) {
-			return def;
-		}
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    public float[] getFloatArray(final String key, final String regex) {
 
-		if(object instanceof Enum[]) {
-			return (T[]) object;
-		}
+        final Object object = values.get(key);
 
-		if(object instanceof String) {
+        if (object == null) {
+            throw new IllegalArgumentException();
+        }
 
-			final String[] strs = object.toString().split(regex);
+        if (object instanceof float[]) {
+            return (float[]) object;
+        }
 
-			final T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
+        if (object instanceof String) {
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Enum.valueOf(type, strs[i]);
-			}
+            final String[] strs = object.toString().split(regex);
 
-			return result;
-		}
+            final float[] result = new float[strs.length];
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Float.parseFloat(strs[i]);
+            }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public float getFloat(final String key) {
+            return result;
+        }
+
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		final Object object = values.get(key);
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    public float[] getFloatArray(final String key, final String regex, final float... def) {
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        final Object object = values.get(key);
 
-		if(object instanceof Float) {
-			return ((Float) object).floatValue();
-		}
+        if (object == null) {
+            return def;
+        }
 
-		if(object instanceof String) {
-			return Float.parseFloat(object.toString());
-		}
+        if (object instanceof float[]) {
+            return (float[]) object;
+        }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object instanceof String) {
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public float getFloat(final String key, final float def) {
+            final String[] strs = object.toString().split(regex);
 
-		final Object object = values.get(key);
+            final float[] result = new float[strs.length];
 
-		if(object == null) {
-			return def;
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Float.parseFloat(strs[i]);
+            }
 
-		if(object instanceof Float) {
-			return ((Float) object).floatValue();
-		}
+            return result;
+        }
 
-		if(object instanceof String) {
-			return Float.parseFloat(object.toString());
-		}
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		return def;
-	}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public int getInteger(final String key) {
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	public float[] getFloatArray(final String key, final String regex) {
+        final Object object = values.get(key);
 
-		final Object object = values.get(key);
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-		if(object == null) {
-			throw new IllegalArgumentException();
-		}
+        if (object instanceof Integer) {
+            return ((Integer) object).intValue();
+        }
 
-		if(object instanceof float[]) {
-			return (float[]) object;
-		}
+        if (object instanceof String) {
+            return Integer.parseInt(object.toString());
+        }
 
-		if(object instanceof String) {
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-			final String[] strs = object.toString().split(regex);
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public int getInteger(final String key, final int def) {
 
-			final float[] result = new float[strs.length];
+        final Object object = values.get(key);
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Float.parseFloat(strs[i]);
-			}
+        if (object == null) {
+            return def;
+        }
 
-			return result;
-		}
+        if (object instanceof Integer) {
+            return ((Integer) object).intValue();
+        }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object instanceof String) {
+            return Integer.parseInt(object.toString());
+        }
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	public float[] getFloatArray(final String key, final String regex, final float... def) {
+        return def;
+    }
 
-		final Object object = values.get(key);
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    public int[] getIntegerArray(final String key, final String regex) {
 
-		if(object == null) {
-			return def;
-		}
+        final Object object = values.get(key);
 
-		if(object instanceof float[]) {
-			return (float[]) object;
-		}
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-		if(object instanceof String) {
+        if (object instanceof int[]) {
+            return (int[]) object;
+        }
 
-			final String[] strs = object.toString().split(regex);
+        if (object instanceof String) {
 
-			final float[] result = new float[strs.length];
+            final String[] strs = object.toString().split(regex);
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Float.parseFloat(strs[i]);
-			}
+            final int[] result = new int[strs.length];
 
-			return result;
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Integer.parseInt(strs[i]);
+            }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+            return result;
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public int getInteger(final String key) {
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		final Object object = values.get(key);
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    public int[] getIntegerArray(final String key, final String regex, final int... def) {
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        final Object object = values.get(key);
 
-		if(object instanceof Integer) {
-			return ((Integer) object).intValue();
-		}
+        if (object == null) {
+            return def;
+        }
 
-		if(object instanceof String) {
-			return Integer.parseInt(object.toString());
-		}
+        if (object instanceof int[]) {
+            return (int[]) object;
+        }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object instanceof String) {
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public int getInteger(final String key, final int def) {
+            final String[] strs = object.toString().split(regex);
 
-		final Object object = values.get(key);
+            final int[] result = new int[strs.length];
 
-		if(object == null) {
-			return def;
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Integer.parseInt(strs[i]);
+            }
 
-		if(object instanceof Integer) {
-			return ((Integer) object).intValue();
-		}
+            return result;
+        }
 
-		if(object instanceof String) {
-			return Integer.parseInt(object.toString());
-		}
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		return def;
-	}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public long getLong(final String key) {
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	public int[] getIntegerArray(final String key, final String regex) {
+        final Object object = values.get(key);
 
-		final Object object = values.get(key);
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        if (object instanceof Long) {
+            return ((Long) object).longValue();
+        }
 
-		if(object instanceof int[]) {
-			return (int[]) object;
-		}
+        if (object instanceof String) {
+            return Long.parseLong(object.toString());
+        }
 
-		if(object instanceof String) {
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-			final String[] strs = object.toString().split(regex);
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public long getLong(final String key, final long def) {
 
-			final int[] result = new int[strs.length];
+        final Object object = values.get(key);
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Integer.parseInt(strs[i]);
-			}
+        if (object == null) {
+            return def;
+        }
 
-			return result;
-		}
+        if (object instanceof Long) {
+            return ((Long) object).longValue();
+        }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object instanceof String) {
+            return Long.parseLong(object.toString());
+        }
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	public int[] getIntegerArray(final String key, final String regex, final int... def) {
+        return def;
+    }
 
-		final Object object = values.get(key);
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    public long[] getLongArray(final String key, final String regex) {
 
-		if(object == null) {
-			return def;
-		}
+        final Object object = values.get(key);
 
-		if(object instanceof int[]) {
-			return (int[]) object;
-		}
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-		if(object instanceof String) {
+        if (object instanceof long[]) {
+            return (long[]) object;
+        }
 
-			final String[] strs = object.toString().split(regex);
+        if (object instanceof String) {
 
-			final int[] result = new int[strs.length];
+            final String[] strs = object.toString().split(regex);
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Integer.parseInt(strs[i]);
-			}
+            final long[] result = new long[strs.length];
 
-			return result;
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Long.parseLong(strs[i]);
+            }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+            return result;
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public long getLong(final String key) {
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		final Object object = values.get(key);
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    public long[] getLongArray(final String key, final String regex, final long... def) {
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        final Object object = values.get(key);
 
-		if(object instanceof Long) {
-			return ((Long) object).longValue();
-		}
+        if (object == null) {
+            return def;
+        }
 
-		if(object instanceof String) {
-			return Long.parseLong(object.toString());
-		}
+        if (object instanceof long[]) {
+            return (long[]) object;
+        }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object instanceof String) {
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public long getLong(final String key, final long def) {
+            final String[] strs = object.toString().split(regex);
 
-		final Object object = values.get(key);
+            final long[] result = new long[strs.length];
 
-		if(object == null) {
-			return def;
-		}
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Long.parseLong(strs[i]);
+            }
 
-		if(object instanceof Long) {
-			return ((Long) object).longValue();
-		}
+            return result;
+        }
 
-		if(object instanceof String) {
-			return Long.parseLong(object.toString());
-		}
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		return def;
-	}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public Rotation getRotation(final String key) {
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	public long[] getLongArray(final String key, final String regex) {
+        final Object object = values.get(key);
 
-		final Object object = values.get(key);
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        if (object instanceof Rotation) {
+            return (Rotation) object;
+        }
 
-		if(object instanceof long[]) {
-			return (long[]) object;
-		}
+        if (object instanceof String) {
 
-		if(object instanceof String) {
+            final String[] vals = ((String) object).split(",");
 
-			final String[] strs = object.toString().split(regex);
+            final Rotation rotation = Rotation.newInstance();
+            rotation.setXYZW(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3]));
 
-			final long[] result = new long[strs.length];
+            return rotation;
+        }
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Long.parseLong(strs[i]);
-			}
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-			return result;
-		}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public Rotation getRotation(final String key, final Rotation def) {
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        final Object object = values.get(key);
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	public long[] getLongArray(final String key, final String regex, final long... def) {
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof Rotation) {
+            return (Rotation) object;
+        }
 
-		if(object == null) {
-			return def;
-		}
+        if (object instanceof String) {
 
-		if(object instanceof long[]) {
-			return (long[]) object;
-		}
+            final String[] vals = ((String) object).split(",");
 
-		if(object instanceof String) {
+            final Rotation rotation = Rotation.newInstance();
+            rotation.setXYZW(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3]));
 
-			final String[] strs = object.toString().split(regex);
+            return rotation;
+        }
 
-			final long[] result = new long[strs.length];
+        return def;
+    }
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Long.parseLong(strs[i]);
-			}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public short getShort(final String key) {
 
-			return result;
-		}
+        final Object object = values.get(key);
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public short getShort(final String key) {
+        if (object instanceof Short) {
+            return ((Short) object).shortValue();
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof String) {
+            return Short.parseShort(object.toString());
+        }
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		if(object instanceof Short) {
-			return ((Short) object).shortValue();
-		}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public short getShort(final String key, final short def) {
 
-		if(object instanceof String) {
-			return Short.parseShort(object.toString());
-		}
+        final Object object = values.get(key);
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object == null) {
+            return def;
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public short getShort(final String key, final short def) {
+        if (object instanceof Short) {
+            return ((Short) object).shortValue();
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof String) {
+            return Short.parseShort(object.toString());
+        }
 
-		if(object == null) {
-			return def;
-		}
+        return def;
+    }
 
-		if(object instanceof Short) {
-			return ((Short) object).shortValue();
-		}
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    public short[] getShortArray(final String key, final String regex) {
 
-		if(object instanceof String) {
-			return Short.parseShort(object.toString());
-		}
+        final Object object = values.get(key);
 
-		return def;
-	}
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	public short[] getShortArray(final String key, final String regex) {
+        if (object instanceof short[]) {
+            return (short[]) object;
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof String) {
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+            final String[] strs = object.toString().split(regex);
 
-		if(object instanceof short[]) {
-			return (short[]) object;
-		}
+            final short[] result = new short[strs.length];
 
-		if(object instanceof String) {
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Short.parseShort(strs[i]);
+            }
 
-			final String[] strs = object.toString().split(regex);
+            return result;
+        }
 
-			final short[] result = new short[strs.length];
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Short.parseShort(strs[i]);
-			}
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    public short[] getShortArray(final String key, final String regex, final short... def) {
 
-			return result;
-		}
+        final Object object = values.get(key);
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object == null) {
+            return def;
+        }
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	public short[] getShortArray(final String key, final String regex, final short... def) {
+        if (object instanceof short[]) {
+            return (short[]) object;
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof String) {
 
-		if(object == null) {
-			return def;
-		}
+            final String[] strs = object.toString().split(regex);
 
-		if(object instanceof short[]) {
-			return (short[]) object;
-		}
+            final short[] result = new short[strs.length];
 
-		if(object instanceof String) {
+            for (int i = 0, length = strs.length; i < length; i++) {
+                result[i] = Short.parseShort(strs[i]);
+            }
 
-			final String[] strs = object.toString().split(regex);
+            return result;
+        }
 
-			final short[] result = new short[strs.length];
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-			for(int i = 0, length = strs.length; i < length; i++) {
-				result[i] = Short.parseShort(strs[i]);
-			}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public String getString(final String key) {
 
-			return result;
-		}
+        final Object object = values.get(key);
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public String getString(final String key) {
+        if (object instanceof String) {
+            return object.toString();
+        }
 
-		final Object object = values.get(key);
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public String getString(final String key, final String def) {
 
-		if(object instanceof String) {
-			return object.toString();
-		}
+        final Object object = values.get(key);
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object == null) {
+            return def;
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public String getString(final String key, final String def) {
+        if (object instanceof String) {
+            return object.toString();
+        }
 
-		final Object object = values.get(key);
+        return def;
+    }
 
-		if(object == null) {
-			return def;
-		}
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @return массив значений параметра.
+     */
+    public String[] getStringArray(final String key, final String regex) {
 
-		if(object instanceof String) {
-			return object.toString();
-		}
+        final Object object = values.get(key);
 
-		return def;
-	}
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @return массив значений параметра.
-	 */
-	public String[] getStringArray(final String key, final String regex) {
+        if (object instanceof String[]) {
+            return (String[]) object;
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof String) {
+            return object.toString().split(regex);
+        }
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-		if(object instanceof String[]) {
-			return (String[]) object;
-		}
+    /**
+     * Получение массива значений параметра по ключу.
+     *
+     * @param key   ключ параметра.
+     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
+     *              значений.
+     * @param def   набор значений параметра по умолчанию.
+     * @return массив значений параметра.
+     */
+    public String[] getStringArray(final String key, final String regex, final String... def) {
+        final Object object = values.get(key);
 
-		if(object instanceof String) {
-			return object.toString().split(regex);
-		}
+        if (object == null) {
+            return def;
+        }
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object instanceof String[]) {
+            return (String[]) object;
+        }
 
-	/**
-	 * Получение массива значений параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param regex регулярное выражение для разбития строки значения параметра
-	 * на массив нужных значений.
-	 * @param def набор значений параметра по умолчанию.
-	 * @return массив значений параметра.
-	 */
-	public String[] getStringArray(final String key, final String regex, final String... def) {
-		final Object object = values.get(key);
+        if (object instanceof String) {
+            return ((String) object).split(regex);
+        }
 
-		if(object == null) {
-			return def;
-		}
+        throw new IllegalArgumentException("no found " + key);
+    }
 
-		if(object instanceof String[]) {
-			return (String[]) object;
-		}
+    /**
+     * @return все пропаршенные параметры.
+     */
+    public ObjectDictionary<String, Object> getValues() {
+        return values;
+    }
 
-		if(object instanceof String) {
-			return (String[]) object;
-		}
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @return значение параметра.
+     */
+    public Vector getVector(final String key) {
 
-		throw new IllegalArgumentException("no found " + key);
-	}
+        final Object object = values.get(key);
 
-	/**
-	 * @return все пропаршенные параметры.
-	 */
-	public Table<String, Object> getValues() {
-		return values;
-	}
+        if (object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public Vector getVector(final String key) {
+        if (object instanceof Vector) {
+            return (Vector) object;
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof String) {
 
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
+            final String[] vals = ((String) object).split(",");
 
-		if(object instanceof Vector) {
-			return (Vector) object;
-		}
+            final Vector vector = Vector.newInstance();
+            vector.setXYZ(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
 
-		if(object instanceof String) {
+            return vector;
+        }
 
-			final String[] vals = ((String) object).split(",");
+        throw new IllegalArgumentException("not found " + key);
+    }
 
-			final Vector vector = Vector.newInstance();
-			vector.setXYZ(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key ключ параметра.
+     * @param def значение по умолчанию.
+     * @return значение параметра.
+     */
+    public Vector getVector(final String key, final Vector def) {
 
-			return vector;
-		}
+        final Object object = values.get(key);
 
-		throw new IllegalArgumentException("not found " + key);
-	}
+        if (object == null) {
+            return def;
+        }
 
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public Vector getVector(final String key, final Vector def) {
+        if (object instanceof Vector) {
+            return (Vector) object;
+        }
 
-		final Object object = values.get(key);
+        if (object instanceof String) {
 
-		if(object == null) {
-			return def;
-		}
-
-		if(object instanceof Vector) {
-			return (Vector) object;
-		}
-
-		if(object instanceof String) {
-
-			final String[] vals = ((String) object).split(",");
-
-			final Vector vector = Vector.newInstance();
-			vector.setXYZ(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
-
-			return vector;
-		}
-
-		return def;
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @return значение параметра.
-	 */
-	public Rotation getRotation(final String key) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
-
-		if(object instanceof Rotation) {
-			return (Rotation) object;
-		}
-
-		if(object instanceof String) {
-
-			final String[] vals = ((String) object).split(",");
-
-			final Rotation rotation = Rotation.newInstance();
-			rotation.setXYZW(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3]));
-
-			return rotation;
-		}
-
-		throw new IllegalArgumentException("not found " + key);
-	}
-
-	/**
-	 * Получение значение параметра по ключу.
-	 * 
-	 * @param key ключ параметра.
-	 * @param def значение по умолчанию.
-	 * @return значение параметра.
-	 */
-	public Rotation getRotation(final String key, final Rotation def) {
-
-		final Object object = values.get(key);
-
-		if(object == null) {
-			throw new IllegalArgumentException("not found " + key);
-		}
-
-		if(object instanceof Rotation) {
-			return (Rotation) object;
-		}
-
-		if(object instanceof String) {
-
-			final String[] vals = ((String) object).split(",");
-
-			final Rotation rotation = Rotation.newInstance();
-			rotation.setXYZW(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3]));
-
-			return rotation;
-		}
-
-		return def;
-	}
-
-	/**
-	 * Очистка таблицы и внесение в нее значений атрибутов элемента XML
-	 * документа.
-	 * 
-	 * @param node узел из XML документа с атрибутами.
-	 */
-	public VarTable parse(final Node node) {
-		values.clear();
-
-		if(node == null) {
-			return this;
-		}
-
-		final NamedNodeMap attributes = node.getAttributes();
-
-		if(attributes == null) {
-			return this;
-		}
-
-		for(int i = 0, length = attributes.getLength(); i < length; i++) {
-			final Node item = attributes.item(i);
-			set(item.getNodeName(), item.getNodeValue());
-		}
-
-		return this;
-	}
-
-	/**
-	 * Очистка таблицы и внесенее в нее параметров из дочерних элементов
-	 * указанного узла с указанными именами атрибутов и узлов.
-	 * 
-	 * <pre>
-	 * 	< element > 
-	 * 		< child name="name" valu="value" />
-	 * 		< child name="name" valu="value" />
-	 * 		< child name="name" valu="value" />
-	 * 		< child name="name" valu="value" />
-	 * 	< /element >
-	 * 
-	 * vars.parse(node, "child", "name", "value")
-	 * </pre>
-	 * 
-	 * @param node узел, который надо отпарсить.
-	 * @param childName название элемента, у которого будет браться параметр.
-	 * @param nameType название атрибута, задающее название параметра.
-	 * @param nameValue название атрибута, задающее значение параметра.
-	 */
-	public VarTable parse(final Node node, final String childName, final String nameType, final String nameValue) {
-		values.clear();
-
-		if(node == null) {
-			return this;
-		}
-
-		for(Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-
-			if(child.getNodeType() != Node.ELEMENT_NODE || !childName.equals(child.getNodeName())) {
-				continue;
-			}
-
-			final NamedNodeMap attributes = child.getAttributes();
-
-			final Node nameNode = attributes.getNamedItem(nameType);
-			final Node valueNode = attributes.getNamedItem(nameValue);
-
-			if(nameNode == null || valueNode == null) {
-				continue;
-			}
-
-			set(nameNode.getNodeValue(), valueNode.getNodeValue());
-		}
-
-		return this;
-	}
-
-	/**
-	 * Вставка значения параметра в таблицу.
-	 * 
-	 * @param key название параметра.
-	 * @param value значение параметра.
-	 */
-	public void set(final String key, final Object value) {
-		values.put(key, value);
-	}
-
-	/**
-	 * Копирование параметров из указанной таблицы в эту, текущие параметры не
-	 * очищаются.
-	 * 
-	 * @param vars копируемая таблица параметров.
-	 */
-	public VarTable set(final VarTable vars) {
-		values.put(vars.getValues());
-		return this;
-	}
-
-	@Override
-	public String toString() {
-		return "VarTable: " + (values != null ? "values = " + values : "");
-	}
+            final String[] vals = ((String) object).split(",");
+
+            final Vector vector = Vector.newInstance();
+            vector.setXYZ(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
+
+            return vector;
+        }
+
+        return def;
+    }
+
+    /**
+     * Очистка таблицы и внесение в нее значений атрибутов элемента XML документа.
+     *
+     * @param node узел из XML документа с атрибутами.
+     */
+    public VarTable parse(final Node node) {
+        values.clear();
+
+        if (node == null) {
+            return this;
+        }
+
+        final NamedNodeMap attributes = node.getAttributes();
+
+        if (attributes == null) {
+            return this;
+        }
+
+        for (int i = 0, length = attributes.getLength(); i < length; i++) {
+            final Node item = attributes.item(i);
+            set(item.getNodeName(), item.getNodeValue());
+        }
+
+        return this;
+    }
+
+    /**
+     * Очистка таблицы и внесенее в нее параметров из дочерних элементов указанного узла с
+     * указанными именами атрибутов и узлов. <p>
+     * <pre>
+     * 	< element >
+     * 		< child name="name" valu="value" />
+     * 		< child name="name" valu="value" />
+     * 		< child name="name" valu="value" />
+     * 		< child name="name" valu="value" />
+     * 	< /element >
+     *
+     * vars.parse(node, "child", "name", "value")
+     * </pre>
+     *
+     * @param node      узел, который надо отпарсить.
+     * @param childName название элемента, у которого будет браться параметр.
+     * @param nameType  название атрибута, задающее название параметра.
+     * @param nameValue название атрибута, задающее значение параметра.
+     */
+    public VarTable parse(final Node node, final String childName, final String nameType, final String nameValue) {
+        values.clear();
+
+        if (node == null) {
+            return this;
+        }
+
+        for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
+
+            if (child.getNodeType() != Node.ELEMENT_NODE || !childName.equals(child.getNodeName())) {
+                continue;
+            }
+
+            final NamedNodeMap attributes = child.getAttributes();
+
+            final Node nameNode = attributes.getNamedItem(nameType);
+            final Node valueNode = attributes.getNamedItem(nameValue);
+
+            if (nameNode == null || valueNode == null) {
+                continue;
+            }
+
+            set(nameNode.getNodeValue(), valueNode.getNodeValue());
+        }
+
+        return this;
+    }
+
+    /**
+     * Вставка значения параметра в таблицу.
+     *
+     * @param key   название параметра.
+     * @param value значение параметра.
+     */
+    public void set(final String key, final Object value) {
+        values.put(key, value);
+    }
+
+    /**
+     * Копирование параметров из указанной таблицы в эту, текущие параметры не очищаются.
+     *
+     * @param vars копируемая таблица параметров.
+     */
+    public VarTable set(final VarTable vars) {
+        values.put(vars.getValues());
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "VarTable: " + (values != null ? "values = " + values : "");
+    }
 }

@@ -10,49 +10,50 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Менеджер для очистки БД от ненужных записей. Хранит список запросов
- * необходимых для очистки БД.
- * 
+ * Менеджер для очистки БД от ненужных записей. Хранит список запросов необходимых для очистки БД.
+ *
  * @author Ronn
  */
 public abstract class CleaningManager {
 
-	/**
-	 * Добавление запроса для очистки БД.
-	 * 
-	 * @param name название таблицы.
-	 * @param squery запрос для очистки.
-	 */
-	public static void addQuery(final String name, final String squery) {
-		QUERY.add(new CleaningQuery(name, squery));
-	}
+    private static final Logger LOGGER = LoggerManager.getLogger(CleaningManager.class);
 
-	/**
-	 * Очистка БД.
-	 */
-	public static void cleaning(final ConnectFactory connects) {
+    /**
+     * Список запросов для очистки.
+     */
+    public static final Array<CleaningQuery> QUERY = ArrayFactory.newArray(CleaningQuery.class);
 
-		Connection con = null;
-		Statement statement = null;
+    /**
+     * Добавление запроса для очистки БД.
+     *
+     * @param name  название таблицы.
+     * @param query запрос для очистки.
+     */
+    public static void addQuery(final String name, final String query) {
+        QUERY.add(new CleaningQuery(name, query));
+    }
 
-		try {
+    /**
+     * Очистка БД.
+     */
+    public static void cleaning(final ConnectFactory connects) {
 
-			con = connects.getConnection();
-			statement = con.createStatement();
+        Connection con = null;
+        Statement statement = null;
 
-			for(final CleaningQuery clean : QUERY) {
-				LOGGER.info(clean.getName().replace("{count}", String.valueOf(statement.executeUpdate(clean.getQuery()))) + ".");
-			}
+        try {
 
-		} catch(final SQLException e) {
-			LOGGER.warning(e);
-		} finally {
-			DBUtils.closeDatabaseCS(con, statement);
-		}
-	}
+            con = connects.getConnection();
+            statement = con.createStatement();
 
-	private static final Logger LOGGER = LoggerManager.getLogger(CleaningManager.class);
+            for (final CleaningQuery clean : QUERY) {
+                LOGGER.info(clean.getName().replace("{count}", String.valueOf(statement.executeUpdate(clean.getQuery()))) + ".");
+            }
 
-	/** список запросов для очистки */
-	public static final Array<CleaningQuery> QUERY = ArrayFactory.newArray(CleaningQuery.class);
+        } catch (final SQLException e) {
+            LOGGER.warning(e);
+        } finally {
+            DBUtils.closeDatabaseCS(con, statement);
+        }
+    }
 }

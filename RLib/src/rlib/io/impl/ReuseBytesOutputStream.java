@@ -9,116 +9,131 @@ import rlib.io.ReusableStream;
 
 /**
  * Реализация переиспользуемого выходного стрима на массиве байтов.
- * 
+ *
  * @author Ronn
  */
 public final class ReuseBytesOutputStream extends OutputStream implements ReusableStream {
 
-	/** данные стрима */
-	protected byte[] data;
+    /**
+     * Данные стрима.
+     */
+    protected byte[] data;
 
-	/** размер записи в стрим */
-	protected int size;
+    /**
+     * Размер записи в стрим.
+     */
+    protected int size;
 
-	public ReuseBytesOutputStream() {
-		this(32);
-	}
+    public ReuseBytesOutputStream() {
+        this(32);
+    }
 
-	public ReuseBytesOutputStream(final int size) {
+    public ReuseBytesOutputStream(final int size) {
 
-		if(size < 0) {
-			throw new IllegalArgumentException("Negative initial size: " + size);
-		}
-		data = new byte[size];
-	}
+        if (size < 0) {
+            throw new IllegalArgumentException("Negative initial size: " + size);
+        }
 
-	/**
-	 * Проверка и при необходиомсти увеличение размера массива данных под нужную
-	 * длинну.
-	 * 
-	 * @param minCapacity интересуемая длинна массива.
-	 */
-	private void checkLength(final int minCapacity) {
-		if(minCapacity - data.length > 0) {
-			resizeData(minCapacity);
-		}
-	}
+        data = new byte[size];
+    }
 
-	@Override
-	public void close() throws IOException {
-	}
+    @Override
+    public void initFor(byte[] buffer, int offset, int length) {
 
-	/**
-	 * @return данные стрима.
-	 */
-	public byte[] getData() {
-		return data;
-	}
+        if (offset != 0) {
+            throw new IllegalArgumentException("don't support offset.");
+        }
 
-	@Override
-	public void reset() {
-		size = 0;
-	}
+        this.data = buffer;
+        this.size = length;
+    }
 
-	/**
-	 * Процесс увеличение размера массива данных.
-	 * 
-	 * @param minCapacity требуемаяд линна.
-	 */
-	private void resizeData(final int minCapacity) {
+    /**
+     * Проверка и при необходиомсти увеличение размера массива данных под нужную длинну.
+     *
+     * @param minCapacity интересуемая длинна массива.
+     */
+    private void checkLength(final int minCapacity) {
+        if (minCapacity - data.length > 0) {
+            resizeData(minCapacity);
+        }
+    }
 
-		// overflow-conscious code
-		final int oldCapacity = data.length;
-		int newCapacity = oldCapacity << 1;
+    @Override
+    public void close() throws IOException {
+    }
 
-		if(newCapacity - minCapacity < 0) {
-			newCapacity = minCapacity;
-		}
+    /**
+     * @return данные стрима.
+     */
+    public byte[] getData() {
+        return data;
+    }
 
-		if(newCapacity < 0) {
+    @Override
+    public void reset() {
+        size = 0;
+    }
 
-			if(minCapacity < 0) { // overflow
-				throw new OutOfMemoryError();
-			}
+    /**
+     * Процесс увеличение размера массива данных.
+     *
+     * @param minCapacity требуемаяд линна.
+     */
+    private void resizeData(final int minCapacity) {
 
-			newCapacity = Integer.MAX_VALUE;
-		}
+        final int oldCapacity = data.length;
 
-		data = Arrays.copyOf(data, newCapacity);
-	}
+        int newCapacity = oldCapacity << 1;
 
-	/**
-	 * @return размер записи в стрим.
-	 */
-	public int size() {
-		return size;
-	}
+        if (newCapacity - minCapacity < 0) {
+            newCapacity = minCapacity;
+        }
 
-	@Override
-	public String toString() {
-		return new String(data, 0, size);
-	}
+        if (newCapacity < 0) {
 
-	public String toString(final String charsetName) throws UnsupportedEncodingException {
-		return new String(data, 0, size, charsetName);
-	}
+            if (minCapacity < 0) {
+                throw new OutOfMemoryError();
+            }
 
-	@Override
-	public void write(final byte[] buffer, final int offset, final int length) {
+            newCapacity = Integer.MAX_VALUE;
+        }
 
-		if(offset < 0 || offset > buffer.length || length < 0 || offset + length - buffer.length > 0) {
-			throw new IndexOutOfBoundsException();
-		}
+        data = Arrays.copyOf(data, newCapacity);
+    }
 
-		checkLength(size + length);
-		System.arraycopy(buffer, offset, data, size, length);
-		size += length;
-	}
+    /**
+     * @return размер записи в стрим.
+     */
+    public int size() {
+        return size;
+    }
 
-	@Override
-	public void write(final int b) {
-		checkLength(size + 1);
-		data[size] = (byte) b;
-		size += 1;
-	}
+    @Override
+    public String toString() {
+        return new String(data, 0, size);
+    }
+
+    public String toString(final String charsetName) throws UnsupportedEncodingException {
+        return new String(data, 0, size, charsetName);
+    }
+
+    @Override
+    public void write(final byte[] buffer, final int offset, final int length) {
+
+        if (offset < 0 || offset > buffer.length || length < 0 || offset + length - buffer.length > 0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        checkLength(size + length);
+        System.arraycopy(buffer, offset, data, size, length);
+        size += length;
+    }
+
+    @Override
+    public void write(final int b) {
+        checkLength(size + 1);
+        data[size] = (byte) b;
+        size += 1;
+    }
 }

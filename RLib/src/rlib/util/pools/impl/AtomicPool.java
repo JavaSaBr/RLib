@@ -1,80 +1,80 @@
 package rlib.util.pools.impl;
 
-import java.util.concurrent.locks.Lock;
-
-import rlib.concurrent.lock.LockFactory;
+import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Pool;
 
 /**
  * Реализация потокобезопасного {@link Pool} с помощью атомарного блокировщика.
- * 
+ *
  * @author Ronn
  */
 public class AtomicPool<E> implements Pool<E> {
 
-	/** пул объектов */
-	private final Array<E> pool;
-	/** блокировщик */
-	private final Lock lock;
+    /**
+     * Пул объектов.
+     */
+    private final Array<E> pool;
 
-	public AtomicPool(final Class<?> type) {
-		this.pool = ArrayFactory.newArray(type);
-		this.lock = LockFactory.newPrimitiveAtomicLock();
-	}
+    public AtomicPool(final Class<?> type) {
+        this.pool = ArrayFactory.newConcurrentAtomicArray(type);
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return pool.isEmpty();
-	}
+    /**
+     * @return пул объектов.
+     */
+    private Array<E> getPool() {
+        return pool;
+    }
 
-	@Override
-	public void put(final E object) {
+    @Override
+    public boolean isEmpty() {
+        return pool.isEmpty();
+    }
 
-		if(object == null) {
-			return;
-		}
+    @Override
+    public void put(final E object) {
 
-		lock.lock();
-		try {
-			pool.add(object);
-		} finally {
-			lock.unlock();
-		}
-	}
+        if (object == null) {
+            return;
+        }
 
-	@Override
-	public void remove(final E object) {
-		lock.lock();
-		try {
-			pool.fastRemove(object);
-		} finally {
-			lock.unlock();
-		}
-	}
+        ArrayUtils.addInWriteLockTo(pool, object);
+    }
 
-	@Override
-	public E take() {
+    @Override
+    public void remove(final E object) {
+        ArrayUtils.fastRemoveInWriteLockTo(pool, object);
+    }
 
-		E object = null;
+    @Override
+    public E take() {
 
-		lock.lock();
-		try {
-			object = pool.pop();
-		} finally {
-			lock.unlock();
-		}
+        final Array<E> pool = getPool();
 
-		if(object == null) {
-			return null;
-		}
+        if (pool.isEmpty()) {
+            return null;
+        }
 
-		return object;
-	}
+        E object = null;
 
-	@Override
-	public String toString() {
-		return pool.toString();
-	}
+        pool.writeLock();
+        try {
+            object = pool.pop();
+        } finally {
+            pool.writeUnlock();
+        }
+
+        if (object == null) {
+            return null;
+        }
+
+        return object;
+    }
+
+    @Override
+    public String toString() {
+        return pool.toString();
+    }
 }

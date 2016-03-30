@@ -4,37 +4,36 @@ import rlib.util.pools.Foldable;
 
 /**
  * Дополнение к стандартной реализации.
- * 
+ *
  * @author Ronn
  */
 public class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger implements Foldable {
 
-	private static final long serialVersionUID = -624766818867950719L;
+    private static final long serialVersionUID = -624766818867950719L;
 
-	public AtomicInteger() {
-		super();
-	}
+    public AtomicInteger() {
+    }
 
-	public AtomicInteger(final int initialValue) {
-		super(initialValue);
-	}
+    public AtomicInteger(final int initialValue) {
+        super(initialValue);
+    }
 
-	/**
-	 * Атамарная операция по отниманию числа.
-	 * 
-	 * @param delta разница между текущим и новым значением.
-	 * @return новое значение.
-	 */
-	public final int subAndGet(final int delta) {
+    /**
+     * Атамарная операция по отниманию числа.
+     *
+     * @param delta разница между текущим и новым значением.
+     * @return новое значение.
+     */
+    public final int subAndGet(final int delta) {
 
-		while(true) {
+        while (true) {
 
-			final int current = get();
-			final int next = current - delta;
+            final int current = get();
+            final int next = current - delta;
 
-			if(compareAndSet(current, next)) {
-				return next;
-			}
-		}
-	}
+            if (compareAndSet(current, next)) {
+                return next;
+            }
+        }
+    }
 }

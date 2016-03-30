@@ -16,123 +16,134 @@ import rlib.util.array.ArrayFactory;
 
 /**
  * Модель поиска и обнаружения делоков.
- * 
+ *
  * @author Ronn
  */
 public class DeadLockDetector implements SafeTask {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(DeadLockDetector.class);
+    private static final Logger LOGGER = LoggerManager.getLogger(DeadLockDetector.class);
 
-	/** набор слушателей дедлоков */
-	private final Array<DeadLockListener> listeners;
+    /**
+     * Набор слушателей дедлоков.
+     */
+    private final Array<DeadLockListener> listeners;
 
-	/** информация об состоянии потоков */
-	private final ThreadMXBean mxThread;
-	/** сервис по запуску детектора */
-	private final ScheduledExecutorService executor;
+    /**
+     * Информация об состоянии потоков.
+     */
+    private final ThreadMXBean mxThread;
 
-	/** ссылка на исполение детектора */
-	private volatile ScheduledFuture<?> schedule;
+    /**
+     * Сервис по запуску детектора.
+     */
+    private final ScheduledExecutorService executor;
 
-	/** интервал детектора */
-	private final int interval;
+    /**
+     * Ссылка на исполение детектора.
+     */
+    private volatile ScheduledFuture<?> schedule;
 
-	public DeadLockDetector(final int interval) {
+    /**
+     * Интервал детектора.
+     */
+    private final int interval;
 
-		if(interval < 1) {
-			throw new IllegalArgumentException("negative interval.");
-		}
+    public DeadLockDetector(final int interval) {
 
-		this.listeners = ArrayFactory.newConcurrentArray(DeadLockListener.class);
-		this.mxThread = ManagementFactory.getThreadMXBean();
-		this.executor = Executors.newSingleThreadScheduledExecutor();
-		this.interval = interval;
-	}
+        if (interval < 1) {
+            throw new IllegalArgumentException("negative interval.");
+        }
 
-	/**
-	 * Добавление слушателя мертвых блокировок.
-	 * 
-	 * @param listener новый слушатель.
-	 */
-	public void addListener(final DeadLockListener listener) {
-		listeners.writeLock();
-		try {
-			listeners.add(listener);
-		} finally {
-			listeners.writeUnlock();
-		}
-	}
+        this.listeners = ArrayFactory.newConcurrentArray(DeadLockListener.class);
+        this.mxThread = ManagementFactory.getThreadMXBean();
+        this.executor = Executors.newSingleThreadScheduledExecutor();
+        this.interval = interval;
+    }
 
-	/**
-	 * @return список слушателей.
-	 */
-	public Array<DeadLockListener> getListeners() {
-		return listeners;
-	}
+    /**
+     * Добавление слушателя мертвых блокировок.
+     *
+     * @param listener новый слушатель.
+     */
+    public void addListener(final DeadLockListener listener) {
+        listeners.writeLock();
+        try {
+            listeners.add(listener);
+        } finally {
+            listeners.writeUnlock();
+        }
+    }
 
-	@Override
-	public void runImpl() {
+    /**
+     * @return список слушателей.
+     */
+    public Array<DeadLockListener> getListeners() {
+        return listeners;
+    }
 
-		final long[] threadIds = mxThread.findDeadlockedThreads();
+    @Override
+    public void runImpl() {
 
-		if(threadIds.length < 1) {
-			return;
-		}
+        final long[] threadIds = mxThread.findDeadlockedThreads();
 
-		final Array<DeadLockListener> listeners = getListeners();
+        if (threadIds.length < 1) {
+            return;
+        }
 
-		for(int i = 0, length = threadIds.length; i < length; i++) {
+        final Array<DeadLockListener> listeners = getListeners();
 
-			final long id = threadIds[i];
+        for (int i = 0, length = threadIds.length; i < length; i++) {
 
-			final ThreadInfo info = mxThread.getThreadInfo(id);
+            final long id = threadIds[i];
 
-			if(listeners.isEmpty()) {
-				continue;
-			}
+            final ThreadInfo info = mxThread.getThreadInfo(id);
 
-			listeners.readLock();
-			try {
+            if (listeners.isEmpty()) {
+                continue;
+            }
 
-				for(final DeadLockListener listener : listeners.array()) {
+            listeners.readLock();
+            try {
 
-					if(listener == null) {
-						break;
-					}
+                for (final DeadLockListener listener : listeners.array()) {
 
-					listener.onDetected(info);
-				}
+                    if (listener == null) {
+                        break;
+                    }
 
-			} finally {
-				listeners.readUnlock();
-			}
+                    listener.onDetected(info);
+                }
 
-			LOGGER.warning("DeadLock detected! : " + info);
-		}
-	}
+            } finally {
+                listeners.readUnlock();
+            }
 
-	/**
-	 * Запуск детектора.
-	 */
-	public synchronized void start() {
+            LOGGER.warning("DeadLock detected! : " + info);
+        }
+    }
 
-		if(schedule != null) {
-			return;
-		}
+    /**
+     * Запуск детектора.
+     */
+    public synchronized void start() {
 
-		schedule = executor.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
-	}
+        if (schedule != null) {
+            return;
+        }
 
-	/**
-	 * Остановка детектора.
-	 */
-	public synchronized void stop() {
+        schedule = executor.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
+    }
 
-		if(schedule == null) {
-			return;
-		}
+    /**
+     * Остановка детектора.
+     */
+    public synchronized void stop() {
 
-		schedule.cancel(false);
-		schedule = null;
-	}
+        if (schedule == null) {
+            return;
+        }
+
+        schedule.cancel(false);
+        schedule = null;
+    }
 }

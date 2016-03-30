@@ -1,5 +1,6 @@
 package rlib.util.pools.impl;
 
+import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.impl.ConcurrentArray;
@@ -7,79 +8,75 @@ import rlib.util.pools.Foldable;
 import rlib.util.pools.FoldablePool;
 
 /**
- * Реализация потокобезопасного {@link FoldablePool} с помощью потокобезопасного
- * массива {@link ConcurrentArray}
- * 
+ * Реализация потокобезопасного {@link FoldablePool} с помощью потокобезопасного массива {@link
+ * ConcurrentArray}
+ *
  * @author Ronn
  */
 public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<E> {
 
-	/** массив объектов */
-	private final Array<E> pool;
+    /**
+     * Пул объектов.
+     */
+    private final Array<E> pool;
 
-	public ConcurrentFoldablePool(final Class<?> type) {
-		this.pool = ArrayFactory.newConcurrentArray(type);
-	}
+    public ConcurrentFoldablePool(final Class<?> type) {
+        this.pool = ArrayFactory.newConcurrentArray(type);
+    }
 
-	/**
-	 * @return массив объектов.
-	 */
-	private Array<E> getPool() {
-		return pool;
-	}
+    /**
+     * @return массив объектов.
+     */
+    private Array<E> getPool() {
+        return pool;
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return pool.isEmpty();
-	}
+    @Override
+    public boolean isEmpty() {
+        return pool.isEmpty();
+    }
 
-	@Override
-	public void put(final E object) {
+    @Override
+    public void put(final E object) {
 
-		if(object == null) {
-			return;
-		}
+        if (object == null) {
+            return;
+        }
 
-		object.finalyze();
+        object.finalyze();
 
-		final Array<E> pool = getPool();
-		pool.writeLock();
-		try {
-			pool.add(object);
-		} finally {
-			pool.writeUnlock();
-		}
-	}
+        ArrayUtils.addInWriteLockTo(pool, object);
+    }
 
-	@Override
-	public void remove(final E object) {
-		final Array<E> pool = getPool();
-		pool.writeLock();
-		try {
-			pool.fastRemove(object);
-		} finally {
-			pool.writeUnlock();
-		}
-	}
+    @Override
+    public void remove(final E object) {
+        ArrayUtils.fastRemoveInWriteLockTo(pool, object);
+    }
 
-	@Override
-	public E take() {
+    @Override
+    public E take() {
 
-		E object = null;
+        final Array<E> pool = getPool();
 
-		final Array<E> pool = getPool();
-		pool.writeLock();
-		try {
-			object = pool.pop();
-		} finally {
-			pool.writeUnlock();
-		}
+        if (pool.isEmpty()) {
+            return null;
+        }
 
-		if(object == null) {
-			return null;
-		}
+        E object = null;
 
-		object.reinit();
-		return object;
-	}
+        pool.writeLock();
+        try {
+            object = pool.pop();
+        } finally {
+            pool.writeUnlock();
+        }
+
+        if (object == null) {
+            return null;
+        }
+
+        object.reinit();
+
+        return object;
+    }
 }

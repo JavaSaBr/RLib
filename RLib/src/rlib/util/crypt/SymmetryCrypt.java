@@ -13,84 +13,81 @@ import javax.crypto.ShortBufferException;
 
 /**
  * Модель симметричного криптора с использованием RC4 алгоритма.
- * 
+ *
  * @author Ronn
  */
 public class SymmetryCrypt {
 
-	/** криптовщик */
-	private volatile Cipher ecipher;
-	/** декриптовщик */
-	private volatile Cipher dcipher;
+    /**
+     * Криптовщик.
+     */
+    private volatile Cipher ecipher;
 
-	/** ключ шифрования */
-	private volatile SecretKey secretKey;
+    /**
+     * Декриптовщик.
+     */
+    private volatile Cipher dcipher;
 
-	/**
-	 * @param key 8 символов.
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchPaddingException
-	 * @throws UnsupportedEncodingException
-	 * @throws InvalidKeyException
-	 */
-	public SymmetryCrypt(final String key) throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException {
+    /**
+     * Ключ шифрования
+     */
+    private volatile SecretKey secretKey;
 
-		ecipher = Cipher.getInstance("RC4");
-		dcipher = Cipher.getInstance("RC4");
+    /**
+     * @param key 8 символов.
+     */
+    public SymmetryCrypt(final String key) throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException {
 
-		final byte[] bytes = key.getBytes("UTF-8");
+        ecipher = Cipher.getInstance("RC4");
+        dcipher = Cipher.getInstance("RC4");
 
-		secretKey = new SecretKey() {
+        final byte[] bytes = key.getBytes("UTF-8");
 
-			private static final long serialVersionUID = -8907627571317506056L;
+        secretKey = new SecretKey() {
 
-			@Override
-			public String getAlgorithm() {
-				return "RC4";
-			}
+            private static final long serialVersionUID = -8907627571317506056L;
 
-			@Override
-			public byte[] getEncoded() {
-				return bytes;
-			}
+            @Override
+            public String getAlgorithm() {
+                return "RC4";
+            }
 
-			@Override
-			public String getFormat() {
-				return "RAW";
-			}
-		};
+            @Override
+            public byte[] getEncoded() {
+                return bytes;
+            }
 
-		ecipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		dcipher.init(Cipher.DECRYPT_MODE, secretKey);
-	}
+            @Override
+            public String getFormat() {
+                return "RAW";
+            }
+        };
 
-	/**
-	 * Расшифровать массив байтов.
-	 * 
-	 * @param in исходный массив.
-	 * @param offset отступ в исходном массиве.
-	 * @param length длинна дешифруемого части.
-	 * @param out выходной массив.
-	 * @throws ShortBufferException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
-	 */
-	public void decrypt(final byte[] in, final int offset, final int length, final byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
-		dcipher.doFinal(in, offset, length, out, offset);
-	}
+        ecipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        dcipher.init(Cipher.DECRYPT_MODE, secretKey);
+    }
 
-	/**
-	 * Зашифровать массив байтов.
-	 * 
-	 * @param in исходный массив.
-	 * @param offset отступ в исходном массиве.
-	 * @param length длинна шифруемой части.
-	 * @param out выходной массив.
-	 * @throws ShortBufferException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
-	 */
-	public void encrypt(final byte[] in, final int offset, final int length, final byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
-		ecipher.doFinal(in, offset, length, out, offset);
-	}
+    /**
+     * Расшифровать массив байтов.
+     *
+     * @param in     исходный массив.
+     * @param offset отступ в исходном массиве.
+     * @param length длинна дешифруемого части.
+     * @param out    выходной массив.
+     */
+    public void decrypt(final byte[] in, final int offset, final int length, final byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+        dcipher.doFinal(in, offset, length, out, offset);
+    }
+
+    /**
+     * Зашифровать массив байтов.
+     *
+     * @param in     исходный массив.
+     * @param offset отступ в исходном массиве.
+     * @param length длинна шифруемой части.
+     * @param out    выходной массив.
+     */
+    public void encrypt(final byte[] in, final int offset, final int length, final byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+        ecipher.doFinal(in, offset, length, out, offset);
+    }
 }

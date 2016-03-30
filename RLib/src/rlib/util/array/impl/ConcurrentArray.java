@@ -11,15 +11,12 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 
 /**
- * Реализация динамического массива с возможностью потокобезопасно асинхронно
- * читать и синхронно записывать. Поддерживается рекурсивный вызов
- * readLock/writeLock. Используется реализация блокировщика
- * {@link ReentrantReadWriteLock}, так что отлично подходит и для мест где мало
- * записей и много чтений так и на оборот, единственный минус в нагрузке на GC,
- * так как создает много временных объектов при активном использовании.
- * 
- * Все операции по чтению/записи массива производить в блоке
- * 
+ * Реализация динамического массива с возможностью потокобезопасно асинхронно читать и синхронно
+ * записывать. Поддерживается рекурсивный вызов readLock/writeLock. Используется реализация
+ * блокировщика {@link ReentrantReadWriteLock}, так что отлично подходит и для мест где мало записей
+ * и много чтений так и на оборот, единственный минус в нагрузке на GC, так как создает много
+ * временных объектов при активном использовании. <p> Все операции по чтению/записи массива
+ * производить в блоке <p>
  * <pre>
  * array.readLock()/writeLock();
  * try {
@@ -33,228 +30,237 @@ import rlib.util.array.ArrayIterator;
  */
 public class ConcurrentArray<E> extends AbstractArray<E> {
 
-	private static final long serialVersionUID = -7985171224116955303L;
+    private static final long serialVersionUID = -7985171224116955303L;
 
-	/** кол-во элементов в колекции */
-	private final AtomicInteger size;
+    /**
+     * Кол-во элементов в колекции.
+     */
+    private final AtomicInteger size;
 
-	/** блокировщик на чтение */
-	private final Lock readLock;
-	/** блокировщик на запись */
-	private final Lock writeLock;
+    /**
+     * Блокировщик на чтение.
+     */
+    private final Lock readLock;
 
-	/** массив элементов */
-	private volatile E[] array;
+    /**
+     * Блокировщик на запись.
+     */
+    private final Lock writeLock;
 
-	/**
-	 * @param type тип элементов в массиве.
-	 */
-	public ConcurrentArray(final Class<E> type) {
-		this(type, 10);
-	}
+    /**
+     * Массив элементов.
+     */
+    private volatile E[] array;
 
-	/**
-	 * @param type тип элементов в массиве.
-	 * @param size размер массива.
-	 */
-	public ConcurrentArray(final Class<E> type, final int size) {
-		super(type, size);
+    /**
+     * @param type тип элементов в массиве.
+     */
+    public ConcurrentArray(final Class<E> type) {
+        this(type, 10);
+    }
 
-		final ReadWriteLock readWriteLock = LockFactory.newRWLock();
+    /**
+     * @param type тип элементов в массиве.
+     * @param size размер массива.
+     */
+    public ConcurrentArray(final Class<E> type, final int size) {
+        super(type, size);
 
-		this.size = new AtomicInteger();
-		this.readLock = readWriteLock.readLock();
-		this.writeLock = readWriteLock.writeLock();
-	}
+        final ReadWriteLock readWriteLock = LockFactory.newRWLock();
 
-	@Override
-	public ConcurrentArray<E> add(final E element) {
+        this.size = new AtomicInteger();
+        this.readLock = readWriteLock.readLock();
+        this.writeLock = readWriteLock.writeLock();
+    }
 
-		if(size() == array.length) {
-			array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
-		}
+    @Override
+    public ConcurrentArray<E> add(final E element) {
 
-		array[size.getAndIncrement()] = element;
+        if (size() == array.length) {
+            array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
+        }
 
-		return this;
-	}
+        array[size.getAndIncrement()] = element;
 
-	@Override
-	public final ConcurrentArray<E> addAll(final Array<? extends E> elements) {
+        return this;
+    }
 
-		if(elements == null || elements.isEmpty()) {
-			return this;
-		}
+    @Override
+    public final ConcurrentArray<E> addAll(final Array<? extends E> elements) {
 
-		final int current = array.length;
-		final int diff = size() + elements.size() - current;
+        if (elements == null || elements.isEmpty()) {
+            return this;
+        }
 
-		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
-		}
+        final int current = array.length;
+        final int diff = size() + elements.size() - current;
 
-		for(final E element : elements.array()) {
+        if (diff > 0) {
+            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+        }
 
-			if(element == null) {
-				break;
-			}
+        for (final E element : elements.array()) {
 
-			add(element);
-		}
+            if (element == null) {
+                break;
+            }
 
-		return this;
-	}
+            add(element);
+        }
 
-	@Override
-	public final Array<E> addAll(final E[] elements) {
+        return this;
+    }
 
-		if(elements == null || elements.length < 1) {
-			return this;
-		}
+    @Override
+    public final Array<E> addAll(final E[] elements) {
 
-		final int current = array.length;
-		final int diff = size() + elements.length - current;
+        if (elements == null || elements.length < 1) {
+            return this;
+        }
 
-		if(diff > 0) {
-			array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
-		}
+        final int current = array.length;
+        final int diff = size() + elements.length - current;
 
-		for(final E element : elements) {
-			add(element);
-		}
+        if (diff > 0) {
+            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+        }
 
-		return this;
-	}
+        for (final E element : elements) {
+            add(element);
+        }
 
-	@Override
-	public final E[] array() {
-		return array;
-	}
+        return this;
+    }
 
-	@Override
-	public final E fastRemove(final int index) {
+    @Override
+    public final E[] array() {
+        return array;
+    }
 
-		if(index < 0) {
-			return null;
-		}
+    @Override
+    public final E fastRemove(final int index) {
 
-		final E[] array = array();
+        if (index < 0) {
+            return null;
+        }
 
-		int length = size();
+        final E[] array = array();
 
-		if(length < 1 || index >= length) {
-			return null;
-		}
+        int length = size();
 
-		length = size.decrementAndGet();
+        if (length < 1 || index >= length) {
+            return null;
+        }
 
-		final E old = array[index];
+        length = size.decrementAndGet();
 
-		array[index] = array[length];
-		array[length] = null;
+        final E old = array[index];
 
-		return old;
-	}
+        array[index] = array[length];
+        array[length] = null;
 
-	@Override
-	public final E get(final int index) {
-		return array[index];
-	}
+        return old;
+    }
 
-	@Override
-	public final ArrayIterator<E> iterator() {
-		return new ArrayIteratorImpl<>(this);
-	}
+    @Override
+    public final E get(final int index) {
+        return array[index];
+    }
 
-	@Override
-	public final void readLock() {
-		readLock.lock();
-	}
+    @Override
+    public final ArrayIterator<E> iterator() {
+        return new ArrayIteratorImpl<>(this);
+    }
 
-	@Override
-	public final void readUnlock() {
-		readLock.unlock();
-	}
+    @Override
+    public final void readLock() {
+        readLock.lock();
+    }
 
-	@Override
-	public final void set(final int index, final E element) {
+    @Override
+    public final void readUnlock() {
+        readLock.unlock();
+    }
 
-		if(index < 0 || index >= size() || element == null) {
-			return;
-		}
+    @Override
+    public final void set(final int index, final E element) {
 
-		final E[] array = array();
+        if (index < 0 || index >= size() || element == null) {
+            return;
+        }
 
-		if(array[index] != null) {
-			size.decrementAndGet();
-		}
+        final E[] array = array();
 
-		array[index] = element;
+        if (array[index] != null) {
+            size.decrementAndGet();
+        }
 
-		size.incrementAndGet();
-	}
+        array[index] = element;
 
-	@Override
-	protected final void setArray(final E[] array) {
-		this.array = array;
-	}
+        size.incrementAndGet();
+    }
 
-	@Override
-	protected final void setSize(final int size) {
-		this.size.getAndSet(size);
-	}
+    @Override
+    protected final void setArray(final E[] array) {
+        this.array = array;
+    }
 
-	@Override
-	public final int size() {
-		return size.get();
-	}
+    @Override
+    protected final void setSize(final int size) {
+        this.size.getAndSet(size);
+    }
 
-	@Override
-	public final E slowRemove(final int index) {
+    @Override
+    public final int size() {
+        return size.get();
+    }
 
-		final int length = size();
+    @Override
+    public final E slowRemove(final int index) {
 
-		if(index < 0 || length < 1) {
-			return null;
-		}
+        final int length = size();
 
-		final E[] array = array();
+        if (index < 0 || length < 1) {
+            return null;
+        }
 
-		final int numMoved = length - index - 1;
+        final E[] array = array();
 
-		final E old = array[index];
+        final int numMoved = length - index - 1;
 
-		if(numMoved > 0) {
-			System.arraycopy(array, index + 1, array, index, numMoved);
-		}
+        final E old = array[index];
 
-		size.decrementAndGet();
+        if (numMoved > 0) {
+            System.arraycopy(array, index + 1, array, index, numMoved);
+        }
 
-		array[size.get()] = null;
+        size.decrementAndGet();
 
-		return old;
-	}
+        array[size.get()] = null;
 
-	@Override
-	public final ConcurrentArray<E> trimToSize() {
+        return old;
+    }
 
-		final int size = size();
+    @Override
+    public final ConcurrentArray<E> trimToSize() {
 
-		if(size == array.length) {
-			return this;
-		}
+        final int size = size();
 
-		array = ArrayUtils.copyOfRange(array, 0, size);
-		return this;
-	}
+        if (size == array.length) {
+            return this;
+        }
 
-	@Override
-	public final void writeLock() {
-		writeLock.lock();
-	}
+        array = ArrayUtils.copyOfRange(array, 0, size);
+        return this;
+    }
 
-	@Override
-	public final void writeUnlock() {
-		writeLock.unlock();
-	}
+    @Override
+    public final void writeLock() {
+        writeLock.lock();
+    }
+
+    @Override
+    public final void writeUnlock() {
+        writeLock.unlock();
+    }
 }

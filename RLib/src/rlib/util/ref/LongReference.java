@@ -4,31 +4,33 @@ import static rlib.util.ref.ReferenceType.LONG;
 
 /**
  * Ссылка на тип данных long.
- * 
+ *
  * @author Ronn
  */
 final class LongReference extends AbstractReference {
 
-	/** значение по ссылке */
-	private long value;
+    /**
+     * Значение по ссылке.
+     */
+    private long value;
 
-	@Override
-	public long getLong() {
-		return value;
-	}
+    @Override
+    public long getLong() {
+        return value;
+    }
 
-	@Override
-	public ReferenceType getReferenceType() {
-		return LONG;
-	}
+    @Override
+    public void setLong(final long value) {
+        this.value = value;
+    }
 
-	@Override
-	public void setLong(final long value) {
-		this.value = value;
-	}
+    @Override
+    public ReferenceType getReferenceType() {
+        return LONG;
+    }
 
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + " [value=" + value + "]";
-	}
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [value=" + value + "]";
+    }
 }

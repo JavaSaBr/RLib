@@ -20,177 +20,188 @@ import rlib.util.linkedlist.LinkedList;
 import rlib.util.linkedlist.LinkedListFactory;
 
 /**
- * Реализация многопоточного пакетного исполнителя задач. Использовать только в
- * случае необходимости выполнять большое кол-во задач с минимальной нагрузкой
- * на GC либо необходимости часто использовать локальные объекты, в остальных
- * случаях рекамендуются {@link Executors} сервисы. Для получение локальных
- * объектов, необходимо переопределить метод {@link #getLocalObjects(Thread)}.
- * 
+ * Реализация многопоточного пакетного исполнителя задач. Использовать только в случае необходимости
+ * выполнять большое кол-во задач с минимальной нагрузкой на GC либо необходимости часто
+ * использовать локальные объекты, в остальных случаях рекамендуются {@link Executors} сервисы. Для
+ * получение локальных объектов, необходимо переопределить метод {@link #getLocalObjects(Thread)}.
+ *
  * @author Ronn
  */
 public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Synchronized {
 
-	protected static final Logger LOGGER = LoggerManager.getLogger(ThreadPoolTaskExecutor.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(ThreadPoolTaskExecutor.class);
 
-	/** список ожидающих исполнение задач */
-	private final LinkedList<CallableTask<?, L>> waitTasks;
-	/** список задействованных потоков */
-	private final Array<Thread> threads;
+    /**
+     * Список ожидающих исполнение задач.
+     */
+    private final LinkedList<CallableTask<?, L>> waitTasks;
 
-	/** находится ли исполнитель в ожидании */
-	private final AtomicBoolean wait;
-	/** блокировщик */
-	private final Lock lock;
+    /**
+     * Список задействованных потоков.
+     */
+    private final Array<Thread> threads;
 
-	/** размер пакета выполняемых задач на поток */
-	private final int packetSize;
+    /**
+     * Находится ли исполнитель в ожидании.
+     */
+    private final AtomicBoolean wait;
 
-	public ThreadPoolTaskExecutor(final GroupThreadFactory threadFactory, final int poolSize, final int packetSize) {
-		this.waitTasks = LinkedListFactory.newLinkedList(CallableTask.class);
-		this.wait = new AtomicBoolean();
-		this.lock = LockFactory.newPrimitiveAtomicLock();
-		this.threads = ArrayFactory.newArray(Thread.class);
-		this.packetSize = packetSize;
+    /**
+     * Блокировщик.
+     */
+    private final Lock lock;
 
-		for(int i = 0; i < poolSize; i++) {
+    /**
+     * размер пакета выполняемых задач на поток
+     */
+    private final int packetSize;
 
-			final Thread thread = threadFactory.newThread(this);
-			thread.setDaemon(true);
-			thread.start();
+    public ThreadPoolTaskExecutor(final GroupThreadFactory threadFactory, final int poolSize, final int packetSize) {
+        this.waitTasks = LinkedListFactory.newLinkedList(CallableTask.class);
+        this.wait = new AtomicBoolean();
+        this.lock = LockFactory.newPrimitiveAtomicLock();
+        this.threads = ArrayFactory.newArray(Thread.class);
+        this.packetSize = packetSize;
 
-			threads.add(thread);
-		}
-	}
+        for (int i = 0; i < poolSize; i++) {
 
-	@Override
-	public void execute(final SimpleTask<L> task) {
-		lock();
-		try {
+            final Thread thread = threadFactory.newThread(this);
+            thread.setDaemon(true);
+            thread.start();
 
-			final LinkedList<CallableTask<?, L>> waitTasks = getWaitTasks();
-			waitTasks.add(task);
+            threads.add(thread);
+        }
+    }
 
-			final AtomicBoolean wait = getWait();
+    @Override
+    public void execute(final SimpleTask<L> task) {
+        lock();
+        try {
 
-			if(wait.get()) {
-				synchronized(wait) {
-					if(wait.compareAndSet(true, false)) {
-						ConcurrentUtils.notifyAllInSynchronize(wait);
-					}
-				}
-			}
+            final LinkedList<CallableTask<?, L>> waitTasks = getWaitTasks();
+            waitTasks.add(task);
 
-		} finally {
-			unlock();
-		}
-	}
+            final AtomicBoolean wait = getWait();
 
-	/**
-	 * Получение контейнера локальных объектов для указанного потока.
-	 * 
-	 * @param thread интересуемый поток.
-	 * @return контейнер локальных объектов для него.
-	 */
-	protected L getLocalObjects(final Thread thread) {
-		return null;
-	}
+            if (wait.get()) {
+                synchronized (wait) {
+                    if (wait.compareAndSet(true, false)) {
+                        ConcurrentUtils.notifyAllInSynchronize(wait);
+                    }
+                }
+            }
 
-	/**
-	 * @return размера пакета исполняемых задач.
-	 */
-	public int getPacketSize() {
-		return packetSize;
-	}
+        } finally {
+            unlock();
+        }
+    }
 
-	/**
-	 * @return находится ли исполнитель в ожидании.
-	 */
-	public AtomicBoolean getWait() {
-		return wait;
-	}
+    /**
+     * Получение контейнера локальных объектов для указанного потока.
+     *
+     * @param thread интересуемый поток.
+     * @return контейнер локальных объектов для него.
+     */
+    protected L getLocalObjects(final Thread thread) {
+        return null;
+    }
 
-	/**
-	 * @return список ожидающих исполнение задач.
-	 */
-	protected LinkedList<CallableTask<?, L>> getWaitTasks() {
-		return waitTasks;
-	}
+    /**
+     * @return размера пакета исполняемых задач.
+     */
+    public int getPacketSize() {
+        return packetSize;
+    }
 
-	@Override
-	public void lock() {
-		lock.lock();
-	}
+    /**
+     * @return находится ли исполнитель в ожидании.
+     */
+    public AtomicBoolean getWait() {
+        return wait;
+    }
 
-	@Override
-	public void run() {
+    /**
+     * @return список ожидающих исполнение задач.
+     */
+    protected LinkedList<CallableTask<?, L>> getWaitTasks() {
+        return waitTasks;
+    }
 
-		final Thread thread = Thread.currentThread();
+    @Override
+    public void lock() {
+        lock.lock();
+    }
 
-		final LinkedList<CallableTask<?, L>> waitTasks = getWaitTasks();
-		final Array<CallableTask<?, L>> executeTasks = ArrayFactory.newArray(CallableTask.class);
+    @Override
+    public void run() {
 
-		final AtomicBoolean wait = getWait();
-		final L local = getLocalObjects(thread);
-		final int packetSize = getPacketSize();
+        final Thread thread = Thread.currentThread();
 
-		while(true) {
+        final LinkedList<CallableTask<?, L>> waitTasks = getWaitTasks();
+        final Array<CallableTask<?, L>> executeTasks = ArrayFactory.newArray(CallableTask.class);
 
-			executeTasks.clear();
+        final AtomicBoolean wait = getWait();
+        final L local = getLocalObjects(thread);
+        final int packetSize = getPacketSize();
 
-			lock();
-			try {
+        while (true) {
 
-				if(waitTasks.isEmpty()) {
-					wait.getAndSet(true);
-				} else {
+            executeTasks.clear();
 
-					for(int i = 0; i < packetSize && !waitTasks.isEmpty(); i++) {
-						executeTasks.add(waitTasks.poll());
-					}
-				}
+            lock();
+            try {
 
-			} finally {
-				unlock();
-			}
+                if (waitTasks.isEmpty()) {
+                    wait.getAndSet(true);
+                } else {
 
-			if(executeTasks.isEmpty() && wait.get()) {
-				synchronized(wait) {
-					if(wait.get()) {
-						ConcurrentUtils.waitInSynchronize(wait);
-					}
-				}
-			}
+                    for (int i = 0; i < packetSize && !waitTasks.isEmpty(); i++) {
+                        executeTasks.add(waitTasks.poll());
+                    }
+                }
 
-			if(executeTasks.isEmpty()) {
-				continue;
-			}
+            } finally {
+                unlock();
+            }
 
-			try {
+            if (executeTasks.isEmpty() && wait.get()) {
+                synchronized (wait) {
+                    if (wait.get()) {
+                        ConcurrentUtils.waitInSynchronize(wait);
+                    }
+                }
+            }
 
-				final long currentTime = System.currentTimeMillis();
+            if (executeTasks.isEmpty()) {
+                continue;
+            }
 
-				for(final CallableTask<?, L> task : executeTasks.array()) {
+            try {
 
-					if(task == null) {
-						break;
-					}
+                final long currentTime = System.currentTimeMillis();
 
-					task.call(local, currentTime);
-				}
+                for (final CallableTask<?, L> task : executeTasks.array()) {
 
-			} catch(final Exception e) {
-				LOGGER.warning(e);
-			}
-		}
-	}
+                    if (task == null) {
+                        break;
+                    }
 
-	@Override
-	public <R> Future<R> submit(final CallableTask<R, L> task) {
-		throw new RuntimeException("not implemented.");
-	}
+                    task.call(local, currentTime);
+                }
 
-	@Override
-	public void unlock() {
-		lock.unlock();
-	}
+            } catch (final Exception e) {
+                LOGGER.warning(e);
+            }
+        }
+    }
+
+    @Override
+    public <R> Future<R> submit(final CallableTask<R, L> task) {
+        throw new RuntimeException("not implemented.");
+    }
+
+    @Override
+    public void unlock() {
+        lock.unlock();
+    }
 }

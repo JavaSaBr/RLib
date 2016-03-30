@@ -5,38 +5,40 @@ import rlib.util.pools.PoolFactory;
 
 /**
  * Перечисление типов ссылок.
- * 
+ *
  * @author Ronn
  */
 public enum ReferenceType {
 
-	FLOAT,
-	DOUBLE,
-	CHAR,
-	OBJECT,
-	BYTE,
-	SHORT,
-	LONG,
-	INTEGER;
+    FLOAT,
+    DOUBLE,
+    CHAR,
+    OBJECT,
+    BYTE,
+    SHORT,
+    LONG,
+    INTEGER;
 
-	/** пул ссылок */
-	private final FoldablePool<Reference> pool;
+    /**
+     * Пул ссылок.
+     */
+    private final FoldablePool<Reference> pool;
 
-	private ReferenceType() {
-		this.pool = PoolFactory.newAtomicFoldablePool(Reference.class);
-	}
+    private ReferenceType() {
+        this.pool = PoolFactory.newAtomicFoldablePool(Reference.class);
+    }
 
-	/**
-	 * @param wrap складировать ссылку.
-	 */
-	protected void put(final Reference wrap) {
-		pool.put(wrap);
-	}
+    /**
+     * @param wrap складировать ссылку.
+     */
+    protected void put(final Reference wrap) {
+        pool.put(wrap);
+    }
 
-	/**
-	 * @return достать использованную ссылку.
-	 */
-	protected Reference take() {
-		return pool.take();
-	}
+    /**
+     * @return достать использованную ссылку.
+     */
+    protected Reference take() {
+        return pool.take();
+    }
 }

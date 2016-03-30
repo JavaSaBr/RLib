@@ -1,6 +1,10 @@
 package rlib.compiler.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.tools.Diagnostic;
 import javax.tools.JavaCompiler;
@@ -16,179 +20,250 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Реализация обертки над java компилятором для удобной компиляции java кода в
- * runtime.
- * 
+ * Реализация обертки над java компилятором для удобной компиляции java кода в runtime.
+ *
  * @author Ronn
  */
 public class CompilerImpl implements Compiler {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(Compiler.class);
+    private static final Logger LOGGER = LoggerManager.getLogger(Compiler.class);
 
-	/** слушатель ошибок компиляций */
-	private final CompileListener listener;
+    public static final Class<?>[] EMPTY_CLASSES = new Class[0];
 
-	/** компилятор java кода */
-	private final JavaCompiler compiler;
+    /**
+     * Слушатель ошибок компиляций.
+     */
+    private final CompileListener listener;
 
-	/** загрузчик скомпилированных классов */
-	private final CompileClassLoader loader;
+    /**
+     * Компилятор java кода.
+     */
+    private final JavaCompiler compiler;
 
-	/** менедж по компилируемым ресурсам */
-	private final CompileJavaFileManager fileManager;
+    /**
+     * Загрузчик скомпилированных классов.
+     */
+    private final CompileClassLoader loader;
 
-	/** отображать ли ошибки компиляции */
-	private final boolean showDiagnostic;
+    /**
+     * Менедж по компилируемым ресурсам.
+     */
+    private final CompileJavaFileManager fileManager;
 
-	/**
-	 * @param showDiagnostic отображать ли ошибки компиляции.
-	 */
-	public CompilerImpl(final boolean showDiagnostic) {
-		this.compiler = ToolProvider.getSystemJavaCompiler();
-		this.listener = new CompileListener();
-		this.loader = new CompileClassLoader();
+    /**
+     * Отображать ли ошибки компиляции.
+     */
+    private final boolean showDiagnostic;
 
-		final StandardJavaFileManager standardJavaFileManager = compiler.getStandardFileManager(listener, null, null);
+    /**
+     * @param showDiagnostic отображать ли ошибки компиляции.
+     */
+    public CompilerImpl(final boolean showDiagnostic) {
+        this.compiler = ToolProvider.getSystemJavaCompiler();
+        this.listener = new CompileListener();
+        this.loader = new CompileClassLoader();
 
-		this.fileManager = new CompileJavaFileManager(standardJavaFileManager, loader);
-		this.showDiagnostic = showDiagnostic;
-	}
+        final StandardJavaFileManager standardJavaFileManager = compiler.getStandardFileManager(listener, null, null);
 
-	@Override
-	public Class<?>[] compile(final File... files) {
+        this.fileManager = new CompileJavaFileManager(standardJavaFileManager, loader);
+        this.showDiagnostic = showDiagnostic;
+    }
 
-		if(files.length < 1) {
-			return null;
-		}
+    @Override
+    public Class<?>[] compile(final File... files) {
 
-		final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
+        if (files.length < 1) {
+            return EMPTY_CLASSES;
+        }
 
-		for(final File file : files) {
-			javaSource.add(new JavaFileSource(file));
-		}
+        final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
 
-		return compile(null, javaSource);
-	}
+        for (final File file : files) {
+            javaSource.add(new JavaFileSource(file));
+        }
 
-	/**
-	 * Компиляция списка объектов.
-	 * 
-	 * @param options опции компиляции.
-	 * @param source список исходников.
-	 * @return список скомпиленых классов.
-	 */
-	protected synchronized Class<?>[] compile(final Iterable<String> options, final Iterable<? extends JavaFileObject> source) {
+        return compile(null, javaSource);
+    }
 
-		final JavaCompiler compiler = getCompiler();
+    @Override
+    public Class<?>[] compile(final Path... paths) {
 
-		final CompileJavaFileManager fileManager = getFileManager();
-		final CompileListener listener = getListener();
-		final CompileClassLoader loader = getLoader();
+        if (paths.length < 1) {
+            return EMPTY_CLASSES;
+        }
 
-		try {
+        final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
 
-			final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, source);
-			task.call();
+        for (final Path path : paths) {
+            javaSource.add(new JavaFileSource(path));
+        }
 
-			final Diagnostic<JavaFileObject>[] diagnostics = listener.getDiagnostics();
+        return compile(null, javaSource);
+    }
 
-			if(isShowDiagnostic() && diagnostics.length > 1) {
+    /**
+     * Компиляция списка объектов.
+     *
+     * @param options опции компиляции.
+     * @param source  список исходников.
+     * @return список скомпиленых классов.
+     */
+    protected synchronized Class<?>[] compile(final Iterable<String> options, final Iterable<? extends JavaFileObject> source) {
 
-				LOGGER.warning("errors:");
+        final JavaCompiler compiler = getCompiler();
 
-				for(final Diagnostic<JavaFileObject> diagnostic : diagnostics) {
-					LOGGER.warning(String.valueOf(diagnostic));
-				}
-			}
+        final CompileJavaFileManager fileManager = getFileManager();
+        final CompileListener listener = getListener();
+        final CompileClassLoader loader = getLoader();
 
-			final Array<Class<?>> result = ArrayFactory.newArray(Class.class);
+        try {
 
-			final String[] classNames = fileManager.getClassNames();
+            final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, source);
+            task.call();
 
-			for(final String className : classNames) {
-				try {
-					final Class<?> cs = Class.forName(className, false, loader);
-					result.add(cs);
-				} catch(final ClassNotFoundException e) {
-					LOGGER.warning(e);
-				}
-			}
+            final Diagnostic<JavaFileObject>[] diagnostics = listener.getDiagnostics();
 
-			return result.toArray(new Class[result.size()]);
-		} finally {
-			listener.clear();
-			fileManager.clear();
-		}
-	}
+            if (isShowDiagnostic() && diagnostics.length > 1) {
 
-	/**
-	 * Скомпилировать классы в дериктории.
-	 * 
-	 * @param container контейнер классов.
-	 * @param directory дериктория.
-	 */
-	private void compileDirectory(final Array<Class<?>> container, final File directory) {
+                LOGGER.warning("errors:");
 
-		final File[] files = directory.listFiles();
+                for (final Diagnostic<JavaFileObject> diagnostic : diagnostics) {
+                    LOGGER.warning(String.valueOf(diagnostic));
+                }
+            }
 
-		for(final File file : files) {
-			if(file.isDirectory()) {
-				compileDirectory(container, file);
-			} else if(file.getName().endsWith(Compiler.SOURCE_EXTENSION)) {
-				container.addAll(compile(file));
-			}
-		}
-	}
+            final Array<Class<?>> result = ArrayFactory.newArray(Class.class);
 
-	@Override
-	public Class<?>[] compileDirectory(final File... files) {
+            final String[] classNames = fileManager.getClassNames();
 
-		final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
+            for (final String className : classNames) {
+                try {
+                    final Class<?> cs = Class.forName(className, false, loader);
+                    result.add(cs);
+                } catch (final ClassNotFoundException e) {
+                    LOGGER.warning(e);
+                }
+            }
 
-		for(final File directory : files) {
+            return result.toArray(new Class[result.size()]);
+        } finally {
+            listener.clear();
+            fileManager.clear();
+        }
+    }
 
-			if(!directory.exists() || !directory.isDirectory()) {
-				continue;
-			}
+    /**
+     * Скомпилировать классы в дериктории.
+     *
+     * @param container контейнер классов.
+     * @param directory дериктория.
+     */
+    private void compileDirectory(final Array<Class<?>> container, final File directory) {
 
-			compileDirectory(container, directory);
-		}
+        final File[] files = directory.listFiles();
 
-		return container.toArray(new Class[container.size()]);
-	}
+        if (files == null || files.length < 1) {
+            return;
+        }
 
-	/**
-	 * @return компилятор java кода.
-	 */
-	protected JavaCompiler getCompiler() {
-		return compiler;
-	}
+        for (final File file : files) {
+            if (file.isDirectory()) {
+                compileDirectory(container, file);
+            } else if (file.getName().endsWith(Compiler.SOURCE_EXTENSION)) {
+                container.addAll(compile(file));
+            }
+        }
+    }
 
-	/**
-	 * @return менедж по компилируемым ресурсам.
-	 */
-	protected CompileJavaFileManager getFileManager() {
-		return fileManager;
-	}
+    @Override
+    public Class<?>[] compileDirectory(final File... files) {
 
-	/**
-	 * @return слушатель ошибок компиляций.
-	 */
-	protected CompileListener getListener() {
-		return listener;
-	}
+        final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
-	/**
-	 * @return загрузчик скомпилированных классов.
-	 */
-	protected CompileClassLoader getLoader() {
-		return loader;
-	}
+        for (final File directory : files) {
 
-	/**
-	 * @return отображать ли диагностику.
-	 */
-	private boolean isShowDiagnostic() {
-		return showDiagnostic;
-	}
+            if (!directory.exists() || !directory.isDirectory()) {
+                continue;
+            }
+
+            compileDirectory(container, directory);
+        }
+
+        return container.toArray(new Class[container.size()]);
+    }
+
+    /**
+     * Скомпилировать классы в дериктории.
+     *
+     * @param container контейнер классов.
+     * @param directory дериктория.
+     */
+    private void compileDirectory(final Array<Class<?>> container, final Path directory) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+
+            for (final Path path : stream) {
+                if (Files.isDirectory(path)) {
+                    compileDirectory(container, path);
+                } else if (path.toString().endsWith(Compiler.SOURCE_EXTENSION)) {
+                    container.addAll(compile(path));
+                }
+            }
+
+        } catch (IOException e) {
+            LOGGER.warning(e);
+        }
+    }
+
+    @Override
+    public Class<?>[] compileDirectory(Path... paths) {
+
+        final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
+
+        for (final Path path : paths) {
+
+            if (!Files.exists(path) || !Files.isDirectory(path)) {
+                continue;
+            }
+
+            compileDirectory(container, path);
+        }
+
+        return container.toArray(new Class[container.size()]);
+
+    }
+
+    /**
+     * @return компилятор java кода.
+     */
+    protected JavaCompiler getCompiler() {
+        return compiler;
+    }
+
+    /**
+     * @return менедж по компилируемым ресурсам.
+     */
+    protected CompileJavaFileManager getFileManager() {
+        return fileManager;
+    }
+
+    /**
+     * @return слушатель ошибок компиляций.
+     */
+    protected CompileListener getListener() {
+        return listener;
+    }
+
+    /**
+     * @return загрузчик скомпилированных классов.
+     */
+    protected CompileClassLoader getLoader() {
+        return loader;
+    }
+
+    /**
+     * @return отображать ли диагностику.
+     */
+    private boolean isShowDiagnostic() {
+        return showDiagnostic;
+    }
 }

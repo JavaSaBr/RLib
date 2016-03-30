@@ -7,16 +7,16 @@ import rlib.util.FileUtils;
 
 /**
  * Реализация теста утильного класса по работе с файлами.
- * 
+ *
  * @author Ronn
  */
 public class TestFileUtils extends Assert {
 
-	@Test
-	public void test() {
+    @Test
+    public void test() {
 
-		final String result = FileUtils.getNameWithoutExtension("test/test.olooo/test/file.extension");
-		final String result2 = FileUtils.getExtension("test/test.olooo/test/file.extension");
-		System.out.println();
-	}
+        final String result = FileUtils.getNameWithoutExtension("test/test.olooo/test/file.extension");
+        final String result2 = FileUtils.getExtension("test/test.olooo/test/file.extension");
+        System.out.println();
+    }
 }

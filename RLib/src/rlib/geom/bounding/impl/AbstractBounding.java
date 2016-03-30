@@ -11,79 +11,84 @@ import rlib.logging.LoggerManager;
 
 /**
  * Базовая реализация формы из точек.
- * 
+ *
  * @author Ronn
  */
 public abstract class AbstractBounding implements Bounding {
 
-	protected static final Logger LOGGER = LoggerManager.getLogger(Bounding.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(Bounding.class);
 
-	/** центр формы */
-	protected Vector center;
-	/** смещение от центра */
-	protected Vector offset;
+    /**
+     * Центр формы.
+     */
+    protected Vector center;
 
-	protected AbstractBounding(final Vector center, final Vector offset) {
-		this.center = center;
-		this.offset = offset;
-	}
+    /**
+     * Смещение от центра.
+     */
+    protected Vector offset;
 
-	@Override
-	public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
-		return false;
-	}
+    protected AbstractBounding(final Vector center, final Vector offset) {
+        this.center = center;
+        this.offset = offset;
+    }
 
-	@Override
-	public boolean contains(final Vector point, final VectorBuffer buffer) {
-		return contains(point.getX(), point.getY(), point.getZ(), buffer);
-	}
+    @Override
+    public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
+        return false;
+    }
 
-	@Override
-	public final float distanceTo(final Vector point) {
-		return center.distance(point);
-	}
+    @Override
+    public boolean contains(final Vector point, final VectorBuffer buffer) {
+        return contains(point.getX(), point.getY(), point.getZ(), buffer);
+    }
 
-	@Override
-	public BoundingType getBoundingType() {
-		return BoundingType.EMPTY;
-	}
+    @Override
+    public final float distanceTo(final Vector point) {
+        return center.distance(point);
+    }
 
-	@Override
-	public final Vector getCenter() {
-		return center;
-	}
+    @Override
+    public BoundingType getBoundingType() {
+        return BoundingType.EMPTY;
+    }
 
-	@Override
-	public Vector getOffset() {
-		return offset;
-	}
+    @Override
+    public final Vector getCenter() {
+        return center;
+    }
 
-	@Override
-	public Vector getResultCenter(final VectorBuffer buffer) {
-		return null;
-	}
+    @Override
+    public void setCenter(final Vector center) {
+        this.center = center;
+    }
 
-	@Override
-	public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
-		return false;
-	}
+    @Override
+    public Vector getOffset() {
+        return offset;
+    }
 
-	@Override
-	public final boolean intersects(final Ray ray, final VectorBuffer buffer) {
-		return intersects(ray.getStart(), ray.getDirection(), buffer);
-	}
+    @Override
+    public Vector getResultCenter(final VectorBuffer buffer) {
+        return null;
+    }
 
-	@Override
-	public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
-		return false;
-	}
+    @Override
+    public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
+        return false;
+    }
 
-	@Override
-	public void setCenter(final Vector center) {
-		this.center = center;
-	}
+    @Override
+    public final boolean intersects(final Ray ray, final VectorBuffer buffer) {
+        return intersects(ray.getStart(), ray.getDirection(), buffer);
+    }
 
-	@Override
-	public void update(final Rotation rotation, final VectorBuffer buffer) {
-	}
+    @Override
+    public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
+        return false;
+    }
+
+    @Override
+    public void update(final Rotation rotation, final VectorBuffer buffer) {
+    }
 }

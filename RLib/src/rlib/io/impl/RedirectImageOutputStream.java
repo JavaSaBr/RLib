@@ -8,51 +8,56 @@ import javax.imageio.stream.ImageOutputStreamImpl;
 
 /**
  * Реализация перенаправителя стрима.
- * 
+ *
  * @author Ronn
  */
 public class RedirectImageOutputStream extends ImageOutputStreamImpl {
 
-	/** перенаправляющий выходящий поток */
-	private OutputStream out;
-	/** перенаправляющий входящий поток */
-	private InputStream in;
+    /**
+     * Перенаправляющий выходящий поток.
+     */
+    private OutputStream out;
 
-	@Override
-	public void close() throws IOException {
-	}
+    /**
+     * Перенаправляющий входящий поток.
+     */
+    private InputStream in;
 
-	@Override
-	public int read() throws IOException {
-		return in.read();
-	}
+    @Override
+    public void close() throws IOException {
+    }
 
-	@Override
-	public int read(final byte[] b, final int off, final int len) throws IOException {
-		return in.read(b, off, len);
-	}
+    @Override
+    public int read() throws IOException {
+        return in.read();
+    }
 
-	/**
-	 * @param in перенаправляющий входящий поток.
-	 */
-	public void setIn(final InputStream in) {
-		this.in = in;
-	}
+    @Override
+    public int read(final byte[] b, final int off, final int len) throws IOException {
+        return in.read(b, off, len);
+    }
 
-	/**
-	 * @param out перенаправляющий выходящий поток.
-	 */
-	public void setOut(final OutputStream out) {
-		this.out = out;
-	}
+    /**
+     * @param in перенаправляющий входящий поток.
+     */
+    public void setIn(final InputStream in) {
+        this.in = in;
+    }
 
-	@Override
-	public void write(final byte[] b, final int off, final int len) throws IOException {
-		out.write(b, off, len);
-	}
+    /**
+     * @param out перенаправляющий выходящий поток.
+     */
+    public void setOut(final OutputStream out) {
+        this.out = out;
+    }
 
-	@Override
-	public void write(final int b) throws IOException {
-		out.write(b);
-	}
+    @Override
+    public void write(final byte[] b, final int off, final int len) throws IOException {
+        out.write(b, off, len);
+    }
+
+    @Override
+    public void write(final int b) throws IOException {
+        out.write(b);
+    }
 }

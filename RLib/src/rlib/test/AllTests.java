@@ -10,9 +10,9 @@ import rlib.test.util.array.TestFastArray;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	TestThreadPoolTaskExecutor.class,
-	TestPrimitiveAtomicReadWriteLock.class,
-	TestFastArray.class
+        TestThreadPoolTaskExecutor.class,
+        TestPrimitiveAtomicReadWriteLock.class,
+        TestFastArray.class
 })
 public class AllTests {
 

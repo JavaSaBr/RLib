@@ -11,182 +11,193 @@ import rlib.logging.LoggerManager;
 
 /**
  * Набор методов для работы со строками.
- * 
+ *
  * @author Ronn
  * @created 27.03.2012
  */
 public class StringUtils {
 
-	private static final Logger LOGGER = LoggerManager.getLogger(StringUtils.class);
+    private static final Logger LOGGER = LoggerManager.getLogger(StringUtils.class);
 
-	/** экземпляр пустой строки */
-	public static final String EMPTY = "".intern();
+    /**
+     * Экземпляр пустой строки.
+     */
+    public static final String EMPTY = "".intern();
 
-	/** экземпляр пустого массива строк */
-	public static final String[] EMPTY_ARRAY = new String[0];
+    /**
+     * Экземпляр пустого массива строк.
+     */
+    public static final String[] EMPTY_ARRAY = new String[0];
 
-	/** создаем регулярку для проверки почты */
-	public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE
-			| Pattern.MULTILINE);
+    /**
+     * Создаем регулярку для проверки почты.
+     */
+    public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-	private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = new ThreadLocal<MessageDigest>() {
+    private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = new ThreadLocal<MessageDigest>() {
 
-		@Override
-		protected MessageDigest initialValue() {
-			return getHashMD5();
-		}
-	};
+        @Override
+        protected MessageDigest initialValue() {
+            return getHashMD5();
+        }
+    };
 
-	/**
-	 * Рассчет длинны строки для пакета
-	 * 
-	 * @param string интересуемая строка.
-	 * @return длинна строки в байтах.
-	 */
-	public static int byteCount(final String string) {
+    /**
+     * Рассчет длинны строки для пакета
+     *
+     * @param string интересуемая строка.
+     * @return длинна строки в байтах.
+     */
+    public static int byteCount(final String string) {
 
-		if(string == null || string.isEmpty()) {
-			return 2;
-		}
+        if (string == null || string.isEmpty()) {
+            return 2;
+        }
 
-		return string.length() * 2 + 2;
-	}
+        return string.length() * 2 + 2;
+    }
 
-	/**
-	 * Проверка на корректность почтового адресса.
-	 * 
-	 * @param email проверяемый адресс.
-	 * @return корректно ли введен.
-	 */
-	public static boolean checkEmail(final String email) {
-		final Matcher matcher = EMAIL_PATTERN.matcher(email);
-		return matcher.matches();
-	}
+    /**
+     * Проверка на корректность почтового адресса.
+     *
+     * @param email проверяемый адресс.
+     * @return корректно ли введен.
+     */
+    public static boolean checkEmail(final String email) {
+        final Matcher matcher = EMAIL_PATTERN.matcher(email);
+        return matcher.matches();
+    }
 
-	/**
-	 * Сравнение 2х строк.
-	 */
-	public static boolean equals(final String first, final String second) {
+    /**
+     * Сравнение 2х строк с учетом регистра с прооверками на <code>null</code>.
+     */
+    public static int compare(String first, String second) {
 
-		if(first == null || second == null) {
-			return false;
-		}
+        if (first == null) {
+            return 1;
+        } else if (second == null) {
+            return -1;
+        }
 
-		return first.equals(second);
-	}
+        return first.compareTo(second);
+    }
 
-	/**
-	 * Сравнение 2х строк без учета регистра.
-	 */
-	public static boolean equalsIgnoreCase(final String first, final String second) {
+    /**
+     * Сравнение 2х строк без учета регистра с прооверками на <code>null</code>.
+     */
+    public static int compareIgnoreCase(String first, String second) {
 
-		if(first == null || second == null) {
-			return false;
-		}
+        if (first == null) {
+            return 1;
+        } else if (second == null) {
+            return -1;
+        }
 
-		return first.equalsIgnoreCase(second);
-	}
+        return first.compareToIgnoreCase(second);
+    }
 
-	/**
-	 * Сравнение 2х строк с учетом регистра с прооверками на <code>null</code>.
-	 */
-	public static int compare(String first, String second) {
+    /**
+     * Сравнение 2х строк.
+     */
+    public static boolean equals(final String first, final String second) {
 
-		if(first == null) {
-			return 1;
-		}
+        if (first == null || second == null) {
+            return false;
+        }
 
-		if(second == null) {
-			return -1;
-		}
+        return first.equals(second);
+    }
 
-		return first.compareTo(second);
-	}
+    /**
+     * Сравнение 2х строк без учета регистра.
+     */
+    public static boolean equalsIgnoreCase(final String first, final String second) {
 
-	/**
-	 * Сравнение 2х строк без учета регистра с прооверками на <code>null</code>.
-	 */
-	public static int compareIgonoreCase(String first, String second) {
+        if (first == null || second == null) {
+            return false;
+        }
 
-		if(first == null) {
-			return 1;
-		}
+        return first.equalsIgnoreCase(second);
+    }
 
-		if(second == null) {
-			return -1;
-		}
+    /**
+     * Конверктация эксепшена в строку.
+     *
+     * @param throwable полученный эксепшен.
+     * @return строковое представление.
+     */
+    public static String format(final Throwable throwable) {
 
-		return first.compareToIgnoreCase(second);
-	}
+        final StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
 
-	/**
-	 * Конверктация эксепшена в строку.
-	 * 
-	 * @param throwable полученный эксепшен.
-	 * @return строковое представление.
-	 */
-	public static String format(final Throwable throwable) {
+        builder.append(" : stack trace:\n");
 
-		final StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
+        for (final StackTraceElement stack : throwable.getStackTrace()) {
+            builder.append(stack).append("\n");
+        }
 
-		builder.append(" : stack trace:\n");
+        return builder.toString();
+    }
 
-		for(final StackTraceElement stack : throwable.getStackTrace()) {
-			builder.append(stack).append("\n");
-		}
+    /**
+     * Генерирование случайной строки указанной длинны.
+     *
+     * @param length длинна строки.
+     * @return итоговая строка.
+     */
+    public static String generate(final int length) {
 
-		return builder.toString();
-	}
+        final char[] array = new char[length];
 
-	/**
-	 * Генерирование случайной строки указанной длинны.
-	 * 
-	 * @param length длинна строки.
-	 * @return итоговая строка.
-	 */
-	public static String generate(final int length) {
+        for (int i = 0; i < length; i++) {
+            array[i] = (char) Rnd.nextInt('a', 'z');
+        }
 
-		final char[] array = new char[length];
+        return String.valueOf(array);
+    }
 
-		for(int i = 0; i < length; i++) {
-			array[i] = (char) Rnd.nextInt('a', 'z');
-		}
+    /**
+     * @return получаение алгоритма хеша.
+     */
+    private static MessageDigest getHashMD5() {
 
-		return String.valueOf(array);
-	}
+        try {
+            return MessageDigest.getInstance("MD5");
+        } catch (final NoSuchAlgorithmException e) {
+            LOGGER.warning(e);
+        }
 
-	/**
-	 * @return получаение алгоритма хеша.
-	 */
-	private static MessageDigest getHashMD5() {
+        return null;
+    }
 
-		try {
-			return MessageDigest.getInstance("MD5");
-		} catch(final NoSuchAlgorithmException e) {
-			LOGGER.warning(e);
-		}
+    /**
+     * @return является ли строка пустой.
+     */
+    public static boolean isEmpty(final String string) {
+        return string == null || string.isEmpty();
+    }
 
-		return null;
-	}
+    /**
+     * Получение длинны указанной строки.
+     *
+     * @param string интересуемая строка.
+     * @return длинна строки или же 0 в случае если она пуста или <code>null</code>
+     */
+    public static int length(String string) {
+        return string == null ? 0 : string.length();
+    }
 
-	/**
-	 * @return является ли строка пустой.
-	 */
-	public static boolean isEmpty(final String string) {
-		return string == null || string.isEmpty();
-	}
+    /**
+     * Получение хэша пароля.
+     *
+     * @param password пароль.
+     * @return хэш пароля.
+     */
+    public static String passwordToHash(final String password) {
 
-	/**
-	 * Получение хэша пароля.
-	 * 
-	 * @param password пароль.
-	 * @return хэш пароля.
-	 */
-	public static String passwordToHash(final String password) {
+        final MessageDigest hashMD5 = LOCAL_HASH_MD.get();
+        hashMD5.update(password.getBytes(), 0, password.length());
 
-		final MessageDigest hashMD5 = LOCAL_HASH_MD.get();
-		hashMD5.update(password.getBytes(), 0, password.length());
-
-		return new BigInteger(1, hashMD5.digest()).toString(16);
-	}
+        return new BigInteger(1, hashMD5.digest()).toString(16);
+    }
 }

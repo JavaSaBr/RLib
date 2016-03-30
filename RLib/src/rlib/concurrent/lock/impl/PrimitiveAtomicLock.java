@@ -8,107 +8,112 @@ import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.util.ThreadUtils;
 
 /**
- * Реализация примитивного блокировщика при помощи {@link AtomicInteger} без
- * поддержки рекурсивной блокировки. Рекамендуется приминется в местах с не
- * более чем средней конкурнции и с короткими секциями блокировки.
- * 
+ * Реализация примитивного блокировщика при помощи {@link AtomicInteger} без поддержки рекурсивной
+ * блокировки. Рекамендуется приминется в местах с не более чем средней конкурнции и с короткими
+ * секциями блокировки.
+ *
  * @author Ronn
  */
 @SuppressWarnings("restriction")
 public final class PrimitiveAtomicLock implements Lock {
 
-	public static final int STATUS_LOCKED = 1;
-	public static final int STATUS_UNLOCKED = 0;
+    public static final int STATUS_LOCKED = 1;
+    public static final int STATUS_UNLOCKED = 0;
 
-	/** статус блокировки */
-	@sun.misc.Contended
-	private final AtomicInteger status;
+    /**
+     * Статус блокировки.
+     */
+    @sun.misc.Contended
+    private final AtomicInteger status;
 
-	/** простой счетчик для выполнения простых операций в цикле CAS */
-	private int counter;
+    /**
+     * Простой счетчик для выполнения простых операций в цикле CAS.
+     */
+    private int counter;
 
-	public PrimitiveAtomicLock() {
-		this.status = new AtomicInteger();
-	}
+    public PrimitiveAtomicLock() {
+        this.status = new AtomicInteger();
+    }
 
-	/**
-	 * @return получение и инкрементирования счетчика.
-	 */
-	private int getAndIncrementCounter() {
-		return counter++;
-	}
+    /**
+     * @return получение и инкрементирования счетчика.
+     */
+    private int getAndIncrementCounter() {
+        return counter++;
+    }
 
-	/**
-	 * @return статус блокировки.
-	 */
-	private AtomicInteger getStatus() {
-		return status;
-	}
+    /**
+     * @return статус блокировки.
+     */
+    private AtomicInteger getStatus() {
+        return status;
+    }
 
-	@Override
-	public void lock() {
+    @Override
+    public void lock() {
 
-		final AtomicInteger status = getStatus();
-		while(!status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED)) {
+        final AtomicInteger status = getStatus();
 
-			// выполняем пачку элементарных бессмысленных операций для
-			// обеспечения интервала между проверками
-			final int currentCounter = getAndIncrementCounter();
-			int newValue = currentCounter ^ currentCounter;
+        while (!status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED)) {
 
-			newValue = currentCounter >>> 1;
-			newValue = currentCounter & newValue;
-			newValue = currentCounter ^ newValue;
-			newValue = newValue << currentCounter;
-			newValue = newValue | currentCounter;
+            // выполняем пачку элементарных бессмысленных операций для
+            // обеспечения интервала между проверками
+            final int currentCounter = getAndIncrementCounter();
+            int newValue = currentCounter ^ currentCounter;
 
-			setCounter(newValue);
-		}
-	}
+            newValue = currentCounter >>> 1;
+            newValue = currentCounter & newValue;
+            newValue = currentCounter ^ newValue;
+            newValue = newValue << currentCounter;
+            newValue = newValue | currentCounter;
 
-	@Override
-	public void lockInterruptibly() throws InterruptedException {
-		throw new RuntimeException("not supported.");
-	}
+            setCounter(newValue);
+        }
+    }
 
-	@Override
-	public Condition newCondition() {
-		throw new RuntimeException("not supported.");
-	}
+    @Override
+    public void lockInterruptibly() throws InterruptedException {
+        throw new RuntimeException("not supported.");
+    }
 
-	/**
-	 * Обновление счетчика.
-	 */
-	public void setCounter(final int counter) {
-		this.counter = counter;
-	}
+    @Override
+    public Condition newCondition() {
+        throw new RuntimeException("not supported.");
+    }
 
-	@Override
-	public boolean tryLock() {
-		return status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED);
-	}
+    /**
+     * Обновление счетчика.
+     */
+    public void setCounter(final int counter) {
+        this.counter = counter;
+    }
 
-	@Override
-	public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
+    @Override
+    public boolean tryLock() {
+        return status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED);
+    }
 
-		final AtomicInteger status = getStatus();
+    @Override
+    public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
 
-		if(status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED)) {
-			return true;
-		}
+        final AtomicInteger status = getStatus();
 
-		final long resultTime = unit.toMillis(time);
+        if (status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED)) {
+            return true;
+        }
 
-		if(resultTime > 1) {
-			ThreadUtils.sleep(resultTime);
-		}
+        final long resultTime = unit.toMillis(time);
 
-		return status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED);
-	}
+        if (resultTime > 1) {
+            ThreadUtils.sleep(resultTime);
+        }
 
-	@Override
-	public void unlock() {
-		final AtomicInteger status = getStatus();
-		status.set(STATUS_UNLOCKED);
-	}
+        return status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED);
+    }
+
+    @Override
+    public void unlock() {
+        final AtomicInteger status = getStatus();
+        status.set(STATUS_UNLOCKED);
+    }
 }
