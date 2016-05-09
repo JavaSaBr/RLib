@@ -7,8 +7,8 @@ import java.util.function.Function;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.LongArray;
-import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
+import rlib.util.pools.ReusablePool;
 
 /**
  * Базоваря реализация словаря с примитивным ключем long.

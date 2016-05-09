@@ -1,7 +1,7 @@
 package rlib.util.ref;
 
-import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
+import rlib.util.pools.ReusablePool;
 
 /**
  * Перечисление типов ссылок.

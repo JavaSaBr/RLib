@@ -223,8 +223,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     /**
      * Итерирование массива с двумя дополнительными аргументомами.
      *
-     * @param first первый дополнительный аргумент.
-     * @param second второй дополнительный аргумент.
+     * @param first    первый дополнительный аргумент.
+     * @param second   второй дополнительный аргумент.
      * @param consumer функция для обработки элементов.
      */
     public default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
@@ -433,7 +433,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     /**
      * Ищет первый элемент удовлетворяющий условию c дополнительным аргументом.
      *
-     * @param argument дополнительный аргумент.
+     * @param argument  дополнительный аргумент.
      * @param predicate условия отбора элемента.
      * @return искомый объект либо null.
      */

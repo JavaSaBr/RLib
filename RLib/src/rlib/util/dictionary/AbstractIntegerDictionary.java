@@ -10,8 +10,8 @@ import rlib.function.IntObjectConsumer;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.IntegerArray;
-import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
+import rlib.util.pools.ReusablePool;
 
 /**
  * Базовая реализация словаря с примитивным ключем int.
@@ -179,7 +179,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
         IntegerDictionaryEntry<V> entry = getEntry(key);
 
-        if(entry == null) {
+        if (entry == null) {
             put(key, factory.get());
         }
 

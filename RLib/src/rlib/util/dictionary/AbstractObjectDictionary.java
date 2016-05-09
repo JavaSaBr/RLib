@@ -8,8 +8,8 @@ import java.util.function.Function;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
+import rlib.util.pools.ReusablePool;
 
 /**
  * Базовая реализация словаря с объектным ключем.

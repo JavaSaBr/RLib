@@ -5,8 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import rlib.util.linkedlist.LinkedList;
-import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
+import rlib.util.pools.ReusablePool;
 
 /**
  * Реадизация не потокобезопасного {@link LinkedList}.

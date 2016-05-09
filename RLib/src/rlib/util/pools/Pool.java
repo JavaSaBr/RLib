@@ -45,6 +45,6 @@ public interface Pool<E> {
      */
     public default E take(final Supplier<E> factory) {
         final E take = take();
-        return take != null? take : factory.get();
+        return take != null ? take : factory.get();
     }
 }

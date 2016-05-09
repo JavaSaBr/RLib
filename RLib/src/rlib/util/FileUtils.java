@@ -41,10 +41,10 @@ public class FileUtils {
         final int firstLength = first.getNameCount();
         final int secondLength = second.getNameCount();
 
-        if(firstLength == secondLength) {
+        if (firstLength == secondLength) {
 
-            final int firstLevel = Files.isDirectory(first)? 2 : 1;
-            final int secondLevel = Files.isDirectory(first)? 2 : 1;
+            final int firstLevel = Files.isDirectory(first) ? 2 : 1;
+            final int secondLevel = Files.isDirectory(first) ? 2 : 1;
 
             return firstLevel - secondLevel;
         }
@@ -106,7 +106,7 @@ public class FileUtils {
      */
     public static void addFilesTo(final Array<Path> container, final Path dir, final boolean withFolders, final String... extensions) {
 
-        if(Files.isDirectory(dir) && withFolders) {
+        if (Files.isDirectory(dir) && withFolders) {
             container.add(dir);
         }
 
