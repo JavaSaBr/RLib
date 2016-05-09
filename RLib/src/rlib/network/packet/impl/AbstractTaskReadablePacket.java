@@ -2,7 +2,7 @@ package rlib.network.packet.impl;
 
 import rlib.concurrent.executor.TaskExecutor;
 import rlib.concurrent.task.SimpleTask;
-import rlib.util.pools.FoldablePool;
+import rlib.util.pools.ReusablePool;
 
 /**
  * Базовая реализация читаемого пакета с реализацией интерфейса {@link SimpleTask} для выполнения в
@@ -21,7 +21,7 @@ public abstract class AbstractTaskReadablePacket<C, L> extends AbstractReadableP
             LOGGER.warning(this, e);
         } finally {
 
-            final FoldablePool pool = getPool();
+            final ReusablePool pool = getPool();
 
             if (pool != null) {
                 pool.put(this);
@@ -41,7 +41,7 @@ public abstract class AbstractTaskReadablePacket<C, L> extends AbstractReadableP
      * @return пулл для складывания этого пакета. может быть <code>null</code>.
      */
     @SuppressWarnings("rawtypes")
-    protected abstract FoldablePool getPool();
+    protected abstract ReusablePool getPool();
 
     /**
      * @return нужно ли выполнять синхронно пакет.

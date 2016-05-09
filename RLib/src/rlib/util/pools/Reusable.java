@@ -2,23 +2,23 @@ package rlib.util.pools;
 
 /**
  * Интерфейс для реализации методов по финалзации и переинициализации используемых объектов совместо
- * с {@link FoldablePool}.
+ * с {@link ReusablePool}.
  *
  * @author Ronn
- * @see FoldablePool
+ * @see ReusablePool
  */
-public interface Foldable {
+public interface Reusable {
 
     /**
-     * Подготовка объекта к складыванию в объектный пул.
+     * Очистка объекта перед завершением работы с ним.
      */
-    public default void finalyze() {
+    public default void free() {
     }
 
     /**
-     * Подготовка объекта к использованию после вытаскивания из объектного пула.
+     * Подготовка объекта к новому переиспользованию.
      */
-    public default void reinit() {
+    public default void reuse() {
     }
 
     /**

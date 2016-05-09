@@ -4,14 +4,14 @@ import java.nio.ByteBuffer;
 
 import rlib.network.packet.ReadeablePacket;
 import rlib.util.Util;
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Базовая реализация читаемого пакета.
  *
  * @author Ronn
  */
-public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implements ReadeablePacket<C>, Foldable {
+public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implements ReadeablePacket<C>, Reusable {
 
     /**
      * Буффер данных читаемого пакета.

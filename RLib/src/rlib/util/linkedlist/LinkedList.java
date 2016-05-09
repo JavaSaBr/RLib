@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import rlib.util.linkedlist.impl.Node;
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Интерфей с для реализации связанного списка. Главное преймущество, это переиспользование узлов
@@ -21,7 +21,7 @@ import rlib.util.pools.Foldable;
  *
  * @author Ronn
  */
-public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Foldable {
+public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusable {
 
     /**
      * Применить функцию на все элементы в списке.

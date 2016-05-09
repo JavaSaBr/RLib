@@ -59,7 +59,7 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
     }
 
     @Override
-    public void finalyze() {
+    public void free() {
         clear();
     }
 

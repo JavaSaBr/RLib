@@ -3,7 +3,7 @@ package rlib.network.packet.impl;
 import java.nio.ByteBuffer;
 
 import rlib.concurrent.atomic.AtomicInteger;
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Баовая реализация переиспользуемого отправляемого сетевого пакета. Реализация переипользуемости
@@ -13,7 +13,7 @@ import rlib.util.pools.Foldable;
  *
  * @author Ronn
  */
-public abstract class AbstractReusableSendablePacket<C> extends AbstractSendablePacket<C> implements Foldable {
+public abstract class AbstractReusableSendablePacket<C> extends AbstractSendablePacket<C> implements Reusable {
 
     /**
      * счетчик добавлений на отправку экземпляра пакета

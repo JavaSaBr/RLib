@@ -1,13 +1,13 @@
 package rlib.concurrent.atomic;
 
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Дополнение к стандартной реализации.
  *
  * @author Ronn
  */
-public class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger implements Foldable {
+public class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger implements Reusable {
 
     private static final long serialVersionUID = -624766818867950719L;
 

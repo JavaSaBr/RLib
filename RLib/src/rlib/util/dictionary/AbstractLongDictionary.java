@@ -7,7 +7,7 @@ import java.util.function.Function;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.LongArray;
-import rlib.util.pools.FoldablePool;
+import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
 
 /**
@@ -20,7 +20,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     /**
      * Пул ячеяк.
      */
-    private final FoldablePool<LongEntry<V>> entryPool;
+    private final ReusablePool<LongEntry<V>> entryPool;
 
     /**
      * Таблица элементов.
@@ -67,7 +67,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
      */
     private final void addEntry(final int hash, final long key, final V value, final int index) {
 
-        final FoldablePool<LongEntry<V>> entryPool = getEntryPool();
+        final ReusablePool<LongEntry<V>> entryPool = getEntryPool();
 
         final LongEntry<V>[] content = content();
         final LongEntry<V> entry = content[index];
@@ -100,7 +100,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     @Override
     public void clear() {
 
-        final FoldablePool<LongEntry<V>> entryPool = getEntryPool();
+        final ReusablePool<LongEntry<V>> entryPool = getEntryPool();
         final LongEntry<V>[] content = content();
 
         LongEntry<V> next = null;
@@ -181,7 +181,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         return null;
     }
 
-    private FoldablePool<LongEntry<V>> getEntryPool() {
+    private ReusablePool<LongEntry<V>> getEntryPool() {
         return entryPool;
     }
 
@@ -253,7 +253,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         final LongEntry<V> old = removeEntryForKey(key);
         final V value = old == null ? null : old.getValue();
 
-        final FoldablePool<LongEntry<V>> entryPool = getEntryPool();
+        final ReusablePool<LongEntry<V>> entryPool = getEntryPool();
         entryPool.put(old);
 
         return value;

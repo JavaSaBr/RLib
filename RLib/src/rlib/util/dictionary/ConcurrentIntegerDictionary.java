@@ -6,5 +6,4 @@ package rlib.util.dictionary;
  * @author Ronn
  */
 public interface ConcurrentIntegerDictionary<V> extends IntegerDictionary<V>, ConcurrentDictionary<IntKey, V> {
-
 }

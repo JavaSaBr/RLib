@@ -1,5 +1,7 @@
 package rlib.util.pools;
 
+import java.util.function.Supplier;
+
 /**
  * Интерфейс для реализации объектоного пула. Используется при подходе к переиспользованию объектов
  * для облегчения нагрузки на GC. Создается с помощью {@link PoolFactory}
@@ -34,4 +36,15 @@ public interface Pool<E> {
      * @return объект из пула.
      */
     public E take();
+
+    /**
+     * Взять из пула объект или же создать новый.
+     *
+     * @param factory фабрика объектов.
+     * @return объект из пула.
+     */
+    public default E take(final Supplier<E> factory) {
+        final E take = take();
+        return take != null? take : factory.get();
+    }
 }

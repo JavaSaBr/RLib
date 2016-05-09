@@ -1,11 +1,11 @@
 package rlib.util.pools;
 
-import rlib.util.pools.impl.AtomicFoldablePool;
+import rlib.util.pools.impl.AtomicReusablePool;
 import rlib.util.pools.impl.AtomicPool;
-import rlib.util.pools.impl.ConcurrentFoldablePool;
-import rlib.util.pools.impl.FastFoldablePool;
+import rlib.util.pools.impl.ConcurrentReusablePool;
+import rlib.util.pools.impl.FastReusablePool;
 import rlib.util.pools.impl.FastPool;
-import rlib.util.pools.impl.SynchronizedFoldablePool;
+import rlib.util.pools.impl.SynchronizedReusablePool;
 
 /**
  * Фабрика пулов.
@@ -19,10 +19,10 @@ public final class PoolFactory {
      *
      * @param type тип объектов пула.
      * @return новый объектный пул.
-     * @see AtomicFoldablePool
+     * @see AtomicReusablePool
      */
-    public static final <T extends Foldable> FoldablePool<T> newAtomicFoldablePool(final Class<? extends Foldable> type) {
-        return new AtomicFoldablePool<T>(type);
+    public static final <T extends Reusable> ReusablePool<T> newAtomicFoldablePool(final Class<? extends Reusable> type) {
+        return new AtomicReusablePool<T>(type);
     }
 
     /**
@@ -41,10 +41,10 @@ public final class PoolFactory {
      *
      * @param type тип объектов пула.
      * @return новый объектный пул.
-     * @see ConcurrentFoldablePool
+     * @see ConcurrentReusablePool
      */
-    public static final <T extends Foldable> FoldablePool<T> newConcurrentFoldablePool(final Class<? extends Foldable> type) {
-        return new ConcurrentFoldablePool<T>(type);
+    public static final <T extends Reusable> ReusablePool<T> newConcurrentFoldablePool(final Class<? extends Reusable> type) {
+        return new ConcurrentReusablePool<T>(type);
     }
 
     /**
@@ -52,10 +52,10 @@ public final class PoolFactory {
      *
      * @param type тип объектов пула.
      * @return новый объектный пул.
-     * @see FastFoldablePool
+     * @see FastReusablePool
      */
-    public static final <T extends Foldable> FoldablePool<T> newFoldablePool(final Class<? extends Foldable> type) {
-        return new FastFoldablePool<T>(type);
+    public static final <T extends Reusable> ReusablePool<T> newFoldablePool(final Class<? extends Reusable> type) {
+        return new FastReusablePool<T>(type);
     }
 
     /**
@@ -74,10 +74,10 @@ public final class PoolFactory {
      *
      * @param type тип объектов пула.
      * @return новый объектный пул.
-     * @see SynchronizedFoldablePool
+     * @see SynchronizedReusablePool
      */
-    public static final <T extends Foldable> FoldablePool<T> newSynchronizedFoldablePool(final Class<? extends Foldable> type) {
-        return new SynchronizedFoldablePool<T>(type);
+    public static final <T extends Reusable> ReusablePool<T> newSynchronizedFoldablePool(final Class<? extends Reusable> type) {
+        return new SynchronizedReusablePool<T>(type);
     }
 
     private PoolFactory() {

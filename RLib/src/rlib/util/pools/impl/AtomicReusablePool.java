@@ -3,29 +3,27 @@ package rlib.util.pools.impl;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-import rlib.util.array.impl.ConcurrentArray;
-import rlib.util.pools.Foldable;
-import rlib.util.pools.FoldablePool;
+import rlib.util.pools.Reusable;
+import rlib.util.pools.ReusablePool;
 
 /**
- * Реализация потокобезопасного {@link FoldablePool} с помощью потокобезопасного массива {@link
- * ConcurrentArray}
+ * Реализация потокобезопасного {@link ReusablePool} с помощью атомарного блокировщика.
  *
  * @author Ronn
  */
-public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<E> {
+public class AtomicReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     /**
      * Пул объектов.
      */
     private final Array<E> pool;
 
-    public ConcurrentFoldablePool(final Class<?> type) {
-        this.pool = ArrayFactory.newConcurrentArray(type);
+    public AtomicReusablePool(final Class<?> type) {
+        this.pool = ArrayFactory.newConcurrentAtomicArray(type);
     }
 
     /**
-     * @return массив объектов.
+     * @return контейнер объектов.
      */
     private Array<E> getPool() {
         return pool;
@@ -43,7 +41,7 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
             return;
         }
 
-        object.finalyze();
+        object.free();
 
         ArrayUtils.addInWriteLockTo(pool, object);
     }
@@ -75,8 +73,13 @@ public class ConcurrentFoldablePool<E extends Foldable> implements FoldablePool<
             return null;
         }
 
-        object.reinit();
+        object.reuse();
 
         return object;
+    }
+
+    @Override
+    public String toString() {
+        return pool.toString();
     }
 }

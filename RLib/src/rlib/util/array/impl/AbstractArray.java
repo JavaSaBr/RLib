@@ -51,7 +51,7 @@ public abstract class AbstractArray<E> implements Array<E> {
     }
 
     @Override
-    public final void finalyze() {
+    public final void free() {
         clear();
     }
 

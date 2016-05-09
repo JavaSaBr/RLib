@@ -2,12 +2,16 @@ package rlib.util.array;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
+import rlib.function.TripleConsumer;
 import rlib.util.ArrayUtils;
 import rlib.util.ObjectUtils;
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Интерфейс для реализации динамических массивов. Главное преймущество по сравнению с ArrayList,
@@ -27,7 +31,7 @@ import rlib.util.pools.Foldable;
  * @author Ronn
  * @created 27.02.2012
  */
-public interface Array<E> extends Iterable<E>, Serializable, Foldable {
+public interface Array<E> extends Iterable<E>, Serializable, Reusable {
 
     /**
      * Добавление элемента в этот {@link Array}.
@@ -151,6 +155,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
         return true;
     }
 
+    @Override
+    public default void free() {
+        clear();
+    }
+
     /**
      * Удаляет элемент по индексу с установкой последнего элемента на месте его.
      *
@@ -184,7 +193,6 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
 
     @Override
     public default void forEach(final Consumer<? super E> consumer) {
-
         for (final E element : array()) {
 
             if (element == null) {
@@ -192,6 +200,41 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
             }
 
             consumer.accept(element);
+        }
+    }
+
+    /**
+     * Итерирование массива с дополнительным аргументом.
+     *
+     * @param argument дополнительный аргумент.
+     * @param consumer функция для обработки элементов.
+     */
+    public default <T> void forEach(final T argument, final BiConsumer<T, E> consumer) {
+        for (final E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            consumer.accept(argument, element);
+        }
+    }
+
+    /**
+     * Итерирование массива с двумя дополнительными аргументомами.
+     *
+     * @param first первый дополнительный аргумент.
+     * @param second второй дополнительный аргумент.
+     * @param consumer функция для обработки элементов.
+     */
+    public default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
+        for (final E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            consumer.accept(first, second, element);
         }
     }
 
@@ -319,7 +362,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     /**
      * Удаляет из {@link Array} все элементы из указанного {@link Array}.
      *
-     * @param array {@link Array} с удаляемыми элементами.
+     * @param target {@link Array} с удаляемыми элементами.
      * @return <code>true</code> если переданный {@link Array} был не пуст и все в нем элементы
      * находились в этом {@link Array}.
      */
@@ -348,7 +391,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     /**
      * Удаляет все элементы {@link Array}, которые отсутствуют в указанном {@link Array}.
      *
-     * @param array {@link Array} с элементами.
+     * @param target {@link Array} с элементами.
      * @return удалены ли все объекты.
      */
     public default boolean retainAll(final Array<?> target) {
@@ -366,21 +409,43 @@ public interface Array<E> extends Iterable<E>, Serializable, Foldable {
     }
 
     /**
-     * Ищет подходящий элемент к указанному объекту.
+     * Ищет первый элемент удовлетворяющий условию.
      *
-     * @param required сравниваемый объект.
-     * @param search   поисковик подходящего объекта.
-     * @return искомый объект.
+     * @param predicate условия отбора элемента.
+     * @return искомый объект либо null.
      */
-    public default E search(final E required, final Search<E> search) {
+    public default E search(final Predicate<E> predicate) {
 
-        final E[] array = array();
+        for (final E element : array()) {
 
-        for (int i = 0, length = size(); i < length; i++) {
+            if (element == null) {
+                break;
+            }
 
-            final E element = array[i];
+            if (predicate.test(element)) {
+                return element;
+            }
+        }
 
-            if (search.compare(required, element)) {
+        return null;
+    }
+
+    /**
+     * Ищет первый элемент удовлетворяющий условию c дополнительным аргументом.
+     *
+     * @param argument дополнительный аргумент.
+     * @param predicate условия отбора элемента.
+     * @return искомый объект либо null.
+     */
+    public default <T> E search(final T argument, final BiPredicate<T, E> predicate) {
+
+        for (final E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            if (predicate.test(argument, element)) {
                 return element;
             }
         }

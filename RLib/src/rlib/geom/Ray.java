@@ -1,13 +1,13 @@
 package rlib.geom;
 
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Реализация модели луча.
  *
  * @author Ronn
  */
-public class Ray implements Foldable {
+public class Ray implements Reusable {
 
     /**
      * стартовая точка луча

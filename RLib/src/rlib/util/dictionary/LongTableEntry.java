@@ -1,13 +1,13 @@
 package rlib.util.dictionary;
 
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Реализация чеяки таблицы для таблиц с примитивным long ключем.
  *
  * @author Ronn
  */
-public class LongTableEntry<V> implements Foldable {
+public class LongTableEntry<V> implements Reusable {
 
     /**
      * Следующая ячейка.
@@ -55,7 +55,7 @@ public class LongTableEntry<V> implements Foldable {
     }
 
     @Override
-    public void finalyze() {
+    public void free() {
         value = null;
         next = null;
         key = 0;
@@ -103,7 +103,7 @@ public class LongTableEntry<V> implements Foldable {
     }
 
     @Override
-    public void reinit() {
+    public void reuse() {
         hash = 0;
     }
 

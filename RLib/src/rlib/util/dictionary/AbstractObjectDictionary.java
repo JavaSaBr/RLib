@@ -8,7 +8,7 @@ import java.util.function.Function;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-import rlib.util.pools.FoldablePool;
+import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
 
 /**
@@ -21,7 +21,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     /**
      * Пул ячеяк.
      */
-    private final FoldablePool<ObjectDictionaryEntry<K, V>> entryPool;
+    private final ReusablePool<ObjectDictionaryEntry<K, V>> entryPool;
 
     /**
      * Массив ячеяк словаря.
@@ -107,7 +107,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     @Override
     public void clear() {
 
-        final FoldablePool<ObjectDictionaryEntry<K, V>> entryPool = getEntryPool();
+        final ReusablePool<ObjectDictionaryEntry<K, V>> entryPool = getEntryPool();
 
         final ObjectDictionaryEntry<K, V>[] content = content();
         ObjectDictionaryEntry<K, V> next = null;
@@ -196,7 +196,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     /**
      * @return пул ячеяк.
      */
-    protected FoldablePool<ObjectDictionaryEntry<K, V>> getEntryPool() {
+    protected ReusablePool<ObjectDictionaryEntry<K, V>> getEntryPool() {
         return entryPool;
     }
 
@@ -281,7 +281,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         final ObjectDictionaryEntry<K, V> old = removeEntryForKey(key);
         final V value = old == null ? null : old.getValue();
 
-        final FoldablePool<ObjectDictionaryEntry<K, V>> pool = getEntryPool();
+        final ReusablePool<ObjectDictionaryEntry<K, V>> pool = getEntryPool();
         pool.put(old);
 
         return value;

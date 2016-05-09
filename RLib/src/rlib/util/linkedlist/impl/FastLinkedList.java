@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import rlib.util.linkedlist.LinkedList;
-import rlib.util.pools.FoldablePool;
+import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
 
 /**
@@ -20,7 +20,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
     /**
      * Пул узлов.
      */
-    private final FoldablePool<Node<E>> pool;
+    private final ReusablePool<Node<E>> pool;
 
     /**
      * Первый элемент списка.
@@ -72,7 +72,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
     @Override
     public void clear() {
 
-        final FoldablePool<Node<E>> pool = getPool();
+        final ReusablePool<Node<E>> pool = getPool();
 
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             pool.put(node);
@@ -176,7 +176,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
     /**
      * @return пул узлов.
      */
-    protected FoldablePool<Node<E>> getPool() {
+    protected ReusablePool<Node<E>> getPool() {
         return pool;
     }
 

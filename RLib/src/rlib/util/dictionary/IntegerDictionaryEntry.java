@@ -2,14 +2,14 @@ package rlib.util.dictionary;
 
 import java.util.Objects;
 
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Реализация ячейки для словарей с ключем примитива int.
  *
  * @author Ronn
  */
-public class IntegerDictionaryEntry<V> implements Foldable {
+public class IntegerDictionaryEntry<V> implements Reusable {
 
     /**
      * Следующая ячейка.
@@ -55,7 +55,7 @@ public class IntegerDictionaryEntry<V> implements Foldable {
     }
 
     @Override
-    public void finalyze() {
+    public void free() {
         value = null;
         next = null;
         key = 0;
@@ -103,7 +103,7 @@ public class IntegerDictionaryEntry<V> implements Foldable {
     }
 
     @Override
-    public void reinit() {
+    public void reuse() {
         hash = 0;
     }
 

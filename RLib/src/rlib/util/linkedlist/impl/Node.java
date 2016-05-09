@@ -1,14 +1,14 @@
 package rlib.util.linkedlist.impl;
 
 import rlib.util.linkedlist.LinkedList;
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Реализация узла для {@link LinkedList}.
  *
  * @author Ronn
  */
-public final class Node<E> implements Foldable {
+public final class Node<E> implements Reusable {
 
     /**
      * Содержимый элемент.
@@ -26,7 +26,7 @@ public final class Node<E> implements Foldable {
     private Node<E> next;
 
     @Override
-    public void finalyze() {
+    public void free() {
         item = null;
         prev = null;
         next = null;

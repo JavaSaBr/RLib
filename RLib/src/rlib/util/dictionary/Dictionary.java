@@ -4,7 +4,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import rlib.util.array.Array;
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Интерфей для реализации словаря.
@@ -12,7 +12,7 @@ import rlib.util.pools.Foldable;
  * @author Ronn
  * @created 27.02.2012
  */
-public interface Dictionary<K, V> extends Iterable<V>, Foldable {
+public interface Dictionary<K, V> extends Iterable<V>, Reusable {
 
     /**
      * Размер словаря по умолчанию.
@@ -60,7 +60,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Foldable {
     }
 
     @Override
-    public default void finalyze() {
+    public default void free() {
         clear();
     }
 
@@ -84,7 +84,6 @@ public interface Dictionary<K, V> extends Iterable<V>, Foldable {
      * @param dictionary новый контейнер данных.
      */
     public default void moveTo(final Dictionary<? super K, ? super V> dictionary) {
-
         if (getType() != dictionary.getType()) {
             throw new IllegalArgumentException("incorrect table type.");
         }

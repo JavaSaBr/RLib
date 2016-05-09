@@ -2,14 +2,14 @@ package rlib.util.dictionary;
 
 import java.util.Objects;
 
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Реализация элемента словаря с объектным ключем.
  *
  * @author Ronn
  */
-public class ObjectDictionaryEntry<K, V> implements Foldable {
+public class ObjectDictionaryEntry<K, V> implements Reusable {
 
     /**
      * Следующая ячейка.
@@ -55,7 +55,7 @@ public class ObjectDictionaryEntry<K, V> implements Foldable {
     }
 
     @Override
-    public void finalyze() {
+    public void free() {
         key = null;
         value = null;
         next = null;
@@ -103,7 +103,7 @@ public class ObjectDictionaryEntry<K, V> implements Foldable {
     }
 
     @Override
-    public void reinit() {
+    public void reuse() {
         hash = 0;
     }
 

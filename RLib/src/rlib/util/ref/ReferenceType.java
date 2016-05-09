@@ -1,6 +1,6 @@
 package rlib.util.ref;
 
-import rlib.util.pools.FoldablePool;
+import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
 
 /**
@@ -22,7 +22,7 @@ public enum ReferenceType {
     /**
      * Пул ссылок.
      */
-    private final FoldablePool<Reference> pool;
+    private final ReusablePool<Reference> pool;
 
     private ReferenceType() {
         this.pool = PoolFactory.newAtomicFoldablePool(Reference.class);

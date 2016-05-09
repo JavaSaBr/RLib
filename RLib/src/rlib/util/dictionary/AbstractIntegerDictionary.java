@@ -3,11 +3,14 @@ package rlib.util.dictionary;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import rlib.function.IntBiObjectConsumer;
+import rlib.function.IntObjectConsumer;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.IntegerArray;
-import rlib.util.pools.FoldablePool;
+import rlib.util.pools.ReusablePool;
 import rlib.util.pools.PoolFactory;
 
 /**
@@ -20,7 +23,12 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     /**
      * Пул ячеяк.
      */
-    private final FoldablePool<IntegerDictionaryEntry<V>> entryPool;
+    private final ReusablePool<IntegerDictionaryEntry<V>> entryPool;
+
+    /**
+     * Фактор загруженности.
+     */
+    private final float loadFactor;
 
     /**
      * Таблица элементов.
@@ -31,11 +39,6 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      * Следующий размер для метода изминения размера (capacity * load factor).
      */
     private int threshold;
-
-    /**
-     * Фактор загруженности.
-     */
-    private final float loadFactor;
 
     @SuppressWarnings("unchecked")
     protected AbstractIntegerDictionary(final float loadFactor, final int initCapacity) {
@@ -55,7 +58,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      */
     protected final void addEntry(final int hash, final int key, final V value, final int index) {
 
-        final FoldablePool<IntegerDictionaryEntry<V>> entryPool = getEntryPool();
+        final ReusablePool<IntegerDictionaryEntry<V>> entryPool = getEntryPool();
 
         final IntegerDictionaryEntry<V>[] table = content();
         final IntegerDictionaryEntry<V> entry = table[index];
@@ -88,10 +91,10 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     @Override
     public void clear() {
 
-        final FoldablePool<IntegerDictionaryEntry<V>> entryPool = getEntryPool();
+        final ReusablePool<IntegerDictionaryEntry<V>> entryPool = getEntryPool();
         final IntegerDictionaryEntry<V>[] content = content();
 
-        IntegerDictionaryEntry<V> next = null;
+        IntegerDictionaryEntry<V> next;
 
         for (IntegerDictionaryEntry<V> entry : content) {
             while (entry != null) {
@@ -146,8 +149,42 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     }
 
     @Override
+    public <T> void forEach(final T argument, final IntBiObjectConsumer<V, T> consumer) {
+        for (IntegerDictionaryEntry<V> entry : content()) {
+            while (entry != null) {
+                consumer.accept(entry.getKey(), entry.getValue(), argument);
+                entry = entry.getNext();
+            }
+        }
+    }
+
+    @Override
+    public void forEach(final IntObjectConsumer<V> consumer) {
+        for (IntegerDictionaryEntry<V> entry : content()) {
+            while (entry != null) {
+                consumer.accept(entry.getKey(), entry.getValue());
+                entry = entry.getNext();
+            }
+        }
+    }
+
+    @Override
     public final V get(final int key) {
         final IntegerDictionaryEntry<V> entry = getEntry(key);
+        return entry == null ? null : entry.getValue();
+    }
+
+    @Override
+    public V get(final int key, final Supplier<V> factory) {
+
+        IntegerDictionaryEntry<V> entry = getEntry(key);
+
+        if(entry == null) {
+            put(key, factory.get());
+        }
+
+        entry = getEntry(key);
+
         return entry == null ? null : entry.getValue();
     }
 
@@ -157,7 +194,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      * @param key ключ ячейки.
      * @return ячейка.
      */
-    private final IntegerDictionaryEntry<V> getEntry(final int key) {
+    private IntegerDictionaryEntry<V> getEntry(final int key) {
 
         final int hash = hash(key);
 
@@ -175,7 +212,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     /**
      * @return пул ячеяк.
      */
-    private FoldablePool<IntegerDictionaryEntry<V>> getEntryPool() {
+    private ReusablePool<IntegerDictionaryEntry<V>> getEntryPool() {
         return entryPool;
     }
 
@@ -248,7 +285,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
         final IntegerDictionaryEntry<V> old = removeEntryForKey(key);
         final V value = old == null ? null : old.getValue();
 
-        final FoldablePool<IntegerDictionaryEntry<V>> entryPool = getEntryPool();
+        final ReusablePool<IntegerDictionaryEntry<V>> entryPool = getEntryPool();
         entryPool.put(old);
 
         return value;
@@ -277,7 +314,6 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
             final IntegerDictionaryEntry<V> next = entry.getNext();
 
             if (entry.getHash() == hash && key == entry.getKey()) {
-
                 decrementSizeAndGet();
 
                 if (prev == entry) {
@@ -293,7 +329,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
             entry = next;
         }
 
-        return entry;
+        return null;
     }
 
     /**
@@ -302,7 +338,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      * @param newLength новый размер.
      */
     @SuppressWarnings("unchecked")
-    private final void resize(final int newLength) {
+    private void resize(final int newLength) {
 
         final IntegerDictionaryEntry<V>[] oldContent = content();
 
@@ -328,14 +364,8 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
         final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
         builder.append(" size = ").append(size).append(" : ");
 
-        final IntegerDictionaryEntry<V>[] content = content();
-
-        for (int i = 0, length = content.length; i < length; i++) {
-
-            IntegerDictionaryEntry<V> entry = content[i];
-
+        for (IntegerDictionaryEntry<V> entry : content()) {
             while (entry != null) {
-
                 builder.append("[").append(entry.getKey()).append(" - ").append(entry.getValue()).append("]");
                 builder.append("\n");
                 entry = entry.getNext();
@@ -354,16 +384,11 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      *
      * @param newTable новая таблица.
      */
-    private final void transfer(final IntegerDictionaryEntry<V>[] newTable) {
-
-        final IntegerDictionaryEntry<V>[] original = content();
+    private void transfer(final IntegerDictionaryEntry<V>[] newTable) {
 
         final int newCapacity = newTable.length;
 
-        for (int j = 0, length = original.length; j < length; j++) {
-
-            IntegerDictionaryEntry<V> entry = original[j];
-
+        for (IntegerDictionaryEntry<V> entry : content()) {
             if (entry != null) {
                 do {
 

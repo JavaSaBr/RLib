@@ -1,13 +1,13 @@
 package rlib.util.ref;
 
-import rlib.util.pools.Foldable;
+import rlib.util.pools.Reusable;
 
 /**
  * Интерфейс для реализации ссылки на какие-нибудь данные.
  *
  * @author Ronn
  */
-public interface Reference extends Foldable {
+public interface Reference extends Reusable {
 
     /**
      * @return байт, на который ссылается ссылка.

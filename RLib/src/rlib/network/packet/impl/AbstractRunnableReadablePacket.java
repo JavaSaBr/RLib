@@ -2,7 +2,7 @@ package rlib.network.packet.impl;
 
 import java.util.concurrent.ExecutorService;
 
-import rlib.util.pools.FoldablePool;
+import rlib.util.pools.ReusablePool;
 
 /**
  * Базовая реализация читаемого пакета с реализацией интерфейса Runnable для выполнения в {@link
@@ -19,7 +19,7 @@ public abstract class AbstractRunnableReadablePacket<C> extends AbstractReadable
      * @return пулл для складывания этого пакета. может быть <code>null</code>.
      */
     @SuppressWarnings("rawtypes")
-    protected abstract FoldablePool getPool();
+    protected abstract ReusablePool getPool();
 
     /**
      * @return нужно ли выполнять синхронно пакет.
@@ -37,7 +37,7 @@ public abstract class AbstractRunnableReadablePacket<C> extends AbstractReadable
             LOGGER.warning(this, e);
         } finally {
 
-            final FoldablePool pool = getPool();
+            final ReusablePool pool = getPool();
 
             if (pool != null) {
                 pool.put(this);
