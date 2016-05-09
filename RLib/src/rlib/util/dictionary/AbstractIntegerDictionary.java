@@ -188,6 +188,20 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
         return entry == null ? null : entry.getValue();
     }
 
+    @Override
+    public <T> V get(int key, T argument, Function<T, V> factory) {
+
+        IntegerDictionaryEntry<V> entry = getEntry(key);
+
+        if (entry == null) {
+            put(key, factory.apply(argument));
+        }
+
+        entry = getEntry(key);
+
+        return entry == null ? null : entry.getValue();
+    }
+
     /**
      * Получение ячейки по ключу.
      *
