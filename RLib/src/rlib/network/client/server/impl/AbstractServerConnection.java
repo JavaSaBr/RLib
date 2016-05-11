@@ -8,7 +8,7 @@ import rlib.network.client.ClientNetwork;
 import rlib.network.client.server.Server;
 import rlib.network.client.server.ServerConnection;
 import rlib.network.impl.AbstractAsyncConnection;
-import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
@@ -17,7 +17,7 @@ import rlib.network.packet.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractServerConnection<T extends Server, R extends ReadeablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {
+public abstract class AbstractServerConnection<T extends Server, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ServerConnection.class);
 
@@ -58,6 +58,8 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reade
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [network=" + network + ", channel=" + channel + ", closed=" + closed + ", config=" + config + ", lastActive=" + lastActive + "]";
+        return "AbstractServerConnection{" +
+                "server=" + server +
+                "} " + super.toString();
     }
 }

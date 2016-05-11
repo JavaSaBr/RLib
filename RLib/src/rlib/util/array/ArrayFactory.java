@@ -30,6 +30,19 @@ public class ArrayFactory {
     }
 
     /**
+     * Создание нового не потокобезопасного динамического массива.
+     *
+     * @param type тип элементов в массиве.
+     * @param capacity стартовый размер массива.
+     * @return новый экземпляр массива.
+     * @see FastArray
+     */
+    @SuppressWarnings("unchecked")
+    public static <E> Array<E> newArray(final Class<?> type, final int capacity) {
+        return new FastArray<E>((Class<E>) type, capacity);
+    }
+
+    /**
      * Создание нового не потокобезопасного динамического массива с проверкой на уникальность
      * элементов при вставке.
      *

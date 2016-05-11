@@ -2,7 +2,7 @@ package rlib.network.packet.impl;
 
 import java.nio.ByteBuffer;
 
-import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.ReadablePacket;
 import rlib.util.Util;
 import rlib.util.pools.Reusable;
 
@@ -11,7 +11,7 @@ import rlib.util.pools.Reusable;
  *
  * @author Ronn
  */
-public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implements ReadeablePacket<C>, Reusable {
+public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implements ReadablePacket<C>, Reusable {
 
     /**
      * Буффер данных читаемого пакета.

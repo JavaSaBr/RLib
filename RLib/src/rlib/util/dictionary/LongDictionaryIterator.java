@@ -36,7 +36,7 @@ public class LongDictionaryIterator<V> implements Iterator<V> {
         final LongEntry<V>[] content = dictionary.content();
 
         if (dictionary.size() > 0) {
-            while (index < content.length && (next = content[index++]) == null) ;
+            while (index < content.length && (next = content[index++]) == null);
         }
     }
 
@@ -72,7 +72,7 @@ public class LongDictionaryIterator<V> implements Iterator<V> {
         }
 
         if ((next = entry.getNext()) == null) {
-            while (index < content.length && (next = content[index++]) == null) ;
+            while (index < content.length && (next = content[index++]) == null);
         }
 
         current = entry;

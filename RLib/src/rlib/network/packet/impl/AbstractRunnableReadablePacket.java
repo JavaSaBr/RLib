@@ -18,18 +18,16 @@ public abstract class AbstractRunnableReadablePacket<C> extends AbstractReadable
      *
      * @return пулл для складывания этого пакета. может быть <code>null</code>.
      */
-    @SuppressWarnings("rawtypes")
     protected abstract ReusablePool getPool();
 
     /**
-     * @return нужно ли выполнять синхронно пакет.
+     * @return нужно ли обрабатывать пакет синхронизированно.
      */
     public boolean isSynchronized() {
         return false;
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void run() {
         try {
             runImpl();

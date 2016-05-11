@@ -18,129 +18,65 @@ public final class ReferenceFactory {
 
     public static Reference newByteReference(final byte value, final boolean usePool) {
 
-        Reference reference = null;
-
-        if (usePool) {
-            reference = BYTE.take();
-        }
-
-        if (reference == null) {
-            reference = new ByteReference();
-        }
-
+        final Reference reference = usePool? BYTE.take(ByteReference::new) : new ByteReference();
         reference.setByte(value);
+
         return reference;
     }
 
     public static Reference newCharReference(final char value, final boolean usePool) {
 
-        Reference reference = null;
-
-        if (usePool) {
-            reference = CHAR.take();
-        }
-
-        if (reference == null) {
-            reference = new CharReference();
-        }
-
+        final Reference reference = usePool? CHAR.take(CharReference::new) : new CharReference();
         reference.setChar(value);
+
         return reference;
     }
 
     public static Reference newDoubleReference(final double value, final boolean usePool) {
 
-        Reference reference = null;
-
-        if (usePool) {
-            reference = DOUBLE.take();
-        }
-
-        if (reference == null) {
-            reference = new DoubleReference();
-        }
-
+        final Reference reference = usePool? DOUBLE.take(DoubleReference::new) : new DoubleReference();
         reference.setDouble(value);
+
         return reference;
     }
 
     public static Reference newFloatReference(final float value, final boolean usePool) {
 
-        Reference reference = null;
-
-        if (usePool) {
-            reference = FLOAT.take();
-        }
-
-        if (reference == null) {
-            reference = new FloatReference();
-        }
-
+        final Reference reference = usePool? FLOAT.take(FloatReference::new) : new FloatReference();
         reference.setFloat(value);
+
         return reference;
     }
 
     public static Reference newIntegerReference(final int value, final boolean usePool) {
 
-        Reference reference = null;
-
-        if (usePool) {
-            reference = INTEGER.take();
-        }
-
-        if (reference == null) {
-            reference = new IntegerReference();
-        }
-
+        final Reference reference = usePool? INTEGER.take(IntegerReference::new) : new IntegerReference();
         reference.setInt(value);
+
         return reference;
     }
 
     public static Reference newLongReference(final long value, final boolean usePool) {
 
-        Reference reference = null;
-
-        if (usePool) {
-            reference = LONG.take();
-        }
-
-        if (reference == null) {
-            reference = new LongReference();
-        }
-
+        final Reference reference = usePool? LONG.take(LongReference::new) : new LongReference();
         reference.setLong(value);
+
         return reference;
     }
 
     public static Reference newObjectReference(final Object object, final boolean usePool) {
 
-        Reference reference = null;
-
-        if (usePool) {
-            reference = OBJECT.take();
-        }
-
-        if (reference == null) {
-            reference = new ObjectReference();
-        }
-
+        final Reference reference = usePool? OBJECT.take(ObjectReference::new) : new ObjectReference();
         reference.setObject(object);
+
         return reference;
     }
 
     public static Reference newShortReference(final short value, final boolean usePool) {
 
-        Reference reference = null;
-
-        if (usePool) {
-            reference = SHORT.take();
-        }
-
-        if (reference == null) {
-            reference = new ShortReference();
-        }
-
+        final Reference reference = usePool? SHORT.take(ShortReference::new) : new ShortReference();
         reference.setShort(value);
+
         return reference;
     }
 

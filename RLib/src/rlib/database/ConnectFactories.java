@@ -13,7 +13,7 @@ import rlib.database.impl.BoneCPConnectFactory;
  */
 public final class ConnectFactories {
 
-    public static final ConnectFactory newBoneCPConnectFactory(final BoneCPConfig config, final String driver) {
+    public static ConnectFactory newBoneCPConnectFactory(final BoneCPConfig config, final String driver) {
         try {
             final BoneCPConnectFactory factory = new BoneCPConnectFactory();
             factory.init(config, driver);

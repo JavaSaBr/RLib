@@ -14,6 +14,15 @@ import rlib.util.array.LongArray;
  */
 public final class ArrayUtils {
 
+    public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+    public static final Enum[] EMPTY_ENUM_ARRAY = new Enum[0];
+
+    public static final int[] EMPTY_INT_ARRAY = new int[0];
+    public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+    public static final short[] EMPTY_SHORT_ARRAY = new short[0];
+    public static final long[] EMPTY_LONG_ARRAY = new long[0];
+    public static final char[] EMPTY_CHAR_ARRAY = new char[0];
+
     /**
      * Добавляет элемент в массив с расширением массива на +1.
      *
@@ -60,9 +69,7 @@ public final class ArrayUtils {
 
         if (base == null) {
             return added;
-        }
-
-        if (added == null || added.length < 1) {
+        } else if (added == null || added.length < 1) {
             return base;
         }
 
@@ -70,12 +77,12 @@ public final class ArrayUtils {
 
         int index = 0;
 
-        for (int i = 0, length = base.length; i < length; i++) {
-            result[index++] = base[i];
+        for (int val : base) {
+            result[index++] = val;
         }
 
-        for (int i = 0, length = added.length; i < length; i++) {
-            result[index++] = added[i];
+        for (int val : added) {
+            result[index++] = val;
         }
 
         return result;
@@ -93,9 +100,7 @@ public final class ArrayUtils {
 
         if (base == null) {
             return added;
-        }
-
-        if (added == null || added.length < 1) {
+        } else if (added == null || added.length < 1) {
             return base;
         }
 
@@ -103,12 +108,12 @@ public final class ArrayUtils {
 
         int index = 0;
 
-        for (int i = 0, length = base.length; i < length; i++) {
-            result[index++] = base[i];
+        for (T object : base) {
+            result[index++] = object;
         }
 
-        for (int i = 0, length = added.length; i < length; i++) {
-            result[index++] = added[i];
+        for (E object : added) {
+            result[index++] = object;
         }
 
         return result;
@@ -574,7 +579,6 @@ public final class ArrayUtils {
      * @param destination массив в который копируем данные.
      */
     public static <T> void copyInReadLock(Array<T> source, Array<T> destination) {
-
         source.readLock();
         try {
             destination.addAll(source);

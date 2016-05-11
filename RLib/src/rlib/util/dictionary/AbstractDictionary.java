@@ -28,7 +28,7 @@ public abstract class AbstractDictionary<K, V> implements Dictionary<K, V> {
      * @param hash начальный хэш.
      * @return новый хэш.
      */
-    protected final static int hash(int hash) {
+    protected static int hash(int hash) {
         hash ^= hash >>> 20 ^ hash >>> 12;
         return hash ^ hash >>> 7 ^ hash >>> 4;
     }
@@ -39,7 +39,7 @@ public abstract class AbstractDictionary<K, V> implements Dictionary<K, V> {
      * @param key лонг ключ.
      * @return новый хэш.
      */
-    protected final static int hash(final long key) {
+    protected static int hash(final long key) {
         int hash = (int) (key ^ key >>> 32);
         hash ^= hash >>> 20 ^ hash >>> 12;
         return hash ^ hash >>> 7 ^ hash >>> 4;
@@ -52,7 +52,7 @@ public abstract class AbstractDictionary<K, V> implements Dictionary<K, V> {
      * @param length длина массива.
      * @return индекс ячейки.
      */
-    protected final static int indexFor(final int hash, final int length) {
+    protected static int indexFor(final int hash, final int length) {
         return hash & length - 1;
     }
 

@@ -17,20 +17,20 @@ public interface AsynchronousNetwork {
     /**
      * @return получить из пула свободный буфер для чтения.
      */
-    public ByteBuffer getReadByteBuffer();
+    public ByteBuffer takeReadBuffer();
 
     /**
      * @return получить из пула свободный буффер для записи.
      */
-    public ByteBuffer getWriteByteBuffer();
+    public ByteBuffer takeWriteBuffer();
 
     /**
      * @param buffer складываем освобожденнй буффер чтения в пул.
      */
-    public void putReadByteBuffer(ByteBuffer buffer);
+    public void putReadBuffer(ByteBuffer buffer);
 
     /**
      * @param buffer складываем освобожденнй буффер записи в пул.
      */
-    public void putWriteByteBuffer(ByteBuffer buffer);
+    public void putWriteBuffer(ByteBuffer buffer);
 }

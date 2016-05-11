@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import java.util.function.Supplier;
+
 import rlib.util.pools.PoolFactory;
 import rlib.util.pools.ReusablePool;
 
@@ -9,7 +11,6 @@ import rlib.util.pools.ReusablePool;
  * @author Ronn
  */
 public enum ReferenceType {
-
     FLOAT,
     DOUBLE,
     CHAR,
@@ -40,5 +41,12 @@ public enum ReferenceType {
      */
     protected Reference take() {
         return pool.take();
+    }
+
+    /**
+     * @return достать использованную ссылку.
+     */
+    protected Reference take(Supplier<Reference> factory) {
+        return pool.take(factory);
     }
 }

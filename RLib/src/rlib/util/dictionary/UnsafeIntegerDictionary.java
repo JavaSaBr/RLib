@@ -10,7 +10,7 @@ public interface UnsafeIntegerDictionary<V> extends IntegerDictionary<V> {
     /**
      * @return массив ячеяк.
      */
-    public IntegerDictionaryEntry<V>[] content();
+    public IntegerEntry<V>[] content();
 
     /**
      * Удаление значения из ячейки по указанному ключу.
@@ -18,5 +18,5 @@ public interface UnsafeIntegerDictionary<V> extends IntegerDictionary<V> {
      * @param key ключ ячейки.
      * @return удаленная ячейка.
      */
-    public IntegerDictionaryEntry<V> removeEntryForKey(final int key);
+    public IntegerEntry<V> removeEntryForKey(final int key);
 }

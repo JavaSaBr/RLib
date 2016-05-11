@@ -4,7 +4,9 @@ import java.util.Iterator;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import rlib.function.TripleConsumer;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
@@ -21,12 +23,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     /**
      * Пул ячеяк.
      */
-    private final ReusablePool<ObjectDictionaryEntry<K, V>> entryPool;
+    private final ReusablePool<ObjectEntry<K, V>> entryPool;
 
     /**
      * Массив ячеяк словаря.
      */
-    private ObjectDictionaryEntry<K, V>[] content;
+    private ObjectEntry<K, V>[] content;
 
     /**
      * Следующий размер для метода изминения размера (capacity * load factor).
@@ -46,12 +48,11 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
     }
 
-    @SuppressWarnings("unchecked")
     protected AbstractObjectDictionary(final float loadFactor, final int initCapacity) {
         this.loadFactor = loadFactor;
         this.threshold = (int) (initCapacity * loadFactor);
-        this.content = new ObjectDictionaryEntry[Dictionary.DEFAULT_INITIAL_CAPACITY];
-        this.entryPool = PoolFactory.newFoldablePool(ObjectDictionaryEntry.class);
+        this.content = new ObjectEntry[Dictionary.DEFAULT_INITIAL_CAPACITY];
+        this.entryPool = PoolFactory.newFoldablePool(ObjectEntry.class);
     }
 
     protected AbstractObjectDictionary(final int initCapacity) {
@@ -60,7 +61,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public void accept(final BiConsumer<? super K, ? super V> consumer) {
-        for (ObjectDictionaryEntry<K, V> entry : content()) {
+        for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
@@ -76,17 +77,14 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
      * @param value значение по ключу.
      * @param index индекс ячейки.
      */
-    private final void addEntry(final int hash, final K key, final V value, final int index) {
+    private void addEntry(final int hash, final K key, final V value, final int index) {
 
-        final ObjectDictionaryEntry<K, V>[] content = content();
-        final ObjectDictionaryEntry<K, V> entry = content[index];
-        ObjectDictionaryEntry<K, V> newEntry = entryPool.take();
+        final ObjectEntry<K, V>[] content = content();
+        final ObjectEntry<K, V> entry = content[index];
 
-        if (newEntry == null) {
-            newEntry = new ObjectDictionaryEntry<K, V>();
-        }
-
+        final ObjectEntry<K, V> newEntry = entryPool.take(ObjectEntry::new);
         newEntry.set(hash, key, value, entry);
+
         content[index] = newEntry;
 
         if (incrementSizeAndGet() >= threshold) {
@@ -96,7 +94,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public void apply(final Function<? super V, V> function) {
-        for (ObjectDictionaryEntry<K, V> entry : content()) {
+        for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
                 entry.setValue(function.apply(entry.getValue()));
                 entry = entry.getNext();
@@ -107,12 +105,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     @Override
     public void clear() {
 
-        final ReusablePool<ObjectDictionaryEntry<K, V>> entryPool = getEntryPool();
+        final ReusablePool<ObjectEntry<K, V>> entryPool = getEntryPool();
 
-        final ObjectDictionaryEntry<K, V>[] content = content();
-        ObjectDictionaryEntry<K, V> next = null;
+        final ObjectEntry<K, V>[] content = content();
+        ObjectEntry<K, V> next = null;
 
-        for (ObjectDictionaryEntry<K, V> entry : content) {
+        for (ObjectEntry<K, V> entry : content) {
             while (entry != null) {
                 next = entry.getNext();
                 entryPool.put(entry);
@@ -135,8 +133,8 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
             throw new NullPointerException("value is null.");
         }
 
-        for (final ObjectDictionaryEntry<K, V> element : content()) {
-            for (ObjectDictionaryEntry<K, V> entry = element; entry != null; entry = entry.getNext()) {
+        for (final ObjectEntry<K, V> element : content()) {
+            for (ObjectEntry<K, V> entry = element; entry != null; entry = entry.getNext()) {
                 if (value.equals(entry.getValue())) {
                     return true;
                 }
@@ -147,13 +145,13 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public ObjectDictionaryEntry<K, V>[] content() {
+    public ObjectEntry<K, V>[] content() {
         return content;
     }
 
     @Override
     public void forEach(final Consumer<? super V> consumer) {
-        for (ObjectDictionaryEntry<K, V> entry : content()) {
+        for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
                 consumer.accept(entry.getValue());
                 entry = entry.getNext();
@@ -168,7 +166,35 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
             throw new NullPointerException("key is null.");
         }
 
-        final ObjectDictionaryEntry<K, V> entry = getEntry(key);
+        final ObjectEntry<K, V> entry = getEntry(key);
+        return entry == null ? null : entry.getValue();
+    }
+
+    @Override
+    public V get(final K key, final Supplier<V> factory) {
+
+        ObjectEntry<K, V> entry = getEntry(key);
+
+        if (entry == null) {
+            put(key, factory.get());
+        }
+
+        entry = getEntry(key);
+
+        return entry == null ? null : entry.getValue();
+    }
+
+    @Override
+    public <T> V get(final K key, final T argument, final Function<T, V> factory) {
+
+        ObjectEntry<K, V> entry = getEntry(key);
+
+        if (entry == null) {
+            put(key, factory.apply(argument));
+        }
+
+        entry = getEntry(key);
+
         return entry == null ? null : entry.getValue();
     }
 
@@ -178,13 +204,13 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
      * @param key ключ ячейки.
      * @return ячейка.
      */
-    private final ObjectDictionaryEntry<K, V> getEntry(final K key) {
+    private ObjectEntry<K, V> getEntry(final K key) {
 
         final int hash = hash(key.hashCode());
 
-        final ObjectDictionaryEntry<K, V>[] content = content();
+        final ObjectEntry<K, V>[] content = content();
 
-        for (ObjectDictionaryEntry<K, V> entry = content[indexFor(hash, content.length)]; entry != null; entry = entry.getNext()) {
+        for (ObjectEntry<K, V> entry = content[indexFor(hash, content.length)]; entry != null; entry = entry.getNext()) {
             if (entry.getHash() == hash && key.equals(entry.getKey())) {
                 return entry;
             }
@@ -196,7 +222,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     /**
      * @return пул ячеяк.
      */
-    protected ReusablePool<ObjectDictionaryEntry<K, V>> getEntryPool() {
+    protected ReusablePool<ObjectEntry<K, V>> getEntryPool() {
         return entryPool;
     }
 
@@ -212,10 +238,11 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public final Array<K> keyArray(final Array<K> container) {
+        container.checkSize(container.size() + size());
 
-        for (ObjectDictionaryEntry<K, V> entry : content()) {
+        for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
-                container.add(entry.getKey());
+                container.unsafeAdd(entry.getKey());
                 entry = entry.getNext();
             }
         }
@@ -229,7 +256,6 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void moveTo(final Dictionary<? super K, ? super V> dictionary) {
 
         if (isEmpty() || dictionary.getType() != getType()) {
@@ -240,7 +266,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
         super.moveTo(objectDictionary);
 
-        for (ObjectDictionaryEntry<K, V> entry : content()) {
+        for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
                 objectDictionary.put(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
@@ -255,12 +281,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
             throw new NullPointerException("key is null.");
         }
 
-        final ObjectDictionaryEntry<K, V>[] content = content();
+        final ObjectEntry<K, V>[] content = content();
 
         final int hash = hash(key.hashCode());
         final int i = indexFor(hash, content.length);
 
-        for (ObjectDictionaryEntry<K, V> entry = content[i]; entry != null; entry = entry.getNext()) {
+        for (ObjectEntry<K, V> entry = content[i]; entry != null; entry = entry.getNext()) {
             if (entry.getHash() == hash && key.equals(entry.getKey())) {
                 return entry.setValue(value);
             }
@@ -278,29 +304,29 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
             throw new NullPointerException("key is null.");
         }
 
-        final ObjectDictionaryEntry<K, V> old = removeEntryForKey(key);
+        final ObjectEntry<K, V> old = removeEntryForKey(key);
         final V value = old == null ? null : old.getValue();
 
-        final ReusablePool<ObjectDictionaryEntry<K, V>> pool = getEntryPool();
+        final ReusablePool<ObjectEntry<K, V>> pool = getEntryPool();
         pool.put(old);
 
         return value;
     }
 
     @Override
-    public ObjectDictionaryEntry<K, V> removeEntryForKey(final K key) {
+    public ObjectEntry<K, V> removeEntryForKey(final K key) {
 
-        final ObjectDictionaryEntry<K, V>[] content = content();
+        final ObjectEntry<K, V>[] content = content();
 
         final int hash = hash(key.hashCode());
         final int i = indexFor(hash, content.length);
 
-        ObjectDictionaryEntry<K, V> prev = content[i];
-        ObjectDictionaryEntry<K, V> entry = prev;
+        ObjectEntry<K, V> prev = content[i];
+        ObjectEntry<K, V> entry = prev;
 
         while (entry != null) {
 
-            final ObjectDictionaryEntry<K, V> next = entry.getNext();
+            final ObjectEntry<K, V> next = entry.getNext();
 
             if (entry.getHash() == hash && key.equals(entry.getKey())) {
 
@@ -319,7 +345,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
             entry = next;
         }
 
-        return entry;
+        return null;
     }
 
     /**
@@ -327,10 +353,9 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
      *
      * @param newLength новый размер.
      */
-    @SuppressWarnings("unchecked")
-    private final void resize(final int newLength) {
+    private void resize(final int newLength) {
 
-        final ObjectDictionaryEntry<K, V>[] oldContent = content();
+        final ObjectEntry<K, V>[] oldContent = content();
 
         final int oldLength = oldContent.length;
 
@@ -339,7 +364,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
             return;
         }
 
-        final ObjectDictionaryEntry<K, V>[] newContent = new ObjectDictionaryEntry[newLength];
+        final ObjectEntry<K, V>[] newContent = new ObjectEntry[newLength];
         transfer(newContent);
 
         this.content = newContent;
@@ -354,12 +379,9 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
         builder.append(" size = ").append(size).append(" : ");
 
-        final ObjectDictionaryEntry<K, V>[] table = content();
+        final ObjectEntry<K, V>[] table = content();
 
-        for (int i = 0, length = table.length; i < length; i++) {
-
-            ObjectDictionaryEntry<K, V> entry = table[i];
-
+        for (ObjectEntry<K, V> entry : table) {
             while (entry != null) {
                 builder.append("[").append(entry.getKey()).append(" - ").append(entry.getValue()).append("]\n");
                 entry = entry.getNext();
@@ -378,14 +400,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
      *
      * @param newTable новая таблица.
      */
-    private final void transfer(final ObjectDictionaryEntry<K, V>[] newTable) {
+    private void transfer(final ObjectEntry<K, V>[] newTable) {
 
-        final ObjectDictionaryEntry<K, V>[] original = content;
+        final ObjectEntry<K, V>[] original = content;
         final int newCapacity = newTable.length;
 
-        for (int j = 0, length = original.length; j < length; j++) {
-
-            ObjectDictionaryEntry<K, V> entry = original[j];
+        for (ObjectEntry<K, V> entry : original) {
 
             if (entry == null) {
                 continue;
@@ -393,7 +413,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
             do {
 
-                final ObjectDictionaryEntry<K, V> next = entry.getNext();
+                final ObjectEntry<K, V> next = entry.getNext();
 
                 final int i = indexFor(entry.getHash(), newCapacity);
 
@@ -407,10 +427,11 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public Array<V> values(final Array<V> container) {
+        container.checkSize(container.size() + size());
 
-        for (ObjectDictionaryEntry<K, V> entry : content()) {
+        for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
-                container.add(entry.getValue());
+                container.unsafeAdd(entry.getValue());
                 entry = entry.getNext();
             }
         }
@@ -419,7 +440,22 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public Array<V> values(final Class<V> type) {
-        return values(ArrayFactory.newArray(type));
+    public void forEach(final BiConsumer<K, V> consumer) {
+        for (ObjectEntry<K, V> entry : content()) {
+            while (entry != null) {
+                consumer.accept(entry.getKey(), entry.getValue());
+                entry = entry.getNext();
+            }
+        }
+    }
+
+    @Override
+    public <T> void forEach(final T argument, final TripleConsumer<K, V, T> consumer) {
+        for (ObjectEntry<K, V> entry : content()) {
+            while (entry != null) {
+                consumer.accept(entry.getKey(), entry.getValue(), argument);
+                entry = entry.getNext();
+            }
+        }
     }
 }

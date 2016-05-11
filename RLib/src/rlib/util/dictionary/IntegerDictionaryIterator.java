@@ -18,11 +18,11 @@ public class IntegerDictionaryIterator<V> implements Iterator<V> {
     /**
      * следующая ячейка
      */
-    private IntegerDictionaryEntry<V> next;
+    private IntegerEntry<V> next;
     /**
      * текущая ячейка
      */
-    private IntegerDictionaryEntry<V> current;
+    private IntegerEntry<V> current;
 
     /**
      * текущий индекс в массиве
@@ -32,7 +32,7 @@ public class IntegerDictionaryIterator<V> implements Iterator<V> {
     public IntegerDictionaryIterator(final UnsafeIntegerDictionary<V> dictionary) {
         this.dictionary = dictionary;
 
-        final IntegerDictionaryEntry<V>[] content = dictionary.content();
+        final IntegerEntry<V>[] content = dictionary.content();
 
         if (dictionary.size() > 0) {
             while (index < content.length && (next = content[index++]) == null) ;
@@ -59,12 +59,12 @@ public class IntegerDictionaryIterator<V> implements Iterator<V> {
     /**
      * @return следующая занятая ячейка.
      */
-    private IntegerDictionaryEntry<V> nextEntry() {
+    private IntegerEntry<V> nextEntry() {
 
         final UnsafeIntegerDictionary<V> dictionary = getDictionary();
 
-        final IntegerDictionaryEntry<V>[] content = dictionary.content();
-        final IntegerDictionaryEntry<V> entry = next;
+        final IntegerEntry<V>[] content = dictionary.content();
+        final IntegerEntry<V> entry = next;
 
         if (entry == null) {
             throw new NoSuchElementException();

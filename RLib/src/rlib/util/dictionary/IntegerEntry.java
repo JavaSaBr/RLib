@@ -9,12 +9,12 @@ import rlib.util.pools.Reusable;
  *
  * @author Ronn
  */
-public class IntegerDictionaryEntry<V> implements Reusable {
+public class IntegerEntry<V> implements Reusable {
 
     /**
      * Следующая ячейка.
      */
-    private IntegerDictionaryEntry<V> next;
+    private IntegerEntry<V> next;
 
     /**
      * Значение.
@@ -34,11 +34,11 @@ public class IntegerDictionaryEntry<V> implements Reusable {
     @Override
     public boolean equals(final Object object) {
 
-        if (object == null || object.getClass() != IntegerDictionaryEntry.class) {
+        if (object == null || object.getClass() != IntegerEntry.class) {
             return false;
         }
 
-        final IntegerDictionaryEntry<?> entry = (IntegerDictionaryEntry<?>) object;
+        final IntegerEntry<?> entry = (IntegerEntry<?>) object;
 
         final int firstKey = getKey();
         final int secondKey = entry.getKey();
@@ -79,14 +79,14 @@ public class IntegerDictionaryEntry<V> implements Reusable {
     /**
      * @return следующая ячейка.
      */
-    public IntegerDictionaryEntry<V> getNext() {
+    public IntegerEntry<V> getNext() {
         return next;
     }
 
     /**
      * @param next следующая ячейка.
      */
-    public void setNext(final IntegerDictionaryEntry<V> next) {
+    public void setNext(final IntegerEntry<V> next) {
         this.next = next;
     }
 
@@ -107,7 +107,7 @@ public class IntegerDictionaryEntry<V> implements Reusable {
         hash = 0;
     }
 
-    public void set(final int hash, final int key, final V value, final IntegerDictionaryEntry<V> next) {
+    public void set(final int hash, final int key, final V value, final IntegerEntry<V> next) {
         this.value = value;
         this.next = next;
         this.key = key;

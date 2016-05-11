@@ -9,12 +9,12 @@ import rlib.util.pools.Reusable;
  *
  * @author Ronn
  */
-public class ObjectDictionaryEntry<K, V> implements Reusable {
+public class ObjectEntry<K, V> implements Reusable {
 
     /**
      * Следующая ячейка.
      */
-    private ObjectDictionaryEntry<K, V> next;
+    private ObjectEntry<K, V> next;
 
     /**
      * Ключ.
@@ -34,11 +34,11 @@ public class ObjectDictionaryEntry<K, V> implements Reusable {
     @Override
     public boolean equals(final Object object) {
 
-        if (object == null || object.getClass() != ObjectDictionaryEntry.class) {
+        if (object == null || object.getClass() != ObjectEntry.class) {
             return false;
         }
 
-        final ObjectDictionaryEntry<?, ?> entry = (ObjectDictionaryEntry<?, ?>) object;
+        final ObjectEntry<?, ?> entry = (ObjectEntry<?, ?>) object;
 
         final Object firstKey = getKey();
         final Object secondKey = entry.getKey();
@@ -79,14 +79,14 @@ public class ObjectDictionaryEntry<K, V> implements Reusable {
     /**
      * @return следующая ячейка.
      */
-    public ObjectDictionaryEntry<K, V> getNext() {
+    public ObjectEntry<K, V> getNext() {
         return next;
     }
 
     /**
      * @param next следующая цепочка.
      */
-    public void setNext(final ObjectDictionaryEntry<K, V> next) {
+    public void setNext(final ObjectEntry<K, V> next) {
         this.next = next;
     }
 
@@ -107,7 +107,7 @@ public class ObjectDictionaryEntry<K, V> implements Reusable {
         hash = 0;
     }
 
-    public void set(final int hash, final K key, final V value, final ObjectDictionaryEntry<K, V> next) {
+    public void set(final int hash, final K key, final V value, final ObjectEntry<K, V> next) {
         this.value = value;
         this.next = next;
         this.key = key;

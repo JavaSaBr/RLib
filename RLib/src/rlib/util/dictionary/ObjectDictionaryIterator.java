@@ -18,12 +18,12 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
     /**
      * Следующая ячейка.
      */
-    private ObjectDictionaryEntry<K, V> next;
+    private ObjectEntry<K, V> next;
 
     /**
      * Текущая ячейка.
      */
-    private ObjectDictionaryEntry<K, V> current;
+    private ObjectEntry<K, V> current;
 
     /**
      * Текущий индекс в массиве.
@@ -33,7 +33,7 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
     public ObjectDictionaryIterator(UnsafeObjectDictionary<K, V> dictionary) {
         this.dictionary = dictionary;
 
-        final ObjectDictionaryEntry<K, V>[] content = dictionary.content();
+        final ObjectEntry<K, V>[] content = dictionary.content();
 
         if (dictionary.size() > 0) {
             while (index < content.length && (next = content[index++]) == null) ;
@@ -60,12 +60,12 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
     /**
      * @return следующая занятая ячейка.
      */
-    private ObjectDictionaryEntry<K, V> nextEntry() {
+    private ObjectEntry<K, V> nextEntry() {
 
         final UnsafeObjectDictionary<K, V> dictionary = getDictionary();
 
-        final ObjectDictionaryEntry<K, V>[] content = dictionary.content();
-        final ObjectDictionaryEntry<K, V> entry = next;
+        final ObjectEntry<K, V>[] content = dictionary.content();
+        final ObjectEntry<K, V> entry = next;
 
         if (entry == null) {
             throw new NoSuchElementException();

@@ -16,7 +16,7 @@ import static java.lang.Math.min;
  *
  * @author Ronn
  */
-public final class AxisAlignedBoundingBox extends AbstractBounding {
+public class AxisAlignedBoundingBox extends AbstractBounding {
 
     /**
      * Матрица для промежуточных вычислений.

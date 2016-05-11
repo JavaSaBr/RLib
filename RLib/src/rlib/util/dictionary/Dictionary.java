@@ -4,6 +4,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import rlib.util.array.Array;
+import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Reusable;
 
 /**
@@ -117,6 +118,6 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
      * @return итоговый список всех значений.
      */
     public default Array<V> values(final Class<V> type) {
-        throw new RuntimeException("not supported.");
+        return values(ArrayFactory.newArray(type, size()));
     }
 }

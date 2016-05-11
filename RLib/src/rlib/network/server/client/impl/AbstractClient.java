@@ -6,7 +6,7 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.AsyncConnection;
 import rlib.network.GameCrypt;
-import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 import rlib.network.server.client.Client;
 
@@ -16,7 +16,7 @@ import rlib.network.server.client.Client;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends GameCrypt, RP extends ReadeablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
+public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends GameCrypt, RP extends ReadablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
 
@@ -184,6 +184,11 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [owner=" + owner + ", account=" + account + ", connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
+        return "AbstractClient{" +
+                ", owner=" + owner +
+                ", account=" + account +
+                ", crypt=" + crypt +
+                ", closed=" + closed +
+                '}';
     }
 }

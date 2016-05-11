@@ -26,6 +26,6 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
      * Процесс записи пакета в указанный буффер.
      */
     protected void writeImpl(final ByteBuffer buffer) {
-        LOGGER.warning(this, new Exception("unsupperted method"));
+        LOGGER.warning(this, new Exception("unsupported method"));
     }
 }

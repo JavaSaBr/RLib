@@ -74,9 +74,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException();
-        }
-
-        if (type.isInstance(object)) {
+        } else if (type.isInstance(object)) {
             return type.cast(object);
         }
 
@@ -97,9 +95,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (type.isInstance(object)) {
+        } else if (type.isInstance(object)) {
             return type.cast(object);
         }
 
@@ -145,9 +141,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (type.isInstance(object)) {
+        } else if (type.isInstance(object)) {
             return (T[]) object;
         }
 
@@ -169,9 +163,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (type.isInstance(object)) {
+        } else if (type.isInstance(object)) {
             return (T[]) object;
         }
 
@@ -190,13 +182,9 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Boolean) {
-            return ((Boolean) object).booleanValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof Boolean) {
+            return (Boolean) object;
+        } else if (object instanceof String) {
             return Boolean.parseBoolean(object.toString());
         }
 
@@ -216,13 +204,9 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Boolean) {
-            return ((Boolean) object).booleanValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof Boolean) {
+            return (Boolean) object;
+        } else if (object instanceof String) {
             return Boolean.parseBoolean(object.toString());
         }
 
@@ -243,9 +227,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof boolean[]) {
+        } else if (object instanceof boolean[]) {
             return (boolean[]) object;
         }
 
@@ -280,9 +262,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof boolean[]) {
+        } else if (object instanceof boolean[]) {
             return (boolean[]) object;
         }
 
@@ -314,13 +294,9 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Byte) {
+        } else if (object instanceof Byte) {
             return ((Byte) object).byteValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Byte.parseByte(object.toString());
         }
 
@@ -340,13 +316,9 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Byte) {
+        } else if (object instanceof Byte) {
             return ((Byte) object).byteValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Byte.parseByte(object.toString());
         }
 
@@ -367,9 +339,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof byte[]) {
+        } else if (object instanceof byte[]) {
             return (byte[]) object;
         }
 
@@ -404,9 +374,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof byte[]) {
+        } else if (object instanceof byte[]) {
             return (byte[]) object;
         }
 
@@ -438,13 +406,9 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Double) {
-            return ((Double) object).doubleValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof Double) {
+            return (Double) object;
+        } else if (object instanceof String) {
             return Double.parseDouble(object.toString());
         }
 
@@ -464,13 +428,9 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Double) {
+        } else if (object instanceof Double) {
             return ((Double) object).doubleValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Double.parseDouble(object.toString());
         }
 
@@ -491,9 +451,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof double[]) {
+        } else if (object instanceof double[]) {
             return (double[]) object;
         }
 
@@ -528,9 +486,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof double[]) {
+        } else if (object instanceof double[]) {
             return (double[]) object;
         }
 
@@ -563,13 +519,9 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (type.isInstance(object)) {
+        } else if (type.isInstance(object)) {
             return type.cast(object);
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Enum.valueOf(type, object.toString());
         }
 
@@ -590,13 +542,9 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (type.isInstance(object)) {
+        } else if (type.isInstance(object)) {
             return type.cast(object);
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Enum.valueOf(type, object.toString());
         }
 
@@ -619,9 +567,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Enum[]) {
+        } else if (object instanceof Enum[]) {
             return (T[]) object;
         }
 
@@ -658,9 +604,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Enum[]) {
+        } else if (object instanceof Enum[]) {
             return (T[]) object;
         }
 
@@ -692,13 +636,9 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Float) {
+        } else  if (object instanceof Float) {
             return ((Float) object).floatValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Float.parseFloat(object.toString());
         }
 
@@ -718,13 +658,9 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Float) {
+        } else if (object instanceof Float) {
             return ((Float) object).floatValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Float.parseFloat(object.toString());
         }
 
@@ -745,9 +681,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException();
-        }
-
-        if (object instanceof float[]) {
+        } else if (object instanceof float[]) {
             return (float[]) object;
         }
 
@@ -782,9 +716,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof float[]) {
+        } else if (object instanceof float[]) {
             return (float[]) object;
         }
 
@@ -816,13 +748,9 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Integer) {
-            return ((Integer) object).intValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof Integer) {
+            return (Integer) object;
+        } else if (object instanceof String) {
             return Integer.parseInt(object.toString());
         }
 
@@ -842,13 +770,9 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Integer) {
-            return ((Integer) object).intValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof Integer) {
+            return (Integer) object;
+        } else if (object instanceof String) {
             return Integer.parseInt(object.toString());
         }
 
@@ -869,9 +793,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof int[]) {
+        } else if (object instanceof int[]) {
             return (int[]) object;
         }
 
@@ -906,9 +828,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof int[]) {
+        } else if (object instanceof int[]) {
             return (int[]) object;
         }
 
@@ -940,10 +860,8 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Long) {
-            return ((Long) object).longValue();
+        } else if (object instanceof Long) {
+            return (Long) object;
         }
 
         if (object instanceof String) {
@@ -966,10 +884,8 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Long) {
-            return ((Long) object).longValue();
+        } else if (object instanceof Long) {
+            return (Long) object;
         }
 
         if (object instanceof String) {
@@ -993,9 +909,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof long[]) {
+        } else if (object instanceof long[]) {
             return (long[]) object;
         }
 
@@ -1030,9 +944,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof long[]) {
+        } else if (object instanceof long[]) {
             return (long[]) object;
         }
 
@@ -1064,9 +976,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Rotation) {
+        } else if (object instanceof Rotation) {
             return (Rotation) object;
         }
 
@@ -1096,9 +1006,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Rotation) {
+        } else if (object instanceof Rotation) {
             return (Rotation) object;
         }
 
@@ -1127,13 +1035,9 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Short) {
+        } else if (object instanceof Short) {
             return ((Short) object).shortValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Short.parseShort(object.toString());
         }
 
@@ -1153,13 +1057,9 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Short) {
+        } else if (object instanceof Short) {
             return ((Short) object).shortValue();
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Short.parseShort(object.toString());
         }
 
@@ -1180,9 +1080,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof short[]) {
+        } else if (object instanceof short[]) {
             return (short[]) object;
         }
 
@@ -1217,9 +1115,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof short[]) {
+        } else if (object instanceof short[]) {
             return (short[]) object;
         }
 
@@ -1251,9 +1147,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return object.toString();
         }
 
@@ -1273,9 +1167,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return object.toString();
         }
 
@@ -1296,13 +1188,9 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof String[]) {
+        } else if (object instanceof String[]) {
             return (String[]) object;
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return object.toString().split(regex);
         }
 
@@ -1319,17 +1207,14 @@ public class VarTable {
      * @return массив значений параметра.
      */
     public String[] getStringArray(final String key, final String regex, final String... def) {
+
         final Object object = values.get(key);
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof String[]) {
+        } else if (object instanceof String[]) {
             return (String[]) object;
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return ((String) object).split(regex);
         }
 
@@ -1355,9 +1240,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        }
-
-        if (object instanceof Vector) {
+        } else if (object instanceof Vector) {
             return (Vector) object;
         }
 
@@ -1387,9 +1270,7 @@ public class VarTable {
 
         if (object == null) {
             return def;
-        }
-
-        if (object instanceof Vector) {
+        } else if (object instanceof Vector) {
             return (Vector) object;
         }
 
@@ -1501,6 +1382,6 @@ public class VarTable {
 
     @Override
     public String toString() {
-        return "VarTable: " + (values != null ? "values = " + values : "");
+        return "VarTable: " + ("values = " + values);
     }
 }

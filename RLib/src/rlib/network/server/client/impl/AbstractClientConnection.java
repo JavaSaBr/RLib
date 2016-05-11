@@ -3,7 +3,7 @@ package rlib.network.server.client.impl;
 import java.nio.channels.AsynchronousSocketChannel;
 
 import rlib.network.impl.AbstractAsyncConnection;
-import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 import rlib.network.server.ServerNetwork;
 import rlib.network.server.client.Client;
@@ -15,7 +15,7 @@ import rlib.network.server.client.ClientConnection;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractClientConnection<T extends Client, R extends ReadeablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ServerNetwork, R, S> implements ClientConnection<T, R, S> {
+public abstract class AbstractClientConnection<T extends Client, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ServerNetwork, R, S> implements ClientConnection<T, R, S> {
 
     /**
      * Подключенный клиент.
@@ -43,5 +43,12 @@ public abstract class AbstractClientConnection<T extends Client, R extends Reade
 
     @Override
     protected void onWrote(final S packet) {
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractClientConnection{" +
+                "client=" + client +
+                "} " + super.toString();
     }
 }

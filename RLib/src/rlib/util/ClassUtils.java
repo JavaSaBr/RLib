@@ -15,7 +15,6 @@ public final class ClassUtils {
 
     private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
 
-    @SuppressWarnings("unchecked")
     public static <T> Class<T> getClass(final String name) {
         try {
             return (Class<T>) Class.forName(name);
@@ -32,7 +31,6 @@ public final class ClassUtils {
      * @param classes набор параметров конструктора.
      * @return конструктор класса.
      */
-    @SuppressWarnings("unchecked")
     public static <T> Constructor<T> getConstructor(final Class<?> cs, final Class<?>... classes) {
         try {
             return (Constructor<T>) cs.getConstructor(classes);
@@ -49,7 +47,6 @@ public final class ClassUtils {
      * @param classes   список параметров конструктора.
      * @return конструктор класса.
      */
-    @SuppressWarnings("unchecked")
     public static <T> Constructor<T> getConstructor(final String className, final Class<?>... classes) {
         try {
             final Class<?> cs = Class.forName(className);
@@ -66,7 +63,6 @@ public final class ClassUtils {
      * @param cs интересуемый класс.
      * @return новый экземпляр класса.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T newInstance(final Class<?> cs) {
         try {
             return (T) cs.newInstance();
@@ -83,7 +79,6 @@ public final class ClassUtils {
      * @param objects     набор параметров дял конструктора.
      * @return новый экземпляр класса.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T newInstance(final Constructor<?> constructor, final Object... objects) {
         try {
             return (T) constructor.newInstance(objects);
@@ -96,7 +91,6 @@ public final class ClassUtils {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T newInstance(final String className) {
         try {
             return (T) Class.forName(className).newInstance();

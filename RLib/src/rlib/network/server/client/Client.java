@@ -3,7 +3,7 @@ package rlib.network.server.client;
 import java.nio.ByteBuffer;
 
 import rlib.network.AsyncConnection;
-import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
@@ -12,7 +12,7 @@ import rlib.network.packet.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public interface Client<A, P, C extends AsyncConnection, RP extends ReadeablePacket, SP extends SendablePacket> {
+public interface Client<A, P, C extends AsyncConnection, RP extends ReadablePacket, SP extends SendablePacket> {
 
     /**
      * Закрыть клиент.

@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
  *
  * @author Ronn
  */
-public interface ReadeablePacket<C> extends Packet<C> {
+public interface ReadablePacket<C> extends Packet<C> {
 
     /**
      * @return кол-во не прочитанных байтов.
@@ -22,7 +22,7 @@ public interface ReadeablePacket<C> extends Packet<C> {
     /**
      * @param buffer буффер данных.
      */
-    public void setBuffer(ByteBuffer buffer);
+    public void setBuffer(final ByteBuffer buffer);
 
     /**
      * Прочитать присланную информацию.

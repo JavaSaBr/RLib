@@ -2,7 +2,7 @@ package rlib.network.client.server;
 
 import java.nio.ByteBuffer;
 
-import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
@@ -11,7 +11,7 @@ import rlib.network.packet.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public interface Server<C extends ServerConnection, RP extends ReadeablePacket, SP extends SendablePacket> {
+public interface Server<C extends ServerConnection, RP extends ReadablePacket, SP extends SendablePacket> {
 
     /**
      * Отключиться от сервера.

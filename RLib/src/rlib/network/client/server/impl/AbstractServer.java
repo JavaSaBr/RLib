@@ -7,7 +7,7 @@ import rlib.logging.LoggerManager;
 import rlib.network.GameCrypt;
 import rlib.network.client.server.Server;
 import rlib.network.client.server.ServerConnection;
-import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
@@ -16,7 +16,7 @@ import rlib.network.packet.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt, RP extends ReadeablePacket, SP extends SendablePacket> implements Server<C, RP, SP> {
+public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt, RP extends ReadablePacket, SP extends SendablePacket> implements Server<C, RP, SP> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(Server.class);
 
@@ -122,6 +122,9 @@ public abstract class AbstractServer<C extends ServerConnection, T extends GameC
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [connection=" + connection + ", crypt=" + crypt + ", closed=" + closed + "]";
+        return "AbstractServer{" +
+                ", crypt=" + crypt +
+                ", closed=" + closed +
+                '}';
     }
 }

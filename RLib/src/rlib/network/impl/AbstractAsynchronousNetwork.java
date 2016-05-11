@@ -10,6 +10,8 @@ import rlib.network.NetworkConfig;
 import rlib.util.pools.Pool;
 import rlib.util.pools.PoolFactory;
 
+import static java.nio.ByteBuffer.allocate;
+
 /**
  * Базовая реализация асинхронной сети.
  *
@@ -53,17 +55,11 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
     }
 
     @Override
-    public ByteBuffer getReadByteBuffer() {
+    public ByteBuffer takeReadBuffer() {
 
         final Pool<ByteBuffer> pool = getReadBufferPool();
-
-        ByteBuffer buffer = pool.take();
-
-        if (buffer != null) {
-            buffer.clear();
-        } else {
-            buffer = ByteBuffer.allocate(config.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
-        }
+        final ByteBuffer buffer = pool.take(config, conf -> allocate(conf.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN));
+        buffer.clear();
 
         return buffer;
     }
@@ -76,23 +72,17 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
     }
 
     @Override
-    public ByteBuffer getWriteByteBuffer() {
+    public ByteBuffer takeWriteBuffer() {
 
         final Pool<ByteBuffer> pool = getWriteBufferPool();
-
-        ByteBuffer buffer = pool.take();
-
-        if (buffer != null) {
-            buffer.clear();
-        } else {
-            buffer = ByteBuffer.allocate(config.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN);
-        }
+        final ByteBuffer buffer = pool.take(config, conf -> allocate(conf.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN));
+        buffer.clear();
 
         return buffer;
     }
 
     @Override
-    public void putReadByteBuffer(final ByteBuffer buffer) {
+    public void putReadBuffer(final ByteBuffer buffer) {
 
         if (buffer == null) {
             return;
@@ -103,7 +93,7 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
     }
 
     @Override
-    public void putWriteByteBuffer(final ByteBuffer buffer) {
+    public void putWriteBuffer(final ByteBuffer buffer) {
 
         if (buffer == null) {
             return;
@@ -115,6 +105,8 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [config=" + config + "]";
+        return "AbstractAsynchronousNetwork{" +
+                "config=" + config +
+                '}';
     }
 }

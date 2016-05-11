@@ -7,12 +7,13 @@ import rlib.util.pools.Reusable;
  *
  * @author Ronn
  */
-public class LongEntry<V> implements Reusable {
+public final class LongEntry<V> implements Reusable {
 
     /**
      * следующая ячейка
      */
     private LongEntry<V> next;
+
     /**
      * значение
      */
@@ -22,6 +23,7 @@ public class LongEntry<V> implements Reusable {
      * ключ
      */
     private long key;
+
     /**
      * хэш ключа
      */
@@ -56,8 +58,6 @@ public class LongEntry<V> implements Reusable {
     public void free() {
         value = null;
         next = null;
-        key = 0;
-        hash = 0;
     }
 
     /**
@@ -100,11 +100,6 @@ public class LongEntry<V> implements Reusable {
         return (int) (key ^ (value == null ? 0 : value.hashCode()));
     }
 
-    @Override
-    public void reuse() {
-        hash = 0;
-    }
-
     public void set(final int hash, final long key, final V value, final LongEntry<V> next) {
         this.value = value;
         this.next = next;
@@ -125,7 +120,12 @@ public class LongEntry<V> implements Reusable {
     }
 
     @Override
-    public final String toString() {
-        return "Entry : " + key + " = " + value;
+    public String toString() {
+        return "LongEntry{" +
+                "next=" + next +
+                ", value=" + value +
+                ", key=" + key +
+                ", hash=" + hash +
+                '}';
     }
 }

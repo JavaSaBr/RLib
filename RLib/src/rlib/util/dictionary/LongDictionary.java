@@ -1,5 +1,10 @@
 package rlib.util.dictionary;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import rlib.function.LongBiObjectConsumer;
+import rlib.function.LongObjectConsumer;
 import rlib.util.array.LongArray;
 
 /**
@@ -24,6 +29,29 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @param key ключ.
      */
     public default V get(final long key) {
+        throw new RuntimeException("not supported.");
+    }
+
+    /**
+     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
+     * ложится по этому же ключу.
+     *
+     * @param key     ключ.
+     * @param factory фабрика.
+     */
+    public default V get(final long key, final Supplier<V> factory) {
+        throw new RuntimeException("not supported.");
+    }
+
+    /**
+     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый с
+     * учетом дополнительного аргумента и ложится по этому же ключу.
+     *
+     * @param key      ключ.
+     * @param argument дополнительный аргумент.
+     * @param factory  фабрика.
+     */
+    public default <T> V get(final long key, final T argument, final Function<T, V> factory) {
         throw new RuntimeException("not supported.");
     }
 
@@ -62,4 +90,22 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
         throw new RuntimeException("not supported.");
     }
 
+    /**
+     * Пробег по словарю с просмотром ключа и значения.
+     *
+     * @param consumer функция обработки ключа и значения.
+     */
+    public default void forEach(final LongObjectConsumer<V> consumer) {
+        throw new RuntimeException("not supported.");
+    }
+
+    /**
+     * Пробег по словарю с просмотром ключа и значения и дополнительным аргументом.
+     *
+     * @param argument дополнительный аргумент.
+     * @param consumer функция обработки ключа и значения.
+     */
+    public default <T> void forEach(final T argument, LongBiObjectConsumer<V, T> consumer) {
+        throw new RuntimeException("not supported.");
+    }
 }

@@ -12,7 +12,7 @@ import static java.lang.Math.abs;
  *
  * @author Ronn
  */
-public final class BoundingSphere extends AbstractBounding {
+public class BoundingSphere extends AbstractBounding {
 
     /**
      * Радиус сферы.

@@ -25,12 +25,12 @@ public interface ConnectHandler extends CompletionHandler<Void, AsynchronousSock
      *
      * @param channel канал с сервером.
      */
-    public void onConnect(AsynchronousSocketChannel channel);
+    public void onConnect(final AsynchronousSocketChannel channel);
 
     /**
      * Обработка ошибки подключения к серверу.
      *
      * @param exc ошибка подключения.
      */
-    public void onFailed(Throwable exc);
+    public void onFailed(final Throwable exc);
 }

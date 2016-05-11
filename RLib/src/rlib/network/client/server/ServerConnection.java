@@ -1,7 +1,7 @@
 package rlib.network.client.server;
 
 import rlib.network.AsyncConnection;
-import rlib.network.packet.ReadeablePacket;
+import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
@@ -10,7 +10,7 @@ import rlib.network.packet.SendablePacket;
  * @author Ronn
  */
 @SuppressWarnings("rawtypes")
-public interface ServerConnection<T extends Server, R extends ReadeablePacket<T>, S extends SendablePacket<T>> extends AsyncConnection<R, S> {
+public interface ServerConnection<T extends Server, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AsyncConnection<R, S> {
 
     /**
      * @return сервер.

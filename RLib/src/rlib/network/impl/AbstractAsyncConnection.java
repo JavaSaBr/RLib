@@ -22,7 +22,6 @@ import rlib.util.linkedlist.LinkedListFactory;
  *
  * @author Ronn
  */
-@SuppressWarnings("rawtypes")
 public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, S> implements AsyncConnection<R, S> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(AsyncConnection.class);
@@ -85,7 +84,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
         @Override
         public void completed(final Integer result, final AbstractAsyncConnection connection) {
 
-            if (result.intValue() == -1) {
+            if (result == -1) {
                 finish();
                 return;
             }
@@ -124,6 +123,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
             finish();
         }
     };
+
     /**
      * Обработчик записи пакетов.
      */
@@ -132,7 +132,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
         @Override
         public void completed(final Integer result, final S packet) {
 
-            if (result.intValue() == -1) {
+            if (result == -1) {
                 finish();
                 return;
             }
@@ -175,8 +175,8 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
         this.channel = channel;
         this.waitPackets = LinkedListFactory.newLinkedList(sendableType);
         this.network = network;
-        this.readBuffer = network.getReadByteBuffer();
-        this.writeBuffer = network.getWriteByteBuffer();
+        this.readBuffer = network.takeReadBuffer();
+        this.writeBuffer = network.takeWriteBuffer();
         this.config = network.getConfig();
         this.writeCounter = new AtomicInteger();
         this.closed = new AtomicBoolean(false);
@@ -220,8 +220,8 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
         clearPackets(getWaitPackets());
 
         final N network = getNetwork();
-        network.putReadByteBuffer(getReadBuffer());
-        network.putWriteByteBuffer(getWriteBuffer());
+        network.putReadBuffer(getReadBuffer());
+        network.putWriteBuffer(getWriteBuffer());
     }
 
     /**
@@ -384,7 +384,14 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [network=" + network + ", channel=" + channel + ", closed=" + closed + ", lastActive=" + lastActive + "]";
+        return "AbstractAsyncConnection{" +
+                "network=" + network +
+                ", waitPackets=" + waitPackets +
+                ", channel=" + channel +
+                ", writeCounter=" + writeCounter +
+                ", closed=" + closed +
+                ", lastActive=" + lastActive +
+                '}';
     }
 
     @Override

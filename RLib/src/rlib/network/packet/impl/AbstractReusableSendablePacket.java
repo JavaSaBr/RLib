@@ -16,7 +16,7 @@ import rlib.util.pools.Reusable;
 public abstract class AbstractReusableSendablePacket<C> extends AbstractSendablePacket<C> implements Reusable {
 
     /**
-     * счетчик добавлений на отправку экземпляра пакета
+     * Счетчик добавлений на отправку экземпляра пакета.
      */
     protected final AtomicInteger counter;
 
@@ -68,7 +68,9 @@ public abstract class AbstractReusableSendablePacket<C> extends AbstractSendable
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [counter=" + counter + ", owner=" + owner + ", name=" + name + "]";
+        return "AbstractReusableSendablePacket{" +
+                "counter=" + counter +
+                "} " + super.toString();
     }
 
     @Override
