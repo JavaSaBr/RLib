@@ -1,7 +1,14 @@
 package rlib.util;
 
 import java.util.Comparator;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
+import rlib.function.IntObjectPredicate;
+import rlib.function.TripleConsumer;
+import rlib.function.TripleFunction;
+import rlib.function.TriplePredicate;
 import rlib.util.array.Array;
 import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
@@ -585,6 +592,172 @@ public final class ArrayUtils {
         } finally {
             source.readUnlock();
         }
+    }
+
+    /**
+     * Обработка элемента массива с дополнительными аргументами.
+     *
+     * @param array массив для поиска элемента.
+     * @param first первый дополнительный аргумент.
+     * @param second второй дополнительный аргумент.
+     * @param consumer обработчик под элемента.
+     */
+    public static <T, F, S> void forEach(final T[] array, final F first, final S second, final TripleConsumer<F, S, T> consumer) {
+        for (final T element : array) {
+            consumer.accept(first, second, element);
+        }
+    }
+
+    /**
+     * Обработка под элемента массива с дополнительными аргументами.
+     *
+     * @param array массив для поиска элемента.
+     * @param first первый дополнительный аргумент.
+     * @param second второй дополнительный аргумент.
+     * @param getElement функция извлечения под элемента массива.
+     * @param consumer обработчик под элемента.
+     */
+    public static <T, R, F, S> void forEach(final T[] array, final F first, final S second, final TripleFunction<F, S, T, R> getElement, final TripleConsumer<F, S, R> consumer) {
+        for (final T element : array) {
+            final R subElement = getElement.apply(first, second, element);
+            consumer.accept(first, second, subElement);
+        }
+    }
+
+    /**
+     * Поиск индекса элемента в массиве с дополнительным аргументом.
+     *
+     * @param array массив для поиска элемента.
+     * @param argument дополнительный аргумент.
+     * @param condition условие отбора элемента.
+     * @return индекс первого элемента, удовлетворяющего условия либо -1.
+     */
+    public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<F, T> condition) {
+
+        for (int i = 0, length = array.length; i < length; i++) {
+            if(condition.test(argument, array[i])) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Функция подсчета кол-ва элементов удовлетворяющие указанному условию.
+     *
+     * @param array массив для подсчета элементов.
+     * @param predicate условие учета элемента.
+     * @return кол-во нужных элементов.
+     */
+    public static <T> int count(final T[] array, final Predicate<T> predicate) {
+
+        int count = 0;
+
+        for (final T element : array) {
+            if(predicate.test(element)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Поиск элемента в массиве.
+     *
+     * @param array массив для поиска элемента.
+     * @param condition условие отбора элемента.
+     * @return первый подходящий элемент либо null.
+     */
+    public static <T> T find(final T[] array, final Predicate<T> condition) {
+
+        for (final T element : array) {
+            if(condition.test(element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Поиск элемента в массиве с дополнительным аргументом.
+     *
+     * @param array массив для поиска элемента.
+     * @param argument дополнительный аргумент.
+     * @param condition условие отбора элемента.
+     * @return первый подходящий элемент либо null.
+     */
+    public static <T, F> T find(final T[] array, final F argument, final BiPredicate<F, T> condition) {
+
+        for (final T element : array) {
+            if(condition.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Поиск элемента в массиве с дополнительным аргументом.
+     *
+     * @param array массив для поиска элемента.
+     * @param argument дополнительный аргумент.
+     * @param condition условие отбора элемента.
+     * @return первый подходящий элемент либо null.
+     */
+    public static <T> T find(final T[] array, final int argument, final IntObjectPredicate<T> condition) {
+
+        for (final T element : array) {
+            if(condition.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Поиск под-элемента в массиве с дополнительным аргументом.
+     *
+     * @param array массив для поиска элемента.
+     * @param argument дополнительный аргумент.
+     * @param getElement функция извлечения под элемента массива.
+     * @param condition условие отбора элемента.
+     * @return первый подходящий элемент либо null.
+     */
+    public static <T, R> R find(final T[] array, final int argument, final Function<T, R> getElement, final IntObjectPredicate<R> condition) {
+
+        for (final T element : array) {
+            final R subElement = getElement.apply(element);
+            if(condition.test(argument, subElement)) {
+                return subElement;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Поиск элемента в массиве c двумя дополнительными аргументами.
+     *
+     * @param array массив для поиска элемента.
+     * @param first первый дополнительный аргумент.
+     * @param second второй дополнительный аргумент.
+     * @param condition условие отбора элемента.
+     * @return первый подходящий элемент либо null.
+     */
+    public static <T, F, S> T find(final T[] array, final F first, final S second, final TriplePredicate<F, S, T> condition) {
+
+        for (final T element : array) {
+            if(condition.test(first, second, element)) {
+                return element;
+            }
+        }
+
+        return null;
     }
 
     private ArrayUtils() {

@@ -15,7 +15,14 @@ import java.nio.file.StandardOpenOption;
  */
 public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> {
 
+    /**
+     * Путь к файлу.
+     */
+    protected final String filePath;
+
     public AbstractFileDocument(final File file) {
+        this.filePath = file.getPath();
+
         try {
             setStream(new FileInputStream(file));
         } catch (final FileNotFoundException e) {
@@ -24,10 +31,19 @@ public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> 
     }
 
     public AbstractFileDocument(final Path path) {
+        this.filePath = path.toString();
+
         try {
             setStream(Files.newInputStream(path, StandardOpenOption.READ));
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @return путь к файлу.
+     */
+    protected String getFilePath() {
+        return filePath;
     }
 }

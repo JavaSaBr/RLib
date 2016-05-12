@@ -1,6 +1,8 @@
 package rlib.data;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -23,16 +25,12 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(DocumentXML.class);
 
-    protected static final ThreadLocal<DocumentBuilderFactory> LOCAL_FACTORY = new ThreadLocal<DocumentBuilderFactory>() {
-
-        @Override
-        protected DocumentBuilderFactory initialValue() {
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setValidating(false);
-            factory.setIgnoringComments(true);
-            return factory;
-        }
-    };
+    protected static final ThreadLocal<DocumentBuilderFactory> LOCAL_FACTORY = ThreadLocal.withInitial(() -> {
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setValidating(false);
+        factory.setIgnoringComments(true);
+        return factory;
+    });
 
     /**
      * Поток файла.
@@ -94,7 +92,44 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
      *
      * @param document DOM представление xml файла.
      */
-    protected abstract void parse(Document document);
+    protected void parse(final Document document) {
+        for(Node node = document.getFirstChild(); node != null; node = node.getNextSibling()) {
+
+            if(node.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+
+            parse(null, (Element) node);
+        }
+    };
+
+    /**
+     * Процесс парсинга хмл файла.
+     *
+     * @param parent родительский элемент.
+     * @param element текущий элемент.
+     */
+    protected void parse(final Element parent, final Element element) {
+        handle(parent, element);
+
+        for(Node node = element.getFirstChild(); node != null; node = node.getNextSibling()) {
+
+            if(node.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+
+            parse(element, (Element) node);
+        }
+    }
+
+    /**
+     * Процесс парсинга хмл файла.
+     *
+     * @param parent родительский элемент.
+     * @param element текущий элемент.
+     */
+    protected void handle(final Element parent, final Element element) {
+    }
 
     /**
      * @param stream контент для парса.
