@@ -44,6 +44,17 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
+     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
+     * ложится по этому же ключу.
+     *
+     * @param key     ключ.
+     * @param factory фабрика.
+     */
+    public default V get(final K key, final Function<K, V> factory) {
+        throw new RuntimeException("not supported.");
+    }
+
+    /**
      * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый с
      * учетом дополнительного аргумента и ложится по этому же ключу.
      *

@@ -3,6 +3,7 @@ package rlib.util.dictionary;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import rlib.function.IntBiObjectConsumer;
@@ -175,6 +176,20 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
         if (entry == null) {
             put(key, factory.get());
+        }
+
+        entry = getEntry(key);
+
+        return entry == null ? null : entry.getValue();
+    }
+
+    @Override
+    public V get(final int key, final IntFunction<V> factory) {
+
+        IntegerEntry<V> entry = getEntry(key);
+
+        if (entry == null) {
+            put(key, factory.apply(key));
         }
 
         entry = getEntry(key);

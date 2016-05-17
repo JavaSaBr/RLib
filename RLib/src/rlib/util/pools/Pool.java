@@ -54,7 +54,7 @@ public interface Pool<E> {
      * Взять из пула объект или же создать новый с использованием дополнительного аргумента.
      *
      * @param argument дополнительный аргумент.
-     * @param factory фабрика объектов.
+     * @param factory  фабрика объектов.
      * @return объект из пула либо новй объект.
      */
     public default <T> E take(final T argument, final Function<T, E> factory) {
@@ -65,8 +65,8 @@ public interface Pool<E> {
     /**
      * Взять из пула объект или же создать новый с использованием дополнительных аргументов.
      *
-     * @param first дополнительный аргумент.
-     * @param second дополнительный аргумент.
+     * @param first   дополнительный аргумент.
+     * @param second  дополнительный аргумент.
      * @param factory фабрика объектов.
      * @return объект из пула либо новй объект.
      */

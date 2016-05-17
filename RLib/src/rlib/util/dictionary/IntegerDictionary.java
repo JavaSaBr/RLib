@@ -1,6 +1,7 @@
 package rlib.util.dictionary;
 
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import rlib.function.IntBiObjectConsumer;
@@ -40,6 +41,17 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      * @param factory фабрика.
      */
     public default V get(final int key, final Supplier<V> factory) {
+        throw new RuntimeException("not supported.");
+    }
+
+    /**
+     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
+     * ложится по этому же ключу.
+     *
+     * @param key     ключ.
+     * @param factory фабрика.
+     */
+    public default V get(final int key, final IntFunction<V> factory) {
         throw new RuntimeException("not supported.");
     }
 

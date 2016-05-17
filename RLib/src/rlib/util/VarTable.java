@@ -636,7 +636,7 @@ public class VarTable {
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        } else  if (object instanceof Float) {
+        } else if (object instanceof Float) {
             return ((Float) object).floatValue();
         } else if (object instanceof String) {
             return Float.parseFloat(object.toString());

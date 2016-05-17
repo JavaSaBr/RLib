@@ -185,6 +185,20 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
+    public V get(final K key, final Function<K, V> factory) {
+
+        ObjectEntry<K, V> entry = getEntry(key);
+
+        if (entry == null) {
+            put(key, factory.apply(key));
+        }
+
+        entry = getEntry(key);
+
+        return entry == null ? null : entry.getValue();
+    }
+
+    @Override
     public <T> V get(final K key, final T argument, final Function<T, V> factory) {
 
         ObjectEntry<K, V> entry = getEntry(key);

@@ -3,6 +3,7 @@ package rlib.util.dictionary;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.LongFunction;
 import java.util.function.Supplier;
 
 import rlib.function.LongBiObjectConsumer;
@@ -164,6 +165,20 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
 
         if (entry == null) {
             put(key, factory.get());
+        }
+
+        entry = getEntry(key);
+
+        return entry == null ? null : entry.getValue();
+    }
+
+    @Override
+    public V get(final long key, final LongFunction<V> factory) {
+
+        LongEntry<V> entry = getEntry(key);
+
+        if (entry == null) {
+            put(key, factory.apply(key));
         }
 
         entry = getEntry(key);

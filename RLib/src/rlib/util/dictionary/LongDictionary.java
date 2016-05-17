@@ -1,6 +1,7 @@
 package rlib.util.dictionary;
 
 import java.util.function.Function;
+import java.util.function.LongFunction;
 import java.util.function.Supplier;
 
 import rlib.function.LongBiObjectConsumer;
@@ -40,6 +41,17 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @param factory фабрика.
      */
     public default V get(final long key, final Supplier<V> factory) {
+        throw new RuntimeException("not supported.");
+    }
+
+    /**
+     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
+     * ложится по этому же ключу.
+     *
+     * @param key     ключ.
+     * @param factory фабрика.
+     */
+    public default V get(final long key, final LongFunction<V> factory) {
         throw new RuntimeException("not supported.");
     }
 

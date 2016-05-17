@@ -10,7 +10,7 @@ public interface Logger {
     /**
      * Вывод отладочного сообщение.
      *
-     * @param cs   класс объекта, посылающего сообщение.
+     * @param cs      класс объекта, посылающего сообщение.
      * @param message содержание сообщения.
      */
     public void debug(Class<?> cs, String message);
@@ -41,7 +41,7 @@ public interface Logger {
     /**
      * Вывод критического сообщение.
      *
-     * @param cs   класс объекта, посылающего сообщение.
+     * @param cs      класс объекта, посылающего сообщение.
      * @param message содержание сообщения.
      */
     public void error(Class<?> cs, String message);
@@ -49,7 +49,7 @@ public interface Logger {
     /**
      * Вывод критического эксепшена.
      *
-     * @param cs     класс объекта, посылающего сообщение.
+     * @param cs        класс объекта, посылающего сообщение.
      * @param exception сам эксепшен.
      */
     public void error(Class<?> cs, Throwable exception);
@@ -113,7 +113,7 @@ public interface Logger {
     /**
      * Вывод информативного сообщение.
      *
-     * @param cs   класс объекта, посылающего сообщение.
+     * @param cs      класс объекта, посылающего сообщение.
      * @param message содержание сообщения.
      */
     public void info(Class<?> cs, String message);
@@ -164,7 +164,7 @@ public interface Logger {
     /**
      * Вывод важного сообщение.
      *
-     * @param cs   класс объекта, посылающего сообщение.
+     * @param cs      класс объекта, посылающего сообщение.
      * @param message содержание сообщения.
      */
     public void warning(Class<?> cs, String message);
@@ -172,7 +172,7 @@ public interface Logger {
     /**
      * Вывод важного эксепшена.
      *
-     * @param cs     класс объекта, посылающего сообщение.
+     * @param cs        класс объекта, посылающего сообщение.
      * @param exception сам эксепшен.
      */
     public void warning(Class<?> cs, Throwable exception);
