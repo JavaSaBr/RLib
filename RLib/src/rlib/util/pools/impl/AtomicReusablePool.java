@@ -1,10 +1,12 @@
 package rlib.util.pools.impl;
 
-import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Reusable;
 import rlib.util.pools.ReusablePool;
+
+import static rlib.util.ArrayUtils.getInWriteLock;
+import static rlib.util.ArrayUtils.runInWriteLock;
 
 /**
  * Реализация потокобезопасного {@link ReusablePool} с помощью атомарного блокировщика.
@@ -43,12 +45,12 @@ public class AtomicReusablePool<E extends Reusable> implements ReusablePool<E> {
 
         object.free();
 
-        ArrayUtils.addInWriteLockTo(pool, object);
+        runInWriteLock(pool, object, Array::add);
     }
 
     @Override
     public void remove(final E object) {
-        ArrayUtils.fastRemoveInWriteLockTo(pool, object);
+        runInWriteLock(pool, object, Array::fastRemove);
     }
 
     @Override
@@ -60,14 +62,7 @@ public class AtomicReusablePool<E extends Reusable> implements ReusablePool<E> {
             return null;
         }
 
-        E object = null;
-
-        pool.writeLock();
-        try {
-            object = pool.pop();
-        } finally {
-            pool.writeUnlock();
-        }
+        final E object = getInWriteLock(pool, Array::pop);
 
         if (object == null) {
             return null;

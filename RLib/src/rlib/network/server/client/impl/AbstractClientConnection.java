@@ -42,7 +42,7 @@ public abstract class AbstractClientConnection<T extends Client, R extends Reada
     }
 
     @Override
-    protected void onWrote(final S packet) {
+    protected void completed(final S packet) {
     }
 
     @Override

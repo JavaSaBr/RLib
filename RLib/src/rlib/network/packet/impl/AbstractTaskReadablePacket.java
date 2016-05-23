@@ -20,12 +20,8 @@ public abstract class AbstractTaskReadablePacket<C, L> extends AbstractReadableP
         } catch (final Exception e) {
             LOGGER.warning(this, e);
         } finally {
-
             final ReusablePool pool = getPool();
-
-            if (pool != null) {
-                pool.put(this);
-            }
+            if (pool != null) pool.put(this);
         }
     }
 
@@ -40,7 +36,6 @@ public abstract class AbstractTaskReadablePacket<C, L> extends AbstractReadableP
      *
      * @return пулл для складывания этого пакета. может быть <code>null</code>.
      */
-    @SuppressWarnings("rawtypes")
     protected abstract ReusablePool getPool();
 
     /**

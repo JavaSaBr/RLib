@@ -132,18 +132,13 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
         packet.setOwner(this);
         packet.setBuffer(buffer);
         try {
-
-            if (packet.read()) {
-                execute(packet);
-            }
-
+            if (packet.read()) execute(packet);
         } finally {
             packet.setBuffer(null);
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public final void sendPacket(final SendablePacket packet) {
 
         if (isClosed()) {

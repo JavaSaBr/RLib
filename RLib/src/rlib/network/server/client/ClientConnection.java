@@ -9,7 +9,6 @@ import rlib.network.packet.SendablePacket;
  *
  * @author Ronn
  */
-@SuppressWarnings("rawtypes")
 public interface ClientConnection<T extends Client, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AsyncConnection<R, S> {
 
     /**

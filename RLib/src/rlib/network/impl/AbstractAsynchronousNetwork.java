@@ -1,7 +1,7 @@
 package rlib.network.impl;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.util.function.Function;
 
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
@@ -11,6 +11,8 @@ import rlib.util.pools.Pool;
 import rlib.util.pools.PoolFactory;
 
 import static java.nio.ByteBuffer.allocate;
+import static java.nio.ByteBuffer.allocateDirect;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 /**
  * Базовая реализация асинхронной сети.
@@ -47,60 +49,48 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
         return config;
     }
 
-    /**
-     * @return пул буфферов для чтения.
-     */
-    private Pool<ByteBuffer> getReadBufferPool() {
-        return readBufferPool;
-    }
-
     @Override
     public ByteBuffer takeReadBuffer() {
 
-        final Pool<ByteBuffer> pool = getReadBufferPool();
-        final ByteBuffer buffer = pool.take(config, conf -> allocate(conf.getReadBufferSize()).order(ByteOrder.LITTLE_ENDIAN));
+        final ByteBuffer buffer = readBufferPool.take(config, readBufferFactory());
         buffer.clear();
 
         return buffer;
     }
 
     /**
-     * @return пул буфферов для записи.
+     * @return фабрика новыйх буфферов для чтения.
      */
-    private Pool<ByteBuffer> getWriteBufferPool() {
-        return writeBufferPool;
+    protected Function<NetworkConfig, ByteBuffer> readBufferFactory() {
+        return conf -> (conf.isDirectByteBuffer() ?
+                allocateDirect(conf.getReadBufferSize()) : allocate(conf.getReadBufferSize())).order(LITTLE_ENDIAN);
     }
 
     @Override
     public ByteBuffer takeWriteBuffer() {
 
-        final Pool<ByteBuffer> pool = getWriteBufferPool();
-        final ByteBuffer buffer = pool.take(config, conf -> allocate(conf.getWriteBufferSize()).order(ByteOrder.LITTLE_ENDIAN));
+        final ByteBuffer buffer = writeBufferPool.take(config, writeBufferFactory());
         buffer.clear();
 
         return buffer;
     }
 
+    /**
+     * @return фабрика новыйх буфферов для записи.
+     */
+    protected Function<NetworkConfig, ByteBuffer> writeBufferFactory() {
+        return conf -> (conf.isDirectByteBuffer() ?
+                allocateDirect(conf.getWriteBufferSize()) : allocate(conf.getWriteBufferSize())).order(LITTLE_ENDIAN);
+    }
+
     @Override
     public void putReadBuffer(final ByteBuffer buffer) {
-
-        if (buffer == null) {
-            return;
-        }
-
-        final Pool<ByteBuffer> pool = getReadBufferPool();
-        pool.put(buffer);
+        readBufferPool.put(buffer);
     }
 
     @Override
     public void putWriteBuffer(final ByteBuffer buffer) {
-
-        if (buffer == null) {
-            return;
-        }
-
-        final Pool<ByteBuffer> pool = getWriteBufferPool();
-        pool.put(buffer);
+        writeBufferPool.put(buffer);
     }
 
     @Override

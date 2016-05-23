@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import java.util.Collection;
+
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
@@ -70,6 +72,29 @@ public class FastArray<E> extends AbstractArray<E> {
         }
 
         processAdd(elements, selfSize, targetSize);
+
+        return this;
+    }
+
+    @Override
+    public Array<E> addAll(final Collection<? extends E> collection) {
+
+        if (collection.isEmpty()) {
+            return this;
+        }
+
+        final int current = array.length;
+        final int selfSize = size();
+        final int targetSize = collection.size();
+        final int diff = selfSize + targetSize - current;
+
+        if (diff > 0) {
+            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+        }
+
+        for (final E element : collection) {
+            unsafeAdd(element);
+        }
 
         return this;
     }

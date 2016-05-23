@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import java.util.Collection;
+
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.LockFactory;
@@ -92,6 +94,27 @@ public class ConcurrentAtomicArray<E> extends AbstractArray<E> {
                 break;
             }
 
+            add(element);
+        }
+
+        return this;
+    }
+
+    @Override
+    public final ConcurrentAtomicArray<E> addAll(final Collection<? extends E> elements) {
+
+        if (elements == null || elements.isEmpty()) {
+            return this;
+        }
+
+        final int current = array.length;
+        final int diff = size() + elements.size() - current;
+
+        if (diff > 0) {
+            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+        }
+
+        for (final E element : elements) {
             add(element);
         }
 

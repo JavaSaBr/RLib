@@ -34,12 +34,8 @@ public abstract class AbstractRunnableReadablePacket<C> extends AbstractReadable
         } catch (final Exception e) {
             LOGGER.warning(this, e);
         } finally {
-
             final ReusablePool pool = getPool();
-
-            if (pool != null) {
-                pool.put(this);
-            }
+            if (pool != null) pool.put(this);
         }
     }
 

@@ -53,7 +53,7 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reada
     }
 
     @Override
-    protected void onWrote(final S packet) {
+    protected void completed(final S packet) {
     }
 
     @Override

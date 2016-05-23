@@ -2,10 +2,13 @@ package rlib.util;
 
 import java.util.Comparator;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import rlib.function.FunctionInt;
 import rlib.function.IntObjectPredicate;
 import rlib.function.LongObjectPredicate;
 import rlib.function.TripleConsumer;
@@ -494,17 +497,189 @@ public final class ArrayUtils {
     }
 
     /**
-     * Добавление элемента в массив в блоке {@link Array#writeLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
      *
-     * @param array  массив, в который надо добавить элемент.
-     * @param object добавляемый элемент.
+     * @param array    массив с которым надо работать.
+     * @param function функция получения чего-то.
+     * @return результат функции.
      */
-    public static <T, V extends T> void addInWriteLockTo(final Array<T> array, final V object) {
+    public static <T, R> R getInWriteLock(final Array<T> array, final Function<Array<T>, R> function) {
         array.writeLock();
         try {
-            array.add(object);
+            return function.apply(array);
         } finally {
             array.writeUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param consumer функция действия.
+     */
+    public static <T> void runInWriteLock(final Array<T> array, final Consumer<Array<T>> consumer) {
+        array.writeLock();
+        try {
+            consumer.accept(array);
+        } finally {
+            array.writeUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param consumer функция действия.
+     */
+    public static <T> void runInReadLock(final Array<T> array, final Consumer<Array<T>> consumer) {
+        array.readLock();
+        try {
+            consumer.accept(array);
+        } finally {
+            array.readUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param function функция действия.
+     * @return результат действия функции.
+     */
+    public static <T, R> R getInReadLock(final Array<T> array, final Function<Array<T>, R> function) {
+        array.readLock();
+        try {
+            return function.apply(array);
+        } finally {
+            array.readUnlock();
+        }
+    }
+
+    /**
+     * Выполнение суммирование массива в блоке {@link Array#readLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param function функция получения сумы.
+     * @return итоговая сумма.
+     */
+    public static <T> int sumInReadLock(final Array<T> array, final FunctionInt<T> function) {
+        array.readLock();
+        try {
+
+            int sum = 0;
+
+            for (T element : array) {
+                if (element == null) break;
+                sum += function.apply(element);
+            }
+
+            return sum;
+
+        } finally {
+            array.readUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param argument дополнительный аргумент.
+     * @param function функция действия.
+     * @return результат действия функции.
+     */
+    public static <T, V, R> R getInWriteLock(final Array<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
+        array.writeLock();
+        try {
+            return function.apply(array, argument);
+        } finally {
+            array.writeUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param argument дополнительный аргумент.
+     * @param consumer функция действия.
+     */
+    public static <T, V> void runInWriteLock(final Array<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
+        array.writeLock();
+        try {
+            consumer.accept(array, argument);
+        } finally {
+            array.writeUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param argument дополнительный аргумент.
+     * @param function функция действия.
+     * @return результат действия функции.
+     */
+    public static <T, V, R> R getInReadLock(final Array<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
+        array.readLock();
+        try {
+            return function.apply(array, argument);
+        } finally {
+            array.readUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param argument дополнительный аргумент.
+     * @param consumer функция действия.
+     */
+    public static <T, V> void runInReadLock(final Array<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
+        array.readLock();
+        try {
+            consumer.accept(array, argument);
+        } finally {
+            array.readUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param first    первый дополнительный аргумент.
+     * @param second   второй дополнительный аргумент.
+     * @param consumer функция действия.
+     */
+    public static <T, F, S> void runInWriteLock(final Array<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
+        array.writeLock();
+        try {
+            consumer.accept(array, first, second);
+        } finally {
+            array.writeUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param first    первый дополнительный аргумент.
+     * @param second   второй дополнительный аргумент.
+     * @param consumer функция действия.
+     */
+    public static <T, F, S> void runInReadLock(final Array<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
+        array.readLock();
+        try {
+            consumer.accept(array, first, second);
+        } finally {
+            array.readUnlock();
         }
     }
 
@@ -521,21 +696,6 @@ public final class ArrayUtils {
     }
 
     /**
-     * Быстрое удаление элемента из массива в блоке {@link Array#writeLock()}.
-     *
-     * @param array  массив, в котором надо удалить элемент.
-     * @param object удаляемый элемент.
-     */
-    public static <T, V extends T> void fastRemoveInWriteLockTo(final Array<T> array, final V object) {
-        array.writeLock();
-        try {
-            array.fastRemove(object);
-        } finally {
-            array.writeUnlock();
-        }
-    }
-
-    /**
      * Быстрое удаление элемента из массива в блоке synchronized.
      *
      * @param array  массив, в котором надо удалить элемент.
@@ -548,51 +708,14 @@ public final class ArrayUtils {
     }
 
     /**
-     * Добавление элементов в массив в блоке {@link Array#writeLock()}.
+     * Обработка элемента массива.
      *
-     * @param array   массив, в который надо добавить элемент.
-     * @param objects добавляемые элементы.
+     * @param array    массив для обработки элементов.
+     * @param consumer обработчик элемента.
      */
-    public static <T, V extends T> void addInWriteLockTo(Array<T> array, V[] objects) {
-        array.writeLock();
-        try {
-            array.addAll(objects);
-        } finally {
-            array.writeUnlock();
-        }
-    }
-
-    /**
-     * Быстрое удаление элементов их массива в блоке {@link Array#writeLock()}.
-     *
-     * @param array   массив, в котором надо удалить элементы.
-     * @param objects удаляемый элементы.
-     */
-    public static <T, V extends T> void fastRemoveInWriteLockTo(Array<T> array, V[] objects) {
-        array.writeLock();
-        try {
-
-            for (V object : objects) {
-                array.fastRemove(object);
-            }
-
-        } finally {
-            array.writeUnlock();
-        }
-    }
-
-    /**
-     * Копирование содержимого source в destination в блоке {@link Array#readLock()}.
-     *
-     * @param source      копируемый массив.
-     * @param destination массив в который копируем данные.
-     */
-    public static <T> void copyInReadLock(Array<T> source, Array<T> destination) {
-        source.readLock();
-        try {
-            destination.addAll(source);
-        } finally {
-            source.readUnlock();
+    public static <T> void forEach(final T[] array, final Consumer<T> consumer) {
+        for (final T element : array) {
+            consumer.accept(element);
         }
     }
 
@@ -601,7 +724,7 @@ public final class ArrayUtils {
      *
      * @param array    массив для обработки элементов.
      * @param argument дополнительный аргумент.
-     * @param consumer обработчик под элемента.
+     * @param consumer обработчик элемента.
      */
     public static <T, F> void forEach(final T[] array, final F argument, final BiConsumer<F, T> consumer) {
         for (final T element : array) {
@@ -615,7 +738,7 @@ public final class ArrayUtils {
      * @param array       массив для обработки элементов.
      * @param argument    дополнительный аргумент.
      * @param conditional условие обработки элемента.
-     * @param consumer    обработчик под элемента.
+     * @param consumer    обработчик элемента.
      */
     public static <T, F> void forEach(final T[] array, final F argument, final Predicate<T> conditional, final BiConsumer<F, T> consumer) {
         for (final T element : array) {
@@ -685,8 +808,21 @@ public final class ArrayUtils {
      * @return индекс первого элемента, удовлетворяющего условия либо -1.
      */
     public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<F, T> condition) {
+        return indexOf(array, argument, condition, 0, array.length);
+    }
 
-        for (int i = 0, length = array.length; i < length; i++) {
+    /**
+     * Поиск индекса элемента в массиве с дополнительным аргументом.
+     *
+     * @param array      массив для поиска элемента.
+     * @param argument   дополнительный аргумент.
+     * @param condition  условие отбора элемента.
+     * @param startIndex индекс ячейки с которой начинать.
+     * @param endIndex   последний индекс проверяемой ячейки.
+     * @return индекс первого элемента, удовлетворяющего условия либо -1.
+     */
+    public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<F, T> condition, final int startIndex, final int endIndex) {
+        for (int i = startIndex; i < endIndex; i++) {
             if (condition.test(argument, array[i])) {
                 return i;
             }

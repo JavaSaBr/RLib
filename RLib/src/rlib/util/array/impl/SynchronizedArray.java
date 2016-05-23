@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import java.util.Collection;
+
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
@@ -86,6 +88,27 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
                 break;
             }
 
+            add(element);
+        }
+
+        return this;
+    }
+
+    @Override
+    public synchronized Array<E> addAll(final Collection<? extends E> collection) {
+
+        if (collection == null || collection.isEmpty()) {
+            return this;
+        }
+
+        final int current = array.length;
+        final int diff = size() + collection.size() - current;
+
+        if (diff > 0) {
+            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+        }
+
+        for (final E element : collection) {
             add(element);
         }
 

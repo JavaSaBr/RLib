@@ -29,6 +29,13 @@ public interface NetworkConfig {
     }
 
     /**
+     * @return использовать ли буфера байтов в нативной памяти.
+     */
+    public default boolean isDirectByteBuffer() {
+        return false;
+    }
+
+    /**
      * @return класс потоков сети
      */
     public default Class<? extends Thread> getThreadClass() {

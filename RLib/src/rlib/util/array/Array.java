@@ -1,13 +1,17 @@
 package rlib.util.array;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
+import rlib.function.LongBiObjectConsumer;
 import rlib.function.TripleConsumer;
 import rlib.util.ArrayUtils;
 import rlib.util.ObjectUtils;
@@ -44,9 +48,14 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     public Array<E> addAll(Array<? extends E> array);
 
     /**
-     * Добавление всех элементов массива в этот массив.
+     * Добавление всех элементов массива в этот {@link Array}.
      */
     public Array<E> addAll(E[] array);
+
+    /**
+     * Добавление всех элементов коллекции в этот {@link Array}.
+     */
+    public Array<E> addAll(Collection<? extends E> collection);
 
     /**
      * Применить функцию замены всех элементов.
@@ -68,6 +77,13 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     public E[] array();
 
     /**
+     * @return стрим для работы с массивом.
+     */
+    public default Stream<E> stream() {
+        return Arrays.stream(array(), 0, size());
+    }
+
+    /**
      * Проверка и при необходимости подготовка для расширения до указанного размера.
      */
     public default void checkSize(final int size) {
@@ -87,23 +103,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * Array} либо он <code>null</code>.
      */
     public default boolean contains(final Object object) {
-
-        if (object == null) {
-            return false;
-        }
-
-        for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (element.equals(object)) {
-                return true;
-            }
-        }
-
-        return false;
+        return object != null && ArrayUtils.indexOf(array(), object, Object::equals, 0, size()) != -1;
     }
 
     /**
@@ -228,6 +228,24 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param consumer функция для обработки элементов.
      */
     public default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
+        for (final E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            consumer.accept(first, second, element);
+        }
+    }
+
+    /**
+     * Итерирование массива с двумя дополнительными аргументомами.
+     *
+     * @param first    первый дополнительный аргумент.
+     * @param second   второй дополнительный аргумент.
+     * @param consumer функция для обработки элементов.
+     */
+    public default <F> void forEach(final long first, final F second, final LongBiObjectConsumer<F, E> consumer) {
         for (final E element : array()) {
 
             if (element == null) {

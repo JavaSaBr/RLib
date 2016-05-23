@@ -1,5 +1,6 @@
 package rlib.util.array.impl;
 
+import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -105,6 +106,27 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
                 break;
             }
 
+            add(element);
+        }
+
+        return this;
+    }
+
+    @Override
+    public Array<E> addAll(final Collection<? extends E> collection) {
+
+        if (collection == null || collection.isEmpty()) {
+            return this;
+        }
+
+        final int current = array.length;
+        final int diff = size() + collection.size() - current;
+
+        if (diff > 0) {
+            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+        }
+
+        for (final E element : collection) {
             add(element);
         }
 
