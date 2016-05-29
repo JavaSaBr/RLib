@@ -8,5 +8,4 @@ package rlib.util.pools;
  * @author Ronn
  */
 public interface ReusablePool<E extends Reusable> extends Pool<E> {
-
 }

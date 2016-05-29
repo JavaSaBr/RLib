@@ -720,6 +720,19 @@ public final class ArrayUtils {
     }
 
     /**
+     * Обработка элемента массива.
+     *
+     * @param array     массив для обработки элементов.
+     * @param condition условие для приминения функции на элемент.
+     * @param consumer  обработчик элемента.
+     */
+    public static <T> void forEach(final T[] array, final Predicate<T> condition, final Consumer<T> consumer) {
+        for (final T element : array) {
+            if (condition.test(element)) consumer.accept(element);
+        }
+    }
+
+    /**
      * Обработка элемента массива с дополнительным аргументом.
      *
      * @param array    массив для обработки элементов.

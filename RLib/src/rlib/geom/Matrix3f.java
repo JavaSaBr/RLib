@@ -21,7 +21,7 @@ public final class Matrix3f implements Reusable {
     }
 
     /**
-     * значения матрицы
+     * Значения матрицы.
      */
     protected float val_0_0, val_0_1, val_0_2;
     protected float val_1_0, val_1_1, val_1_2;

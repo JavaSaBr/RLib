@@ -26,18 +26,16 @@ public final class ObjectUtils {
      * @param original оригинальный объект.
      * @return новая копия.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T clone(final T original) {
+        if (original == null) return null;
 
-        if (original == null) {
-            return null;
-        }
+        final Class<?> aClass = original.getClass();
 
         if (original instanceof Cloneable) {
 
             try {
 
-                final Method method = original.getClass().getMethod("clone");
+                final Method method = aClass.getDeclaredMethod("clone");
                 method.setAccessible(true);
 
                 return (T) method.invoke(original);
@@ -49,7 +47,7 @@ public final class ObjectUtils {
             return null;
         }
 
-        final Object newObject = newInstance(original.getClass());
+        final Object newObject = newInstance(aClass);
         reload(newObject, original);
 
         return (T) newObject;
@@ -95,7 +93,6 @@ public final class ObjectUtils {
      * @param cs класс объекта, который нужно создать.
      * @return новый экземпляр объекта.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T newInstance(final Class<T> cs) {
 
         if (cs == Boolean.class || cs == boolean.class) {
@@ -127,15 +124,15 @@ public final class ObjectUtils {
             }
 
             final Class<?>[] types = constructor.getParameterTypes();
-            final Object[] parametrs = new Object[types.length];
+            final Object[] parameters = new Object[types.length];
 
             for (int i = 0, length = types.length; i < length; i++) {
                 final Object object = newInstance(types[i]);
-                parametrs[i] = object;
+                parameters[i] = object;
             }
 
             try {
-                return (T) constructor.newInstance(parametrs);
+                return (T) constructor.newInstance(parameters);
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 LOGGER.warning(e);
             }
@@ -150,7 +147,7 @@ public final class ObjectUtils {
      * @param original обновляемый объект.
      * @param updated  объект, с которого нужно взять значения.
      */
-    public static final <O, N extends O> void reload(final O original, final N updated) {
+    public static <O, N extends O> void reload(final O original, final N updated) {
 
         if (original == null || updated == null) {
             return;

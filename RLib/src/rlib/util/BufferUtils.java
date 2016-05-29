@@ -23,7 +23,7 @@ public class BufferUtils {
         final int originalLength = buffer.remaining();
         final int length = min(destination.remaining(), originalLength);
 
-        destination.put(buffer.array(), buffer.position(), length);
+        destination.put(buffer);
         destination.flip();
 
         return length == originalLength;
@@ -44,7 +44,7 @@ public class BufferUtils {
         final int originalLength = buffer.remaining();
         final int length = min(destination.remaining(), originalLength);
 
-        destination.put(buffer.array(), buffer.position(), length);
+        destination.put(buffer);
         destination.flip();
 
         return length == originalLength;

@@ -17,11 +17,8 @@ public final class IOUtils {
 
     private static final Logger LOGGER = LoggerManager.getLogger(IOUtils.class);
 
-    public static final void close(final Closeable stream) {
-
-        if (stream == null) {
-            return;
-        }
+    public static void close(final Closeable stream) {
+        if (stream == null) return;
 
         try {
             stream.close();

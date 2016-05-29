@@ -70,7 +70,7 @@ public class DictionaryUtils {
      * @return результат выполнения функции.
      */
     public static <V, R> R getInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final ObjectIntFunction<ConcurrentIntegerDictionary<V>, R> function) {
-        dictionary.readUnlock();
+        dictionary.readLock();
         try {
             return function.apply(dictionary, key);
         } finally {

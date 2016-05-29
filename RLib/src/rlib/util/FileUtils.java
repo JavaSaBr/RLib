@@ -91,8 +91,7 @@ public class FileUtils {
      */
     public static boolean isValidName(final String filename) {
         final Matcher matcher = FILE_NAME_PATTERN.matcher(filename);
-        final boolean isMatch = matcher.matches();
-        return isMatch;
+        return matcher.matches();
     }
 
     /**
@@ -102,7 +101,6 @@ public class FileUtils {
      * @param dir         папка.
      * @param withFolders добавлять ли папки в результат.
      * @param extensions  набор нужных расширений.
-     * @return список всех найденных файлов.
      */
     public static void addFilesTo(final Array<Path> container, final Path dir, final boolean withFolders, final String... extensions) {
 
@@ -377,7 +375,7 @@ public class FileUtils {
      * @param file файл для получения имени.
      * @return имя файла бе расширения.
      */
-    public static final String getNameWithoutExtension(final Path file) {
+    public static String getNameWithoutExtension(final Path file) {
 
         final String filename = file.getFileName().toString();
 

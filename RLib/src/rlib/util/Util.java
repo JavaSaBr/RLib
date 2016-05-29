@@ -28,28 +28,15 @@ public final class Util {
 
     private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
 
-    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("HH:mm:ss:SSS");
-        }
-    };
-
-    private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
-
-        @Override
-        protected Date initialValue() {
-            return new Date();
-        }
-    };
+    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("HH:mm:ss:SSS"));
+    private static final ThreadLocal<Date> LOCAL_DATE = ThreadLocal.withInitial(Date::new);
 
     /**
      * Добавение параметров, указывающих что бы соединение к БД работало с UTF-8 кодировкой.
      *
      * @param properties проперти соединения к БД.
      */
-    public static final void addUTFToMySQLConnectionProperties(final Properties properties) {
+    public static void addUTFToMySQLConnectionProperties(final Properties properties) {
         properties.setProperty("useUnicode", "true");
         properties.setProperty("characterEncoding", "UTF-8");
     }
@@ -95,7 +82,7 @@ public final class Util {
     }
 
     /**
-     * форматирует время в секундах в дни/часы/минуты/секунды
+     * Форматирует время в секундах в дни/часы/минуты/секунды
      */
     public static String formatTime(final long time) {
 
@@ -241,7 +228,7 @@ public final class Util {
      *
      * @return имя пользователя системы.
      */
-    public static final String getUserName() {
+    public static String getUserName() {
         return System.getProperty("user.name");
     }
 

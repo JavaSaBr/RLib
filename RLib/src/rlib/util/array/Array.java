@@ -103,7 +103,23 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * Array} либо он <code>null</code>.
      */
     public default boolean contains(final Object object) {
-        return object != null && ArrayUtils.indexOf(array(), object, Object::equals, 0, size()) != -1;
+
+        if (object == null) {
+            return false;
+        }
+
+        for (final E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            if (element.equals(object)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

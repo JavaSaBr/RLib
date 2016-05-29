@@ -75,7 +75,7 @@ public final class Vector implements GamePoint {
     }
 
     /**
-     * координаты
+     * Координаты.
      */
     protected float x;
     protected float y;

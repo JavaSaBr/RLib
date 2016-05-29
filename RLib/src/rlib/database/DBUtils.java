@@ -24,10 +24,7 @@ public final class DBUtils {
      * @param connection подключение, с каторым завершена работа.
      */
     public static void closeConnection(final Connection connection) {
-
-        if (connection == null) {
-            return;
-        }
+        if (connection == null) return;
 
         try {
             connection.close();
@@ -77,10 +74,7 @@ public final class DBUtils {
      * @param rset результат, который необходимо закрыть.
      */
     public static void closeResultSet(final ResultSet rset) {
-
-        if (rset == null) {
-            return;
-        }
+        if (rset == null) return;
 
         try {
             rset.close();
@@ -95,10 +89,7 @@ public final class DBUtils {
      * @param statement запрос, который необходимо закрыть.
      */
     public static void closeStatement(final Statement statement) {
-
-        if (statement == null) {
-            return;
-        }
+        if (statement == null) return;
 
         try {
             statement.close();

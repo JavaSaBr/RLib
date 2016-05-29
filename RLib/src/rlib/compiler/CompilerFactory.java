@@ -18,7 +18,7 @@ public class CompilerFactory {
         return ToolProvider.getSystemJavaCompiler() != null;
     }
 
-    public static final Compiler newDefaultCompiler() {
+    public static Compiler newDefaultCompiler() {
         return new CompilerImpl(true);
     }
 

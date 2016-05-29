@@ -28,7 +28,6 @@ public final class CoordsUtils {
      * @param width   ширина дуги.
      * @return массив позиций.
      */
-    @SuppressWarnings("unchecked")
     public static <T extends GamePoint> T[] arcCoords(final Class<T> type, final float x, final float y, final float z, final int heading, final int radius, final int count, final int degree, final int width) {
 
         final T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);

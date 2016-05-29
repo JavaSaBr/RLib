@@ -148,6 +148,18 @@ public class ConcurrentAtomicArray<E> extends AbstractArray<E> {
     }
 
     @Override
+    public void checkSize(final int size) {
+
+        final int current = array.length;
+        final int selfSize = size();
+        final int diff = selfSize + size - current;
+
+        if (diff > 0) {
+            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+        }
+    }
+
+    @Override
     public final E fastRemove(final int index) {
 
         if (index < 0) {

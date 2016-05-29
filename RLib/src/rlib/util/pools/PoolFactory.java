@@ -21,7 +21,19 @@ public final class PoolFactory {
      * @return новый объектный пул.
      * @see AtomicReusablePool
      */
-    public static final <T extends Reusable> ReusablePool<T> newAtomicFoldablePool(final Class<? extends Reusable> type) {
+    @Deprecated
+    public static <T extends Reusable> ReusablePool<T> newAtomicFoldablePool(final Class<? extends Reusable> type) {
+        return new AtomicReusablePool<T>(type);
+    }
+
+    /**
+     * Создание нового потокобезопасного объектного пула.
+     *
+     * @param type тип объектов пула.
+     * @return новый объектный пул.
+     * @see AtomicReusablePool
+     */
+    public static <T extends Reusable> ReusablePool<T> newAtomicReusablePool(final Class<? extends Reusable> type) {
         return new AtomicReusablePool<T>(type);
     }
 
@@ -32,7 +44,7 @@ public final class PoolFactory {
      * @return новый объектный пул.
      * @see AtomicPool
      */
-    public static final <T> Pool<T> newAtomicPool(final Class<?> type) {
+    public static <T> Pool<T> newAtomicPool(final Class<?> type) {
         return new AtomicPool<T>(type);
     }
 
@@ -43,7 +55,19 @@ public final class PoolFactory {
      * @return новый объектный пул.
      * @see ConcurrentReusablePool
      */
-    public static final <T extends Reusable> ReusablePool<T> newConcurrentFoldablePool(final Class<? extends Reusable> type) {
+    @Deprecated
+    public static <T extends Reusable> ReusablePool<T> newConcurrentFoldablePool(final Class<? extends Reusable> type) {
+        return new ConcurrentReusablePool<T>(type);
+    }
+
+    /**
+     * Создание нового потокобезопасного объектного пула.
+     *
+     * @param type тип объектов пула.
+     * @return новый объектный пул.
+     * @see ConcurrentReusablePool
+     */
+    public static <T extends Reusable> ReusablePool<T> newConcurrentReusablePool(final Class<? extends Reusable> type) {
         return new ConcurrentReusablePool<T>(type);
     }
 
@@ -54,7 +78,19 @@ public final class PoolFactory {
      * @return новый объектный пул.
      * @see FastReusablePool
      */
-    public static final <T extends Reusable> ReusablePool<T> newFoldablePool(final Class<? extends Reusable> type) {
+    @Deprecated
+    public static <T extends Reusable> ReusablePool<T> newFoldablePool(final Class<? extends Reusable> type) {
+        return new FastReusablePool<T>(type);
+    }
+
+    /**
+     * Создание нового не потокобезопасного объектного пула.
+     *
+     * @param type тип объектов пула.
+     * @return новый объектный пул.
+     * @see FastReusablePool
+     */
+    public static <T extends Reusable> ReusablePool<T> newReusablePool(final Class<? extends Reusable> type) {
         return new FastReusablePool<T>(type);
     }
 
@@ -65,7 +101,7 @@ public final class PoolFactory {
      * @return новый объектный пул.
      * @see FastPool
      */
-    public static final <T> Pool<T> newPool(final Class<?> type) {
+    public static <T> Pool<T> newPool(final Class<?> type) {
         return new FastPool<T>(type);
     }
 
@@ -76,7 +112,19 @@ public final class PoolFactory {
      * @return новый объектный пул.
      * @see SynchronizedReusablePool
      */
-    public static final <T extends Reusable> ReusablePool<T> newSynchronizedFoldablePool(final Class<? extends Reusable> type) {
+    @Deprecated
+    public static <T extends Reusable> ReusablePool<T> newSynchronizedFoldablePool(final Class<? extends Reusable> type) {
+        return new SynchronizedReusablePool<T>(type);
+    }
+
+    /**
+     * Создание нового потокобезопасного объектного пула.
+     *
+     * @param type тип объектов пула.
+     * @return новый объектный пул.
+     * @see SynchronizedReusablePool
+     */
+    public static <T extends Reusable> ReusablePool<T> newSynchronizedReusablePool(final Class<? extends Reusable> type) {
         return new SynchronizedReusablePool<T>(type);
     }
 

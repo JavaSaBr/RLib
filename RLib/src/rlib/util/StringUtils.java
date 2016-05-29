@@ -34,13 +34,7 @@ public class StringUtils {
      */
     public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
-    private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = new ThreadLocal<MessageDigest>() {
-
-        @Override
-        protected MessageDigest initialValue() {
-            return getHashMD5();
-        }
-    };
+    private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = ThreadLocal.withInitial(StringUtils::getHashMD5);
 
     /**
      * Рассчет длинны строки для пакета
@@ -71,7 +65,7 @@ public class StringUtils {
     /**
      * Сравнение 2х строк с учетом регистра с прооверками на <code>null</code>.
      */
-    public static int compare(String first, String second) {
+    public static int compare(final String first, final String second) {
 
         if (first == null) {
             return 1;
@@ -85,7 +79,7 @@ public class StringUtils {
     /**
      * Сравнение 2х строк без учета регистра с прооверками на <code>null</code>.
      */
-    public static int compareIgnoreCase(String first, String second) {
+    public static int compareIgnoreCase(final String first, final String second) {
 
         if (first == null) {
             return 1;
@@ -183,7 +177,7 @@ public class StringUtils {
      * @param string интересуемая строка.
      * @return длинна строки или же 0 в случае если она пуста или <code>null</code>
      */
-    public static int length(String string) {
+    public static int length(final String string) {
         return string == null ? 0 : string.length();
     }
 

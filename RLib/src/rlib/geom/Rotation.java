@@ -12,30 +12,13 @@ import rlib.util.random.RandomFactory;
  */
 public class Rotation {
 
-    private static final ThreadLocal<Random> RANDOM_LOCAL = new ThreadLocal<Random>() {
-
-        @Override
-        protected Random initialValue() {
-            return RandomFactory.newFastRandom();
-        }
-
-        ;
-    };
-
-    private static final ThreadLocal<Rotation> ROTATION_LOCAL = new ThreadLocal<Rotation>() {
-
-        @Override
-        protected Rotation initialValue() {
-            return newInstance();
-        }
-
-        ;
-    };
+    private static final ThreadLocal<Random> RANDOM_LOCAL = ThreadLocal.withInitial(RandomFactory::newFastRandom);
+    private static final ThreadLocal<Rotation> ROTATION_LOCAL = ThreadLocal.withInitial(Rotation::newInstance);
 
     /**
      * @return локалый для потока экземпляр разворота.
      */
-    public static final Rotation get() {
+    public static Rotation get() {
         return ROTATION_LOCAL.get();
     }
 
@@ -275,7 +258,7 @@ public class Rotation {
     }
 
     /**
-     * @param степень разворота по оси w.
+     * @param w степень разворота по оси w.
      */
     public final void setW(final float w) {
         this.w = w;
@@ -289,7 +272,7 @@ public class Rotation {
     }
 
     /**
-     * @param степень разворота по оси х.
+     * @param x степень разворота по оси х.
      */
     public final void setX(final float x) {
         this.x = x;
@@ -303,7 +286,7 @@ public class Rotation {
     }
 
     /**
-     * @param степень разворота по оси y.
+     * @param y степень разворота по оси y.
      */
     public final void setY(final float y) {
         this.y = y;
@@ -317,7 +300,7 @@ public class Rotation {
     }
 
     /**
-     * @param степень разворота по оси z.
+     * @param z степень разворота по оси z.
      */
     public final void setZ(final float z) {
         this.z = z;

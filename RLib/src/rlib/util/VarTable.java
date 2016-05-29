@@ -3,6 +3,8 @@ package rlib.util;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import java.util.function.Supplier;
+
 import rlib.geom.Rotation;
 import rlib.geom.Vector;
 import rlib.util.dictionary.DictionaryFactory;
@@ -100,6 +102,27 @@ public class VarTable {
         }
 
         return def;
+    }
+
+    /**
+     * Получение значение параметра по ключу.
+     *
+     * @param key  ключ параметра.
+     * @param type тип параметра.
+     * @param def  значение по умолчанию.
+     * @return значение параметра.
+     */
+    public <T, E extends T> T get(final String key, final Class<T> type, final Supplier<E> def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def.get();
+        } else if (type.isInstance(object)) {
+            return type.cast(object);
+        }
+
+        return def.get();
     }
 
     /**

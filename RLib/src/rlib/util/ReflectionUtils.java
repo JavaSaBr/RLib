@@ -39,9 +39,7 @@ public final class ReflectionUtils {
                 container.addAll(fields);
             } else {
 
-                for (int i = 0, length = fields.length; i < length; i++) {
-
-                    final Field field = fields[i];
+                for (final Field field : fields) {
 
                     if (ArrayUtils.contains(exceptions, field.getName())) {
                         continue;
@@ -74,8 +72,7 @@ public final class ReflectionUtils {
      * @param fieldName название поле объекта.
      * @return значение поля объекта.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T getFieldValue(Object object, String fieldName) {
+    public static <T> T getFieldValue(final Object object, final String fieldName) {
 
         try {
 
@@ -96,8 +93,7 @@ public final class ReflectionUtils {
      * @param fieldName название статического поля.
      * @return значение статического поля.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T getStaticFieldValue(Class<?> type, String fieldName) {
+    public static <T> T getStaticFieldValue(final Class<?> type, final String fieldName) {
 
         try {
 
@@ -118,7 +114,7 @@ public final class ReflectionUtils {
      * @param fieldName название статического поля.
      * @param value     новое значение статического поля.
      */
-    public static void setStaticFieldValue(Class<?> type, String fieldName, Object value) {
+    public static void setStaticFieldValue(final Class<?> type, final String fieldName, final Object value) {
 
         try {
             final Field field = type.getDeclaredField(fieldName);

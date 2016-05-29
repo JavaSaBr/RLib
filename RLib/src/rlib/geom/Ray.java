@@ -10,11 +10,12 @@ import rlib.util.pools.Reusable;
 public class Ray implements Reusable {
 
     /**
-     * стартовая точка луча
+     * Стартовая точка луча.
      */
     protected Vector start;
+
     /**
-     * точка направления луча
+     * Вектор направления луча.
      */
     protected Vector direction;
 
