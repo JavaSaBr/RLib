@@ -504,6 +504,8 @@ public final class ArrayUtils {
      * @return результат функции.
      */
     public static <T, R> R getInWriteLock(final Array<T> array, final Function<Array<T>, R> function) {
+        if (array.isEmpty()) return null;
+
         array.writeLock();
         try {
             return function.apply(array);
@@ -534,6 +536,7 @@ public final class ArrayUtils {
      * @param consumer функция действия.
      */
     public static <T> void runInReadLock(final Array<T> array, final Consumer<Array<T>> consumer) {
+        if (array.isEmpty()) return;
         array.readLock();
         try {
             consumer.accept(array);
@@ -550,6 +553,7 @@ public final class ArrayUtils {
      * @return результат действия функции.
      */
     public static <T, R> R getInReadLock(final Array<T> array, final Function<Array<T>, R> function) {
+        if (array.isEmpty()) return null;
         array.readLock();
         try {
             return function.apply(array);
@@ -566,6 +570,7 @@ public final class ArrayUtils {
      * @return итоговая сумма.
      */
     public static <T> int sumInReadLock(final Array<T> array, final FunctionInt<T> function) {
+        if (array.isEmpty()) return 0;
         array.readLock();
         try {
 
@@ -592,6 +597,7 @@ public final class ArrayUtils {
      * @return результат действия функции.
      */
     public static <T, V, R> R getInWriteLock(final Array<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
+        if (array.isEmpty()) return null;
         array.writeLock();
         try {
             return function.apply(array, argument);
@@ -625,6 +631,7 @@ public final class ArrayUtils {
      * @return результат действия функции.
      */
     public static <T, V, R> R getInReadLock(final Array<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
+        if (array.isEmpty()) return null;
         array.readLock();
         try {
             return function.apply(array, argument);
@@ -641,6 +648,7 @@ public final class ArrayUtils {
      * @param consumer функция действия.
      */
     public static <T, V> void runInReadLock(final Array<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
+        if (array.isEmpty()) return;
         array.readLock();
         try {
             consumer.accept(array, argument);
@@ -675,12 +683,36 @@ public final class ArrayUtils {
      * @param consumer функция действия.
      */
     public static <T, F, S> void runInReadLock(final Array<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
+        if (array.isEmpty()) return;
         array.readLock();
         try {
             consumer.accept(array, first, second);
         } finally {
             array.readUnlock();
         }
+    }
+
+    /**
+     * Перенос всех данных из одного массива в другой.
+     *
+     * @param source массив откуда надо перенести данные.
+     * @param destination массив в который надо перенести данные.
+     * @param clearSource нужно ли после этого очищасть исходный массив.
+     */
+    public static <F extends S, S> void move(final Array<F> source, final Array<S> destination, final boolean clearSource) {
+        if(source.isEmpty()) return;
+        destination.addAll(source);
+        if(clearSource) source.clear();
+    }
+
+    /**
+     * Перенос всех данных из одного массива в другой с очисткой после этого первого массива.
+     *
+     * @param source массив откуда надо перенести данные.
+     * @param destination массив в который надо перенести данные.
+     */
+    public static <F extends S, S> void move(final Array<F> source, final Array<S> destination) {
+        move(source, destination, true);
     }
 
     /**

@@ -100,6 +100,38 @@ public final class ClassUtils {
         }
     }
 
+    /**
+     * Небезопасный каст переданного объекта в требуемый тип.
+     *
+     * @param object объект который надо скастить.
+     * @return объект скастенный в нужный тип.
+     */
+    public static <T> T unsafeCast(final Object object) {
+        return (T) object;
+    }
+
+    /**
+     * Небезопасный каст переданного объекта в требуемый тип.
+     *
+     * @param object объект который надо скастить.
+     * @param type   тип в который хотим скастить объект.
+     * @return объект скастенный в нужный тип.
+     */
+    public static <T> T unsafeCast(final Class<T> type, final Object object) {
+        return type.cast(object);
+    }
+
+    /**
+     * Безопасный каст переданного объекта в требуемый тип.
+     *
+     * @param object объект который надо скастить.
+     * @param type   тип в который хотим скастить объект.
+     * @return объект скастенный в нужный тип либо null если он не подходит по типу.
+     */
+    public static <T> T cast(final Class<T> type, final Object object) {
+        return type.isInstance(object) ? type.cast(object) : null;
+    }
+
     private ClassUtils() {
         throw new RuntimeException();
     }
