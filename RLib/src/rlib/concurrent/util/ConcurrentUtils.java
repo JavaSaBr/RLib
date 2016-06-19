@@ -1,7 +1,12 @@
 package rlib.concurrent.util;
 
+import java.util.function.Function;
+
+import rlib.function.ObjectIntFunction;
+import rlib.function.ObjectLongFunction;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
+import rlib.util.Synchronized;
 
 /**
  * Набор утильных методов для работы в сфере кокнуренции.
@@ -83,6 +88,56 @@ public final class ConcurrentUtils {
             object.wait(time);
         } catch (final InterruptedException e) {
             LOGGER.warning(e);
+        }
+    }
+
+    /**
+     * Вытащить что-то из объекта в синхронизированном состоянии.
+     *
+     * @param sync     объект поддерживающий синхронизацию.
+     * @param function функция вытаскивания результата.
+     * @return результатработы функции.
+     */
+    public static <T extends Synchronized, R> R getInSynchronized(final T sync, final Function<T, R> function) {
+        sync.lock();
+        try {
+            return function.apply(sync);
+        } finally {
+            sync.unlock();
+        }
+    }
+
+    /**
+     * Вытащить что-то из объекта в синхронизированном состоянии.
+     *
+     * @param sync     объект поддерживающий синхронизацию.
+     * @param argument дополнительный числовой аргумент.
+     * @param function функция вытаскивания результата.
+     * @return результатработы функции.
+     */
+    public static <T extends Synchronized, R> R getInSynchronized(final T sync, final int argument, final ObjectIntFunction<T, R> function) {
+        sync.lock();
+        try {
+            return function.apply(sync, argument);
+        } finally {
+            sync.unlock();
+        }
+    }
+
+    /**
+     * Вытащить что-то из объекта в синхронизированном состоянии.
+     *
+     * @param sync     объект поддерживающий синхронизацию.
+     * @param argument дополнительный числовой аргумент.
+     * @param function функция вытаскивания результата.
+     * @return результатработы функции.
+     */
+    public static <T extends Synchronized, R> R getInSynchronizedL(final T sync, final long argument, final ObjectLongFunction<T, R> function) {
+        sync.lock();
+        try {
+            return function.apply(sync, argument);
+        } finally {
+            sync.unlock();
         }
     }
 

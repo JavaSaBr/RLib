@@ -1,9 +1,12 @@
 package rlib.util.dictionary;
 
+import java.util.function.Consumer;
+
 import rlib.function.ObjectIntConsumer;
 import rlib.function.ObjectIntFunction;
 import rlib.function.ObjectIntObjectConsumer;
 import rlib.function.ObjectIntObjectFunction;
+import rlib.function.ObjectLongObjectConsumer;
 
 /**
  * Реализация набора утильных методов для работы со словарями.
@@ -11,6 +14,21 @@ import rlib.function.ObjectIntObjectFunction;
  * @author Ronn
  */
 public class DictionaryUtils {
+
+    /**
+     * Выполнение функции на словаре в блоке {@link ConcurrentIntegerDictionary#writeLock()}.
+     *
+     * @param dictionary словарь.
+     * @param consumer   функция для выполнения действий над словарем.
+     */
+    public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final Consumer<ConcurrentIntegerDictionary<V>> consumer) {
+        dictionary.writeLock();
+        try {
+            consumer.accept(dictionary);
+        } finally {
+            dictionary.writeUnlock();
+        }
+    }
 
     /**
      * Выполнение функции на словаре в блоке {@link ConcurrentIntegerDictionary#writeLock()}.
@@ -87,6 +105,23 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final V object, final ObjectIntObjectConsumer<ConcurrentIntegerDictionary<V>, V> consumer) {
+        dictionary.writeLock();
+        try {
+            consumer.accept(dictionary, key, object);
+        } finally {
+            dictionary.writeUnlock();
+        }
+    }
+
+    /**
+     * Выполнение функции на словаре в блоке {@link ConcurrentLongDictionary#writeLock()}.
+     *
+     * @param dictionary словарь.
+     * @param key        аргумент ключ для передачи в функцию.
+     * @param object     аргумент объект для передачи в функцию.
+     * @param consumer   функция для выполнения действий над словарем.
+     */
+    public static <V> void runInWriteLock(final ConcurrentLongDictionary<V> dictionary, final long key, final V object, final ObjectLongObjectConsumer<ConcurrentLongDictionary<V>, V> consumer) {
         dictionary.writeLock();
         try {
             consumer.accept(dictionary, key, object);

@@ -695,20 +695,20 @@ public final class ArrayUtils {
     /**
      * Перенос всех данных из одного массива в другой.
      *
-     * @param source массив откуда надо перенести данные.
+     * @param source      массив откуда надо перенести данные.
      * @param destination массив в который надо перенести данные.
      * @param clearSource нужно ли после этого очищасть исходный массив.
      */
     public static <F extends S, S> void move(final Array<F> source, final Array<S> destination, final boolean clearSource) {
-        if(source.isEmpty()) return;
+        if (source.isEmpty()) return;
         destination.addAll(source);
-        if(clearSource) source.clear();
+        if (clearSource) source.clear();
     }
 
     /**
      * Перенос всех данных из одного массива в другой с очисткой после этого первого массива.
      *
-     * @param source массив откуда надо перенести данные.
+     * @param source      массив откуда надо перенести данные.
      * @param destination массив в который надо перенести данные.
      */
     public static <F extends S, S> void move(final Array<F> source, final Array<S> destination) {
@@ -746,6 +746,7 @@ public final class ArrayUtils {
      * @param consumer обработчик элемента.
      */
     public static <T> void forEach(final T[] array, final Consumer<T> consumer) {
+        if (array == null || array.length < 1) return;
         for (final T element : array) {
             consumer.accept(element);
         }
@@ -759,6 +760,7 @@ public final class ArrayUtils {
      * @param consumer  обработчик элемента.
      */
     public static <T> void forEach(final T[] array, final Predicate<T> condition, final Consumer<T> consumer) {
+        if (array == null || array.length < 1) return;
         for (final T element : array) {
             if (condition.test(element)) consumer.accept(element);
         }
@@ -772,6 +774,7 @@ public final class ArrayUtils {
      * @param consumer обработчик элемента.
      */
     public static <T, F> void forEach(final T[] array, final F argument, final BiConsumer<F, T> consumer) {
+        if (array == null || array.length < 1) return;
         for (final T element : array) {
             consumer.accept(argument, element);
         }
@@ -786,6 +789,7 @@ public final class ArrayUtils {
      * @param consumer    обработчик элемента.
      */
     public static <T, F> void forEach(final T[] array, final F argument, final Predicate<T> conditional, final BiConsumer<F, T> consumer) {
+        if (array == null || array.length < 1) return;
         for (final T element : array) {
             if (conditional.test(element)) {
                 consumer.accept(argument, element);
@@ -803,6 +807,7 @@ public final class ArrayUtils {
      * @param consumer   обработчик под элемента.
      */
     public static <T, R, F> void forEach(final T[] array, final F argument, final Predicate<T> firstCond, final Function<T, R> getElement, final BiConsumer<F, R> consumer) {
+        if (array == null || array.length < 1) return;
         for (final T element : array) {
 
             if (!firstCond.test(element)) {
@@ -823,6 +828,7 @@ public final class ArrayUtils {
      * @param consumer обработчик под элемента.
      */
     public static <T, F, S> void forEach(final T[] array, final F first, final S second, final TripleConsumer<F, S, T> consumer) {
+        if (array == null || array.length < 1) return;
         for (final T element : array) {
             consumer.accept(first, second, element);
         }
@@ -838,6 +844,7 @@ public final class ArrayUtils {
      * @param consumer   обработчик под элемента.
      */
     public static <T, R, F, S> void forEach(final T[] array, final F first, final S second, final TripleFunction<F, S, T, R> getElement, final TripleConsumer<F, S, R> consumer) {
+        if (array == null || array.length < 1) return;
         for (final T element : array) {
             final R subElement = getElement.apply(first, second, element);
             consumer.accept(first, second, subElement);
@@ -867,6 +874,7 @@ public final class ArrayUtils {
      * @return индекс первого элемента, удовлетворяющего условия либо -1.
      */
     public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<F, T> condition, final int startIndex, final int endIndex) {
+        if (array == null || array.length < 1) return -1;
         for (int i = startIndex; i < endIndex; i++) {
             if (condition.test(argument, array[i])) {
                 return i;
@@ -884,6 +892,7 @@ public final class ArrayUtils {
      * @return кол-во нужных элементов.
      */
     public static <T> int count(final T[] array, final Predicate<T> predicate) {
+        if (array == null || array.length < 1) return 0;
 
         int count = 0;
 
@@ -904,6 +913,7 @@ public final class ArrayUtils {
      * @return первый подходящий элемент либо null.
      */
     public static <T> T find(final T[] array, final Predicate<T> condition) {
+        if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             if (condition.test(element)) {
@@ -923,6 +933,7 @@ public final class ArrayUtils {
      * @return первый подходящий элемент либо null.
      */
     public static <T, F> T find(final T[] array, final F argument, final BiPredicate<F, T> condition) {
+        if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             if (condition.test(argument, element)) {
@@ -942,6 +953,7 @@ public final class ArrayUtils {
      * @return первый подходящий элемент либо null.
      */
     public static <T> T find(final T[] array, final int argument, final IntObjectPredicate<T> condition) {
+        if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             if (condition.test(argument, element)) {
@@ -962,6 +974,7 @@ public final class ArrayUtils {
      * @return первый подходящий элемент либо null.
      */
     public static <T, R> R find(final T[] array, final int argument, final Function<T, R> getElement, final IntObjectPredicate<R> condition) {
+        if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             final R subElement = getElement.apply(element);
@@ -984,6 +997,7 @@ public final class ArrayUtils {
      * @return первый подходящий элемент либо null.
      */
     public static <T, R> R find(final T[] array, final int argument, Predicate<T> firstCond, final Function<T, R> getElement, final IntObjectPredicate<R> secondCond) {
+        if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
 
@@ -1012,6 +1026,7 @@ public final class ArrayUtils {
      * @return первый подходящий элемент либо null.
      */
     public static <T, R> R findL(final T[] array, final long argument, final Predicate<T> firstCond, final Function<T, R> getElement, final LongObjectPredicate<R> secondCond) {
+        if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
 
@@ -1039,6 +1054,7 @@ public final class ArrayUtils {
      * @return первый подходящий элемент либо null.
      */
     public static <T, R> R findL(final T[] array, final long argument, final Function<T, R> getElement, final LongObjectPredicate<R> condition) {
+        if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             final R subElement = getElement.apply(element);
@@ -1060,6 +1076,7 @@ public final class ArrayUtils {
      * @return первый подходящий элемент либо null.
      */
     public static <T, F, S> T find(final T[] array, final F first, final S second, final TriplePredicate<F, S, T> condition) {
+        if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             if (condition.test(first, second, element)) {

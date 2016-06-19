@@ -130,20 +130,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * всего его элементы есть в этом {@link Array}.
      */
     public default boolean containsAll(final Array<?> array) {
-
-        if (array == null || array.isEmpty()) {
-            return false;
-        }
+        if (array == null || array.isEmpty()) return false;
 
         for (final Object element : array.array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (!contains(element)) {
-                return false;
-            }
+            if (element == null) break;
+            if (!contains(element)) return false;
         }
 
         return true;
@@ -157,15 +148,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * все его элементы есть в этом {@link Array}.
      */
     public default boolean containsAll(final Object[] array) {
-
-        if (array == null || array.length < 1) {
-            return false;
-        }
+        if (array == null || array.length < 1) return false;
 
         for (final Object element : array) {
-            if (!contains(element)) {
-                return false;
-            }
+            if (!contains(element)) return false;
         }
 
         return true;
@@ -199,23 +185,28 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @return первый элемент в {@link Array} либо <code>null</code>, если он пуст.
      */
     public default E first() {
-
-        if (isEmpty()) {
-            return null;
-        }
-
+        if (isEmpty()) return null;
         return get(0);
     }
 
     @Override
     public default void forEach(final Consumer<? super E> consumer) {
         for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
+            if (element == null) break;
             consumer.accept(element);
+        }
+    }
+
+    /**
+     * Итерирование массива.
+     *
+     * @param predicate фильтр элементов.
+     * @param consumer  функция для обработки элементов.
+     */
+    public default void forEach(final Predicate<E> predicate, final Consumer<? super E> consumer) {
+        for (final E element : array()) {
+            if (element == null) break;
+            if (predicate.test(element)) consumer.accept(element);
         }
     }
 
@@ -227,12 +218,22 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      */
     public default <T> void forEach(final T argument, final BiConsumer<T, E> consumer) {
         for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
+            if (element == null) break;
             consumer.accept(argument, element);
+        }
+    }
+
+    /**
+     * Итерирование массива с дополнительным аргументом.
+     *
+     * @param argument  дополнительный аргумент.
+     * @param predicate фильтр элементов.
+     * @param consumer  функция для обработки элементов.
+     */
+    public default <T> void forEach(final T argument, final BiPredicate<E, T> predicate, final BiConsumer<T, E> consumer) {
+        for (final E element : array()) {
+            if (element == null) break;
+            if (predicate.test(element, argument)) consumer.accept(argument, element);
         }
     }
 
@@ -245,11 +246,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      */
     public default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
         for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
+            if (element == null) break;
             consumer.accept(first, second, element);
         }
     }
@@ -263,11 +260,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      */
     public default <F> void forEach(final long first, final F second, final LongBiObjectConsumer<F, E> consumer) {
         for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
+            if (element == null) break;
             consumer.accept(first, second, element);
         }
     }
@@ -288,23 +281,13 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * <code>null</code>.
      */
     public default int indexOf(final Object object) {
-
-        if (object == null) {
-            return -1;
-        }
+        if (object == null) return -1;
 
         int index = 0;
 
         for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (ObjectUtils.equals(object, element)) {
-                return index;
-            }
-
+            if (element == null) break;
+            if (ObjectUtils.equals(object, element)) return index;
             index++;
         }
 
@@ -325,13 +308,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @return последний элемент в этом {@link Array} либо <code>null</code>, если он пуст.
      */
     public default E last() {
-
         final int size = size();
-
-        if (size < 1) {
-            return null;
-        }
-
+        if (size < 1) return null;
         return get(size - 1);
     }
 
@@ -342,10 +320,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @return <code>-1</code> в случае если такой объект не содержится в этом {@link Array}.
      */
     public default int lastIndexOf(final Object object) {
-
-        if (object == null) {
-            return -1;
-        }
+        if (object == null) return -1;
 
         final E[] array = array();
 
@@ -401,22 +376,13 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * находились в этом {@link Array}.
      */
     public default boolean removeAll(final Array<?> target) {
-
-        if (target == null || target.isEmpty()) {
-            return false;
-        }
+        if (target == null || target.isEmpty()) return false;
 
         int count = 0;
 
         for (final Object element : target.array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (fastRemove(element)) {
-                count++;
-            }
+            if (element == null) break;
+            if (fastRemove(element)) count++;
         }
 
         return count == target.size();
@@ -451,14 +417,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     public default E search(final Predicate<E> predicate) {
 
         for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (predicate.test(element)) {
-                return element;
-            }
+            if (element == null) break;
+            if (predicate.test(element)) return element;
         }
 
         return null;
@@ -474,14 +434,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     public default <T> E search(final T argument, final BiPredicate<T, E> predicate) {
 
         for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (predicate.test(argument, element)) {
-                return element;
-            }
+            if (element == null) break;
+            if (predicate.test(argument, element)) return element;
         }
 
         return null;

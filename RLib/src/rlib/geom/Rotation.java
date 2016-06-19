@@ -133,7 +133,6 @@ public class Rotation {
         z = cosYXsinZ * cosX - sinYXcosZ * sinX;
 
         normalizeLocal();
-
         return this;
     }
 
@@ -206,16 +205,10 @@ public class Rotation {
      * @return вычисленный вектор.
      */
     public Vector getVectorDirection(final DirectionType type, Vector store) {
-
-        if (store == null) {
-            store = Vector.newInstance();
-        }
+        if (store == null) store = Vector.newInstance();
 
         float norm = norm();
-
-        if (norm != 1.0f) {
-            norm = ExtMath.invSqrt(norm);
-        }
+        if (norm != 1.0f) norm = ExtMath.invSqrt(norm);
 
         final float xx = x * x * norm;
         final float xy = x * y * norm;
@@ -335,10 +328,10 @@ public class Rotation {
         final Vector second = buffer.getNextVector();
         second.set(up).crossLocal(direction).normalizeLocal();
 
-        final Vector thrid = buffer.getNextVector();
-        thrid.set(direction).crossLocal(second).normalizeLocal();
+        final Vector third = buffer.getNextVector();
+        third.set(direction).crossLocal(second).normalizeLocal();
 
-        fromAxes(second, thrid, first);
+        fromAxes(second, third, first);
         normalizeLocal();
     }
 
@@ -440,10 +433,7 @@ public class Rotation {
      * @param percent % разворота от текущего к конечному.
      */
     public void slerp(final Rotation end, final float percent) {
-
-        if (equals(end)) {
-            return;
-        }
+        if (equals(end)) return;
 
         float result = x * end.x + y * end.y + z * end.z + w * end.w;
 
@@ -526,6 +516,33 @@ public class Rotation {
         this.w = startScale * start.getW() + endScale * end.getW();
 
         return this;
+    }
+
+    /**
+     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в
+     * зависимости от указанного %.
+     *
+     * @param targetRotation конечный разворот.
+     * @param percent        % разворота от стартового до конечного.
+     */
+    public void nlerp(final Rotation targetRotation, float percent) {
+
+        float dot = dot(targetRotation);
+        float blendI = 1.0F - percent;
+
+        if (dot < 0.0F) {
+            x = blendI * x - percent * targetRotation.x;
+            y = blendI * y - percent * targetRotation.y;
+            z = blendI * z - percent * targetRotation.z;
+            w = blendI * w - percent * targetRotation.w;
+        } else {
+            x = blendI * x + percent * targetRotation.x;
+            y = blendI * y + percent * targetRotation.y;
+            z = blendI * z + percent * targetRotation.z;
+            w = blendI * w + percent * targetRotation.w;
+        }
+
+        normalizeLocal();
     }
 
     public Rotation subtractLocal(final Rotation rotation) {
