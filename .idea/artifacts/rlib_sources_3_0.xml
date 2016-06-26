@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/RLib/build</output-path>
     <root id="archive" name="rlib-sources-3.0.jar">
       <element id="dir-copy" path="$PROJECT_DIR$/RLib/src" />
+      <element id="file-copy" path="$PROJECT_DIR$/RLib/LICENSE" />
     </root>
   </artifact>
 </component>

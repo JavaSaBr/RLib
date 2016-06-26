@@ -6,6 +6,7 @@
         <element id="file-copy" path="$PROJECT_DIR$/RLib/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="rlib" />
+      <element id="file-copy" path="$PROJECT_DIR$/RLib/LICENSE" />
     </root>
   </artifact>
 </component>
