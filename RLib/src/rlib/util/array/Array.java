@@ -3,7 +3,6 @@ package rlib.util.array;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -103,20 +102,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * Array} либо он <code>null</code>.
      */
     public default boolean contains(final Object object) {
-
-        if (object == null) {
-            return false;
-        }
+        if (object == null) return false;
 
         for (final E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (element.equals(object)) {
-                return true;
-            }
+            if (element == null) break;
+            if (element.equals(object)) return true;
         }
 
         return false;
@@ -475,7 +465,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      *
      * @param comparator компаратор для сортировки.
      */
-    public default Array<E> sort(final Comparator<E> comparator) {
+    public default Array<E> sort(final ArrayComparator<E> comparator) {
         ArrayUtils.sort(array(), comparator);
         return this;
     }
