@@ -45,7 +45,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
         this.loadFactor = loadFactor;
         this.threshold = (int) (initCapacity * loadFactor);
         this.content = new IntegerEntry[Dictionary.DEFAULT_INITIAL_CAPACITY];
-        this.entryPool = PoolFactory.newFoldablePool(IntegerEntry.class);
+        this.entryPool = PoolFactory.newReusablePool(IntegerEntry.class);
     }
 
     /**

@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 /**
  * Набор утильных методов по работе с рефлексией.
  *
@@ -31,9 +33,7 @@ public final class ReflectionUtils {
 
             next = next.getSuperclass();
 
-            if (fields.length < 1) {
-                continue;
-            }
+            if (fields.length < 1) continue;
 
             if (exceptions == null || exceptions.length < 1) {
                 container.addAll(fields);
@@ -79,8 +79,7 @@ public final class ReflectionUtils {
             final Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
 
-            return (T) field.get(object);
-
+            return unsafeCast(field.get(object));
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -100,8 +99,7 @@ public final class ReflectionUtils {
             final Field field = type.getDeclaredField(fieldName);
             field.setAccessible(true);
 
-            return (T) field.get(null);
-
+            return unsafeCast(field.get(null));
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

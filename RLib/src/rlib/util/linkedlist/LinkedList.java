@@ -2,9 +2,15 @@ package rlib.util.linkedlist;
 
 import java.io.Serializable;
 import java.util.Deque;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
+import rlib.function.LongBiObjectConsumer;
+import rlib.function.TripleConsumer;
+import rlib.function.TriplePredicate;
 import rlib.util.linkedlist.impl.Node;
 import rlib.util.pools.Reusable;
 
@@ -23,14 +29,90 @@ import rlib.util.pools.Reusable;
  */
 public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusable {
 
-    /**
-     * Применить функцию на все элементы в списке.
-     *
-     * @param consumer применяемая функция.
-     */
-    public default void accept(final Consumer<? super E> consumer) {
+    @Override
+    public default void forEach(final Consumer<? super E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             consumer.accept(node.getItem());
+        }
+    }
+
+    /**
+     * Итерирование списка.
+     *
+     * @param predicate фильтр элементов.
+     * @param consumer  функция для обработки элементов.
+     */
+    public default void forEach(final Predicate<E> predicate, final Consumer<? super E> consumer) {
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            final E item = node.getItem();
+            if (predicate.test(item)) consumer.accept(item);
+        }
+    }
+
+    /**
+     * Итерирование списка с дополнительным аргументом.
+     *
+     * @param argument дополнительный аргумент.
+     * @param consumer функция для обработки элементов.
+     */
+    public default <T> void forEach(final T argument, final BiConsumer<T, E> consumer) {
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            consumer.accept(argument, node.getItem());
+        }
+    }
+
+    /**
+     * Итерирование списка с дополнительным аргументом.
+     *
+     * @param argument  дополнительный аргумент.
+     * @param predicate фильтр элементов.
+     * @param consumer  функция для обработки элементов.
+     */
+    public default <T> void forEach(final T argument, final BiPredicate<E, T> predicate, final BiConsumer<T, E> consumer) {
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            final E item = node.getItem();
+            if (predicate.test(item, argument)) consumer.accept(argument, item);
+        }
+    }
+
+    /**
+     * Итерирование массива с дополнительным аргументом.
+     *
+     * @param first     первый аргумент.
+     * @param second    второй аргумент.
+     * @param predicate фильтр элементов.
+     * @param consumer  функция для обработки элементов.
+     */
+    public default <F, S> void forEach(final F first, final S second, final TriplePredicate<E, F, S> predicate, final TripleConsumer<F, S, E> consumer) {
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            final E item = node.getItem();
+            if (predicate.test(item, first, second)) consumer.accept(first, second, item);
+        }
+    }
+
+    /**
+     * Итерирование массива с двумя дополнительными аргументомами.
+     *
+     * @param first    первый дополнительный аргумент.
+     * @param second   второй дополнительный аргумент.
+     * @param consumer функция для обработки элементов.
+     */
+    public default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            consumer.accept(first, second, node.getItem());
+        }
+    }
+
+    /**
+     * Итерирование массива с двумя дополнительными аргументомами.
+     *
+     * @param first    первый дополнительный аргумент.
+     * @param second   второй дополнительный аргумент.
+     * @param consumer функция для обработки элементов.
+     */
+    public default <F> void forEach(final long first, final F second, final LongBiObjectConsumer<F, E> consumer) {
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            consumer.accept(first, second, node.getItem());
         }
     }
 

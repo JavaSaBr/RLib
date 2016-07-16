@@ -38,7 +38,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 
     public FastLinkedList(final Class<?> type) {
         super(type);
-        this.pool = PoolFactory.newFoldablePool(Node.class);
+        this.pool = PoolFactory.newReusablePool(Node.class);
     }
 
     @Override

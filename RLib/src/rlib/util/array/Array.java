@@ -10,8 +10,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import rlib.function.IntObjectPredicate;
 import rlib.function.LongBiObjectConsumer;
+import rlib.function.LongObjectPredicate;
 import rlib.function.TripleConsumer;
+import rlib.function.TriplePredicate;
 import rlib.util.ArrayUtils;
 import rlib.util.ObjectUtils;
 import rlib.util.pools.Reusable;
@@ -228,6 +231,21 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
+     * Итерирование массива с дополнительным аргументом.
+     *
+     * @param first     первый аргумент.
+     * @param second    второй аргумент.
+     * @param predicate фильтр элементов.
+     * @param consumer  функция для обработки элементов.
+     */
+    public default <F, S> void forEach(final F first, final S second, final TriplePredicate<E, F, S> predicate, final TripleConsumer<F, S, E> consumer) {
+        for (final E element : array()) {
+            if (element == null) break;
+            if (predicate.test(element, first, second)) consumer.accept(first, second, element);
+        }
+    }
+
+    /**
      * Итерирование массива с двумя дополнительными аргументомами.
      *
      * @param first    первый дополнительный аргумент.
@@ -422,6 +440,40 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @return искомый объект либо null.
      */
     public default <T> E search(final T argument, final BiPredicate<T, E> predicate) {
+
+        for (final E element : array()) {
+            if (element == null) break;
+            if (predicate.test(argument, element)) return element;
+        }
+
+        return null;
+    }
+
+    /**
+     * Ищет первый элемент удовлетворяющий условию c дополнительным аргументом.
+     *
+     * @param argument  дополнительный аргумент.
+     * @param predicate условия отбора элемента.
+     * @return искомый объект либо null.
+     */
+    public default E search(final int argument, final IntObjectPredicate<E> predicate) {
+
+        for (final E element : array()) {
+            if (element == null) break;
+            if (predicate.test(argument, element)) return element;
+        }
+
+        return null;
+    }
+
+    /**
+     * Ищет первый элемент удовлетворяющий условию c дополнительным аргументом.
+     *
+     * @param argument  дополнительный аргумент.
+     * @param predicate условия отбора элемента.
+     * @return искомый объект либо null.
+     */
+    public default E searchL(final long argument, final LongObjectPredicate<E> predicate) {
 
         for (final E element : array()) {
             if (element == null) break;

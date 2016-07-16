@@ -12,9 +12,13 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
+import rlib.function.SafeBiConsumer;
+import rlib.function.SafeConsumer;
+import rlib.function.SafeFactory;
+import rlib.function.SafeFunction;
+import rlib.function.SafeRunnable;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
@@ -315,13 +319,40 @@ public final class Util {
     /**
      * Безопасное выполнение задачи.
      *
-     * @param callable выполняемая задача.
+     * @param runnable выполняемая задача.
      */
-    public static <V> V safeExecute(final Callable<V> callable) {
+    public static void safeExecute(final SafeRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (final Exception e) {
+            LOGGER.warning(e);
+        }
+    }
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param runnable     выполняемая задача.
+     * @param errorHandler обработчик ошибок.
+     */
+    public static void safeExecute(final SafeRunnable runnable, final Consumer<Exception> errorHandler) {
+        try {
+            runnable.run();
+        } catch (final Exception e) {
+            errorHandler.accept(e);
+        }
+    }
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param factory выполняемая задача.
+     */
+    public static <R> R safeExecute(final SafeFactory<R> factory) {
 
         try {
-            return callable.call();
-        } catch (final Throwable e) {
+            return factory.get();
+        } catch (final Exception e) {
             LOGGER.warning(e);
         }
 
@@ -331,30 +362,30 @@ public final class Util {
     /**
      * Безопасное выполнение задачи.
      *
-     * @param callable     выполняемая задача.
-     * @param errorHandler обработчик ошибки.
+     * @param factory      выполняемая задача.
+     * @param errorHandler обработчик ошибок.
      */
-    public static <V> V safeExecute(final Callable<V> callable, final Consumer<Throwable> errorHandler) {
+    public static <R> R safeExecute(final SafeFactory<R> factory, final Consumer<Exception> errorHandler) {
 
         try {
-            return callable.call();
-        } catch (final Throwable e) {
+            return factory.get();
+        } catch (final Exception e) {
             errorHandler.accept(e);
         }
 
         return null;
     }
 
-
     /**
      * Безопасное выполнение задачи.
      *
-     * @param runnable выполняемая задача.
+     * @param first    первый аргумент.
+     * @param consumer выполняемая задача.
      */
-    public static void safeExecute(final Runnable runnable) {
+    public static <F> void safeExecute(final F first, final SafeConsumer<F> consumer) {
         try {
-            runnable.run();
-        } catch (final Throwable e) {
+            consumer.accept(first);
+        } catch (final Exception e) {
             LOGGER.warning(e);
         }
     }
@@ -362,12 +393,81 @@ public final class Util {
     /**
      * Безопасное выполнение задачи.
      *
-     * @param runnable выполняемая задача.
+     * @param first    первый аргумент.
+     * @param function выполняемая задача.
      */
-    public static void safeExecute(final Runnable runnable, final Consumer<Throwable> errorHandler) {
+    public static <F, R> R safeExecute(final F first, final SafeFunction<F, R> function) {
+
         try {
-            runnable.run();
-        } catch (final Throwable e) {
+            return function.apply(first);
+        } catch (final Exception e) {
+            LOGGER.warning(e);
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param first        первый аргумент.
+     * @param consumer     выполняемая задача.
+     * @param errorHandler обработчик ошибок.
+     */
+    public static <F> void safeExecute(final F first, final SafeConsumer<F> consumer, final Consumer<Exception> errorHandler) {
+        try {
+            consumer.accept(first);
+        } catch (final Exception e) {
+            errorHandler.accept(e);
+        }
+    }
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param first        первый аргумент.
+     * @param function     выполняемая задача.
+     * @param errorHandler обработчик ошибок.
+     */
+    public static <F, R> R safeExecute(final F first, final SafeFunction<F, R> function, final Consumer<Exception> errorHandler) {
+
+        try {
+            return function.apply(first);
+        } catch (final Exception e) {
+            errorHandler.accept(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param first    первый аргумент.
+     * @param second   второй аргумент.
+     * @param consumer выполняемая задача.
+     */
+    public static <F, S> void safeExecute(final F first, S second, final SafeBiConsumer<F, S> consumer) {
+        try {
+            consumer.accept(first, second);
+        } catch (final Exception e) {
+            LOGGER.warning(e);
+        }
+    }
+
+    /**
+     * Безопасное выполнение задачи.
+     *
+     * @param first        первый аргумент.
+     * @param second       второй аргумент.
+     * @param consumer     выполняемая задача.
+     * @param errorHandler обработчик ошибок.
+     */
+    public static <F, S> void safeExecute(final F first, S second, final SafeBiConsumer<F, S> consumer, final Consumer<Exception> errorHandler) {
+        try {
+            consumer.accept(first, second);
+        } catch (final Exception e) {
             errorHandler.accept(e);
         }
     }

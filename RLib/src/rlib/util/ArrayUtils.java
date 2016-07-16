@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import rlib.function.FunctionInt;
 import rlib.function.IntObjectPredicate;
 import rlib.function.LongObjectPredicate;
+import rlib.function.ObjectIntFunction;
 import rlib.function.TripleConsumer;
 import rlib.function.TripleFunction;
 import rlib.function.TriplePredicate;
@@ -645,6 +646,24 @@ public final class ArrayUtils {
      *
      * @param array    массив с которым надо работать.
      * @param argument дополнительный аргумент.
+     * @param function функция действия.
+     * @return результат действия функции.
+     */
+    public static <T, V, R> R getInReadLock(final Array<T> array, final int argument, final ObjectIntFunction<Array<T>, R> function) {
+        if (array.isEmpty()) return null;
+        array.readLock();
+        try {
+            return function.apply(array, argument);
+        } finally {
+            array.readUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param argument дополнительный аргумент.
      * @param consumer функция действия.
      */
     public static <T, V> void runInReadLock(final Array<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
@@ -669,6 +688,24 @@ public final class ArrayUtils {
         array.writeLock();
         try {
             consumer.accept(array, first, second);
+        } finally {
+            array.writeUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     *
+     * @param array     массив с которым надо работать.
+     * @param first     первый дополнительный аргумент.
+     * @param second    второй дополнительный аргумент.
+     * @param predicate условие выполнения.
+     * @param consumer  функция действия.
+     */
+    public static <T, F, S> void runInWriteLock(final Array<T> array, final F first, S second, final TriplePredicate<Array<T>, F, S> predicate, final TripleConsumer<Array<T>, F, S> consumer) {
+        array.writeLock();
+        try {
+            if (predicate.test(array, first, second)) consumer.accept(array, first, second);
         } finally {
             array.writeUnlock();
         }
@@ -777,6 +814,22 @@ public final class ArrayUtils {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
             consumer.accept(argument, element);
+        }
+    }
+
+    /**
+     * Обработка элемента массива с дополнительным аргументом.
+     *
+     * @param array      массив для обработки элементов.
+     * @param argument   дополнительный аргумент.
+     * @param getElement функция получения под элемента.
+     * @param consumer   обработчик элемента.
+     */
+    public static <T, F, R> void forEach(final T[] array, final F argument, final Function<T, R> getElement, final BiConsumer<F, R> consumer) {
+        if (array == null || array.length < 1) return;
+        for (final T element : array) {
+            final R subElement = getElement.apply(element);
+            if (subElement != null) consumer.accept(argument, subElement);
         }
     }
 
@@ -945,6 +998,48 @@ public final class ArrayUtils {
     }
 
     /**
+     * Поиск под-элемента в массиве с дополнительным аргументом.
+     *
+     * @param array      массив для поиска элемента.
+     * @param argument   дополнительный аргумент.
+     * @param getElement функция извлечения под элемента массива.
+     * @param secondCond условие отбора под элемента.
+     * @return первый подходящий элемент либо null.
+     */
+    public static <T, R, F> R find(final T[] array, final F argument, final Function<T, R> getElement, final BiPredicate<F, R> secondCond) {
+        if (array == null || array.length < 1) return null;
+
+        for (final T element : array) {
+            final R subElement = getElement.apply(element);
+            if (secondCond.test(argument, subElement)) return subElement;
+        }
+
+        return null;
+    }
+
+    /**
+     * Поиск под-элемента в массиве с дополнительным аргументом.
+     *
+     * @param array      массив для поиска элемента.
+     * @param argument   дополнительный аргумент.
+     * @param condition  условие для выполнения функции получения под элемента.
+     * @param getElement функция извлечения под элемента массива.
+     * @param secondCond условие отбора под элемента.
+     * @return первый подходящий элемент либо null.
+     */
+    public static <T, R, F> R find(final T[] array, final F argument, final Predicate<T> condition, final Function<T, R> getElement, final BiPredicate<F, R> secondCond) {
+        if (array == null || array.length < 1) return null;
+
+        for (final T element : array) {
+            if (!condition.test(element)) continue;
+            final R subElement = getElement.apply(element);
+            if (secondCond.test(argument, subElement)) return subElement;
+        }
+
+        return null;
+    }
+
+    /**
      * Поиск элемента в массиве с дополнительным аргументом.
      *
      * @param array     массив для поиска элемента.
@@ -1039,6 +1134,24 @@ public final class ArrayUtils {
             if (secondCond.test(argument, subElement)) {
                 return subElement;
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Поиск под-элемента в массиве с дополнительным аргументом.
+     *
+     * @param array     массив для поиска элемента.
+     * @param argument  дополнительный аргумент.
+     * @param condition условие отбора элемента.
+     * @return первый подходящий элемент либо null.
+     */
+    public static <T> T findL(final T[] array, final long argument, final LongObjectPredicate<T> condition) {
+        if (array == null || array.length < 1) return null;
+
+        for (final T element : array) {
+            if (condition.test(argument, element)) return element;
         }
 
         return null;

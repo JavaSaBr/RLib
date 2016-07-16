@@ -52,7 +52,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         this.loadFactor = loadFactor;
         this.threshold = (int) (initCapacity * loadFactor);
         this.content = new ObjectEntry[Dictionary.DEFAULT_INITIAL_CAPACITY];
-        this.entryPool = PoolFactory.newFoldablePool(ObjectEntry.class);
+        this.entryPool = PoolFactory.newReusablePool(ObjectEntry.class);
     }
 
     protected AbstractObjectDictionary(final int initCapacity) {

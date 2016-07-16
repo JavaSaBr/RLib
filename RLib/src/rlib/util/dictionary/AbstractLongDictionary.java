@@ -53,7 +53,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         this.loadFactor = loadFactor;
         this.threshold = (int) (initCapacity * loadFactor);
         this.table = new LongEntry[Dictionary.DEFAULT_INITIAL_CAPACITY];
-        this.entryPool = PoolFactory.newFoldablePool(LongEntry.class);
+        this.entryPool = PoolFactory.newReusablePool(LongEntry.class);
     }
 
     protected AbstractLongDictionary(final int initCapacity) {

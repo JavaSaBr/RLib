@@ -1,5 +1,7 @@
 package rlib.util.dictionary;
 
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import rlib.function.ObjectIntConsumer;
@@ -47,6 +49,22 @@ public class DictionaryUtils {
     }
 
     /**
+     * Выполнение функции на словаре в блоке {@link ConcurrentObjectDictionary#writeLock()}.
+     *
+     * @param dictionary словарь.
+     * @param key        аргумент ключ для передачи в функцию.
+     * @param consumer   функция для выполнения действий над словарем.
+     */
+    public static <K, V> void runInWriteLock(final ConcurrentObjectDictionary<K, V> dictionary, final K key, final BiConsumer<ConcurrentObjectDictionary<K, V>, K> consumer) {
+        dictionary.writeLock();
+        try {
+            consumer.accept(dictionary, key);
+        } finally {
+            dictionary.writeUnlock();
+        }
+    }
+
+    /**
      * Выполнение функции на словаре в блоке {@link ConcurrentIntegerDictionary#readLock()}.
      *
      * @param dictionary словарь.
@@ -76,6 +94,23 @@ public class DictionaryUtils {
             return function.apply(dictionary, key);
         } finally {
             dictionary.writeUnlock();
+        }
+    }
+
+    /**
+     * Выполнение функции на словаре в блоке {@link ConcurrentObjectDictionary#readLock()}.
+     *
+     * @param dictionary словарь.
+     * @param key        аргумент ключ для передачи в функцию.
+     * @param function   функция для выполнения действий над словарем.
+     * @return результат выполнения функции.
+     */
+    public static <K, V, R> R getInReadLock(final ConcurrentObjectDictionary<K, V> dictionary, final K key, final BiFunction<ConcurrentObjectDictionary<K, V>, K, R> function) {
+        dictionary.readLock();
+        try {
+            return function.apply(dictionary, key);
+        } finally {
+            dictionary.readUnlock();
         }
     }
 
