@@ -9,15 +9,17 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import rlib.function.FunctionInt;
-import rlib.function.IntObjectPredicate;
-import rlib.function.LongObjectPredicate;
 import rlib.function.ObjectIntFunction;
+import rlib.function.ObjectIntPredicate;
+import rlib.function.ObjectLongPredicate;
 import rlib.function.TripleConsumer;
 import rlib.function.TripleFunction;
 import rlib.function.TriplePredicate;
 import rlib.util.array.Array;
 import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
+
+import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * Набор утильных методов для работы с массивами.
@@ -140,13 +142,9 @@ public final class ArrayUtils {
      * @return содержит ли массив указанное значение.
      */
     public static boolean contains(final int[] array, final int val) {
-
         for (final int value : array) {
-            if (value == val) {
-                return true;
-            }
+            if (value == val) return true;
         }
-
         return false;
     }
 
@@ -176,11 +174,8 @@ public final class ArrayUtils {
      * @return новый массив.
      */
     public static byte[] copyOf(final byte[] old, final int added) {
-
         final byte[] copy = new byte[old.length + added];
-
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
-
         return copy;
     }
 
@@ -192,11 +187,8 @@ public final class ArrayUtils {
      * @return новый массив.
      */
     public static int[] copyOf(final int[] old, final int added) {
-
         final int[] copy = new int[old.length + added];
-
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
-
         return copy;
     }
 
@@ -208,11 +200,8 @@ public final class ArrayUtils {
      * @return новый массив.
      */
     public static long[] copyOf(final long[] old, final int added) {
-
         final long[] copy = new long[old.length + added];
-
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
-
         return copy;
     }
 
@@ -227,7 +216,6 @@ public final class ArrayUtils {
     public static <T> T[] copyOf(final T[] old, final int added) {
 
         final Class<? extends Object[]> newType = old.getClass();
-
         final T[] copy = (T[]) create(newType.getComponentType(), old.length + added);
 
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
@@ -246,7 +234,6 @@ public final class ArrayUtils {
     public static int[] copyOfRange(final int[] original, final int from, final int to) {
 
         final int newLength = to - from;
-
         final int[] copy = new int[newLength];
 
         System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
@@ -265,7 +252,6 @@ public final class ArrayUtils {
     public static long[] copyOfRange(final long[] original, final int from, final int to) {
 
         final int newLength = to - from;
-
         final long[] copy = new long[newLength];
 
         System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
@@ -281,14 +267,12 @@ public final class ArrayUtils {
      * @param to       по какой индекс.
      * @return новый массив.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] copyOfRange(final T[] original, final int from, final int to) {
 
         final Class<? extends Object[]> newType = original.getClass();
-
         final int newLength = to - from;
 
-        final T[] copy = (T[]) create(newType.getComponentType(), newLength);
+        final T[] copy = unsafeCast(create(newType.getComponentType(), newLength));
 
         System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
 
@@ -302,9 +286,8 @@ public final class ArrayUtils {
      * @param size размер массива.
      * @return новый массив.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] create(final Class<?> type, final int size) {
-        return (T[]) java.lang.reflect.Array.newInstance(type, size);
+        return unsafeCast(java.lang.reflect.Array.newInstance(type, size));
     }
 
     /**
@@ -319,11 +302,7 @@ public final class ArrayUtils {
         int index = 0;
 
         for (final Object element : array) {
-
-            if (ObjectUtils.equals(element, object)) {
-                return index;
-            }
-
+            if (ObjectUtils.equals(element, object)) return index;
             index++;
         }
 
@@ -414,22 +393,14 @@ public final class ArrayUtils {
      * @return строковый вариант.
      */
     public static String toString(final IntegerArray array) {
-
-        if (array == null) {
-            return "[]";
-        }
+        if (array == null) return "[]";
 
         final String className = array.array().getClass().getSimpleName();
         final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
         for (int i = 0, length = array.size() - 1; i <= length; i++) {
-
             builder.append(String.valueOf(array.get(i)));
-
-            if (i == length) {
-                break;
-            }
-
+            if (i == length) break;
             builder.append(", ");
         }
 
@@ -444,22 +415,14 @@ public final class ArrayUtils {
      * @return строковый вариант.
      */
     public static String toString(final LongArray array) {
-
-        if (array == null) {
-            return "[]";
-        }
+        if (array == null) return "[]";
 
         final String className = array.array().getClass().getSimpleName();
         final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
         for (int i = 0, length = array.size() - 1; i <= length; i++) {
-
             builder.append(String.valueOf(array.get(i)));
-
-            if (i == length) {
-                break;
-            }
-
+            if (i == length) break;
             builder.append(", ");
         }
 
@@ -474,22 +437,14 @@ public final class ArrayUtils {
      * @return строковый вариант.
      */
     public static String toString(final Object[] array) {
-
-        if (array == null) {
-            return "[]";
-        }
+        if (array == null) return "[]";
 
         final String className = array.getClass().getSimpleName();
         final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
         for (int i = 0, length = array.length - 1; i <= length; i++) {
-
             builder.append(String.valueOf(array[i]));
-
-            if (i == length) {
-                break;
-            }
-
+            if (i == length) break;
             builder.append(", ");
         }
 
@@ -506,7 +461,6 @@ public final class ArrayUtils {
      */
     public static <T, R> R getInWriteLock(final Array<T> array, final Function<Array<T>, R> function) {
         if (array.isEmpty()) return null;
-
         array.writeLock();
         try {
             return function.apply(array);
@@ -810,10 +764,10 @@ public final class ArrayUtils {
      * @param argument дополнительный аргумент.
      * @param consumer обработчик элемента.
      */
-    public static <T, F> void forEach(final T[] array, final F argument, final BiConsumer<F, T> consumer) {
+    public static <T, F> void forEach(final T[] array, final F argument, final BiConsumer<T, F> consumer) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            consumer.accept(argument, element);
+            consumer.accept(element, argument);
         }
     }
 
@@ -825,11 +779,11 @@ public final class ArrayUtils {
      * @param getElement функция получения под элемента.
      * @param consumer   обработчик элемента.
      */
-    public static <T, F, R> void forEach(final T[] array, final F argument, final Function<T, R> getElement, final BiConsumer<F, R> consumer) {
+    public static <T, F, R> void forEach(final T[] array, final F argument, final Function<T, R> getElement, final BiConsumer<R, F> consumer) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
             final R subElement = getElement.apply(element);
-            if (subElement != null) consumer.accept(argument, subElement);
+            if (subElement != null) consumer.accept(subElement, argument);
         }
     }
 
@@ -841,11 +795,11 @@ public final class ArrayUtils {
      * @param conditional условие обработки элемента.
      * @param consumer    обработчик элемента.
      */
-    public static <T, F> void forEach(final T[] array, final F argument, final Predicate<T> conditional, final BiConsumer<F, T> consumer) {
+    public static <T, F> void forEach(final T[] array, final F argument, final Predicate<T> conditional, final BiConsumer<T, F> consumer) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
             if (conditional.test(element)) {
-                consumer.accept(argument, element);
+                consumer.accept(element, argument);
             }
         }
     }
@@ -859,16 +813,12 @@ public final class ArrayUtils {
      * @param getElement функция извлечения под элемента массива.
      * @param consumer   обработчик под элемента.
      */
-    public static <T, R, F> void forEach(final T[] array, final F argument, final Predicate<T> firstCond, final Function<T, R> getElement, final BiConsumer<F, R> consumer) {
+    public static <T, R, F> void forEach(final T[] array, final F argument, final Predicate<T> firstCond, final Function<T, R> getElement, final BiConsumer<R, F> consumer) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-
-            if (!firstCond.test(element)) {
-                continue;
-            }
-
+            if (!firstCond.test(element)) continue;
             final R subElement = getElement.apply(element);
-            consumer.accept(argument, subElement);
+            consumer.accept(subElement, argument);
         }
     }
 
@@ -880,10 +830,10 @@ public final class ArrayUtils {
      * @param second   второй дополнительный аргумент.
      * @param consumer обработчик под элемента.
      */
-    public static <T, F, S> void forEach(final T[] array, final F first, final S second, final TripleConsumer<F, S, T> consumer) {
+    public static <T, F, S> void forEach(final T[] array, final F first, final S second, final TripleConsumer<T, F, S> consumer) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            consumer.accept(first, second, element);
+            consumer.accept(element, first, second);
         }
     }
 
@@ -896,11 +846,11 @@ public final class ArrayUtils {
      * @param getElement функция извлечения под элемента массива.
      * @param consumer   обработчик под элемента.
      */
-    public static <T, R, F, S> void forEach(final T[] array, final F first, final S second, final TripleFunction<F, S, T, R> getElement, final TripleConsumer<F, S, R> consumer) {
+    public static <T, R, F, S> void forEach(final T[] array, final F first, final S second, final TripleFunction<T, F, S, R> getElement, final TripleConsumer<R, F, S> consumer) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            final R subElement = getElement.apply(first, second, element);
-            consumer.accept(first, second, subElement);
+            final R subElement = getElement.apply(element, first, second);
+            consumer.accept(subElement, first, second);
         }
     }
 
@@ -912,7 +862,7 @@ public final class ArrayUtils {
      * @param condition условие отбора элемента.
      * @return индекс первого элемента, удовлетворяющего условия либо -1.
      */
-    public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<F, T> condition) {
+    public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<T, F> condition) {
         return indexOf(array, argument, condition, 0, array.length);
     }
 
@@ -926,10 +876,10 @@ public final class ArrayUtils {
      * @param endIndex   последний индекс проверяемой ячейки.
      * @return индекс первого элемента, удовлетворяющего условия либо -1.
      */
-    public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<F, T> condition, final int startIndex, final int endIndex) {
+    public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<T, F> condition, final int startIndex, final int endIndex) {
         if (array == null || array.length < 1) return -1;
         for (int i = startIndex; i < endIndex; i++) {
-            if (condition.test(argument, array[i])) {
+            if (condition.test(array[i], argument)) {
                 return i;
             }
         }
@@ -985,15 +935,11 @@ public final class ArrayUtils {
      * @param condition условие отбора элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T, F> T find(final T[] array, final F argument, final BiPredicate<F, T> condition) {
+    public static <T, F> T find(final T[] array, final F argument, final BiPredicate<T, F> condition) {
         if (array == null || array.length < 1) return null;
-
         for (final T element : array) {
-            if (condition.test(argument, element)) {
-                return element;
-            }
+            if (condition.test(element, argument)) return element;
         }
-
         return null;
     }
 
@@ -1006,12 +952,12 @@ public final class ArrayUtils {
      * @param secondCond условие отбора под элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T, R, F> R find(final T[] array, final F argument, final Function<T, R> getElement, final BiPredicate<F, R> secondCond) {
+    public static <T, R, F> R find(final T[] array, final F argument, final Function<T, R> getElement, final BiPredicate<R, F> secondCond) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             final R subElement = getElement.apply(element);
-            if (secondCond.test(argument, subElement)) return subElement;
+            if (secondCond.test(subElement, argument)) return subElement;
         }
 
         return null;
@@ -1027,13 +973,13 @@ public final class ArrayUtils {
      * @param secondCond условие отбора под элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T, R, F> R find(final T[] array, final F argument, final Predicate<T> condition, final Function<T, R> getElement, final BiPredicate<F, R> secondCond) {
+    public static <T, R, F> R find(final T[] array, final F argument, final Predicate<T> condition, final Function<T, R> getElement, final BiPredicate<R, F> secondCond) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             if (!condition.test(element)) continue;
             final R subElement = getElement.apply(element);
-            if (secondCond.test(argument, subElement)) return subElement;
+            if (secondCond.test(subElement, argument)) return subElement;
         }
 
         return null;
@@ -1047,11 +993,11 @@ public final class ArrayUtils {
      * @param condition условие отбора элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T> T find(final T[] array, final int argument, final IntObjectPredicate<T> condition) {
+    public static <T> T find(final T[] array, final int argument, final ObjectIntPredicate<T> condition) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
-            if (condition.test(argument, element)) {
+            if (condition.test(element, argument)) {
                 return element;
             }
         }
@@ -1068,12 +1014,12 @@ public final class ArrayUtils {
      * @param condition  условие отбора под элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T, R> R find(final T[] array, final int argument, final Function<T, R> getElement, final IntObjectPredicate<R> condition) {
+    public static <T, R> R find(final T[] array, final int argument, final Function<T, R> getElement, final ObjectIntPredicate<R> condition) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             final R subElement = getElement.apply(element);
-            if (condition.test(argument, subElement)) {
+            if (condition.test(subElement, argument)) {
                 return subElement;
             }
         }
@@ -1091,18 +1037,13 @@ public final class ArrayUtils {
      * @param secondCond условие отбора под элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T, R> R find(final T[] array, final int argument, Predicate<T> firstCond, final Function<T, R> getElement, final IntObjectPredicate<R> secondCond) {
+    public static <T, R> R find(final T[] array, final int argument, Predicate<T> firstCond, final Function<T, R> getElement, final ObjectIntPredicate<R> secondCond) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
-
-            if (!firstCond.test(element)) {
-                continue;
-            }
-
+            if (!firstCond.test(element)) continue;
             final R subElement = getElement.apply(element);
-
-            if (secondCond.test(argument, subElement)) {
+            if (secondCond.test(subElement, argument)) {
                 return subElement;
             }
         }
@@ -1120,18 +1061,13 @@ public final class ArrayUtils {
      * @param secondCond условие отбора под элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T, R> R findL(final T[] array, final long argument, final Predicate<T> firstCond, final Function<T, R> getElement, final LongObjectPredicate<R> secondCond) {
+    public static <T, R> R findL(final T[] array, final long argument, final Predicate<T> firstCond, final Function<T, R> getElement, final ObjectLongPredicate<R> secondCond) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
-
-            if (!firstCond.test(element)) {
-                continue;
-            }
-
+            if (!firstCond.test(element)) continue;
             final R subElement = getElement.apply(element);
-
-            if (secondCond.test(argument, subElement)) {
+            if (secondCond.test(subElement, argument)) {
                 return subElement;
             }
         }
@@ -1147,13 +1083,11 @@ public final class ArrayUtils {
      * @param condition условие отбора элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T> T findL(final T[] array, final long argument, final LongObjectPredicate<T> condition) {
+    public static <T> T findL(final T[] array, final long argument, final ObjectLongPredicate<T> condition) {
         if (array == null || array.length < 1) return null;
-
         for (final T element : array) {
-            if (condition.test(argument, element)) return element;
+            if (condition.test(element, argument)) return element;
         }
-
         return null;
     }
 
@@ -1166,12 +1100,12 @@ public final class ArrayUtils {
      * @param condition  условие отбора элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T, R> R findL(final T[] array, final long argument, final Function<T, R> getElement, final LongObjectPredicate<R> condition) {
+    public static <T, R> R findL(final T[] array, final long argument, final Function<T, R> getElement, final ObjectLongPredicate<R> condition) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             final R subElement = getElement.apply(element);
-            if (condition.test(argument, subElement)) {
+            if (condition.test(subElement, argument)) {
                 return subElement;
             }
         }
@@ -1188,15 +1122,13 @@ public final class ArrayUtils {
      * @param condition условие отбора элемента.
      * @return первый подходящий элемент либо null.
      */
-    public static <T, F, S> T find(final T[] array, final F first, final S second, final TriplePredicate<F, S, T> condition) {
+    public static <T, F, S> T find(final T[] array, final F first, final S second, final TriplePredicate<T, F, S> condition) {
         if (array == null || array.length < 1) return null;
-
         for (final T element : array) {
-            if (condition.test(first, second, element)) {
+            if (condition.test(element, first, second)) {
                 return element;
             }
         }
-
         return null;
     }
 

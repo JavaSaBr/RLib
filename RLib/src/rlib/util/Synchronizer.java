@@ -7,7 +7,7 @@ import rlib.concurrent.lock.LockFactory;
 /**
  * @author Ronn
  */
-public final class Synchronizer implements Synchronized {
+public final class Synchronizer implements Lockable {
 
     /**
      * Блокировщик.

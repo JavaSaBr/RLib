@@ -1,11 +1,11 @@
 package rlib.util;
 
 /**
- * Интерфейс для синхронизируемый объектов.
+ * Интерфейс для блокируемых объектов.
  *
  * @author Ronn
  */
-public interface Synchronized {
+public interface Lockable {
 
     /**
      * Заблокировать изминения.

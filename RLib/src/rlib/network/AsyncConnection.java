@@ -1,13 +1,13 @@
 package rlib.network;
 
-import rlib.util.Synchronized;
+import rlib.util.Lockable;
 
 /**
  * Интерфейс для реализации сетевого подключения.
  *
  * @author Ronn
  */
-public interface AsyncConnection<R, S> extends Synchronized {
+public interface AsyncConnection<R, S> extends Lockable {
 
     /**
      * Закрытие коннекта.

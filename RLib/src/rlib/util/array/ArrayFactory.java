@@ -7,8 +7,13 @@ import rlib.util.array.impl.FastArray;
 import rlib.util.array.impl.FastArraySet;
 import rlib.util.array.impl.FastIntegerArray;
 import rlib.util.array.impl.FastLongArray;
+import rlib.util.array.impl.FinalConcurrentAtomicArray;
+import rlib.util.array.impl.FinalFastArray;
+import rlib.util.array.impl.FinalFastArraySet;
 import rlib.util.array.impl.SortedArray;
 import rlib.util.array.impl.SynchronizedArray;
+
+import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * Реализация фабрики различных массивов.
@@ -24,9 +29,8 @@ public class ArrayFactory {
      * @return новый экземпляр массива.
      * @see FastArray
      */
-    @SuppressWarnings("unchecked")
     public static <E> Array<E> newArray(final Class<?> type) {
-        return new FastArray<E>((Class<E>) type);
+        return new FinalFastArray<>(unsafeCast(type));
     }
 
     /**
@@ -37,9 +41,8 @@ public class ArrayFactory {
      * @return новый экземпляр массива.
      * @see FastArray
      */
-    @SuppressWarnings("unchecked")
     public static <E> Array<E> newArray(final Class<?> type, final int capacity) {
-        return new FastArray<E>((Class<E>) type, capacity);
+        return new FinalFastArray<>(unsafeCast(type), capacity);
     }
 
     /**
@@ -52,7 +55,7 @@ public class ArrayFactory {
      */
     @SuppressWarnings("unchecked")
     public static <E> Array<E> newArraySet(final Class<?> type) {
-        return new FastArraySet<E>((Class<E>) type);
+        return new FinalFastArraySet<>(unsafeCast(type));
     }
 
     /**
@@ -65,7 +68,7 @@ public class ArrayFactory {
      */
     @SuppressWarnings("unchecked")
     public static <E> Array<E> newConcurrentArray(final Class<?> type) {
-        return new ConcurrentArray<E>((Class<E>) type);
+        return new ConcurrentArray<>(unsafeCast(type));
     }
 
     /**
@@ -78,7 +81,7 @@ public class ArrayFactory {
      */
     @SuppressWarnings("unchecked")
     public static <E> Array<E> newConcurrentArraySet(final Class<?> type) {
-        return new ConcurrentArraySet<E>((Class<E>) type);
+        return new ConcurrentArraySet<>(unsafeCast(type));
     }
 
     /**
@@ -91,7 +94,7 @@ public class ArrayFactory {
      */
     @SuppressWarnings("unchecked")
     public static <E> Array<E> newConcurrentAtomicArray(final Class<?> type) {
-        return new ConcurrentAtomicArray<E>((Class<E>) type);
+        return new FinalConcurrentAtomicArray<>(unsafeCast(type));
     }
 
     /**
@@ -150,9 +153,8 @@ public class ArrayFactory {
      * @return новый экземпляр массива.
      * @see SortedArray
      */
-    @SuppressWarnings("unchecked")
     public static <E extends Comparable<E>> Array<E> newSortedArray(final Class<?> type) {
-        return new SortedArray<E>((Class<E>) type);
+        return new SortedArray<>(unsafeCast(type));
     }
 
     /**
@@ -164,7 +166,7 @@ public class ArrayFactory {
      */
     @SuppressWarnings("unchecked")
     public static <E> Array<E> newSynchronizedArray(final Class<?> type) {
-        return new SynchronizedArray<E>((Class<E>) type);
+        return new SynchronizedArray<>(unsafeCast(type));
     }
 
     /**
@@ -185,6 +187,17 @@ public class ArrayFactory {
      */
     @SafeVarargs
     public static <T, K extends T> T[] toGenericArray(final K... elements) {
+        return elements;
+    }
+
+    /**
+     * Создает массив из перечисленных элементов.
+     *
+     * @param elements набор элементов.
+     * @return новый массив.
+     */
+    @SafeVarargs
+    public static <T, K extends T> T[] toArray(final K... elements) {
         return elements;
     }
 

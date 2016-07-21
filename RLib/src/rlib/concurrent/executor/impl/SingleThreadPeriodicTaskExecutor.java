@@ -13,7 +13,7 @@ import rlib.concurrent.util.ThreadUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.ClassUtils;
-import rlib.util.Synchronized;
+import rlib.util.Lockable;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -22,7 +22,7 @@ import rlib.util.array.ArrayFactory;
  *
  * @author Ronn
  */
-public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> implements PeriodicTaskExecutor<T, L>, Runnable, Synchronized {
+public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> implements PeriodicTaskExecutor<T, L>, Runnable, Lockable {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadPeriodicTaskExecutor.class);
 

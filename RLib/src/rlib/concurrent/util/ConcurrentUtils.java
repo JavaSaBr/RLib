@@ -6,7 +6,7 @@ import rlib.function.ObjectIntFunction;
 import rlib.function.ObjectLongFunction;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-import rlib.util.Synchronized;
+import rlib.util.Lockable;
 
 /**
  * Набор утильных методов для работы в сфере кокнуренции.
@@ -98,7 +98,7 @@ public final class ConcurrentUtils {
      * @param function функция вытаскивания результата.
      * @return результатработы функции.
      */
-    public static <T extends Synchronized, R> R getInSynchronized(final T sync, final Function<T, R> function) {
+    public static <T extends Lockable, R> R getInSynchronized(final T sync, final Function<T, R> function) {
         sync.lock();
         try {
             return function.apply(sync);
@@ -115,7 +115,7 @@ public final class ConcurrentUtils {
      * @param function функция вытаскивания результата.
      * @return результатработы функции.
      */
-    public static <T extends Synchronized, R> R getInSynchronized(final T sync, final int argument, final ObjectIntFunction<T, R> function) {
+    public static <T extends Lockable, R> R getInSynchronized(final T sync, final int argument, final ObjectIntFunction<T, R> function) {
         sync.lock();
         try {
             return function.apply(sync, argument);
@@ -132,7 +132,7 @@ public final class ConcurrentUtils {
      * @param function функция вытаскивания результата.
      * @return результатработы функции.
      */
-    public static <T extends Synchronized, R> R getInSynchronizedL(final T sync, final long argument, final ObjectLongFunction<T, R> function) {
+    public static <T extends Lockable, R> R getInSynchronizedL(final T sync, final long argument, final ObjectLongFunction<T, R> function) {
         sync.lock();
         try {
             return function.apply(sync, argument);

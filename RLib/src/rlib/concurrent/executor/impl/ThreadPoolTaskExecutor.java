@@ -13,7 +13,7 @@ import rlib.concurrent.task.SimpleTask;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-import rlib.util.Synchronized;
+import rlib.util.Lockable;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.linkedlist.LinkedList;
@@ -27,7 +27,7 @@ import rlib.util.linkedlist.LinkedListFactory;
  *
  * @author Ronn
  */
-public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Synchronized {
+public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Lockable {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ThreadPoolTaskExecutor.class);
 

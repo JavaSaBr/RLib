@@ -10,14 +10,16 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import rlib.function.IntObjectPredicate;
-import rlib.function.LongBiObjectConsumer;
-import rlib.function.LongObjectPredicate;
+import rlib.function.ObjectIntPredicate;
+import rlib.function.ObjectLongObjectConsumer;
+import rlib.function.ObjectLongPredicate;
 import rlib.function.TripleConsumer;
 import rlib.function.TriplePredicate;
 import rlib.util.ArrayUtils;
 import rlib.util.ObjectUtils;
 import rlib.util.pools.Reusable;
+
+import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * Интерфейс для реализации динамических массивов. Главное преймущество по сравнению с ArrayList,
@@ -65,9 +67,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param function применяемая функция.
      */
     public default void apply(final Function<? super E, ? extends E> function) {
-
         final E[] array = array();
-
         for (int i = 0, length = size(); i < length; i++) {
             array[i] = function.apply(array[i]);
         }
@@ -209,10 +209,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param argument дополнительный аргумент.
      * @param consumer функция для обработки элементов.
      */
-    public default <T> void forEach(final T argument, final BiConsumer<T, E> consumer) {
+    public default <T> void forEach(final T argument, final BiConsumer<E, T> consumer) {
         for (final E element : array()) {
             if (element == null) break;
-            consumer.accept(argument, element);
+            consumer.accept(element, argument);
         }
     }
 
@@ -223,10 +223,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param predicate фильтр элементов.
      * @param consumer  функция для обработки элементов.
      */
-    public default <T> void forEach(final T argument, final BiPredicate<E, T> predicate, final BiConsumer<T, E> consumer) {
+    public default <T> void forEach(final T argument, final BiPredicate<E, T> predicate, final BiConsumer<E, T> consumer) {
         for (final E element : array()) {
             if (element == null) break;
-            if (predicate.test(element, argument)) consumer.accept(argument, element);
+            if (predicate.test(element, argument)) consumer.accept(element, argument);
         }
     }
 
@@ -238,10 +238,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param predicate фильтр элементов.
      * @param consumer  функция для обработки элементов.
      */
-    public default <F, S> void forEach(final F first, final S second, final TriplePredicate<E, F, S> predicate, final TripleConsumer<F, S, E> consumer) {
+    public default <F, S> void forEach(final F first, final S second, final TriplePredicate<E, F, S> predicate, final TripleConsumer<E, F, S> consumer) {
         for (final E element : array()) {
             if (element == null) break;
-            if (predicate.test(element, first, second)) consumer.accept(first, second, element);
+            if (predicate.test(element, first, second)) consumer.accept(element, first, second);
         }
     }
 
@@ -252,10 +252,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param second   второй дополнительный аргумент.
      * @param consumer функция для обработки элементов.
      */
-    public default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
+    public default <F, S> void forEach(final F first, final S second, final TripleConsumer<E, F, S> consumer) {
         for (final E element : array()) {
             if (element == null) break;
-            consumer.accept(first, second, element);
+            consumer.accept(element, first, second);
         }
     }
 
@@ -266,10 +266,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param second   второй дополнительный аргумент.
      * @param consumer функция для обработки элементов.
      */
-    public default <F> void forEach(final long first, final F second, final LongBiObjectConsumer<F, E> consumer) {
+    public default <F> void forEach(final long first, final F second, final ObjectLongObjectConsumer<E, F> consumer) {
         for (final E element : array()) {
             if (element == null) break;
-            consumer.accept(first, second, element);
+            consumer.accept(element, first, second);
         }
     }
 
@@ -423,12 +423,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @return искомый объект либо null.
      */
     public default E search(final Predicate<E> predicate) {
-
         for (final E element : array()) {
             if (element == null) break;
             if (predicate.test(element)) return element;
         }
-
         return null;
     }
 
@@ -439,13 +437,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param predicate условия отбора элемента.
      * @return искомый объект либо null.
      */
-    public default <T> E search(final T argument, final BiPredicate<T, E> predicate) {
-
+    public default <T> E search(final T argument, final BiPredicate<E, T> predicate) {
         for (final E element : array()) {
             if (element == null) break;
-            if (predicate.test(argument, element)) return element;
+            if (predicate.test(element, argument)) return element;
         }
-
         return null;
     }
 
@@ -456,13 +452,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param predicate условия отбора элемента.
      * @return искомый объект либо null.
      */
-    public default E search(final int argument, final IntObjectPredicate<E> predicate) {
-
+    public default E search(final int argument, final ObjectIntPredicate<E> predicate) {
         for (final E element : array()) {
             if (element == null) break;
-            if (predicate.test(argument, element)) return element;
+            if (predicate.test(element, argument)) return element;
         }
-
         return null;
     }
 
@@ -473,13 +467,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param predicate условия отбора элемента.
      * @return искомый объект либо null.
      */
-    public default E searchL(final long argument, final LongObjectPredicate<E> predicate) {
-
+    public default E searchL(final long argument, final ObjectLongPredicate<E> predicate) {
         for (final E element : array()) {
             if (element == null) break;
-            if (predicate.test(argument, element)) return element;
+            if (predicate.test(element, argument)) return element;
         }
-
         return null;
     }
 
@@ -528,7 +520,6 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      *
      * @param newArray массив, в который нужно перенести.
      */
-    @SuppressWarnings("unchecked")
     public default <T> T[] toArray(final T[] newArray) {
 
         final E[] array = array();
@@ -536,18 +527,14 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
         if (newArray.length >= size()) {
 
             for (int i = 0, j = 0, length = array.length, newLength = newArray.length; i < length && j < newLength; i++) {
-
-                if (array[i] == null) {
-                    continue;
-                }
-
+                if (array[i] == null) continue;
                 newArray[j++] = (T) array[i];
             }
 
             return newArray;
         }
 
-        return (T[]) array;
+        return unsafeCast(array);
     }
 
     /**
