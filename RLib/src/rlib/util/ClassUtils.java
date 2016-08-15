@@ -3,9 +3,6 @@ package rlib.util;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-
 /**
  * Класс с утильными методами по работе с классами.
  *
@@ -13,13 +10,10 @@ import rlib.logging.LoggerManager;
  */
 public final class ClassUtils {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
-
     public static <T> Class<T> getClass(final String name) {
         try {
             return (Class<T>) Class.forName(name);
         } catch (final ClassNotFoundException e) {
-            LOGGER.error(e);
             throw new RuntimeException(e);
         }
     }
@@ -35,7 +29,6 @@ public final class ClassUtils {
         try {
             return (Constructor<T>) cs.getConstructor(classes);
         } catch (NoSuchMethodException | SecurityException e) {
-            LOGGER.error(e);
             throw new RuntimeException(e);
         }
     }
@@ -52,7 +45,6 @@ public final class ClassUtils {
             final Class<?> cs = Class.forName(className);
             return (Constructor<T>) cs.getConstructor(classes);
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            LOGGER.error(e);
             throw new RuntimeException(e);
         }
     }
@@ -67,7 +59,6 @@ public final class ClassUtils {
         try {
             return (T) cs.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            LOGGER.error(e);
             throw new RuntimeException(e);
         }
     }
@@ -83,10 +74,8 @@ public final class ClassUtils {
         try {
             return (T) constructor.newInstance(objects);
         } catch (final InvocationTargetException e) {
-            LOGGER.error(e.getTargetException());
             throw new RuntimeException(e.getTargetException());
         } catch (final InstantiationException | IllegalAccessException | IllegalArgumentException e) {
-            LOGGER.error(e);
             throw new RuntimeException(e);
         }
     }
@@ -95,7 +84,6 @@ public final class ClassUtils {
         try {
             return (T) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            LOGGER.error(e);
             throw new RuntimeException(e);
         }
     }

@@ -100,4 +100,11 @@ public final class Matrix3f implements Reusable {
     public Matrix3f set(final Rotation rotation) {
         return rotation.toRotationMatrix(this);
     }
+
+    @Override
+    public String toString() {
+        return val_0_0 + ", " + val_0_1 + ", " + val_0_2 + "\n" +
+                val_1_0 + ", " + val_1_1 + ", " + val_1_2 + "\n" +
+                val_2_0 + ", " + val_2_1 + ", " + val_2_2 + "\n";
+    }
 }

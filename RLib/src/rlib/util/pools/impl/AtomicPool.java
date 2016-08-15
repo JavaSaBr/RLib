@@ -37,11 +37,7 @@ public class AtomicPool<E> implements Pool<E> {
 
     @Override
     public void put(final E object) {
-
-        if (object == null) {
-            return;
-        }
-
+        if (object == null) return;
         runInWriteLock(pool, object, Array::add);
     }
 
@@ -54,16 +50,10 @@ public class AtomicPool<E> implements Pool<E> {
     public E take() {
 
         final Array<E> pool = getPool();
-
-        if (pool.isEmpty()) {
-            return null;
-        }
+        if (pool.isEmpty()) return null;
 
         final E object = getInWriteLock(pool, Array::pop);
-
-        if (object == null) {
-            return null;
-        }
+        if (object == null) return null;
 
         return object;
     }

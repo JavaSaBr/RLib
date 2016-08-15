@@ -15,7 +15,6 @@ import rlib.network.server.client.Client;
  *
  * @author Ronn
  */
-@SuppressWarnings("rawtypes")
 public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends GameCrypt, RP extends ReadablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
@@ -122,12 +121,8 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public final void readPacket(final RP packet, final ByteBuffer buffer) {
-
-        if (packet == null) {
-            return;
-        }
+        if (packet == null) return;
 
         packet.setOwner(this);
         packet.setBuffer(buffer);
@@ -140,16 +135,10 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
 
     @Override
     public final void sendPacket(final SendablePacket packet) {
-
-        if (isClosed()) {
-            return;
-        }
+        if (isClosed()) return;
 
         final C connection = getConnection();
-
-        if (connection != null) {
-            connection.sendPacket(packet);
-        }
+        if (connection != null) connection.sendPacket(packet);
     }
 
     @Override
@@ -165,10 +154,7 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
     protected void switchTo(final C connection) {
 
         final C current = getConnection();
-
-        if (current == connection) {
-            return;
-        }
+        if (current == connection) return;
 
         if (!current.isClosed()) {
             current.close();

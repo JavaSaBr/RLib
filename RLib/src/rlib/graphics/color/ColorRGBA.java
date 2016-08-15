@@ -47,18 +47,24 @@ public final class ColorRGBA implements Cloneable, Serializable {
     }
 
     public int asIntABGR() {
-        final int abgr = ((int) (a * 255) & 0xFF) << 24 | ((int) (b * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (r * 255) & 0xFF;
-        return abgr;
+        return ((int) (a * 255) & 0xFF) << 24 |
+                ((int) (b * 255) & 0xFF) << 16 |
+                ((int) (g * 255) & 0xFF) << 8 |
+                (int) (r * 255) & 0xFF;
     }
 
     public int asIntARGB() {
-        final int argb = ((int) (a * 255) & 0xFF) << 24 | ((int) (r * 255) & 0xFF) << 16 | ((int) (g * 255) & 0xFF) << 8 | (int) (b * 255) & 0xFF;
-        return argb;
+        return ((int) (a * 255) & 0xFF) << 24 |
+                ((int) (r * 255) & 0xFF) << 16 |
+                ((int) (g * 255) & 0xFF) << 8 |
+                (int) (b * 255) & 0xFF;
     }
 
     public int asIntRGBA() {
-        final int rgba = ((int) (r * 255) & 0xFF) << 24 | ((int) (g * 255) & 0xFF) << 16 | ((int) (b * 255) & 0xFF) << 8 | (int) (a * 255) & 0xFF;
-        return rgba;
+        return ((int) (r * 255) & 0xFF) << 24 |
+                ((int) (g * 255) & 0xFF) << 16 |
+                ((int) (b * 255) & 0xFF) << 8 |
+                (int) (a * 255) & 0xFF;
     }
 
     @Override
@@ -145,5 +151,15 @@ public final class ColorRGBA implements Cloneable, Serializable {
         this.b = b;
         this.a = a;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "ColorRGBA{" +
+                "r=" + r +
+                ", g=" + g +
+                ", b=" + b +
+                ", a=" + a +
+                '}';
     }
 }

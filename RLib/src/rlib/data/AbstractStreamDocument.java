@@ -94,16 +94,10 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
      */
     protected void parse(final Document document) {
         for (Node node = document.getFirstChild(); node != null; node = node.getNextSibling()) {
-
-            if (node.getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
-
+            if (node.getNodeType() != Node.ELEMENT_NODE) continue;
             parse(null, (Element) node);
         }
     }
-
-    ;
 
     /**
      * Процесс парсинга хмл файла.
@@ -115,11 +109,7 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
         handle(parent, element);
 
         for (Node node = element.getFirstChild(); node != null; node = node.getNextSibling()) {
-
-            if (node.getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
-
+            if (node.getNodeType() != Node.ELEMENT_NODE) continue;
             parse(element, (Element) node);
         }
     }

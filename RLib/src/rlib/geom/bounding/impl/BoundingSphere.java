@@ -112,18 +112,11 @@ public class BoundingSphere extends AbstractBounding {
         diff.set(start).subtractLocal(getResultCenter(buffer));
 
         final float a = start.dot(diff) - squareRadius;
-
-        if (a <= 0.0) {
-            return true;
-        }
+        if (a <= 0.0) return true;
 
         final float b = direction.dot(diff);
+        return b < 0.0 && b * b >= a;
 
-        if (b >= 0.0) {
-            return false;
-        }
-
-        return b * b >= a;
     }
 
     @Override

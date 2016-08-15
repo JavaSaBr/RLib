@@ -39,7 +39,7 @@ public class TestFastArray extends Assert {
             added.add(i);
         }
 
-        final List<Integer> list = new ArrayList<Integer>();
+        final List<Integer> list = new ArrayList<>();
 
         long time = System.currentTimeMillis();
 

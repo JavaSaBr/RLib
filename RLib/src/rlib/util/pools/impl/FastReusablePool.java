@@ -28,13 +28,8 @@ public class FastReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     @Override
     public void put(final E object) {
-
-        if (object == null) {
-            return;
-        }
-
+        if (object == null) return;
         object.free();
-
         pool.add(object);
     }
 
@@ -47,10 +42,7 @@ public class FastReusablePool<E extends Reusable> implements ReusablePool<E> {
     public E take() {
 
         final E object = pool.pop();
-
-        if (object == null) {
-            return null;
-        }
+        if (object == null) return null;
 
         object.reuse();
 

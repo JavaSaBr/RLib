@@ -16,11 +16,16 @@ public interface ClassPathScanner {
     /**
      * Добавить в сканнер дополнительные классы.
      *
-     * @param added добавляемые классы.
+     * @param classes добавляемые классы.
      */
-    public void addClasses(Array<Class<?>> added);
+    public void addClasses(Array<Class<?>> classes);
 
-    public void addResources(Array<String> added);
+    /**
+     * Добавить в сканнер дополнительные ресурсы.
+     *
+     * @param resources добавляемые ресурсы.
+     */
+    public void addResources(Array<String> resources);
 
     /**
      * Найти все реализации указанного интерфейса.
@@ -45,6 +50,11 @@ public interface ClassPathScanner {
      */
     public void getAll(Array<Class<?>> container);
 
+    /**
+     * Получить все найденные ресурсы.
+     *
+     * @param container контейнер ресурсов.
+     */
     public void getAllResources(Array<String> container);
 
     /**

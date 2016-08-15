@@ -10,64 +10,64 @@ public final class DictionaryFactory {
     /**
      * @return новый {@link ConcurrentAtomicIntegerDictionary}.
      */
-    public static final <V> ConcurrentIntegerDictionary<V> newConcurrentAtomicIntegerDictionary() {
-        return new ConcurrentAtomicIntegerDictionary<V>();
+    public static <V> ConcurrentIntegerDictionary<V> newConcurrentAtomicIntegerDictionary() {
+        return new ConcurrentAtomicIntegerDictionary<>();
     }
 
     /**
      * @return новый {@link ConcurrentLockLongDictionary}.
      */
-    public static final <V> ConcurrentLongDictionary<V> newConcurrentAtomicLongDictionary() {
-        return new ConcurrentAtomicLongDictionary<V>();
+    public static <V> ConcurrentLongDictionary<V> newConcurrentAtomicLongDictionary() {
+        return new ConcurrentAtomicLongDictionary<>();
     }
 
     /**
      * @return новый {@link ConcurrentAtomicObjectDictionary}.
      */
-    public static final <K, V> ConcurrentObjectDictionary<K, V> newConcurrentAtomicObjectDictionary() {
-        return new ConcurrentAtomicObjectDictionary<K, V>();
+    public static <K, V> ConcurrentObjectDictionary<K, V> newConcurrentAtomicObjectDictionary() {
+        return new ConcurrentAtomicObjectDictionary<>();
     }
 
     /**
      * @return новый {@link ConcurrentLockIntegerDictionary}.
      */
-    public static final <V> ConcurrentIntegerDictionary<V> newConcurrentIntegerDictionary() {
-        return new ConcurrentLockIntegerDictionary<V>();
+    public static <V> ConcurrentIntegerDictionary<V> newConcurrentIntegerDictionary() {
+        return new ConcurrentLockIntegerDictionary<>();
     }
 
     /**
      * @return новый {@link ConcurrentLockLongDictionary}.
      */
-    public static final <V> ConcurrentLongDictionary<V> newConcurrentLongDictionary() {
-        return new ConcurrentLockLongDictionary<V>();
+    public static <V> ConcurrentLongDictionary<V> newConcurrentLongDictionary() {
+        return new ConcurrentLockLongDictionary<>();
     }
 
     /**
      * @return новый {@link ConcurrentLockObjectDictionary}.
      */
-    public static final <K, V> ConcurrentObjectDictionary<K, V> newConcurrentObjectDictionary() {
-        return new ConcurrentLockObjectDictionary<K, V>();
+    public static <K, V> ConcurrentObjectDictionary<K, V> newConcurrentObjectDictionary() {
+        return new ConcurrentLockObjectDictionary<>();
     }
 
     /**
      * @return новый {@link FastIntegerDictionary}.
      */
-    public static final <V> IntegerDictionary<V> newIntegerDictionary() {
-        return new FastIntegerDictionary<V>();
+    public static <V> IntegerDictionary<V> newIntegerDictionary() {
+        return new FastIntegerDictionary<>();
     }
 
     /**
      * @return новый {@link FastLongDictionary}.
      */
-    public static final <V> LongDictionary<V> newLongDictionary() {
-        return new FastLongDictionary<V>();
+    public static <V> LongDictionary<V> newLongDictionary() {
+        return new FastLongDictionary<>();
     }
 
     /**
      * @return новый {@link FastObjectDictionary}.
      */
-    public static final <K, V> ObjectDictionary<K, V> newObjectDictionary() {
-        return new FastObjectDictionary<K, V>();
+    public static <K, V> ObjectDictionary<K, V> newObjectDictionary() {
+        return new FastObjectDictionary<>();
     }
 
     private DictionaryFactory() {

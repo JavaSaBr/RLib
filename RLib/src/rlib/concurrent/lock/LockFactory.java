@@ -24,7 +24,7 @@ public class LockFactory {
      *
      * @return новый блокировщик.
      */
-    public static final AsyncReadSyncWriteLock newARSWLock() {
+    public static AsyncReadSyncWriteLock newARSWLock() {
         return new SimpleReadWriteLock();
     }
 
@@ -33,7 +33,7 @@ public class LockFactory {
      *
      * @return новый блокировщик.
      */
-    public static final Lock newLock() {
+    public static Lock newLock() {
         return new FinalLock();
     }
 
@@ -44,7 +44,7 @@ public class LockFactory {
      * @return новый блокировщик.
      * @see PrimitiveAtomicReadWriteLock
      */
-    public static final AsyncReadSyncWriteLock newPrimitiveAtomicARSWLock() {
+    public static AsyncReadSyncWriteLock newPrimitiveAtomicARSWLock() {
         return new PrimitiveAtomicReadWriteLock();
     }
 
@@ -55,7 +55,7 @@ public class LockFactory {
      * @return новый блокировщик.
      * @see PrimitiveAtomicLock
      */
-    public static final Lock newPrimitiveAtomicLock() {
+    public static Lock newPrimitiveAtomicLock() {
         return new PrimitiveAtomicLock();
     }
 
@@ -64,7 +64,7 @@ public class LockFactory {
      *
      * @return новый блокировщик.
      */
-    public static final ReadWriteLock newRWLock() {
+    public static ReadWriteLock newRWLock() {
         return new FinalReadWriteLock();
     }
 
@@ -74,7 +74,7 @@ public class LockFactory {
      * @return новый блокировщик.
      * @see ReentrantAtomicLock
      */
-    public static final Lock newReentrantAtomicLock() {
+    public static Lock newReentrantAtomicLock() {
         return new ReentrantAtomicLock();
     }
 }

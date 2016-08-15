@@ -39,10 +39,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
     public String[] getManifestClassPath() {
 
         final Path root = Util.getRootFolderFromClass(rootClass);
-
-        if (root == null) {
-            return new String[0];
-        }
+        if (root == null) return new String[0];
 
         final Array<String> result = ArrayFactory.newArray(String.class);
 
@@ -60,7 +57,6 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
                 try {
 
                     final URL url = urls.nextElement();
-
                     final InputStream is = url.openStream();
 
                     if (is != null) {
@@ -69,10 +65,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
                         final Attributes attributes = manifest.getMainAttributes();
 
                         final String value = attributes.getValue(classPathKey);
-
-                        if (value == null) {
-                            continue;
-                        }
+                        if (value == null) continue;
 
                         final String[] classpath = value.split(" ");
 

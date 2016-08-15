@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import rlib.util.array.ArrayFactory;
 
@@ -19,7 +20,7 @@ public class MethodHandler {
         final MethodType methodType = MethodType.methodType(boolean.class, ArrayFactory.toGenericArray(Object.class));
 
         final MethodHandle constructor = MethodHandles.lookup().findConstructor(ArrayList.class, constructorMethodType);
-        final Object result = constructor.invokeWithArguments(Arrays.asList(20));
+        final Object result = constructor.invokeWithArguments(Collections.singletonList(20));
         System.out.println(result);
 
         final MethodHandle add = MethodHandles.lookup().findVirtual(ArrayList.class, "add", methodType);

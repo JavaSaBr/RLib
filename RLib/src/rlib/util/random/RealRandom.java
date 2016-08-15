@@ -15,13 +15,7 @@ import static java.lang.Math.round;
  */
 public final class RealRandom implements Random {
 
-    private final ThreadLocal<byte[]> LOCAL_BUFFER = new ThreadLocal<byte[]>() {
-
-        @Override
-        protected byte[] initialValue() {
-            return new byte[8];
-        }
-    };
+    private final ThreadLocal<byte[]> LOCAL_BUFFER = ThreadLocal.withInitial(() -> new byte[8]);
 
     /**
      * Генератор чисел.
@@ -115,9 +109,7 @@ public final class RealRandom implements Random {
     public void increaseUse() {
         counter++;
 
-        if (counter < 8) {
-            return;
-        }
+        if (counter < 8) return;
 
         counter = 0;
 

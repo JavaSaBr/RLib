@@ -51,6 +51,9 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
      */
     private final L localObjects;
 
+    /**
+     * Функция для выполнения завершения задач.
+     */
     private final Consumer<T> finishFunc = task -> task.onFinish(getLocalObjects());
 
     /**
@@ -90,10 +93,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
         lock();
         try {
 
-            final Array<T> waitTasks = getWaitTasks();
             waitTasks.add(task);
-
-            final AtomicBoolean wait = getWait();
 
             if (wait.get()) {
                 synchronized (wait) {
@@ -128,16 +128,9 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
      * @param startExecuteTime время начало исполнения.
      */
     protected void executeImpl(final Array<T> executeTasks, final Array<T> finishedTasks, final L local, final long startExecuteTime) {
-
-        final long currentTime = startExecuteTime;
-
         for (final T task : executeTasks.array()) {
-
-            if (task == null) {
-                break;
-            }
-
-            if (task.call(local, currentTime) == Boolean.TRUE) {
+            if (task == null) break;
+            if (task.call(local, startExecuteTime) == Boolean.TRUE) {
                 finishedTasks.add(task);
             }
         }
@@ -215,7 +208,6 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     public void removeTask(final T task) {
         lock();
         try {
-            final Array<T> waitTasks = getWaitTasks();
             waitTasks.fastRemove(task);
         } finally {
             unlock();
@@ -230,7 +222,6 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
         final Array<T> finishedTasks = getFinishedTasks();
 
         final L local = getLocalObjects();
-        final AtomicBoolean wait = getWait();
 
         final int interval = getInterval();
 
@@ -260,9 +251,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
                 }
             }
 
-            if (executeTasks.isEmpty()) {
-                continue;
-            }
+            if (executeTasks.isEmpty()) continue;
 
             final long startExecuteTime = System.currentTimeMillis();
 
@@ -292,15 +281,9 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
                 LOGGER.warning(getClass(), e);
             }
 
-            if (interval < 1) {
-                continue;
-            }
-
+            if (interval < 1) continue;
             final int result = interval - (int) (System.currentTimeMillis() - startExecuteTime);
-
-            if (result < 1) {
-                continue;
-            }
+            if (result < 1) continue;
 
             ThreadUtils.sleep(result);
         }

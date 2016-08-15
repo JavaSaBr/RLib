@@ -29,13 +29,8 @@ public class SynchronizedReusablePool<E extends Reusable> implements ReusablePoo
 
     @Override
     public void put(final E object) {
-
-        if (object == null) {
-            return;
-        }
-
+        if (object == null) return;
         object.free();
-
         ArrayUtils.addInSynchronizeTo(pool, object);
     }
 
@@ -53,9 +48,7 @@ public class SynchronizedReusablePool<E extends Reusable> implements ReusablePoo
             object = pool.pop();
         }
 
-        if (object == null) {
-            return null;
-        }
+        if (object == null) return null;
 
         object.reuse();
 

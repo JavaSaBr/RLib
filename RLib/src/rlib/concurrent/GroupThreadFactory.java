@@ -14,25 +14,27 @@ import rlib.util.ClassUtils;
 public class GroupThreadFactory implements ThreadFactory {
 
     /**
-     * номер следующего потока
+     * Номер следующего потока.
      */
     private final AtomicInteger ordinal;
+
     /**
-     * имя группы потоков
+     * Имя группы потоков.
      */
     private final String name;
+
     /**
-     * группа потоков
+     * Группа потоков.
      */
     private final ThreadGroup group;
 
     /**
-     * конструктор потока
+     * Конструктор потока.
      */
     private final Constructor<? extends Thread> constructor;
 
     /**
-     * приоритет потоков
+     * Приоритет потоков.
      */
     private final int priority;
 

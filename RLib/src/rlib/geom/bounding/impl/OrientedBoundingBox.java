@@ -163,7 +163,7 @@ public final class OrientedBoundingBox extends AbstractBounding {
         final Vector fWdU = buffer.getNextVector();
         final Vector fAWdU = buffer.getNextVector();
         final Vector fDdU = buffer.getNextVector();
-        ;
+
         final Vector fADdU = buffer.getNextVector();
         final Vector fAWxDdU = buffer.getNextVector();
 

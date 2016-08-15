@@ -29,11 +29,7 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     public ReuseBytesOutputStream(final int size) {
-
-        if (size < 0) {
-            throw new IllegalArgumentException("Negative initial size: " + size);
-        }
-
+        if (size < 0) throw new IllegalArgumentException("Negative initial size: " + size);
         data = new byte[size];
     }
 

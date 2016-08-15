@@ -5,7 +5,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.util.ThreadUtils;
 
 /**
  * Реализация примитивного блокировщика при помощи {@link AtomicInteger} без поддержки рекурсивной
@@ -14,11 +13,10 @@ import rlib.concurrent.util.ThreadUtils;
  *
  * @author Ronn
  */
-@SuppressWarnings("restriction")
 public final class PrimitiveAtomicLock implements Lock {
 
-    public static final int STATUS_LOCKED = 1;
-    public static final int STATUS_UNLOCKED = 0;
+    private static final int STATUS_LOCKED = 1;
+    private static final int STATUS_UNLOCKED = 0;
 
     /**
      * Статус блокировки.
@@ -27,19 +25,13 @@ public final class PrimitiveAtomicLock implements Lock {
     private final AtomicInteger status;
 
     /**
-     * Простой счетчик для выполнения простых операций в цикле CAS.
+     * Поле для слива результата временных вычислений.
      */
-    private int counter;
+    private int sink;
 
     public PrimitiveAtomicLock() {
         this.status = new AtomicInteger();
-    }
-
-    /**
-     * @return получение и инкрементирования счетчика.
-     */
-    private int getAndIncrementCounter() {
-        return counter++;
+        this.sink = 1;
     }
 
     /**
@@ -58,34 +50,26 @@ public final class PrimitiveAtomicLock implements Lock {
 
             // выполняем пачку элементарных бессмысленных операций для
             // обеспечения интервала между проверками
-            final int currentCounter = getAndIncrementCounter();
-            int newValue = currentCounter ^ currentCounter;
+            final int value = sink;
+            int newValue = value * value;
+            newValue = value >>> 1;
+            newValue = value & newValue;
+            newValue = value ^ newValue;
+            newValue = newValue << value;
+            newValue = newValue | value;
 
-            newValue = currentCounter >>> 1;
-            newValue = currentCounter & newValue;
-            newValue = currentCounter ^ newValue;
-            newValue = newValue << currentCounter;
-            newValue = newValue | currentCounter;
-
-            setCounter(newValue);
+            sink = newValue;
         }
     }
 
     @Override
     public void lockInterruptibly() throws InterruptedException {
-        throw new RuntimeException("not supported.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Condition newCondition() {
-        throw new RuntimeException("not supported.");
-    }
-
-    /**
-     * Обновление счетчика.
-     */
-    public void setCounter(final int counter) {
-        this.counter = counter;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -95,20 +79,7 @@ public final class PrimitiveAtomicLock implements Lock {
 
     @Override
     public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
-
-        final AtomicInteger status = getStatus();
-
-        if (status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED)) {
-            return true;
-        }
-
-        final long resultTime = unit.toMillis(time);
-
-        if (resultTime > 1) {
-            ThreadUtils.sleep(resultTime);
-        }
-
-        return status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED);
+        throw new UnsupportedOperationException();
     }
 
     @Override

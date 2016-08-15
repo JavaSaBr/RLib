@@ -191,7 +191,7 @@ public class ConcurrentAtomicArray<E> extends AbstractArray<E> {
 
     @Override
     public final ArrayIterator<E> iterator() {
-        return new ArrayIteratorImpl<E>(this);
+        return new ArrayIteratorImpl<>(this);
     }
 
     @Override

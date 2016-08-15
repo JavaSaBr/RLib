@@ -8,6 +8,7 @@ import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.lock.LockFactory;
 import rlib.logging.impl.LoggerImpl;
+import rlib.util.ArrayUtils;
 import rlib.util.ClassUtils;
 import rlib.util.StringUtils;
 import rlib.util.array.Array;
@@ -30,12 +31,12 @@ public class LoggerManager {
     /**
      * список слушателей логирования
      */
-    private static final Array<LoggerListener> LISTENERS = ArrayFactory.newArray(LoggerListener.class);
+    private static final Array<LoggerListener> LISTENERS = ArrayFactory.newConcurrentAtomicArray(LoggerListener.class);
 
     /**
      * список записчиков лога
      */
-    private static final Array<Writer> WRITERS = ArrayFactory.newArray(Writer.class);
+    private static final Array<Writer> WRITERS = ArrayFactory.newConcurrentAtomicArray(Writer.class);
 
     /**
      * синхронизатор записи лога
@@ -63,7 +64,7 @@ public class LoggerManager {
 
         if (!StringUtils.isEmpty(className)) {
             try {
-                implementedClass = (Class<? extends Logger>) Class.forName(className);
+                implementedClass = ClassUtils.unsafeCast(Class.forName(className));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -87,7 +88,7 @@ public class LoggerManager {
             throw new IllegalArgumentException("listener is null.");
         }
 
-        LISTENERS.add(listener);
+        ArrayUtils.runInWriteLock(LISTENERS, listener, Array::add);
     }
 
     /**
@@ -101,7 +102,7 @@ public class LoggerManager {
             throw new IllegalArgumentException("writer is null.");
         }
 
-        WRITERS.add(writer);
+        ArrayUtils.runInWriteLock(WRITERS, writer, Array::add);
     }
 
     /**
@@ -124,13 +125,10 @@ public class LoggerManager {
      * @param cs класс, который запрашивает логгер
      * @return индивидуальный логер для указанного класса.
      */
-    public static final Logger getLogger(final Class<?> cs) {
+    public static Logger getLogger(final Class<?> cs) {
 
         Logger logger = LOGGERS.get(cs.getName());
-
-        if (logger != null) {
-            return logger;
-        }
+        if (logger != null) return logger;
 
         logger = ClassUtils.newInstance(implementedClass);
         logger.setName(cs.getSimpleName());
@@ -169,53 +167,28 @@ public class LoggerManager {
      *
      * @param message содержание сообщения
      */
-    public static final void write(final LoggerLevel level, final String name, final String message) {
-
-        if (!level.isEnabled()) {
-            return;
-        }
+    public static void write(final LoggerLevel level, final String name, final String message) {
+        if (!level.isEnabled()) return;
 
         SYNC.lock();
         try {
 
-            final StringBuilder builder = new StringBuilder(level.getTitle());
-            builder.append(' ').append(TIME_FORMATTER.format(LocalTime.now()));
-            builder.append(' ').append(name).append(": ").append(message);
+            final String timeStump = TIME_FORMATTER.format(LocalTime.now());
+            final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + message;
 
-            final String result = builder.toString();
+            ArrayUtils.runInReadLock(getListeners(), result,
+                    (listeners, string) -> listeners.forEach(string, LoggerListener::println));
 
-            final Array<LoggerListener> listeners = getListeners();
-
-            if (!listeners.isEmpty()) {
-
-                for (final LoggerListener listener : listeners.array()) {
-
-                    if (listener == null) {
-                        break;
-                    }
-
-                    listener.println(result);
-                }
-            }
-
-            final Array<Writer> writers = getWriters();
-
-            if (!writers.isEmpty()) {
-                for (final Writer writer : writers.array()) {
-
-                    if (writer == null) {
-                        continue;
-                    }
-
-                    try {
-                        writer.append(result);
-                        writer.append('\n');
-                        writer.flush();
-                    } catch (final IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            ArrayUtils.runInReadLock(getWriters(), result,
+                    (writers, string) -> writers.forEach(string, (writer, toWrite) -> {
+                        try {
+                            writer.append(toWrite);
+                            writer.append('\n');
+                            writer.flush();
+                        } catch (final IOException e) {
+                            e.printStackTrace();
+                        }
+                    }));
 
             System.err.println(result);
 

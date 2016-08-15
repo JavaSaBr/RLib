@@ -59,13 +59,13 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public void addClasses(final Array<Class<?>> added) {
-        this.classes = ArrayUtils.combine(classes, added.toArray(new Class[added.size()]), Class.class);
+    public void addClasses(final Array<Class<?>> classes) {
+        this.classes = ArrayUtils.combine(this.classes, classes.toArray(new Class[classes.size()]), Class.class);
     }
 
     @Override
-    public void addResources(final Array<String> added) {
-        this.resources = ArrayUtils.combine(resources, added.toArray(new String[added.size()]), String.class);
+    public void addResources(final Array<String> resources) {
+        this.resources = ArrayUtils.combine(this.resources, resources.toArray(new String[resources.size()]), String.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -149,12 +149,9 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      * @param container контейнер загруженных классов.
      */
     private void loadClass(final String name, final Array<Class<?>> container) {
+        if (!name.endsWith(CLASS_EXTENSION)) return;
 
-        if (!name.endsWith(CLASS_EXTENSION)) {
-            return;
-        }
-
-        String className = null;
+        String className;
 
         try {
 
@@ -163,13 +160,8 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             final StringBuilder result = new StringBuilder(className.length());
 
             for (int i = 0, length = className.length(); i < length; i++) {
-
                 char ch = className.charAt(i);
-
-                if (ch == '/') {
-                    ch = '.';
-                }
-
+                if (ch == '/') ch = '.';
                 result.append(ch);
             }
 
@@ -265,10 +257,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         try (final JarInputStream jin = new JarInputStream(Files.newInputStream(jarFile))) {
 
             for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
-
-                if (entry.isDirectory()) {
-                    continue;
-                }
+                if (entry.isDirectory()) continue;
 
                 final String name = entry.getName();
 
@@ -308,10 +297,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         try (final JarInputStream jin = new JarInputStream(jarFile)) {
 
             for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
-
-                if (entry.isDirectory()) {
-                    continue;
-                }
+                if (entry.isDirectory()) continue;
 
                 final String name = entry.getName();
 

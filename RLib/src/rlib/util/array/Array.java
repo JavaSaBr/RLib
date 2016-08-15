@@ -175,6 +175,42 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
+     * Удаляет указанных элементов с использованием метода {@link Array#fastRemove(Object)}.
+     *
+     * @param array удаляемыу объекты.
+     * @return количество удаленных объектов.
+     */
+    public default int fastRemove(Array<? extends E> array) {
+
+        int count = 0;
+
+        for (final E object : array.array()) {
+            if (object == null) break;
+            if (fastRemove(object)) count++;
+        }
+
+        return count;
+    }
+
+    /**
+     * Удаляет указанных элементов с использованием метода {@link Array#fastRemove(Object)}.
+     *
+     * @param array удаляемыу объекты.
+     * @return количество удаленных объектов.
+     */
+    public default int fastRemove(E[] array) {
+
+        int count = 0;
+
+        for (final E object : array) {
+            if (object == null) break;
+            if (fastRemove(object)) count++;
+        }
+
+        return count;
+    }
+
+    /**
      * @return первый элемент в {@link Array} либо <code>null</code>, если он пуст.
      */
     public default E first() {

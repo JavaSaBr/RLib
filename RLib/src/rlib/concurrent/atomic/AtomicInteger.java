@@ -7,7 +7,7 @@ import rlib.util.pools.Reusable;
  *
  * @author Ronn
  */
-public class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger implements Reusable {
+public final class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger implements Reusable {
 
     private static final long serialVersionUID = -624766818867950719L;
 
@@ -25,15 +25,10 @@ public class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger imp
      * @return новое значение.
      */
     public final int subAndGet(final int delta) {
-
         while (true) {
-
             final int current = get();
             final int next = current - delta;
-
-            if (compareAndSet(current, next)) {
-                return next;
-            }
+            if (compareAndSet(current, next)) return next;
         }
     }
 }

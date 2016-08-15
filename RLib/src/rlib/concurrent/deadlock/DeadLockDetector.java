@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
+import rlib.util.ArrayUtils;
 import rlib.util.SafeTask;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
@@ -66,12 +67,7 @@ public class DeadLockDetector implements SafeTask {
      * @param listener новый слушатель.
      */
     public void addListener(final DeadLockListener listener) {
-        listeners.writeLock();
-        try {
-            listeners.add(listener);
-        } finally {
-            listeners.writeUnlock();
-        }
+        ArrayUtils.runInWriteLock(listeners, listener, Array::add);
     }
 
     /**
@@ -85,38 +81,18 @@ public class DeadLockDetector implements SafeTask {
     public void runImpl() {
 
         final long[] threadIds = mxThread.findDeadlockedThreads();
-
-        if (threadIds.length < 1) {
-            return;
-        }
+        if (threadIds.length < 1) return;
 
         final Array<DeadLockListener> listeners = getListeners();
 
-        for (int i = 0, length = threadIds.length; i < length; i++) {
-
-            final long id = threadIds[i];
+        for (final long id : threadIds) {
 
             final ThreadInfo info = mxThread.getThreadInfo(id);
+            if (listeners.isEmpty()) continue;
 
-            if (listeners.isEmpty()) {
-                continue;
-            }
-
-            listeners.readLock();
-            try {
-
-                for (final DeadLockListener listener : listeners.array()) {
-
-                    if (listener == null) {
-                        break;
-                    }
-
-                    listener.onDetected(info);
-                }
-
-            } finally {
-                listeners.readUnlock();
-            }
+            ArrayUtils.runInReadLock(listeners, info,
+                    (deadLockListeners, threadInfo) ->
+                            deadLockListeners.forEach(threadInfo, DeadLockListener::onDetected));
 
             LOGGER.warning("DeadLock detected! : " + info);
         }
@@ -126,11 +102,7 @@ public class DeadLockDetector implements SafeTask {
      * Запуск детектора.
      */
     public synchronized void start() {
-
-        if (schedule != null) {
-            return;
-        }
-
+        if (schedule != null) return;
         schedule = executor.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
     }
 
@@ -138,11 +110,7 @@ public class DeadLockDetector implements SafeTask {
      * Остановка детектора.
      */
     public synchronized void stop() {
-
-        if (schedule == null) {
-            return;
-        }
-
+        if (schedule == null) return;
         schedule.cancel(false);
         schedule = null;
     }

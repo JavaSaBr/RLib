@@ -86,7 +86,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 
     @Override
     public Iterator<E> descendingIterator() {
-        return new IteratorImpl<E>(this, IteratorImpl.PREV);
+        return new IteratorImpl<>(this, IteratorImpl.PREV);
     }
 
     @Override
@@ -163,7 +163,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         Node<E> node = getPool().take();
 
         if (node == null) {
-            node = new Node<E>();
+            node = new Node<>();
         }
 
         node.setItem(item);
@@ -210,7 +210,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return new IteratorImpl<E>(this, IteratorImpl.NEXT);
+        return new IteratorImpl<>(this, IteratorImpl.NEXT);
     }
 
     protected final void linkFirst(final E eitem) {

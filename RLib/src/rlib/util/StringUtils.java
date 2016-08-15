@@ -22,7 +22,7 @@ public class StringUtils {
     /**
      * Экземпляр пустой строки.
      */
-    public static final String EMPTY = "".intern();
+    public static final String EMPTY = "";
 
     /**
      * Экземпляр пустого массива строк.
@@ -94,24 +94,15 @@ public class StringUtils {
      * Сравнение 2х строк.
      */
     public static boolean equals(final String first, final String second) {
+        return !(first == null || second == null) && first.equals(second);
 
-        if (first == null || second == null) {
-            return false;
-        }
-
-        return first.equals(second);
     }
 
     /**
      * Сравнение 2х строк без учета регистра.
      */
     public static boolean equalsIgnoreCase(final String first, final String second) {
-
-        if (first == null || second == null) {
-            return false;
-        }
-
-        return first.equalsIgnoreCase(second);
+        return !(first == null || second == null) && first.equalsIgnoreCase(second);
     }
 
     /**

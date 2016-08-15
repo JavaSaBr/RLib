@@ -7,6 +7,8 @@ import javax.tools.JavaFileObject;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 /**
  * @author Ronn
  */
@@ -31,9 +33,8 @@ public class CompileListener implements DiagnosticListener<JavaFileObject> {
     /**
      * @return список рапортов о компиляции классов.
      */
-    @SuppressWarnings("unchecked")
     public Diagnostic<JavaFileObject>[] getDiagnostics() {
-        return diagnostics.toArray(new Diagnostic[diagnostics.size()]);
+        return unsafeCast(diagnostics.toArray(new Diagnostic[diagnostics.size()]));
     }
 
     @Override

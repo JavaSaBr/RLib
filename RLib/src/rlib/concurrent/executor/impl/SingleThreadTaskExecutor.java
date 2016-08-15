@@ -80,10 +80,7 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
         lock();
         try {
 
-            final Array<CallableTask<?, L>> waitTasks = getWaitTasks();
             waitTasks.add(task);
-
-            final AtomicBoolean wait = getWait();
 
             if (wait.get()) {
                 synchronized (wait) {
@@ -138,7 +135,6 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
         final Array<CallableTask<?, L>> executeTasks = getExecuteTasks();
 
         final L local = getLocalObjects();
-        final AtomicBoolean wait = getWait();
 
         while (true) {
 
@@ -166,20 +162,14 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
                 }
             }
 
-            if (executeTasks.isEmpty()) {
-                continue;
-            }
+            if (executeTasks.isEmpty()) continue;
 
             try {
 
                 final long currentTime = System.currentTimeMillis();
 
                 for (final CallableTask<?, L> task : executeTasks.array()) {
-
-                    if (task == null) {
-                        break;
-                    }
-
+                    if (task == null) break;
                     task.call(local, currentTime);
                 }
 

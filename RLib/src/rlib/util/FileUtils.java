@@ -354,17 +354,11 @@ public class FileUtils {
      * @param filename имя файла.
      * @return имя файла без расширения.
      */
-    public static final String getNameWithoutExtension(final String filename) {
-
-        if (StringUtils.isEmpty(filename)) {
-            return filename;
-        }
+    public static String getNameWithoutExtension(final String filename) {
+        if (StringUtils.isEmpty(filename)) return filename;
 
         final int index = filename.lastIndexOf('.');
-
-        if (index == -1) {
-            return filename;
-        }
+        if (index == -1) return filename;
 
         return filename.substring(0, index);
     }

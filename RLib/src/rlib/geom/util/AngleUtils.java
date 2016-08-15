@@ -55,11 +55,7 @@ public final class AngleUtils {
      * @return heading направление разворота.
      */
     public static int degreeToHeading(float degree) {
-
-        if (degree < 0) {
-            degree += 360f;
-        }
-
+        if (degree < 0) degree += 360f;
         return (int) (degree * 182.044444444f);
     }
 
@@ -83,13 +79,8 @@ public final class AngleUtils {
      * @return кол-во градусов.
      */
     public static float getAngleFrom(final float startX, final float startY, final float endX, final float endY) {
-
         float angle = (float) Math.toDegrees(Math.atan2(startY - endY, startX - endX));
-
-        if (angle <= 0F) {
-            angle += 360F;
-        }
-
+        if (angle <= 0F) angle += 360F;
         return angle;
     }
 
@@ -100,13 +91,8 @@ public final class AngleUtils {
      * @return кол-во градусов.
      */
     public static float headingToDegree(final int heading) {
-
         float angle = heading / 182.044444444f;
-
-        if (angle == 0) {
-            angle = 360f;
-        }
-
+        if (angle == 0) angle = 360f;
         return angle;
     }
 
@@ -117,13 +103,8 @@ public final class AngleUtils {
      * @return кол-во радианов.
      */
     public static float headingToRadians(final int heading) {
-
         float angle = heading / 182.044444444f;
-
-        if (angle == 0) {
-            angle = 360f;
-        }
-
+        if (angle == 0) angle = 360f;
         return angle * 3.141592653f / 180f;
     }
 
@@ -146,23 +127,12 @@ public final class AngleUtils {
         int min = degree - width;
         int max = degree + width;
 
-        if (min < 0) {
-            min += 360;
-        }
-
-        if (max < 0) {
-            max += 360;
-        }
+        if (min < 0) min += 360;
+        if (max < 0) max += 360;
 
         final boolean flag = angle - degree > 180;
-
-        if (flag) {
-            angle -= 360;
-        }
-
-        if (angle > max) {
-            return false;
-        }
+        if (flag) angle -= 360;
+        if (angle > max) return false;
 
         angle += 360;
 

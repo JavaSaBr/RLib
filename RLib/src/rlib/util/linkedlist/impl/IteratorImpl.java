@@ -85,25 +85,23 @@ public class IteratorImpl<E> implements Iterator<E> {
         if (mode == NEXT) {
 
             final Node<E> next = getNext();
-            final Node<E> lastReturned = next;
 
             setNext(next.getNext());
-            setLastReturned(lastReturned);
+            setLastReturned(next);
 
             nextIndex++;
 
-            return lastReturned.getItem();
+            return next.getItem();
         } else if (mode == PREV) {
 
             final Node<E> next = getNext();
-            final Node<E> lastReturned = next;
 
             setNext(next.getPrev());
-            setLastReturned(lastReturned);
+            setLastReturned(next);
 
             nextIndex--;
 
-            return lastReturned.getItem();
+            return next.getItem();
         }
 
         return null;

@@ -19,5 +19,4 @@ public class ThreadUtils {
             LOGGER.warning(e);
         }
     }
-
 }

@@ -46,4 +46,12 @@ public class Ray implements Reusable {
     public final void setStart(final Vector start) {
         this.start = start;
     }
+
+    @Override
+    public String toString() {
+        return "Ray{" +
+                "start=" + start +
+                ", direction=" + direction +
+                '}';
+    }
 }

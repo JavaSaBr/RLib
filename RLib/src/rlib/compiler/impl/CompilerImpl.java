@@ -71,10 +71,7 @@ public class CompilerImpl implements Compiler {
 
     @Override
     public Class<?>[] compile(final File... files) {
-
-        if (files.length < 1) {
-            return EMPTY_CLASSES;
-        }
+        if (files.length < 1) return EMPTY_CLASSES;
 
         final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
 
@@ -87,10 +84,7 @@ public class CompilerImpl implements Compiler {
 
     @Override
     public Class<?>[] compile(final Path... paths) {
-
-        if (paths.length < 1) {
-            return EMPTY_CLASSES;
-        }
+        if (paths.length < 1) return EMPTY_CLASSES;
 
         final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
 
@@ -146,6 +140,7 @@ public class CompilerImpl implements Compiler {
             }
 
             return result.toArray(new Class[result.size()]);
+
         } finally {
             listener.clear();
             fileManager.clear();
@@ -161,10 +156,7 @@ public class CompilerImpl implements Compiler {
     private void compileDirectory(final Array<Class<?>> container, final File directory) {
 
         final File[] files = directory.listFiles();
-
-        if (files == null || files.length < 1) {
-            return;
-        }
+        if (files == null || files.length < 1) return;
 
         for (final File file : files) {
             if (file.isDirectory()) {

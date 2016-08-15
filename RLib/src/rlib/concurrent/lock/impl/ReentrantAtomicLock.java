@@ -15,7 +15,6 @@ import rlib.concurrent.util.ThreadUtils;
  *
  * @author Ronn
  */
-@SuppressWarnings("restriction")
 public final class ReentrantAtomicLock implements Lock {
 
     /**
@@ -31,20 +30,14 @@ public final class ReentrantAtomicLock implements Lock {
     private final AtomicInteger level;
 
     /**
-     * Простой счетчик для выполнения простых операций в цикле CAS.
+     * Поле для слива результата временных вычислений.
      */
-    private int counter;
+    private int sink;
 
     public ReentrantAtomicLock() {
         this.status = new AtomicReference<>();
         this.level = new AtomicInteger();
-    }
-
-    /**
-     * @return получение и инкрементирования счетчика.
-     */
-    private int getAndIncrementCounter() {
-        return counter++;
+        this.sink = 1;
     }
 
     /**
@@ -62,24 +55,20 @@ public final class ReentrantAtomicLock implements Lock {
 
         try {
 
-            if (status.get() == thread) {
-                return;
-            }
-
+            if (status.get() == thread) return;
             while (!status.compareAndSet(null, thread)) {
 
                 // выполняем пачку элементарных бессмысленных операций для
                 // обеспечения интервала между проверками
-                final int currentCounter = getAndIncrementCounter();
-                int newValue = currentCounter ^ currentCounter;
+                final int value = sink;
+                int newValue = value * value;
+                newValue = value >>> 1;
+                newValue = value & newValue;
+                newValue = value ^ newValue;
+                newValue = newValue << value;
+                newValue = newValue | value;
 
-                newValue = currentCounter >>> 1;
-                newValue = currentCounter & newValue;
-                newValue = currentCounter ^ newValue;
-                newValue = newValue << currentCounter;
-                newValue = newValue | currentCounter;
-
-                setCounter(newValue);
+                sink = newValue;
             }
 
         } finally {
@@ -95,13 +84,6 @@ public final class ReentrantAtomicLock implements Lock {
     @Override
     public Condition newCondition() {
         throw new RuntimeException("not supperted.");
-    }
-
-    /**
-     * Обновление счетчика.
-     */
-    public void setCounter(final int counter) {
-        this.counter = counter;
     }
 
     @Override
@@ -158,10 +140,7 @@ public final class ReentrantAtomicLock implements Lock {
 
         final Thread thread = Thread.currentThread();
         final AtomicReference<Thread> status = getStatus();
-
-        if (status.get() != thread) {
-            return;
-        }
+        if (status.get() != thread) return;
 
         if (level.decrementAndGet() == 0) {
             status.set(null);

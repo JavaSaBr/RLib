@@ -78,10 +78,7 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
         lock();
         try {
 
-            final LinkedList<CallableTask<?, L>> waitTasks = getWaitTasks();
             waitTasks.add(task);
-
-            final AtomicBoolean wait = getWait();
 
             if (wait.get()) {
                 synchronized (wait) {
@@ -140,7 +137,6 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
         final LinkedList<CallableTask<?, L>> waitTasks = getWaitTasks();
         final Array<CallableTask<?, L>> executeTasks = ArrayFactory.newArray(CallableTask.class);
 
-        final AtomicBoolean wait = getWait();
         final L local = getLocalObjects(thread);
         final int packetSize = getPacketSize();
 
@@ -154,7 +150,6 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
                 if (waitTasks.isEmpty()) {
                     wait.getAndSet(true);
                 } else {
-
                     for (int i = 0; i < packetSize && !waitTasks.isEmpty(); i++) {
                         executeTasks.add(waitTasks.poll());
                     }
@@ -172,20 +167,14 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
                 }
             }
 
-            if (executeTasks.isEmpty()) {
-                continue;
-            }
+            if (executeTasks.isEmpty()) continue;
 
             try {
 
                 final long currentTime = System.currentTimeMillis();
 
                 for (final CallableTask<?, L> task : executeTasks.array()) {
-
-                    if (task == null) {
-                        break;
-                    }
-
+                    if (task == null) break;
                     task.call(local, currentTime);
                 }
 

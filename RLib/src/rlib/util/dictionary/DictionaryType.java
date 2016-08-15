@@ -9,5 +9,5 @@ public enum DictionaryType {
     DEPRECATED,
     OBJECT,
     INTEGER,
-    LONG;
+    LONG
 }

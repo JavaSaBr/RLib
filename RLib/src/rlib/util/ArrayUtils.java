@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import rlib.function.FunctionInt;
 import rlib.function.ObjectIntFunction;
 import rlib.function.ObjectIntPredicate;
+import rlib.function.ObjectLongFunction;
 import rlib.function.ObjectLongPredicate;
 import rlib.function.TripleConsumer;
 import rlib.function.TripleFunction;
@@ -604,6 +605,24 @@ public final class ArrayUtils {
      * @return результат действия функции.
      */
     public static <T, V, R> R getInReadLock(final Array<T> array, final int argument, final ObjectIntFunction<Array<T>, R> function) {
+        if (array.isEmpty()) return null;
+        array.readLock();
+        try {
+            return function.apply(array, argument);
+        } finally {
+            array.readUnlock();
+        }
+    }
+
+    /**
+     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     *
+     * @param array    массив с которым надо работать.
+     * @param argument дополнительный аргумент.
+     * @param function функция действия.
+     * @return результат действия функции.
+     */
+    public static <T, V, R> R getInReadLockL(final Array<T> array, final long argument, final ObjectLongFunction<Array<T>, R> function) {
         if (array.isEmpty()) return null;
         array.readLock();
         try {

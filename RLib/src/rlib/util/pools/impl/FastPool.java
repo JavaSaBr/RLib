@@ -27,11 +27,7 @@ public class FastPool<E> implements Pool<E> {
 
     @Override
     public void put(final E object) {
-
-        if (object == null) {
-            return;
-        }
-
+        if (object == null) return;
         pool.add(object);
     }
 
@@ -42,13 +38,8 @@ public class FastPool<E> implements Pool<E> {
 
     @Override
     public E take() {
-
         final E object = pool.pop();
-
-        if (object == null) {
-            return null;
-        }
-
+        if (object == null) return null;
         return object;
     }
 

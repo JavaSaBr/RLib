@@ -54,9 +54,7 @@ public interface IntegerArray extends Iterable<Integer> {
         final int[] array = array();
 
         for (int i = 0, length = size(); i < length; i++) {
-            if (array[i] == element) {
-                return true;
-            }
+            if (array[i] == element) return true;
         }
 
         return false;

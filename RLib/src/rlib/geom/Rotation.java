@@ -667,6 +667,11 @@ public class Rotation {
 
     @Override
     public String toString() {
-        return "Rotation x = " + x + ", y = " + y + ", z = " + z + ", w = " + w;
+        return "Rotation{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", w=" + w +
+                '}';
     }
 }

@@ -1,6 +1,7 @@
 package rlib.compiler.impl;
 
 import rlib.compiler.ByteSource;
+import rlib.util.Util;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -29,40 +30,16 @@ public class CompileClassLoader extends ClassLoader {
 
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
-
-        final Array<ByteSource> byteCode = getByteCode();
-
-        if (byteCode.isEmpty()) {
-            return null;
-        }
-
         synchronized (byteCode) {
+            if (byteCode.isEmpty()) return null;
 
             for (final ByteSource byteSource : byteCode) {
-
                 final byte[] bytes = byteSource.getByteSource();
-
-                Class<?> result = null;
-
-                try {
-                    result = defineClass(name, bytes, 0, bytes.length);
-                } catch (ClassFormatError | NoClassDefFoundError e) {
-                    continue;
-                }
-
-                if (result != null) {
-                    return result;
-                }
+                final Class<?> result = Util.safeExecute(() -> defineClass(name, bytes, 0, bytes.length));
+                if (result != null) return result;
             }
         }
 
         return null;
-    }
-
-    /**
-     * @return байт код загруженных классов.
-     */
-    private Array<ByteSource> getByteCode() {
-        return byteCode;
     }
 }

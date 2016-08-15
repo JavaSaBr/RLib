@@ -9,6 +9,7 @@ import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
 import static java.lang.Float.parseFloat;
+import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * Реализация таблицы разнородных параметров.
@@ -56,9 +57,8 @@ public class VarTable {
     /**
      * Получение значение параметра по ключу.
      */
-    @SuppressWarnings("unchecked")
     public <T> T get(final String key) {
-        return (T) values.get(key);
+        return unsafeCast(values.get(key));
     }
 
     /**
@@ -109,20 +109,13 @@ public class VarTable {
      * @param def значение по умолчанию.
      * @return значение параметра.
      */
-    @SuppressWarnings("unchecked")
     public <T> T get(final String key, final T def) {
 
         final Object object = values.get(key);
+        if (object == null) return def;
 
-        if (object == null) {
-            return def;
-        }
-
-        final Class<? extends Object> type = def.getClass();
-
-        if (type.isInstance(object)) {
-            return (T) object;
-        }
+        final Class<?> type = def.getClass();
+        if (type.isInstance(object)) return unsafeCast(object);
 
         return def;
     }
@@ -134,7 +127,6 @@ public class VarTable {
      * @param type тип значений параметра.
      * @return массив значений параметра.
      */
-    @SuppressWarnings("unchecked")
     public <T> T[] getArray(final String key, final Class<T[]> type) {
 
         final Object object = values.get(key);
@@ -142,7 +134,7 @@ public class VarTable {
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (type.isInstance(object)) {
-            return (T[]) object;
+            return unsafeCast(object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -156,7 +148,6 @@ public class VarTable {
      * @param def  список значений по умолчанию.
      * @return массив значений параметра.
      */
-    @SuppressWarnings("unchecked")
     public <T> T[] getArray(final String key, final Class<T[]> type, final T... def) {
 
         final Object object = values.get(key);
@@ -164,7 +155,7 @@ public class VarTable {
         if (object == null) {
             return def;
         } else if (type.isInstance(object)) {
-            return (T[]) object;
+            return unsafeCast(object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -295,7 +286,7 @@ public class VarTable {
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Byte) {
-            return ((Byte) object).byteValue();
+            return (Byte) object;
         } else if (object instanceof String) {
             return Byte.parseByte(object.toString());
         }
@@ -317,7 +308,7 @@ public class VarTable {
         if (object == null) {
             return def;
         } else if (object instanceof Byte) {
-            return ((Byte) object).byteValue();
+            return (Byte) object;
         } else if (object instanceof String) {
             return Byte.parseByte(object.toString());
         }
@@ -429,7 +420,7 @@ public class VarTable {
         if (object == null) {
             return def;
         } else if (object instanceof Double) {
-            return ((Double) object).doubleValue();
+            return (Double) object;
         } else if (object instanceof String) {
             return Double.parseDouble(object.toString());
         }
@@ -560,7 +551,6 @@ public class VarTable {
      *              значений.
      * @return массив значений параметра.
      */
-    @SuppressWarnings("unchecked")
     public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex) {
 
         final Object object = values.get(key);
@@ -568,14 +558,14 @@ public class VarTable {
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Enum[]) {
-            return (T[]) object;
+            return unsafeCast(object);
         }
 
         if (object instanceof String) {
 
             final String[] strs = object.toString().split(regex);
 
-            final T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
+            final T[] result = unsafeCast(java.lang.reflect.Array.newInstance(type, strs.length));
 
             for (int i = 0, length = strs.length; i < length; i++) {
                 result[i] = Enum.valueOf(type, strs[i]);
@@ -597,7 +587,6 @@ public class VarTable {
      * @param def   набор значений параметра по умолчанию.
      * @return массив значений параметра.
      */
-    @SuppressWarnings("unchecked")
     public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex, final T... def) {
 
         final Object object = values.get(key);
@@ -605,14 +594,14 @@ public class VarTable {
         if (object == null) {
             return def;
         } else if (object instanceof Enum[]) {
-            return (T[]) object;
+            return unsafeCast(object);
         }
 
         if (object instanceof String) {
 
             final String[] strs = object.toString().split(regex);
 
-            final T[] result = (T[]) java.lang.reflect.Array.newInstance(type, strs.length);
+            final T[] result = unsafeCast(java.lang.reflect.Array.newInstance(type, strs.length));
 
             for (int i = 0, length = strs.length; i < length; i++) {
                 result[i] = Enum.valueOf(type, strs[i]);
@@ -637,7 +626,7 @@ public class VarTable {
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Float) {
-            return ((Float) object).floatValue();
+            return (Float) object;
         } else if (object instanceof String) {
             return Float.parseFloat(object.toString());
         }
@@ -659,7 +648,7 @@ public class VarTable {
         if (object == null) {
             return def;
         } else if (object instanceof Float) {
-            return ((Float) object).floatValue();
+            return (Float) object;
         } else if (object instanceof String) {
             return Float.parseFloat(object.toString());
         }
@@ -1036,7 +1025,7 @@ public class VarTable {
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Short) {
-            return ((Short) object).shortValue();
+            return (Short) object;
         } else if (object instanceof String) {
             return Short.parseShort(object.toString());
         }
@@ -1058,7 +1047,7 @@ public class VarTable {
         if (object == null) {
             return def;
         } else if (object instanceof Short) {
-            return ((Short) object).shortValue();
+            return (Short) object;
         } else if (object instanceof String) {
             return Short.parseShort(object.toString());
         }

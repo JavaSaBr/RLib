@@ -50,8 +50,7 @@ public class JavaFileSource extends SimpleJavaFileObject {
     @Override
     public CharSequence getCharContent(final boolean ignoreEncodingErrors) throws IOException {
         final Path path = Paths.get(uri);
-        final String content = new String(Files.readAllBytes(path), "UTF-8");
-        return content;
+        return new String(Files.readAllBytes(path), "UTF-8");
     }
 
     @Override

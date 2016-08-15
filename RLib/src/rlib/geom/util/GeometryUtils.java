@@ -19,7 +19,7 @@ public final class GeometryUtils {
      * @param targetZ координата второй точки.
      * @return расстояние между точками.
      */
-    public static final float getDistance(final float startX, final float startY, final float startZ, final float targetX, final float targetY, final float targetZ) {
+    public static float getDistance(final float startX, final float startY, final float startZ, final float targetX, final float targetY, final float targetZ) {
         return (float) Math.sqrt(getSquareDistance(startX, startY, startZ, targetX, targetY, targetZ));
     }
 
@@ -52,7 +52,7 @@ public final class GeometryUtils {
      * @param targetZ координата точки.
      * @return расстояние от точки до отрезка.
      */
-    public final static float getDistanceToLine(final float startX, final float startY, final float startZ, final float endX, final float endY, final float endZ, final float targetX, final float targetY, final float targetZ) {
+    public static float getDistanceToLine(final float startX, final float startY, final float startZ, final float endX, final float endY, final float endZ, final float targetX, final float targetY, final float targetZ) {
         return (float) Math.sqrt(getSquareDistanceToLine(startX, startY, startZ, endX, endY, endZ, targetX, targetY, targetZ));
     }
 
@@ -67,7 +67,7 @@ public final class GeometryUtils {
      * @param targetZ координата второй точки.
      * @return квадрат расстояния между точками.
      */
-    public static final float getSquareDistance(final float startX, final float startY, final float startZ, final float targetX, final float targetY, final float targetZ) {
+    public static float getSquareDistance(final float startX, final float startY, final float startZ, final float targetX, final float targetY, final float targetZ) {
 
         final float dx = targetX - startX;
         final float dy = targetY - startY;
@@ -138,7 +138,7 @@ public final class GeometryUtils {
      * @param targetZ координата точки.
      * @return квадрат расстояния от точки до отрезка.
      */
-    public final static float getSquareDistanceToLine(final float startX, final float startY, final float startZ, final float endX, final float endY, final float endZ, final float targetX, final float targetY, final float targetZ) {
+    public static float getSquareDistanceToLine(final float startX, final float startY, final float startZ, final float endX, final float endY, final float endZ, final float targetX, final float targetY, final float targetZ) {
 
         final float lineX = endX - startX;
         final float lineY = endY - startY;
@@ -180,7 +180,7 @@ public final class GeometryUtils {
      * @param z2 координата второй точки.
      * @return произведение двух точек.
      */
-    public static final float scalar(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2) {
+    public static float scalar(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2) {
         return x1 * x2 + y1 * y2 + z1 * z2;
     }
 
@@ -195,7 +195,7 @@ public final class GeometryUtils {
      * @param z2 координата второй точки.
      * @return квадрат длинны между точками.
      */
-    public static final float squareLength(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2) {
+    public static float squareLength(final float x1, final float y1, final float z1, final float x2, final float y2, final float z2) {
 
         final float dx = x1 - x2;
         final float dy = y1 - y2;

@@ -54,9 +54,7 @@ public interface LongArray extends Iterable<Long> {
         final long[] array = array();
 
         for (int i = 0, length = size(); i < length; i++) {
-            if (array[i] == element) {
-                return true;
-            }
+            if (array[i] == element) return true;
         }
 
         return false;

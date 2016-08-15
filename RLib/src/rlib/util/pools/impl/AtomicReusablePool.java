@@ -38,13 +38,8 @@ public class AtomicReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     @Override
     public void put(final E object) {
-
-        if (object == null) {
-            return;
-        }
-
+        if (object == null) return;
         object.free();
-
         runInWriteLock(pool, object, Array::add);
     }
 
@@ -57,16 +52,10 @@ public class AtomicReusablePool<E extends Reusable> implements ReusablePool<E> {
     public E take() {
 
         final Array<E> pool = getPool();
-
-        if (pool.isEmpty()) {
-            return null;
-        }
+        if (pool.isEmpty()) return null;
 
         final E object = getInWriteLock(pool, Array::pop);
-
-        if (object == null) {
-            return null;
-        }
+        if (object == null) return null;
 
         object.reuse();
 

@@ -10,11 +10,11 @@ import rlib.classpath.impl.ManifestClassPathScannerImpl;
  */
 public final class ClassPathScannerFactory {
 
-    public static final ClassPathScanner newDefaultScanner() {
+    public static ClassPathScanner newDefaultScanner() {
         return new ClassPathScannerImpl();
     }
 
-    public static final ClassPathScanner newManifestScanner(final Class<?> rootClass, final String classPathKey) {
+    public static ClassPathScanner newManifestScanner(final Class<?> rootClass, final String classPathKey) {
         return new ManifestClassPathScannerImpl(rootClass, classPathKey);
     }
 

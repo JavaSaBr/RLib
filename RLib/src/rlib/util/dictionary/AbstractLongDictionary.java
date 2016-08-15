@@ -101,7 +101,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         final ReusablePool<LongEntry<V>> entryPool = getEntryPool();
         final LongEntry<V>[] content = content();
 
-        LongEntry<V> next = null;
+        LongEntry<V> next;
 
         for (LongEntry<V> entry : content) {
             while (entry != null) {

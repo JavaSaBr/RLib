@@ -31,8 +31,7 @@ public class TestThreadPoolTaskExecutor extends Assert {
 
         final AtomicInteger counter = new AtomicInteger();
 
-        for (int i = 0, length = TASK_LIMIT; i < length; i++) {
-
+        for (int i = 0; i < TASK_LIMIT; i++) {
             executor.execute((local, currentTime) -> {
                 counter.incrementAndGet();
                 ThreadUtils.sleep(1);

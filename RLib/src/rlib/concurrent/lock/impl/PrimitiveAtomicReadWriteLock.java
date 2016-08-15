@@ -16,17 +16,13 @@ import rlib.concurrent.lock.AsyncReadSyncWriteLock;
  *
  * @author Ronn
  */
-@SuppressWarnings("restriction")
 public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLock, Lock {
 
-    public static final int STATUS_WRITE_COUNT_LOCKED = -1;
-    public static final int STATUS_NOT_WRITE = 0;
-    public static final int STATUS_WRITE_LOCKED = 1;
-    public static final int STATUS_WRITE_UNLOCKED = 0;
+    private static final int STATUS_WRITE_LOCKED = 1;
+    private static final int STATUS_WRITE_UNLOCKED = 0;
 
-    public static final int STATUS_READ_UNLOCKED = 0;
-    public static final int STATUS_READ_LOCKED = -200000;
-    public static final int STATUS_READ_POST_INCREMENT_LOCKED = STATUS_READ_LOCKED + 1;
+    private static final int STATUS_READ_UNLOCKED = 0;
+    private static final int STATUS_READ_LOCKED = -200000;
 
     /**
      * Статус блокировки на запись.
@@ -47,14 +43,15 @@ public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLoc
     private final AtomicInteger readCount;
 
     /**
-     * Простой счетчик для выполнения простых операций в цикле CAS.
+     * Поле для слива результата временных вычислений.
      */
-    private int counter;
+    private int sink;
 
     public PrimitiveAtomicReadWriteLock() {
         this.writeCount = new AtomicInteger(0);
         this.writeStatus = new AtomicInteger(0);
         this.readCount = new AtomicInteger(0);
+        this.sink = 1;
     }
 
     @Override
@@ -70,50 +67,41 @@ public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLoc
     }
 
     /**
-     * @return получение и инкрементирования счетчика.
-     */
-    private int getAndIncrementCounter() {
-        return counter++;
-    }
-
-    /**
      * @return кол-во читающих потоков.
      */
-    protected AtomicInteger getReadCount() {
+    private AtomicInteger getReadCount() {
         return readCount;
     }
 
     /**
      * @return кол-во ожидающих потоков на запись.
      */
-    protected AtomicInteger getWriteCount() {
+    private AtomicInteger getWriteCount() {
         return writeCount;
     }
 
     /**
      * @return статус блокировки на запись.
      */
-    protected AtomicInteger getWriteStatus() {
+    private AtomicInteger getWriteStatus() {
         return writeStatus;
     }
 
     /**
      * Выполнение локальных вычислений для занятия потока.
      */
-    protected void localCalculate() {
+    private void localCalculate() {
 
-        final int currentCounter = getAndIncrementCounter();
-        int newValue = currentCounter ^ currentCounter;
+        final int value = sink;
+        int newValue = value * value;
+        newValue = value >>> 1;
+        newValue = value & newValue;
+        newValue = value >>> 1;
+        newValue = value & newValue;
+        newValue = value >>> 1;
+        newValue = value & newValue;
 
-        newValue = currentCounter >>> 1;
-        newValue = currentCounter & newValue;
-        newValue = currentCounter >>> 1;
-        newValue = currentCounter & newValue;
-        newValue = currentCounter >>> 1;
-        newValue = currentCounter & newValue;
-
-        setCounter(newValue);
-        setCounter(currentCounter);
+        sink = newValue;
     }
 
     @Override
@@ -123,19 +111,12 @@ public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLoc
 
     @Override
     public void lockInterruptibly() throws InterruptedException {
-        throw new RuntimeException("not supported.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Condition newCondition() {
-        throw new RuntimeException("not supported.");
-    }
-
-    /**
-     * Обновление счетчика.
-     */
-    public void setCounter(final int counter) {
-        this.counter = counter;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -176,12 +157,12 @@ public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLoc
 
     @Override
     public boolean tryLock() {
-        throw new RuntimeException("not supported.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
-        throw new RuntimeException("not supported.");
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -191,10 +172,7 @@ public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLoc
 
         // проверем отсутствия желающих записать потоков
         final AtomicInteger writeCount = getWriteCount();
-
-        if (writeCount.get() != 0) {
-            return false;
-        }
+        if (writeCount.get() != 0) return false;
 
         final AtomicInteger readCount = getReadCount();
 
@@ -202,12 +180,7 @@ public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLoc
         // мы добавились после начало записи, возвращаем в исходную позицию
         // счетчик и пробуем еще раз.
         final int value = readCount.get();
-
-        if (value == STATUS_READ_LOCKED) {
-            return false;
-        }
-
-        return readCount.compareAndSet(value, value + 1);
+        return value != STATUS_READ_LOCKED && readCount.compareAndSet(value, value + 1);
     }
 
     @Override

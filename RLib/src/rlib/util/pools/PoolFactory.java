@@ -23,7 +23,7 @@ public final class PoolFactory {
      */
     @Deprecated
     public static <T extends Reusable> ReusablePool<T> newAtomicFoldablePool(final Class<? extends Reusable> type) {
-        return new AtomicReusablePool<T>(type);
+        return new AtomicReusablePool<>(type);
     }
 
     /**
@@ -34,7 +34,7 @@ public final class PoolFactory {
      * @see AtomicReusablePool
      */
     public static <T extends Reusable> ReusablePool<T> newAtomicReusablePool(final Class<? extends Reusable> type) {
-        return new AtomicReusablePool<T>(type);
+        return new AtomicReusablePool<>(type);
     }
 
     /**
@@ -45,7 +45,7 @@ public final class PoolFactory {
      * @see AtomicPool
      */
     public static <T> Pool<T> newAtomicPool(final Class<?> type) {
-        return new AtomicPool<T>(type);
+        return new AtomicPool<>(type);
     }
 
     /**
@@ -57,7 +57,7 @@ public final class PoolFactory {
      */
     @Deprecated
     public static <T extends Reusable> ReusablePool<T> newConcurrentFoldablePool(final Class<? extends Reusable> type) {
-        return new ConcurrentReusablePool<T>(type);
+        return new ConcurrentReusablePool<>(type);
     }
 
     /**
@@ -68,7 +68,7 @@ public final class PoolFactory {
      * @see ConcurrentReusablePool
      */
     public static <T extends Reusable> ReusablePool<T> newConcurrentReusablePool(final Class<? extends Reusable> type) {
-        return new ConcurrentReusablePool<T>(type);
+        return new ConcurrentReusablePool<>(type);
     }
 
     /**
@@ -80,7 +80,7 @@ public final class PoolFactory {
      */
     @Deprecated
     public static <T extends Reusable> ReusablePool<T> newFoldablePool(final Class<? extends Reusable> type) {
-        return new FastReusablePool<T>(type);
+        return new FastReusablePool<>(type);
     }
 
     /**
@@ -91,7 +91,7 @@ public final class PoolFactory {
      * @see FastReusablePool
      */
     public static <T extends Reusable> ReusablePool<T> newReusablePool(final Class<? extends Reusable> type) {
-        return new FastReusablePool<T>(type);
+        return new FastReusablePool<>(type);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class PoolFactory {
      * @see FastPool
      */
     public static <T> Pool<T> newPool(final Class<?> type) {
-        return new FastPool<T>(type);
+        return new FastPool<>(type);
     }
 
     /**
@@ -114,7 +114,7 @@ public final class PoolFactory {
      */
     @Deprecated
     public static <T extends Reusable> ReusablePool<T> newSynchronizedFoldablePool(final Class<? extends Reusable> type) {
-        return new SynchronizedReusablePool<T>(type);
+        return new SynchronizedReusablePool<>(type);
     }
 
     /**
@@ -125,7 +125,7 @@ public final class PoolFactory {
      * @see SynchronizedReusablePool
      */
     public static <T extends Reusable> ReusablePool<T> newSynchronizedReusablePool(final Class<? extends Reusable> type) {
-        return new SynchronizedReusablePool<T>(type);
+        return new SynchronizedReusablePool<>(type);
     }
 
     private PoolFactory() {

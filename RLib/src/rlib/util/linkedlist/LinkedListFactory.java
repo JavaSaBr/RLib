@@ -17,7 +17,7 @@ public final class LinkedListFactory {
      * @return новый связанный список.
      */
     public static <E> LinkedList<E> newLinkedList(final Class<?> type) {
-        return new FastLinkedList<E>(type);
+        return new FastLinkedList<>(type);
     }
 
     /**
