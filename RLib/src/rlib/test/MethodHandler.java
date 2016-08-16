@@ -16,8 +16,8 @@ public class MethodHandler {
 
     public static void main(String[] args) throws Throwable {
 
-        final MethodType constructorMethodType = MethodType.methodType(void.class, ArrayFactory.toGenericArray(int.class));
-        final MethodType methodType = MethodType.methodType(boolean.class, ArrayFactory.toGenericArray(Object.class));
+        final MethodType constructorMethodType = MethodType.methodType(void.class, ArrayFactory.toArray(int.class));
+        final MethodType methodType = MethodType.methodType(boolean.class, ArrayFactory.toArray(Object.class));
 
         final MethodHandle constructor = MethodHandles.lookup().findConstructor(ArrayList.class, constructorMethodType);
         final Object result = constructor.invokeWithArguments(Collections.singletonList(20));
