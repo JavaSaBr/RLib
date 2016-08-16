@@ -57,10 +57,7 @@ public class FastArray<E> extends AbstractArray<E> {
 
     @Override
     public final FastArray<E> addAll(final Array<? extends E> elements) {
-
-        if (elements.isEmpty()) {
-            return this;
-        }
+        if (elements.isEmpty()) return this;
 
         final int current = array.length;
         final int selfSize = size();
@@ -72,16 +69,12 @@ public class FastArray<E> extends AbstractArray<E> {
         }
 
         processAdd(elements, selfSize, targetSize);
-
         return this;
     }
 
     @Override
     public Array<E> addAll(final Collection<? extends E> collection) {
-
-        if (collection.isEmpty()) {
-            return this;
-        }
+        if (collection.isEmpty()) return this;
 
         final int current = array.length;
         final int selfSize = size();
@@ -101,10 +94,7 @@ public class FastArray<E> extends AbstractArray<E> {
 
     @Override
     public final Array<E> addAll(final E[] elements) {
-
-        if (elements == null || elements.length < 1) {
-            return this;
-        }
+        if (elements == null || elements.length < 1) return this;
 
         final int current = array.length;
         final int selfSize = size();
@@ -116,7 +106,6 @@ public class FastArray<E> extends AbstractArray<E> {
         }
 
         processAdd(elements, selfSize, targetSize);
-
         return this;
     }
 
@@ -167,7 +156,6 @@ public class FastArray<E> extends AbstractArray<E> {
     }
 
     protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
-
         // если надо срау большой массив добавить, то лучше черзе нативный метод
         if (targetSize > SIZE_BIG_ARRAY) {
             System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
@@ -177,32 +165,22 @@ public class FastArray<E> extends AbstractArray<E> {
             // если добавляемый массив небольшой, можно и обычным способом
             // внести
             for (final E element : elements.array()) {
-
-                if (element == null) {
-                    break;
-                }
-
+                if (element == null) break;
                 unsafeAdd(element);
             }
         }
     }
 
     protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
-
         // если надо срау большой массив добавить, то лучше черзе нативный метод
         if (targetSize > SIZE_BIG_ARRAY) {
             System.arraycopy(elements, 0, array, selfSize, targetSize);
             size = selfSize + targetSize;
         } else {
-
             // если добавляемый массив небольшой, можно и обычным способом
             // внести
             for (final E element : elements) {
-
-                if (element == null) {
-                    break;
-                }
-
+                if (element == null) break;
                 unsafeAdd(element);
             }
         }
@@ -210,10 +188,7 @@ public class FastArray<E> extends AbstractArray<E> {
 
     @Override
     public final void set(final int index, final E element) {
-
-        if (index < 0 || index >= size || element == null) {
-            return;
-        }
+        if (index < 0 || index >= size || element == null) return;
 
         final E[] array = array();
 
@@ -243,15 +218,10 @@ public class FastArray<E> extends AbstractArray<E> {
 
     @Override
     public final E slowRemove(final int index) {
-
-        if (index < 0 || size < 1) {
-            return null;
-        }
+        if (index < 0 || size < 1) return null;
 
         final E[] array = array();
-
         final int numMoved = size - index - 1;
-
         final E old = array[index];
 
         if (numMoved > 0) {
@@ -259,7 +229,6 @@ public class FastArray<E> extends AbstractArray<E> {
         }
 
         size -= 1;
-
         array[size] = null;
 
         return old;
@@ -267,13 +236,8 @@ public class FastArray<E> extends AbstractArray<E> {
 
     @Override
     public final FastArray<E> trimToSize() {
-
-        if (size == array.length) {
-            return this;
-        }
-
+        if (size == array.length) return this;
         array = ArrayUtils.copyOfRange(array, 0, size);
-
         return this;
     }
 

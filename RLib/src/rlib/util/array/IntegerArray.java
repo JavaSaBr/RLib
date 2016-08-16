@@ -68,10 +68,8 @@ public interface IntegerArray extends Iterable<Integer> {
      */
     public default boolean containsAll(final int[] array) {
 
-        for (int i = 0, length = array.length; i < length; i++) {
-            if (!contains(array[i])) {
-                return false;
-            }
+        for (final int val : array) {
+            if (!contains(val)) return false;
         }
 
         return true;
@@ -105,10 +103,7 @@ public interface IntegerArray extends Iterable<Integer> {
     public default boolean fastRemove(final int element) {
 
         final int index = indexOf(element);
-
-        if (index > -1) {
-            fastRemoveByIndex(index);
-        }
+        if (index > -1) fastRemoveByIndex(index);
 
         return index > -1;
     }
@@ -122,7 +117,7 @@ public interface IntegerArray extends Iterable<Integer> {
     public boolean fastRemoveByIndex(int index);
 
     /**
-     * @return первый элемент в массиве.
+     * @return первый элемент в массиве либо -1.
      */
     public int first();
 
@@ -145,9 +140,7 @@ public interface IntegerArray extends Iterable<Integer> {
         final int[] array = array();
 
         for (int i = 0, length = size(); i < length; i++) {
-            if (element == array[i]) {
-                return i;
-            }
+            if (element == array[i]) return i;
         }
 
         return -1;
@@ -164,7 +157,7 @@ public interface IntegerArray extends Iterable<Integer> {
     public ArrayIterator<Integer> iterator();
 
     /**
-     * @return последний элемент в массиве.
+     * @return последний элемент в массиве либо -1.
      */
     public int last();
 
@@ -181,21 +174,19 @@ public interface IntegerArray extends Iterable<Integer> {
         int last = -1;
 
         for (int i = 0, length = size(); i < length; i++) {
-            if (element == array[i]) {
-                last = i;
-            }
+            if (element == array[i]) last = i;
         }
 
         return last;
     }
 
     /**
-     * @return первый элемент массива.
+     * @return первый элемент массива либо -1.
      */
     public int poll();
 
     /**
-     * @return последний элемент массива.
+     * @return последний элемент массива либо -1.
      */
     public int pop();
 
@@ -218,10 +209,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @return удалены ли все указанные элементы.
      */
     public default boolean removeAll(final IntegerArray target) {
-
-        if (target.isEmpty()) {
-            return true;
-        }
+        if (target.isEmpty()) return true;
 
         final int[] array = target.array();
 
@@ -266,10 +254,7 @@ public interface IntegerArray extends Iterable<Integer> {
     public default boolean slowRemove(final int element) {
 
         final int index = indexOf(element);
-
-        if (index > -1) {
-            slowRemoveByIndex(index);
-        }
+        if (index > -1) slowRemoveByIndex(index);
 
         return index > -1;
     }

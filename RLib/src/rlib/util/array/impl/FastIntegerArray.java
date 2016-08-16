@@ -38,7 +38,6 @@ public class FastIntegerArray implements IntegerArray {
         }
 
         array[size++] = element;
-
         return this;
     }
 
@@ -116,12 +115,7 @@ public class FastIntegerArray implements IntegerArray {
 
     @Override
     public final int first() {
-
-        if (size < 1) {
-            return 0;
-        }
-
-        return array[0];
+        return size < 1 ? -1 : array[0];
     }
 
     @Override
@@ -136,26 +130,19 @@ public class FastIntegerArray implements IntegerArray {
 
     @Override
     public final int last() {
-
-        if (size < 1) {
-            return 0;
-        }
-
-        return array[size - 1];
+        return size < 1 ? -1 : array[size - 1];
     }
 
     @Override
     public final int poll() {
         final int val = first();
-        slowRemoveByIndex(0);
-        return val;
+        return slowRemoveByIndex(0) ? val : -1;
     }
 
     @Override
     public final int pop() {
         final int last = last();
-        fastRemoveByIndex(size - 1);
-        return last;
+        return fastRemoveByIndex(size - 1) ? last : -1;
     }
 
     @Override
@@ -165,10 +152,7 @@ public class FastIntegerArray implements IntegerArray {
 
     @Override
     public final boolean slowRemoveByIndex(final int index) {
-
-        if (index < 0 || size < 1) {
-            return false;
-        }
+        if (index < 0 || size < 1) return false;
 
         final int[] array = array();
 
@@ -179,7 +163,6 @@ public class FastIntegerArray implements IntegerArray {
         }
 
         array[--size] = 0;
-
         return true;
     }
 
@@ -199,7 +182,6 @@ public class FastIntegerArray implements IntegerArray {
         }
 
         this.array = ArrayUtils.copyOfRange(array, 0, size);
-
         return this;
     }
 

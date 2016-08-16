@@ -64,7 +64,6 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
         }
 
         array[size.getAndIncrement()] = element;
-
         return this;
     }
 
@@ -83,11 +82,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
         }
 
         for (final E element : elements.array()) {
-
-            if (element == null) {
-                break;
-            }
-
+            if (element == null) break;
             add(element);
         }
 
@@ -143,10 +138,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
 
     @Override
     public synchronized final E fastRemove(final int index) {
-
-        if (index < 0) {
-            return null;
-        }
+        if (index < 0) return null;
 
         final E[] array = array();
 

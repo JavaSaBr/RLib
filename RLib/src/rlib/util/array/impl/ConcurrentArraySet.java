@@ -20,11 +20,6 @@ public class ConcurrentArraySet<E> extends ConcurrentArray<E> {
 
     @Override
     public ConcurrentArray<E> add(final E element) {
-
-        if (contains(element)) {
-            return this;
-        }
-
-        return super.add(element);
+        return contains(element) ? this : super.add(element);
     }
 }

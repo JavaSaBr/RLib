@@ -47,12 +47,7 @@ public class ArrayIteratorImpl<E> implements ArrayIterator<E> {
 
     @Override
     public E next() {
-
-        if (ordinal >= array.length) {
-            return null;
-        }
-
-        return array[ordinal++];
+        return ordinal >= array.length ? null : array[ordinal++];
     }
 
     @Override

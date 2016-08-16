@@ -3,6 +3,8 @@ package rlib.util.array.impl;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 /**
  * Базовая реализация {@link Array}.
  *
@@ -28,7 +30,6 @@ public abstract class AbstractArray<E> implements Array<E> {
      * @param type тип элементов в массиве.
      * @param size размер массива.
      */
-    @SuppressWarnings("unchecked")
     public AbstractArray(final Class<E> type, final int size) {
         super();
 
@@ -36,7 +37,7 @@ public abstract class AbstractArray<E> implements Array<E> {
             throw new IllegalArgumentException("negative size");
         }
 
-        setArray((E[]) java.lang.reflect.Array.newInstance(type, size));
+        setArray(unsafeCast(java.lang.reflect.Array.newInstance(type, size)));
     }
 
     @Override

@@ -53,7 +53,6 @@ public class ArrayFactory {
      * @return новый экземпляр массива.
      * @see FastArraySet
      */
-    @SuppressWarnings("unchecked")
     public static <E> Array<E> newArraySet(final Class<?> type) {
         return new FinalFastArraySet<>(unsafeCast(type));
     }
@@ -66,7 +65,6 @@ public class ArrayFactory {
      * @return новый экземпляр массива.
      * @see ConcurrentArray
      */
-    @SuppressWarnings("unchecked")
     public static <E> Array<E> newConcurrentArray(final Class<?> type) {
         return new ConcurrentArray<>(unsafeCast(type));
     }
@@ -79,7 +77,6 @@ public class ArrayFactory {
      * @return новый экземпляр массива.
      * @see ConcurrentArraySet
      */
-    @SuppressWarnings("unchecked")
     public static <E> Array<E> newConcurrentArraySet(final Class<?> type) {
         return new ConcurrentArraySet<>(unsafeCast(type));
     }
@@ -92,7 +89,6 @@ public class ArrayFactory {
      * @return новый экземпляр массива.
      * @see ConcurrentAtomicArray
      */
-    @SuppressWarnings("unchecked")
     public static <E> Array<E> newConcurrentAtomicArray(final Class<?> type) {
         return new FinalConcurrentAtomicArray<>(unsafeCast(type));
     }
@@ -104,17 +100,6 @@ public class ArrayFactory {
      * @return новый массив.
      */
     public static float[] newFloatArray(final float... elements) {
-        return elements;
-    }
-
-    /**
-     * Создает массив из перечисленных элементов.
-     *
-     * @param elements набор элементов.
-     * @return новый массив.
-     */
-    @SafeVarargs
-    public static <T, K extends T> T[] newGenericArray(final K... elements) {
         return elements;
     }
 
@@ -164,7 +149,6 @@ public class ArrayFactory {
      * @return новый экземпляр массива.
      * @see SynchronizedArray
      */
-    @SuppressWarnings("unchecked")
     public static <E> Array<E> newSynchronizedArray(final Class<?> type) {
         return new SynchronizedArray<>(unsafeCast(type));
     }
@@ -176,17 +160,6 @@ public class ArrayFactory {
      * @return новый массив.
      */
     public static float[] toFloatArray(final float... elements) {
-        return elements;
-    }
-
-    /**
-     * Создает массив из перечисленных элементов.
-     *
-     * @param elements набор элементов.
-     * @return новый массив.
-     */
-    @SafeVarargs
-    public static <T, K extends T> T[] toGenericArray(final K... elements) {
         return elements;
     }
 

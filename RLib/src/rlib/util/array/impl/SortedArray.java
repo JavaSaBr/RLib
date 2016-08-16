@@ -67,11 +67,7 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
     @Override
     protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
         for (final E element : elements.array()) {
-
-            if (element == null) {
-                break;
-            }
-
+            if (element == null) break;
             add(element);
         }
     }
@@ -79,11 +75,7 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
     @Override
     protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
         for (final E element : elements) {
-
-            if (element == null) {
-                break;
-            }
-
+            if (element == null) break;
             add(element);
         }
     }

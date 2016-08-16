@@ -68,10 +68,8 @@ public interface LongArray extends Iterable<Long> {
      */
     public default boolean containsAll(final long[] array) {
 
-        for (int i = 0, length = array.length; i < length; i++) {
-            if (!contains(array[i])) {
-                return false;
-            }
+        for (final long val : array) {
+            if (!contains(val)) return false;
         }
 
         return true;
@@ -113,16 +111,13 @@ public interface LongArray extends Iterable<Long> {
     public default boolean fastRemove(final long element) {
 
         final int index = indexOf(element);
-
-        if (index > -1) {
-            fastRemove(index);
-        }
+        if (index > -1) fastRemove(index);
 
         return index > -1;
     }
 
     /**
-     * @return первый элемент в массиве.
+     * @return первый элемент в массиве либо -1.
      */
     public long first();
 
@@ -162,7 +157,7 @@ public interface LongArray extends Iterable<Long> {
     public ArrayIterator<Long> iterator();
 
     /**
-     * @return последний элемент в массиве.
+     * @return последний элемент в массиве либо -1.
      */
     public long last();
 
@@ -188,12 +183,12 @@ public interface LongArray extends Iterable<Long> {
     }
 
     /**
-     * @return первый элемент массива.
+     * @return первый элемент массива либо -1.
      */
     public long poll();
 
     /**
-     * @return последний элемент массива.
+     * @return последний элемент массива либо -1.
      */
     public long pop();
 
@@ -216,10 +211,7 @@ public interface LongArray extends Iterable<Long> {
      * @return удалены ли все указанные элементы.
      */
     public default boolean removeAll(final LongArray target) {
-
-        if (target.isEmpty()) {
-            return true;
-        }
+        if (target.isEmpty()) return true;
 
         final long[] array = target.array();
 
@@ -272,10 +264,7 @@ public interface LongArray extends Iterable<Long> {
     public default boolean slowRemove(final long element) {
 
         final int index = indexOf(element);
-
-        if (index > -1) {
-            slowRemove(index);
-        }
+        if (index > -1) slowRemove(index);
 
         return index > -1;
     }
