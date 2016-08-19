@@ -10,7 +10,7 @@ import rlib.logging.LoggerManager;
 /**
  * Базовая модель обработчика принятия подключений.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
 

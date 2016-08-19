@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Реализация мониторинга работы Java процесса и его окружения.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class RuntimeMonitoring {
 

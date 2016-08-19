@@ -17,7 +17,7 @@ import rlib.util.pools.ReusablePool;
 /**
  * Базовая реализация словаря с примитивным ключем int.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<IntKey, V> implements UnsafeIntegerDictionary<V> {
 
@@ -428,7 +428,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
     @Override
     public Array<V> values(final Array<V> container) {
-        container.checkSize(container.size() + size());
+        container.prepareForSize(container.size() + size());
 
         for (IntegerEntry<V> entry : content()) {
             while (entry != null) {

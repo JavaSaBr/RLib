@@ -3,7 +3,7 @@ package rlib.util.ref;
 /**
  * Базовая реализация ссылки.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractReference implements Reference {
 

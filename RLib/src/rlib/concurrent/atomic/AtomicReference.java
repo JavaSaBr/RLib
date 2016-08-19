@@ -3,7 +3,7 @@ package rlib.concurrent.atomic;
 import rlib.util.pools.Reusable;
 
 /**
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class AtomicReference<V> extends java.util.concurrent.atomic.AtomicReference<V> implements Reusable {
 

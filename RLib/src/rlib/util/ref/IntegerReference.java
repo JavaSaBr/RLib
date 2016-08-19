@@ -5,7 +5,7 @@ import static rlib.util.ref.ReferenceType.INTEGER;
 /**
  * Ссылка на тип данных int.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class IntegerReference extends AbstractReference {
 

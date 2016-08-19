@@ -6,7 +6,7 @@ import java.nio.file.Path;
 /**
  * Интерфейс для реализации компилятора.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Compiler {
 

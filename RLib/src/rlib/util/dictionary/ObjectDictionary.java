@@ -10,7 +10,7 @@ import rlib.util.array.Array;
 /**
  * Интерфейс для реализации словаря с объектным ключем.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
 

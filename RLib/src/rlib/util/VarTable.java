@@ -14,7 +14,7 @@ import static rlib.util.ClassUtils.unsafeCast;
 /**
  * Реализация таблицы разнородных параметров.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 29.02.2012
  */
 public class VarTable {

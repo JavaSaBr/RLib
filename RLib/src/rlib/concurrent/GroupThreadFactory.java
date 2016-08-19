@@ -9,7 +9,7 @@ import rlib.util.ClassUtils;
 /**
  * Реализация группированной фабрики потоков.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class GroupThreadFactory implements ThreadFactory {
 

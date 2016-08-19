@@ -10,7 +10,7 @@ import static rlib.util.ClassUtils.unsafeCast;
 /**
  * Набор утильных методов по работе с рефлексией.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ReflectionUtils {
 

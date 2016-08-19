@@ -25,7 +25,7 @@ import static rlib.util.ClassUtils.unsafeCast;
 /**
  * Набор утильных методов для работы с массивами.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 07.04.2012
  */
 public final class ArrayUtils {
@@ -363,23 +363,14 @@ public final class ArrayUtils {
      * @return строковый вариант.
      */
     public static String toString(final Array<?> array) {
-
-        if (array == null) {
-            return "[]";
-        }
+        if (array == null) return "[]";
 
         final String className = array.array().getClass().getSimpleName();
-
         final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
         for (int i = 0, length = array.size() - 1; i <= length; i++) {
-
             builder.append(String.valueOf(array.get(i)));
-
-            if (i == length) {
-                break;
-            }
-
+            if (i == length) break;
             builder.append(", ");
         }
 

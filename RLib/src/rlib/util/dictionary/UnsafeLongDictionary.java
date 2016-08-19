@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Интерфейс для реализации внутреннего API словаря с примитивным ключем long.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface UnsafeLongDictionary<V> extends LongDictionary<V> {
 

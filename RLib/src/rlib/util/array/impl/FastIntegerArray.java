@@ -7,7 +7,7 @@ import rlib.util.array.IntegerArray;
 /**
  * Реализация не потокобезопасного динамического массива примитивов int.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastIntegerArray implements IntegerArray {
 

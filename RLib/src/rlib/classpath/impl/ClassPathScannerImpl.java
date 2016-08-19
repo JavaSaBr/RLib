@@ -29,7 +29,7 @@ import static rlib.util.IOUtils.copy;
 /**
  * Реализация обычного сканера classpath.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ClassPathScannerImpl implements ClassPathScanner {
 

@@ -6,7 +6,7 @@ import rlib.util.array.ArrayIterator;
 /**
  * Реализация итератора динамического массива.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ArrayIteratorImpl<E> implements ArrayIterator<E> {
 

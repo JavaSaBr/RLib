@@ -8,7 +8,7 @@ import rlib.geom.bounding.impl.BoundingSphere;
 /**
  * Фабрика форм.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class BoundingFactory {
 

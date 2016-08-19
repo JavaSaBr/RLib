@@ -3,7 +3,7 @@ package rlib.concurrent.task;
 /**
  * Интерфейс для реализации периодической азадчи.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface PeriodicTask<L> extends CallableTask<Boolean, L> {
 

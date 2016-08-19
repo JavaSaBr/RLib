@@ -3,7 +3,7 @@ package rlib.util.random;
 /**
  * Фарика рандоминайзеров.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class RandomFactory {
 

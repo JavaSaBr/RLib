@@ -13,7 +13,7 @@ import static rlib.util.ArrayUtils.runInWriteLock;
  * Реализация потокобезопасного {@link ReusablePool} с помощью потокобезопасного массива {@link
  * ConcurrentArray}
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ConcurrentReusablePool<E extends Reusable> implements ReusablePool<E> {
 

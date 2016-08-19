@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Lock;
 import rlib.concurrent.lock.LockFactory;
 
 /**
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class Synchronizer implements Lockable {
 

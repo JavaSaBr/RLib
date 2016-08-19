@@ -16,7 +16,7 @@ import static java.lang.Integer.parseInt;
 /**
  * Реализация класса для определения информации об текущей ОС.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class OperatingSystemResolver {
 

@@ -8,7 +8,7 @@ import rlib.util.FileUtils;
 /**
  * Реализация теста утильного класса по работе с файлами.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class TestFileUtils extends Assert {
 

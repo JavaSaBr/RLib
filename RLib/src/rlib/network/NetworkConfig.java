@@ -3,7 +3,7 @@ package rlib.network;
 /**
  * Интерфейся для конфигурирования асинхронной сети.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface NetworkConfig {
 

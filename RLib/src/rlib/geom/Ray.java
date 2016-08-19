@@ -5,7 +5,7 @@ import rlib.util.pools.Reusable;
 /**
  * Реализация модели луча.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class Ray implements Reusable {
 

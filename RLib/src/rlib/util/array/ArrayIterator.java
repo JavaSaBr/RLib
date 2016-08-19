@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Интерфейс для реализации расширенного итератора {@link Array}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ArrayIterator<E> extends Iterator<E> {
 

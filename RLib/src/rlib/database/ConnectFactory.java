@@ -6,7 +6,7 @@ import java.sql.SQLException;
 /**
  * Интерфейс для реализации фабрики подкюлчений к БД.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ConnectFactory {
 

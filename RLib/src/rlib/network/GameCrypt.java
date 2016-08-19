@@ -3,7 +3,7 @@ package rlib.network;
 /**
  * Интерфейс для реализации криптора/декриптора.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface GameCrypt {
 

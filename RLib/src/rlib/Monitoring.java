@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * Модель мониторинга состояния процесса.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 24.04.2012
  */
 public abstract class Monitoring {

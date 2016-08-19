@@ -8,7 +8,7 @@ import rlib.network.packet.SendablePacket;
 /**
  * Интерфейс для реализации сервера для игрового клиента.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @SuppressWarnings("rawtypes")
 public interface Server<C extends ServerConnection, RP extends ReadablePacket, SP extends SendablePacket> {

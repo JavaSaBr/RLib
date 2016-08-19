@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Фабрика по созаднию словарей.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class DictionaryFactory {
 

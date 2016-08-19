@@ -13,7 +13,7 @@ import rlib.function.ObjectLongObjectConsumer;
 /**
  * Реализация набора утильных методов для работы со словарями.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class DictionaryUtils {
 

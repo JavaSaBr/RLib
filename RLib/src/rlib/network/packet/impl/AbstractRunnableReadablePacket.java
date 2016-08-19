@@ -8,7 +8,7 @@ import rlib.util.pools.ReusablePool;
  * Базовая реализация читаемого пакета с реализацией интерфейса Runnable для выполнения в {@link
  * ExecutorService}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractRunnableReadablePacket<C> extends AbstractReadablePacket<C> implements Runnable {
 

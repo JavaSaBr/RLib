@@ -3,7 +3,7 @@ package rlib.geom;
 /**
  * Интерфейс для реализации контейнера векторов для промежуточных вычислений.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface VectorBuffer {
 

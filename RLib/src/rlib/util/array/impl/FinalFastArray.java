@@ -3,7 +3,7 @@ package rlib.util.array.impl;
 /**
  * Финальная версия быстрого массива.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class FinalFastArray<E> extends FastArray<E> {
 

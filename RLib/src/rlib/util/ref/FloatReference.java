@@ -5,7 +5,7 @@ import static rlib.util.ref.ReferenceType.FLOAT;
 /**
  * Ссылка на тип данных float.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class FloatReference extends AbstractReference {
 

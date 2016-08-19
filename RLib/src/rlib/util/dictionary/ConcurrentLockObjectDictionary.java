@@ -10,7 +10,7 @@ import rlib.concurrent.lock.LockFactory;
  * Реализация конкуретного словаря с объектным ключем, используя механизмом синхронизации в виде
  * {@link ReentrantReadWriteLock}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ConcurrentLockObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> implements ConcurrentObjectDictionary<K, V> {
 

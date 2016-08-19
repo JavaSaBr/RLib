@@ -3,7 +3,7 @@ package rlib.geom;
 /**
  * Перечисление типов направлений.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public enum DirectionType {
     LEFT,

@@ -11,7 +11,7 @@ import javax.tools.SimpleJavaFileObject;
 /**
  * Объект исходного java кода.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class JavaFileSource extends SimpleJavaFileObject {
 

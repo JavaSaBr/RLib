@@ -7,7 +7,7 @@ import rlib.util.StringUtils;
 /**
  * Интерфейс для реализации отправляемых пакетов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface SendablePacket<C> extends Packet<C> {
 

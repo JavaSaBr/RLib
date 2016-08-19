@@ -3,7 +3,7 @@ package rlib.util;
 /**
  * Интерфейс, который помечает, что объект имеет имя.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Nameable {
 

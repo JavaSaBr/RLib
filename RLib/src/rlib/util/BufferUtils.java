@@ -7,7 +7,7 @@ import static java.lang.Math.min;
 /**
  * Класс с утильными методами для работы с буферами.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class BufferUtils {
 

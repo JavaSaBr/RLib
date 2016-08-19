@@ -19,7 +19,7 @@ import rlib.util.IOUtils;
 /**
  * Базовая модель для парсера данных с xml файла.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 

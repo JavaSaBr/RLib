@@ -10,7 +10,7 @@ import rlib.util.pools.impl.SynchronizedReusablePool;
 /**
  * Фабрика пулов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class PoolFactory {
 

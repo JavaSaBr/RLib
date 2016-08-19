@@ -11,7 +11,7 @@ import rlib.util.Lockable;
 /**
  * Набор утильных методов для работы в сфере кокнуренции.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ConcurrentUtils {
 

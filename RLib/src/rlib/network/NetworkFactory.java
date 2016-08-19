@@ -14,7 +14,7 @@ import rlib.network.server.impl.DefaultServerNetwork;
 /**
  * Фабрика для создания серверной и клиетнской сети.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class NetworkFactory {
 

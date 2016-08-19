@@ -13,7 +13,7 @@ import rlib.logging.LoggerManager;
 /**
  * Фабрика подключений к БД.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 27.03.2012
  */
 public final class BoneCPConnectFactory implements ConnectFactory {

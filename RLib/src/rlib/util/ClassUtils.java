@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Класс с утильными методами по работе с классами.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ClassUtils {
 

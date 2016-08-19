@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Реализация словаря с использованием примитивного int ключа.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements UnsafeIntegerDictionary<V> {
 

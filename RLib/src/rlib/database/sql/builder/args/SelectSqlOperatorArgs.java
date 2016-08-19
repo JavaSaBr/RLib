@@ -5,7 +5,7 @@ import rlib.database.sql.builder.operator.SelectSqlOperator;
 /**
  * Интерфейс для указания SQL оператору необходимых аргументов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface SelectSqlOperatorArgs extends SqlOperatorArgs<SelectSqlOperator> {

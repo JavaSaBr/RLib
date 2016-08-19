@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 /**
  * Реализация циклического пула объектов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class CycleBuffer<T> {
 

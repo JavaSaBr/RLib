@@ -6,7 +6,7 @@ import rlib.logging.LoggerManager;
 /**
  * Интерфейс для реализации безопасно исполняющейся задачи.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 22.04.2012
  */
 public interface SafeTask extends Runnable {

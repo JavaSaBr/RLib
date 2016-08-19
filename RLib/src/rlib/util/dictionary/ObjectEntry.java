@@ -7,7 +7,7 @@ import rlib.util.pools.Reusable;
 /**
  * Реализация элемента словаря с объектным ключем.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ObjectEntry<K, V> implements Reusable {
 

@@ -10,7 +10,7 @@ import java.util.List;
  * Реализация мониторинга использования памяти Java процессом, дает информацияю о использовании Java
  * Heap в целом, так и информация о использовании конкретных областей Java Heap и native memory.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class MemoryMonitoring {
 

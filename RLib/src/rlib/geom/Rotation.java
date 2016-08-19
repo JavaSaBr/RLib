@@ -8,7 +8,7 @@ import rlib.util.random.RandomFactory;
 /**
  * Модель описание направления объекта в 3D пространстве, реализовано в виде кватерниона.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class Rotation {
 

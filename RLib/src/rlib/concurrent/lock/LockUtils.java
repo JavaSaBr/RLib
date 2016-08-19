@@ -13,7 +13,7 @@ import rlib.util.Lockable;
 /**
  * Утильный класс для работы с блокерами.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class LockUtils {
 

@@ -5,7 +5,7 @@ import static rlib.util.ref.ReferenceType.SHORT;
 /**
  * Ссылка на тип данных short.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class ShortReference extends AbstractReference {
 

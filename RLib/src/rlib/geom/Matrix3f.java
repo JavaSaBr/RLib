@@ -5,7 +5,7 @@ import rlib.util.pools.Reusable;
 /**
  * Модель матрицы 3x3.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class Matrix3f implements Reusable {
 

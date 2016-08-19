@@ -13,7 +13,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Класс для работы с объектами.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 07.04.2012
  */
 public final class ObjectUtils {

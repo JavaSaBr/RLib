@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -27,7 +29,7 @@ import rlib.util.array.ArrayIterator;
  * }
  * </pre>
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ConcurrentArray<E> extends AbstractArray<E> {
 
@@ -74,8 +76,9 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
         this.writeLock = readWriteLock.writeLock();
     }
 
+    @NotNull
     @Override
-    public ConcurrentArray<E> add(final E element) {
+    public ConcurrentArray<E> add(@NotNull final E element) {
 
         if (size() == array.length) {
             array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
@@ -86,8 +89,9 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
         return this;
     }
 
+    @NotNull
     @Override
-    public final ConcurrentArray<E> addAll(final Array<? extends E> elements) {
+    public final ConcurrentArray<E> addAll(@NotNull final Array<? extends E> elements) {
 
         if (elements == null || elements.isEmpty()) {
             return this;
@@ -108,8 +112,9 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
         return this;
     }
 
+    @NotNull
     @Override
-    public Array<E> addAll(final Collection<? extends E> collection) {
+    public Array<E> addAll(@NotNull final Collection<? extends E> collection) {
 
         if (collection == null || collection.isEmpty()) {
             return this;
@@ -129,8 +134,9 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
         return this;
     }
 
+    @NotNull
     @Override
-    public final Array<E> addAll(final E[] elements) {
+    public final Array<E> addAll(@NotNull final E[] elements) {
 
         if (elements == null || elements.length < 1) {
             return this;
@@ -150,13 +156,14 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
         return this;
     }
 
+    @NotNull
     @Override
     public final E[] array() {
         return array;
     }
 
     @Override
-    public void checkSize(final int size) {
+    public void prepareForSize(final int size) {
 
         final int current = array.length;
         final int selfSize = size();
@@ -189,6 +196,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
         return old;
     }
 
+    @NotNull
     @Override
     public final E get(final int index) {
         return array[index];
@@ -210,7 +218,7 @@ public class ConcurrentArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public final void set(final int index, final E element) {
+    public final void set(final int index, @NotNull final E element) {
 
         if (index < 0 || index >= size() || element == null) {
             return;

@@ -7,7 +7,7 @@ import rlib.concurrent.lock.LockFactory;
  * Реализация конкуретного словаря с объектным ключем, где механизмом синхронизации выступает
  * атомарные счетчики.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ConcurrentAtomicObjectDictionary<K, V> extends ConcurrentLockObjectDictionary<K, V> {
 

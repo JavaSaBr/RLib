@@ -10,7 +10,7 @@ import rlib.util.array.ArrayFactory;
 import static rlib.util.ClassUtils.unsafeCast;
 
 /**
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompileListener implements DiagnosticListener<JavaFileObject> {
 

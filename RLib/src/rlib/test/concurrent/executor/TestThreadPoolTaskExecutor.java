@@ -12,7 +12,7 @@ import rlib.concurrent.util.ThreadUtils;
 /**
  * Реализация теста многопоточного исполнителя задач.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class TestThreadPoolTaskExecutor extends Assert {
 

@@ -11,7 +11,7 @@ import rlib.util.array.IntegerArray;
 /**
  * Интерфейс для реализации словаря с примитивным ключем int.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
 

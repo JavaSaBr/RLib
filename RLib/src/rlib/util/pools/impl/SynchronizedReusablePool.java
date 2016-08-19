@@ -9,7 +9,7 @@ import rlib.util.pools.ReusablePool;
 /**
  * Реализация потокобезопасного {@link ReusablePool} за счет синхронизации на коллекции объектов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class SynchronizedReusablePool<E extends Reusable> implements ReusablePool<E> {
 

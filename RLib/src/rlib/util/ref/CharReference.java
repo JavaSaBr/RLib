@@ -5,7 +5,7 @@ import static rlib.util.ref.ReferenceType.CHAR;
 /**
  * Ссылка на тип данных char.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class CharReference extends AbstractReference {
 

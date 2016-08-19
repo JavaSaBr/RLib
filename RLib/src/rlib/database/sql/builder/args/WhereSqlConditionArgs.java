@@ -5,7 +5,7 @@ import rlib.database.sql.builder.condition.WhereSqlCondition;
 /**
  * Интерфейс для указания необходимых условию WHERE аргументов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface WhereSqlConditionArgs extends SqlConditionArgs<WhereSqlCondition> {
 

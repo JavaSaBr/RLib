@@ -3,7 +3,7 @@ package rlib.compiler;
 /**
  * Интерфейс для реализации хранилища байткода скомпиленного класса.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ByteSource {
 

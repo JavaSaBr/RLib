@@ -5,7 +5,7 @@ import rlib.util.pools.Reusable;
 /**
  * Реализация ячейки для словарей с примитивным ключем long.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class LongEntry<V> implements Reusable {
 

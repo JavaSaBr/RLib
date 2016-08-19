@@ -3,7 +3,7 @@ package rlib.concurrent.task;
 /**
  * Интерфейс для реализации простой задачи.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface SimpleTask<L> extends CallableTask<Void, L> {
 

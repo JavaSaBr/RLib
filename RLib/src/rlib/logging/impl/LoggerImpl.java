@@ -12,7 +12,7 @@ import static rlib.logging.LoggerLevel.WARNING;
 /**
  * Реализация логгера консольных сообщений. Работает через LoggerManager.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class LoggerImpl implements Logger {
 

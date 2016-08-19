@@ -9,7 +9,7 @@ import javax.imageio.stream.ImageOutputStreamImpl;
 /**
  * Реализация перенаправителя стрима.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class RedirectImageOutputStream extends ImageOutputStreamImpl {
 

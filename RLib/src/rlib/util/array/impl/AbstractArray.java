@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 
@@ -8,7 +10,7 @@ import static rlib.util.ClassUtils.unsafeCast;
 /**
  * Базовая реализация {@link Array}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractArray<E> implements Array<E> {
 
@@ -40,6 +42,7 @@ public abstract class AbstractArray<E> implements Array<E> {
         setArray(unsafeCast(java.lang.reflect.Array.newInstance(type, size)));
     }
 
+    @NotNull
     @Override
     public Array<E> clear() {
 
@@ -67,7 +70,7 @@ public abstract class AbstractArray<E> implements Array<E> {
     protected abstract void setSize(int size);
 
     @Override
-    public final boolean slowRemove(final Object object) {
+    public final boolean slowRemove(@NotNull final Object object) {
         return slowRemove(indexOf(object)) != null;
     }
 

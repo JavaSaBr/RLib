@@ -3,7 +3,7 @@ package rlib.network.packet;
 /**
  * Интерфейс для реализации сетевого пакета на стороне сервера.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Packet<C> {
 

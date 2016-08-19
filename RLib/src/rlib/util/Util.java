@@ -25,7 +25,7 @@ import rlib.logging.LoggerManager;
 /**
  * Утильный класс с набором статических вспомогательных методов.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 27.03.2012
  */
 public final class Util {

@@ -8,7 +8,7 @@ import rlib.util.pools.ReusablePool;
  * Базовая реализация читаемого пакета с реализацией интерфейса {@link SimpleTask} для выполнения в
  * {@link TaskExecutor}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractTaskReadablePacket<C, L> extends AbstractReadablePacket<C> implements SimpleTask<L> {
 

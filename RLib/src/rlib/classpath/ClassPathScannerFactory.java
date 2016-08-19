@@ -6,7 +6,7 @@ import rlib.classpath.impl.ManifestClassPathScannerImpl;
 /**
  * Фабрика сканеров classpath.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ClassPathScannerFactory {
 

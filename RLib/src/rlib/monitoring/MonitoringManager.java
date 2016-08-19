@@ -5,7 +5,7 @@ import javax.management.MXBean;
 /**
  * Реализация менеджера по мониторингу состояния Java процесса с помощью {@link MXBean}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class MonitoringManager {
 

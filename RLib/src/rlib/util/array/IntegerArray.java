@@ -14,7 +14,7 @@ import rlib.util.ArrayUtils;
  * </pre>
  * <p> Для создания использовать {@link ArrayFactory}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface IntegerArray extends Iterable<Integer> {
 

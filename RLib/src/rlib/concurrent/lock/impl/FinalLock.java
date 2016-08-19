@@ -5,7 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Финализированная версия блокера для более быстрой работы.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class FinalLock extends ReentrantLock {
 

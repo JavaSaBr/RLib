@@ -3,7 +3,7 @@ package rlib.geoengine;
 /**
  * Интерфейс конфига для гео движка.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface GeoConfig {
 

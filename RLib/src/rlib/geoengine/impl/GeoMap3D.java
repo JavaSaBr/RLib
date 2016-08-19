@@ -19,7 +19,7 @@ import rlib.util.array.Array;
 /**
  * Модель 3х мерной геокарты.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class GeoMap3D implements GeoMap {
 

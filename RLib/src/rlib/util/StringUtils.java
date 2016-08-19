@@ -12,7 +12,7 @@ import rlib.logging.LoggerManager;
 /**
  * Набор методов для работы со строками.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 27.03.2012
  */
 public class StringUtils {

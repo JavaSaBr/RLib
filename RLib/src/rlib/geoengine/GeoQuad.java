@@ -3,7 +3,7 @@ package rlib.geoengine;
 /**
  * Модель квадрата гео.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class GeoQuad {
 

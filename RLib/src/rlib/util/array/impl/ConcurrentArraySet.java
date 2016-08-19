@@ -1,9 +1,11 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Реализация {@link ConcurrentArray} с проверкой на уникальность вставляемых элементов.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @see ConcurrentArray
  */
 public class ConcurrentArraySet<E> extends ConcurrentArray<E> {
@@ -18,8 +20,9 @@ public class ConcurrentArraySet<E> extends ConcurrentArray<E> {
         super(type, size);
     }
 
+    @NotNull
     @Override
-    public ConcurrentArray<E> add(final E element) {
+    public ConcurrentArray<E> add(@NotNull final E element) {
         return contains(element) ? this : super.add(element);
     }
 }

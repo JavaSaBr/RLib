@@ -7,7 +7,7 @@ import rlib.util.array.Array;
 /**
  * Сканер classpath для последущего поиска нужных классов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ClassPathScanner {
 

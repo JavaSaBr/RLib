@@ -7,7 +7,7 @@ import rlib.network.packet.Packet;
 /**
  * Базовая реализация сетевого пакета.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractPacket<C> implements Packet<C> {
 

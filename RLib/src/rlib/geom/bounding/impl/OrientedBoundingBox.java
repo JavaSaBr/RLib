@@ -10,7 +10,7 @@ import rlib.geom.bounding.BoundingType;
 /**
  * Модель формы коробки.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class OrientedBoundingBox extends AbstractBounding {
 

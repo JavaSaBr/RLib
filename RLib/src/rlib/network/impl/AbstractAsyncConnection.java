@@ -19,7 +19,7 @@ import rlib.util.linkedlist.LinkedListFactory;
 /**
  * Базовая модель асинхронного конекта.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, S> implements AsyncConnection<R, S> {
 

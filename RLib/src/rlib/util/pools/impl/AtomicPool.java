@@ -10,7 +10,7 @@ import static rlib.util.ArrayUtils.runInWriteLock;
 /**
  * Реализация потокобезопасного {@link Pool} с помощью атомарного блокировщика.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class AtomicPool<E> implements Pool<E> {
 

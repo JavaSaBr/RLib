@@ -5,7 +5,7 @@ import static rlib.util.ref.ReferenceType.BYTE;
 /**
  * Ссылка на тип данных byte.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class ByteReference extends AbstractReference {
 

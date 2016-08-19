@@ -7,7 +7,7 @@ import rlib.network.packet.SendablePacket;
 /**
  * Интерфейс для реализации асинхронного подключения к серверу.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @SuppressWarnings("rawtypes")
 public interface ServerConnection<T extends Server, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AsyncConnection<R, S> {

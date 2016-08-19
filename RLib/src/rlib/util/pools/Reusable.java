@@ -4,7 +4,7 @@ package rlib.util.pools;
  * Интерфейс для реализации методов по финалзации и переинициализации используемых объектов совместо
  * с {@link ReusablePool}.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @see ReusablePool
  */
 public interface Reusable {

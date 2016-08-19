@@ -17,7 +17,7 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 /**
  * Базовая реализация асинхронной сети.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork {
 

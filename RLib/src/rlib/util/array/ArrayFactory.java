@@ -18,7 +18,7 @@ import static rlib.util.ClassUtils.unsafeCast;
 /**
  * Реализация фабрики различных массивов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ArrayFactory {
 

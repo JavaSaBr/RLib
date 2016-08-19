@@ -11,7 +11,7 @@ import rlib.logging.LoggerManager;
 /**
  * Набор утильных методов для работы с БД.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 27.03.2012
  */
 public final class DBUtils {

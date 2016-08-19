@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Тип ключа в таблице.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class LongKey {
 

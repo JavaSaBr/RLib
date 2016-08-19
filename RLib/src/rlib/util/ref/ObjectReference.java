@@ -5,7 +5,7 @@ import static rlib.util.ref.ReferenceType.OBJECT;
 /**
  * Ссылка на тип данных Object.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class ObjectReference extends AbstractReference {
 

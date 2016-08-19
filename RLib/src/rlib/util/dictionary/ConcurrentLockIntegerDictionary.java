@@ -10,7 +10,7 @@ import rlib.concurrent.lock.LockFactory;
  * Реализация конкурентнго словаря с примитивным ключем int, где миханизм синхранизации выступает
  * {@link ReentrantReadWriteLock}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ConcurrentLockIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements ConcurrentIntegerDictionary<V> {
 

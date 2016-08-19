@@ -5,7 +5,7 @@ import rlib.database.sql.builder.condition.SqlCondition;
 /**
  * Интерфейс для реализации аргументов к условия оператора.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface SqlConditionArgs<T extends SqlCondition> {
 

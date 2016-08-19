@@ -19,7 +19,7 @@ import rlib.util.dictionary.ObjectDictionary;
 /**
  * Менеджер логгирования, служит для получения, конфигурирования и записывания лога.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class LoggerManager {
 

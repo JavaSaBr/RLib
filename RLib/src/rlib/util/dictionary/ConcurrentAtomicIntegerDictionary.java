@@ -7,7 +7,7 @@ import rlib.concurrent.lock.LockFactory;
  * Реализация конкурентного словаря с примитивным ключем int, где миханизм синхранизации выступают
  * атомарные счетчики.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ConcurrentAtomicIntegerDictionary<V> extends ConcurrentLockIntegerDictionary<V> {
 

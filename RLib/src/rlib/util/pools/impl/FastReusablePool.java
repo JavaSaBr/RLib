@@ -8,7 +8,7 @@ import rlib.util.pools.ReusablePool;
 /**
  * Реализация не потокобезопасного легковесного {@link ReusablePool}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastReusablePool<E extends Reusable> implements ReusablePool<E> {
 

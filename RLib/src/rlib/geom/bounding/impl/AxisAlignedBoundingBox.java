@@ -14,7 +14,7 @@ import static java.lang.Math.min;
 /**
  * Реализация формы коробки.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class AxisAlignedBoundingBox extends AbstractBounding {
 

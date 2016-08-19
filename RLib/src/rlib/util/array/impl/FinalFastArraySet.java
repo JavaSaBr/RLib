@@ -3,7 +3,7 @@ package rlib.util.array.impl;
 /**
  * Финальная версия быстрого сета.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class FinalFastArraySet<E> extends FastArraySet<E> {
 

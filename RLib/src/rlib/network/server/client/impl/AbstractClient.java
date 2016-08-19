@@ -13,7 +13,7 @@ import rlib.network.server.client.Client;
 /**
  * Базовая реализация клиента для сервера.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends GameCrypt, RP extends ReadablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
 

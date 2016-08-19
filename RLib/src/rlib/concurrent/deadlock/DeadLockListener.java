@@ -5,7 +5,7 @@ import java.lang.management.ThreadInfo;
 /**
  * Интерфейс для реализации прослушки обнаружений дедлоков.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface DeadLockListener {
 

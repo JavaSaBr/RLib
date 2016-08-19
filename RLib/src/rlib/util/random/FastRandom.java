@@ -3,7 +3,7 @@ package rlib.util.random;
 /**
  * Реализация быстрого рандоминайзера на основе псевдорандом генератора.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class FastRandom implements Random {
 

@@ -6,7 +6,7 @@ import rlib.logging.LoggerManager;
 /**
  * Набор утильных методов по работе с потоками.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ThreadUtils {
 

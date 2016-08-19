@@ -19,7 +19,7 @@ import rlib.concurrent.util.ThreadUtils;
 /**
  * Тест функционала блокировщика.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class TestPrimitiveAtomicReadWriteLock extends Assert {
 

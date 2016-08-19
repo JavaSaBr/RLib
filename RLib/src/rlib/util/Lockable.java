@@ -3,7 +3,7 @@ package rlib.util;
 /**
  * Интерфейс для блокируемых объектов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Lockable {
 

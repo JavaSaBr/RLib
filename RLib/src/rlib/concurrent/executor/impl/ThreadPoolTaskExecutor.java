@@ -25,7 +25,7 @@ import rlib.util.linkedlist.LinkedListFactory;
  * использовать локальные объекты, в остальных случаях рекамендуются {@link Executors} сервисы. Для
  * получение локальных объектов, необходимо переопределить метод {@link #getLocalObjects(Thread)}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Lockable {
 

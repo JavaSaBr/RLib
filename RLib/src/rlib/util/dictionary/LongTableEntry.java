@@ -5,7 +5,7 @@ import rlib.util.pools.Reusable;
 /**
  * Реализация чеяки таблицы для таблиц с примитивным long ключем.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class LongTableEntry<V> implements Reusable {
 

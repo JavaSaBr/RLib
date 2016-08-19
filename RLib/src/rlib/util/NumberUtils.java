@@ -3,7 +3,7 @@ package rlib.util;
 /**
  * Набор утильных методов по работе с числами.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class NumberUtils {
 

@@ -5,7 +5,7 @@ import rlib.database.sql.builder.condition.WhereSqlCondition;
 /**
  * Реализация конструктора условия WHERE для MySQL.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class MySqlWhereSqlCondition implements WhereSqlCondition {
 

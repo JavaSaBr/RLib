@@ -12,7 +12,7 @@ import rlib.network.server.client.ClientConnection;
 /**
  * Базовая реализация асинхронного клиентского подключения.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @SuppressWarnings("rawtypes")
 public abstract class AbstractClientConnection<T extends Client, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ServerNetwork, R, S> implements ClientConnection<T, R, S> {

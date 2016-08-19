@@ -12,7 +12,7 @@ import static rlib.util.ref.ReferenceType.SHORT;
 /**
  * Фабрика ссылок на разные виды данных.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ReferenceFactory {
 

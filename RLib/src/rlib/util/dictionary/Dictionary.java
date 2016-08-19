@@ -10,7 +10,7 @@ import rlib.util.pools.Reusable;
 /**
  * Интерфей для реализации словаря.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 27.02.2012
  */
 public interface Dictionary<K, V> extends Iterable<V>, Reusable {

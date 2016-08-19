@@ -11,7 +11,7 @@ import rlib.util.pools.Reusable;
  * скольким он отправил, и позволяет переопределить логику через {@link #completeImpl()}, в которой
  * можно обработать завершения работы этого пакета после отправки всем необходимым клиентам данных.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractReusableSendablePacket<C> extends AbstractSendablePacket<C> implements Reusable {
 

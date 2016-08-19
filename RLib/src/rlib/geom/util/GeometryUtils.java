@@ -3,7 +3,7 @@ package rlib.geom.util;
 /**
  * Набор геометрически методов.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 01.03.2012
  */
 public final class GeometryUtils {

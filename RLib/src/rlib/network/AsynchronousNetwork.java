@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * Интерфейс для реализации модели асинхронной сети.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface AsynchronousNetwork {
 

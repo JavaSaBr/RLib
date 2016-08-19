@@ -29,7 +29,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Класс для работы с файлами.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 01.03.2012
  */
 public class FileUtils {

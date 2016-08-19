@@ -11,7 +11,7 @@ import rlib.logging.LoggerManager;
 /**
  * Набор утильных методов по работе с I/O.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class IOUtils {
 

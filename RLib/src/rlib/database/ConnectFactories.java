@@ -9,7 +9,7 @@ import rlib.database.impl.BoneCPConnectFactory;
 /**
  * Интерфейс для реализации фабрики подкюлчений к БД.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ConnectFactories {
 

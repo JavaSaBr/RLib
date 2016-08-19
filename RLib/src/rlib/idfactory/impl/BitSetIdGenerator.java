@@ -23,7 +23,7 @@ import rlib.util.dictionary.IntegerDictionary;
 /**
  * Модель фабрики ид основаной на BitSet
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 

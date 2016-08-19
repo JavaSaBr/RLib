@@ -11,7 +11,7 @@ import rlib.util.array.LongArray;
 /**
  * Интерфейс для реализации словаря с примитивным ключем long.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface LongDictionary<V> extends Dictionary<LongKey, V> {
 

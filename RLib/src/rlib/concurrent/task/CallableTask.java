@@ -3,7 +3,7 @@ package rlib.concurrent.task;
 /**
  * Интерфейс для реализации задача с возвращаемся результатом.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface CallableTask<R, L> {

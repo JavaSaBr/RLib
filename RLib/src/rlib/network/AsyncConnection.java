@@ -5,7 +5,7 @@ import rlib.util.Lockable;
 /**
  * Интерфейс для реализации сетевого подключения.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface AsyncConnection<R, S> extends Lockable {
 

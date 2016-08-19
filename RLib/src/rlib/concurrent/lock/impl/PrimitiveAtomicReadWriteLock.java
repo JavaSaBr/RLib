@@ -14,7 +14,7 @@ import rlib.concurrent.lock.AsyncReadSyncWriteLock;
  * необходимо уменьшить нагрузку на GC. <p> Смысл этой реализации в создании легковесного
  * блокировщика, который для синхронизации не создает временных объектов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class PrimitiveAtomicReadWriteLock implements AsyncReadSyncWriteLock, Lock {
 

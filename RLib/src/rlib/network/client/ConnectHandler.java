@@ -6,7 +6,7 @@ import java.nio.channels.CompletionHandler;
 /**
  * Интерфейс для реализации обработчика подключения к серверу.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ConnectHandler extends CompletionHandler<Void, AsynchronousSocketChannel> {
 

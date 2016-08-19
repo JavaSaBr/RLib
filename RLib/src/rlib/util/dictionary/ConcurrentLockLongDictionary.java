@@ -10,7 +10,7 @@ import rlib.concurrent.lock.LockFactory;
  * Реализация конкурентного словая использующего примитивный ключ long, используя механизм
  * синхронизации через {@link ReentrantLock}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ConcurrentLockLongDictionary<V> extends AbstractLongDictionary<V> implements ConcurrentLongDictionary<V> {
 

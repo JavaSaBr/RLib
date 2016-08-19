@@ -1,11 +1,13 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.util.array.Array;
 
 /**
  * Реализация {@link FastArray} с проверкой на уникальность элемента при вставке.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @see FastArray
  */
 public class FastArraySet<E> extends FastArray<E> {
@@ -20,8 +22,9 @@ public class FastArraySet<E> extends FastArray<E> {
         super(type, size);
     }
 
+    @NotNull
     @Override
-    public FastArray<E> add(final E element) {
+    public FastArray<E> add(@NotNull final E element) {
         return contains(element) ? this : super.add(element);
     }
 

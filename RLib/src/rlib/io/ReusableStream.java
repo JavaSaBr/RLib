@@ -5,7 +5,7 @@ import java.io.IOException;
 /**
  * Интерфейсд ля реализации переиспользуемых стримов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ReusableStream {
 

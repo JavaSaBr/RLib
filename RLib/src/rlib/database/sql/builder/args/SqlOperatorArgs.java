@@ -5,7 +5,7 @@ import rlib.database.sql.builder.operator.SqlOperator;
 /**
  * Интерфейс для реализации аргументов к оператору SQL.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface SqlOperatorArgs<T extends SqlOperator> {
 

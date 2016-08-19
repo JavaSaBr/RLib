@@ -7,7 +7,7 @@ import rlib.util.pools.Pool;
 /**
  * Реализация не потокобезопасного легковесного {@link Pool}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastPool<E> implements Pool<E> {
 

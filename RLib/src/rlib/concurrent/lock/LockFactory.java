@@ -14,7 +14,7 @@ import rlib.concurrent.lock.impl.SimpleReadWriteLock;
 /**
  * Реализация фабрики для создание различных блокировщиков.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class LockFactory {
 

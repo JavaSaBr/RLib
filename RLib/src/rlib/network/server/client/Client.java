@@ -9,7 +9,7 @@ import rlib.network.packet.SendablePacket;
 /**
  * Интерфейс для реализации игрового клиента в ММО играх.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @SuppressWarnings("rawtypes")
 public interface Client<A, P, C extends AsyncConnection, RP extends ReadablePacket, SP extends SendablePacket> {

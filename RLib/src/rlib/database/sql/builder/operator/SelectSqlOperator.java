@@ -3,7 +3,7 @@ package rlib.database.sql.builder.operator;
 /**
  * Интерфейс для реализации оператора SELECT.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface SelectSqlOperator extends SqlOperator {
 

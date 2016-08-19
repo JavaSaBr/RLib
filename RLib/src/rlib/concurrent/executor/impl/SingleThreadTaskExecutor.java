@@ -20,7 +20,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Реализация однопоточного исполнителя задач.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, Lockable {
 

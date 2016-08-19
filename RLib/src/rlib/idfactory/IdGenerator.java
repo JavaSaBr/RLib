@@ -3,7 +3,7 @@ package rlib.idfactory;
 /**
  * Интерфейс для реализации генератора ид.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface IdGenerator {
 

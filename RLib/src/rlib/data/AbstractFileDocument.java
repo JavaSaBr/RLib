@@ -11,7 +11,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * Базовая модель для парсера данных с xml файла.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> {
 

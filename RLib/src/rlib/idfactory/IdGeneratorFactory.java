@@ -9,7 +9,7 @@ import rlib.idfactory.impl.SimpleIdGenerator;
 /**
  * Фабрика ид генераторов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class IdGeneratorFactory {
 

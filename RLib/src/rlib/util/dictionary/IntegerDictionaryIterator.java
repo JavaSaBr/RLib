@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 /**
  * Реализация итератора для словарей с примитивным ключем int.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class IntegerDictionaryIterator<V> implements Iterator<V> {
 

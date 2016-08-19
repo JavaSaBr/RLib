@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Интерфейс для реализации внутреннего API словарей с объектным ключем.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface UnsafeObjectDictionary<K, V> extends ObjectDictionary<K, V> {
 

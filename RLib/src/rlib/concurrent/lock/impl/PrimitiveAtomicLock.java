@@ -11,7 +11,7 @@ import rlib.concurrent.atomic.AtomicInteger;
  * блокировки. Рекамендуется приминется в местах с не более чем средней конкурнции и с короткими
  * секциями блокировки.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class PrimitiveAtomicLock implements Lock {
 

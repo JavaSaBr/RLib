@@ -5,7 +5,7 @@ import rlib.database.sql.builder.impl.MySqlBuilder;
 /**
  * Реализация фабрики конструкторов SQL запросов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class SqlBuilderFactory {
 

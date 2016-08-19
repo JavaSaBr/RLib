@@ -11,7 +11,7 @@ import rlib.concurrent.lock.LockFactory;
  * Реализация обертки {@link ReentrantReadWriteLock} для реализации интерфейса {@link
  * AsyncReadSyncWriteLock}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class SimpleReadWriteLock implements AsyncReadSyncWriteLock {
 

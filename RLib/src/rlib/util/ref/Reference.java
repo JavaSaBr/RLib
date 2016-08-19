@@ -5,7 +5,7 @@ import rlib.util.pools.Reusable;
 /**
  * Интерфейс для реализации ссылки на какие-нибудь данные.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Reference extends Reusable {
 

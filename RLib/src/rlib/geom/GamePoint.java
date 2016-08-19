@@ -3,7 +3,7 @@ package rlib.geom;
 /**
  * Интерфейс для реализации позиции с вещесвенным координатами.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface GamePoint {
 

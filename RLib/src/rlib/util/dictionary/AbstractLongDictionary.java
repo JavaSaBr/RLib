@@ -17,7 +17,7 @@ import rlib.util.pools.ReusablePool;
 /**
  * Базоваря реализация словаря с примитивным ключем long.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongKey, V> implements UnsafeLongDictionary<V> {
 
@@ -418,7 +418,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
 
     @Override
     public Array<V> values(final Array<V> container) {
-        container.checkSize(container.size() + size());
+        container.prepareForSize(container.size() + size());
 
         for (LongEntry<V> entry : content()) {
             while (entry != null) {

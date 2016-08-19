@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Реализация быстрого словаря с примитивным ключем long.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastLongDictionary<V> extends AbstractLongDictionary<V> {
 

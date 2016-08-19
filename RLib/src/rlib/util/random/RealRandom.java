@@ -11,7 +11,7 @@ import static java.lang.Math.round;
 /**
  * Реализация медленного рандоминайзера с очень естественным рандомом.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class RealRandom implements Random {
 

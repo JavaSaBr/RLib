@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Базовая реализация слваря.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractDictionary<K, V> implements Dictionary<K, V> {
 

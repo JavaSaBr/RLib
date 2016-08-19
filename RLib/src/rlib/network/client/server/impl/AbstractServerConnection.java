@@ -14,7 +14,7 @@ import rlib.network.packet.SendablePacket;
 /**
  * Базовая модель асинхронного конекта к серверу.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @SuppressWarnings("rawtypes")
 public abstract class AbstractServerConnection<T extends Server, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {

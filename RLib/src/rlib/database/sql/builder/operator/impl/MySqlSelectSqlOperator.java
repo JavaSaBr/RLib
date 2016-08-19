@@ -9,7 +9,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Реализация оператора SELECT для MySQL.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class MySqlSelectSqlOperator implements SelectSqlOperator {
 

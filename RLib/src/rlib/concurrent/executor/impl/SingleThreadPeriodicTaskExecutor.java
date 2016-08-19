@@ -20,7 +20,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Реализация однопоточного исполнителя обновлений задач.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> implements PeriodicTaskExecutor<T, L>, Runnable, Lockable {
 

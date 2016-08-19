@@ -8,7 +8,7 @@ import rlib.util.pools.ReusablePool;
 /**
  * Перечисление типов ссылок.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public enum ReferenceType {
     FLOAT,

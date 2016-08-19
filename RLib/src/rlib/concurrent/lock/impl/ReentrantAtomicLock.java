@@ -13,7 +13,7 @@ import rlib.concurrent.util.ThreadUtils;
  * блокировки. Рекамендуется приминется в местах с не более чем средней конкурнции и с короткими
  * секциями блокировки.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ReentrantAtomicLock implements Lock {
 

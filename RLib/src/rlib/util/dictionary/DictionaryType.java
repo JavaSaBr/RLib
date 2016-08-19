@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Перечисление типов таблиц по возможным ключам.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public enum DictionaryType {
     DEPRECATED,

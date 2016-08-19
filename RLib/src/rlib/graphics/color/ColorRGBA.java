@@ -3,7 +3,7 @@ package rlib.graphics.color;
 import java.io.Serializable;
 
 /**
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ColorRGBA implements Cloneable, Serializable {
 

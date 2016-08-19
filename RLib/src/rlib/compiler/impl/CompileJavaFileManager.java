@@ -14,7 +14,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Файловый менеджер по загрузке классов для компиляции.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
 

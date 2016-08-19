@@ -5,7 +5,7 @@ import static rlib.util.ref.ReferenceType.LONG;
 /**
  * Ссылка на тип данных long.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class LongReference extends AbstractReference {
 

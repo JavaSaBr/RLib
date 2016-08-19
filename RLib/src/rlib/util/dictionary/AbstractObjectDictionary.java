@@ -16,7 +16,7 @@ import rlib.util.pools.ReusablePool;
 /**
  * Базовая реализация словаря с объектным ключем.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<K, V> implements UnsafeObjectDictionary<K, V> {
 
@@ -252,7 +252,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public final Array<K> keyArray(final Array<K> container) {
-        container.checkSize(container.size() + size());
+        container.prepareForSize(container.size() + size());
 
         for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
@@ -441,7 +441,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public Array<V> values(final Array<V> container) {
-        container.checkSize(container.size() + size());
+        container.prepareForSize(container.size() + size());
 
         for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {

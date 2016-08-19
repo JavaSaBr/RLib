@@ -3,7 +3,7 @@ package rlib.geom.util;
 /**
  * Реализация утильного класса с методами по работе с углами.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class AngleUtils {
 

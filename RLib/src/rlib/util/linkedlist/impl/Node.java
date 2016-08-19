@@ -6,7 +6,7 @@ import rlib.util.pools.Reusable;
 /**
  * Реализация узла для {@link LinkedList}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class Node<E> implements Reusable {
 

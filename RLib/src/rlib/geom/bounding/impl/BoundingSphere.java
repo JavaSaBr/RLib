@@ -10,7 +10,7 @@ import static java.lang.Math.abs;
 /**
  * Реализация формы сферы.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class BoundingSphere extends AbstractBounding {
 

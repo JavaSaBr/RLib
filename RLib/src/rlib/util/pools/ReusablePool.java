@@ -5,7 +5,7 @@ package rlib.util.pools;
  * {@link Reusable}. Используется при подходе с умным переиспользованием объектов для уменьшения
  * нагрузки на GC. Создается с помощью {@link PoolFactory}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ReusablePool<E extends Reusable> extends Pool<E> {
 }

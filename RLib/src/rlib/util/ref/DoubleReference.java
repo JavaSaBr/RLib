@@ -5,7 +5,7 @@ import static rlib.util.ref.ReferenceType.DOUBLE;
 /**
  * Ссылка на тип данных double.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class DoubleReference extends AbstractReference {
 

@@ -3,7 +3,7 @@ package rlib.logging;
 /**
  * Интерфейс для реализации логгера.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Logger {
 

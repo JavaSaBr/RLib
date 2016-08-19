@@ -18,7 +18,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Модель поиска и обнаружения делоков.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class DeadLockDetector implements SafeTask {
 

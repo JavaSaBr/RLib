@@ -5,7 +5,7 @@ import rlib.util.pools.Reusable;
 /**
  * Дополнение к стандартной реализации.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger implements Reusable {
 

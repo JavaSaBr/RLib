@@ -3,7 +3,7 @@ package rlib.util;
 /**
  * Интерфейс для реализации метода копирования объекта.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Copyable<T> {
 

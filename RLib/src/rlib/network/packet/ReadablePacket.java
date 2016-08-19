@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * Интерфейс для реализации читаемого пакета.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ReadablePacket<C> extends Packet<C> {
 

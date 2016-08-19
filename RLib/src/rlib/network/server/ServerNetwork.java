@@ -10,7 +10,7 @@ import rlib.network.AsynchronousNetwork;
 /**
  * Интерфейс для реализации модели асинхронной серверной сети.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ServerNetwork extends AsynchronousNetwork {
 

@@ -22,7 +22,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Реализация обертки над java компилятором для удобной компиляции java кода в runtime.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompilerImpl implements Compiler {
 

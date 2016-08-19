@@ -12,7 +12,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Теаст скорости и функционала FastArray.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class TestFastArray extends Assert {
 
@@ -43,7 +43,7 @@ public class TestFastArray extends Assert {
 
         long time = System.currentTimeMillis();
 
-        array.checkSize(1_000_000);
+        array.prepareForSize(1_000_000);
 
         for (int i = 0, length = 1_000_000; i < length; i++) {
             array.unsafeAdd(i);

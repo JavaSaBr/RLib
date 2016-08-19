@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Интерфейс для реализации внутреннего API словарей с примитивным ключем int.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface UnsafeIntegerDictionary<V> extends IntegerDictionary<V> {
 

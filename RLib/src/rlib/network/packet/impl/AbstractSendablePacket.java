@@ -8,7 +8,7 @@ import rlib.util.Util;
 /**
  * Базовая реализация отправляемого пакета.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implements SendablePacket<C> {
 

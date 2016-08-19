@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Интерфейс для реализации механизмов работы в многопоточной среде со словарем.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ConcurrentDictionary<K, V> extends Dictionary<K, V> {
 

@@ -7,7 +7,7 @@ import static java.lang.Float.floatToIntBits;
 /**
  * Реализация игровой позиции и вектора.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class Vector implements GamePoint {
 

@@ -17,7 +17,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Реализация сканера, который еще умеет из манифеста classpath доставать.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
 

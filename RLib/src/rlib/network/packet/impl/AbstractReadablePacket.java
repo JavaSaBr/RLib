@@ -9,7 +9,7 @@ import rlib.util.pools.Reusable;
 /**
  * Базовая реализация читаемого пакета.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implements ReadablePacket<C>, Reusable {
 

@@ -8,7 +8,7 @@ import rlib.util.Rnd;
 /**
  * Реализация утильного класса с методами для рассчета координат.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class CoordsUtils {
 

@@ -7,7 +7,7 @@ import rlib.idfactory.IdGenerator;
 /**
  * Модель простого генератора ид.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class SimpleIdGenerator implements IdGenerator {
 

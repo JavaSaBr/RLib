@@ -3,7 +3,7 @@ package rlib.logging;
 /**
  * Слушатель логгера.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface LoggerListener {
 

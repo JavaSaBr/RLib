@@ -6,7 +6,7 @@ import rlib.database.sql.builder.condition.WhereSqlCondition;
 /**
  * Интерфейс для реализации оператора запроса в SQL.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface SqlOperator {
 

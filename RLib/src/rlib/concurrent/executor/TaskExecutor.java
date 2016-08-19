@@ -8,7 +8,7 @@ import rlib.concurrent.task.SimpleTask;
 /**
  * Интерфейс для реализации исполнителя задач.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface TaskExecutor<L> {
 

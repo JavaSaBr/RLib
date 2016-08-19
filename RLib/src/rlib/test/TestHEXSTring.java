@@ -6,7 +6,7 @@ import org.junit.Test;
 import rlib.util.Util;
 
 /**
- * @author Ronn
+ * @author JavaSaBr
  */
 public class TestHEXSTring extends Assert {
 

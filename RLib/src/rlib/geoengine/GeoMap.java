@@ -7,7 +7,7 @@ import rlib.util.array.Array;
 /**
  * Интерфейс для реализации карты квадратов геодаты.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface GeoMap {
 

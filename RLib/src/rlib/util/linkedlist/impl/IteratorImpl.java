@@ -8,7 +8,7 @@ import rlib.util.linkedlist.LinkedList;
 /**
  * Реализация итератара для {@link LinkedList}
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class IteratorImpl<E> implements Iterator<E> {
 

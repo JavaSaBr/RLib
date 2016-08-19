@@ -3,7 +3,7 @@ package rlib.database;
 /**
  * Модель запроса для очистки таблицы.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class CleaningQuery {
 

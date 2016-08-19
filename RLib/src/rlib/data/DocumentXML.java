@@ -3,7 +3,7 @@ package rlib.data;
 /**
  * Интерфейс для реализации парсера хмл.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface DocumentXML<C> {
 

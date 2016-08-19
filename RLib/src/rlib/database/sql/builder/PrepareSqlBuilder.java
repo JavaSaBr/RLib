@@ -9,7 +9,7 @@ import rlib.database.sql.builder.operator.UpdateSqlOperator;
 /**
  * Интерфейс для реализации конструктора SQL запроса.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface PrepareSqlBuilder {
 

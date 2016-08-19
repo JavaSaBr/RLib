@@ -3,7 +3,7 @@ package rlib.logging;
 /**
  * Перечисление уровней логгирования.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public enum LoggerLevel {
     INFO("INFO"),

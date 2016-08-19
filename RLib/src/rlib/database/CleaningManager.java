@@ -12,7 +12,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Менеджер для очистки БД от ненужных записей. Хранит список запросов необходимых для очистки БД.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class CleaningManager {
 

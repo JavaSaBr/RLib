@@ -7,7 +7,7 @@ import rlib.util.pools.Reusable;
 /**
  * Реализация ячейки для словарей с ключем примитива int.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class IntegerEntry<V> implements Reusable {
 

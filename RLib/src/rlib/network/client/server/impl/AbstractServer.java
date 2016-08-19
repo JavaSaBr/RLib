@@ -13,7 +13,7 @@ import rlib.network.packet.SendablePacket;
 /**
  * Базовая реализация сервера, к которому подключается клиент.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 @SuppressWarnings("rawtypes")
 public abstract class AbstractServer<C extends ServerConnection, T extends GameCrypt, RP extends ReadablePacket, SP extends SendablePacket> implements Server<C, RP, SP> {

@@ -4,7 +4,7 @@
 package rlib.database.sql.builder.operator;
 
 /**
- * @author ronn
+ * @author JavaSaBr
  */
 public interface UpdateSqlOperator {
 

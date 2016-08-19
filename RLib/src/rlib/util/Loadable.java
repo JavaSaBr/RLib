@@ -3,7 +3,7 @@ package rlib.util;
 /**
  * Интерфейс для реализации загружаемых объектов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Loadable {
 

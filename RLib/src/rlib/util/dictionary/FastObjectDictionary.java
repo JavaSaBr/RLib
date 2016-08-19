@@ -3,7 +3,7 @@ package rlib.util.dictionary;
 /**
  * Реализация словаря с объектным ключем.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
 

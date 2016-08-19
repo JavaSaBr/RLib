@@ -12,7 +12,7 @@ import rlib.compiler.Compiler;
 /**
  * Контейнер байткода класса в памяти.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompileByteCode extends SimpleJavaFileObject implements ByteSource {
 

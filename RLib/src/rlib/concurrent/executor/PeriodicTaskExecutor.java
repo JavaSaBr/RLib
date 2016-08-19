@@ -5,7 +5,7 @@ import rlib.concurrent.task.PeriodicTask;
 /**
  * Интерфейс для реализации периодического исполнителя задач.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface PeriodicTaskExecutor<T extends PeriodicTask<L>, L> {
 

@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 
 import rlib.concurrent.atomic.AtomicInteger;
@@ -23,7 +25,7 @@ import rlib.util.array.ArrayIterator;
  * }
  * </pre>
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class SynchronizedArray<E> extends AbstractArray<E> {
 
@@ -56,8 +58,9 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
         this.size = new AtomicInteger();
     }
 
+    @NotNull
     @Override
-    public synchronized SynchronizedArray<E> add(final E element) {
+    public synchronized SynchronizedArray<E> add(@NotNull final E element) {
 
         if (size() == array.length) {
             array = ArrayUtils.copyOf(array, array.length >> 1);
@@ -67,8 +70,9 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
         return this;
     }
 
+    @NotNull
     @Override
-    public synchronized final SynchronizedArray<E> addAll(final Array<? extends E> elements) {
+    public synchronized final SynchronizedArray<E> addAll(@NotNull final Array<? extends E> elements) {
 
         if (elements == null || elements.isEmpty()) {
             return this;
@@ -89,8 +93,9 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
         return this;
     }
 
+    @NotNull
     @Override
-    public synchronized Array<E> addAll(final Collection<? extends E> collection) {
+    public synchronized Array<E> addAll(@NotNull final Collection<? extends E> collection) {
 
         if (collection == null || collection.isEmpty()) {
             return this;
@@ -110,8 +115,9 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
         return this;
     }
 
+    @NotNull
     @Override
-    public synchronized final Array<E> addAll(final E[] elements) {
+    public synchronized final Array<E> addAll(@NotNull final E[] elements) {
 
         if (elements == null || elements.length < 1) {
             return this;
@@ -131,6 +137,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
         return this;
     }
 
+    @NotNull
     @Override
     public final E[] array() {
         return array;
@@ -158,6 +165,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
         return old;
     }
 
+    @NotNull
     @Override
     public synchronized final E get(final int index) {
         return array[index];
@@ -169,7 +177,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public synchronized final void set(final int index, final E element) {
+    public synchronized final void set(final int index, @NotNull final E element) {
 
         if (index < 0 || index >= size() || element == null) {
             return;

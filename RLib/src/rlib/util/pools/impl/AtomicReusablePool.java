@@ -11,7 +11,7 @@ import static rlib.util.ArrayUtils.runInWriteLock;
 /**
  * Реализация потокобезопасного {@link ReusablePool} с помощью атомарного блокировщика.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class AtomicReusablePool<E extends Reusable> implements ReusablePool<E> {
 

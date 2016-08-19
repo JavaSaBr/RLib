@@ -8,7 +8,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Загрузчик откомпиленных классов в рантайме.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompileClassLoader extends ClassLoader {
 

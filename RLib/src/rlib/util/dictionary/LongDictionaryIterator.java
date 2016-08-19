@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 /**
  * Реализация итератора для словаря с примитивным ключем long.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class LongDictionaryIterator<V> implements Iterator<V> {
 

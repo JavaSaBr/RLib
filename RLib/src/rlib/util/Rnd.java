@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Класс для работы со случайными значениями.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class Rnd {
 

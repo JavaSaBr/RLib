@@ -3,7 +3,7 @@ package rlib.database.sql.builder.condition;
 /**
  * Интерфейс для реализации условия WHERE в SQL.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface WhereSqlCondition extends SqlCondition {
 

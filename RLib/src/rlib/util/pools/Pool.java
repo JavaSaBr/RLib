@@ -8,7 +8,7 @@ import java.util.function.Supplier;
  * Интерфейс для реализации объектоного пула. Используется при подходе к переиспользованию объектов
  * для облегчения нагрузки на GC. Создается с помощью {@link PoolFactory}
  *
- * @author Ronn
+ * @author JavaSaBr
  * @see PoolFactory
  */
 public interface Pool<E> {

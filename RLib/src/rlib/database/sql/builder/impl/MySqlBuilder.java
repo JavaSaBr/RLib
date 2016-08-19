@@ -11,7 +11,7 @@ import rlib.database.sql.builder.operator.impl.MySqlSelectSqlOperator;
 /**
  * Реализация конструктора SQL запроса под MySQL.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class MySqlBuilder implements PrepareSqlBuilder {
 

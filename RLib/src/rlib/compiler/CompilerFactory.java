@@ -7,7 +7,7 @@ import rlib.compiler.impl.CompilerImpl;
 /**
  * Фабрика компиляторов java кода на рантайме.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompilerFactory {
 

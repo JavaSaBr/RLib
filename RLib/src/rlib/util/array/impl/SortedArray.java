@@ -1,12 +1,14 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 
 /**
  * Реализация сортированного {@link FastArray}, где сортировка происходит при вставке.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 28.02.2012
  * @see FastArray
  */
@@ -29,8 +31,9 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
         super(type, size);
     }
 
+    @NotNull
     @Override
-    public SortedArray<E> add(final E element) {
+    public SortedArray<E> add(@NotNull final E element) {
 
         if (size == array.length) {
             array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);

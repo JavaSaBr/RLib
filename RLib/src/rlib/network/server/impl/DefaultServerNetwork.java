@@ -18,7 +18,7 @@ import rlib.network.server.ServerNetwork;
 /**
  * Базовая модель асинхронной сети.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class DefaultServerNetwork extends AbstractAsynchronousNetwork implements ServerNetwork {
 
