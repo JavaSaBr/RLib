@@ -492,7 +492,6 @@ public final class ArrayUtils {
      * @param consumer функция действия.
      */
     public static <T> void runInReadLock(final Array<T> array, final Consumer<Array<T>> consumer) {
-        if (array.isEmpty()) return;
         array.readLock();
         try {
             consumer.accept(array);
@@ -640,7 +639,6 @@ public final class ArrayUtils {
      * @param consumer функция действия.
      */
     public static <T, V> void runInReadLock(final Array<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
-        if (array.isEmpty()) return;
         array.readLock();
         try {
             consumer.accept(array, argument);
@@ -693,7 +691,6 @@ public final class ArrayUtils {
      * @param consumer функция действия.
      */
     public static <T, F, S> void runInReadLock(final Array<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
-        if (array.isEmpty()) return;
         array.readLock();
         try {
             consumer.accept(array, first, second);
