@@ -5,10 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import rlib.util.array.Array;
 
 /**
- * Реализация {@link FastArray} с проверкой на уникальность элемента при вставке.
+ * The fast implementation of the array with checking on duplicates. This array is not threadsafe.
  *
  * @author JavaSaBr
- * @see FastArray
  */
 public class FastArraySet<E> extends FastArray<E> {
 

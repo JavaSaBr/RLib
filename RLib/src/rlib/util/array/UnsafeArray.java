@@ -39,7 +39,7 @@ public interface UnsafeArray<E> extends Array<E> {
     /**
      * Set the element for the index without any checks.
      *
-     * @param index the index.
+     * @param index   the index.
      * @param element the element.
      */
     default void unsafeSet(final int index, @NotNull final E element) {

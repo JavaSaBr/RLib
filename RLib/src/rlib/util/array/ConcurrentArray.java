@@ -18,13 +18,6 @@ public interface ConcurrentArray<E> extends Array<E> {
 
     /**
      * Unlock the read lock.
-     */
-    default void readUnlock() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Unlock the read lock.
      *
      * @param stamp the stamp of read lock.
      */
@@ -57,13 +50,6 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @return the stamp of write lock or 0.
      */
     default long writeLock() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Unlock the write lock.
-     */
-    default void writeUnlock() {
         throw new UnsupportedOperationException();
     }
 

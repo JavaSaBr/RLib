@@ -1,17 +1,15 @@
 package rlib.util.array;
 
-import rlib.util.array.impl.ConcurrentArray;
-import rlib.util.array.impl.ConcurrentArraySet;
-import rlib.util.array.impl.ConcurrentAtomicArray;
-import rlib.util.array.impl.FastArray;
-import rlib.util.array.impl.FastArraySet;
+import rlib.util.array.impl.ConcurrentReentrantRWLockArray;
+import rlib.util.array.impl.ConcurrentReentrantRWLockArraySet;
 import rlib.util.array.impl.FastIntegerArray;
 import rlib.util.array.impl.FastLongArray;
-import rlib.util.array.impl.FinalConcurrentAtomicArray;
+import rlib.util.array.impl.FinalConcurrentPrimitiveAtomicARSWLockArray;
+import rlib.util.array.impl.FinalConcurrentStampedLockArray;
 import rlib.util.array.impl.FinalFastArray;
 import rlib.util.array.impl.FinalFastArraySet;
-import rlib.util.array.impl.SortedArray;
-import rlib.util.array.impl.SynchronizedArray;
+import rlib.util.array.impl.FinalSortedArray;
+import rlib.util.array.impl.FinalSynchronizedArray;
 
 import static rlib.util.ClassUtils.unsafeCast;
 
@@ -23,164 +21,153 @@ import static rlib.util.ClassUtils.unsafeCast;
 public class ArrayFactory {
 
     /**
-     * Создание нового не потокобезопасного динамического массива.
+     * Creates the new array.
      *
-     * @param type тип элементов в массиве.
-     * @return новый экземпляр массива.
-     * @see FastArray
+     * @param type the type of the array.
+     * @return the new array.
+     * @see {@link FinalFastArray}
      */
     public static <E> Array<E> newArray(final Class<?> type) {
         return new FinalFastArray<>(unsafeCast(type));
     }
 
     /**
-     * Создание нового не потокобезопасного динамического массива.
+     * Creates the new array.
      *
-     * @param type     тип элементов в массиве.
-     * @param capacity стартовый размер массива.
-     * @return новый экземпляр массива.
-     * @see FastArray
+     * @param type     the type of the array.
+     * @param capacity the init size of the array.
+     * @return the new array.
+     * @see {@link FinalFastArray}
      */
     public static <E> Array<E> newArray(final Class<?> type, final int capacity) {
         return new FinalFastArray<>(unsafeCast(type), capacity);
     }
 
     /**
-     * Создание нового не потокобезопасного динамического массива с проверкой на уникальность
-     * элементов при вставке.
+     * Creates the new array set.
      *
-     * @param type тип элементов в массиве.
-     * @return новый экземпляр массива.
-     * @see FastArraySet
+     * @param type the type of the array.
+     * @return the new array.
+     * @see {@link FinalFastArraySet}
      */
     public static <E> Array<E> newArraySet(final Class<?> type) {
         return new FinalFastArraySet<>(unsafeCast(type));
     }
 
     /**
-     * Создание нового потокобезопасного динамического массива с возможностью синхронно записывать и
-     * асинхронно читать.
+     * Creates the new concurrent array.
      *
-     * @param type тип элементов в массиве.
-     * @return новый экземпляр массива.
-     * @see ConcurrentArray
+     * @param type the type of the array.
+     * @return the new array.
+     * @see {@link ConcurrentReentrantRWLockArray}
      */
-    public static <E> Array<E> newConcurrentArray(final Class<?> type) {
-        return new ConcurrentArray<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArray(final Class<?> type) {
+        return new ConcurrentReentrantRWLockArray<>(unsafeCast(type));
     }
 
     /**
-     * Создание нового потокобезопасного динамического массива с проверкой на уникальность элемента
-     * при вставке и с возможностью синхронно записывать и асинхронно читать.
+     * Creates the new concurrent array set.
      *
-     * @param type тип элементов в массиве.
-     * @return новый экземпляр массива.
-     * @see ConcurrentArraySet
+     * @param type the type of the array.
+     * @return the new array.
+     * @see {@link ConcurrentReentrantRWLockArraySet}
      */
-    public static <E> Array<E> newConcurrentArraySet(final Class<?> type) {
-        return new ConcurrentArraySet<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArraySet(final Class<?> type) {
+        return new ConcurrentReentrantRWLockArraySet<>(unsafeCast(type));
     }
 
     /**
-     * Создание нового потокобезопасного динамического массива с возможностью синхронно записывать и
-     * асинхронно читать.
+     * Creates the new concurrent array.
      *
-     * @param type тип элементов в массиве.
-     * @return новый экземпляр массива.
-     * @see ConcurrentAtomicArray
+     * @param type the type of the array.
+     * @return the new array.
+     * @see {@link FinalConcurrentPrimitiveAtomicARSWLockArray}
      */
-    public static <E> Array<E> newConcurrentAtomicArray(final Class<?> type) {
-        return new FinalConcurrentAtomicArray<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentPrimitiveAtomicARSWLockArray(final Class<?> type) {
+        return new FinalConcurrentPrimitiveAtomicARSWLockArray<>(unsafeCast(type));
     }
 
     /**
-     * Создает массив из перечисленных чисел.
+     * Creates the new concurrent array.
      *
-     * @param elements набор чисел.
-     * @return новый массив.
+     * @param type the type of the array.
+     * @return the new array.
+     * @see {@link FinalConcurrentPrimitiveAtomicARSWLockArray}
      */
-    public static float[] newFloatArray(final float... elements) {
-        return elements;
+    public static <E> ConcurrentArray<E> newFinalConcurrentStampedLockArray(final Class<?> type) {
+        return new FinalConcurrentStampedLockArray<>(unsafeCast(type));
     }
 
     /**
-     * Создание не потокобезопасного динамического массива примитивов int.
+     * Creates the new sorted array.
      *
-     * @return новый экземпляр массива.
+     * @param type the type of the array.
+     * @return the new array.
+     * @see {@link FinalSortedArray}
+     */
+    public static <E extends Comparable<E>> Array<E> newSortedArray(final Class<?> type) {
+        return new FinalSortedArray<>(unsafeCast(type));
+    }
+
+    /**
+     * Creates the new synchronized array.
+     *
+     * @param type the type of the array.
+     * @return the new array.
+     * @see {@link FinalSynchronizedArray}
+     */
+    public static <E> Array<E> newSynchronizedArray(final Class<?> type) {
+        return new FinalSynchronizedArray<>(unsafeCast(type));
+    }
+
+    /**
+     * Creates the new integer array.
+     *
+     * @return the new array.
+     * @see {@link FastIntegerArray}
      */
     public static IntegerArray newIntegerArray() {
         return new FastIntegerArray();
     }
 
     /**
-     * Создает массив из перечисленных чисел.
+     * Creates the new long array.
      *
-     * @param elements набор чисел.
-     * @return новый массив.
-     */
-    public static int[] newIntegerArray(final int... elements) {
-        return elements;
-    }
-
-    /**
-     * Создание не потокобезопасного динамического массива примитивов long.
-     *
-     * @return новый экземпляр массива.
+     * @return the new array.
+     * @see {@link FastLongArray}
      */
     public static LongArray newLongArray() {
         return new FastLongArray();
     }
 
     /**
-     * Создание нового не потокобезопасного сортированного динамического массива.
+     * Creates the new float array.
      *
-     * @param type тип элементов массива.
-     * @return новый экземпляр массива.
-     * @see SortedArray
-     */
-    public static <E extends Comparable<E>> Array<E> newSortedArray(final Class<?> type) {
-        return new SortedArray<>(unsafeCast(type));
-    }
-
-    /**
-     * Создание нового синхронизированного динамического массива с синхронизированной записью.
-     *
-     * @param type тип элементов в массиве.
-     * @return новый экземпляр массива.
-     * @see SynchronizedArray
-     */
-    public static <E> Array<E> newSynchronizedArray(final Class<?> type) {
-        return new SynchronizedArray<>(unsafeCast(type));
-    }
-
-    /**
-     * Создает массив из перечисленных чисел.
-     *
-     * @param elements набор чисел.
-     * @return новый массив.
+     * @param elements the elements of the new array.
+     * @return the new array.
      */
     public static float[] toFloatArray(final float... elements) {
         return elements;
     }
 
     /**
-     * Создает массив из перечисленных элементов.
+     * Creates the new int array.
      *
-     * @param elements набор элементов.
-     * @return новый массив.
+     * @param elements the elements of the new array.
+     * @return the new array.
      */
-    @SafeVarargs
-    public static <T, K extends T> T[] toArray(final K... elements) {
+    public static int[] toIntegerArray(final int... elements) {
         return elements;
     }
 
     /**
-     * Создает массив из перечисленных чисел.
+     * Creates the new object array.
      *
-     * @param elements набор чисел.
-     * @return новый массив.
+     * @param elements the elements of the new array.
+     * @return the new array.
      */
-    public static int[] toIntegerArray(final int... elements) {
+    @SafeVarargs
+    public static <T, K extends T> T[] toArray(final K... elements) {
         return elements;
     }
 }

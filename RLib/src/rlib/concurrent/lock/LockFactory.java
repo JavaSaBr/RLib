@@ -2,10 +2,12 @@ package rlib.concurrent.lock;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.StampedLock;
 
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.lock.impl.FinalLock;
 import rlib.concurrent.lock.impl.FinalReadWriteLock;
+import rlib.concurrent.lock.impl.FinalStampedLock;
 import rlib.concurrent.lock.impl.PrimitiveAtomicLock;
 import rlib.concurrent.lock.impl.PrimitiveAtomicReadWriteLock;
 import rlib.concurrent.lock.impl.ReentrantAtomicLock;
@@ -26,6 +28,15 @@ public class LockFactory {
      */
     public static AsyncReadSyncWriteLock newARSWLock() {
         return new SimpleReadWriteLock();
+    }
+
+    /**
+     * Creates new stamped lock.
+     *
+     * @return the new stamped lock.
+     */
+    public static StampedLock newStampedLock() {
+        return new FinalStampedLock();
     }
 
     /**

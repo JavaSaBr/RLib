@@ -1,10 +1,10 @@
 package rlib.util.pools;
 
-import rlib.util.pools.impl.AtomicPool;
-import rlib.util.pools.impl.AtomicReusablePool;
-import rlib.util.pools.impl.ConcurrentReusablePool;
+import rlib.util.pools.impl.ConcurrentPrimitiveAtomicARSWLockPool;
+import rlib.util.pools.impl.ConcurrentReentrantRWLockPool;
 import rlib.util.pools.impl.FastPool;
 import rlib.util.pools.impl.FastReusablePool;
+import rlib.util.pools.impl.PrimitiveAtomicARSWLockReusablePool;
 import rlib.util.pools.impl.SynchronizedReusablePool;
 
 /**
@@ -19,22 +19,10 @@ public final class PoolFactory {
      *
      * @param type тип объектов пула.
      * @return новый объектный пул.
-     * @see AtomicReusablePool
-     */
-    @Deprecated
-    public static <T extends Reusable> ReusablePool<T> newAtomicFoldablePool(final Class<? extends Reusable> type) {
-        return new AtomicReusablePool<>(type);
-    }
-
-    /**
-     * Создание нового потокобезопасного объектного пула.
-     *
-     * @param type тип объектов пула.
-     * @return новый объектный пул.
-     * @see AtomicReusablePool
+     * @see PrimitiveAtomicARSWLockReusablePool
      */
     public static <T extends Reusable> ReusablePool<T> newAtomicReusablePool(final Class<? extends Reusable> type) {
-        return new AtomicReusablePool<>(type);
+        return new PrimitiveAtomicARSWLockReusablePool<>(type);
     }
 
     /**
@@ -42,10 +30,10 @@ public final class PoolFactory {
      *
      * @param type тип объектов пула.
      * @return новый объектный пул.
-     * @see AtomicPool
+     * @see ConcurrentPrimitiveAtomicARSWLockPool
      */
     public static <T> Pool<T> newAtomicPool(final Class<?> type) {
-        return new AtomicPool<>(type);
+        return new ConcurrentPrimitiveAtomicARSWLockPool<>(type);
     }
 
     /**
@@ -53,22 +41,10 @@ public final class PoolFactory {
      *
      * @param type тип объектов пула.
      * @return новый объектный пул.
-     * @see ConcurrentReusablePool
-     */
-    @Deprecated
-    public static <T extends Reusable> ReusablePool<T> newConcurrentFoldablePool(final Class<? extends Reusable> type) {
-        return new ConcurrentReusablePool<>(type);
-    }
-
-    /**
-     * Создание нового потокобезопасного объектного пула.
-     *
-     * @param type тип объектов пула.
-     * @return новый объектный пул.
-     * @see ConcurrentReusablePool
+     * @see ConcurrentReentrantRWLockPool
      */
     public static <T extends Reusable> ReusablePool<T> newConcurrentReusablePool(final Class<? extends Reusable> type) {
-        return new ConcurrentReusablePool<>(type);
+        return new ConcurrentReentrantRWLockPool<>(type);
     }
 
     /**

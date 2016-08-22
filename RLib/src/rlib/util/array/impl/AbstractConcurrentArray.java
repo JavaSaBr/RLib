@@ -9,19 +9,20 @@ import rlib.concurrent.atomic.AtomicInteger;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
+import rlib.util.array.ConcurrentArray;
 import rlib.util.array.UnsafeArray;
 
 import static java.lang.Math.max;
 import static rlib.util.ArrayUtils.copyOf;
 
 /**
- * The implementation of the array with synchronization all methods.
+ * The base concurrent implementation of the array.
  *
  * @author JavaSaBr
  */
-public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
+public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implements ConcurrentArray<E>, UnsafeArray<E> {
 
-    private static final long serialVersionUID = -7288153859732883548L;
+    private static final long serialVersionUID = -6291504312637658721L;
 
     /**
      * The count of elements in this array.
@@ -33,11 +34,11 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
      */
     private volatile E[] array;
 
-    public SynchronizedArray(final Class<E> type) {
+    public AbstractConcurrentArray(final Class<E> type) {
         this(type, 10);
     }
 
-    public SynchronizedArray(final Class<E> type, final int size) {
+    public AbstractConcurrentArray(final Class<E> type, final int size) {
         super(type, size);
 
         this.size = new AtomicInteger();
@@ -45,10 +46,10 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
 
     @NotNull
     @Override
-    public synchronized SynchronizedArray<E> add(@NotNull final E element) {
+    public AbstractConcurrentArray<E> add(@NotNull final E element) {
 
         if (size() == array.length) {
-            array = ArrayUtils.copyOf(array, array.length >> 1);
+            array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
         }
 
         array[size.getAndIncrement()] = element;
@@ -57,7 +58,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
 
     @NotNull
     @Override
-    public synchronized final SynchronizedArray<E> addAll(@NotNull final Array<? extends E> elements) {
+    public final AbstractConcurrentArray<E> addAll(@NotNull final Array<? extends E> elements) {
         if (elements.isEmpty()) return this;
 
         final int current = array.length;
@@ -75,7 +76,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
 
     @NotNull
     @Override
-    public synchronized Array<E> addAll(@NotNull final Collection<? extends E> collection) {
+    public final AbstractConcurrentArray<E> addAll(@NotNull final Collection<? extends E> collection) {
         if (collection.isEmpty()) return this;
 
         final int current = array.length;
@@ -91,7 +92,8 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
 
     @NotNull
     @Override
-    public synchronized final Array<E> addAll(@NotNull final E[] elements) {
+    public final Array<E> addAll(@NotNull final E[] elements) {
+        if (elements.length < 1) return this;
 
         final int current = array.length;
         final int selfSize = size();
@@ -112,9 +114,21 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         return array;
     }
 
+    @Override
+    public void prepareForSize(final int size) {
+
+        final int current = array.length;
+        final int selfSize = size();
+        final int diff = selfSize + size - current;
+
+        if (diff > 0) {
+            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+        }
+    }
+
     @NotNull
     @Override
-    public synchronized final E fastRemove(final int index) {
+    public final E fastRemove(final int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
@@ -131,7 +145,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
 
     @NotNull
     @Override
-    public synchronized final E get(final int index) {
+    public final E get(final int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
@@ -141,12 +155,12 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
     }
 
     @Override
-    public synchronized final ArrayIterator<E> iterator() {
+    public final ArrayIterator<E> iterator() {
         return new FinalArrayIterator<>(this);
     }
 
     @Override
-    public synchronized final void set(final int index, @NotNull final E element) {
+    public final void set(final int index, @NotNull final E element) {
 
         if (index < 0 || index >= size()) {
             throw new ArrayIndexOutOfBoundsException();
@@ -177,7 +191,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
 
     @NotNull
     @Override
-    public synchronized final E slowRemove(final int index) {
+    public final E slowRemove(final int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
@@ -193,18 +207,33 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         }
 
         array[size.decrementAndGet()] = null;
-
         return old;
     }
 
     @Override
-    public final SynchronizedArray<E> trimToSize() {
+    public final AbstractConcurrentArray<E> trimToSize() {
 
         final int size = size();
         if (size == array.length) return this;
 
         array = ArrayUtils.copyOfRange(array, 0, size);
         return this;
+    }
+
+    @Override
+    public E unsafeGet(final int index) {
+        return array[index];
+    }
+
+    @Override
+    public void unsafeSet(int index, @NotNull E element) {
+
+        if (array[index] != null) {
+            size.decrementAndGet();
+        }
+
+        array[index] = element;
+        size.incrementAndGet();
     }
 
     protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
@@ -235,5 +264,10 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
                 unsafeAdd(element);
             }
         }
+    }
+
+    @Override
+    public UnsafeArray<E> asUnsafe() {
+        return this;
     }
 }

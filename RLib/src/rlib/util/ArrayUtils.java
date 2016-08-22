@@ -1,6 +1,9 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -17,16 +20,16 @@ import rlib.function.TripleConsumer;
 import rlib.function.TripleFunction;
 import rlib.function.TriplePredicate;
 import rlib.util.array.Array;
+import rlib.util.array.ConcurrentArray;
 import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
 
 import static rlib.util.ClassUtils.unsafeCast;
 
 /**
- * Набор утильных методов для работы с массивами.
+ * The list of methods for working with arrays.
  *
  * @author JavaSaBr
- * @created 07.04.2012
  */
 public final class ArrayUtils {
 
@@ -93,13 +96,8 @@ public final class ArrayUtils {
 
         int index = 0;
 
-        for (int val : base) {
-            result[index++] = val;
-        }
-
-        for (int val : added) {
-            result[index++] = val;
-        }
+        for (int val : base) result[index++] = val;
+        for (int val : added) result[index++] = val;
 
         return result;
     }
@@ -124,13 +122,8 @@ public final class ArrayUtils {
 
         int index = 0;
 
-        for (T object : base) {
-            result[index++] = object;
-        }
-
-        for (E object : added) {
-            result[index++] = object;
-        }
+        for (T object : base) result[index++] = object;
+        for (E object : added) result[index++] = object;
 
         return result;
     }
@@ -157,13 +150,9 @@ public final class ArrayUtils {
      * @return содержит ли массив указанное значение.
      */
     public static boolean contains(final Object[] array, final Object object) {
-
         for (final Object element : array) {
-            if (ObjectUtils.equals(element, object)) {
-                return true;
-            }
+            if (Objects.equals(element, object)) return true;
         }
-
         return false;
     }
 
@@ -213,11 +202,10 @@ public final class ArrayUtils {
      * @param added сила расширения.
      * @return новый массив.
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] copyOf(final T[] old, final int added) {
 
         final Class<? extends Object[]> newType = old.getClass();
-        final T[] copy = (T[]) create(newType.getComponentType(), old.length + added);
+        final T[] copy = unsafeCast(create(newType.getComponentType(), old.length + added));
 
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
 
@@ -287,6 +275,7 @@ public final class ArrayUtils {
      * @param size размер массива.
      * @return новый массив.
      */
+    @NotNull
     public static <T> T[] create(final Class<?> type, final int size) {
         return unsafeCast(java.lang.reflect.Array.newInstance(type, size));
     }
@@ -303,7 +292,7 @@ public final class ArrayUtils {
         int index = 0;
 
         for (final Object element : array) {
-            if (ObjectUtils.equals(element, object)) return index;
+            if (Objects.equals(element, object)) return index;
             index++;
         }
 
@@ -445,79 +434,79 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param function функция получения чего-то.
      * @return результат функции.
      */
-    public static <T, R> R getInWriteLock(final Array<T> array, final Function<Array<T>, R> function) {
+    public static <T, R> R getInWriteLock(final ConcurrentArray<T> array, final Function<Array<T>, R> function) {
         if (array.isEmpty()) return null;
-        array.writeLock();
+        final long stamp = array.writeLock();
         try {
             return function.apply(array);
         } finally {
-            array.writeUnlock();
+            array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param consumer функция действия.
      */
-    public static <T> void runInWriteLock(final Array<T> array, final Consumer<Array<T>> consumer) {
-        array.writeLock();
+    public static <T> void runInWriteLock(final ConcurrentArray<T> array, final Consumer<Array<T>> consumer) {
+        final long stamp = array.writeLock();
         try {
             consumer.accept(array);
         } finally {
-            array.writeUnlock();
+            array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param consumer функция действия.
      */
-    public static <T> void runInReadLock(final Array<T> array, final Consumer<Array<T>> consumer) {
-        array.readLock();
+    public static <T> void runInReadLock(final ConcurrentArray<T> array, final Consumer<Array<T>> consumer) {
+        final long stamp = array.readLock();
         try {
             consumer.accept(array);
         } finally {
-            array.readUnlock();
+            array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param function функция действия.
      * @return результат действия функции.
      */
-    public static <T, R> R getInReadLock(final Array<T> array, final Function<Array<T>, R> function) {
+    public static <T, R> R getInReadLock(final ConcurrentArray<T> array, final Function<Array<T>, R> function) {
         if (array.isEmpty()) return null;
-        array.readLock();
+        final long stamp = array.readLock();
         try {
             return function.apply(array);
         } finally {
-            array.readUnlock();
+            array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение суммирование массива в блоке {@link Array#readLock()}.
+     * Выполнение суммирование массива в блоке {@link ConcurrentArray#readLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param function функция получения сумы.
      * @return итоговая сумма.
      */
-    public static <T> int sumInReadLock(final Array<T> array, final FunctionInt<T> function) {
+    public static <T> int sumInReadLock(final ConcurrentArray<T> array, final FunctionInt<T> function) {
         if (array.isEmpty()) return 0;
-        array.readLock();
+        final long stamp = array.readLock();
         try {
 
             int sum = 0;
@@ -530,133 +519,133 @@ public final class ArrayUtils {
             return sum;
 
         } finally {
-            array.readUnlock();
+            array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param argument дополнительный аргумент.
      * @param function функция действия.
      * @return результат действия функции.
      */
-    public static <T, V, R> R getInWriteLock(final Array<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
+    public static <T, V, R> R getInWriteLock(final ConcurrentArray<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
         if (array.isEmpty()) return null;
-        array.writeLock();
+        final long stamp = array.writeLock();
         try {
             return function.apply(array, argument);
         } finally {
-            array.writeUnlock();
+            array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param argument дополнительный аргумент.
      * @param consumer функция действия.
      */
-    public static <T, V> void runInWriteLock(final Array<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
-        array.writeLock();
+    public static <T, V> void runInWriteLock(final ConcurrentArray<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
+        final long stamp = array.writeLock();
         try {
             consumer.accept(array, argument);
         } finally {
-            array.writeUnlock();
+            array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param argument дополнительный аргумент.
      * @param function функция действия.
      * @return результат действия функции.
      */
-    public static <T, V, R> R getInReadLock(final Array<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
+    public static <T, V, R> R getInReadLock(final ConcurrentArray<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
         if (array.isEmpty()) return null;
-        array.readLock();
+        final long stamp = array.readLock();
         try {
             return function.apply(array, argument);
         } finally {
-            array.readUnlock();
+            array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param argument дополнительный аргумент.
      * @param function функция действия.
      * @return результат действия функции.
      */
-    public static <T, V, R> R getInReadLock(final Array<T> array, final int argument, final ObjectIntFunction<Array<T>, R> function) {
+    public static <T, V, R> R getInReadLock(final ConcurrentArray<T> array, final int argument, final ObjectIntFunction<Array<T>, R> function) {
         if (array.isEmpty()) return null;
-        array.readLock();
+        final long stamp = array.readLock();
         try {
             return function.apply(array, argument);
         } finally {
-            array.readUnlock();
+            array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param argument дополнительный аргумент.
      * @param function функция действия.
      * @return результат действия функции.
      */
-    public static <T, V, R> R getInReadLockL(final Array<T> array, final long argument, final ObjectLongFunction<Array<T>, R> function) {
+    public static <T, V, R> R getInReadLockL(final ConcurrentArray<T> array, final long argument, final ObjectLongFunction<Array<T>, R> function) {
         if (array.isEmpty()) return null;
-        array.readLock();
+        final long stamp = array.readLock();
         try {
             return function.apply(array, argument);
         } finally {
-            array.readUnlock();
+            array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param argument дополнительный аргумент.
      * @param consumer функция действия.
      */
-    public static <T, V> void runInReadLock(final Array<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
-        array.readLock();
+    public static <T, V> void runInReadLock(final ConcurrentArray<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
+        final long stamp = array.readLock();
         try {
             consumer.accept(array, argument);
         } finally {
-            array.readUnlock();
+            array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param first    первый дополнительный аргумент.
      * @param second   второй дополнительный аргумент.
      * @param consumer функция действия.
      */
-    public static <T, F, S> void runInWriteLock(final Array<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
-        array.writeLock();
+    public static <T, F, S> void runInWriteLock(final ConcurrentArray<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
+        final long stamp = array.writeLock();
         try {
             consumer.accept(array, first, second);
         } finally {
-            array.writeUnlock();
+            array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#writeLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
      *
      * @param array     массив с которым надо работать.
      * @param first     первый дополнительный аргумент.
@@ -664,29 +653,29 @@ public final class ArrayUtils {
      * @param predicate условие выполнения.
      * @param consumer  функция действия.
      */
-    public static <T, F, S> void runInWriteLock(final Array<T> array, final F first, S second, final TriplePredicate<Array<T>, F, S> predicate, final TripleConsumer<Array<T>, F, S> consumer) {
-        array.writeLock();
+    public static <T, F, S> void runInWriteLock(final ConcurrentArray<T> array, final F first, S second, final TriplePredicate<Array<T>, F, S> predicate, final TripleConsumer<Array<T>, F, S> consumer) {
+        final long stamp = array.writeLock();
         try {
             if (predicate.test(array, first, second)) consumer.accept(array, first, second);
         } finally {
-            array.writeUnlock();
+            array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link Array#readLock()}.
+     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
      *
      * @param array    массив с которым надо работать.
      * @param first    первый дополнительный аргумент.
      * @param second   второй дополнительный аргумент.
      * @param consumer функция действия.
      */
-    public static <T, F, S> void runInReadLock(final Array<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
-        array.readLock();
+    public static <T, F, S> void runInReadLock(final ConcurrentArray<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
+        final long stamp = array.readLock();
         try {
             consumer.accept(array, first, second);
         } finally {
-            array.readUnlock();
+            array.readUnlock(stamp);
         }
     }
 
@@ -926,9 +915,7 @@ public final class ArrayUtils {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
-            if (condition.test(element)) {
-                return element;
-            }
+            if (condition.test(element)) return element;
         }
 
         return null;
@@ -1004,9 +991,7 @@ public final class ArrayUtils {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
-            if (condition.test(element, argument)) {
-                return element;
-            }
+            if (condition.test(element, argument)) return element;
         }
 
         return null;

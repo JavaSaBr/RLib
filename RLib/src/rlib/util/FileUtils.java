@@ -1,14 +1,9 @@
 package rlib.util;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -17,6 +12,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,12 +21,12 @@ import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayComparator;
 import rlib.util.array.ArrayFactory;
+import rlib.util.array.UnsafeArray;
 
 /**
  * Класс для работы с файлами.
  *
  * @author JavaSaBr
- * @created 01.03.2012
  */
 public class FileUtils {
 
@@ -146,40 +142,7 @@ public class FileUtils {
      * @return подходит ли.
      */
     public static boolean containsExtensions(final String[] extensions, final String path) {
-
-        for (final String extension : extensions) {
-            if (path.endsWith(extension)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Копирует информацию с одного файла в другой.
-     *
-     * @param pathSource адресс исходного файла.
-     * @param pathDest   адресс конечного файла.
-     * @return скопирован ли фаил.
-     */
-    public static boolean copyFile(final String pathSource, final String pathDest) {
-
-        try (FileInputStream source = new FileInputStream(pathSource)) {
-            try (FileOutputStream destination = new FileOutputStream(pathDest)) {
-
-                final FileChannel sourceChannel = source.getChannel();
-                final FileChannel destinationChannel = destination.getChannel();
-
-                destinationChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
-            }
-
-            return true;
-        } catch (final IOException e) {
-            LOGGER.warning(e);
-        }
-
-        return false;
+        return ArrayUtils.find(extensions, path, String::endsWith) != null;
     }
 
     /**
@@ -202,46 +165,16 @@ public class FileUtils {
     }
 
     /**
-     * Чтение контента файла.
-     *
-     * @param file читаемый фаил.
-     * @return массив байтов фаила.
-     */
-    public static byte[] getContent(final Path file) {
-
-        try (final SeekableByteChannel channel = Files.newByteChannel(file)) {
-
-            final byte[] content = new byte[(int) channel.size()];
-            final ByteBuffer byteBuffer = ByteBuffer.wrap(content);
-
-            channel.read(byteBuffer);
-
-            return content;
-
-        } catch (final IOException e) {
-            LOGGER.warning(e);
-        }
-
-        return null;
-    }
-
-    /**
      * Получение расширения файла.
      *
      * @param path путь файла чье расширение надо получить.
      * @return расширение этого файла.
      */
     public static String getExtension(final String path) {
-
-        if (StringUtils.isEmpty(path)) {
-            return path;
-        }
+        if (StringUtils.isEmpty(path)) return path;
 
         final int index = path.lastIndexOf('.');
-
-        if (index == -1) {
-            return path;
-        }
+        if (index == -1) return path;
 
         return path.substring(index + 1, path.length());
     }
@@ -253,24 +186,8 @@ public class FileUtils {
      * @return расширение этого файла.
      */
     public static String getExtension(final Path file) {
-
-        if (Files.isDirectory(file)) {
-            return StringUtils.EMPTY;
-        }
-
-        final String filename = file.getFileName().toString();
-
-        if (StringUtils.isEmpty(filename)) {
-            return filename;
-        }
-
-        final int index = filename.lastIndexOf('.');
-
-        if (index == -1) {
-            return filename;
-        }
-
-        return filename.substring(index + 1, filename.length());
+        if (Files.isDirectory(file)) return StringUtils.EMPTY;
+        return getExtension(Objects.toString(file.getFileName()));
     }
 
     /**
@@ -293,9 +210,14 @@ public class FileUtils {
      * @return список всех найденных файлов.
      */
     public static Array<Path> getFiles(final Path dir, final boolean withFolders, final String... extensions) {
+
         final Array<Path> result = ArrayFactory.newArray(Path.class);
+
         addFilesTo(result, dir, withFolders, extensions);
-        result.trimToSize();
+
+        final UnsafeArray<Path> unsafeArray = result.asUnsafe();
+        unsafeArray.trimToSize();
+
         return result;
     }
 
@@ -318,9 +240,7 @@ public class FileUtils {
             LOGGER.warning(e);
         }
 
-        if (urls == null) {
-            return new Path[0];
-        }
+        if (urls == null) return new Path[0];
 
         final Array<Path> files = ArrayFactory.newArray(Path.class);
 
@@ -343,9 +263,7 @@ public class FileUtils {
             }
         }
 
-        files.trimToSize();
-
-        return files.array();
+        return files.toArray(Path.class);
     }
 
     /**

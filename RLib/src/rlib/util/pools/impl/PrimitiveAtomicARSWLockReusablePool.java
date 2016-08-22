@@ -2,6 +2,7 @@ package rlib.util.pools.impl;
 
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.array.ConcurrentArray;
 import rlib.util.pools.Reusable;
 import rlib.util.pools.ReusablePool;
 
@@ -13,22 +14,15 @@ import static rlib.util.ArrayUtils.runInWriteLock;
  *
  * @author JavaSaBr
  */
-public class AtomicReusablePool<E extends Reusable> implements ReusablePool<E> {
+public class PrimitiveAtomicARSWLockReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     /**
      * Пул объектов.
      */
-    private final Array<E> pool;
+    private final ConcurrentArray<E> pool;
 
-    public AtomicReusablePool(final Class<?> type) {
-        this.pool = ArrayFactory.newConcurrentAtomicArray(type);
-    }
-
-    /**
-     * @return контейнер объектов.
-     */
-    private Array<E> getPool() {
-        return pool;
+    public PrimitiveAtomicARSWLockReusablePool(final Class<?> type) {
+        this.pool = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(type);
     }
 
     @Override
@@ -51,7 +45,6 @@ public class AtomicReusablePool<E extends Reusable> implements ReusablePool<E> {
     @Override
     public E take() {
 
-        final Array<E> pool = getPool();
         if (pool.isEmpty()) return null;
 
         final E object = getInWriteLock(pool, Array::pop);

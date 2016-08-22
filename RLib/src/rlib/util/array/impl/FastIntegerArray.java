@@ -220,10 +220,5 @@ public class FastIntegerArray implements IntegerArray {
         public void remove() {
             FastIntegerArray.this.fastRemove(--ordinal);
         }
-
-        @Override
-        public void slowRemove() {
-            FastIntegerArray.this.slowRemove(--ordinal);
-        }
     }
 }

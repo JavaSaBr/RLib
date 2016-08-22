@@ -3,24 +3,19 @@ package rlib.util.array;
 import java.util.Iterator;
 
 /**
- * Интерфейс для реализации расширенного итератора {@link Array}.
+ * The interface for implementing an iterator for {@link Array}.
  *
  * @author JavaSaBr
  */
 public interface ArrayIterator<E> extends Iterator<E> {
 
     /**
-     * Удалить с переносом последнего элемента на место удаленного.
+     * Removes the current element using reordering.
      */
     public void fastRemove();
 
     /**
-     * @return позиция элемента в {@link Array}.
+     * @return the current position of this {@link Array}.
      */
     public int index();
-
-    /**
-     * Удалить со сдвигом следующих элементов.
-     */
-    public void slowRemove();
 }

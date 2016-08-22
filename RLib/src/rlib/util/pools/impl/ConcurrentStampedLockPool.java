@@ -2,32 +2,29 @@ package rlib.util.pools.impl;
 
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-import rlib.util.pools.Pool;
+import rlib.util.array.ConcurrentArray;
+import rlib.util.array.impl.ConcurrentReentrantRWLockArray;
+import rlib.util.pools.Reusable;
+import rlib.util.pools.ReusablePool;
 
 import static rlib.util.ArrayUtils.getInWriteLock;
 import static rlib.util.ArrayUtils.runInWriteLock;
 
 /**
- * Реализация потокобезопасного {@link Pool} с помощью атомарного блокировщика.
+ * Реализация потокобезопасного {@link ReusablePool} с помощью потокобезопасного массива {@link
+ * ConcurrentReentrantRWLockArray}
  *
  * @author JavaSaBr
  */
-public class AtomicPool<E> implements Pool<E> {
+public class ConcurrentStampedLockPool<E extends Reusable> implements ReusablePool<E> {
 
     /**
      * Пул объектов.
      */
-    private final Array<E> pool;
+    private final ConcurrentArray<E> pool;
 
-    public AtomicPool(final Class<?> type) {
-        this.pool = ArrayFactory.newConcurrentAtomicArray(type);
-    }
-
-    /**
-     * @return пул объектов.
-     */
-    private Array<E> getPool() {
-        return pool;
+    public ConcurrentStampedLockPool(final Class<?> type) {
+        this.pool = ArrayFactory.newFinalConcurrentStampedLockArray(type);
     }
 
     @Override
@@ -38,6 +35,7 @@ public class AtomicPool<E> implements Pool<E> {
     @Override
     public void put(final E object) {
         if (object == null) return;
+        object.free();
         runInWriteLock(pool, object, Array::add);
     }
 
@@ -49,17 +47,13 @@ public class AtomicPool<E> implements Pool<E> {
     @Override
     public E take() {
 
-        final Array<E> pool = getPool();
         if (pool.isEmpty()) return null;
 
         final E object = getInWriteLock(pool, Array::pop);
         if (object == null) return null;
 
-        return object;
-    }
+        object.reuse();
 
-    @Override
-    public String toString() {
-        return pool.toString();
+        return object;
     }
 }

@@ -1,7 +1,7 @@
 package rlib.util.array.impl;
 
 /**
- * Финальная версия быстрого сета.
+ * The final version of the {@link FastArraySet}.
  *
  * @author JavaSaBr
  */

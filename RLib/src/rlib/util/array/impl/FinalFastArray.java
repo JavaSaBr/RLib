@@ -1,7 +1,7 @@
 package rlib.util.array.impl;
 
 /**
- * Финальная версия быстрого массива.
+ * The final version of the {@link FastArray}.
  *
  * @author JavaSaBr
  */

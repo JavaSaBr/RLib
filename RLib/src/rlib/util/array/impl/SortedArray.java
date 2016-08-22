@@ -6,27 +6,18 @@ import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 
 /**
- * Реализация сортированного {@link FastArray}, где сортировка происходит при вставке.
+ * The sorted implementation of the {@link FastArray}.
  *
  * @author JavaSaBr
- * @created 28.02.2012
- * @see FastArray
  */
 public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * @param type тип элементов в массиве.
-     */
     public SortedArray(final Class<E> type) {
         super(type);
     }
 
-    /**
-     * @param type тип элементов в массиве.
-     * @param size размер массива.
-     */
     public SortedArray(final Class<E> type, final int size) {
         super(type, size);
     }
@@ -52,7 +43,6 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
             }
 
             if (element.compareTo(old) < 0) {
-
                 size++;
 
                 final int numMoved = size - i - 1;
@@ -81,5 +71,35 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
             if (element == null) break;
             add(element);
         }
+    }
+
+    @Override
+    public FastArray<E> unsafeAdd(@NotNull final E element) {
+
+        final E[] array = array();
+
+        for (int i = 0, length = array.length; i < length; i++) {
+
+            final E old = array[i];
+
+            if (old == null) {
+                array[i] = element;
+                size++;
+                return this;
+            }
+
+            if (element.compareTo(old) < 0) {
+                size++;
+
+                final int numMoved = size - i - 1;
+
+                System.arraycopy(array, i, array, i + 1, numMoved);
+
+                array[i] = element;
+                return this;
+            }
+        }
+
+        return this;
     }
 }

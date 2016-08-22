@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -19,14 +20,13 @@ import rlib.function.ObjectLongPredicate;
 import rlib.function.TripleConsumer;
 import rlib.function.TriplePredicate;
 import rlib.util.ArrayUtils;
-import rlib.util.ObjectUtils;
 import rlib.util.pools.Reusable;
 
 import static rlib.util.ClassUtils.unsafeCast;
 
 /**
- * Interface to implement dynamic arrays. Main advantages compared to an ArrayList, the ability to iterate in the fastest way possible and without prejudice to GC:
- * <p>
+ * Interface to implement dynamic arrays. Main advantages compared to an ArrayList, the ability to
+ * iterate in the fastest way possible and without prejudice to GC: <p>
  * <pre>
  * for(? element : array.array()) {
  *
@@ -81,7 +81,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     Array<E> addAll(@NotNull Collection<? extends E> collection);
 
     /**
-     * Applies this function to each element of this array with replacing to result element from thia function.
+     * Applies this function to each element of this array with replacing to result element from
+     * thia function.
      *
      * @param function the function.
      */
@@ -129,12 +130,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Returns <tt>true</tt> if this array contains all of the elements
-     * in the specified array.
+     * Returns <tt>true</tt> if this array contains all of the elements in the specified array.
      *
-     * @param  array the array to be checked for containment in this array
-     * @return <tt>true</tt> if this array contains all of the elements
-     *         in the specified array.
+     * @param array the array to be checked for containment in this array
+     * @return <tt>true</tt> if this array contains all of the elements in the specified array.
      */
     default boolean containsAll(@NotNull final Array<?> array) {
         if (array.isEmpty()) return false;
@@ -148,12 +147,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Returns <tt>true</tt> if this array contains all of the elements
-     * in the specified array.
+     * Returns <tt>true</tt> if this array contains all of the elements in the specified array.
      *
-     * @param  array the array to be checked for containment in this array
-     * @return <tt>true</tt> if this array contains all of the elements
-     *         in the specified array.
+     * @param array the array to be checked for containment in this array
+     * @return <tt>true</tt> if this array contains all of the elements in the specified array.
      */
     default boolean containsAll(@NotNull final Object[] array) {
         if (array.length < 1) return false;
@@ -171,31 +168,34 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Removes the element at index with the installation of the last element on his place.
+     * Removes the element at index with reordering.
      *
      * @param index the index for removing the element.
      * @return the removed element.
      */
-    @Nullable
+    @NotNull
     E fastRemove(int index);
 
     /**
-     * Removes the specified element with the installation of the last element on his place.
+     * Removes the specified element with reordering.
      *
      * @param object the element for removing.
      * @return <code>true</code> if the element was removed.
      */
     default boolean fastRemove(@NotNull final Object object) {
-        return fastRemove(indexOf(object)) != null;
+        final int index = indexOf(object);
+        if (index == -1) return false;
+        fastRemove(index);
+        return true;
     }
 
     /**
-     * Удаляет указанных элементов с использованием метода {@link Array#fastRemove(Object)}.
+     * Removes the each element from the array.
      *
-     * @param array удаляемыу объекты.
-     * @return количество удаленных объектов.
+     * @param array the array with elements to remove.
+     * @return count of removed elements.
      */
-    default int fastRemove(@NotNull Array<? extends E> array) {
+    default int fastRemove(@NotNull final Array<? extends E> array) {
 
         int count = 0;
 
@@ -208,12 +208,12 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Удаляет указанных элементов с использованием метода {@link Array#fastRemove(Object)}.
+     * Removes the each element from the array.
      *
-     * @param array удаляемыу объекты.
-     * @return количество удаленных объектов.
+     * @param array the array with elements to remove.
+     * @return count of removed elements.
      */
-    default int fastRemove(@NotNull E[] array) {
+    default int fastRemove(@NotNull final E[] array) {
 
         int count = 0;
 
@@ -226,7 +226,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * @return первый элемент в {@link Array} либо <code>null</code>, если он пуст.
+     * @return the first element of this array or null.
      */
     default E first() {
         if (isEmpty()) return null;
@@ -325,20 +325,19 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Извлекает элемент по указанному индексу.
+     * Gets the element for the index.
      *
-     * @param index индекс элемента в {@link Array}.
-     * @return элемент по указанному индексу.
+     * @param index the index of an element.
+     * @return the element for the index.
      */
     @NotNull
     E get(int index);
 
     /**
-     * Поиск индекса расположения указанного объекта в этом {@link Array}.
+     * Finds the index of the object in this array.
      *
-     * @param object искомый объект.
-     * @return <code>-1</code> в случае если такой объект небыл найден или если передоваемый объект
-     * <code>null</code>.
+     * @param object the object to find.
+     * @return the index of the objet or -1.
      */
     default int indexOf(@NotNull final Object object) {
 
@@ -346,7 +345,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
 
         for (final E element : array()) {
             if (element == null) break;
-            if (ObjectUtils.equals(object, element)) return index;
+            if (Objects.equals(object, element)) return index;
             index++;
         }
 
@@ -354,7 +353,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * @return является ли {@link Array} пустым.
+     * @return true is this array is empty.
      */
     default boolean isEmpty() {
         return size() < 1;
@@ -364,7 +363,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     ArrayIterator<E> iterator();
 
     /**
-     * @return последний элемент в этом {@link Array} либо <code>null</code>, если он пуст.
+     * @return the last element of this array or null.
      */
     @Nullable
     default E last() {
@@ -374,10 +373,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Поиск последнего индекса расположения указанного объекта в этом {@link Array}.
+     * Finds the last index for the object in this array.
      *
-     * @param object искомый объект.
-     * @return <code>-1</code> в случае если такой объект не содержится в этом {@link Array}.
+     * @param object the object.
+     * @return the last index of the object in this array or -1.
      */
     default int lastIndexOf(@NotNull final Object object) {
 
@@ -393,9 +392,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Удаляет первый элемент из {@link Array}.
+     * Gets and removes the first element from this array.
      *
-     * @return первый элемент этого {@link Array} либо <code>null</code>.
+     * @return the first element or null.
      */
     @Nullable
     default E poll() {
@@ -403,9 +402,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Удаляет последний элеметн из {@link Array}.
+     * Gets and removes the last element of this array.
      *
-     * @return последний элемент этого {@link Array} либо <code>null</code> если он пуст.
+     * @return the last element or null.
      */
     @Nullable
     default E pop() {
@@ -413,11 +412,12 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Удаляет из {@link Array} все элементы из указанного {@link Array}.
+     * Removes all of this target's elements that are also contained in the specified array
+     * (optional operation).  After this call returns, this array will contain no elements in common
+     * with the specified array.
      *
-     * @param target {@link Array} с удаляемыми элементами.
-     * @return <code>true</code> если переданный {@link Array} был не пуст и все в нем элементы
-     * находились в этом {@link Array}.
+     * @param target array containing elements to be removed from this array.
+     * @return <tt>true</tt> if this array changed as a result of the call.
      */
     default boolean removeAll(@NotNull final Array<?> target) {
         if (target.isEmpty()) return false;
@@ -433,10 +433,12 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Удаляет все элементы {@link Array}, которые отсутствуют в указанном {@link Array}.
+     * Retains only the elements in this array that are contained in the specified array (optional
+     * operation).  In other words, removes from this array all of its elements that are not
+     * contained in the specified array.
      *
-     * @param target {@link Array} с элементами.
-     * @return удалены ли все объекты.
+     * @param target array containing elements to be retained in this array.
+     * @return <tt>true</tt> if this array changed as a result of the call.
      */
     default boolean retainAll(@NotNull final Array<?> target) {
 
@@ -516,7 +518,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Установка указанного элемента по указанному индексу.
+     * Set the element for the index.
      *
      * @param index   индекс, по которому нужно устоновить элемент.
      * @param element элемент, который нужно добавит в массив.
@@ -524,31 +526,31 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     void set(int index, @NotNull E element);
 
     /**
-     * @return кол-во элементов в {@link Array}.
+     * @return the count of elements in this {@link Array}.
      */
     int size();
 
     /**
-     * Удаляет элемент по индексу со сдвигом всех элементов после него.
+     * Removes the element for the index without reordering.
      *
-     * @param index индекс удаляемого элемента.
-     * @return удаленный элемент.
+     * @param index the index of the element.
+     * @return the removed element.
      */
     @NotNull
     E slowRemove(int index);
 
     /**
-     * Удаляет элемент со сдвигом всех элементов после него.
+     * Removes the element without reordering.
      *
-     * @param object удаляемый объект.
-     * @return удален ли объект.
+     * @param object the element.
+     * @return true if the element was removed.
      */
     boolean slowRemove(@NotNull Object object);
 
     /**
-     * Сортировка {@link Array} компаратором.
+     * Sorts this array using the comparator.
      *
-     * @param comparator компаратор для сортировки.
+     * @param comparator the comparator.
      */
     @NotNull
     default Array<E> sort(@NotNull final ArrayComparator<E> comparator) {
@@ -557,13 +559,12 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Копирует элементы {@link Array} в указаный массив, либо возвращает исходный в указанном
-     * типе.
+     * Copies this array to the array.
      *
-     * @param newArray массив, в который нужно перенести.
+     * @param newArray the new array.
      */
     @NotNull
-    default <T> T[] toArray(@NotNull final T[] newArray) {
+    default <T extends E> T[] toArray(@NotNull final T[] newArray) {
 
         final E[] array = array();
 
@@ -577,6 +578,30 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
             return newArray;
         }
 
-        return unsafeCast(array);
+        final Class<T[]> arrayClass = unsafeCast(newArray.getClass());
+        final Class<T> componentType = unsafeCast(arrayClass.getComponentType());
+
+        return toArray(componentType);
+    }
+
+    /**
+     * Copies this array to the new array.
+     *
+     * @param componentType the type of the new array.
+     */
+    @NotNull
+    default <T extends E> T[] toArray(@NotNull final Class<T> componentType) {
+
+        final T[] newArray = ArrayUtils.create(componentType, size());
+        final E[] array = array();
+
+        System.arraycopy(array, 0, newArray, 0, size());
+
+        return newArray;
+    }
+
+    default UnsafeArray<E> asUnsafe() {
+        if (this instanceof UnsafeArray) return (UnsafeArray<E>) this;
+        throw new UnsupportedOperationException();
     }
 }

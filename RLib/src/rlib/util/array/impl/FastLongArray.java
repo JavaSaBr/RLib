@@ -244,10 +244,5 @@ public class FastLongArray implements LongArray {
         public void remove() {
             FastLongArray.this.fastRemove(--ordinal);
         }
-
-        @Override
-        public void slowRemove() {
-            FastLongArray.this.slowRemove(--ordinal);
-        }
     }
 }

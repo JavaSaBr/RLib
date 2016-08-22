@@ -55,7 +55,7 @@ public class DeadLockDetector implements SafeTask {
             throw new IllegalArgumentException("negative interval.");
         }
 
-        this.listeners = ArrayFactory.newConcurrentArray(DeadLockListener.class);
+        this.listeners = ArrayFactory.newConcurrentReentrantRWLockArray(DeadLockListener.class);
         this.mxThread = ManagementFactory.getThreadMXBean();
         this.executor = Executors.newSingleThreadScheduledExecutor();
         this.interval = interval;
