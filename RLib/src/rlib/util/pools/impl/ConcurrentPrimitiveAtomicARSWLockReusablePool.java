@@ -3,25 +3,28 @@ package rlib.util.pools.impl;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.ConcurrentArray;
+import rlib.util.array.impl.ConcurrentPrimitiveAtomicARSWLockArray;
 import rlib.util.pools.Reusable;
 import rlib.util.pools.ReusablePool;
 
 import static rlib.util.ArrayUtils.getInWriteLock;
 import static rlib.util.ArrayUtils.runInWriteLock;
 
+
 /**
- * Реализация потокобезопасного {@link ReusablePool} с помощью атомарного блокировщика.
+ * The threadsafe implementation of the {@link ReusablePool} using like a storage the {@link
+ * ConcurrentPrimitiveAtomicARSWLockArray}.
  *
  * @author JavaSaBr
  */
-public class PrimitiveAtomicARSWLockReusablePool<E extends Reusable> implements ReusablePool<E> {
+public class ConcurrentPrimitiveAtomicARSWLockReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     /**
-     * Пул объектов.
+     * The storage of objects.
      */
     private final ConcurrentArray<E> pool;
 
-    public PrimitiveAtomicARSWLockReusablePool(final Class<?> type) {
+    public ConcurrentPrimitiveAtomicARSWLockReusablePool(final Class<?> type) {
         this.pool = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(type);
     }
 

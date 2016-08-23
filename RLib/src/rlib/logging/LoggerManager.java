@@ -13,6 +13,7 @@ import rlib.util.ClassUtils;
 import rlib.util.StringUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.array.ConcurrentArray;
 import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
@@ -31,12 +32,12 @@ public class LoggerManager {
     /**
      * список слушателей логирования
      */
-    private static final Array<LoggerListener> LISTENERS = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(LoggerListener.class);
+    private static final ConcurrentArray<LoggerListener> LISTENERS = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(LoggerListener.class);
 
     /**
      * список записчиков лога
      */
-    private static final Array<Writer> WRITERS = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(Writer.class);
+    private static final ConcurrentArray<Writer> WRITERS = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(Writer.class);
 
     /**
      * синхронизатор записи лога
@@ -115,7 +116,7 @@ public class LoggerManager {
     /**
      * @return список слушателей логирования.
      */
-    private static Array<LoggerListener> getListeners() {
+    private static ConcurrentArray<LoggerListener> getListeners() {
         return LISTENERS;
     }
 
@@ -140,7 +141,7 @@ public class LoggerManager {
     /**
      * @return список дополнительных записчиков лога.
      */
-    private static Array<Writer> getWriters() {
+    private static ConcurrentArray<Writer> getWriters() {
         return WRITERS;
     }
 
@@ -180,20 +181,22 @@ public class LoggerManager {
                     (listeners, string) -> listeners.forEach(string, LoggerListener::println));
 
             ArrayUtils.runInReadLock(getWriters(), result,
-                    (writers, string) -> writers.forEach(string, (writer, toWrite) -> {
-                        try {
-                            writer.append(toWrite);
-                            writer.append('\n');
-                            writer.flush();
-                        } catch (final IOException e) {
-                            e.printStackTrace();
-                        }
-                    }));
+                    (writers, string) -> writers.forEach(string, LoggerManager::append));
 
             System.err.println(result);
 
         } finally {
             SYNC.unlock();
+        }
+    }
+
+    private static void append(final Writer writer, final String toWrite) {
+        try {
+            writer.append(toWrite);
+            writer.append('\n');
+            writer.flush();
+        } catch (final IOException e) {
+            e.printStackTrace();
         }
     }
 }

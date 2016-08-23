@@ -14,7 +14,7 @@ import rlib.util.array.impl.FinalSynchronizedArray;
 import static rlib.util.ClassUtils.unsafeCast;
 
 /**
- * Реализация фабрики различных массивов.
+ * The factory for creating arrays.
  *
  * @author JavaSaBr
  */

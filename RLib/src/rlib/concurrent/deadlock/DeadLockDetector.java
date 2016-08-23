@@ -14,6 +14,7 @@ import rlib.util.ArrayUtils;
 import rlib.util.SafeTask;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.array.ConcurrentArray;
 
 /**
  * Модель поиска и обнаружения делоков.
@@ -27,7 +28,7 @@ public class DeadLockDetector implements SafeTask {
     /**
      * Набор слушателей дедлоков.
      */
-    private final Array<DeadLockListener> listeners;
+    private final ConcurrentArray<DeadLockListener> listeners;
 
     /**
      * Информация об состоянии потоков.
@@ -73,7 +74,7 @@ public class DeadLockDetector implements SafeTask {
     /**
      * @return список слушателей.
      */
-    public Array<DeadLockListener> getListeners() {
+    public ConcurrentArray<DeadLockListener> getListeners() {
         return listeners;
     }
 
@@ -83,7 +84,7 @@ public class DeadLockDetector implements SafeTask {
         final long[] threadIds = mxThread.findDeadlockedThreads();
         if (threadIds.length < 1) return;
 
-        final Array<DeadLockListener> listeners = getListeners();
+        final ConcurrentArray<DeadLockListener> listeners = getListeners();
 
         for (final long id : threadIds) {
 

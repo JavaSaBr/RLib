@@ -26,7 +26,7 @@ public enum ReferenceType {
     private final ReusablePool<Reference> pool;
 
     private ReferenceType() {
-        this.pool = PoolFactory.newAtomicReusablePool(Reference.class);
+        this.pool = PoolFactory.newConcurrentPrimitiveAtomicARSWLockReusablePool(Reference.class);
     }
 
     /**

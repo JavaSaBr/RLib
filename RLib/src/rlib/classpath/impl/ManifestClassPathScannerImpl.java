@@ -88,9 +88,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
             LOGGER.warning(e1);
         }
 
-        result.trimToSize();
-
-        return result.array();
+        return result.toArray(String.class);
     }
 
     @Override
@@ -99,8 +97,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
         final Array<String> result = ArrayFactory.newArraySet(String.class);
         result.addAll(super.getPaths());
         result.addAll(getManifestClassPath());
-        result.trimToSize();
 
-        return result.array();
+        return result.toArray(String.class);
     }
 }

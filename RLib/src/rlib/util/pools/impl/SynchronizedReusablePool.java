@@ -7,14 +7,14 @@ import rlib.util.pools.Reusable;
 import rlib.util.pools.ReusablePool;
 
 /**
- * Реализация потокобезопасного {@link ReusablePool} за счет синхронизации на коллекции объектов.
+ * The implementation of the {@link ReusablePool} using synchronization for take/put methods.
  *
  * @author JavaSaBr
  */
 public class SynchronizedReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     /**
-     * Пул объектов.
+     * The storage of objects.
      */
     private final Array<E> pool;
 

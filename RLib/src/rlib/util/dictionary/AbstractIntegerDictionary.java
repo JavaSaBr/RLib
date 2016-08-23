@@ -11,6 +11,7 @@ import rlib.function.IntObjectConsumer;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.IntegerArray;
+import rlib.util.array.UnsafeArray;
 import rlib.util.pools.PoolFactory;
 import rlib.util.pools.ReusablePool;
 
@@ -428,11 +429,12 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
     @Override
     public Array<V> values(final Array<V> container) {
-        container.prepareForSize(container.size() + size());
+        final UnsafeArray<V> unsafeArray = container.asUnsafe();
+        unsafeArray.prepareForSize(container.size() + size());
 
         for (IntegerEntry<V> entry : content()) {
             while (entry != null) {
-                container.unsafeAdd(entry.getValue());
+                unsafeArray.unsafeAdd(entry.getValue());
                 entry = entry.getNext();
             }
         }

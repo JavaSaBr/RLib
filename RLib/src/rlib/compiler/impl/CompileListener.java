@@ -34,7 +34,8 @@ public class CompileListener implements DiagnosticListener<JavaFileObject> {
      * @return список рапортов о компиляции классов.
      */
     public Diagnostic<JavaFileObject>[] getDiagnostics() {
-        return unsafeCast(diagnostics.toArray(new Diagnostic[diagnostics.size()]));
+        final Diagnostic[] array = diagnostics.toArray(Diagnostic.class);
+        return unsafeCast(array);
     }
 
     @Override

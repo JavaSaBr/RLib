@@ -5,45 +5,43 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Интерфейс для реализации объектоного пула. Используется при подходе к переиспользованию объектов
- * для облегчения нагрузки на GC. Создается с помощью {@link PoolFactory}
+ * The interface for implementing a pool for storing and reusing any objects.
  *
  * @author JavaSaBr
- * @see PoolFactory
  */
 public interface Pool<E> {
 
     /**
-     * @return пустой ли пул.
+     * @return true if this pool is empty.
      */
     public boolean isEmpty();
 
     /**
-     * Положить объект в пул.
+     * Puts the object to this pool.
      *
-     * @param object объект, который хотим положить.
+     * @param object the object.
      */
     public void put(E object);
 
     /**
-     * Удаление из пула объекта.
+     * Removes the object from this pool.
      *
-     * @param object удаляемый объект.
+     * @param object the object.
      */
     public void remove(E object);
 
     /**
-     * Взять из пула объект.
+     * Takes an object from this pool.
      *
-     * @return объект из пула.
+     * @return taken object or null is this pool is empty.
      */
     public E take();
 
     /**
-     * Взять из пула объект или же создать новый.
+     * Takes an object from this pool.
      *
-     * @param factory фабрика объектов.
-     * @return объект из пула либо новй объект.
+     * @param factory the factory for creating new object if this pool is empty.
+     * @return taken object.
      */
     public default E take(final Supplier<E> factory) {
         final E take = take();
@@ -51,11 +49,11 @@ public interface Pool<E> {
     }
 
     /**
-     * Взять из пула объект или же создать новый с использованием дополнительного аргумента.
+     * Takes an object from this pool.
      *
-     * @param argument дополнительный аргумент.
-     * @param factory  фабрика объектов.
-     * @return объект из пула либо новй объект.
+     * @param argument the argument for the factory function.
+     * @param factory  the factory for creating new object if this pool is empty.
+     * @return taken object.
      */
     public default <T> E take(final T argument, final Function<T, E> factory) {
         final E take = take();
@@ -63,12 +61,12 @@ public interface Pool<E> {
     }
 
     /**
-     * Взять из пула объект или же создать новый с использованием дополнительных аргументов.
+     * Takes an object from this pool.
      *
-     * @param first   дополнительный аргумент.
-     * @param second  дополнительный аргумент.
-     * @param factory фабрика объектов.
-     * @return объект из пула либо новй объект.
+     * @param first   the first argument for the factory function.
+     * @param second  the second argument for the factory function.
+     * @param factory the factory for creating new object if this pool is empty.
+     * @return taken object.
      */
     public default <F, S> E take(final F first, S second, final BiFunction<F, S, E> factory) {
         final E take = take();

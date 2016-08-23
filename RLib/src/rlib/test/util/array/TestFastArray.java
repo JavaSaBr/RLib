@@ -8,6 +8,7 @@ import java.util.List;
 
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.array.UnsafeArray;
 
 /**
  * Теаст скорости и функционала FastArray.
@@ -33,7 +34,10 @@ public class TestFastArray extends Assert {
         System.gc();
 
         final Array<Integer> array = ArrayFactory.newArray(Integer.class);
+        final UnsafeArray<Integer> array1 = array.asUnsafe();
+
         final Array<Integer> added = ArrayFactory.newArray(Integer.class);
+        final UnsafeArray<Integer> array2 = added.asUnsafe();
 
         for (int i = 999_000, length = 1_000_000; i < length; i++) {
             added.add(i);
@@ -43,10 +47,10 @@ public class TestFastArray extends Assert {
 
         long time = System.currentTimeMillis();
 
-        array.prepareForSize(1_000_000);
+        array1.prepareForSize(1_000_000);
 
         for (int i = 0, length = 1_000_000; i < length; i++) {
-            array.unsafeAdd(i);
+            array1.unsafeAdd(i);
         }
 
         System.out.println(head + "test add to FastArray " + (System.currentTimeMillis() - time));
@@ -102,7 +106,7 @@ public class TestFastArray extends Assert {
         array.clear();
         array.add(1).add(1).add(1).add(2);
         array.addAll(added);
-        array.addAll(added.trimToSize().array());
+        array.addAll(array2.trimToSize().array());
 
         assertTrue(array.size() == added.size() * 2 + 4);
 

@@ -40,8 +40,8 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 
     protected AbstractAsynchronousNetwork(final NetworkConfig config) {
         this.config = config;
-        this.readBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
-        this.writeBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
+        this.readBufferPool = PoolFactory.newPrimitiveAtomicARSWLockPool(ByteBuffer.class);
+        this.writeBufferPool = PoolFactory.newPrimitiveAtomicARSWLockPool(ByteBuffer.class);
     }
 
     @Override

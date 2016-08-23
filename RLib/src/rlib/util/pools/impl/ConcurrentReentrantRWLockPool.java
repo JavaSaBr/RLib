@@ -11,15 +11,15 @@ import static rlib.util.ArrayUtils.getInWriteLock;
 import static rlib.util.ArrayUtils.runInWriteLock;
 
 /**
- * Реализация потокобезопасного {@link ReusablePool} с помощью потокобезопасного массива {@link
- * ConcurrentReentrantRWLockArray}
+ * The threadsafe implementation of the {@link ReusablePool} using like a storage the {@link
+ * ConcurrentReentrantRWLockArray}.
  *
  * @author JavaSaBr
  */
 public class ConcurrentReentrantRWLockPool<E extends Reusable> implements ReusablePool<E> {
 
     /**
-     * Пул объектов.
+     * The storage of objects.
      */
     private final ConcurrentArray<E> pool;
 

@@ -6,14 +6,14 @@ import rlib.util.pools.Reusable;
 import rlib.util.pools.ReusablePool;
 
 /**
- * Реализация не потокобезопасного легковесного {@link ReusablePool}.
+ * The fast implementation of the {@link ReusablePool}. It isn't threadsafe.
  *
  * @author JavaSaBr
  */
 public class FastReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     /**
-     * Пул объектов.
+     * The storage of objects.
      */
     private final Array<E> pool;
 

@@ -10,8 +10,11 @@ import rlib.function.TripleConsumer;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.array.UnsafeArray;
 import rlib.util.pools.PoolFactory;
 import rlib.util.pools.ReusablePool;
+
+import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * Базовая реализация словаря с объектным ключем.
@@ -106,9 +109,9 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     public void clear() {
 
         final ReusablePool<ObjectEntry<K, V>> entryPool = getEntryPool();
-
         final ObjectEntry<K, V>[] content = content();
-        ObjectEntry<K, V> next = null;
+
+        ObjectEntry<K, V> next;
 
         for (ObjectEntry<K, V> entry : content) {
             while (entry != null) {
@@ -252,11 +255,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public final Array<K> keyArray(final Array<K> container) {
-        container.prepareForSize(container.size() + size());
+        final UnsafeArray<K> unsafeArray = container.asUnsafe();
+        unsafeArray.prepareForSize(container.size() + size());
 
         for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
-                container.unsafeAdd(entry.getKey());
+                unsafeArray.unsafeAdd(entry.getKey());
                 entry = entry.getNext();
             }
         }
@@ -276,7 +280,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
             return;
         }
 
-        final ObjectDictionary<K, V> objectDictionary = (ObjectDictionary<K, V>) dictionary;
+        final ObjectDictionary<K, V> objectDictionary = unsafeCast(dictionary);
 
         super.moveTo(objectDictionary);
 
@@ -441,11 +445,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public Array<V> values(final Array<V> container) {
-        container.prepareForSize(container.size() + size());
+        final UnsafeArray<V> unsafeArray = container.asUnsafe();
+        unsafeArray.prepareForSize(container.size() + size());
 
         for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
-                container.unsafeAdd(entry.getValue());
+                unsafeArray.unsafeAdd(entry.getValue());
                 entry = entry.getNext();
             }
         }
