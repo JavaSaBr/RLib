@@ -1,5 +1,8 @@
 package rlib.util.pools.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Reusable;
@@ -27,17 +30,17 @@ public class FastReusablePool<E extends Reusable> implements ReusablePool<E> {
     }
 
     @Override
-    public void put(final E object) {
-        if (object == null) return;
+    public void put(@NotNull final E object) {
         object.free();
         pool.add(object);
     }
 
     @Override
-    public void remove(final E object) {
+    public void remove(@NotNull final E object) {
         pool.fastRemove(object);
     }
 
+    @Nullable
     @Override
     public E take() {
 

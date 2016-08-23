@@ -1,116 +1,226 @@
 package rlib.network.packet;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 
 /**
- * Интерфейс для реализации читаемого пакета.
+ * The interface for implementing readable network packets.
  *
  * @author JavaSaBr
  */
-public interface ReadablePacket<C> extends Packet<C> {
+public interface ReadablePacket extends Packet {
 
     /**
-     * @return кол-во не прочитанных байтов.
+     * Notifies about started preparing data for reading of this packet.
      */
-    public int getAvailableBytes();
-
-    /**
-     * @return буффер данных.
-     */
-    public ByteBuffer getBuffer();
-
-    /**
-     * @param buffer буффер данных.
-     */
-    public void setBuffer(final ByteBuffer buffer);
-
-    /**
-     * Прочитать присланную информацию.
-     *
-     * @return успешно ли прочитано.
-     */
-    public boolean read();
-
-    /**
-     * Чтение одного байта из буфера.
-     */
-    public default int readByte() {
-        final ByteBuffer buffer = getBuffer();
-        return buffer.get() & 0xFF;
+    default void notifyStartedPreparing() {
     }
 
     /**
-     * Наполнение указанного массива байтов, байтами из буфера.
-     *
-     * @param array наполняемый массив байтов.
+     * Notifies about finished preparing data for reading of this packet.
      */
-    public default void readBytes(final byte[] array) {
-        final ByteBuffer buffer = getBuffer();
+    default void notifyFinishedPreparing() {
+    }
+
+    /**
+     * Notifies about started reading data of this packet.
+     */
+    default void notifyStartedReading() {
+    }
+
+    /**
+     * Notifies about finished reading data of this packet.
+     */
+    default void notifyFinishedReading() {
+    }
+
+    /**
+     * @return count of available bytes fro reading.
+     */
+    int getAvailableBytes();
+
+    /**
+     * Gets the current read buffer.
+     *
+     * @return the current read buffer or {@link NullPointerException} if this packet has no buffer.
+     */
+    @NotNull
+    ByteBuffer getBuffer();
+
+    /**
+     * @param buffer the current read buffer.
+     */
+    void setBuffer(@Nullable final ByteBuffer buffer);
+
+    /**
+     * Reads this packet.
+     *
+     * @return true if reading was success.
+     */
+    boolean read();
+
+    /**
+     * Reads 1 byte from this packet.
+     *
+     * @return 1 byte from this packet.
+     */
+    default int readByte() {
+        return readByte(getBuffer());
+    }
+
+    /**
+     * Reads 1 byte from this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @return 1 byte from this packet.
+     */
+    default int readByte(@NotNull final ByteBuffer buffer) {
+        return buffer.get();
+    }
+
+    /**
+     * Reads the bytes array from this packet.
+     *
+     * @param array the bytes array.
+     */
+    default void readBytes(@NotNull final byte[] array) {
+        readBytes(getBuffer(), array);
+    }
+
+    /**
+     * Reads the bytes array from this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @param array  the bytes array.
+     */
+    default void readBytes(@NotNull final ByteBuffer buffer, @NotNull final byte[] array) {
         buffer.get(array);
     }
 
     /**
-     * Наполнение указанного массива байтов, байтами из буфера.
+     * Reads the bytes array from this packet.
      *
-     * @param array  наполняемый массив байтов.
-     * @param offset отступ в массиве байтов.
-     * @param length кол-во записываемых байтов в массив.
+     * @param array  the bytes array.
+     * @param offset the offset for reading.
+     * @param length the length for reading.
      */
-    public default void readBytes(final byte[] array, final int offset, final int length) {
-        final ByteBuffer buffer = getBuffer();
+    default void readBytes(@NotNull final byte[] array, final int offset, final int length) {
+        readBytes(getBuffer(), array, offset, length);
+    }
+
+    /**
+     * Reads the bytes array from this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @param array  the bytes array.
+     * @param offset the offset for reading.
+     * @param length the length for reading.
+     */
+    default void readBytes(@NotNull final ByteBuffer buffer, @NotNull final byte[] array, final int offset, final int length) {
         buffer.get(array, offset, length);
     }
 
     /**
-     * Чтение 4х байтов в виде float из буфера.
+     * Reads 4 bytes from this packet.
+     *
+     * @return 4 bytes from this packet.
      */
-    public default float readFloat() {
-        final ByteBuffer buffer = getBuffer();
+    default float readFloat() {
+        return readFloat(getBuffer());
+    }
+
+    /**
+     * Reads 4 bytes from this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @return 4 bytes from this packet.
+     */
+    default float readFloat(@NotNull final ByteBuffer buffer) {
         return buffer.getFloat();
     }
 
     /**
-     * Чтение 4х байтов в виде int из буфера.
+     * Reads 4 bytes from this packet.
+     *
+     * @return 4 bytes from this packet.
      */
-    public default int readInt() {
-        final ByteBuffer buffer = getBuffer();
+    default int readInt() {
+        return readInt(getBuffer());
+    }
+
+    /**
+     * Reads 4 bytes from this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @return 4 bytes from this packet.
+     */
+    default int readInt(@NotNull final ByteBuffer buffer) {
         return buffer.getInt();
     }
 
     /**
-     * Чтение 8ми байтов в виде long из буфера.
+     * Reads 8 bytes from this packet.
+     *
+     * @return 8 bytes from this packet.
      */
-    public default long readLong() {
-        final ByteBuffer buffer = getBuffer();
+    default long readLong() {
+        return readLong(getBuffer());
+    }
+
+    /**
+     * Reads 8 bytes from this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @return 8 bytes from this packet.
+     */
+    default long readLong(@NotNull final ByteBuffer buffer) {
         return buffer.getLong();
     }
 
     /**
-     * Чтение 2х байтов в виде short из буфера.
+     * Reads 2 bytes from this packet.
+     *
+     * @return 2 bytes from this packet.
      */
-    public default int readShort() {
-        final ByteBuffer buffer = getBuffer();
-        return buffer.getShort() & 0xFFFF;
+    default int readShort() {
+        return readShort(getBuffer());
     }
 
     /**
-     * Чтение строки из буфера по ближайшего нулевого символа.
+     * Reads 2 bytes from this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @return 2 bytes from this packet.
      */
-    public default String readString() {
+    default int readShort(@NotNull final ByteBuffer buffer) {
+        return buffer.getShort();
+    }
+
+    /**
+     * Reads the string form this packet.
+     *
+     * @return the read string.
+     */
+    default String readString() {
+        return readString(getBuffer());
+    }
+
+    /**
+     * Reads the string form this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @return the read string.
+     */
+    default String readString(@NotNull final ByteBuffer buffer) {
 
         final StringBuilder builder = new StringBuilder();
-        final ByteBuffer buffer = getBuffer();
-
         char cha;
 
         while (buffer.remaining() > 1) {
-
             cha = buffer.getChar();
-
-            if (cha == 0) {
-                break;
-            }
-
+            if (cha == 0) break;
             builder.append(cha);
         }
 
@@ -118,11 +228,23 @@ public interface ReadablePacket<C> extends Packet<C> {
     }
 
     /**
-     * Чтение строки из буфера указанной длинны.
+     * Reads the string form this packet.
+     *
+     * @param length the length of the string.
+     * @return the read string.
      */
-    public default String readString(final int length) {
+    default String readString(final int length) {
+        return readString(getBuffer(), length);
+    }
 
-        final ByteBuffer buffer = getBuffer();
+    /**
+     * Reads the string form this packet.
+     *
+     * @param buffer the buffer for reading.
+     * @param length the length of the string.
+     * @return the read string.
+     */
+    default String readString(@NotNull final ByteBuffer buffer, final int length) {
 
         final char[] array = new char[length];
 

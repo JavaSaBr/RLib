@@ -1,5 +1,8 @@
 package rlib.util.pools.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.ConcurrentArray;
@@ -33,17 +36,17 @@ public class ConcurrentReentrantRWLockPool<E extends Reusable> implements Reusab
     }
 
     @Override
-    public void put(final E object) {
-        if (object == null) return;
+    public void put(@NotNull final E object) {
         object.free();
         runInWriteLock(pool, object, Array::add);
     }
 
     @Override
-    public void remove(final E object) {
+    public void remove(@NotNull final E object) {
         runInWriteLock(pool, object, Array::fastRemove);
     }
 
+    @Nullable
     @Override
     public E take() {
 

@@ -14,8 +14,7 @@ import rlib.network.server.client.ClientConnection;
  *
  * @author JavaSaBr
  */
-@SuppressWarnings("rawtypes")
-public abstract class AbstractClientConnection<T extends Client, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ServerNetwork, R, S> implements ClientConnection<T, R, S> {
+public abstract class AbstractClientConnection<T extends Client, R extends ReadablePacket, S extends SendablePacket> extends AbstractAsyncConnection<ServerNetwork, R, S> implements ClientConnection<T, R, S> {
 
     /**
      * Подключенный клиент.

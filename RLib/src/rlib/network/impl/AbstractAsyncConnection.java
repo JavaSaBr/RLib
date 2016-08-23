@@ -104,14 +104,8 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
 
         @Override
         public void failed(final Throwable exc, final AbstractAsyncConnection attachment) {
-
-            if (config.isVisibleReadException()) {
-                LOGGER.warning(this, exc);
-            }
-
-            if (!isClosed()) {
-                finish();
-            }
+            if (config.isVisibleReadException()) LOGGER.warning(this, exc);
+            if (!isClosed()) finish();
         }
     };
 
@@ -146,10 +140,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
                 LOGGER.warning(this, new Exception("incorrect write packet " + packet, exc));
             }
 
-            if (isClosed()) {
-                return;
-            }
-
+            if (isClosed()) return;
             if (isWriting.compareAndSet(true, false)) writeNextPacket();
         }
     };
@@ -179,17 +170,11 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
         lock();
         try {
 
-            if (isClosed()) {
-                return;
-            }
-
+            if (isClosed()) return;
             setClosed(true);
 
             final AsynchronousSocketChannel channel = getChannel();
-
-            if (channel.isOpen()) {
-                channel.close();
-            }
+            if (channel.isOpen()) channel.close();
 
             clearWaitPackets();
 
@@ -329,13 +314,11 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
 
     @Override
     public final void sendPacket(final S packet) {
-
-        if (isClosed()) {
-            return;
-        }
+        if (isClosed()) return;
 
         lock();
         try {
+            if (isClosed()) return;
             waitPackets.add(packet);
         } finally {
             unlock();

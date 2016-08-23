@@ -11,18 +11,18 @@ public interface Reusable {
     /**
      * Cleanup this object before storing to a pool.
      */
-    public default void free() {
+    default void free() {
     }
 
     /**
      * Prepares to reuse this object before taking from a pool.
      */
-    public default void reuse() {
+    default void reuse() {
     }
 
     /**
      * Stores this object to a pool.
      */
-    public default void release() {
+    default void release() {
     }
 }

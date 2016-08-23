@@ -17,7 +17,7 @@ import rlib.network.packet.SendablePacket;
  * @author JavaSaBr
  */
 @SuppressWarnings("rawtypes")
-public abstract class AbstractServerConnection<T extends Server, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {
+public abstract class AbstractServerConnection<T extends Server, R extends ReadablePacket, S extends SendablePacket> extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ServerConnection.class);
 

@@ -1,5 +1,8 @@
 package rlib.util.pools.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Pool;
@@ -26,16 +29,16 @@ public class FastPool<E> implements Pool<E> {
     }
 
     @Override
-    public void put(final E object) {
-        if (object == null) return;
+    public void put(@NotNull final E object) {
         pool.add(object);
     }
 
     @Override
-    public void remove(final E object) {
+    public void remove(@NotNull final E object) {
         pool.fastRemove(object);
     }
 
+    @Nullable
     @Override
     public E take() {
         final E object = pool.pop();

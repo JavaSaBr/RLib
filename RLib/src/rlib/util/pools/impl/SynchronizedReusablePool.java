@@ -1,5 +1,8 @@
 package rlib.util.pools.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
@@ -28,17 +31,17 @@ public class SynchronizedReusablePool<E extends Reusable> implements ReusablePoo
     }
 
     @Override
-    public void put(final E object) {
-        if (object == null) return;
+    public void put(@NotNull final E object) {
         object.free();
         ArrayUtils.addInSynchronizeTo(pool, object);
     }
 
     @Override
-    public void remove(final E object) {
+    public void remove(@NotNull final E object) {
         ArrayUtils.fastRemoveInSynchronizeTo(pool, object);
     }
 
+    @Nullable
     @Override
     public E take() {
 

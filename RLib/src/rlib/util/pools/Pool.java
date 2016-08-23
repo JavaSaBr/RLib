@@ -1,5 +1,8 @@
 package rlib.util.pools;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -14,28 +17,29 @@ public interface Pool<E> {
     /**
      * @return true if this pool is empty.
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 
     /**
      * Puts the object to this pool.
      *
      * @param object the object.
      */
-    public void put(E object);
+    void put(@NotNull E object);
 
     /**
      * Removes the object from this pool.
      *
      * @param object the object.
      */
-    public void remove(E object);
+    void remove(@NotNull E object);
 
     /**
      * Takes an object from this pool.
      *
      * @return taken object or null is this pool is empty.
      */
-    public E take();
+    @Nullable
+    E take();
 
     /**
      * Takes an object from this pool.
@@ -43,7 +47,7 @@ public interface Pool<E> {
      * @param factory the factory for creating new object if this pool is empty.
      * @return taken object.
      */
-    public default E take(final Supplier<E> factory) {
+    default E take(@NotNull final Supplier<E> factory) {
         final E take = take();
         return take != null ? take : factory.get();
     }
@@ -55,7 +59,7 @@ public interface Pool<E> {
      * @param factory  the factory for creating new object if this pool is empty.
      * @return taken object.
      */
-    public default <T> E take(final T argument, final Function<T, E> factory) {
+    default <T> E take(@Nullable final T argument, @NotNull final Function<T, E> factory) {
         final E take = take();
         return take != null ? take : factory.apply(argument);
     }
@@ -68,7 +72,7 @@ public interface Pool<E> {
      * @param factory the factory for creating new object if this pool is empty.
      * @return taken object.
      */
-    public default <F, S> E take(final F first, S second, final BiFunction<F, S, E> factory) {
+    default <F, S> E take(@Nullable final F first, @Nullable final S second, @NotNull final BiFunction<F, S, E> factory) {
         final E take = take();
         return take != null ? take : factory.apply(first, second);
     }
