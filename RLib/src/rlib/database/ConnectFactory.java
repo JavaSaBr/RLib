@@ -4,16 +4,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Интерфейс для реализации фабрики подкюлчений к БД.
+ * The interface for implementing the connection factory to database.
  *
  * @author JavaSaBr
  */
 public interface ConnectFactory {
 
     /**
-     * Метод получения подключения для работы с БД.
+     * Get new connection to database.
      *
-     * @return connection подключение, для работы с БД.
+     * @return the new connection.
      */
-    public abstract Connection getConnection() throws SQLException;
+    Connection getConnection() throws SQLException;
 }

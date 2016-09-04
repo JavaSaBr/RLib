@@ -1,5 +1,7 @@
 package rlib.classpath;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.classpath.impl.ClassPathScannerImpl;
 import rlib.classpath.impl.ManifestClassPathScannerImpl;
 
@@ -10,10 +12,12 @@ import rlib.classpath.impl.ManifestClassPathScannerImpl;
  */
 public final class ClassPathScannerFactory {
 
+    @NotNull
     public static ClassPathScanner newDefaultScanner() {
         return new ClassPathScannerImpl();
     }
 
+    @NotNull
     public static ClassPathScanner newManifestScanner(final Class<?> rootClass, final String classPathKey) {
         return new ManifestClassPathScannerImpl(rootClass, classPathKey);
     }

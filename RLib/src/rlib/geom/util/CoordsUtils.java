@@ -1,9 +1,10 @@
 package rlib.geom.util;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import rlib.geom.GamePoint;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-import rlib.util.Rnd;
 
 /**
  * Реализация утильного класса с методами для рассчета координат.
@@ -220,7 +221,8 @@ public final class CoordsUtils {
      * @return новая точка.
      */
     public static <T extends GamePoint> T randomCoords(final T loc, final float x, final float y, final float z, final int radiusMin, final int radiusMax) {
-        return randomCoords(loc, x, y, z, Rnd.nextInt(35000), radiusMin, radiusMax);
+        final ThreadLocalRandom current = ThreadLocalRandom.current();
+        return randomCoords(loc, x, y, z, current.nextInt(35000), radiusMin, radiusMax);
     }
 
     /**
@@ -241,8 +243,10 @@ public final class CoordsUtils {
             return loc;
         }
 
-        final int radius = Rnd.nextInt(radiusMin, radiusMax);
-        final float radians = AngleUtils.degreeToRadians(Rnd.nextInt(0, 360));
+        final ThreadLocalRandom current = ThreadLocalRandom.current();
+
+        final int radius = current.nextInt(radiusMin, radiusMax);
+        final float radians = AngleUtils.degreeToRadians(current.nextInt(0, 360));
 
         final float newX = calcX(x, radius, radians);
         final float newY = calcY(y, radius, radians);

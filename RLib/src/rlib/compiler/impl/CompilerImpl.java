@@ -1,5 +1,7 @@
 package rlib.compiler.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -69,8 +71,9 @@ public class CompilerImpl implements Compiler {
         this.showDiagnostic = showDiagnostic;
     }
 
+    @NotNull
     @Override
-    public Class<?>[] compile(final File... files) {
+    public Class<?>[] compile(@NotNull final File... files) {
         if (files.length < 1) return EMPTY_CLASSES;
 
         final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
@@ -82,8 +85,9 @@ public class CompilerImpl implements Compiler {
         return compile(null, javaSource);
     }
 
+    @NotNull
     @Override
-    public Class<?>[] compile(final Path... paths) {
+    public Class<?>[] compile(@NotNull final Path... paths) {
         if (paths.length < 1) return EMPTY_CLASSES;
 
         final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
@@ -167,8 +171,9 @@ public class CompilerImpl implements Compiler {
         }
     }
 
+    @NotNull
     @Override
-    public Class<?>[] compileDirectory(final File... files) {
+    public Class<?>[] compileDirectory(@NotNull final File... files) {
 
         final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
@@ -206,8 +211,9 @@ public class CompilerImpl implements Compiler {
         }
     }
 
+    @NotNull
     @Override
-    public Class<?>[] compileDirectory(Path... paths) {
+    public Class<?>[] compileDirectory(@NotNull Path... paths) {
 
         final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 

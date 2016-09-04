@@ -13,5 +13,5 @@ public interface DocumentXML<C> {
      * Parse this document and get the result.
      */
     @NotNull
-    public C parse();
+    C parse();
 }

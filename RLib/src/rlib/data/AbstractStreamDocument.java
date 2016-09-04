@@ -70,7 +70,6 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     public C parse() {
 
         final DocumentBuilderFactory factory = LOCAL_FACTORY.get();
-
         try {
             final DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(stream);

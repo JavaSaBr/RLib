@@ -1,5 +1,7 @@
 package rlib.classpath.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +25,7 @@ import rlib.util.StringUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
+import static java.lang.reflect.Modifier.isAbstract;
 import static rlib.compiler.Compiler.SOURCE_EXTENSION;
 import static rlib.util.IOUtils.copy;
 
@@ -59,18 +62,18 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public void addClasses(final Array<Class<?>> classes) {
+    public void addClasses(@NotNull final Array<Class<?>> classes) {
         this.classes = ArrayUtils.combine(this.classes, classes.toArray(new Class[classes.size()]), Class.class);
     }
 
     @Override
-    public void addResources(final Array<String> resources) {
+    public void addResources(@NotNull final Array<String> resources) {
         this.resources = ArrayUtils.combine(this.resources, resources.toArray(new String[resources.size()]), String.class);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, R extends T> void findImplements(final Array<Class<R>> container, final Class<T> interfaceClass) {
+    public <T, R extends T> void findImplements(@NotNull final Array<Class<R>> container, @NotNull final Class<T> interfaceClass) {
 
         if (!interfaceClass.isInterface()) {
             throw new RuntimeException("class " + interfaceClass + " is not interface.");
@@ -78,7 +81,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
         for (final Class<?> cs : getClasses()) {
 
-            if (cs.isInterface() || !interfaceClass.isAssignableFrom(cs) || Modifier.isAbstract(cs.getModifiers())) {
+            if (cs.isInterface() || !interfaceClass.isAssignableFrom(cs) || isAbstract(cs.getModifiers())) {
                 continue;
             }
 
@@ -88,7 +91,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, R extends T> void findInherited(final Array<Class<R>> container, final Class<T> parentClass) {
+    public <T, R extends T> void findInherited(@NotNull final Array<Class<R>> container, @NotNull final Class<T> parentClass) {
 
         if (Modifier.isFinal(parentClass.getModifiers())) {
             throw new RuntimeException("class " + parentClass + " is final class.");
@@ -96,7 +99,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
         for (final Class<?> cs : getClasses()) {
 
-            if (cs.isInterface() || cs == parentClass || !parentClass.isAssignableFrom(cs) || Modifier.isAbstract(cs.getModifiers())) {
+            if (cs.isInterface() || cs == parentClass || !parentClass.isAssignableFrom(cs) || isAbstract(cs.getModifiers())) {
                 continue;
             }
 
@@ -105,12 +108,12 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public void getAll(final Array<Class<?>> container) {
+    public void getAll(@NotNull final Array<Class<?>> container) {
         container.addAll(getClasses());
     }
 
     @Override
-    public void getAllResources(Array<String> container) {
+    public void getAllResources(@NotNull Array<String> container) {
         container.addAll(getResources());
     }
 
@@ -321,7 +324,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public void scanning(final Function<String, Boolean> filter) {
+    public void scanning(@NotNull final Function<String, Boolean> filter) {
 
         if (classes != null || resources != null) {
             throw new RuntimeException("scanning is already.");
@@ -336,7 +339,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
             final Path file = Paths.get(path);
 
-            if (!Files.exists(file) || (filter != null && !filter.apply(path))) {
+            if (!Files.exists(file) || (!filter.apply(path))) {
                 continue;
             }
 

@@ -1,5 +1,7 @@
 package rlib.classpath;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Function;
 
 import rlib.util.array.Array;
@@ -11,21 +13,21 @@ import rlib.util.array.Array;
  */
 public interface ClassPathScanner {
 
-    public static final String JAR_EXTENSION = ".jar";
+    String JAR_EXTENSION = ".jar";
 
     /**
      * Добавить в сканнер дополнительные классы.
      *
      * @param classes добавляемые классы.
      */
-    public void addClasses(Array<Class<?>> classes);
+    void addClasses(@NotNull Array<Class<?>> classes);
 
     /**
      * Добавить в сканнер дополнительные ресурсы.
      *
      * @param resources добавляемые ресурсы.
      */
-    public void addResources(Array<String> resources);
+    void addResources(@NotNull Array<String> resources);
 
     /**
      * Найти все реализации указанного интерфейса.
@@ -33,7 +35,7 @@ public interface ClassPathScanner {
      * @param container      контейнер классов.
      * @param interfaceClass интересуемый интерфейс.
      */
-    public <T, R extends T> void findImplements(Array<Class<R>> container, Class<T> interfaceClass);
+    <T, R extends T> void findImplements(@NotNull Array<Class<R>> container, @NotNull Class<T> interfaceClass);
 
     /**
      * Найти всех наследников указанного класса.
@@ -41,24 +43,24 @@ public interface ClassPathScanner {
      * @param container   контейнер классов.
      * @param parentClass наследуемый класс.
      */
-    public <T, R extends T> void findInherited(Array<Class<R>> container, Class<T> parentClass);
+    <T, R extends T> void findInherited(@NotNull Array<Class<R>> container, @NotNull Class<T> parentClass);
 
     /**
      * Получить все найденные классы.
      *
      * @param container контейнер классов.
      */
-    public void getAll(Array<Class<?>> container);
+    void getAll(@NotNull Array<Class<?>> container);
 
     /**
      * Получить все найденные ресурсы.
      *
      * @param container контейнер ресурсов.
      */
-    public void getAllResources(Array<String> container);
+    void getAllResources(@NotNull Array<String> container);
 
     /**
      * Запустить сканирование classpath.
      */
-    public void scanning(Function<String, Boolean> filter);
+    void scanning(@NotNull Function<String, Boolean> filter);
 }

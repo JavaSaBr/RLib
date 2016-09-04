@@ -163,7 +163,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 
                         if (!clearIds.isEmpty()) {
 
-                            DBUtils.closeResultSet(rset);
+                            DBUtils.close(rset);
 
                             for (final int id : clearIds.array()) {
                                 statement.executeUpdate("DELETE FROM " + table[0] + " WHERE " + table[1] + " = " + id + " LIMIT 1");
@@ -171,7 +171,7 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
                         }
                     }
                 } finally {
-                    DBUtils.closeDatabaseCSR(con, statement, rset);
+                    DBUtils.close(con, statement, rset);
                 }
 
                 final int[] extracted = new int[extractedIds.size()];

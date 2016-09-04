@@ -1,5 +1,7 @@
 package rlib.compiler;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.nio.file.Path;
 
@@ -10,8 +12,8 @@ import java.nio.file.Path;
  */
 public interface Compiler {
 
-    public static final String SOURCE_EXTENSION = ".java";
-    public static final String CLASS_EXTENSION = ".class";
+    String SOURCE_EXTENSION = ".java";
+    String CLASS_EXTENSION = ".class";
 
     /**
      * Скомпилировать указанные файлы.
@@ -19,7 +21,8 @@ public interface Compiler {
      * @param files список файлов исходников.
      * @return список полученных классов.
      */
-    public Class<?>[] compile(File... files);
+    @NotNull
+    Class<?>[] compile(@NotNull File... files);
 
     /**
      * Скомпилировать указанные файлы.
@@ -27,7 +30,8 @@ public interface Compiler {
      * @param paths список файлов исходников.
      * @return список полученных классов.
      */
-    public Class<?>[] compile(Path... paths);
+    @NotNull
+    Class<?>[] compile(@NotNull Path... paths);
 
     /**
      * Скомпилировать все классы в указанных дерикториях.
@@ -35,7 +39,8 @@ public interface Compiler {
      * @param files список дерикторий.
      * @return скомпилированные классы.
      */
-    public Class<?>[] compileDirectory(File... files);
+    @NotNull
+    Class<?>[] compileDirectory(@NotNull File... files);
 
     /**
      * Скомпилировать все классы в указанных дерикториях.
@@ -43,5 +48,6 @@ public interface Compiler {
      * @param paths список дерикторий.
      * @return скомпилированные классы.
      */
-    public Class<?>[] compileDirectory(Path... paths);
+    @NotNull
+    Class<?>[] compileDirectory(@NotNull Path... paths);
 }

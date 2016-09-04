@@ -53,7 +53,7 @@ public abstract class CleaningManager {
         } catch (final SQLException e) {
             LOGGER.warning(e);
         } finally {
-            DBUtils.closeDatabaseCS(con, statement);
+            DBUtils.close(con, statement);
         }
     }
 }

@@ -1,5 +1,7 @@
 package rlib.compiler.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -26,6 +28,7 @@ public class CompileByteCode extends SimpleJavaFileObject implements ByteSource 
         this.outputStream = new ByteArrayOutputStream();
     }
 
+    @NotNull
     @Override
     public byte[] getByteSource() {
         return outputStream.toByteArray();

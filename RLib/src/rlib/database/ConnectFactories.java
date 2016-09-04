@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import rlib.database.impl.BoneCPConnectFactory;
 
 /**
- * Интерфейс для реализации фабрики подкюлчений к БД.
+ * The factory for creating the connection factories.
  *
  * @author JavaSaBr
  */
