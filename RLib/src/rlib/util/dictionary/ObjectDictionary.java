@@ -3,6 +3,7 @@ package rlib.util.dictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -15,6 +16,13 @@ import rlib.util.array.Array;
  * @author JavaSaBr
  */
 public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
+
+    /**
+     * Performs the given action for each key-value pair of this dictionary.
+     */
+    default void forEach(@NotNull final BiConsumer<? super K, ? super V> consumer) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns <tt>true</tt> if this dictionary contains a mapping for the specified key.  More

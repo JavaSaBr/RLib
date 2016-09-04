@@ -2,7 +2,6 @@ package rlib.util.dictionary;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import rlib.util.array.Array;
@@ -16,13 +15,6 @@ import static rlib.util.array.ArrayFactory.newArray;
  * @author JavaSaBr
  */
 public interface Dictionary<K, V> extends Iterable<V>, Reusable {
-
-    /**
-     * Performs the given action for each key-value pair of this dictionary.
-     */
-    default void forEach(@NotNull final BiConsumer<? super K, ? super V> consumer) {
-        throw new UnsupportedOperationException();
-    }
 
     /**
      * Replace the all values using the function.
