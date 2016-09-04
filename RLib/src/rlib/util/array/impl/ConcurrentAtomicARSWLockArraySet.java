@@ -12,15 +12,15 @@ import rlib.util.array.ConcurrentArray;
  *
  * @author JavaSaBr
  */
-public class ConcurrentPrimitiveAtomicARSWLockArraySet<E> extends ConcurrentReentrantRWLockArray<E> {
+public class ConcurrentAtomicARSWLockArraySet<E> extends ConcurrentReentrantRWLockArray<E> {
 
     private static final long serialVersionUID = -3394386864246350866L;
 
-    public ConcurrentPrimitiveAtomicARSWLockArraySet(final Class<E> type) {
+    public ConcurrentAtomicARSWLockArraySet(final Class<E> type) {
         super(type);
     }
 
-    public ConcurrentPrimitiveAtomicARSWLockArraySet(final Class<E> type, final int size) {
+    public ConcurrentAtomicARSWLockArraySet(final Class<E> type, final int size) {
         super(type, size);
     }
 

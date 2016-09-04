@@ -10,7 +10,7 @@ import rlib.util.array.ConcurrentArray;
  *
  * @author JavaSaBr
  */
-public class ConcurrentPrimitiveAtomicARSWLockArray<E> extends AbstractConcurrentArray<E> {
+public class ConcurrentAtomicARSWLockArray<E> extends AbstractConcurrentArray<E> {
 
     private static final long serialVersionUID = -6291504312637658721L;
 
@@ -19,11 +19,11 @@ public class ConcurrentPrimitiveAtomicARSWLockArray<E> extends AbstractConcurren
      */
     private final AsyncReadSyncWriteLock lock;
 
-    public ConcurrentPrimitiveAtomicARSWLockArray(final Class<E> type) {
+    public ConcurrentAtomicARSWLockArray(final Class<E> type) {
         this(type, 10);
     }
 
-    public ConcurrentPrimitiveAtomicARSWLockArray(final Class<E> type, final int size) {
+    public ConcurrentAtomicARSWLockArray(final Class<E> type, final int size) {
         super(type, size);
 
         this.lock = LockFactory.newAtomicARSWLock();

@@ -6,29 +6,28 @@ import org.jetbrains.annotations.Nullable;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.ConcurrentArray;
-import rlib.util.array.impl.ConcurrentPrimitiveAtomicARSWLockArray;
+import rlib.util.array.impl.ConcurrentStampedLockArray;
 import rlib.util.pools.Reusable;
 import rlib.util.pools.ReusablePool;
 
 import static rlib.util.ArrayUtils.getInWriteLock;
 import static rlib.util.ArrayUtils.runInWriteLock;
 
-
 /**
  * The threadsafe implementation of the {@link ReusablePool} using like a storage the {@link
- * ConcurrentPrimitiveAtomicARSWLockArray}.
+ * ConcurrentStampedLockArray}.
  *
  * @author JavaSaBr
  */
-public class ConcurrentPrimitiveAtomicARSWLockReusablePool<E extends Reusable> implements ReusablePool<E> {
+public class ConcurrentStampedLockReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     /**
      * The storage of objects.
      */
     private final ConcurrentArray<E> pool;
 
-    public ConcurrentPrimitiveAtomicARSWLockReusablePool(final Class<?> type) {
-        this.pool = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(type);
+    public ConcurrentStampedLockReusablePool(final Class<?> type) {
+        this.pool = ArrayFactory.newConcurrentStampedLockArray(type);
     }
 
     @Override
@@ -59,10 +58,5 @@ public class ConcurrentPrimitiveAtomicARSWLockReusablePool<E extends Reusable> i
         object.reuse();
 
         return object;
-    }
-
-    @Override
-    public String toString() {
-        return pool.toString();
     }
 }

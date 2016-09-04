@@ -4,7 +4,7 @@ import rlib.util.array.impl.ConcurrentReentrantRWLockArray;
 import rlib.util.array.impl.ConcurrentReentrantRWLockArraySet;
 import rlib.util.array.impl.FastIntegerArray;
 import rlib.util.array.impl.FastLongArray;
-import rlib.util.array.impl.FinalConcurrentPrimitiveAtomicARSWLockArray;
+import rlib.util.array.impl.FinalConcurrentAtomicARSWLockArray;
 import rlib.util.array.impl.FinalConcurrentStampedLockArray;
 import rlib.util.array.impl.FinalFastArray;
 import rlib.util.array.impl.FinalFastArraySet;
@@ -96,10 +96,10 @@ public class ArrayFactory {
      *
      * @param type the type of the array.
      * @return the new array.
-     * @see {@link FinalConcurrentPrimitiveAtomicARSWLockArray}
+     * @see {@link FinalConcurrentAtomicARSWLockArray}
      */
-    public static <E> ConcurrentArray<E> newConcurrentPrimitiveAtomicARSWLockArray(final Class<?> type) {
-        return new FinalConcurrentPrimitiveAtomicARSWLockArray<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentAtomicARSWLockArray(final Class<?> type) {
+        return new FinalConcurrentAtomicARSWLockArray<>(unsafeCast(type));
     }
 
     /**
@@ -107,7 +107,7 @@ public class ArrayFactory {
      *
      * @param type the type of the array.
      * @return the new array.
-     * @see {@link FinalConcurrentPrimitiveAtomicARSWLockArray}
+     * @see {@link FinalConcurrentAtomicARSWLockArray}
      */
     public static <E> ConcurrentArray<E> newConcurrentStampedLockArray(final Class<?> type) {
         return new FinalConcurrentStampedLockArray<>(unsafeCast(type));

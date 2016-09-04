@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.ConcurrentArray;
-import rlib.util.array.impl.ConcurrentPrimitiveAtomicARSWLockArray;
+import rlib.util.array.impl.ConcurrentAtomicARSWLockArray;
 import rlib.util.pools.Pool;
 
 import static rlib.util.ArrayUtils.getInWriteLock;
@@ -14,19 +14,19 @@ import static rlib.util.ArrayUtils.runInWriteLock;
 
 /**
  * The threadsafe implementation of the {@link Pool} using like a storage the {@link
- * ConcurrentPrimitiveAtomicARSWLockArray}.
+ * ConcurrentAtomicARSWLockArray}.
  *
  * @author JavaSaBr
  */
-public class ConcurrentPrimitiveAtomicARSWLockPool<E> implements Pool<E> {
+public class ConcurrentAtomicARSWLockPool<E> implements Pool<E> {
 
     /**
      * The storage of objects.
      */
     private final ConcurrentArray<E> pool;
 
-    public ConcurrentPrimitiveAtomicARSWLockPool(final Class<?> type) {
-        this.pool = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(type);
+    public ConcurrentAtomicARSWLockPool(final Class<?> type) {
+        this.pool = ArrayFactory.newConcurrentAtomicARSWLockArray(type);
     }
 
     @Override

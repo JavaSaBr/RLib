@@ -32,12 +32,12 @@ public class LoggerManager {
     /**
      * список слушателей логирования
      */
-    private static final ConcurrentArray<LoggerListener> LISTENERS = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(LoggerListener.class);
+    private static final ConcurrentArray<LoggerListener> LISTENERS = ArrayFactory.newConcurrentAtomicARSWLockArray(LoggerListener.class);
 
     /**
      * список записчиков лога
      */
-    private static final ConcurrentArray<Writer> WRITERS = ArrayFactory.newConcurrentPrimitiveAtomicARSWLockArray(Writer.class);
+    private static final ConcurrentArray<Writer> WRITERS = ArrayFactory.newConcurrentAtomicARSWLockArray(Writer.class);
 
     /**
      * синхронизатор записи лога

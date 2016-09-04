@@ -31,9 +31,7 @@ public class FastArraySet<E> extends FastArray<E> {
     protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
         for (final E element : elements.array()) {
             if (element == null) break;
-            if (!contains(element)) {
-                unsafeAdd(element);
-            }
+            if (!contains(element)) unsafeAdd(element);
         }
     }
 
@@ -41,9 +39,7 @@ public class FastArraySet<E> extends FastArray<E> {
     protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
         for (final E element : elements) {
             if (element == null) break;
-            if (!contains(element)) {
-                unsafeAdd(element);
-            }
+            if (!contains(element)) unsafeAdd(element);
         }
     }
 }
