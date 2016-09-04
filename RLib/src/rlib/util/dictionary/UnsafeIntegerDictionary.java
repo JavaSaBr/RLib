@@ -1,22 +1,27 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Интерфейс для реализации внутреннего API словарей с примитивным ключем int.
+ * The interface for implementing Unsafe part of {@link IntegerDictionary} API.
  *
  * @author JavaSaBr
  */
 public interface UnsafeIntegerDictionary<V> extends IntegerDictionary<V> {
 
     /**
-     * @return массив ячеяк.
+     * @return the array of entries.
      */
-    public IntegerEntry<V>[] content();
+    @NotNull
+    IntegerEntry<V>[] content();
 
     /**
-     * Удаление значения из ячейки по указанному ключу.
+     * Remove an entry for the key.
      *
-     * @param key ключ ячейки.
-     * @return удаленная ячейка.
+     * @param key the key of the entry.
+     * @return removed entry.
      */
-    public IntegerEntry<V> removeEntryForKey(final int key);
+    @Nullable
+    IntegerEntry<V> removeEntryForKey(final int key);
 }

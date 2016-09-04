@@ -1,22 +1,27 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Интерфейс для реализации внутреннего API словарей с объектным ключем.
+ * The interface for implementing Unsafe part of {@link ObjectDictionary} API.
  *
  * @author JavaSaBr
  */
 public interface UnsafeObjectDictionary<K, V> extends ObjectDictionary<K, V> {
 
     /**
-     * @return массив ячеяк словаря.
+     * @return the array of entries.
      */
-    public ObjectEntry<K, V>[] content();
+    @NotNull
+    ObjectEntry<K, V>[] content();
 
     /**
-     * Удаление ячейки по указанному ключу.
+     * Remove an entry for the key.
      *
-     * @param key ключ ячейки.
-     * @return удаленная ячейка.
+     * @param key the key of the entry.
+     * @return removed entry.
      */
-    public ObjectEntry<K, V> removeEntryForKey(final K key);
+    @Nullable
+    ObjectEntry<K, V> removeEntryForKey(@NotNull final K key);
 }

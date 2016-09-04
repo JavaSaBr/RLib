@@ -9,14 +9,14 @@ import rlib.concurrent.lock.LockFactory;
  *
  * @author JavaSaBr
  */
-public class ConcurrentAtomicLongDictionary<V> extends ConcurrentLockLongDictionary<V> {
+public class ConcurrentAtomicLongDictionary<V> extends ConcurrentReentrantReadWriteLockLongDictionary<V> {
 
     protected ConcurrentAtomicLongDictionary() {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
     protected ConcurrentAtomicLongDictionary(final float loadFactor) {
-        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
     protected ConcurrentAtomicLongDictionary(final float loadFactor, final int initCapacity) {
@@ -24,7 +24,7 @@ public class ConcurrentAtomicLongDictionary<V> extends ConcurrentLockLongDiction
     }
 
     protected ConcurrentAtomicLongDictionary(final int initCapacity) {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
+        this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     @Override

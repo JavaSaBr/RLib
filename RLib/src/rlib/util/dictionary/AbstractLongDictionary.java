@@ -1,5 +1,8 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -15,59 +18,78 @@ import rlib.util.array.UnsafeArray;
 import rlib.util.pools.PoolFactory;
 import rlib.util.pools.ReusablePool;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 /**
- * Базоваря реализация словаря с примитивным ключем long.
+ * The base implementation of the {@link LongDictionary}.
  *
  * @author JavaSaBr
  */
 public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongKey, V> implements UnsafeLongDictionary<V> {
 
     /**
-     * Пул ячеяк.
+     * The pool with entries.
      */
     private final ReusablePool<LongEntry<V>> entryPool;
 
     /**
-     * Таблица элементов.
-     */
-    private LongEntry<V>[] table;
-
-    /**
-     * Следующий размер для метода изминения размера (capacity * load factor).
-     */
-    private int threshold;
-
-    /**
-     * Фактор загруженности.
+     * The load factor.
      */
     private float loadFactor;
 
     protected AbstractLongDictionary() {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
     protected AbstractLongDictionary(final float loadFactor) {
-        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(loadFactor, DEFAULT_INITIAL_CAPACITY);
+    }
+
+    protected AbstractLongDictionary(final int initCapacity) {
+        this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     protected AbstractLongDictionary(final float loadFactor, final int initCapacity) {
         this.loadFactor = loadFactor;
-        this.threshold = (int) (initCapacity * loadFactor);
-        this.table = new LongEntry[Dictionary.DEFAULT_INITIAL_CAPACITY];
         this.entryPool = PoolFactory.newReusablePool(LongEntry.class);
-    }
-
-    protected AbstractLongDictionary(final int initCapacity) {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
+        setThreshold((int) (initCapacity * loadFactor));
+        setContent(unsafeCast(new LongEntry[DEFAULT_INITIAL_CAPACITY]));
+        setSize(0);
     }
 
     /**
-     * Добавляет новую ячейку в таблицу.
+     * Set new array of entries of this {@link Dictionary}.
      *
-     * @param hash  хэш значение.
-     * @param key   значение ключа.
-     * @param value значение по ключу.
-     * @param index индекс ячейки.
+     * @param newContent the new array of entries.
+     */
+    protected abstract void setContent(final LongEntry<V>[] newContent);
+
+    /**
+     * Set the next size value at which to resize (capacity * load factor).
+     *
+     * @param newThreshold the next size.
+     */
+    protected abstract void setThreshold(final int newThreshold);
+
+    /**
+     * @return the current next size.
+     */
+    protected abstract int getThreshold();
+
+    /**
+     * Set the new size of this {@link Dictionary}.
+     *
+     * @param size the new size.
+     */
+    protected abstract void setSize(final int size);
+
+    /**
+     * Add new entry to this dictionary.
+     *
+     * @param hash  the hash of the key.
+     * @param key   the key.
+     * @param value the value of the key.
+     * @param index the index of bucket.
      */
     private void addEntry(final int hash, final long key, final V value, final int index) {
 
@@ -81,13 +103,13 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
 
         content[index] = newEntry;
 
-        if (incrementSizeAndGet() >= threshold) {
+        if (incrementSizeAndGet() >= getThreshold()) {
             resize(2 * content.length);
         }
     }
 
     @Override
-    public void apply(final Function<? super V, V> function) {
+    public void apply(@NotNull final Function<? super V, V> function) {
         for (LongEntry<V> entry : content()) {
             while (entry != null) {
                 entry.setValue(function.apply(entry.getValue()));
@@ -113,6 +135,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         }
 
         ArrayUtils.clear(content);
+        setSize(0);
     }
 
     @Override
@@ -121,26 +144,15 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    public final boolean containsValue(final V value) {
-
-        if (value == null) {
-            throw new NullPointerException("value is null.");
-        }
+    public final boolean containsValue(@NotNull final V value) {
 
         for (final LongEntry<V> element : content()) {
             for (LongEntry<V> entry = element; entry != null; entry = entry.getNext()) {
-                if (value.equals(entry.getValue())) {
-                    return true;
-                }
+                if (value.equals(entry.getValue())) return true;
             }
         }
 
         return false;
-    }
-
-    @Override
-    public LongEntry<V>[] content() {
-        return table;
     }
 
     @Override
@@ -153,65 +165,66 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         }
     }
 
+    @Nullable
     @Override
     public final V get(final long key) {
         final LongEntry<V> entry = getEntry(key);
         return entry == null ? null : entry.getValue();
     }
 
+    @Nullable
     @Override
-    public V get(final long key, final Supplier<V> factory) {
+    public V get(final long key, @NotNull final Supplier<V> factory) {
 
         LongEntry<V> entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.get());
+            entry = getEntry(key);
         }
-
-        entry = getEntry(key);
 
         return entry == null ? null : entry.getValue();
     }
 
+    @Nullable
     @Override
-    public V get(final long key, final LongFunction<V> factory) {
+    public V get(final long key, @NotNull final LongFunction<V> factory) {
 
         LongEntry<V> entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.apply(key));
+            entry = getEntry(key);
         }
-
-        entry = getEntry(key);
 
         return entry == null ? null : entry.getValue();
     }
 
+    @Nullable
     @Override
-    public <T> V get(final long key, final T argument, final Function<T, V> factory) {
+    public <T> V get(final long key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
 
         LongEntry<V> entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.apply(argument));
+            entry = getEntry(key);
         }
-
-        entry = getEntry(key);
 
         return entry == null ? null : entry.getValue();
     }
 
     /**
-     * Получение ячейки по ключу.
+     * Get the entry with value for the key.
      *
-     * @param key ключ ячейки.
-     * @return ячейка.
+     * @param key the key.
+     * @return the entry or null.
      */
+    @Nullable
     private LongEntry<V> getEntry(final long key) {
 
-        final int hash = hash(key);
-
         final LongEntry<V>[] table = content();
+        final int hash = hash(key);
 
         for (LongEntry<V> entry = table[indexFor(hash, table.length)]; entry != null; entry = entry.getNext()) {
             if (entry.getHash() == hash && key == entry.getKey()) {
@@ -222,10 +235,15 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         return null;
     }
 
-    private ReusablePool<LongEntry<V>> getEntryPool() {
+    /**
+     * @return the pool with entries.
+     */
+    @NotNull
+    protected ReusablePool<LongEntry<V>> getEntryPool() {
         return entryPool;
     }
 
+    @NotNull
     @Override
     public DictionaryType getType() {
         return DictionaryType.LONG;
@@ -236,8 +254,9 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         return new LongDictionaryIterator<>(this);
     }
 
+    @NotNull
     @Override
-    public LongArray keyLongArray(final LongArray container) {
+    public LongArray keyLongArray(@NotNull final LongArray container) {
 
         for (LongEntry<V> entry : content()) {
             while (entry != null) {
@@ -250,14 +269,10 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void moveTo(final Dictionary<? super LongKey, ? super V> dictionary) {
+    public void moveTo(@NotNull final Dictionary<? super LongKey, ? super V> dictionary) {
+        if (isEmpty() || dictionary.getType() != getType()) return;
 
-        if (isEmpty() || getType() != dictionary.getType()) {
-            return;
-        }
-
-        final LongDictionary<V> longDictionary = (LongDictionary<V>) dictionary;
+        final LongDictionary<V> longDictionary = unsafeCast(dictionary);
 
         super.moveTo(dictionary);
 
@@ -270,7 +285,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    public final V put(final long key, final V value) {
+    public final V put(final long key, @Nullable final V value) {
 
         final LongEntry<V>[] content = content();
 
@@ -284,10 +299,10 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         }
 
         addEntry(hash, key, value, i);
-
         return null;
     }
 
+    @Nullable
     @Override
     public final V remove(final long key) {
 
@@ -295,7 +310,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         final V value = old == null ? null : old.getValue();
 
         final ReusablePool<LongEntry<V>> entryPool = getEntryPool();
-        entryPool.put(old);
+        if (old != null) entryPool.put(old);
 
         return value;
     }
@@ -303,10 +318,9 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     @Override
     public final LongEntry<V> removeEntryForKey(final long key) {
 
-        final int hash = hash(key);
-
         final LongEntry<V>[] content = content();
 
+        final int hash = hash(key);
         final int i = indexFor(hash, content.length);
 
         LongEntry<V> prev = content[i];
@@ -337,9 +351,9 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     /**
-     * Перестройка таблицы под новый размер.
+     * Resize the array of buckets of this dictionary.
      *
-     * @param newLength новый размер.
+     * @param newLength the new size.
      */
     private void resize(final int newLength) {
 
@@ -348,15 +362,14 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         final int oldLength = oldContent.length;
 
         if (oldLength >= DEFAULT_MAXIMUM_CAPACITY) {
-            threshold = Integer.MAX_VALUE;
+            setThreshold(Integer.MAX_VALUE);
             return;
         }
 
-        final LongEntry<V>[] newTable = new LongEntry[newLength];
-        transfer(newTable);
-
-        this.table = newTable;
-        this.threshold = (int) (newLength * loadFactor);
+        final LongEntry<V>[] newContent = unsafeCast(new LongEntry[newLength]);
+        transfer(newContent);
+        setContent(newContent);
+        setThreshold((int) (newLength * loadFactor));
     }
 
     @Override
@@ -387,26 +400,20 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     /**
-     * Перенос всех записей из старой таблице в новую.
+     * Transfer current entries to new buckets.
      *
-     * @param newTable новая таблица.
+     * @param newTable the new array of buckets.
      */
     private void transfer(final LongEntry<V>[] newTable) {
 
         final LongEntry<V>[] original = content();
-
         final int newCapacity = newTable.length;
 
         for (LongEntry<V> entry : original) {
-
-            if (entry == null) {
-                continue;
-            }
-
+            if (entry == null) continue;
             do {
 
                 final LongEntry<V> next = entry.getNext();
-
                 final int i = indexFor(entry.getHash(), newCapacity);
 
                 entry.setNext(newTable[i]);
@@ -417,14 +424,16 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         }
     }
 
+    @NotNull
     @Override
-    public Array<V> values(final Array<V> container) {
+    public Array<V> values(@NotNull final Array<V> container) {
         final UnsafeArray<V> unsafeArray = container.asUnsafe();
         unsafeArray.prepareForSize(container.size() + size());
 
         for (LongEntry<V> entry : content()) {
             while (entry != null) {
-                unsafeArray.unsafeAdd(entry.getValue());
+                final V value = entry.getValue();
+                if (value != null) unsafeArray.unsafeAdd(value);
                 entry = entry.getNext();
             }
         }
@@ -433,7 +442,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    public <T> void forEach(final T argument, final LongBiObjectConsumer<V, T> consumer) {
+    public <T> void forEach(@Nullable final T argument, @NotNull final LongBiObjectConsumer<V, T> consumer) {
         for (LongEntry<V> entry : content()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue(), argument);
@@ -443,7 +452,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    public void forEach(final LongObjectConsumer<V> consumer) {
+    public void forEach(@NotNull final LongObjectConsumer<V> consumer) {
         for (LongEntry<V> entry : content()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue());

@@ -27,7 +27,7 @@ public class ConcurrentStampedLockPool<E extends Reusable> implements ReusablePo
     private final ConcurrentArray<E> pool;
 
     public ConcurrentStampedLockPool(final Class<?> type) {
-        this.pool = ArrayFactory.newFinalConcurrentStampedLockArray(type);
+        this.pool = ArrayFactory.newConcurrentStampedLockArray(type);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Function;
 import java.util.function.LongFunction;
 import java.util.function.Supplier;
@@ -20,8 +23,8 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      *
      * @param key проверяемый ключ.
      */
-    public default boolean containsKey(final long key) {
-        throw new RuntimeException("not supported.");
+    default boolean containsKey(final long key) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -29,8 +32,9 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      *
      * @param key ключ.
      */
-    public default V get(final long key) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(final long key) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -40,8 +44,9 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @param key     ключ.
      * @param factory фабрика.
      */
-    public default V get(final long key, final Supplier<V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(final long key, @NotNull final Supplier<V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -51,8 +56,9 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @param key     ключ.
      * @param factory фабрика.
      */
-    public default V get(final long key, final LongFunction<V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(final long key, @NotNull final LongFunction<V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -63,23 +69,26 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @param argument дополнительный аргумент.
      * @param factory  фабрика.
      */
-    public default <T> V get(final long key, final T argument, final Function<T, V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default <T> V get(final long key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * @return массив ключей словаря.
      */
-    public default LongArray keyLongArray() {
-        throw new RuntimeException("not supported.");
+    @NotNull
+    default LongArray keyLongArray() {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * @param container контейнер для ключей.
      * @return массив ключей словаря.
      */
-    public default LongArray keyLongArray(final LongArray container) {
-        throw new RuntimeException("not supported.");
+    @NotNull
+    default LongArray keyLongArray(@NotNull final LongArray container) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -89,8 +98,9 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @param key   ключ значения.
      * @param value вставляемое значение.
      */
-    public default V put(final long key, final V value) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V put(final long key, @Nullable final V value) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -98,8 +108,9 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      *
      * @param key ключ значения.
      */
-    public default V remove(final long key) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V remove(final long key) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -107,8 +118,8 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      *
      * @param consumer функция обработки ключа и значения.
      */
-    public default void forEach(final LongObjectConsumer<V> consumer) {
-        throw new RuntimeException("not supported.");
+    default void forEach(@NotNull final LongObjectConsumer<V> consumer) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -117,7 +128,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @param argument дополнительный аргумент.
      * @param consumer функция обработки ключа и значения.
      */
-    public default <T> void forEach(final T argument, LongBiObjectConsumer<V, T> consumer) {
-        throw new RuntimeException("not supported.");
+    default <T> void forEach(@Nullable final T argument, @NotNull final LongBiObjectConsumer<V, T> consumer) {
+        throw new UnsupportedOperationException();
     }
 }

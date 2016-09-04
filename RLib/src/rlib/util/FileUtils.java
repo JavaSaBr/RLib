@@ -142,7 +142,7 @@ public class FileUtils {
      * @return подходит ли.
      */
     public static boolean containsExtensions(final String[] extensions, final String path) {
-        return ArrayUtils.find(extensions, path, String::endsWith) != null;
+        return ArrayUtils.find(extensions, path, (extension, p) -> p.endsWith(extension)) != null;
     }
 
     /**

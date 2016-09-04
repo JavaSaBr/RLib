@@ -40,7 +40,7 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
     /**
      * The process of writing this packet to the buffer.
      */
-    protected void writeImpl(final ByteBuffer buffer) {
+    protected void writeImpl(@NotNull final ByteBuffer buffer) {
     }
 
     @Override

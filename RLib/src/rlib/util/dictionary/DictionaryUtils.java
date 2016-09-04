@@ -24,11 +24,11 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final Consumer<ConcurrentIntegerDictionary<V>> consumer) {
-        dictionary.writeLock();
+        final long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary);
         } finally {
-            dictionary.writeUnlock();
+            dictionary.writeUnlock(stamp);
         }
     }
 
@@ -40,11 +40,11 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final ObjectIntConsumer<ConcurrentIntegerDictionary<V>> consumer) {
-        dictionary.writeLock();
+        final long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary, key);
         } finally {
-            dictionary.writeUnlock();
+            dictionary.writeUnlock(stamp);
         }
     }
 
@@ -56,11 +56,11 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <K, V> void runInWriteLock(final ConcurrentObjectDictionary<K, V> dictionary, final K key, final BiConsumer<ConcurrentObjectDictionary<K, V>, K> consumer) {
-        dictionary.writeLock();
+        final long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary, key);
         } finally {
-            dictionary.writeUnlock();
+            dictionary.writeUnlock(stamp);
         }
     }
 
@@ -72,11 +72,11 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <V> void runInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final ObjectIntConsumer<ConcurrentIntegerDictionary<V>> consumer) {
-        dictionary.readLock();
+        final long stamp = dictionary.readLock();
         try {
             consumer.accept(dictionary, key);
         } finally {
-            dictionary.readUnlock();
+            dictionary.readUnlock(stamp);
         }
     }
 
@@ -89,11 +89,11 @@ public class DictionaryUtils {
      * @return результат выполнения функции.
      */
     public static <V, R> R getInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final ObjectIntFunction<ConcurrentIntegerDictionary<V>, R> function) {
-        dictionary.writeLock();
+        final long stamp = dictionary.writeLock();
         try {
             return function.apply(dictionary, key);
         } finally {
-            dictionary.writeUnlock();
+            dictionary.writeUnlock(stamp);
         }
     }
 
@@ -106,11 +106,11 @@ public class DictionaryUtils {
      * @return результат выполнения функции.
      */
     public static <K, V, R> R getInReadLock(final ConcurrentObjectDictionary<K, V> dictionary, final K key, final BiFunction<ConcurrentObjectDictionary<K, V>, K, R> function) {
-        dictionary.readLock();
+        final long stamp = dictionary.readLock();
         try {
             return function.apply(dictionary, key);
         } finally {
-            dictionary.readUnlock();
+            dictionary.readUnlock(stamp);
         }
     }
 
@@ -123,11 +123,11 @@ public class DictionaryUtils {
      * @return результат выполнения функции.
      */
     public static <V, R> R getInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final ObjectIntFunction<ConcurrentIntegerDictionary<V>, R> function) {
-        dictionary.readLock();
+        final long stamp = dictionary.readLock();
         try {
             return function.apply(dictionary, key);
         } finally {
-            dictionary.readUnlock();
+            dictionary.readUnlock(stamp);
         }
     }
 
@@ -140,11 +140,11 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final V object, final ObjectIntObjectConsumer<ConcurrentIntegerDictionary<V>, V> consumer) {
-        dictionary.writeLock();
+        final long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary, key, object);
         } finally {
-            dictionary.writeUnlock();
+            dictionary.writeUnlock(stamp);
         }
     }
 
@@ -157,11 +157,11 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <V> void runInWriteLock(final ConcurrentLongDictionary<V> dictionary, final long key, final V object, final ObjectLongObjectConsumer<ConcurrentLongDictionary<V>, V> consumer) {
-        dictionary.writeLock();
+        final long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary, key, object);
         } finally {
-            dictionary.writeUnlock();
+            dictionary.writeUnlock(stamp);
         }
     }
 
@@ -174,11 +174,11 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <V> void runInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final V object, final ObjectIntObjectConsumer<ConcurrentIntegerDictionary<V>, V> consumer) {
-        dictionary.readLock();
+        final long stamp = dictionary.readLock();
         try {
             consumer.accept(dictionary, key, object);
         } finally {
-            dictionary.readUnlock();
+            dictionary.readUnlock(stamp);
         }
     }
 
@@ -192,11 +192,11 @@ public class DictionaryUtils {
      * @return результат выполнения функции.
      */
     public static <V, R> R getInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final V object, final ObjectIntObjectFunction<ConcurrentIntegerDictionary<V>, V, R> function) {
-        dictionary.writeLock();
+        final long stamp = dictionary.writeLock();
         try {
             return function.apply(dictionary, key, object);
         } finally {
-            dictionary.writeUnlock();
+            dictionary.writeUnlock(stamp);
         }
     }
 
@@ -210,11 +210,11 @@ public class DictionaryUtils {
      * @return результат выполнения функции.
      */
     public static <V, R> R getInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final V object, final ObjectIntObjectFunction<ConcurrentIntegerDictionary<V>, V, R> function) {
-        dictionary.readLock();
+        final long stamp = dictionary.readLock();
         try {
             return function.apply(dictionary, key, object);
         } finally {
-            dictionary.readUnlock();
+            dictionary.readUnlock(stamp);
         }
     }
 }

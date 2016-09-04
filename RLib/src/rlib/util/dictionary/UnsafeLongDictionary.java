@@ -1,22 +1,27 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Интерфейс для реализации внутреннего API словаря с примитивным ключем long.
+ * The interface for implementing Unsafe part of {@link LongDictionary} API.
  *
  * @author JavaSaBr
  */
 public interface UnsafeLongDictionary<V> extends LongDictionary<V> {
 
     /**
-     * @return массив ячеяк словаря.
+     * @return the array of entries.
      */
-    public LongEntry<V>[] content();
+    @NotNull
+    LongEntry<V>[] content();
 
     /**
-     * Удаление значения из ячейки по указанному ключу.
+     * Remove an entry for the key.
      *
-     * @param key ключ ячейки.
-     * @return удаленная ячейка.
+     * @param key the key of the entry.
+     * @return removed entry.
      */
-    public LongEntry<V> removeEntryForKey(long key);
+    @Nullable
+    LongEntry<V> removeEntryForKey(long key);
 }

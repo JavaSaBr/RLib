@@ -398,6 +398,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      */
     @Nullable
     default E poll() {
+        if (isEmpty()) return null;
         return slowRemove(0);
     }
 
@@ -408,6 +409,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      */
     @Nullable
     default E pop() {
+        if (isEmpty()) return null;
         return fastRemove(size() - 1);
     }
 

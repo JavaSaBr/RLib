@@ -1,6 +1,8 @@
 package rlib.util.dictionary;
 
-import java.util.function.BiConsumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -8,77 +10,92 @@ import rlib.function.TripleConsumer;
 import rlib.util.array.Array;
 
 /**
- * Интерфейс для реализации словаря с объектным ключем.
+ * The interface for implementing a key-value dictionary which using an object key.
  *
  * @author JavaSaBr
  */
 public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
 
     /**
-     * Проверка наличия значения в словаре по указанному ключу.
+     * Returns <tt>true</tt> if this dictionary contains a mapping for the specified key.  More
+     * formally, returns <tt>true</tt> if and only if this dictionary contains a mapping for a key
+     * <tt>k</tt> such that <tt>(key==null ? k==null : key.equals(k))</tt>.  (There can be at most
+     * one such mapping.)
      *
-     * @param key проверяемый ключ.
+     * @param key key whose presence in this dictionary is to be tested.
+     * @return <tt>true</tt> if this dictionary contains a mapping for the specified key.
      */
-    public default boolean containsKey(final K key) {
-        throw new RuntimeException("not supported.");
+    default boolean containsKey(@NotNull final K key) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Вовзращает значения по указанному ключу.
+     * Returns the value to which the specified key is mapped, or {@code null} if this dictionary
+     * contains no mapping for the key.
      *
-     * @param key ключ.
+     * @param key the key whose associated value is to be returned.
+     * @return the value to which the specified key is mapped, or {@code null} if this dictionary
+     * contains no mapping for the key.
      */
-    public default V get(final K key) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(@NotNull final K key) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
-     * ложится по этому же ключу.
+     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param key     ключ.
-     * @param factory фабрика.
+     * @param key     the key.
+     * @param factory the factory.
      */
-    public default V get(final K key, final Supplier<V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(@NotNull final K key, @NotNull final Supplier<V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
-     * ложится по этому же ключу.
+     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param key     ключ.
-     * @param factory фабрика.
+     * @param key     the key.
+     * @param factory the factory.
      */
-    public default V get(final K key, final Function<K, V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(@NotNull final K key, @NotNull final Function<K, V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый с
-     * учетом дополнительного аргумента и ложится по этому же ключу.
+     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param key      ключ.
-     * @param argument дополнительный аргумент.
-     * @param factory  фабрика.
+     * @param key      the key.
+     * @param argument the additional argument.
+     * @param factory  the factory.
      */
-    public default <T> V get(final K key, final T argument, final Function<T, V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default <T> V get(@NotNull final K key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * @param container контейнер для ключей.
+     * Gets all keys of this dictionary.
+     *
+     * @param container the container for storing keys.
+     * @return the array with all keys.
+     */
+    @NotNull
+    default Array<K> keyArray(@NotNull final Array<K> container) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * @return массив ключей словаря.
      */
-    public default Array<K> keyArray(final Array<K> container) {
-        throw new RuntimeException("not supported.");
-    }
-
-    /**
-     * @return массив ключей словаря.
-     */
-    public default Array<K> keyArray(final Class<K> type) {
-        throw new RuntimeException("not supported.");
+    @NotNull
+    default Array<K> keyArray(@NotNull final Class<K> type) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -88,8 +105,9 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param key   ключ значения.
      * @param value вставляемое значение.
      */
-    public default V put(final K key, final V value) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V put(@NotNull final K key, @Nullable final V value) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -97,17 +115,9 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      *
      * @param key ключ значения.
      */
-    public default V remove(final K key) {
-        throw new RuntimeException("not supported.");
-    }
-
-    /**
-     * Пробег по словарю с просмотром ключа и значения.
-     *
-     * @param consumer функция обработки ключа и значения.
-     */
-    public default void forEach(final BiConsumer<K, V> consumer) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V remove(final K key) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -116,7 +126,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param argument дополнительный аргумент.
      * @param consumer функция обработки ключа и значения.
      */
-    public default <T> void forEach(final T argument, TripleConsumer<K, V, T> consumer) {
-        throw new RuntimeException("not supported.");
+    default <T> void forEach(@Nullable final T argument, @NotNull final TripleConsumer<K, V, T> consumer) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,7 +1,7 @@
 package rlib.util.dictionary;
 
 /**
- * Интерфейс для реализации конкуретного словаря с объектным ключем.
+ * The interface with methods for supporting threadsafe for the {@link ObjectDictionary}.
  *
  * @author JavaSaBr
  */

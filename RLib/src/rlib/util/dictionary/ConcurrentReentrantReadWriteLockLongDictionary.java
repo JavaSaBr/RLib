@@ -12,7 +12,7 @@ import rlib.concurrent.lock.LockFactory;
  *
  * @author JavaSaBr
  */
-public class ConcurrentLockLongDictionary<V> extends AbstractLongDictionary<V> implements ConcurrentLongDictionary<V> {
+public class ConcurrentReentrantReadWriteLockLongDictionary<V> extends AbstractLongDictionary<V> implements ConcurrentLongDictionary<V> {
 
     /**
      * Блокировщик.
@@ -24,22 +24,22 @@ public class ConcurrentLockLongDictionary<V> extends AbstractLongDictionary<V> i
      */
     private final AtomicInteger size;
 
-    protected ConcurrentLockLongDictionary() {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+    protected ConcurrentReentrantReadWriteLockLongDictionary() {
+        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected ConcurrentLockLongDictionary(final float loadFactor) {
-        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+    protected ConcurrentReentrantReadWriteLockLongDictionary(final float loadFactor) {
+        this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected ConcurrentLockLongDictionary(final float loadFactor, final int initCapacity) {
+    protected ConcurrentReentrantReadWriteLockLongDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
         this.size = new AtomicInteger();
         this.locker = createLocker();
     }
 
-    protected ConcurrentLockLongDictionary(final int initCapacity) {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
+    protected ConcurrentReentrantReadWriteLockLongDictionary(final int initCapacity) {
+        this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     @Override
@@ -63,12 +63,13 @@ public class ConcurrentLockLongDictionary<V> extends AbstractLongDictionary<V> i
     }
 
     @Override
-    public void readLock() {
+    public long readLock() {
         locker.asyncLock();
+        return 0;
     }
 
     @Override
-    public void readUnlock() {
+    public void readUnlock(final long stamp) {
         locker.asyncUnlock();
     }
 
@@ -78,12 +79,13 @@ public class ConcurrentLockLongDictionary<V> extends AbstractLongDictionary<V> i
     }
 
     @Override
-    public void writeLock() {
+    public long writeLock() {
         locker.syncLock();
+        return 0;
     }
 
     @Override
-    public void writeUnlock() {
+    public void writeUnlock(final long stamp) {
         locker.syncUnlock();
     }
 }

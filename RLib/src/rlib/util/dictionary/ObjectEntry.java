@@ -1,57 +1,54 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 import rlib.util.pools.Reusable;
 
 /**
- * Реализация элемента словаря с объектным ключем.
+ * The entry of {@link ObjectDictionary}.
  *
  * @author JavaSaBr
  */
 public class ObjectEntry<K, V> implements Reusable {
 
     /**
-     * Следующая ячейка.
+     * The next entry.
      */
     private ObjectEntry<K, V> next;
 
     /**
-     * Ключ.
+     * The key of this entry.
      */
     private K key;
 
     /**
-     * Значение.
+     * The value of this entry.
      */
     private V value;
 
     /**
-     * Хэш ключа.
+     * The hash of the key.
      */
     private int hash;
 
     @Override
     public boolean equals(final Object object) {
-
-        if (object == null || object.getClass() != ObjectEntry.class) {
-            return false;
-        }
+        if (object == null || object.getClass() != ObjectEntry.class) return false;
 
         final ObjectEntry<?, ?> entry = (ObjectEntry<?, ?>) object;
 
         final Object firstKey = getKey();
         final Object secondKey = entry.getKey();
 
-        if (Objects.equals(firstKey, secondKey)) {
+        if (!Objects.equals(firstKey, secondKey)) return false;
 
-            final Object firstValue = getValue();
-            final Object secondValue = entry.getValue();
+        final Object firstValue = getValue();
+        final Object secondValue = entry.getValue();
 
-            return Objects.equals(firstValue, secondValue);
-        }
-
-        return false;
+        return Objects.equals(firstValue, secondValue);
     }
 
     @Override
@@ -63,35 +60,37 @@ public class ObjectEntry<K, V> implements Reusable {
     }
 
     /**
-     * @return хэш ячейки.
+     * @return the hash of the key.
      */
     public int getHash() {
         return hash;
     }
 
     /**
-     * @return ключ ячейки.
+     * @return the key of this entry.
      */
+    @NotNull
     public K getKey() {
         return key;
     }
 
     /**
-     * @return следующая ячейка.
+     * @return the next entry.
      */
+    @Nullable
     public ObjectEntry<K, V> getNext() {
         return next;
     }
 
     /**
-     * @param next следующая цепочка.
+     * @param next the next entry.
      */
-    public void setNext(final ObjectEntry<K, V> next) {
+    public void setNext(@Nullable final ObjectEntry<K, V> next) {
         this.next = next;
     }
 
     /**
-     * @return значение ячейки.
+     * @return the value of this entry.
      */
     public V getValue() {
         return value;
@@ -107,7 +106,7 @@ public class ObjectEntry<K, V> implements Reusable {
         hash = 0;
     }
 
-    public void set(final int hash, final K key, final V value, final ObjectEntry<K, V> next) {
+    public void set(final int hash, @NotNull final K key, @Nullable final V value, @Nullable final ObjectEntry<K, V> next) {
         this.value = value;
         this.next = next;
         this.key = key;
@@ -115,12 +114,11 @@ public class ObjectEntry<K, V> implements Reusable {
     }
 
     /**
-     * Установка нового значения.
-     *
-     * @param value новое значение.
-     * @return старое значение.
+     * @param value the new value of this entry.
+     * @return the old value of null.
      */
-    public V setValue(final V value) {
+    @Nullable
+    public V setValue(@Nullable final V value) {
         final V old = getValue();
         this.value = value;
         return old;

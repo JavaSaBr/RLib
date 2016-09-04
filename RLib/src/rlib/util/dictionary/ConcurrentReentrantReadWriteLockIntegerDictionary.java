@@ -12,34 +12,51 @@ import rlib.concurrent.lock.LockFactory;
  *
  * @author JavaSaBr
  */
-public class ConcurrentLockIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements ConcurrentIntegerDictionary<V> {
+public class ConcurrentReentrantReadWriteLockIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements ConcurrentIntegerDictionary<V> {
 
     /**
      * Блокировщик.
      */
-    private final AsyncReadSyncWriteLock locker;
+    protected final AsyncReadSyncWriteLock locker;
 
     /**
      * Кол-во элементов в словаре.
      */
     private final AtomicInteger size;
 
-    protected ConcurrentLockIntegerDictionary() {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+    /**
+     * Таблица элементов.
+     */
+    private volatile IntegerEntry<V>[] content;
+
+    /**
+     * Следующий размер для метода изминения размера (capacity * load factor).
+     */
+    private volatile int threshold;
+
+    protected ConcurrentReentrantReadWriteLockIntegerDictionary() {
+        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected ConcurrentLockIntegerDictionary(final float loadFactor) {
-        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+    protected ConcurrentReentrantReadWriteLockIntegerDictionary(final float loadFactor) {
+        this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected ConcurrentLockIntegerDictionary(final float loadFactor, final int initCapacity) {
+    protected ConcurrentReentrantReadWriteLockIntegerDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
+        this.threshold = (int) (initCapacity * loadFactor);
+        this.content = new IntegerEntry[DEFAULT_INITIAL_CAPACITY];
         this.size = new AtomicInteger();
         this.locker = createLocker();
     }
 
-    protected ConcurrentLockIntegerDictionary(final int initCapacity) {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
+    protected ConcurrentReentrantReadWriteLockIntegerDictionary(final int initCapacity) {
+        this(DEFAULT_LOAD_FACTOR, initCapacity);
+    }
+
+    @Override
+    public int getThreshold() {
+        return threshold;
     }
 
     @Override
@@ -63,12 +80,13 @@ public class ConcurrentLockIntegerDictionary<V> extends AbstractIntegerDictionar
     }
 
     @Override
-    public void readLock() {
+    public long readLock() {
         locker.asyncLock();
+        return 0;
     }
 
     @Override
-    public void readUnlock() {
+    public void readUnlock(final long stamp) {
         locker.asyncUnlock();
     }
 
@@ -78,12 +96,13 @@ public class ConcurrentLockIntegerDictionary<V> extends AbstractIntegerDictionar
     }
 
     @Override
-    public void writeLock() {
+    public long writeLock() {
         locker.syncLock();
+        return 0;
     }
 
     @Override
-    public void writeUnlock() {
+    public void writeUnlock(final long stamp) {
         locker.syncUnlock();
     }
 }

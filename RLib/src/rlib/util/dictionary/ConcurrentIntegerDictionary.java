@@ -1,7 +1,7 @@
 package rlib.util.dictionary;
 
 /**
- * Интерфейс для реализации конкуретного словаря с примитивным ключем int.
+ * The interface with methods for supporting threadsafe for the {@link IntegerDictionary}.
  *
  * @author JavaSaBr
  */

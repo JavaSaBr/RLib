@@ -23,6 +23,21 @@ public class ArrayFactory {
     /**
      * Creates the new array.
      *
+     * @param args the elements for the new array.
+     * @return the new array.
+     * @see {@link FinalFastArray}
+     */
+    @SafeVarargs
+    public static <E> Array<E> asArray(final E... args) {
+        final Class<?> type = args.getClass().getComponentType();
+        final FinalFastArray<E> array = new FinalFastArray<>(unsafeCast(type), args.length);
+        array.addAll(args);
+        return array;
+    }
+
+    /**
+     * Creates the new array.
+     *
      * @param type the type of the array.
      * @return the new array.
      * @see {@link FinalFastArray}
@@ -94,7 +109,7 @@ public class ArrayFactory {
      * @return the new array.
      * @see {@link FinalConcurrentPrimitiveAtomicARSWLockArray}
      */
-    public static <E> ConcurrentArray<E> newFinalConcurrentStampedLockArray(final Class<?> type) {
+    public static <E> ConcurrentArray<E> newConcurrentStampedLockArray(final Class<?> type) {
         return new FinalConcurrentStampedLockArray<>(unsafeCast(type));
     }
 

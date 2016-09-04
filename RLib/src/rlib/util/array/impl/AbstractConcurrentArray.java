@@ -221,6 +221,12 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     @Override
+    public Array<E> unsafeAdd(@NotNull E object) {
+        array[size.getAndIncrement()] = object;
+        return this;
+    }
+
+    @Override
     public E unsafeGet(final int index) {
         return array[index];
     }

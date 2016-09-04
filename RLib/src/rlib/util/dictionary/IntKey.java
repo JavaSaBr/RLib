@@ -1,7 +1,7 @@
 package rlib.util.dictionary;
 
 /**
- * Тип ключа в таблице.
+ * The type of the {@link Dictionary}.
  *
  * @author JavaSaBr
  */

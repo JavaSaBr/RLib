@@ -15,7 +15,7 @@ public final class DictionaryFactory {
     }
 
     /**
-     * @return новый {@link ConcurrentLockLongDictionary}.
+     * @return новый {@link ConcurrentReentrantReadWriteLockLongDictionary}.
      */
     public static <V> ConcurrentLongDictionary<V> newConcurrentAtomicLongDictionary() {
         return new ConcurrentAtomicLongDictionary<>();
@@ -29,45 +29,45 @@ public final class DictionaryFactory {
     }
 
     /**
-     * @return новый {@link ConcurrentLockIntegerDictionary}.
+     * @return новый {@link ConcurrentReentrantReadWriteLockIntegerDictionary}.
      */
     public static <V> ConcurrentIntegerDictionary<V> newConcurrentIntegerDictionary() {
-        return new ConcurrentLockIntegerDictionary<>();
+        return new ConcurrentReentrantReadWriteLockIntegerDictionary<>();
     }
 
     /**
-     * @return новый {@link ConcurrentLockLongDictionary}.
+     * @return новый {@link ConcurrentReentrantReadWriteLockLongDictionary}.
      */
     public static <V> ConcurrentLongDictionary<V> newConcurrentLongDictionary() {
-        return new ConcurrentLockLongDictionary<>();
+        return new ConcurrentReentrantReadWriteLockLongDictionary<>();
     }
 
     /**
-     * @return новый {@link ConcurrentLockObjectDictionary}.
+     * @return новый {@link ConcurrentReentrantReadWriteLockObjectDictionary}.
      */
     public static <K, V> ConcurrentObjectDictionary<K, V> newConcurrentObjectDictionary() {
-        return new ConcurrentLockObjectDictionary<>();
+        return new ConcurrentReentrantReadWriteLockObjectDictionary<>();
     }
 
     /**
      * @return новый {@link FastIntegerDictionary}.
      */
     public static <V> IntegerDictionary<V> newIntegerDictionary() {
-        return new FastIntegerDictionary<>();
+        return new FinalFastIntegerDictionary<>();
     }
 
     /**
      * @return новый {@link FastLongDictionary}.
      */
     public static <V> LongDictionary<V> newLongDictionary() {
-        return new FastLongDictionary<>();
+        return new FinalFastLongDictionary<>();
     }
 
     /**
      * @return новый {@link FastObjectDictionary}.
      */
     public static <K, V> ObjectDictionary<K, V> newObjectDictionary() {
-        return new FastObjectDictionary<>();
+        return new FinalFastObjectDictionary<>();
     }
 
     private DictionaryFactory() {
