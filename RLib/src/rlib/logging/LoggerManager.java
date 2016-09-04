@@ -42,7 +42,7 @@ public class LoggerManager {
     /**
      * синхронизатор записи лога
      */
-    private static final Lock SYNC = LockFactory.newPrimitiveAtomicLock();
+    private static final Lock SYNC = LockFactory.newAtomicLock();
 
     /**
      * формат записи времени

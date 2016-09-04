@@ -34,7 +34,7 @@ public class ConcurrentReentrantRWLockArray<E> extends AbstractConcurrentArray<E
     public ConcurrentReentrantRWLockArray(final Class<E> type, final int size) {
         super(type, size);
 
-        final ReadWriteLock readWriteLock = LockFactory.newRWLock();
+        final ReadWriteLock readWriteLock = LockFactory.newReentrantRWLock();
         this.readLock = readWriteLock.readLock();
         this.writeLock = readWriteLock.writeLock();
     }

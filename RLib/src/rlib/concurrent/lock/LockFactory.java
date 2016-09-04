@@ -4,88 +4,81 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.StampedLock;
 
-import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.lock.impl.FinalLock;
-import rlib.concurrent.lock.impl.FinalReadWriteLock;
+import rlib.concurrent.lock.impl.FinalAtomicLock;
+import rlib.concurrent.lock.impl.FinalAtomicReadWriteLock;
+import rlib.concurrent.lock.impl.FinalReentrantLock;
+import rlib.concurrent.lock.impl.FinalReentrantAtomicLock;
+import rlib.concurrent.lock.impl.FinalReentrantReadWriteLock;
 import rlib.concurrent.lock.impl.FinalStampedLock;
-import rlib.concurrent.lock.impl.PrimitiveAtomicLock;
-import rlib.concurrent.lock.impl.PrimitiveAtomicReadWriteLock;
-import rlib.concurrent.lock.impl.ReentrantAtomicLock;
-import rlib.concurrent.lock.impl.SimpleReadWriteLock;
+import rlib.concurrent.lock.impl.ReentrantARSWLock;
 
 /**
- * Реализация фабрики для создание различных блокировщиков.
+ * The factory for creating new locks.
  *
  * @author JavaSaBr
  */
 public class LockFactory {
 
     /**
-     * Создание обернутого блокировщика ReentrantReadWriteLock для синхронной записи и асинхронного
-     * чтения.
+     * Create a new {@link ReentrantARSWLock}.
      *
-     * @return новый блокировщик.
+     * @return the new lock.
      */
-    public static AsyncReadSyncWriteLock newARSWLock() {
-        return new SimpleReadWriteLock();
+    public static AsyncReadSyncWriteLock newReentrantARSWLock() {
+        return new ReentrantARSWLock();
     }
 
     /**
-     * Creates new stamped lock.
+     * Create a new {@link FinalStampedLock}.
      *
-     * @return the new stamped lock.
+     * @return the new lock.
      */
     public static StampedLock newStampedLock() {
         return new FinalStampedLock();
     }
 
     /**
-     * Создание финализированного наследника ReentrantLock.
+     * Create a new {@link FinalReentrantLock}.
      *
-     * @return новый блокировщик.
+     * @return the new lock.
      */
-    public static Lock newLock() {
-        return new FinalLock();
+    public static Lock newReentrantLock() {
+        return new FinalReentrantLock();
     }
 
     /**
-     * Создание нового блокировщика для синхронной записи и асинхронного чтения на основе {@link
-     * AtomicInteger} без поддержки рекурсивного блокирования.
+     * Create a new {@link FinalAtomicReadWriteLock}.
      *
-     * @return новый блокировщик.
-     * @see PrimitiveAtomicReadWriteLock
+     * @return the new lock.
      */
-    public static AsyncReadSyncWriteLock newPrimitiveAtomicARSWLock() {
-        return new PrimitiveAtomicReadWriteLock();
+    public static AsyncReadSyncWriteLock newAtomicARSWLock() {
+        return new FinalAtomicReadWriteLock();
     }
 
     /**
-     * Создание примитивного блокировщика на основе {@link AtomicInteger} без поддержки рекурсивной
-     * блокировки.
+     * Create a new {@link FinalAtomicLock}.
      *
-     * @return новый блокировщик.
-     * @see PrimitiveAtomicLock
+     * @return the new lock.
      */
-    public static Lock newPrimitiveAtomicLock() {
-        return new PrimitiveAtomicLock();
+    public static Lock newAtomicLock() {
+        return new FinalAtomicLock();
     }
 
     /**
-     * Создание финализированного наследника ReentrantReadWriteLock.
+     * Create a new {@link FinalReentrantReadWriteLock}.
      *
-     * @return новый блокировщик.
+     * @return the new lock.
      */
-    public static ReadWriteLock newRWLock() {
-        return new FinalReadWriteLock();
+    public static ReadWriteLock newReentrantRWLock() {
+        return new FinalReentrantReadWriteLock();
     }
 
     /**
-     * Создание блокировщика на {@link AtomicInteger} с поддержкой рекурсивной блокировки.
+     * Create a new {@link FinalReentrantAtomicLock}.
      *
-     * @return новый блокировщик.
-     * @see ReentrantAtomicLock
+     * @return the new lock.
      */
     public static Lock newReentrantAtomicLock() {
-        return new ReentrantAtomicLock();
+        return new FinalReentrantAtomicLock();
     }
 }

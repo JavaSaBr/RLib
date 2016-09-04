@@ -62,7 +62,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
      *
      * @param newContent the new array of entries.
      */
-    protected abstract void setContent(final LongEntry<V>[] newContent);
+    protected abstract void setContent(@NotNull final LongEntry<V>[] newContent);
 
     /**
      * Set the next size value at which to resize (capacity * load factor).

@@ -50,7 +50,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      *
      * @param newContent the new array of entries.
      */
-    protected abstract void setContent(final IntegerEntry<V>[] newContent);
+    protected abstract void setContent(@NotNull final IntegerEntry<V>[] newContent);
 
     /**
      * Set the next size value at which to resize (capacity * load factor).

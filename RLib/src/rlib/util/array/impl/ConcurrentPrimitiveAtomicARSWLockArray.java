@@ -5,7 +5,7 @@ import rlib.concurrent.lock.LockFactory;
 import rlib.util.array.ConcurrentArray;
 
 /**
- * The concurrent implementation of the array using {@link LockFactory#newARSWLock()} for {@link
+ * The concurrent implementation of the array using {@link LockFactory#newReentrantARSWLock()} for {@link
  * ConcurrentArray#readLock()} and {@link ConcurrentArray#writeLock()}.
  *
  * @author JavaSaBr
@@ -26,7 +26,7 @@ public class ConcurrentPrimitiveAtomicARSWLockArray<E> extends AbstractConcurren
     public ConcurrentPrimitiveAtomicARSWLockArray(final Class<E> type, final int size) {
         super(type, size);
 
-        this.lock = LockFactory.newPrimitiveAtomicARSWLock();
+        this.lock = LockFactory.newAtomicARSWLock();
     }
 
     @Override

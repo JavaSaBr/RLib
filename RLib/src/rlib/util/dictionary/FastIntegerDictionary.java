@@ -46,7 +46,7 @@ public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> imple
     }
 
     @Override
-    public void setContent(final IntegerEntry<V>[] content) {
+    public void setContent(@NotNull final IntegerEntry<V>[] content) {
         this.content = content;
     }
 

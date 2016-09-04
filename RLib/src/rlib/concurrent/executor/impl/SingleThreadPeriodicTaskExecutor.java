@@ -76,7 +76,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
         this.executeTasks = ArrayFactory.newArray(taskClass);
         this.finishedTasks = ArrayFactory.newArray(taskClass);
         this.wait = new AtomicBoolean();
-        this.lock = LockFactory.newPrimitiveAtomicLock();
+        this.lock = LockFactory.newAtomicLock();
         this.interval = interval;
 
         final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);

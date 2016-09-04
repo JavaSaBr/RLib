@@ -7,7 +7,7 @@ import rlib.util.array.ConcurrentArray;
 
 /**
  * The concurrent implementation of the array without duplications using {@link
- * LockFactory#newARSWLock()} for {@link ConcurrentArray#readLock()} and {@link
+ * LockFactory#newReentrantARSWLock()} for {@link ConcurrentArray#readLock()} and {@link
  * ConcurrentArray#writeLock()}.
  *
  * @author JavaSaBr

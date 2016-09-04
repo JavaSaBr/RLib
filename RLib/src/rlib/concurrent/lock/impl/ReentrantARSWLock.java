@@ -8,25 +8,25 @@ import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.LockFactory;
 
 /**
- * Реализация обертки {@link ReentrantReadWriteLock} для реализации интерфейса {@link
+ * The wrapper of {@link ReentrantReadWriteLock} for implementing the interface {@link
  * AsyncReadSyncWriteLock}.
  *
  * @author JavaSaBr
  */
-public final class SimpleReadWriteLock implements AsyncReadSyncWriteLock {
+public final class ReentrantARSWLock implements AsyncReadSyncWriteLock {
 
     /**
-     * Блокировщик записи.
+     * The locker of writing.
      */
     private final Lock readLock;
 
     /**
-     * Блокировщик чтения.
+     * The locker of reading.
      */
     private final Lock writeLock;
 
-    public SimpleReadWriteLock() {
-        final ReadWriteLock readWriteLock = LockFactory.newRWLock();
+    public ReentrantARSWLock() {
+        final ReadWriteLock readWriteLock = LockFactory.newReentrantRWLock();
         readLock = readWriteLock.readLock();
         writeLock = readWriteLock.writeLock();
     }

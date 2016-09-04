@@ -20,7 +20,7 @@ public final class Synchronizer implements Lockable {
     public volatile boolean locked;
 
     public Synchronizer() {
-        this.sync = LockFactory.newLock();
+        this.sync = LockFactory.newReentrantLock();
     }
 
     /**

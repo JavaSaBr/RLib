@@ -60,7 +60,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
      *
      * @param newContent the new array of entries.
      */
-    protected abstract void setContent(final ObjectEntry<K, V>[] newContent);
+    protected abstract void setContent(@NotNull final ObjectEntry<K, V>[] newContent);
 
     /**
      * Set the next size value at which to resize (capacity * load factor).

@@ -3,46 +3,41 @@ package rlib.util.dictionary;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The fast implementation of {@link LongDictionary} without threadsafe supporting.
+ * The base implementation of the {@link ConcurrentLongDictionary}.
  *
  * @author JavaSaBr
  */
-public class FastLongDictionary<V> extends AbstractLongDictionary<V> {
+public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDictionary<V> implements ConcurrentLongDictionary<V> {
 
     /**
-     * The array of entries.
+     * Тhe array of entries.
      */
-    private LongEntry<V>[] content;
+    private volatile LongEntry<V>[] content;
 
     /**
      * The next size value at which to resize (capacity * load factor).
      */
-    private int threshold;
+    private volatile int threshold;
 
     /**
      * The count of values in this {@link Dictionary}.
      */
-    private int size;
+    private volatile int size;
 
-    protected FastLongDictionary() {
+    protected AbstractConcurrentLongDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected FastLongDictionary(final float loadFactor) {
+    protected AbstractConcurrentLongDictionary(final float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected FastLongDictionary(final int initCapacity) {
+    protected AbstractConcurrentLongDictionary(final int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
-    protected FastLongDictionary(final float loadFactor, final int initCapacity) {
+    protected AbstractConcurrentLongDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
-    }
-
-    @Override
-    public void setSize(final int size) {
-        this.size = size;
     }
 
     @Override
@@ -57,23 +52,30 @@ public class FastLongDictionary<V> extends AbstractLongDictionary<V> {
     }
 
     @Override
-    public void setThreshold(final int threshold) {
-        this.threshold = threshold;
-    }
-
-    @Override
     public int getThreshold() {
         return threshold;
     }
 
     @Override
+    protected void setSize(final int size) {
+        this.size = size;
+    }
+
+    @Override
+    public void setThreshold(final int threshold) {
+        this.threshold = threshold;
+    }
+
+    @Override
     protected int decrementSizeAndGet() {
-        return --size;
+        size -= 1;
+        return size;
     }
 
     @Override
     protected int incrementSizeAndGet() {
-        return ++size;
+        size += 1;
+        return size;
     }
 
     @Override

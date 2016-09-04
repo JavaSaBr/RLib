@@ -9,50 +9,37 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.atomic.AtomicInteger;
-import rlib.concurrent.atomic.AtomicReference;
 
 /**
- * The implementation of the {@link Lock} based on using {@link AtomicInteger} with supporting
+ * The implementation of the {@link Lock} based on using {@link AtomicInteger} without supporting
  * reentrant calls.
  *
  * @author JavaSaBr
  */
-public class ReentrantAtomicLock implements Lock {
+public class AtomicLock implements Lock {
+
+    private static final int STATUS_LOCKED = 1;
+    private static final int STATUS_UNLOCKED = 0;
 
     /**
      * The status of lock.
      */
-    @Contended("lock")
-    private final AtomicReference<Thread> status;
-
-    /**
-     * The level of locking.
-     */
-    @Contended("level")
-    private final AtomicInteger level;
+    @Contended
+    protected final AtomicInteger status;
 
     /**
      * The field for consuming CPU.
      */
-    private int sink;
+    protected int sink;
 
-    public ReentrantAtomicLock() {
-        this.status = new AtomicReference<>();
-        this.level = new AtomicInteger();
+    public AtomicLock() {
+        this.status = new AtomicInteger();
         this.sink = 1;
     }
 
     @Override
     public void lock() {
-
-        final Thread thread = Thread.currentThread();
-
-        try {
-            if (status.get() == thread) return;
-            while (!status.compareAndSet(null, thread)) consumeCPU();
-        } finally {
-            level.incrementAndGet();
-        }
+        while (!tryLock()) consumeCPU();
     }
 
     protected void consumeCPU() {
@@ -60,6 +47,10 @@ public class ReentrantAtomicLock implements Lock {
         final int value = sink;
         int newValue = value * value;
         newValue += value >>> 1;
+        newValue += value & newValue;
+        newValue += value ^ newValue;
+        newValue += newValue << value;
+        newValue += newValue | value;
         newValue += value & newValue;
         newValue += value ^ newValue;
         newValue += newValue << value;
@@ -81,20 +72,7 @@ public class ReentrantAtomicLock implements Lock {
 
     @Override
     public boolean tryLock() {
-
-        final Thread currentThread = Thread.currentThread();
-
-        if (status.get() == currentThread) {
-            level.incrementAndGet();
-            return true;
-        }
-
-        if (status.compareAndSet(null, currentThread)) {
-            level.incrementAndGet();
-            return true;
-        }
-
-        return false;
+        return status.compareAndSet(STATUS_UNLOCKED, STATUS_LOCKED);
     }
 
     @Override
@@ -104,12 +82,13 @@ public class ReentrantAtomicLock implements Lock {
 
     @Override
     public void unlock() {
+        status.set(STATUS_UNLOCKED);
+    }
 
-        final Thread thread = Thread.currentThread();
-        if (status.get() != thread) return;
-
-        if (level.decrementAndGet() == 0) {
-            status.set(null);
-        }
+    @Override
+    public String toString() {
+        return "AtomicLock{" +
+                "status=" + status +
+                '}';
     }
 }

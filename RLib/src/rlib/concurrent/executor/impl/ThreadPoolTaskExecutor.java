@@ -59,7 +59,7 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
     public ThreadPoolTaskExecutor(final GroupThreadFactory threadFactory, final int poolSize, final int packetSize) {
         this.waitTasks = LinkedListFactory.newLinkedList(CallableTask.class);
         this.wait = new AtomicBoolean();
-        this.lock = LockFactory.newPrimitiveAtomicLock();
+        this.lock = LockFactory.newAtomicLock();
         this.threads = ArrayFactory.newArray(Thread.class);
         this.packetSize = packetSize;
 

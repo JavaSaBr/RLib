@@ -1,70 +1,49 @@
 package rlib.util.dictionary;
 
 /**
- * Фабрика по созаднию словарей.
+ * The factory for creating new {@link Dictionary}.
  *
  * @author JavaSaBr
  */
 public final class DictionaryFactory {
 
     /**
-     * @return новый {@link ConcurrentAtomicIntegerDictionary}.
+     * @return the new {@link FinalConcurrentAtomicARSWLockIntegerDictionary}.
      */
     public static <V> ConcurrentIntegerDictionary<V> newConcurrentAtomicIntegerDictionary() {
-        return new ConcurrentAtomicIntegerDictionary<>();
+        return new FinalConcurrentAtomicARSWLockIntegerDictionary<>();
     }
 
     /**
-     * @return новый {@link ConcurrentReentrantReadWriteLockLongDictionary}.
+     * @return the new {@link FinalConcurrentAtomicARSWLockLongDictionary}.
      */
     public static <V> ConcurrentLongDictionary<V> newConcurrentAtomicLongDictionary() {
-        return new ConcurrentAtomicLongDictionary<>();
+        return new FinalConcurrentAtomicARSWLockLongDictionary<>();
     }
 
     /**
-     * @return новый {@link ConcurrentAtomicObjectDictionary}.
+     * @return the new {@link FinalConcurrentAtomicARSWLockObjectDictionary}.
      */
     public static <K, V> ConcurrentObjectDictionary<K, V> newConcurrentAtomicObjectDictionary() {
-        return new ConcurrentAtomicObjectDictionary<>();
+        return new FinalConcurrentAtomicARSWLockObjectDictionary<>();
     }
 
     /**
-     * @return новый {@link ConcurrentReentrantReadWriteLockIntegerDictionary}.
-     */
-    public static <V> ConcurrentIntegerDictionary<V> newConcurrentIntegerDictionary() {
-        return new ConcurrentReentrantReadWriteLockIntegerDictionary<>();
-    }
-
-    /**
-     * @return новый {@link ConcurrentReentrantReadWriteLockLongDictionary}.
-     */
-    public static <V> ConcurrentLongDictionary<V> newConcurrentLongDictionary() {
-        return new ConcurrentReentrantReadWriteLockLongDictionary<>();
-    }
-
-    /**
-     * @return новый {@link ConcurrentReentrantReadWriteLockObjectDictionary}.
-     */
-    public static <K, V> ConcurrentObjectDictionary<K, V> newConcurrentObjectDictionary() {
-        return new ConcurrentReentrantReadWriteLockObjectDictionary<>();
-    }
-
-    /**
-     * @return новый {@link FastIntegerDictionary}.
+     * @return the new {@link FinalFastIntegerDictionary}.
      */
     public static <V> IntegerDictionary<V> newIntegerDictionary() {
         return new FinalFastIntegerDictionary<>();
     }
 
     /**
-     * @return новый {@link FastLongDictionary}.
+     * @return the new {@link FinalFastLongDictionary}.
      */
     public static <V> LongDictionary<V> newLongDictionary() {
         return new FinalFastLongDictionary<>();
     }
 
     /**
-     * @return новый {@link FastObjectDictionary}.
+     * @return the new {@link FinalFastObjectDictionary}.
      */
     public static <K, V> ObjectDictionary<K, V> newObjectDictionary() {
         return new FinalFastObjectDictionary<>();

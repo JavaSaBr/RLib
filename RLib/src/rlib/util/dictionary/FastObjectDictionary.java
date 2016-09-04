@@ -46,7 +46,7 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
     }
 
     @Override
-    public void setContent(final ObjectEntry<K, V>[] content) {
+    public void setContent(@NotNull final ObjectEntry<K, V>[] content) {
         this.content = content;
     }
 
