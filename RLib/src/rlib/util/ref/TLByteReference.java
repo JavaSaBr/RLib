@@ -10,7 +10,7 @@ import static rlib.util.ref.ReferenceType.BYTE;
  *
  * @author JavaSaBr
  */
-final class ByteReference extends AbstractReference {
+final class TLByteReference extends AbstractThreadLocalReference {
 
     /**
      * The value of this reference.
@@ -37,9 +37,8 @@ final class ByteReference extends AbstractReference {
     public boolean equals(@Nullable final Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        final ByteReference that = (ByteReference) object;
+        final TLByteReference that = (TLByteReference) object;
         return value == that.value;
-
     }
 
     @Override
@@ -49,7 +48,7 @@ final class ByteReference extends AbstractReference {
 
     @Override
     public String toString() {
-        return "ByteReference{" +
+        return "TLByteReference{" +
                 "value=" + value +
                 "} " + super.toString();
     }

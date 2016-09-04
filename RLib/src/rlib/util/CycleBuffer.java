@@ -1,28 +1,27 @@
 package rlib.util;
 
-import java.lang.reflect.Array;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Реализация циклического пула объектов.
+ * The implementation of cycle buffer of some objects.
  *
  * @author JavaSaBr
  */
 public final class CycleBuffer<T> {
 
     /**
-     * Массив-буффер объектов.
+     * The array with buffered objects.
      */
     private final T[] buffer;
 
     /**
-     * Обработчик объекта перед его получением.
+     * The handler of getting object from buffer.
      */
     private final Consumer<T> handler;
 
     /**
-     * Индекс следующего объекта.
+     * The index of next object.
      */
     private int order;
 
@@ -31,12 +30,9 @@ public final class CycleBuffer<T> {
     }
 
     public CycleBuffer(final Class<?> type, final int size, final Supplier<T> factory, final Consumer<T> handler) {
+        if (size < 2) throw new RuntimeException("size is less to 2.");
 
-        if (size < 2) {
-            throw new RuntimeException("size is less to 2.");
-        }
-
-        this.buffer = (T[]) Array.newInstance(type, size);
+        this.buffer = ArrayUtils.create(type, size);
 
         for (int i = 0; i < buffer.length; i++) {
             buffer[i] = factory.get();

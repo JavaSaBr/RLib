@@ -172,10 +172,8 @@ public class FileUtils {
      */
     public static String getExtension(final String path) {
         if (StringUtils.isEmpty(path)) return path;
-
         final int index = path.lastIndexOf('.');
         if (index == -1) return path;
-
         return path.substring(index + 1, path.length());
     }
 
@@ -290,16 +288,10 @@ public class FileUtils {
     public static String getNameWithoutExtension(final Path file) {
 
         final String filename = file.getFileName().toString();
-
-        if (StringUtils.isEmpty(filename)) {
-            return filename;
-        }
+        if (StringUtils.isEmpty(filename)) return filename;
 
         final int index = filename.lastIndexOf('.');
-
-        if (index == -1) {
-            return filename;
-        }
+        if (index == -1) return filename;
 
         return filename.substring(0, index);
     }
@@ -310,10 +302,7 @@ public class FileUtils {
      * @param path путь к файлу.
      */
     public static String read(final String path) {
-
-        if (path == null) {
-            return null;
-        }
+        if (path == null) return null;
 
         final StringBuilder content = new StringBuilder();
 
@@ -343,10 +332,7 @@ public class FileUtils {
      * @param file читаемый файл.
      */
     public static String read(final Path file) {
-
-        if (file == null) {
-            return null;
-        }
+        if (file == null) return null;
 
         final StringBuilder content = new StringBuilder();
 

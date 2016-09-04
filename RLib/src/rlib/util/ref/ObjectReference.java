@@ -1,36 +1,56 @@
 package rlib.util.ref;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static rlib.util.ref.ReferenceType.OBJECT;
 
 /**
- * Ссылка на тип данных Object.
+ * The reference to object.
  *
  * @author JavaSaBr
  */
 final class ObjectReference extends AbstractReference {
 
     /**
-     * Значение по ссылке.
+     * The object of this reference.
      */
     private Object object;
 
+    @Nullable
     @Override
     public Object getObject() {
         return object;
     }
 
     @Override
-    public void setObject(final Object object) {
+    public void setObject(@Nullable final Object object) {
         this.object = object;
     }
 
+    @NotNull
     @Override
-    public ReferenceType getReferenceType() {
+    public ReferenceType getType() {
         return OBJECT;
     }
 
     @Override
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        final ObjectReference that = (ObjectReference) object;
+        return !(this.object != null ? !this.object.equals(that.object) : that.object != null);
+    }
+
+    @Override
+    public int hashCode() {
+        return object != null ? object.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
-        return getClass().getSimpleName() + " [object=" + object + "]";
+        return "ObjectReference{" +
+                "object=" + object +
+                "} " + super.toString();
     }
 }

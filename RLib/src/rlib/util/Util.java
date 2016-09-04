@@ -22,6 +22,8 @@ import rlib.function.SafeRunnable;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
+import static java.lang.ThreadLocal.withInitial;
+
 /**
  * Утильный класс с набором статических вспомогательных методов.
  *
@@ -32,8 +34,8 @@ public final class Util {
 
     private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
 
-    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("HH:mm:ss:SSS"));
-    private static final ThreadLocal<Date> LOCAL_DATE = ThreadLocal.withInitial(Date::new);
+    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() -> new SimpleDateFormat("HH:mm:ss:SSS"));
+    private static final ThreadLocal<Date> LOCAL_DATE = withInitial(Date::new);
 
     /**
      * Добавение параметров, указывающих что бы соединение к БД работало с UTF-8 кодировкой.
@@ -125,9 +127,7 @@ public final class Util {
         final int limit = Short.MAX_VALUE * 2;
 
         for (int i = port; i < limit; i++) {
-            if (checkFreePort("*", i)) {
-                return i;
-            }
+            if (checkFreePort("*", i)) return i;
         }
 
         return -1;
@@ -149,10 +149,7 @@ public final class Util {
         for (int i = 0, length = className.length(); i < length; i++) {
 
             char ch = className.charAt(i);
-
-            if (ch == '.') {
-                ch = '/';
-            }
+            if (ch == '.') ch = '/';
 
             builder.append(ch);
         }
@@ -181,14 +178,8 @@ public final class Util {
                 for (int i = 0, length = path.length(); i < length; i++) {
 
                     char ch = path.charAt(i);
-
-                    if (ch == '/' && i == 0) {
-                        continue;
-                    }
-
-                    if (ch == '/') {
-                        ch = File.separatorChar;
-                    }
+                    if (ch == '/' && i == 0) continue;
+                    if (ch == '/') ch = File.separatorChar;
 
                     pathBuilder.append(ch);
                 }

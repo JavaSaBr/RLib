@@ -47,6 +47,7 @@ public interface Pool<E> {
      * @param factory the factory for creating new object if this pool is empty.
      * @return taken object.
      */
+    @NotNull
     default E take(@NotNull final Supplier<E> factory) {
         final E take = take();
         return take != null ? take : factory.get();
@@ -59,6 +60,7 @@ public interface Pool<E> {
      * @param factory  the factory for creating new object if this pool is empty.
      * @return taken object.
      */
+    @NotNull
     default <T> E take(@Nullable final T argument, @NotNull final Function<T, E> factory) {
         final E take = take();
         return take != null ? take : factory.apply(argument);
@@ -72,6 +74,7 @@ public interface Pool<E> {
      * @param factory the factory for creating new object if this pool is empty.
      * @return taken object.
      */
+    @NotNull
     default <F, S> E take(@Nullable final F first, @Nullable final S second, @NotNull final BiFunction<F, S, E> factory) {
         final E take = take();
         return take != null ? take : factory.apply(first, second);

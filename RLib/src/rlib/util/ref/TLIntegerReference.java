@@ -3,53 +3,52 @@ package rlib.util.ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static rlib.util.ref.ReferenceType.BYTE;
+import static rlib.util.ref.ReferenceType.INTEGER;
 
 /**
- * The reference to byte value.
+ * The reference to integer value.
  *
  * @author JavaSaBr
  */
-final class ByteReference extends AbstractReference {
+final class TLIntegerReference extends AbstractThreadLocalReference {
 
     /**
      * The value of this reference.
      */
-    private byte value;
+    private int value;
 
     @Override
-    public byte getByte() {
+    public int getInt() {
         return value;
     }
 
     @Override
-    public void setByte(final byte value) {
+    public void setInt(final int value) {
         this.value = value;
     }
 
     @NotNull
     @Override
     public ReferenceType getType() {
-        return BYTE;
+        return INTEGER;
     }
 
     @Override
     public boolean equals(@Nullable final Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        final ByteReference that = (ByteReference) object;
+        final TLIntegerReference that = (TLIntegerReference) object;
         return value == that.value;
-
     }
 
     @Override
     public int hashCode() {
-        return (int) value;
+        return value;
     }
 
     @Override
     public String toString() {
-        return "ByteReference{" +
+        return "TLIntegerReference{" +
                 "value=" + value +
                 "} " + super.toString();
     }

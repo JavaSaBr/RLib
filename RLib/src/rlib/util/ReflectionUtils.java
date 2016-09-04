@@ -73,12 +73,9 @@ public final class ReflectionUtils {
      * @return значение поля объекта.
      */
     public static <T> T getFieldValue(final Object object, final String fieldName) {
-
         try {
-
             final Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
-
             return unsafeCast(field.get(object));
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -93,12 +90,9 @@ public final class ReflectionUtils {
      * @return значение статического поля.
      */
     public static <T> T getStaticFieldValue(final Class<?> type, final String fieldName) {
-
         try {
-
             final Field field = type.getDeclaredField(fieldName);
             field.setAccessible(true);
-
             return unsafeCast(field.get(null));
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -113,7 +107,6 @@ public final class ReflectionUtils {
      * @param value     новое значение статического поля.
      */
     public static void setStaticFieldValue(final Class<?> type, final String fieldName, final Object value) {
-
         try {
             final Field field = type.getDeclaredField(fieldName);
             field.setAccessible(true);

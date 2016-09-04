@@ -1,16 +1,19 @@
 package rlib.util.ref;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static rlib.util.ref.ReferenceType.LONG;
 
 /**
- * Ссылка на тип данных long.
+ * The reference to long value.
  *
  * @author JavaSaBr
  */
 final class LongReference extends AbstractReference {
 
     /**
-     * Значение по ссылке.
+     * The value of this reference.
      */
     private long value;
 
@@ -24,13 +27,29 @@ final class LongReference extends AbstractReference {
         this.value = value;
     }
 
+    @NotNull
     @Override
-    public ReferenceType getReferenceType() {
+    public ReferenceType getType() {
         return LONG;
     }
 
     @Override
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        final LongReference that = (LongReference) object;
+        return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (value ^ (value >>> 32));
+    }
+
+    @Override
     public String toString() {
-        return getClass().getSimpleName() + " [value=" + value + "]";
+        return "LongReference{" +
+                "value=" + value +
+                "} " + super.toString();
     }
 }

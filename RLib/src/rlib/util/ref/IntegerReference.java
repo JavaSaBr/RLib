@@ -1,16 +1,19 @@
 package rlib.util.ref;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import static rlib.util.ref.ReferenceType.INTEGER;
 
 /**
- * Ссылка на тип данных int.
+ * The reference to integer value.
  *
  * @author JavaSaBr
  */
 final class IntegerReference extends AbstractReference {
 
     /**
-     * Значение по ссылке.
+     * The value of this reference.
      */
     private int value;
 
@@ -24,13 +27,29 @@ final class IntegerReference extends AbstractReference {
         this.value = value;
     }
 
+    @NotNull
     @Override
-    public ReferenceType getReferenceType() {
+    public ReferenceType getType() {
         return INTEGER;
     }
 
     @Override
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        final IntegerReference that = (IntegerReference) object;
+        return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return value;
+    }
+
+    @Override
     public String toString() {
-        return getClass().getSimpleName() + " [value=" + value + "]";
+        return "IntegerReference{" +
+                "value=" + value +
+                "} " + super.toString();
     }
 }

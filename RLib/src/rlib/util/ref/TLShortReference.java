@@ -3,53 +3,52 @@ package rlib.util.ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static rlib.util.ref.ReferenceType.BYTE;
+import static rlib.util.ref.ReferenceType.SHORT;
 
 /**
- * The reference to byte value.
+ * The reference to short value.
  *
  * @author JavaSaBr
  */
-final class ByteReference extends AbstractReference {
+final class TLShortReference extends AbstractThreadLocalReference {
 
     /**
      * The value of this reference.
      */
-    private byte value;
+    private short value;
 
     @Override
-    public byte getByte() {
+    public short getShort() {
         return value;
     }
 
     @Override
-    public void setByte(final byte value) {
+    public void setShort(final short value) {
         this.value = value;
     }
 
     @NotNull
     @Override
     public ReferenceType getType() {
-        return BYTE;
+        return SHORT;
     }
 
     @Override
-    public boolean equals(@Nullable final Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        final ByteReference that = (ByteReference) object;
+    public boolean equals(@Nullable final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final TLShortReference that = (TLShortReference) o;
         return value == that.value;
-
     }
 
     @Override
     public int hashCode() {
-        return (int) value;
+        return value;
     }
 
     @Override
     public String toString() {
-        return "ByteReference{" +
+        return "TLShortReference{" +
                 "value=" + value +
                 "} " + super.toString();
     }

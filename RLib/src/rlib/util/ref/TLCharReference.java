@@ -3,43 +3,42 @@ package rlib.util.ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static rlib.util.ref.ReferenceType.BYTE;
+import static rlib.util.ref.ReferenceType.CHAR;
 
 /**
- * The reference to byte value.
+ * The reference to char value.
  *
  * @author JavaSaBr
  */
-final class ByteReference extends AbstractReference {
+final class TLCharReference extends AbstractThreadLocalReference {
 
     /**
      * The value of this reference.
      */
-    private byte value;
+    private char value;
 
     @Override
-    public byte getByte() {
+    public char getChar() {
         return value;
     }
 
     @Override
-    public void setByte(final byte value) {
+    public void setChar(final char value) {
         this.value = value;
     }
 
     @NotNull
     @Override
     public ReferenceType getType() {
-        return BYTE;
+        return CHAR;
     }
 
     @Override
     public boolean equals(@Nullable final Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        final ByteReference that = (ByteReference) object;
+        final TLCharReference that = (TLCharReference) object;
         return value == that.value;
-
     }
 
     @Override
@@ -49,7 +48,7 @@ final class ByteReference extends AbstractReference {
 
     @Override
     public String toString() {
-        return "ByteReference{" +
+        return "TLCharReference{" +
                 "value=" + value +
                 "} " + super.toString();
     }

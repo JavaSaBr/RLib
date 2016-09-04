@@ -19,7 +19,6 @@ public final class IOUtils {
 
     public static void close(final Closeable stream) {
         if (stream == null) return;
-
         try {
             stream.close();
         } catch (final IOException e) {

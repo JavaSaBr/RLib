@@ -1,5 +1,7 @@
 package rlib.util.ref;
 
+import org.jetbrains.annotations.NotNull;
+
 import static rlib.util.ref.ReferenceType.SHORT;
 
 /**
@@ -14,8 +16,9 @@ final class ShortReference extends AbstractReference {
      */
     private short value;
 
+    @NotNull
     @Override
-    public ReferenceType getReferenceType() {
+    public ReferenceType getType() {
         return SHORT;
     }
 
