@@ -2,6 +2,7 @@ package rlib.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.file.DirectoryStream;
@@ -38,10 +39,8 @@ public class FileUtils {
         final int secondLength = second.getNameCount();
 
         if (firstLength == secondLength) {
-
             final int firstLevel = Files.isDirectory(first) ? 2 : 1;
             final int secondLevel = Files.isDirectory(first) ? 2 : 1;
-
             return firstLevel - secondLevel;
         }
 
@@ -381,5 +380,17 @@ public class FileUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Convert the file to {@link URL}.
+     *
+     * @param path the path for converting.
+     * @return the URL of the path.
+     * @throws MalformedURLException If a protocol handler for the URL could not be found, or if
+     *                               some other error occurred while constructing the URL.
+     */
+    public static URL toUrl(final Path path) throws MalformedURLException {
+        return path.toUri().toURL();
     }
 }

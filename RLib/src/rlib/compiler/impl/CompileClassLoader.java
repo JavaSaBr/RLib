@@ -35,7 +35,7 @@ public class CompileClassLoader extends ClassLoader {
 
             for (final ByteSource byteSource : byteCode) {
                 final byte[] bytes = byteSource.getByteSource();
-                final Class<?> result = Util.safeExecute(() -> defineClass(name, bytes, 0, bytes.length));
+                final Class<?> result = Util.safeGet(() -> defineClass(name, bytes, 0, bytes.length));
                 if (result != null) return result;
             }
         }

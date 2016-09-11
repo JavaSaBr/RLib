@@ -1,5 +1,8 @@
 package rlib.network.server.client.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.channels.AsynchronousSocketChannel;
 
 import rlib.network.impl.AbstractAsyncConnection;
@@ -21,7 +24,7 @@ public abstract class AbstractClientConnection<T extends Client, R extends Reada
      */
     protected T client;
 
-    public AbstractClientConnection(final ServerNetwork network, final AsynchronousSocketChannel channel, final Class<S> sendableType) {
+    public AbstractClientConnection(@NotNull final ServerNetwork network, @NotNull final AsynchronousSocketChannel channel, @NotNull final Class<S> sendableType) {
         super(network, channel, sendableType);
     }
 
@@ -36,12 +39,12 @@ public abstract class AbstractClientConnection<T extends Client, R extends Reada
     }
 
     @Override
-    public final void setClient(final T client) {
+    public final void setClient(@Nullable final T client) {
         this.client = client;
     }
 
     @Override
-    protected void completed(final S packet) {
+    protected void completed(@NotNull final S packet) {
     }
 
     @Override

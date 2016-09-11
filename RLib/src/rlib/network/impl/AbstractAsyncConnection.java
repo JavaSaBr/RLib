@@ -1,5 +1,7 @@
 package rlib.network.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -145,7 +147,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
         }
     };
 
-    public AbstractAsyncConnection(final N network, final AsynchronousSocketChannel channel, final Class<S> sendableType) {
+    public AbstractAsyncConnection(@NotNull final N network, @NotNull final AsynchronousSocketChannel channel, @NotNull final Class<S> sendableType) {
         this.lock = LockFactory.newReentrantLock();
         this.channel = channel;
         this.waitPackets = LinkedListFactory.newLinkedList(sendableType);
@@ -199,6 +201,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     /**
      * @return канал соединения.
      */
+    @NotNull
     protected AsynchronousSocketChannel getChannel() {
         return channel;
     }
@@ -216,6 +219,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     /**
      * @return блокировщик.
      */
+    @NotNull
     public Lock getLock() {
         return lock;
     }
@@ -223,6 +227,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     /**
      * @return модель сети, в которой этот коннект.
      */
+    @NotNull
     protected N getNetwork() {
         return network;
     }
@@ -230,6 +235,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     /**
      * @return буффер для чтения пакета.
      */
+    @NotNull
     protected final ByteBuffer getReadBuffer() {
         return readBuffer;
     }
@@ -237,6 +243,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     /**
      * @return Обработчик чтения пакетов.
      */
+    @NotNull
     protected CompletionHandler<Integer, AbstractAsyncConnection> getReadHandler() {
         return readHandler;
     }
@@ -244,6 +251,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     /**
      * @return список ожидающих пакетов на отправку.
      */
+    @NotNull
     protected LinkedList<S> getWaitPackets() {
         return waitPackets;
     }
@@ -251,6 +259,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     /**
      * @return буффер для записи пакета.
      */
+    @NotNull
     protected final ByteBuffer getWriteBuffer() {
         return writeBuffer;
     }
@@ -258,6 +267,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     /**
      * @return Обработчик записи пакетов.
      */
+    @NotNull
     protected CompletionHandler<Integer, S> getWriteHandler() {
         return writeHandler;
     }
@@ -280,7 +290,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
      * @param buffer прочтенный пакет.
      * @return можно ли начинать обработку.
      */
-    protected boolean isReady(final ByteBuffer buffer) {
+    protected boolean isReady(@NotNull final ByteBuffer buffer) {
         return true;
     }
 
@@ -296,26 +306,26 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
      * @param buffer буффер, в который надо перенести.
      * @return этот же буффер.
      */
-    protected abstract ByteBuffer writePacketToBuffer(S packet, ByteBuffer buffer);
+    @NotNull
+    protected abstract ByteBuffer writePacketToBuffer(@NotNull S packet, @NotNull ByteBuffer buffer);
 
     /**
      * Обработка завершения отправки пакета.
      *
      * @param packet отправленый пакет.
      */
-    protected abstract void completed(S packet);
+    protected abstract void completed(@NotNull S packet);
 
     /**
      * Чтение и обработка клиентского пакета.
      *
      * @param buffer буффер данных.
      */
-    protected abstract void readPacket(ByteBuffer buffer);
+    protected abstract void readPacket(@NotNull ByteBuffer buffer);
 
     @Override
-    public final void sendPacket(final S packet) {
+    public final void sendPacket(@NotNull final S packet) {
         if (isClosed()) return;
-
         lock();
         try {
             if (isClosed()) return;

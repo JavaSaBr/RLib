@@ -4,10 +4,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import rlib.function.FourObjectConsumer;
 import rlib.function.TripleConsumer;
 import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
@@ -439,10 +441,30 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public <T> void forEach(@Nullable final T argument, @NotNull final TripleConsumer<K, V, T> consumer) {
+    public void forEach(@NotNull BiConsumer<? super K, ? super V> consumer) {
         for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
-                consumer.accept(entry.getKey(), entry.getValue(), argument);
+                consumer.accept(entry.getKey(), entry.getValue());
+                entry = entry.getNext();
+            }
+        }
+    }
+
+    @Override
+    public <T> void forEach(@Nullable final T argument, @NotNull final TripleConsumer<T, K, V> consumer) {
+        for (ObjectEntry<K, V> entry : content()) {
+            while (entry != null) {
+                consumer.accept(argument, entry.getKey(), entry.getValue());
+                entry = entry.getNext();
+            }
+        }
+    }
+
+    @Override
+    public <F, S> void forEach(@Nullable final F first, @Nullable final S second, @NotNull final FourObjectConsumer<F, S, K, V> consumer) {
+        for (ObjectEntry<K, V> entry : content()) {
+            while (entry != null) {
+                consumer.accept(first, second, entry.getKey(), entry.getValue());
                 entry = entry.getNext();
             }
         }

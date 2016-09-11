@@ -260,7 +260,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
      * @param argument дополнительный аргумент.
      * @param consumer функция для обработки элементов.
      */
-    default <T> void forEach(@NotNull final T argument, @NotNull final BiConsumer<E, T> consumer) {
+    default <T> void forEach(@Nullable final T argument, @NotNull final BiConsumer<E, T> consumer) {
         for (final E element : array()) {
             if (element == null) break;
             consumer.accept(element, argument);

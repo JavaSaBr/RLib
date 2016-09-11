@@ -1,5 +1,8 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -312,11 +315,11 @@ public final class Util {
      *
      * @param runnable выполняемая задача.
      */
-    public static void safeExecute(final SafeRunnable runnable) {
+    public static void safeExecute(@NotNull final SafeRunnable runnable) {
         try {
             runnable.run();
         } catch (final Exception e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -326,7 +329,7 @@ public final class Util {
      * @param runnable     выполняемая задача.
      * @param errorHandler обработчик ошибок.
      */
-    public static void safeExecute(final SafeRunnable runnable, final Consumer<Exception> errorHandler) {
+    public static void safeExecute(@NotNull final SafeRunnable runnable, @NotNull final Consumer<Exception> errorHandler) {
         try {
             runnable.run();
         } catch (final Exception e) {
@@ -339,15 +342,13 @@ public final class Util {
      *
      * @param factory выполняемая задача.
      */
-    public static <R> R safeExecute(final SafeFactory<R> factory) {
-
+    @NotNull
+    public static <R> R safeGet(@NotNull final SafeFactory<R> factory) {
         try {
             return factory.get();
         } catch (final Exception e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 
     /**
@@ -356,14 +357,13 @@ public final class Util {
      * @param factory      выполняемая задача.
      * @param errorHandler обработчик ошибок.
      */
-    public static <R> R safeExecute(final SafeFactory<R> factory, final Consumer<Exception> errorHandler) {
-
+    @Nullable
+    public static <R> R safeGet(@NotNull final SafeFactory<R> factory, @NotNull final Consumer<Exception> errorHandler) {
         try {
             return factory.get();
         } catch (final Exception e) {
             errorHandler.accept(e);
         }
-
         return null;
     }
 
@@ -373,11 +373,11 @@ public final class Util {
      * @param first    первый аргумент.
      * @param consumer выполняемая задача.
      */
-    public static <F> void safeExecute(final F first, final SafeConsumer<F> consumer) {
+    public static <F> void safeExecute(@Nullable final F first, @NotNull final SafeConsumer<F> consumer) {
         try {
             consumer.accept(first);
         } catch (final Exception e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -387,15 +387,13 @@ public final class Util {
      * @param first    первый аргумент.
      * @param function выполняемая задача.
      */
-    public static <F, R> R safeExecute(final F first, final SafeFunction<F, R> function) {
-
+    @NotNull
+    public static <F, R> R safeGet(@Nullable final F first, @NotNull final SafeFunction<F, R> function) {
         try {
             return function.apply(first);
         } catch (final Exception e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 
 
@@ -406,7 +404,8 @@ public final class Util {
      * @param consumer     выполняемая задача.
      * @param errorHandler обработчик ошибок.
      */
-    public static <F> void safeExecute(final F first, final SafeConsumer<F> consumer, final Consumer<Exception> errorHandler) {
+    @Nullable
+    public static <F> void safeExecute(@Nullable final F first, @NotNull final SafeConsumer<F> consumer, @NotNull final Consumer<Exception> errorHandler) {
         try {
             consumer.accept(first);
         } catch (final Exception e) {
@@ -421,14 +420,13 @@ public final class Util {
      * @param function     выполняемая задача.
      * @param errorHandler обработчик ошибок.
      */
-    public static <F, R> R safeExecute(final F first, final SafeFunction<F, R> function, final Consumer<Exception> errorHandler) {
-
+    @Nullable
+    public static <F, R> R safeGet(@Nullable final F first, @NotNull final SafeFunction<F, R> function, @NotNull final Consumer<Exception> errorHandler) {
         try {
             return function.apply(first);
         } catch (final Exception e) {
             errorHandler.accept(e);
         }
-
         return null;
     }
 
@@ -439,11 +437,11 @@ public final class Util {
      * @param second   второй аргумент.
      * @param consumer выполняемая задача.
      */
-    public static <F, S> void safeExecute(final F first, S second, final SafeBiConsumer<F, S> consumer) {
+    public static <F, S> void safeExecute(@Nullable final F first, @Nullable final S second, final SafeBiConsumer<F, S> consumer) {
         try {
             consumer.accept(first, second);
         } catch (final Exception e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -455,7 +453,7 @@ public final class Util {
      * @param consumer     выполняемая задача.
      * @param errorHandler обработчик ошибок.
      */
-    public static <F, S> void safeExecute(final F first, S second, final SafeBiConsumer<F, S> consumer, final Consumer<Exception> errorHandler) {
+    public static <F, S> void safeExecute(@Nullable final F first, @Nullable final S second, @NotNull final SafeBiConsumer<F, S> consumer, @NotNull final Consumer<Exception> errorHandler) {
         try {
             consumer.accept(first, second);
         } catch (final Exception e) {

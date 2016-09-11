@@ -11,6 +11,7 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.pools.Reusable;
 
 /**
  * Класс для работы с объектами.
@@ -168,5 +169,14 @@ public final class ObjectUtils {
                 LOGGER.warning(e);
             }
         });
+    }
+
+    /**
+     * Call the method {@link Reusable#release()} if the object instanceof {@link Reusable}.
+     *
+     * @param object the object.
+     */
+    public static void release(final Object object) {
+        if (object instanceof Reusable) ((Reusable) object).release();
     }
 }

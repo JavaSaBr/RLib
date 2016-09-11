@@ -7,6 +7,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import rlib.function.FourObjectConsumer;
 import rlib.function.TripleConsumer;
 import rlib.util.array.Array;
 
@@ -99,7 +100,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
-     * @return массив ключей словаря.
+     * @return the array of all keys of this dictionary.
      */
     @NotNull
     default Array<K> keyArray(@NotNull final Class<K> type) {
@@ -107,11 +108,18 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
-     * Добавляет новое значение по указанному ключу, и если уже есть элемент с таким ключем,
-     * возвращает его.
+     * Associates the specified value with the specified key in this dictionary (optional
+     * operation).  If the dictionary previously contained a mapping for the key, the old value is
+     * replaced by the specified value.  (A dictionary <tt>m</tt> is said to contain a mapping for a
+     * key <tt>k</tt> if and only if {@link #containsKey(Object) m.containsKey(k)} would return
+     * <tt>true</tt>.)
      *
-     * @param key   ключ значения.
-     * @param value вставляемое значение.
+     * @param key   key with which the specified value is to be associated
+     * @param value value to be associated with the specified key
+     * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no
+     * mapping for <tt>key</tt>. (A <tt>null</tt> return can also indicate that the map previously
+     * associated <tt>null</tt> with <tt>key</tt>, if the implementation supports <tt>null</tt>
+     * values.)
      */
     @Nullable
     default V put(@NotNull final K key, @Nullable final V value) {
@@ -119,9 +127,23 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
-     * Удаляет значение по ключу.
+     * Removes the mapping for a key from this dictionary if it is present (optional operation).
+     * More formally, if this dictionary contains a mapping from key <tt>k</tt> to value <tt>v</tt>
+     * such that <code>(key==null ?  k==null : key.equals(k))</code>, that mapping is removed.  (The
+     * map can contain at most one such mapping.)
      *
-     * @param key ключ значения.
+     * <p>Returns the value to which this dictionary previously associated the key, or <tt>null</tt>
+     * if the dictionary contained no mapping for the key.
+     *
+     * <p>If this dictionary permits null values, then a return value of <tt>null</tt> does not
+     * <i>necessarily</i> indicate that the dictionary contained no mapping for the key; it's also
+     * possible that the dictionary explicitly mapped the key to <tt>null</tt>.
+     *
+     * <p>The dictionary will not contain a mapping for the specified key once the call returns.
+     *
+     * @param key key whose mapping is to be removed from the dictionary
+     * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no
+     * mapping for <tt>key</tt>.
      */
     @Nullable
     default V remove(final K key) {
@@ -129,12 +151,18 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
-     * Пробег по словарю с просмотром ключа и значения и дополнительным аргументом.
-     *
-     * @param argument дополнительный аргумент.
-     * @param consumer функция обработки ключа и значения.
+     * Performs the given action for each key-value pair of this dictionary.
      */
-    default <T> void forEach(@Nullable final T argument, @NotNull final TripleConsumer<K, V, T> consumer) {
+    default <T> void forEach(@Nullable final T argument, @NotNull final TripleConsumer<T, K, V> consumer) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Performs the given action for each key-value pair of this dictionary.
+     */
+    default <F, S> void forEach(@Nullable final F first, @Nullable final S second, @NotNull final FourObjectConsumer<F, S, K, V> consumer) {
         throw new UnsupportedOperationException();
     }
 }
+
+
