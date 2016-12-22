@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * @author JavaSaBr
  */
 @FunctionalInterface
-public interface IntObjectConsumer<T> {
+public interface DoubleObjectConsumer<T> {
 
-    void accept(int first, @Nullable T second);
+    void accept(double first, @Nullable T second);
 }

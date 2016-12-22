@@ -185,6 +185,11 @@ public class LoggerManager {
 
             System.err.println(result);
 
+            if(level.isForceFlush()) {
+                ArrayUtils.runInReadLock(getListeners(), result,
+                        (listeners, string) -> listeners.forEach(string, (listener, s) -> listener.flush()));
+            }
+
         } finally {
             SYNC.unlock();
         }

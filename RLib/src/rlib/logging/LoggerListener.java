@@ -1,14 +1,20 @@
 package rlib.logging;
 
 /**
- * Слушатель логгера.
+ * The listener for listening logger events.
  *
  * @author JavaSaBr
  */
 public interface LoggerListener {
 
     /**
-     * @param text текст.
+     * @param text the new text.
      */
-    public void println(String text);
+    void println(String text);
+
+    /**
+     * Flushes last data.
+     */
+    default void flush() {
+    }
 }

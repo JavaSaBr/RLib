@@ -1,5 +1,7 @@
 package rlib.util.array;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 import rlib.util.array.impl.ConcurrentReentrantRWLockArray;
 import rlib.util.array.impl.ConcurrentReentrantRWLockArraySet;
 import rlib.util.array.impl.FastIntegerArray;
@@ -10,8 +12,6 @@ import rlib.util.array.impl.FinalFastArray;
 import rlib.util.array.impl.FinalFastArraySet;
 import rlib.util.array.impl.FinalSortedArray;
 import rlib.util.array.impl.FinalSynchronizedArray;
-
-import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * The factory for creating arrays.
@@ -43,6 +43,17 @@ public class ArrayFactory {
      * @see {@link FinalFastArray}
      */
     public static <E> Array<E> newArray(final Class<?> type) {
+        return newUnsafeArray(type);
+    }
+
+    /**
+     * Creates the new unsafe array.
+     *
+     * @param type the type of the array.
+     * @return the new unsafe array.
+     * @see {@link FinalFastArray}
+     */
+    public static <E> UnsafeArray<E> newUnsafeArray(final Class<?> type) {
         return new FinalFastArray<>(unsafeCast(type));
     }
 
@@ -55,6 +66,18 @@ public class ArrayFactory {
      * @see {@link FinalFastArray}
      */
     public static <E> Array<E> newArray(final Class<?> type, final int capacity) {
+        return newUnsafeArray(type, capacity);
+    }
+
+    /**
+     * Creates the new unsafe array.
+     *
+     * @param type     the type of the array.
+     * @param capacity the init size of the array.
+     * @return the new unsafe array.
+     * @see {@link FinalFastArray}
+     */
+    public static <E> UnsafeArray<E> newUnsafeArray(final Class<?> type, final int capacity) {
         return new FinalFastArray<>(unsafeCast(type), capacity);
     }
 

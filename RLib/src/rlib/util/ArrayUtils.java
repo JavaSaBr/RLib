@@ -1,6 +1,9 @@
 package rlib.util;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.Objects;
@@ -11,7 +14,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import rlib.function.DoubleObjectConsumer;
 import rlib.function.FunctionInt;
+import rlib.function.IntObjectConsumer;
 import rlib.function.ObjectIntFunction;
 import rlib.function.ObjectIntPredicate;
 import rlib.function.ObjectLongFunction;
@@ -23,8 +28,6 @@ import rlib.util.array.Array;
 import rlib.util.array.ConcurrentArray;
 import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
-
-import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * The list of methods for working with arrays.
@@ -750,6 +753,34 @@ public final class ArrayUtils {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
             if (condition.test(element)) consumer.accept(element);
+        }
+    }
+
+    /**
+     * Apply the consumer for each element of the array.
+     *
+     * @param array    the array.
+     * @param argument the additional argument.
+     * @param consumer the consumer.
+     */
+    public static <F> void forEach(@Nullable final int[] array, @Nullable final F argument, @NotNull final IntObjectConsumer<F> consumer) {
+        if (array == null || array.length < 1) return;
+        for (final int element : array) {
+            consumer.accept(element, argument);
+        }
+    }
+
+    /**
+     * Apply the consumer for each element of the array.
+     *
+     * @param array    the array.
+     * @param argument the additional argument.
+     * @param consumer the consumer.
+     */
+    public static <F> void forEach(@Nullable final double[] array, @Nullable final F argument, @NotNull final DoubleObjectConsumer<F> consumer) {
+        if (array == null || array.length < 1) return;
+        for (final double element : array) {
+            consumer.accept(element, argument);
         }
     }
 
