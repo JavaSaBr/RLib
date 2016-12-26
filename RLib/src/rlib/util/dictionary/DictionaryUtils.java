@@ -1,5 +1,8 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -9,6 +12,7 @@ import rlib.function.ObjectIntFunction;
 import rlib.function.ObjectIntObjectConsumer;
 import rlib.function.ObjectIntObjectFunction;
 import rlib.function.ObjectLongObjectConsumer;
+import rlib.function.TripleConsumer;
 
 /**
  * Реализация набора утильных методов для работы со словарями.
@@ -40,22 +44,6 @@ public class DictionaryUtils {
      * @param consumer   функция для выполнения действий над словарем.
      */
     public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final ObjectIntConsumer<ConcurrentIntegerDictionary<V>> consumer) {
-        final long stamp = dictionary.writeLock();
-        try {
-            consumer.accept(dictionary, key);
-        } finally {
-            dictionary.writeUnlock(stamp);
-        }
-    }
-
-    /**
-     * Выполнение функции на словаре в блоке {@link ConcurrentObjectDictionary#writeLock()}.
-     *
-     * @param dictionary словарь.
-     * @param key        аргумент ключ для передачи в функцию.
-     * @param consumer   функция для выполнения действий над словарем.
-     */
-    public static <K, V> void runInWriteLock(final ConcurrentObjectDictionary<K, V> dictionary, final K key, final BiConsumer<ConcurrentObjectDictionary<K, V>, K> consumer) {
         final long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary, key);
@@ -98,14 +86,17 @@ public class DictionaryUtils {
     }
 
     /**
-     * Выполнение функции на словаре в блоке {@link ConcurrentObjectDictionary#readLock()}.
+     * Get the value using a function from a dictionary in the block {@link
+     * ConcurrentObjectDictionary#readLock()}.
      *
-     * @param dictionary словарь.
-     * @param key        аргумент ключ для передачи в функцию.
-     * @param function   функция для выполнения действий над словарем.
-     * @return результат выполнения функции.
+     * @param dictionary the dictionary.
+     * @param key        the key value.
+     * @param function   the function.
+     * @return the result of the function.
      */
-    public static <K, V, R> R getInReadLock(final ConcurrentObjectDictionary<K, V> dictionary, final K key, final BiFunction<ConcurrentObjectDictionary<K, V>, K, R> function) {
+    @Nullable
+    public static <K, V, R> R getInReadLock(@NotNull final ConcurrentObjectDictionary<K, V> dictionary, @NotNull final K key,
+                                            @NotNull final BiFunction<ConcurrentObjectDictionary<K, V>, K, R> function) {
         final long stamp = dictionary.readLock();
         try {
             return function.apply(dictionary, key);
@@ -149,14 +140,51 @@ public class DictionaryUtils {
     }
 
     /**
-     * Выполнение функции на словаре в блоке {@link ConcurrentLongDictionary#writeLock()}.
+     * Execute the function for a dictionary in the block {@link ConcurrentLongDictionary#writeLock()}.
      *
-     * @param dictionary словарь.
-     * @param key        аргумент ключ для передачи в функцию.
-     * @param object     аргумент объект для передачи в функцию.
-     * @param consumer   функция для выполнения действий над словарем.
+     * @param dictionary the dictionary.
+     * @param key        the key value.
+     * @param object     the value.
+     * @param consumer   the function.
      */
-    public static <V> void runInWriteLock(final ConcurrentLongDictionary<V> dictionary, final long key, final V object, final ObjectLongObjectConsumer<ConcurrentLongDictionary<V>, V> consumer) {
+    public static <V> void runInWriteLock(@NotNull final ConcurrentLongDictionary<V> dictionary, final long key,
+                                          @Nullable final V object, @NotNull final ObjectLongObjectConsumer<ConcurrentLongDictionary<V>, V> consumer) {
+        final long stamp = dictionary.writeLock();
+        try {
+            consumer.accept(dictionary, key, object);
+        } finally {
+            dictionary.writeUnlock(stamp);
+        }
+    }
+
+
+    /**
+     * Execute the function for a dictionary in the block {@link ConcurrentObjectDictionary#writeLock()}.
+     *
+     * @param dictionary the dictionary.
+     * @param key        the key value.
+     * @param consumer   the function.
+     */
+    public static <K, V> void runInWriteLock(@NotNull final ConcurrentObjectDictionary<K, V> dictionary, @NotNull final K key,
+                                             @NotNull final BiConsumer<ConcurrentObjectDictionary<K, V>, K> consumer) {
+        final long stamp = dictionary.writeLock();
+        try {
+            consumer.accept(dictionary, key);
+        } finally {
+            dictionary.writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Execute the function for a dictionary in the block {@link ConcurrentObjectDictionary#writeLock()}.
+     *
+     * @param dictionary the dictionary.
+     * @param key        the key value.
+     * @param object     the value.
+     * @param consumer   the function.
+     */
+    public static <K, V> void runInWriteLock(@NotNull final ConcurrentObjectDictionary<K, V> dictionary, @NotNull final K key,
+                                             @Nullable final V object, @NotNull final TripleConsumer<ConcurrentObjectDictionary<K, V>, K, V> consumer) {
         final long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary, key, object);

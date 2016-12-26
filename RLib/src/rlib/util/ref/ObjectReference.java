@@ -1,9 +1,9 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.OBJECT;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static rlib.util.ref.ReferenceType.OBJECT;
 
 /**
  * The reference to object.

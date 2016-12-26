@@ -1,11 +1,11 @@
 package rlib.util;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 import java.lang.reflect.Field;
 
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
-
-import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * Набор утильных методов по работе с рефлексией.

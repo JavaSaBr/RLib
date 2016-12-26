@@ -1,14 +1,14 @@
 package rlib.util.ref;
 
+import static java.lang.ThreadLocal.withInitial;
+import static rlib.util.pools.PoolFactory.newReusablePool;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
 import rlib.util.pools.PoolFactory;
 import rlib.util.pools.ReusablePool;
-
-import static java.lang.ThreadLocal.withInitial;
-import static rlib.util.pools.PoolFactory.newReusablePool;
 
 /**
  * The enum with types of reference.

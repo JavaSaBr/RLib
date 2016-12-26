@@ -1,5 +1,7 @@
 package rlib.data;
 
+import static java.nio.file.Files.newInputStream;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -8,8 +10,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-
-import static java.nio.file.Files.newInputStream;
 
 /**
  * The file implementation of the parser of xml documents.

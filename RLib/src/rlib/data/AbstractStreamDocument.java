@@ -1,5 +1,7 @@
 package rlib.data;
 
+import static java.lang.ThreadLocal.withInitial;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -17,8 +19,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.IOUtils;
-
-import static java.lang.ThreadLocal.withInitial;
 
 /**
  * The base implementation of the parser of xml documents.

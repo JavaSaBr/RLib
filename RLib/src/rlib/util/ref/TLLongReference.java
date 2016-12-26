@@ -1,9 +1,9 @@
 package rlib.util.ref;
 
+import static rlib.util.ref.ReferenceType.LONG;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static rlib.util.ref.ReferenceType.LONG;
 
 /**
  * The reference to long value.

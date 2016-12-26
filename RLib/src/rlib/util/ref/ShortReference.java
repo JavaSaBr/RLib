@@ -1,8 +1,8 @@
 package rlib.util.ref;
 
-import org.jetbrains.annotations.NotNull;
-
 import static rlib.util.ref.ReferenceType.SHORT;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Ссылка на тип данных short.

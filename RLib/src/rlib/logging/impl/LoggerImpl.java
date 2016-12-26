@@ -1,13 +1,13 @@
 package rlib.logging.impl;
 
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-import rlib.util.Util;
-
 import static rlib.logging.LoggerLevel.DEBUG;
 import static rlib.logging.LoggerLevel.ERROR;
 import static rlib.logging.LoggerLevel.INFO;
 import static rlib.logging.LoggerLevel.WARNING;
+
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
+import rlib.util.Util;
 
 /**
  * Реализация логгера консольных сообщений. Работает через LoggerManager.

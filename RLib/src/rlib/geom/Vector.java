@@ -1,8 +1,8 @@
 package rlib.geom;
 
-import rlib.util.ExtMath;
-
 import static java.lang.Float.floatToIntBits;
+
+import rlib.util.ExtMath;
 
 /**
  * Реализация игровой позиции и вектора.

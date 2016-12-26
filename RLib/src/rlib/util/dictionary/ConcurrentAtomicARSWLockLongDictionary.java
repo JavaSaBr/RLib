@@ -4,7 +4,8 @@ import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.LockFactory;
 
 /**
- * The implementation of the {@link ConcurrentLongDictionary} using {@link LockFactory#newAtomicARSWLock()}.
+ * The implementation of the {@link ConcurrentLongDictionary} using {@link
+ * LockFactory#newAtomicARSWLock()}.
  *
  * @author JavaSaBr
  */

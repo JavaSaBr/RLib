@@ -1,5 +1,9 @@
 package rlib.network.impl;
 
+import static java.nio.ByteBuffer.allocate;
+import static java.nio.ByteBuffer.allocateDirect;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
+
 import java.nio.ByteBuffer;
 import java.util.function.Function;
 
@@ -9,10 +13,6 @@ import rlib.network.AsynchronousNetwork;
 import rlib.network.NetworkConfig;
 import rlib.util.pools.Pool;
 import rlib.util.pools.PoolFactory;
-
-import static java.nio.ByteBuffer.allocate;
-import static java.nio.ByteBuffer.allocateDirect;
-import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 /**
  * Базовая реализация асинхронной сети.

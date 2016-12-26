@@ -1,8 +1,8 @@
 package rlib.util;
 
-import java.nio.ByteBuffer;
-
 import static java.lang.Math.min;
+
+import java.nio.ByteBuffer;
 
 /**
  * Класс с утильными методами для работы с буферами.
@@ -60,7 +60,8 @@ public class BufferUtils {
      *
      * @param buffer               буфер чьи данные надо скопировать.
      * @param destination          буффер в который надо скопировать эти данные.
-     * @param needClearDestination нужно ли очищать целевой буффер перед копированием в него данных.
+     * @param needClearDestination нужно ли очищать целевой буффер перед копированием в него
+     *                             данных.
      */
     public static void copyAndFlip(final ByteBuffer buffer, final ByteBuffer destination, final boolean needClearDestination) {
         if (needClearDestination) destination.clear();

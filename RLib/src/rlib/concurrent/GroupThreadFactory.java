@@ -9,7 +9,8 @@ import rlib.concurrent.atomic.AtomicInteger;
 import rlib.util.ClassUtils;
 
 /**
- * The implementation of the {@link ThreadFactory} for creating some threads in the same thread group.
+ * The implementation of the {@link ThreadFactory} for creating some threads in the same thread
+ * group.
  *
  * @author JavaSaBr
  */

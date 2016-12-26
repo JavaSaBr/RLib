@@ -1,5 +1,7 @@
 package rlib.util.array;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +23,6 @@ import rlib.function.TripleConsumer;
 import rlib.function.TriplePredicate;
 import rlib.util.ArrayUtils;
 import rlib.util.pools.Reusable;
-
-import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * Interface to implement dynamic arrays. Main advantages compared to an ArrayList, the ability to

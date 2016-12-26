@@ -1,5 +1,7 @@
 package rlib.util.dictionary;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +19,6 @@ import rlib.util.array.LongArray;
 import rlib.util.array.UnsafeArray;
 import rlib.util.pools.PoolFactory;
 import rlib.util.pools.ReusablePool;
-
-import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * The base implementation of the {@link LongDictionary}.

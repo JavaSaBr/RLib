@@ -1,13 +1,13 @@
 package rlib.util.dictionary;
 
+import static rlib.util.array.ArrayFactory.newArray;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
 import rlib.util.array.Array;
 import rlib.util.pools.Reusable;
-
-import static rlib.util.array.ArrayFactory.newArray;
 
 /**
  * The interface for implementing a key-value dictionary.

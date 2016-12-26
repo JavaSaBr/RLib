@@ -1,5 +1,7 @@
 package rlib.util;
 
+import static java.lang.ThreadLocal.withInitial;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,8 +26,6 @@ import rlib.function.SafeFunction;
 import rlib.function.SafeRunnable;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-
-import static java.lang.ThreadLocal.withInitial;
 
 /**
  * Утильный класс с набором статических вспомогательных методов.

@@ -371,13 +371,12 @@ public final class ArrayUtils {
     }
 
     /**
-     * Конфектирует массив объектов строку.
+     * Writing the array like a string.
      *
-     * @param array массив объектов.
-     * @return строковый вариант.
+     * @param array the array.
+     * @return the string presentation of the array.
      */
-    public static String toString(final IntegerArray array) {
-        if (array == null) return "[]";
+    public static String toString(@NotNull final IntegerArray array) {
 
         final String className = array.array().getClass().getSimpleName();
         final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
@@ -393,13 +392,12 @@ public final class ArrayUtils {
     }
 
     /**
-     * Конфектирует массив объектов строку.
+     * Writing the array like a string.
      *
-     * @param array массив объектов.
-     * @return строковый вариант.
+     * @param array the array.
+     * @return the string presentation of the array.
      */
-    public static String toString(final LongArray array) {
-        if (array == null) return "[]";
+    public static String toString(@NotNull final LongArray array) {
 
         final String className = array.array().getClass().getSimpleName();
         final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
@@ -415,24 +413,84 @@ public final class ArrayUtils {
     }
 
     /**
-     * Конфектирует массив объектов строку.
+     * Writing the array like a string.
      *
-     * @param array массив объектов.
-     * @return строковый вариант.
+     * @param array the array.
+     * @return the string presentation of the array.
      */
-    public static String toString(final Object[] array) {
-        if (array == null) return "[]";
+    public static String toString(@Nullable int[] array) {
+        return toString(array, ", ", true, true);
+    }
 
-        final String className = array.getClass().getSimpleName();
-        final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
+    /**
+     * Writing the array like a string.
+     *
+     * @param array        the array.
+     * @param separator    the separator.
+     * @param needType     true if need adding type of array.
+     * @param needBrackets true if need adding brackets.
+     * @return the string presentation of the array.
+     */
+    public static String toString(@Nullable int[] array, @NotNull final String separator, final boolean needType, final boolean needBrackets) {
+
+        if (array == null) {
+            array = EMPTY_INT_ARRAY;
+        }
+
+        final StringBuilder builder = new StringBuilder();
+
+        if (needType) builder.append("int");
+        if (needBrackets) builder.append('[');
 
         for (int i = 0, length = array.length - 1; i <= length; i++) {
             builder.append(String.valueOf(array[i]));
             if (i == length) break;
-            builder.append(", ");
+            builder.append(separator);
         }
 
-        builder.append("]");
+        if (needBrackets) builder.append(']');
+
+        return builder.toString();
+    }
+
+    /**
+     * Writing the array like a string.
+     *
+     * @param array the array.
+     * @return the string presentation of the array.
+     */
+    public static String toString(@Nullable final Object[] array) {
+        return toString(array, ", ", true, true);
+    }
+
+    /**
+     * Writing the array like a string.
+     *
+     * @param array        the array.
+     * @param separator    the separator.
+     * @param needType     true if need adding type of array.
+     * @param needBrackets true if need adding brackets.
+     * @return the string presentation of the array.
+     */
+    public static String toString(@Nullable Object[] array, @NotNull final String separator, final boolean needType, final boolean needBrackets) {
+
+        if (array == null) {
+            array = EMPTY_OBJECT_ARRAY;
+        }
+
+        final StringBuilder builder = new StringBuilder();
+
+        if (needType) builder.append(array.getClass().getSimpleName());
+        if (needBrackets) builder.append('[');
+
+        for (int i = 0, length = array.length - 1; i <= length; i++) {
+            builder.append(String.valueOf(array[i]));
+            if (i == length) break;
+            builder.append(separator);
+        }
+
+        if (needBrackets) builder.append(']');
+
         return builder.toString();
     }
 
