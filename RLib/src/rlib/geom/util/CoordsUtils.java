@@ -1,8 +1,10 @@
 package rlib.geom.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.ThreadLocalRandom;
 
-import rlib.geom.GamePoint;
+import rlib.geom.Vector;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
@@ -18,7 +20,6 @@ public final class CoordsUtils {
     /**
      * Генерация дуговых позиций.
      *
-     * @param type    тип позиций.
      * @param x       целевая координата.
      * @param y       целевая координата.
      * @param z       целевая координата.
@@ -29,9 +30,11 @@ public final class CoordsUtils {
      * @param width   ширина дуги.
      * @return массив позиций.
      */
-    public static <T extends GamePoint> T[] arcCoords(final Class<T> type, final float x, final float y, final float z, final int heading, final int radius, final int count, final int degree, final int width) {
+    @NotNull
+    public static Vector[] arcCoords(final float x, final float y, final float z, final int heading,
+                                     final int radius, final int count, final int degree, final int width) {
 
-        final T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
+        final Vector[] vectors = new Vector[count];
 
         final float current = AngleUtils.headingToDegree(heading) - degree;
 
@@ -41,25 +44,20 @@ public final class CoordsUtils {
         final float angle = Math.abs(min - max) / count;
 
         for (int i = 0; i < count; i++) {
-            try {
 
-                final T loc = type.newInstance();
+            final Vector vector = Vector.newInstance();
 
-                final float radians = AngleUtils.degreeToRadians(min + angle * i);
+            final float radians = AngleUtils.degreeToRadians(min + angle * i);
 
-                final float newX = calcX(x, radius, radians);
-                final float newY = calcY(y, radius, radians);
+            final float newX = calcX(x, radius, radians);
+            final float newY = calcY(y, radius, radians);
 
-                loc.setXYZ(newX, newY, z);
+            vector.set(newX, newY, z);
 
-                locs[i] = loc;
-
-            } catch (InstantiationException | IllegalAccessException e) {
-                LOGGER.warning(e);
-            }
+            vectors[i] = vector;
         }
 
-        return locs;
+        return vectors;
     }
 
     /**
@@ -139,7 +137,6 @@ public final class CoordsUtils {
     /**
      * Генерация массива круговых позиций с одинаковым интервлаом.
      *
-     * @param type   тип массива позиций.
      * @param x      центральная координата.
      * @param y      центральная координата.
      * @param z      центральная координата.
@@ -148,29 +145,25 @@ public final class CoordsUtils {
      * @return массив позиций.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends GamePoint> T[] circularCoords(final Class<T> type, final float x, final float y, final float z, final int radius, final int count) {
+    @NotNull
+    public static Vector[] circularCoords(final float x, final float y, final float z, final int radius, final int count) {
 
-        final T[] locs = (T[]) java.lang.reflect.Array.newInstance(type, count);
+        final Vector[] locs = new Vector[count];
 
         final float angle = 360F / count;
 
         for (int i = 1; i <= count; i++) {
-            try {
 
-                final T loc = type.newInstance();
+            final Vector loc = Vector.newInstance();
 
-                final float radians = AngleUtils.degreeToRadians(i * angle);
+            final float radians = AngleUtils.degreeToRadians(i * angle);
 
-                final float newX = calcX(x, radius, radians);
-                final float newY = calcY(y, radius, radians);
+            final float newX = calcX(x, radius, radians);
+            final float newY = calcY(y, radius, radians);
 
-                loc.setXYZ(newX, newY, z);
+            loc.set(newX, newY, z);
 
-                locs[i - 1] = loc;
-
-            } catch (InstantiationException | IllegalAccessException e) {
-                LOGGER.warning(e);
-            }
+            locs[i - 1] = loc;
         }
 
         return locs;
@@ -187,7 +180,9 @@ public final class CoordsUtils {
      * @param radius радиус от центра.
      * @return массив точек.
      */
-    public static <T extends GamePoint> T[] getCircularPoints(final T[] source, final float x, final float y, final float z, final int count, final int radius) {
+    @NotNull
+    public static Vector[] getCircularPoints(@NotNull final Vector[] source, final float x, final float y,
+                                             final float z, final int count, final int radius) {
 
         if (count < 1) {
             return source;
@@ -202,9 +197,9 @@ public final class CoordsUtils {
             final float newX = x + radius * (float) Math.cos(radians);
             final float newY = y + radius * (float) Math.sin(radians);
 
-            final T point = source[i - 1];
+            final Vector point = source[i - 1];
 
-            point.setXYZ(newX, newY, z);
+            point.set(newX, newY, z);
         }
 
         return source;
@@ -220,30 +215,16 @@ public final class CoordsUtils {
      * @param radiusMax максимальный радиус рандома.
      * @return новая точка.
      */
-    public static <T extends GamePoint> T randomCoords(final T loc, final float x, final float y, final float z, final int radiusMin, final int radiusMax) {
-        final ThreadLocalRandom current = ThreadLocalRandom.current();
-        return randomCoords(loc, x, y, z, current.nextInt(35000), radiusMin, radiusMax);
-    }
+    @NotNull
+    public static Vector randomCoords(@NotNull final Vector loc, final float x, final float y, final float z,
+                                      final int radiusMin, final int radiusMax) {
 
-    /**
-     * Рассчет случайной точки.
-     *
-     * @param x         центральная координата.
-     * @param y         центральная координата.
-     * @param z         центральная координата.
-     * @param heading   направление объекта.
-     * @param radiusMin минимальный радиус рандома.
-     * @param radiusMax максимальный радиус рандома.
-     * @return новая точка.
-     */
-    public static <T extends GamePoint> T randomCoords(final T loc, final float x, final float y, final float z, final int heading, final int radiusMin, final int radiusMax) {
+        final ThreadLocalRandom current = ThreadLocalRandom.current();
 
         if (radiusMax == 0 || radiusMax < radiusMin) {
-            loc.setXYZH(x, y, z, heading);
+            loc.set(x, y, z);
             return loc;
         }
-
-        final ThreadLocalRandom current = ThreadLocalRandom.current();
 
         final int radius = current.nextInt(radiusMin, radiusMax);
         final float radians = AngleUtils.degreeToRadians(current.nextInt(0, 360));
@@ -251,7 +232,7 @@ public final class CoordsUtils {
         final float newX = calcX(x, radius, radians);
         final float newY = calcY(y, radius, radians);
 
-        loc.setXYZH(newX, newY, z, heading);
+        loc.set(newX, newY, z);
 
         return loc;
     }

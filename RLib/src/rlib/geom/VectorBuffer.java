@@ -1,14 +1,17 @@
 package rlib.geom;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Интерфейс для реализации контейнера векторов для промежуточных вычислений.
+ * The interface to implement a buffer with vectors.
  *
  * @author JavaSaBr
  */
 public interface VectorBuffer {
 
     /**
-     * @return выдача вектора для рассчетов.
+     * @return the next vector.
      */
-    public Vector getNextVector();
+    @NotNull
+    Vector nextVector();
 }

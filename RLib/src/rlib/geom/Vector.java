@@ -2,6 +2,9 @@ package rlib.geom;
 
 import static java.lang.Float.floatToIntBits;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.util.ExtMath;
 
 /**
@@ -9,7 +12,7 @@ import rlib.util.ExtMath;
  *
  * @author JavaSaBr
  */
-public final class Vector implements GamePoint {
+public final class Vector {
 
     /**
      * нулнвой вектор
@@ -49,7 +52,7 @@ public final class Vector implements GamePoint {
      * @param vector проверяемый вектор.
      * @return валиден ли вектор.
      */
-    public static boolean isValidVector(final Vector vector) {
+    public static boolean isValidVector(@Nullable final Vector vector) {
 
         if (vector == null) {
             return false;
@@ -62,20 +65,23 @@ public final class Vector implements GamePoint {
         return true;
     }
 
+    @NotNull
     public static Vector newInstance() {
         return new Vector();
     }
 
+    @NotNull
     public static Vector newInstance(final float x, final float y, final float z) {
         return new Vector(x, y, z);
     }
 
-    public static Vector newInstance(final float[] vals) {
+    @NotNull
+    public static Vector newInstance(@NotNull final float[] vals) {
         return new Vector(vals[0], vals[1], vals[2]);
     }
 
     /**
-     * Координаты.
+     * Coords.
      */
     protected float x;
     protected float y;
@@ -94,6 +100,7 @@ public final class Vector implements GamePoint {
     /**
      * Локальное добавление координат к вектору.
      */
+    @NotNull
     public Vector addLocal(final float addX, final float addY, final float addZ) {
         x += addX;
         y += addY;
@@ -104,7 +111,8 @@ public final class Vector implements GamePoint {
     /**
      * Локальное добавление указанного вектора.
      */
-    public Vector addLocal(final Vector vec) {
+    @NotNull
+    public Vector addLocal(@NotNull final Vector vec) {
         return addLocal(vec.x, vec.y, vec.z);
     }
 
@@ -117,13 +125,15 @@ public final class Vector implements GamePoint {
      * @param result вектор для хранения результата.
      * @return результирующий веткор.
      */
-    public Vector cross(final float otherX, final float otherY, final float otherZ, final Vector result) {
+    @NotNull
+    public Vector cross(final float otherX, final float otherY, final float otherZ, @NotNull final Vector result) {
 
         final float resX = y * otherZ - z * otherY;
         final float resY = z * otherX - x * otherZ;
         final float resZ = x * otherY - y * otherX;
 
-        result.setXYZ(resX, resY, resZ);
+        result.set(resX, resY, resZ);
+
         return result;
     }
 
@@ -133,7 +143,8 @@ public final class Vector implements GamePoint {
      * @param vector вектор, на который будет произведено произведение.
      * @return результирующий вектор.
      */
-    public Vector cross(final Vector vector) {
+    @NotNull
+    public Vector cross(@NotNull final Vector vector) {
         return cross(vector, newInstance());
     }
 
@@ -144,7 +155,8 @@ public final class Vector implements GamePoint {
      * @param result вектор для хранения результата.
      * @return результирующий веткор.
      */
-    public Vector cross(final Vector vector, final Vector result) {
+    @NotNull
+    public Vector cross(@NotNull final Vector vector, @NotNull final Vector result) {
         return cross(vector.x, vector.y, vector.z, result);
     }
 
@@ -156,6 +168,7 @@ public final class Vector implements GamePoint {
      * @param otherZ координата вектора, с которым нужно произвести произведение.
      * @return этот же вектор.
      */
+    @NotNull
     public Vector crossLocal(final float otherX, final float otherY, final float otherZ) {
 
         final float tempx = y * otherZ - z * otherY;
@@ -174,7 +187,8 @@ public final class Vector implements GamePoint {
      * @param vector вектор, с которым нужно произвести произведение.
      * @return этот же вектор.
      */
-    public Vector crossLocal(final Vector vector) {
+    @NotNull
+    public Vector crossLocal(@NotNull final Vector vector) {
         return crossLocal(vector.x, vector.y, vector.z);
     }
 
@@ -184,7 +198,7 @@ public final class Vector implements GamePoint {
      * @param vector целевой вектор.
      * @return расстояние до вектора.
      */
-    public float distance(final Vector vector) {
+    public float distance(@NotNull final Vector vector) {
         return ExtMath.sqrt(distanceSquared(vector));
     }
 
@@ -211,7 +225,7 @@ public final class Vector implements GamePoint {
      * @param vector целевой вектор.
      * @return квадрат расстояния до вектора.
      */
-    public float distanceSquared(final Vector vector) {
+    public float distanceSquared(@NotNull final Vector vector) {
         return distanceSquared(vector.x, vector.y, vector.z);
     }
 
@@ -221,7 +235,7 @@ public final class Vector implements GamePoint {
      * @param vector вектор, на который умножаем.
      * @return результат произведения.
      */
-    public float dot(final Vector vector) {
+    public float dot(@NotNull final Vector vector) {
         return x * vector.x + y * vector.y + z * vector.z;
     }
 
@@ -249,39 +263,31 @@ public final class Vector implements GamePoint {
         return true;
     }
 
-    @Override
-    public int getHeading() {
-        return 0;
-    }
-
-    @Override
     public float getX() {
         return x;
     }
 
-    @Override
+    @NotNull
     public Vector setX(final float x) {
         this.x = x;
         return this;
     }
 
-    @Override
     public float getY() {
         return y;
     }
 
-    @Override
+    @NotNull
     public Vector setY(final float y) {
         this.y = y;
         return this;
     }
 
-    @Override
     public float getZ() {
         return z;
     }
 
-    @Override
+    @NotNull
     public Vector setZ(final float z) {
         this.z = z;
         return this;
@@ -314,6 +320,7 @@ public final class Vector implements GamePoint {
     /**
      * Локальное умножение вектора.
      */
+    @NotNull
     public Vector multLocal(final float x, final float y, final float z) {
         this.x *= x;
         this.y *= y;
@@ -324,13 +331,15 @@ public final class Vector implements GamePoint {
     /**
      * Локальное умножение вектора.
      */
-    public Vector multLocal(final Vector vector) {
+    @NotNull
+    public Vector multLocal(@NotNull final Vector vector) {
         return multLocal(vector.getX(), vector.getY(), vector.getZ());
     }
 
     /**
      * Получение противоположного вектора.
      */
+    @NotNull
     public Vector negate() {
         return newInstance(-getX(), -getY(), -getZ());
     }
@@ -338,6 +347,7 @@ public final class Vector implements GamePoint {
     /**
      * Изменение вектора на противоположное.
      */
+    @NotNull
     public Vector negateLocal() {
         x = -x;
         y = -y;
@@ -348,6 +358,7 @@ public final class Vector implements GamePoint {
     /**
      * Конвектирование вектора в еденичный.
      */
+    @NotNull
     public Vector normalize() {
 
         float length = x * x + y * y + z * z;
@@ -363,6 +374,7 @@ public final class Vector implements GamePoint {
     /**
      * Конвектирование вектора в еденичный.
      */
+    @NotNull
     public Vector normalizeLocal() {
 
         float length = x * x + y * y + z * z;
@@ -377,25 +389,16 @@ public final class Vector implements GamePoint {
         return this;
     }
 
-    public Vector set(final Vector vector) {
-        return setXYZ(vector.getX(), vector.getY(), vector.getZ());
+    @NotNull
+    public Vector set(@NotNull final Vector vector) {
+        return set(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    @Override
-    public GamePoint setHeading(final int heading) {
-        return this;
-    }
-
-    @Override
-    public Vector setXYZ(final float x, final float y, final float z) {
+    @NotNull
+    public Vector set(final float x, final float y, final float z) {
         this.x = x;
         this.y = y;
         this.z = z;
-        return this;
-    }
-
-    @Override
-    public GamePoint setXYZH(final float x, final float y, final float z, final int heading) {
         return this;
     }
 
@@ -406,7 +409,8 @@ public final class Vector implements GamePoint {
      * @param result результат вычитания.
      * @return разность между текущим и указанным вектором.
      */
-    public Vector subtract(final Vector vector, final Vector result) {
+    @NotNull
+    public Vector subtract(@NotNull final Vector vector, @NotNull final Vector result) {
         result.x = x - vector.x;
         result.y = y - vector.y;
         result.z = z - vector.z;
@@ -421,6 +425,7 @@ public final class Vector implements GamePoint {
      * @param subZ вычитаемый Z.
      * @return итоговый вектор.
      */
+    @NotNull
     public Vector subtractLocal(final float subX, final float subY, final float subZ) {
         x -= subX;
         y -= subY;
@@ -434,7 +439,8 @@ public final class Vector implements GamePoint {
      * @param vector вычитаемый вектор.
      * @return итоговый вектор.
      */
-    public Vector subtractLocal(final Vector vector) {
+    @NotNull
+    public Vector subtractLocal(@NotNull final Vector vector) {
         return subtractLocal(vector.x, vector.y, vector.z);
     }
 

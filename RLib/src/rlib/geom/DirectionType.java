@@ -1,12 +1,15 @@
 package rlib.geom;
 
 /**
- * Перечисление типов направлений.
+ * The list od direction types.
  *
  * @author JavaSaBr
  */
 public enum DirectionType {
     LEFT,
     UP,
-    DIRECTION,
+    FRONT,
+    RIGHT,
+    DOWN,
+    BEHIND;
 }

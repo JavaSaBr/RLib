@@ -1,24 +1,43 @@
 package rlib.graphics.color;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 
 /**
+ * THe implementation of a color class.
+ *
  * @author JavaSaBr
  */
 public final class ColorRGBA implements Cloneable, Serializable {
 
     private static final long serialVersionUID = -3342702659372723983L;
 
+    /**
+     * The red channel.
+     */
     public float r;
+
+    /**
+     * The green channel.
+     */
     public float g;
+
+    /**
+     * The blue channel.
+     */
     public float b;
+
+    /**
+     * The alpha channel.
+     */
     public float a;
 
     public ColorRGBA() {
         r = g = b = a = 1.0f;
     }
 
-    public ColorRGBA(final ColorRGBA rgba) {
+    public ColorRGBA(@NotNull final ColorRGBA rgba) {
         this.a = rgba.a;
         this.r = rgba.r;
         this.g = rgba.g;
@@ -105,18 +124,30 @@ public final class ColorRGBA implements Cloneable, Serializable {
         a = ((byte) color & 0xFF) / 255f;
     }
 
+    /**
+     * @return the alpha channel.
+     */
     public float getAlpha() {
         return a;
     }
 
+    /**
+     * @return the blue channel.
+     */
     public float getBlue() {
         return b;
     }
 
+    /**
+     * @return the green channel.
+     */
     public float getGreen() {
         return g;
     }
 
+    /**
+     * @return the red channel.
+     */
     public float getRed() {
         return r;
     }
@@ -131,14 +162,14 @@ public final class ColorRGBA implements Cloneable, Serializable {
         return hash;
     }
 
-    public void interpolate(final ColorRGBA beginColor, final ColorRGBA finalColor, final float changeAmnt) {
+    public void interpolate(@NotNull final ColorRGBA beginColor, @NotNull final ColorRGBA finalColor, final float changeAmnt) {
         this.r = (1 - changeAmnt) * beginColor.r + changeAmnt * finalColor.r;
         this.g = (1 - changeAmnt) * beginColor.g + changeAmnt * finalColor.g;
         this.b = (1 - changeAmnt) * beginColor.b + changeAmnt * finalColor.b;
         this.a = (1 - changeAmnt) * beginColor.a + changeAmnt * finalColor.a;
     }
 
-    public void interpolate(final ColorRGBA finalColor, final float changeAmnt) {
+    public void interpolate(@NotNull final ColorRGBA finalColor, final float changeAmnt) {
         this.r = (1 - changeAmnt) * this.r + changeAmnt * finalColor.r;
         this.g = (1 - changeAmnt) * this.g + changeAmnt * finalColor.g;
         this.b = (1 - changeAmnt) * this.b + changeAmnt * finalColor.b;
@@ -156,10 +187,10 @@ public final class ColorRGBA implements Cloneable, Serializable {
     @Override
     public String toString() {
         return "ColorRGBA{" +
-                "r=" + r +
-                ", g=" + g +
-                ", b=" + b +
-                ", a=" + a +
+                "red=" + r +
+                ", green=" + g +
+                ", blue=" + b +
+                ", alpha=" + a +
                 '}';
     }
 }

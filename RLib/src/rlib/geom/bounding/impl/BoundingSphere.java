@@ -1,11 +1,11 @@
 package rlib.geom.bounding.impl;
 
+import static java.lang.Math.abs;
+
 import rlib.geom.Vector;
 import rlib.geom.VectorBuffer;
 import rlib.geom.bounding.Bounding;
 import rlib.geom.bounding.BoundingType;
-
-import static java.lang.Math.abs;
 
 /**
  * Реализация формы сферы.
@@ -52,7 +52,7 @@ public class BoundingSphere extends AbstractBounding {
     @Override
     public Vector getResultCenter(final VectorBuffer buffer) {
 
-        final Vector vector = buffer.getNextVector();
+        final Vector vector = buffer.nextVector();
         vector.set(center);
 
         if (offset == Vector.ZERO) {
@@ -108,7 +108,7 @@ public class BoundingSphere extends AbstractBounding {
     @Override
     public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
 
-        final Vector diff = buffer.getNextVector();
+        final Vector diff = buffer.nextVector();
         diff.set(start).subtractLocal(getResultCenter(buffer));
 
         final float a = start.dot(diff) - squareRadius;

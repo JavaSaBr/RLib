@@ -33,7 +33,8 @@ public final class AngleUtils {
      * @param targetY целевая координата.
      * @return нужный разворот.
      */
-    public static int calcHeadingTo(final float x, final float y, final int heading, final float targetX, final float targetY) {
+    public static int calcHeadingTo(final float x, final float y, final int heading,
+                                    final float targetX, final float targetY) {
 
         int newHeading = calcHeading(x, y, targetX, targetY);
 
@@ -119,7 +120,8 @@ public final class AngleUtils {
      * @param width   ширина области.
      * @return входит ли.
      */
-    public static boolean isInDegree(final float x, final float y, final int heading, final float targetX, final float targetY, final int width) {
+    public static boolean isInDegree(final float x, final float y, final int heading,
+                                     final float targetX, final float targetY, final int width) {
 
         int angle = (int) AngleUtils.headingToDegree(calcHeadingTo(x, y, heading, targetX, targetY));
         final int degree = (int) headingToDegree(heading);
