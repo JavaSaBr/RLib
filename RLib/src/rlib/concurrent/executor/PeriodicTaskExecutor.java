@@ -1,25 +1,27 @@
 package rlib.concurrent.executor;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.concurrent.task.PeriodicTask;
 
 /**
- * Интерфейс для реализации периодического исполнителя задач.
+ * The interface to implement a periodic task executor.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface PeriodicTaskExecutor<T extends PeriodicTask<L>, L> {
 
     /**
-     * Добавить периодическую задачу на обновление.
+     * Add a periodic task to execute.
      *
-     * @param task новая периодическая задача.
+     * @param task the periodic task.
      */
-    public void addTask(T task);
+    void addTask(@NotNull T task);
 
     /**
-     * Удалить периодическую задачу из обновлений.
+     * Remove a periodic task from executing.
      *
-     * @param task периодическая задача.
+     * @param task the periodic task.
      */
-    public void removeTask(T task);
+    void removeTask(@NotNull T task);
 }

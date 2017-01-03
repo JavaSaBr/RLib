@@ -1,22 +1,22 @@
 package rlib.network.packet.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.ByteBuffer;
 
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.util.pools.Reusable;
 
 /**
- * Баовая реализация переиспользуемого отправляемого сетевого пакета. Реализация переипользуемости
- * опирается на атомарный счетчик, который подсчитывает скольким клиентам его нужно отправить,
- * скольким он отправил, и позволяет переопределить логику через {@link #completeImpl()}, в которой
- * можно обработать завершения работы этого пакета после отправки всем необходимым клиентам данных.
+ * The reusable implementation of the {@link AbstractSendablePacket} using the counter for
+ * controlling the life cycle of this packet.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractReusableSendablePacket<C> extends AbstractSendablePacket<C> implements Reusable {
 
     /**
-     * Счетчик добавлений на отправку экземпляра пакета.
+     * Counter with the number of pending sendings.
      */
     protected final AtomicInteger counter;
 
@@ -25,7 +25,7 @@ public abstract class AbstractReusableSendablePacket<C> extends AbstractSendable
     }
 
     /**
-     * Обработка завершение одной отправки пакета.
+     * Handles send completion.
      */
     public void complete() {
         if (counter.decrementAndGet() == 0) {
@@ -34,7 +34,7 @@ public abstract class AbstractReusableSendablePacket<C> extends AbstractSendable
     }
 
     /**
-     * Обработка завершения всех отправок этого пакета.
+     * Handles send completion.
      */
     protected abstract void completeImpl();
 
@@ -74,7 +74,7 @@ public abstract class AbstractReusableSendablePacket<C> extends AbstractSendable
     }
 
     @Override
-    public void write(final ByteBuffer buffer) {
+    public void write(@NotNull final ByteBuffer buffer) {
 
         if (counter.get() < 1) {
             LOGGER.warning(this, "write finished packet " + this + " on thread " + Thread.currentThread().getName());

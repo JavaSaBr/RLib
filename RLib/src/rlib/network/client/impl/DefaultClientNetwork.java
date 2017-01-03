@@ -14,7 +14,7 @@ import rlib.network.impl.AbstractAsynchronousNetwork;
 /**
  * Базовая модель асинхронной клиентской сети.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class DefaultClientNetwork extends AbstractAsynchronousNetwork implements ClientNetwork {
 

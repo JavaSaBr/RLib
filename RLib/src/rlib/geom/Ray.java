@@ -1,49 +1,55 @@
 package rlib.geom;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 import rlib.util.pools.Reusable;
 
 /**
- * Реализация модели луча.
+ * The implementation of a ray.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class Ray implements Reusable {
 
     /**
-     * Стартовая точка луча.
+     * The start point.
      */
     protected Vector start;
 
     /**
-     * Вектор направления луча.
+     * The direction of a ray.
      */
     protected Vector direction;
 
     /**
-     * @return точка направления луча.
+     * @return the direction of a ray.
      */
+    @NotNull
     public final Vector getDirection() {
-        return direction;
+        return Objects.requireNonNull(direction);
     }
 
     /**
-     * @param direction точка направления луча.
+     * @param direction the direction of a ray.
      */
-    public final void setDirection(final Vector direction) {
+    public final void setDirection(@NotNull final Vector direction) {
         this.direction = direction;
     }
 
     /**
-     * @return start точка старта луча.
+     * @return the start point.
      */
+    @NotNull
     public final Vector getStart() {
-        return start;
+        return Objects.requireNonNull(start);
     }
 
     /**
-     * @param start точка старта луча.
+     * @param start the start point.
      */
-    public final void setStart(final Vector start) {
+    public final void setStart(@NotNull final Vector start) {
         this.start = start;
     }
 

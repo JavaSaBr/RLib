@@ -1,10 +1,12 @@
 package rlib.function;
 
 /**
- * Функциональный интерфейс-потребитель на 2 аргумента.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface BooleanFloatConsumer {
 
-    public void accept(boolean first, float second);
+    void accept(boolean first, float second);
 }

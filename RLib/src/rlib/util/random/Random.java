@@ -3,7 +3,7 @@ package rlib.util.random;
 /**
  * Интерфейс для реализации рандоминайзера.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Random {
 

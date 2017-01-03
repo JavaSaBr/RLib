@@ -1,9 +1,9 @@
 package rlib.util.dictionary;
 
 /**
- * Интерфейс для реализации конкуретного словаря с объектным ключем.
+ * The interface with methods for supporting threadsafe for the {@link ObjectDictionary}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>, ConcurrentDictionary<K, V> {
 

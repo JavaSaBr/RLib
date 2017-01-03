@@ -3,9 +3,9 @@ package rlib.concurrent.atomic;
 import rlib.util.pools.Reusable;
 
 /**
- * Дополнение к стандартной реализации.
+ * The atomic integer with additional methods.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class AtomicInteger extends java.util.concurrent.atomic.AtomicInteger implements Reusable {
 
@@ -19,16 +19,22 @@ public final class AtomicInteger extends java.util.concurrent.atomic.AtomicInteg
     }
 
     /**
-     * Атамарная операция по отниманию числа.
+     * Atomically decrements by delta the current value.
      *
-     * @param delta разница между текущим и новым значением.
-     * @return новое значение.
+     * @param delta the delta.
+     * @return the result value.
      */
     public final int subAndGet(final int delta) {
-        while (true) {
-            final int current = get();
-            final int next = current - delta;
-            if (compareAndSet(current, next)) return next;
+
+        int current;
+        int next;
+
+        do {
+            current = get();
+            next = current - delta;
         }
+        while (!compareAndSet(current, next));
+
+        return next;
     }
 }

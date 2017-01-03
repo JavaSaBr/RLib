@@ -12,7 +12,7 @@ import rlib.logging.LoggerManager;
 /**
  * Базовая реализация формы из точек.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractBounding implements Bounding {
 

@@ -1,9 +1,9 @@
 package rlib.util.dictionary;
 
 /**
- * Тип ключа в таблице.
+ * The type of the {@link Dictionary}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class IntKey {
 

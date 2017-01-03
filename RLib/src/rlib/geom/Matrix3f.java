@@ -1,27 +1,33 @@
 package rlib.geom;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.util.pools.Reusable;
 
 /**
- * Модель матрицы 3x3.
+ * The implementation of float matrix 3x3.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class Matrix3f implements Reusable {
 
     public static final Matrix3f ZERO = new Matrix3f(0, 0, 0, 0, 0, 0, 0, 0, 0);
     public static final Matrix3f IDENTITY = new Matrix3f();
 
+    @NotNull
     public static Matrix3f newInstance() {
         return new Matrix3f();
     }
 
-    public static Matrix3f newInstance(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0, final float val_2_1, final float val_2_2) {
+    @NotNull
+    public static Matrix3f newInstance(final float val_0_0, final float val_0_1, final float val_0_2,
+                                       final float val_1_0, final float val_1_1, final float val_1_2,
+                                       final float val_2_0, final float val_2_1, final float val_2_2) {
         return new Matrix3f(val_0_0, val_0_1, val_0_2, val_1_0, val_1_1, val_1_2, val_2_0, val_2_1, val_2_2);
     }
 
     /**
-     * Значения матрицы.
+     * Values.
      */
     protected float val_0_0, val_0_1, val_0_2;
     protected float val_1_0, val_1_1, val_1_2;
@@ -32,7 +38,9 @@ public final class Matrix3f implements Reusable {
         val_0_0 = val_1_1 = val_2_2 = 1;
     }
 
-    private Matrix3f(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0, final float val_2_1, final float val_2_2) {
+    private Matrix3f(final float val_0_0, final float val_0_1, final float val_0_2,
+                     final float val_1_0, final float val_1_1, final float val_1_2,
+                     final float val_2_0, final float val_2_1, final float val_2_2) {
         this.val_0_0 = val_0_0;
         this.val_0_1 = val_0_1;
         this.val_0_2 = val_0_2;
@@ -45,7 +53,7 @@ public final class Matrix3f implements Reusable {
     }
 
     /**
-     * Приведение всех значений матрицы в абсолютные.
+     * Change all values to absolute.
      */
     public void absoluteLocal() {
         val_0_0 = Math.abs(val_0_0);
@@ -60,13 +68,14 @@ public final class Matrix3f implements Reusable {
     }
 
     /**
-     * Приминение разворота матрицы на вектор.
+     * Multiply a vector by this matrix.
      *
-     * @param vector изначальный вектор.
-     * @param result контейнер результата.
-     * @return результат приминения матрицы.
+     * @param vector the source vector.
+     * @param result the result vector.
+     * @return the result.
      */
-    public Vector mult(final Vector vector, final Vector result) {
+    @NotNull
+    public Vector mult(@NotNull final Vector vector, @NotNull final Vector result) {
 
         final float x = vector.x;
         final float y = vector.y;
@@ -79,7 +88,12 @@ public final class Matrix3f implements Reusable {
         return result;
     }
 
-    public void set(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0, final float val_2_1, final float val_2_2) {
+    /**
+     * Set all values to this matrix.
+     */
+    public void set(final float val_0_0, final float val_0_1, final float val_0_2,
+                    final float val_1_0, final float val_1_1, final float val_1_2,
+                    final float val_2_0, final float val_2_1, final float val_2_2) {
         this.val_0_0 = val_0_0;
         this.val_0_1 = val_0_1;
         this.val_0_2 = val_0_2;
@@ -92,12 +106,13 @@ public final class Matrix3f implements Reusable {
     }
 
     /**
-     * Формирование матрицы в соответствии с указанным разворотом.
+     * Set values from a rotation.
      *
-     * @param rotation целевой разворот.
-     * @return соответствующая матрица.
+     * @param rotation the rotation.
+     * @return this updated matrix.
      */
-    public Matrix3f set(final Rotation rotation) {
+    @NotNull
+    public Matrix3f set(@NotNull final Rotation rotation) {
         return rotation.toRotationMatrix(this);
     }
 

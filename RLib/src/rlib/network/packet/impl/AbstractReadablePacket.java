@@ -1,54 +1,109 @@
 package rlib.network.packet.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 
 import rlib.network.packet.ReadablePacket;
 import rlib.util.Util;
 import rlib.util.pools.Reusable;
 
+import static java.util.Objects.requireNonNull;
+
 /**
- * Базовая реализация читаемого пакета.
+ * The base implementation of the readable packet.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implements ReadablePacket<C>, Reusable {
+public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implements ReadablePacket, Reusable {
 
     /**
-     * Буффер данных читаемого пакета.
+     * The current buffer for reading.
      */
     protected volatile ByteBuffer buffer;
 
+    /**
+     * The memory barrier.
+     */
+    protected volatile int barrier;
+
+    /**
+     * The sink for the memory barrier.
+     */
+    protected int barrierSink;
+
     @Override
     public final int getAvailableBytes() {
-        return buffer.remaining();
+        return getBuffer().remaining();
     }
 
+    @NotNull
     @Override
     public ByteBuffer getBuffer() {
-        return buffer;
+        final ByteBuffer toReturn = buffer;
+        requireNonNull(toReturn);
+        return toReturn;
     }
 
     @Override
-    public void setBuffer(final ByteBuffer buffer) {
+    public void setBuffer(@Nullable final ByteBuffer buffer) {
         this.buffer = buffer;
     }
 
     @Override
     public final boolean read() {
-
+        notifyStartedPreparing();
         try {
             readImpl();
             return true;
         } catch (final Exception e) {
-            LOGGER.warning(this, e);
-            LOGGER.warning(this, "buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.limit()));
+            handleException(e);
+        } finally {
+            notifyFinishedPreparing();
         }
-
         return false;
     }
 
+    protected void handleException(@NotNull final Exception e) {
+        final ByteBuffer toPrintBuffer = buffer;
+        LOGGER.warning(this, e);
+        if (toPrintBuffer == null) return;
+        LOGGER.warning(this, "buffer " + toPrintBuffer + "\n" + Util.hexdump(toPrintBuffer.array(), toPrintBuffer.limit()));
+    }
+
     /**
-     * Процесс чтения пакета.
+     * The process of reading the data for this packet.
      */
-    protected abstract void readImpl();
+    protected void readImpl() {
+        readImpl(getBuffer());
+    }
+
+    /**
+     * The process of reading the data for this packet.
+     *
+     * @param buffer the buffer for reading.
+     */
+    protected void readImpl(@NotNull final ByteBuffer buffer) {
+    }
+
+    @Override
+    public void notifyStartedPreparing() {
+        barrierSink = barrier;
+    }
+
+    @Override
+    public void notifyFinishedPreparing() {
+        barrier = barrierSink + 1;
+    }
+
+    @Override
+    public void notifyStartedReading() {
+        barrierSink = barrier;
+    }
+
+    @Override
+    public void notifyFinishedReading() {
+        barrier = barrierSink + 1;
+    }
 }

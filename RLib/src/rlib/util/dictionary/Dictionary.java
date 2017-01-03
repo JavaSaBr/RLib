@@ -1,123 +1,120 @@
 package rlib.util.dictionary;
 
-import java.util.function.BiConsumer;
+import static rlib.util.array.ArrayFactory.newArray;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Function;
 
 import rlib.util.array.Array;
-import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Reusable;
 
 /**
- * Интерфей для реализации словаря.
+ * The interface for implementing a key-value dictionary.
  *
- * @author Ronn
- * @created 27.02.2012
+ * @author JavaSaBr
  */
 public interface Dictionary<K, V> extends Iterable<V>, Reusable {
 
     /**
-     * Размер словаря по умолчанию.
+     * Replace the all values using the function.
      */
-    public static final int DEFAULT_INITIAL_CAPACITY = 16;
-
-    /**
-     * Максимальный размер словаря.
-     */
-    public static final int MAXIMUM_CAPACITY = 1 << 30;
-
-    /**
-     * Фактор загружености словаря, для определения момента ее расширения.
-     */
-    public static final float DEFAULT_LOAD_FACTOR = 0.75f;
-
-    /**
-     * Обработать значения и ключи в словаре.
-     */
-    public default void accept(final BiConsumer<? super K, ? super V> consumer) {
+    default void apply(@NotNull final Function<? super V, V> function) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Применить функцию к словарю для обновления значений.
+     * Clears this dictionary.
      */
-    public default void apply(final Function<? super V, V> function) {
+    default void clear() {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Очищает словарь
-     */
-    public default void clear() {
-        if (size() > 0) {
-            clear();
-        }
-    }
-
-    /**
-     * Проверка наличия указанного значения в словаре.
+     * Returns <tt>true</tt> if this dictionary maps one or more keys to the specified value.  More
+     * formally, returns <tt>true</tt> if and only if this dictionary contains at least one mapping
+     * to a value <tt>v</tt> such that <tt>(value==null ? v==null : value.equals(v))</tt>.  This
+     * operation will probably require time linear in the dictionary size for most implementations
+     * of the <tt>Dictionary</tt> interface.
      *
-     * @param value проверяемое значение.
+     * @param value value whose presence in this dictionary is to be tested.
+     * @return <tt>true</tt> if this dictionary maps one or more keys to the specified value.
      */
-    public default boolean containsValue(final V value) {
-        throw new RuntimeException("not supported.");
+    default boolean containsValue(@NotNull final V value) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public default void free() {
+    default void free() {
         clear();
     }
 
     /**
-     * @return тип словаря по возможным ключам.
+     * @return the type of the dictionary.
      */
-    public default DictionaryType getType() {
-        throw new RuntimeException("not supported.");
+    @NotNull
+    default DictionaryType getType() {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * @return пустой ли словарь.
+     * Returns <tt>true</tt> if this dictionary contains no key-value mappings.
+     *
+     * @return <tt>true</tt> if this dictionary contains no key-value mappings
      */
-    public default boolean isEmpty() {
+    default boolean isEmpty() {
         return size() == 0;
     }
 
     /**
-     * Перенос данных в указанный словарь.
+     * Moves all data from this dictionary to the dictionary.
      *
-     * @param dictionary новый контейнер данных.
+     * @param dictionary the dictionary for moving data.
      */
-    public default void moveTo(final Dictionary<? super K, ? super V> dictionary) {
+    default void moveTo(@NotNull final Dictionary<? super K, ? super V> dictionary) {
         if (getType() != dictionary.getType()) {
             throw new IllegalArgumentException("incorrect table type.");
         }
     }
 
     /**
-     * Вставка в всловарь данных из другого словаря.
+     * Puts all data from the dictionary to this dictionary.
      *
-     * @param dictionary вставляемый словарь.
+     * @param dictionary the dictionary with new data.
      */
-    public default void put(final Dictionary<K, V> dictionary) {
+    default void put(@NotNull final Dictionary<K, V> dictionary) {
         dictionary.moveTo(this);
     }
 
     /**
-     * @return кол-во значений в словаре.
+     * Returns the number of key-value mappings in this dictionary.  If the dictionary contains more
+     * than <tt>Integer.MAX_VALUE</tt> elements, returns <tt>Integer.MAX_VALUE</tt>.
+     *
+     * @return the number of key-value mappings in this dictionary.
      */
-    public default int size() {
-        return 0;
+    default int size() {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * @param container контейнер значений.
-     * @return итоговый список всех значений.
+     * Gets all values from this dictionary.
+     *
+     * @param container the container for storing the values.
+     * @return the container with all values from this dictionary.
      */
-    public default Array<V> values(final Array<V> container) {
-        throw new RuntimeException("not supported.");
+    @NotNull
+    default Array<V> values(@NotNull final Array<V> container) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * @return итоговый список всех значений.
+     * Gets all values from this dictionary.
+     *
+     * @param type the type of values in this dictionary.
+     * @return the array with all values from this dictionary.
      */
-    public default Array<V> values(final Class<V> type) {
-        return values(ArrayFactory.newArray(type, size()));
+    @NotNull
+    default Array<V> values(@NotNull final Class<V> type) {
+        return values(newArray(type, size()));
     }
 }

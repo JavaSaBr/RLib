@@ -4,40 +4,40 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 
 /**
- * Реализация итератора динамического массива.
+ * The implementation of the unsafeArray iterator.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ArrayIteratorImpl<E> implements ArrayIterator<E> {
 
     /**
-     * Итерируемая коллекция.
+     * The array for iteration.
      */
-    private final Array<E> collection;
+    private final Array<E> array;
 
     /**
-     * Итерируемый массив.
+     * The unsafe array for directly access.
      */
-    private final E[] array;
+    private final E[] unsafeArray;
 
     /**
-     * Текущая позиция в массиве.
+     * The current position in the array.
      */
     private int ordinal;
 
-    public ArrayIteratorImpl(final Array<E> collection) {
-        this.collection = collection;
-        this.array = collection.array();
+    public ArrayIteratorImpl(final Array<E> array) {
+        this.array = array;
+        this.unsafeArray = array.array();
     }
 
     @Override
     public void fastRemove() {
-        collection.fastRemove(--ordinal);
+        array.fastRemove(--ordinal);
     }
 
     @Override
     public boolean hasNext() {
-        return ordinal < collection.size();
+        return ordinal < array.size();
     }
 
     @Override
@@ -47,16 +47,19 @@ public class ArrayIteratorImpl<E> implements ArrayIterator<E> {
 
     @Override
     public E next() {
-        return ordinal >= array.length ? null : array[ordinal++];
+        return ordinal >= unsafeArray.length ? null : unsafeArray[ordinal++];
     }
 
     @Override
     public void remove() {
-        collection.fastRemove(--ordinal);
+        array.slowRemove(--ordinal);
     }
 
     @Override
-    public void slowRemove() {
-        collection.fastRemove(--ordinal);
+    public String toString() {
+        return "ArrayIteratorImpl{" +
+                "array=" + array +
+                ", ordinal=" + ordinal +
+                '}';
     }
 }

@@ -1,5 +1,9 @@
 package rlib.network.impl;
 
+import static java.nio.ByteBuffer.allocate;
+import static java.nio.ByteBuffer.allocateDirect;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
+
 import java.nio.ByteBuffer;
 import java.util.function.Function;
 
@@ -10,14 +14,10 @@ import rlib.network.NetworkConfig;
 import rlib.util.pools.Pool;
 import rlib.util.pools.PoolFactory;
 
-import static java.nio.ByteBuffer.allocate;
-import static java.nio.ByteBuffer.allocateDirect;
-import static java.nio.ByteOrder.LITTLE_ENDIAN;
-
 /**
  * Базовая реализация асинхронной сети.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork {
 
@@ -40,8 +40,8 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
 
     protected AbstractAsynchronousNetwork(final NetworkConfig config) {
         this.config = config;
-        this.readBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
-        this.writeBufferPool = PoolFactory.newAtomicPool(ByteBuffer.class);
+        this.readBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
+        this.writeBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
     }
 
     @Override

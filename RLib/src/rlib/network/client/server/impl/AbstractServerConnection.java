@@ -1,5 +1,8 @@
 package rlib.network.client.server.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.channels.AsynchronousSocketChannel;
 
 import rlib.logging.Logger;
@@ -14,10 +17,9 @@ import rlib.network.packet.SendablePacket;
 /**
  * Базовая модель асинхронного конекта к серверу.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-@SuppressWarnings("rawtypes")
-public abstract class AbstractServerConnection<T extends Server, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {
+public abstract class AbstractServerConnection<T extends Server, R extends ReadablePacket, S extends SendablePacket> extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ServerConnection.class);
 
@@ -26,7 +28,7 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reada
      */
     protected T server;
 
-    public AbstractServerConnection(final ClientNetwork network, final AsynchronousSocketChannel channel, final Class<S> sendableType) {
+    public AbstractServerConnection(@NotNull final ClientNetwork network, @NotNull final AsynchronousSocketChannel channel, @NotNull final Class<S> sendableType) {
         super(network, channel, sendableType);
     }
 
@@ -48,12 +50,12 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reada
     }
 
     @Override
-    public void setServer(final T server) {
+    public void setServer(@Nullable final T server) {
         this.server = server;
     }
 
     @Override
-    protected void completed(final S packet) {
+    protected void completed(@NotNull final S packet) {
     }
 
     @Override

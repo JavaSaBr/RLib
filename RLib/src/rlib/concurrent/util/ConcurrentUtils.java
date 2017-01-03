@@ -1,5 +1,8 @@
 package rlib.concurrent.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Function;
 
 import rlib.function.ObjectIntFunction;
@@ -9,34 +12,34 @@ import rlib.logging.LoggerManager;
 import rlib.util.Lockable;
 
 /**
- * Набор утильных методов для работы в сфере кокнуренции.
+ * THe utility class with methods to work in concurrent cases.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ConcurrentUtils {
 
     private static final Logger LOGGER = LoggerManager.getLogger(ConcurrentUtils.class);
 
     /**
-     * Отпускание ожидающих потоков на этом объекте.
+     * Notify all threads.
      */
-    public static void notifyAll(final Object object) {
+    public static void notifyAll(@NotNull final Object object) {
         synchronized (object) {
             object.notifyAll();
         }
     }
 
     /**
-     * Отпускание ожидающих потоков на этом объекте.
+     * Notify all threads from a synchronized block.
      */
-    public static void notifyAllInSynchronize(final Object object) {
+    public static void notifyAllInSynchronize(@NotNull final Object object) {
         object.notifyAll();
     }
 
     /**
-     * Отпускание ожидающих потоков на этом объекте и становится самому в ожидание.
+     * Notify all threads and wait.
      */
-    public static void notifyAndWait(final Object object) {
+    public static void notifyAndWait(@NotNull final Object object) {
         synchronized (object) {
             notifyAllInSynchronize(object);
             waitInSynchronize(object);
@@ -44,9 +47,9 @@ public final class ConcurrentUtils {
     }
 
     /**
-     * Ождивать на этом объекте.
+     * Wait.
      */
-    public static void wait(final Object object) {
+    public static void wait(@NotNull final Object object) {
         synchronized (object) {
             try {
                 object.wait();
@@ -57,9 +60,12 @@ public final class ConcurrentUtils {
     }
 
     /**
-     * Ожидать определнное время на этом объекте.
+     * Wait.
+     *
+     * @param object the object.
+     * @param time   the time in ms.
      */
-    public static void wait(final Object object, final long time) {
+    public static void wait(@NotNull final Object object, final long time) {
         synchronized (object) {
             try {
                 object.wait(time);
@@ -70,9 +76,9 @@ public final class ConcurrentUtils {
     }
 
     /**
-     * Ождивать на этом объекте.
+     * Wait from a synchronized block.
      */
-    public static void waitInSynchronize(final Object object) {
+    public static void waitInSynchronize(@NotNull final Object object) {
         try {
             object.wait();
         } catch (final InterruptedException e) {
@@ -81,9 +87,12 @@ public final class ConcurrentUtils {
     }
 
     /**
-     * Ождивать на этом объекте.
+     * Wait from a synchronized block.
+     *
+     * @param object the object.
+     * @param time   the time in ms.
      */
-    public static void waitInSynchronize(final Object object, long time) {
+    public static void waitInSynchronize(@NotNull final Object object, long time) {
         try {
             object.wait(time);
         } catch (final InterruptedException e) {
@@ -92,13 +101,14 @@ public final class ConcurrentUtils {
     }
 
     /**
-     * Вытащить что-то из объекта в синхронизированном состоянии.
+     * Apply a function in locked block.
      *
-     * @param sync     объект поддерживающий синхронизацию.
-     * @param function функция вытаскивания результата.
-     * @return результатработы функции.
+     * @param sync     the synchronizer.
+     * @param function the function.
+     * @return the result from the function.
      */
-    public static <T extends Lockable, R> R getInSynchronized(final T sync, final Function<T, R> function) {
+    @Nullable
+    public static <T extends Lockable, R> R get(@NotNull final T sync, @NotNull final Function<T, R> function) {
         sync.lock();
         try {
             return function.apply(sync);
@@ -108,14 +118,15 @@ public final class ConcurrentUtils {
     }
 
     /**
-     * Вытащить что-то из объекта в синхронизированном состоянии.
+     * Apply a function in locked block.
      *
-     * @param sync     объект поддерживающий синхронизацию.
-     * @param argument дополнительный числовой аргумент.
-     * @param function функция вытаскивания результата.
-     * @return результатработы функции.
+     * @param sync     the synchronizer.
+     * @param argument the argument.
+     * @param function the function.
+     * @return the result from the function.
      */
-    public static <T extends Lockable, R> R getInSynchronized(final T sync, final int argument, final ObjectIntFunction<T, R> function) {
+    @Nullable
+    public static <T extends Lockable, R> R get(@NotNull final T sync, final int argument, @NotNull final ObjectIntFunction<T, R> function) {
         sync.lock();
         try {
             return function.apply(sync, argument);
@@ -125,14 +136,15 @@ public final class ConcurrentUtils {
     }
 
     /**
-     * Вытащить что-то из объекта в синхронизированном состоянии.
+     * Apply a function in locked block.
      *
-     * @param sync     объект поддерживающий синхронизацию.
-     * @param argument дополнительный числовой аргумент.
-     * @param function функция вытаскивания результата.
-     * @return результатработы функции.
+     * @param sync     the synchronizer.
+     * @param argument the argument.
+     * @param function the function.
+     * @return the result from the function.
      */
-    public static <T extends Lockable, R> R getInSynchronizedL(final T sync, final long argument, final ObjectLongFunction<T, R> function) {
+    @Nullable
+    public static <T extends Lockable, R> R getInL(@NotNull final T sync, final long argument, @NotNull final ObjectLongFunction<T, R> function) {
         sync.lock();
         try {
             return function.apply(sync, argument);

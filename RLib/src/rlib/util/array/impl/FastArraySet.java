@@ -1,12 +1,13 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.util.array.Array;
 
 /**
- * Реализация {@link FastArray} с проверкой на уникальность элемента при вставке.
+ * The fast implementation of the array with checking on duplicates. This array is not threadsafe.
  *
- * @author Ronn
- * @see FastArray
+ * @author JavaSaBr
  */
 public class FastArraySet<E> extends FastArray<E> {
 
@@ -20,8 +21,9 @@ public class FastArraySet<E> extends FastArray<E> {
         super(type, size);
     }
 
+    @NotNull
     @Override
-    public FastArray<E> add(final E element) {
+    public FastArray<E> add(@NotNull final E element) {
         return contains(element) ? this : super.add(element);
     }
 
@@ -29,9 +31,7 @@ public class FastArraySet<E> extends FastArray<E> {
     protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
         for (final E element : elements.array()) {
             if (element == null) break;
-            if (!contains(element)) {
-                unsafeAdd(element);
-            }
+            if (!contains(element)) unsafeAdd(element);
         }
     }
 
@@ -39,9 +39,7 @@ public class FastArraySet<E> extends FastArray<E> {
     protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
         for (final E element : elements) {
             if (element == null) break;
-            if (!contains(element)) {
-                unsafeAdd(element);
-            }
+            if (!contains(element)) unsafeAdd(element);
         }
     }
 }

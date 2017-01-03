@@ -1,110 +1,101 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 import rlib.util.pools.Reusable;
 
 /**
- * Реализация ячейки для словарей с ключем примитива int.
+ * The entry of {@link IntegerDictionary}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class IntegerEntry<V> implements Reusable {
 
     /**
-     * Следующая ячейка.
+     * The next entry.
      */
     private IntegerEntry<V> next;
 
     /**
-     * Значение.
+     * The value of this entry.
      */
     private V value;
 
     /**
-     * Хэш ключа.
-     */
-    private int hash;
-
-    /**
-     * Ключ.
+     * The key of this entry.
      */
     private int key;
 
+    /**
+     * The hash of the key.
+     */
+    private int hash;
+
     @Override
     public boolean equals(final Object object) {
-
-        if (object == null || object.getClass() != IntegerEntry.class) {
-            return false;
-        }
+        if (object == null || object.getClass() != IntegerEntry.class) return false;
 
         final IntegerEntry<?> entry = (IntegerEntry<?>) object;
 
         final int firstKey = getKey();
         final int secondKey = entry.getKey();
 
-        if (firstKey == secondKey) {
+        if (firstKey != secondKey) return false;
 
-            final Object firstValue = getValue();
-            final Object secondValue = entry.getValue();
+        final Object firstValue = getValue();
+        final Object secondValue = entry.getValue();
 
-            return Objects.equals(secondValue, firstValue);
-        }
-
-        return false;
+        return Objects.equals(firstValue, secondValue);
     }
 
     @Override
     public void free() {
         value = null;
         next = null;
-        key = 0;
-        hash = 0;
     }
 
     /**
-     * @return хэш ячейки.
+     * @return the hash of the key.
      */
     public int getHash() {
         return hash;
     }
 
     /**
-     * @return ключ ячейки.
+     * @return the key of this entry.
      */
     public int getKey() {
         return key;
     }
 
     /**
-     * @return следующая ячейка.
+     * @return the next entry.
      */
+    @Nullable
     public IntegerEntry<V> getNext() {
         return next;
     }
 
     /**
-     * @param next следующая ячейка.
+     * @param next the next entry.
      */
-    public void setNext(final IntegerEntry<V> next) {
+    public void setNext(@Nullable final IntegerEntry<V> next) {
         this.next = next;
     }
 
     /**
-     * @return значение ячейки.
+     * @return the value of this entry.
      */
+    @Nullable
     public V getValue() {
         return value;
     }
 
     @Override
     public final int hashCode() {
-        return key ^ (value == null ? 0 : value.hashCode());
-    }
-
-    @Override
-    public void reuse() {
-        hash = 0;
+        return (key ^ (value == null ? 0 : value.hashCode()));
     }
 
     public void set(final int hash, final int key, final V value, final IntegerEntry<V> next) {
@@ -115,12 +106,11 @@ public class IntegerEntry<V> implements Reusable {
     }
 
     /**
-     * Установка нового значения.
-     *
-     * @param value новое значение.
-     * @return старое значение.
+     * @param value the new value of this entry.
+     * @return the old value of null.
      */
-    public V setValue(final V value) {
+    @Nullable
+    public V setValue(@Nullable final V value) {
         final V old = getValue();
         this.value = value;
         return old;

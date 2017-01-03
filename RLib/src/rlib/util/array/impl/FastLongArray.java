@@ -7,7 +7,7 @@ import rlib.util.array.LongArray;
 /**
  * Реализация не потокобезопасного динамического массива примитивов long.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastLongArray implements LongArray {
 
@@ -207,7 +207,7 @@ public class FastLongArray implements LongArray {
     /**
      * Быстрый итератор массива.
      *
-     * @author Ronn
+     * @author JavaSaBr
      */
     private final class FastIterator implements ArrayIterator<Long> {
 
@@ -243,11 +243,6 @@ public class FastLongArray implements LongArray {
         @Override
         public void remove() {
             FastLongArray.this.fastRemove(--ordinal);
-        }
-
-        @Override
-        public void slowRemove() {
-            FastLongArray.this.slowRemove(--ordinal);
         }
     }
 }

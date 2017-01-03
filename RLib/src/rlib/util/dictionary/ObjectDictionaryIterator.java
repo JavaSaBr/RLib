@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 /**
  * Реализация итератора для словаря с обхектным ключем.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
 

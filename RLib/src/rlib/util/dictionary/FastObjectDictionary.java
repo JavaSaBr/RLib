@@ -1,38 +1,69 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Реализация словаря с объектным ключем.
+ * The fast implementation of {@link ObjectDictionary} without threadsafe supporting.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
 
     /**
-     * Кол-во элементов в таблице.
+     * The array of entries.
+     */
+    private ObjectEntry<K, V>[] content;
+
+    /**
+     * The next size value at which to resize (capacity * load factor).
+     */
+    private int threshold;
+
+    /**
+     * The count of values in this {@link Dictionary}.
      */
     private int size;
 
     protected FastObjectDictionary() {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
     protected FastObjectDictionary(final float loadFactor) {
-        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(loadFactor, DEFAULT_INITIAL_CAPACITY);
+    }
+
+    protected FastObjectDictionary(final int initCapacity) {
+        this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     protected FastObjectDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
-        this.size = 0;
-    }
-
-    protected FastObjectDictionary(final int initCapacity) {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     @Override
-    public void clear() {
-        super.clear();
-        size = 0;
+    public void setSize(final int size) {
+        this.size = size;
+    }
+
+    @Override
+    public void setContent(@NotNull final ObjectEntry<K, V>[] content) {
+        this.content = content;
+    }
+
+    @NotNull
+    @Override
+    public ObjectEntry<K, V>[] content() {
+        return content;
+    }
+
+    @Override
+    public void setThreshold(final int threshold) {
+        this.threshold = threshold;
+    }
+
+    @Override
+    public int getThreshold() {
+        return threshold;
     }
 
     @Override

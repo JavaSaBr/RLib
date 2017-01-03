@@ -6,13 +6,13 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Класс с утильными методами по работе с классами.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ClassUtils {
 
     public static <T> Class<T> getClass(final String name) {
         try {
-            return (Class<T>) Class.forName(name);
+            return unsafeCast(Class.forName(name));
         } catch (final ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -27,7 +27,7 @@ public final class ClassUtils {
      */
     public static <T> Constructor<T> getConstructor(final Class<?> cs, final Class<?>... classes) {
         try {
-            return (Constructor<T>) cs.getConstructor(classes);
+            return unsafeCast(cs.getConstructor(classes));
         } catch (NoSuchMethodException | SecurityException e) {
             throw new RuntimeException(e);
         }
@@ -43,7 +43,7 @@ public final class ClassUtils {
     public static <T> Constructor<T> getConstructor(final String className, final Class<?>... classes) {
         try {
             final Class<?> cs = Class.forName(className);
-            return (Constructor<T>) cs.getConstructor(classes);
+            return unsafeCast(cs.getConstructor(classes));
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -57,7 +57,7 @@ public final class ClassUtils {
      */
     public static <T> T newInstance(final Class<?> cs) {
         try {
-            return (T) cs.newInstance();
+            return unsafeCast(cs.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -72,7 +72,7 @@ public final class ClassUtils {
      */
     public static <T> T newInstance(final Constructor<?> constructor, final Object... objects) {
         try {
-            return (T) constructor.newInstance(objects);
+            return unsafeCast(constructor.newInstance(objects));
         } catch (final InvocationTargetException e) {
             throw new RuntimeException(e.getTargetException());
         } catch (final InstantiationException | IllegalAccessException | IllegalArgumentException e) {
@@ -82,7 +82,7 @@ public final class ClassUtils {
 
     public static <T> T newInstance(final String className) {
         try {
-            return (T) Class.forName(className).newInstance();
+            return unsafeCast(Class.forName(className).newInstance());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

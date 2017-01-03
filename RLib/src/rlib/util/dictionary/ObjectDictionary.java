@@ -1,122 +1,168 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import rlib.function.FourObjectConsumer;
 import rlib.function.TripleConsumer;
 import rlib.util.array.Array;
 
 /**
- * Интерфейс для реализации словаря с объектным ключем.
+ * The interface for implementing a key-value dictionary which using an object key.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
 
     /**
-     * Проверка наличия значения в словаре по указанному ключу.
+     * Performs the given action for each key-value pair of this dictionary.
+     */
+    default void forEach(@NotNull final BiConsumer<? super K, ? super V> consumer) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Returns <tt>true</tt> if this dictionary contains a mapping for the specified key.  More
+     * formally, returns <tt>true</tt> if and only if this dictionary contains a mapping for a key
+     * <tt>k</tt> such that <tt>(key==null ? k==null : key.equals(k))</tt>.  (There can be at most
+     * one such mapping.)
      *
-     * @param key проверяемый ключ.
+     * @param key key whose presence in this dictionary is to be tested.
+     * @return <tt>true</tt> if this dictionary contains a mapping for the specified key.
      */
-    public default boolean containsKey(final K key) {
-        throw new RuntimeException("not supported.");
+    default boolean containsKey(@NotNull final K key) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Вовзращает значения по указанному ключу.
+     * Returns the value to which the specified key is mapped, or {@code null} if this dictionary
+     * contains no mapping for the key.
      *
-     * @param key ключ.
+     * @param key the key whose associated value is to be returned.
+     * @return the value to which the specified key is mapped, or {@code null} if this dictionary
+     * contains no mapping for the key.
      */
-    public default V get(final K key) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(@NotNull final K key) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
-     * ложится по этому же ключу.
+     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param key     ключ.
-     * @param factory фабрика.
+     * @param key     the key.
+     * @param factory the factory.
      */
-    public default V get(final K key, final Supplier<V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(@NotNull final K key, @NotNull final Supplier<V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
-     * ложится по этому же ключу.
+     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param key     ключ.
-     * @param factory фабрика.
+     * @param key     the key.
+     * @param factory the factory.
      */
-    public default V get(final K key, final Function<K, V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V get(@NotNull final K key, @NotNull final Function<K, V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый с
-     * учетом дополнительного аргумента и ложится по этому же ключу.
+     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param key      ключ.
-     * @param argument дополнительный аргумент.
-     * @param factory  фабрика.
+     * @param key      the key.
+     * @param argument the additional argument.
+     * @param factory  the factory.
      */
-    public default <T> V get(final K key, final T argument, final Function<T, V> factory) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default <T> V get(@NotNull final K key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * @param container контейнер для ключей.
-     * @return массив ключей словаря.
-     */
-    public default Array<K> keyArray(final Array<K> container) {
-        throw new RuntimeException("not supported.");
-    }
-
-    /**
-     * @return массив ключей словаря.
-     */
-    public default Array<K> keyArray(final Class<K> type) {
-        throw new RuntimeException("not supported.");
-    }
-
-    /**
-     * Добавляет новое значение по указанному ключу, и если уже есть элемент с таким ключем,
-     * возвращает его.
+     * Gets all keys of this dictionary.
      *
-     * @param key   ключ значения.
-     * @param value вставляемое значение.
+     * @param container the container for storing keys.
+     * @return the array with all keys.
      */
-    public default V put(final K key, final V value) {
-        throw new RuntimeException("not supported.");
+    @NotNull
+    default Array<K> keyArray(@NotNull final Array<K> container) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Удаляет значение по ключу.
-     *
-     * @param key ключ значения.
+     * @return the array of all keys of this dictionary.
      */
-    public default V remove(final K key) {
-        throw new RuntimeException("not supported.");
+    @NotNull
+    default Array<K> keyArray(@NotNull final Class<K> type) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Пробег по словарю с просмотром ключа и значения.
+     * Associates the specified value with the specified key in this dictionary (optional
+     * operation).  If the dictionary previously contained a mapping for the key, the old value is
+     * replaced by the specified value.  (A dictionary <tt>m</tt> is said to contain a mapping for a
+     * key <tt>k</tt> if and only if {@link #containsKey(Object) m.containsKey(k)} would return
+     * <tt>true</tt>.)
      *
-     * @param consumer функция обработки ключа и значения.
+     * @param key   key with which the specified value is to be associated
+     * @param value value to be associated with the specified key
+     * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no
+     * mapping for <tt>key</tt>. (A <tt>null</tt> return can also indicate that the map previously
+     * associated <tt>null</tt> with <tt>key</tt>, if the implementation supports <tt>null</tt>
+     * values.)
      */
-    public default void forEach(final BiConsumer<K, V> consumer) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V put(@NotNull final K key, @Nullable final V value) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Пробег по словарю с просмотром ключа и значения и дополнительным аргументом.
+     * Removes the mapping for a key from this dictionary if it is present (optional operation).
+     * More formally, if this dictionary contains a mapping from key <tt>k</tt> to value <tt>v</tt>
+     * such that <code>(key==null ?  k==null : key.equals(k))</code>, that mapping is removed.  (The
+     * map can contain at most one such mapping.)
      *
-     * @param argument дополнительный аргумент.
-     * @param consumer функция обработки ключа и значения.
+     * <p>Returns the value to which this dictionary previously associated the key, or <tt>null</tt>
+     * if the dictionary contained no mapping for the key.
+     *
+     * <p>If this dictionary permits null values, then a return value of <tt>null</tt> does not
+     * <i>necessarily</i> indicate that the dictionary contained no mapping for the key; it's also
+     * possible that the dictionary explicitly mapped the key to <tt>null</tt>.
+     *
+     * <p>The dictionary will not contain a mapping for the specified key once the call returns.
+     *
+     * @param key key whose mapping is to be removed from the dictionary
+     * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no
+     * mapping for <tt>key</tt>.
      */
-    public default <T> void forEach(final T argument, TripleConsumer<K, V, T> consumer) {
-        throw new RuntimeException("not supported.");
+    @Nullable
+    default V remove(final K key) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Performs the given action for each key-value pair of this dictionary.
+     */
+    default <T> void forEach(@Nullable final T argument, @NotNull final TripleConsumer<T, K, V> consumer) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Performs the given action for each key-value pair of this dictionary.
+     */
+    default <F, S> void forEach(@Nullable final F first, @Nullable final S second, @NotNull final FourObjectConsumer<F, S, K, V> consumer) {
+        throw new UnsupportedOperationException();
     }
 }
+
+

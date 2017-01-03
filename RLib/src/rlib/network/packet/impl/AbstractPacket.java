@@ -4,22 +4,24 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.packet.Packet;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
 /**
- * Базовая реализация сетевого пакета.
+ * The base implementation of the {@link Packet}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public abstract class AbstractPacket<C> implements Packet<C> {
+public abstract class AbstractPacket<C> implements Packet {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(Packet.class);
 
     /**
-     * Владелец пакета.
+     * The owner of this packet.
      */
     protected volatile C owner;
 
     /**
-     * Название пакета.
+     * The name of this packet.
      */
     protected volatile String name;
 
@@ -39,8 +41,8 @@ public abstract class AbstractPacket<C> implements Packet<C> {
     }
 
     @Override
-    public void setOwner(final C owner) {
-        this.owner = owner;
+    public void setOwner(final Object owner) {
+        this.owner = unsafeCast(owner);
     }
 
     @Override

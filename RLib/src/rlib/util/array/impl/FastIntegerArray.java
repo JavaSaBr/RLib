@@ -7,7 +7,7 @@ import rlib.util.array.IntegerArray;
 /**
  * Реализация не потокобезопасного динамического массива примитивов int.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastIntegerArray implements IntegerArray {
 
@@ -219,11 +219,6 @@ public class FastIntegerArray implements IntegerArray {
         @Override
         public void remove() {
             FastIntegerArray.this.fastRemove(--ordinal);
-        }
-
-        @Override
-        public void slowRemove() {
-            FastIntegerArray.this.slowRemove(--ordinal);
         }
     }
 }

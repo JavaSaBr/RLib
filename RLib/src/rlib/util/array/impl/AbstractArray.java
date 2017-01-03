@@ -1,35 +1,34 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.util.ArrayUtils;
+import rlib.util.ClassUtils;
 import rlib.util.array.Array;
 
-import static rlib.util.ClassUtils.unsafeCast;
-
 /**
- * Базовая реализация {@link Array}.
+ * The base implementation of the {@link Array}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractArray<E> implements Array<E> {
 
     private static final long serialVersionUID = 2113052245369887690L;
 
     /**
-     * Размер массива по умолчанию.
+     * The size of big array.
+     */
+    protected static final int SIZE_BIG_ARRAY = 10;
+
+    /**
+     * The default size of new array.
      */
     protected static final int DEFAULT_SIZE = 10;
 
-    /**
-     * @param type тип элементов в массиве.
-     */
     public AbstractArray(final Class<E> type) {
         this(type, DEFAULT_SIZE);
     }
 
-    /**
-     * @param type тип элементов в массиве.
-     * @param size размер массива.
-     */
     public AbstractArray(final Class<E> type, final int size) {
         super();
 
@@ -37,13 +36,14 @@ public abstract class AbstractArray<E> implements Array<E> {
             throw new IllegalArgumentException("negative size");
         }
 
-        setArray(unsafeCast(java.lang.reflect.Array.newInstance(type, size)));
+        setArray(ArrayUtils.create(type, size));
     }
 
+    @NotNull
     @Override
     public Array<E> clear() {
 
-        if (size() > 0) {
+        if (!isEmpty()) {
             ArrayUtils.clear(array());
             setSize(0);
         }
@@ -56,23 +56,37 @@ public abstract class AbstractArray<E> implements Array<E> {
         clear();
     }
 
+    @Override
+    public AbstractArray<E> clone() throws CloneNotSupportedException {
+        return ClassUtils.unsafeCast(super.clone());
+    }
+
     /**
-     * @param array массив элементов.
+     * @param array the new array.
      */
     protected abstract void setArray(E[] array);
 
     /**
-     * @param size размер массива.
+     * @param size the new size of the array.
      */
     protected abstract void setSize(int size);
 
     @Override
-    public final boolean slowRemove(final Object object) {
-        return slowRemove(indexOf(object)) != null;
+    public boolean fastRemove(@NotNull final Object object) {
+        final int index = indexOf(object);
+        if (index >= 0) fastRemove(index);
+        return index >= 0;
+    }
+
+    @Override
+    public final boolean slowRemove(@NotNull final Object object) {
+        final int index = indexOf(object);
+        if (index >= 0) slowRemove(index);
+        return index >= 0;
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " size = " + size() + " : " + ArrayUtils.toString(this);
+        return getClass().getSimpleName() + " size = " + size() + " :\n " + ArrayUtils.toString(this);
     }
 }

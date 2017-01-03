@@ -1,10 +1,9 @@
 package rlib.util.dictionary;
 
 /**
- * Интерфейс для реализации конкуретного словаря с примитивным ключем long.
+ * The interface with methods for supporting threadsafe for the {@link LongDictionary}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ConcurrentLongDictionary<V> extends LongDictionary<V>, ConcurrentDictionary<LongKey, V> {
-
 }

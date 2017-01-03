@@ -25,7 +25,7 @@ import rlib.util.pools.Reusable;
  * }
  * </pre>
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusable {
 

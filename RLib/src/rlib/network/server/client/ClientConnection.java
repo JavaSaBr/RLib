@@ -7,9 +7,9 @@ import rlib.network.packet.SendablePacket;
 /**
  * Интерфейс для реализации асинхронного коннекта к игровому клиенту.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public interface ClientConnection<T extends Client, R extends ReadablePacket<T>, S extends SendablePacket<T>> extends AsyncConnection<R, S> {
+public interface ClientConnection<T extends Client, R extends ReadablePacket, S extends SendablePacket> extends AsyncConnection<R, S> {
 
     /**
      * @return клиент.

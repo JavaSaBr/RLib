@@ -1,5 +1,7 @@
 package rlib.concurrent.executor.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,46 +22,50 @@ import rlib.util.linkedlist.LinkedList;
 import rlib.util.linkedlist.LinkedListFactory;
 
 /**
- * Реализация многопоточного пакетного исполнителя задач. Использовать только в случае необходимости
- * выполнять большое кол-во задач с минимальной нагрузкой на GC либо необходимости часто
- * использовать локальные объекты, в остальных случаях рекамендуются {@link Executors} сервисы. Для
- * получение локальных объектов, необходимо переопределить метод {@link #getLocalObjects(Thread)}.
+ * Реализация многопоточного пакетного исполнителя задач. Использовать только в случае необходимости выполнять большое
+ * кол-во задач с минимальной нагрузкой на GC либо необходимости часто использовать локальные объекты, в остальных
+ * случаях рекамендуются {@link Executors} сервисы. Для получение локальных объектов, необходимо переопределить метод
+ * {@link #getLocalObjects(Thread)}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Lockable {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ThreadPoolTaskExecutor.class);
 
     /**
-     * Список ожидающих исполнение задач.
+     * The list of waiting tasks.
      */
+    @NotNull
     private final LinkedList<CallableTask<?, L>> waitTasks;
 
     /**
-     * Список задействованных потоков.
+     * The list of working threads.
      */
+    @NotNull
     private final Array<Thread> threads;
 
     /**
-     * Находится ли исполнитель в ожидании.
+     * The waiting flag.
      */
+    @NotNull
     private final AtomicBoolean wait;
 
     /**
-     * Блокировщик.
+     * The synchronizer.
      */
+    @NotNull
     private final Lock lock;
 
     /**
-     * размер пакета выполняемых задач на поток
+     * The count of executing tasks per thread.
      */
     private final int packetSize;
 
-    public ThreadPoolTaskExecutor(final GroupThreadFactory threadFactory, final int poolSize, final int packetSize) {
+    public ThreadPoolTaskExecutor(@NotNull final GroupThreadFactory threadFactory, final int poolSize, final int packetSize) {
         this.waitTasks = LinkedListFactory.newLinkedList(CallableTask.class);
         this.wait = new AtomicBoolean();
-        this.lock = LockFactory.newPrimitiveAtomicLock();
+        this.lock = LockFactory.newAtomicLock();
         this.threads = ArrayFactory.newArray(Thread.class);
         this.packetSize = packetSize;
 
@@ -74,7 +80,7 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
     }
 
     @Override
-    public void execute(final SimpleTask<L> task) {
+    public void execute(@NotNull final SimpleTask<L> task) {
         lock();
         try {
 
@@ -94,32 +100,35 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
     }
 
     /**
-     * Получение контейнера локальных объектов для указанного потока.
+     * Get a local object container.
      *
-     * @param thread интересуемый поток.
-     * @return контейнер локальных объектов для него.
+     * @param thread the thread.
+     * @return the local object container of the thread.
      */
-    protected L getLocalObjects(final Thread thread) {
-        return null;
+    @NotNull
+    protected L getLocalObjects(@NotNull final Thread thread) {
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * @return размера пакета исполняемых задач.
+     * @return the count of executing tasks per thread.
      */
     public int getPacketSize() {
         return packetSize;
     }
 
     /**
-     * @return находится ли исполнитель в ожидании.
+     * @return the waiting flag.
      */
-    public AtomicBoolean getWait() {
+    @NotNull
+    protected AtomicBoolean getWait() {
         return wait;
     }
 
     /**
-     * @return список ожидающих исполнение задач.
+     * @return the list of waiting tasks.
      */
+    @NotNull
     protected LinkedList<CallableTask<?, L>> getWaitTasks() {
         return waitTasks;
     }
@@ -168,7 +177,6 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
             }
 
             if (executeTasks.isEmpty()) continue;
-
             try {
 
                 final long currentTime = System.currentTimeMillis();
@@ -184,8 +192,9 @@ public class ThreadPoolTaskExecutor<L> implements TaskExecutor<L>, Runnable, Loc
         }
     }
 
+    @NotNull
     @Override
-    public <R> Future<R> submit(final CallableTask<R, L> task) {
+    public <R> Future<R> submit(@NotNull final CallableTask<R, L> task) {
         throw new RuntimeException("not implemented.");
     }
 

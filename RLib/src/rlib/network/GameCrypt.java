@@ -3,7 +3,7 @@ package rlib.network;
 /**
  * Интерфейс для реализации криптора/декриптора.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface GameCrypt {
 
@@ -14,7 +14,7 @@ public interface GameCrypt {
      * @param offset отступ от начала масива.
      * @param length кол-во необходимых байтов.
      */
-    public void decrypt(byte[] data, int offset, int length);
+    void decrypt(byte[] data, int offset, int length);
 
     /**
      * Закриптовать массив байтов
@@ -23,5 +23,5 @@ public interface GameCrypt {
      * @param offset отступ от начала масива.
      * @param length кол-во необходимых байтов.
      */
-    public void encrypt(byte[] data, int offset, int length);
+    void encrypt(byte[] data, int offset, int length);
 }

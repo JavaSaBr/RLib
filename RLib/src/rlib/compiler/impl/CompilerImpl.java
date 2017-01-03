@@ -1,5 +1,7 @@
 package rlib.compiler.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -20,9 +22,9 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Реализация обертки над java компилятором для удобной компиляции java кода в runtime.
+ * The base implementation of a compiler using a compiler from JDK.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompilerImpl implements Compiler {
 
@@ -31,32 +33,36 @@ public class CompilerImpl implements Compiler {
     public static final Class<?>[] EMPTY_CLASSES = new Class[0];
 
     /**
-     * Слушатель ошибок компиляций.
+     * The compile listener.
      */
+    @NotNull
     private final CompileListener listener;
 
     /**
-     * Компилятор java кода.
+     * The java compiler.
      */
+    @NotNull
     private final JavaCompiler compiler;
 
     /**
-     * Загрузчик скомпилированных классов.
+     * The class loader.
      */
+    @NotNull
     private final CompileClassLoader loader;
 
     /**
-     * Менедж по компилируемым ресурсам.
+     * The java files manager.
      */
+    @NotNull
     private final CompileJavaFileManager fileManager;
 
     /**
-     * Отображать ли ошибки компиляции.
+     * The flag of showing reports.
      */
     private final boolean showDiagnostic;
 
     /**
-     * @param showDiagnostic отображать ли ошибки компиляции.
+     * @param showDiagnostic true if need to show reports.
      */
     public CompilerImpl(final boolean showDiagnostic) {
         this.compiler = ToolProvider.getSystemJavaCompiler();
@@ -69,8 +75,9 @@ public class CompilerImpl implements Compiler {
         this.showDiagnostic = showDiagnostic;
     }
 
+    @NotNull
     @Override
-    public Class<?>[] compile(final File... files) {
+    public Class<?>[] compile(@NotNull final File... files) {
         if (files.length < 1) return EMPTY_CLASSES;
 
         final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
@@ -82,8 +89,9 @@ public class CompilerImpl implements Compiler {
         return compile(null, javaSource);
     }
 
+    @NotNull
     @Override
-    public Class<?>[] compile(final Path... paths) {
+    public Class<?>[] compile(@NotNull final Path... paths) {
         if (paths.length < 1) return EMPTY_CLASSES;
 
         final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
@@ -96,13 +104,13 @@ public class CompilerImpl implements Compiler {
     }
 
     /**
-     * Компиляция списка объектов.
+     * Compile the list of sources with the list of options.
      *
-     * @param options опции компиляции.
-     * @param source  список исходников.
-     * @return список скомпиленых классов.
+     * @param options the compile options.
+     * @param source  the list of sources.
+     * @return the list of compiled classes.
      */
-    protected synchronized Class<?>[] compile(final Iterable<String> options, final Iterable<? extends JavaFileObject> source) {
+    protected synchronized Class<?>[] compile(@NotNull final Iterable<String> options, @NotNull final Iterable<? extends JavaFileObject> source) {
 
         final JavaCompiler compiler = getCompiler();
 
@@ -148,12 +156,12 @@ public class CompilerImpl implements Compiler {
     }
 
     /**
-     * Скомпилировать классы в дериктории.
+     * Compile classes from a directory.
      *
-     * @param container контейнер классов.
-     * @param directory дериктория.
+     * @param container the container.
+     * @param directory the directory.
      */
-    private void compileDirectory(final Array<Class<?>> container, final File directory) {
+    private void compileDirectory(@NotNull final Array<Class<?>> container, @NotNull final File directory) {
 
         final File[] files = directory.listFiles();
         if (files == null || files.length < 1) return;
@@ -167,8 +175,9 @@ public class CompilerImpl implements Compiler {
         }
     }
 
+    @NotNull
     @Override
-    public Class<?>[] compileDirectory(final File... files) {
+    public Class<?>[] compileDirectory(@NotNull final File... files) {
 
         final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
@@ -185,12 +194,12 @@ public class CompilerImpl implements Compiler {
     }
 
     /**
-     * Скомпилировать классы в дериктории.
+     * Compile classes from a directory.
      *
-     * @param container контейнер классов.
-     * @param directory дериктория.
+     * @param container the container.
+     * @param directory the directory.
      */
-    private void compileDirectory(final Array<Class<?>> container, final Path directory) {
+    private void compileDirectory(@NotNull final Array<Class<?>> container, @NotNull final Path directory) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
 
             for (final Path path : stream) {
@@ -206,8 +215,9 @@ public class CompilerImpl implements Compiler {
         }
     }
 
+    @NotNull
     @Override
-    public Class<?>[] compileDirectory(Path... paths) {
+    public Class<?>[] compileDirectory(@NotNull Path... paths) {
 
         final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
@@ -225,35 +235,39 @@ public class CompilerImpl implements Compiler {
     }
 
     /**
-     * @return компилятор java кода.
+     * @return the java compiler.
      */
+    @NotNull
     protected JavaCompiler getCompiler() {
         return compiler;
     }
 
     /**
-     * @return менедж по компилируемым ресурсам.
+     * @return the java files manager.
      */
+    @NotNull
     protected CompileJavaFileManager getFileManager() {
         return fileManager;
     }
 
     /**
-     * @return слушатель ошибок компиляций.
+     * @return the compile listener.
      */
+    @NotNull
     protected CompileListener getListener() {
         return listener;
     }
 
     /**
-     * @return загрузчик скомпилированных классов.
+     * @return the class loader.
      */
+    @NotNull
     protected CompileClassLoader getLoader() {
         return loader;
     }
 
     /**
-     * @return отображать ли диагностику.
+     * @return true id need o show reports.
      */
     private boolean isShowDiagnostic() {
         return showDiagnostic;

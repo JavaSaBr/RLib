@@ -13,7 +13,7 @@ import rlib.logging.LoggerListener;
 /**
  * Реализация слушателя логирования с записью в создаваемый файл в указанной папке.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FolderFileListener implements LoggerListener {
 

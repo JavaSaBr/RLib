@@ -11,7 +11,7 @@ import rlib.util.pools.ReusablePool;
 /**
  * Реадизация не потокобезопасного {@link LinkedList}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastLinkedList<E> extends AbstractLinkedList<E> {
 

@@ -1,31 +1,65 @@
 package rlib.network.packet.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.ByteBuffer;
 
 import rlib.network.packet.SendablePacket;
 import rlib.util.Util;
 
 /**
- * Базовая реализация отправляемого пакета.
+ * The base implementation of the {@link SendablePacket}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implements SendablePacket<C> {
+public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implements SendablePacket {
+
+    /**
+     * The memory barrier.
+     */
+    protected volatile int barrier;
+
+    /**
+     * The sink for the memory barrier.
+     */
+    protected int barrierSink;
 
     @Override
-    public void write(final ByteBuffer buffer) {
+    public void write(@NotNull final ByteBuffer buffer) {
+        notifyStartedWriting();
         try {
             writeImpl(buffer);
         } catch (final Exception e) {
             LOGGER.warning(this, e);
             LOGGER.warning(this, "Buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.position()));
+        } finally {
+            notifyFinishedWriting();
         }
     }
 
     /**
-     * Процесс записи пакета в указанный буффер.
+     * The process of writing this packet to the buffer.
      */
-    protected void writeImpl(final ByteBuffer buffer) {
-        LOGGER.warning(this, new Exception("unsupported method"));
+    protected void writeImpl(@NotNull final ByteBuffer buffer) {
+    }
+
+    @Override
+    public void notifyStartedPreparing() {
+        barrierSink = barrier;
+    }
+
+    @Override
+    public void notifyFinishedPreparing() {
+        barrier = barrierSink + 1;
+    }
+
+    @Override
+    public void notifyStartedWriting() {
+        barrierSink = barrier;
+    }
+
+    @Override
+    public void notifyFinishedWriting() {
+        barrier = barrierSink + 1;
     }
 }

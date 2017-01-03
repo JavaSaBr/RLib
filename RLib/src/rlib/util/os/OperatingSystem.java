@@ -3,7 +3,7 @@ package rlib.util.os;
 /**
  * Класс для описание ОС.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class OperatingSystem {
 

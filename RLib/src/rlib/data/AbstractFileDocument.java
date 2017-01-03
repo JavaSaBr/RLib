@@ -1,28 +1,31 @@
 package rlib.data;
 
+import static java.nio.file.Files.newInputStream;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
- * Базовая модель для парсера данных с xml файла.
+ * The file implementation of the parser of xml documents.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> {
 
     /**
-     * Путь к файлу.
+     * The file path.
      */
+    @NotNull
     protected final String filePath;
 
-    public AbstractFileDocument(final File file) {
-        this.filePath = file.getPath();
-
+    public AbstractFileDocument(@NotNull final File file) {
+        this.filePath = file.getAbsolutePath();
         try {
             setStream(new FileInputStream(file));
         } catch (final FileNotFoundException e) {
@@ -30,19 +33,19 @@ public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> 
         }
     }
 
-    public AbstractFileDocument(final Path path) {
-        this.filePath = path.toString();
-
+    public AbstractFileDocument(@NotNull final Path path) {
+        this.filePath = path.toAbsolutePath().toString();
         try {
-            setStream(Files.newInputStream(path, StandardOpenOption.READ));
+            setStream(newInputStream(path, StandardOpenOption.READ));
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * @return путь к файлу.
+     * @return the file path.
      */
+    @NotNull
     protected String getFilePath() {
         return filePath;
     }

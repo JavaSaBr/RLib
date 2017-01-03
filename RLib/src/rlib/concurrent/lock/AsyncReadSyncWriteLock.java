@@ -1,29 +1,29 @@
 package rlib.concurrent.lock;
 
 /**
- * Интерфейс для реализации блокировщика c синхронной записью и асинхронным чтением.
+ * The interface for implementing async reading and sync writing lock.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface AsyncReadSyncWriteLock {
 
     /**
-     * Блокировка для ассинхронных действий.
+     * Lock any writing for reading.
      */
-    public void asyncLock();
+    void asyncLock();
 
     /**
-     * Убрать блокировку для ассинхронных действий.
+     * Finish this reading and unlock any writing if it is last reading.
      */
-    public void asyncUnlock();
+    void asyncUnlock();
 
     /**
-     * Блокировка для синхронных действий.
+     * Lock any reading for writing.
      */
-    public void syncLock();
+    void syncLock();
 
     /**
-     * Убрать блокировку для синхронных действий.
+     * Finish this writing and unlock any readings.
      */
-    public void syncUnlock();
+    void syncUnlock();
 }

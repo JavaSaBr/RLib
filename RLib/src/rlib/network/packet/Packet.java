@@ -1,26 +1,26 @@
 package rlib.network.packet;
 
 /**
- * Интерфейс для реализации сетевого пакета на стороне сервера.
+ * The interface for implementing a network packet.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public interface Packet<C> {
+public interface Packet {
 
     /**
-     * @return тип пакета.
+     * @return the name of this packet.
      */
     public String getName();
 
     /**
-     * @return владелец пакета.
+     * @return the owner of this packet.
      */
-    public C getOwner();
+    public Object getOwner();
 
     /**
-     * Установка владельца пакета.
+     * Sets the new owner of this packet.
      *
-     * @param owner владелец пакета..
+     * @param owner the new owner of this packet.
      */
-    public void setOwner(C owner);
+    public void setOwner(Object owner);
 }

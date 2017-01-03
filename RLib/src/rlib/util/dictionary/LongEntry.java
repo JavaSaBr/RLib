@@ -1,57 +1,52 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
+
 import rlib.util.pools.Reusable;
 
 /**
- * Реализация ячейки для словарей с примитивным ключем long.
+ * The entry of {@link LongDictionary}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class LongEntry<V> implements Reusable {
 
     /**
-     * следующая ячейка
+     * The next entry.
      */
     private LongEntry<V> next;
 
     /**
-     * значение
+     * The value of this entry.
      */
     private V value;
 
     /**
-     * ключ
+     * The key of this entry.
      */
     private long key;
-
     /**
-     * хэш ключа
+     * The hash of the key.
      */
     private int hash;
 
     @Override
     public boolean equals(final Object object) {
-
-        if (object == null || object.getClass() != LongEntry.class) {
-            return false;
-        }
+        if (object == null || object.getClass() != LongEntry.class) return false;
 
         final LongEntry<?> entry = (LongEntry<?>) object;
 
         final long firstKey = getKey();
         final long secondKey = entry.getKey();
 
-        if (firstKey == secondKey) {
+        if (firstKey != secondKey) return false;
 
-            final Object firstValue = getValue();
-            final Object secondValue = entry.getValue();
+        final Object firstValue = getValue();
+        final Object secondValue = entry.getValue();
 
-            if (firstValue == secondValue || firstValue != null && firstValue.equals(secondValue)) {
-                return true;
-            }
-        }
-
-        return false;
+        return Objects.equals(firstValue, secondValue);
     }
 
     @Override
@@ -61,36 +56,38 @@ public final class LongEntry<V> implements Reusable {
     }
 
     /**
-     * @return хэш ячейки.
+     * @return the hash of the key.
      */
     public int getHash() {
         return hash;
     }
 
     /**
-     * @return ключ ячейки.
+     * @return the key of this entry.
      */
     public long getKey() {
         return key;
     }
 
     /**
-     * @return следующая ячейка.
+     * @return the next entry.
      */
+    @Nullable
     public LongEntry<V> getNext() {
         return next;
     }
 
     /**
-     * @param next следующая цепочка.
+     * @param next the next entry.
      */
-    public void setNext(final LongEntry<V> next) {
+    public void setNext(@Nullable final LongEntry<V> next) {
         this.next = next;
     }
 
     /**
-     * @return значение ячейки.
+     * @return the value of this entry.
      */
+    @Nullable
     public V getValue() {
         return value;
     }
@@ -108,12 +105,11 @@ public final class LongEntry<V> implements Reusable {
     }
 
     /**
-     * Установка нового значения.
-     *
-     * @param value новое значение.
-     * @return старое значение.
+     * @param value the new value of this entry.
+     * @return the old value of null.
      */
-    public V setValue(final V value) {
+    @Nullable
+    public V setValue(@Nullable final V value) {
         final V old = getValue();
         this.value = value;
         return old;

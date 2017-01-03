@@ -1,5 +1,8 @@
 package rlib.util.os;
 
+import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -10,13 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static java.lang.Double.parseDouble;
-import static java.lang.Integer.parseInt;
-
 /**
  * Реализация класса для определения информации об текущей ОС.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class OperatingSystemResolver {
 

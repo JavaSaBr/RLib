@@ -8,7 +8,7 @@ import rlib.io.ReusableStream;
 /**
  * Реализация переиспользуемого входящего стрима на массиве байтов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ReuseBytesInputStream extends InputStream implements ReusableStream {
 

@@ -1,14 +1,17 @@
 package rlib.geom;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.geom.util.AngleUtils;
 import rlib.util.ExtMath;
 import rlib.util.random.Random;
 import rlib.util.random.RandomFactory;
 
 /**
- * Модель описание направления объекта в 3D пространстве, реализовано в виде кватерниона.
+ * The implementation of rotation in 3D world based on Quaternion.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class Rotation {
 
@@ -16,7 +19,7 @@ public class Rotation {
     private static final ThreadLocal<Rotation> ROTATION_LOCAL = ThreadLocal.withInitial(Rotation::newInstance);
 
     /**
-     * @return локалый для потока экземпляр разворота.
+     * @return the thread local instance.
      */
     public static Rotation get() {
         return ROTATION_LOCAL.get();
@@ -54,7 +57,8 @@ public class Rotation {
         this.w = w;
     }
 
-    public Rotation addLocal(final Rotation rotation) {
+    @NotNull
+    public Rotation addLocal(@NotNull final Rotation rotation) {
         this.x += rotation.x;
         this.y += rotation.y;
         this.z += rotation.z;
@@ -68,7 +72,7 @@ public class Rotation {
      * @param rotation сверяемый разворот.
      * @return косинус угла между 2мя разворотами.
      */
-    public float dot(final Rotation rotation) {
+    public float dot(@NotNull final Rotation rotation) {
         return w * rotation.w + x * rotation.x + y * rotation.y + z * rotation.z;
     }
 
@@ -105,6 +109,7 @@ public class Rotation {
      * @param yAngle угол по оси Y.
      * @param zAngle угол по оси Z.
      */
+    @NotNull
     public final Rotation fromAngles(final float angleX, final float yAngle, final float zAngle) {
 
         float angle = zAngle * 0.5f;
@@ -137,29 +142,34 @@ public class Rotation {
     }
 
     /**
-     * Расчет разворота по углам в 3х осях.
+     * Calculate a rotation from angles.
      *
-     * @param angles угол наклона по осям.
+     * @param angles the angles.
      */
+    @NotNull
     public final Rotation fromAngles(final float[] angles) {
         return fromAngles(angles[0], angles[1], angles[2]);
     }
 
     /**
-     * <code>fromAxes</code> creates a <code>Quaternion</code> that represents the coordinate system
-     * defined by three axes. These axes are assumed to be orthogonal and no error checking is
-     * applied. Thus, the user must insure that the three axes being provided indeed represents a
-     * proper right handed coordinate system.
+     * <code>fromAxes</code> creates a <code>Quaternion</code> that represents the coordinate system defined by three
+     * axes. These axes are assumed to be orthogonal and no error checking is applied. Thus, the user must insure that
+     * the three axes being provided indeed represents a proper right handed coordinate system.
      *
      * @param axisX vector representing the x-axis of the coordinate system.
      * @param axisY vector representing the y-axis of the coordinate system.
      * @param axisZ vector representing the z-axis of the coordinate system.
      */
-    public Rotation fromAxes(final Vector axisX, final Vector axisY, final Vector axisZ) {
-        return fromRotationMatrix(axisX.getX(), axisY.getX(), axisZ.getX(), axisX.getY(), axisY.getY(), axisZ.getY(), axisX.getZ(), axisY.getZ(), axisZ.getZ());
+    @NotNull
+    public Rotation fromAxes(@NotNull final Vector axisX, @NotNull final Vector axisY, @NotNull final Vector axisZ) {
+        return fromRotationMatrix(axisX.getX(), axisY.getX(), axisZ.getX(), axisX.getY(), axisY.getY(),
+                axisZ.getY(), axisX.getZ(), axisY.getZ(), axisZ.getZ());
     }
 
-    public Rotation fromRotationMatrix(final float val_0_0, final float val_0_1, final float val_0_2, final float val_1_0, final float val_1_1, final float val_1_2, final float val_2_0, final float val_2_1, final float val_2_2) {
+    @NotNull
+    public Rotation fromRotationMatrix(final float val_0_0, final float val_0_1, final float val_0_2,
+                                       final float val_1_0, final float val_1_1, final float val_1_2,
+                                       final float val_2_0, final float val_2_1, final float val_2_2) {
 
         final float t = val_0_0 + val_1_1 + val_2_2;
 
@@ -198,13 +208,13 @@ public class Rotation {
     }
 
     /**
-     * Получение вектора направления нужного типа.
+     * Calculate a vector by a direction type.
      *
-     * @param type  тип направления.
-     * @param store контейнер.
-     * @return вычисленный вектор.
+     * @param type  the direction type.
+     * @param store the result container.
+     * @return the calculated vector.
      */
-    public Vector getVectorDirection(final DirectionType type, Vector store) {
+    public Vector getVector(@NotNull final DirectionType type, @Nullable Vector store) {
         if (store == null) store = Vector.newInstance();
 
         float norm = norm();
@@ -227,16 +237,38 @@ public class Rotation {
                 store.setZ(2 * (xz - yw));
                 break;
             }
+            case RIGHT: {
+                store.setX(1 - 2 * (yy + zz));
+                store.setY(2 * (xy + zw));
+                store.setZ(2 * (xz - yw));
+                store.negateLocal();
+                break;
+            }
             case UP: {
                 store.setX(2 * (xy - zw));
                 store.setY(1 - 2 * (xx + zz));
                 store.setZ(2 * (yz + xw));
                 break;
             }
-            case DIRECTION: {
+            case DOWN: {
+                store.setX(2 * (xy - zw));
+                store.setY(1 - 2 * (xx + zz));
+                store.setZ(2 * (yz + xw));
+                store.negateLocal();
+                break;
+            }
+            case FRONT: {
                 store.setX(2 * (xz + yw));
                 store.setY(2 * (yz - xw));
                 store.setZ(1 - 2 * (xx + yy));
+                break;
+            }
+            case BEHIND: {
+                store.setX(2 * (xz + yw));
+                store.setY(2 * (yz - xw));
+                store.setZ(1 - 2 * (xx + yy));
+                store.negate();
+                break;
             }
         }
 
@@ -320,15 +352,15 @@ public class Rotation {
      * @param up        вектор для ориаентации где верх а где низ.
      * @param buffer    буффер векторов для рассчета.
      */
-    public void lookAt(final Vector direction, final Vector up, final VectorBuffer buffer) {
+    public void lookAt(@NotNull final Vector direction, @NotNull final Vector up, @NotNull final VectorBuffer buffer) {
 
-        final Vector first = buffer.getNextVector();
+        final Vector first = buffer.nextVector();
         first.set(direction).normalizeLocal();
 
-        final Vector second = buffer.getNextVector();
+        final Vector second = buffer.nextVector();
         second.set(up).crossLocal(direction).normalizeLocal();
 
-        final Vector third = buffer.getNextVector();
+        final Vector third = buffer.nextVector();
         third.set(direction).crossLocal(second).normalizeLocal();
 
         fromAxes(second, third, first);
@@ -341,7 +373,8 @@ public class Rotation {
      * @param vector вектор, который надо развернуть.
      * @return полученный вектор.
      */
-    public final Vector multLocal(final Vector vector) {
+    @NotNull
+    public final Vector multLocal(@NotNull final Vector vector) {
 
         final float vectorX = vector.getX();
         final float vectorY = vector.getY();
@@ -380,6 +413,7 @@ public class Rotation {
     /**
      * Нормализация текущего разворота.
      */
+    @NotNull
     public final Rotation normalizeLocal() {
 
         final float norm = ExtMath.invSqrt(norm());
@@ -402,7 +436,7 @@ public class Rotation {
     /**
      * Создание случайного разворота.
      */
-    public void random(final Random random) {
+    public void random(@NotNull final Random random) {
 
         final float x = AngleUtils.degreeToRadians(random.nextInt(0, 360));
         final float y = AngleUtils.degreeToRadians(random.nextInt(0, 360));
@@ -411,7 +445,8 @@ public class Rotation {
         fromAngles(x, y, z);
     }
 
-    public Rotation set(final Rotation rotation) {
+    @NotNull
+    public Rotation set(@NotNull final Rotation rotation) {
         this.x = rotation.x;
         this.y = rotation.y;
         this.z = rotation.z;
@@ -432,7 +467,7 @@ public class Rotation {
      * @param end     конечный разворот.
      * @param percent % разворота от текущего к конечному.
      */
-    public void slerp(final Rotation end, final float percent) {
+    public void slerp(@NotNull final Rotation end, final float percent) {
         if (equals(end)) return;
 
         float result = x * end.x + y * end.y + z * end.z + w * end.w;
@@ -464,27 +499,30 @@ public class Rotation {
     }
 
     /**
-     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в
-     * зависимости от указанного %.
+     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в зависимости от указанного
+     * %.
      *
      * @param start   стартовый разворот.
      * @param end     конечный разворот.
      * @param percent % разворота от стартового до конечного.
      */
-    public Rotation slerp(final Rotation start, final Rotation end, final float percent) {
+    @NotNull
+    public Rotation slerp(@NotNull final Rotation start, @NotNull final Rotation end, final float percent) {
         return slerp(start, end, percent, false);
     }
 
     /**
-     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в
-     * зависимости от указанного %.
+     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в зависимости от указанного
+     * %.
      *
      * @param start       стартовый разворот.
      * @param end         конечный разворот.
      * @param percent     % разворота от стартового до конечного.
      * @param forceLinear принудительное использование линейной интерполяции.
      */
-    public final Rotation slerp(final Rotation start, final Rotation end, final float percent, final boolean forceLinear) {
+    @NotNull
+    public final Rotation slerp(@NotNull final Rotation start, @NotNull final Rotation end,
+                                final float percent, final boolean forceLinear) {
 
         if (start.equals(end)) {
             set(start);
@@ -519,13 +557,13 @@ public class Rotation {
     }
 
     /**
-     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в
-     * зависимости от указанного %.
+     * Рассчитывает промежуточный разворот от указанного стартового, до указанного конечного в зависимости от указанного
+     * %.
      *
      * @param targetRotation конечный разворот.
      * @param percent        % разворота от стартового до конечного.
      */
-    public void nlerp(final Rotation targetRotation, float percent) {
+    public void nlerp(@NotNull final Rotation targetRotation, float percent) {
 
         float dot = dot(targetRotation);
         float blendI = 1.0F - percent;
@@ -545,7 +583,7 @@ public class Rotation {
         normalizeLocal();
     }
 
-    public Rotation subtractLocal(final Rotation rotation) {
+    public Rotation subtractLocal(@NotNull final Rotation rotation) {
         this.x -= rotation.x;
         this.y -= rotation.y;
         this.z -= rotation.z;
@@ -553,7 +591,7 @@ public class Rotation {
         return this;
     }
 
-    public final float toAngleAxis(final Vector axisStore) {
+    public final float toAngleAxis(@Nullable final Vector axisStore) {
 
         final float sqrLength = x * x + y * y + z * z;
         float angle;
@@ -586,16 +624,15 @@ public class Rotation {
     }
 
     /**
-     * <code>toAngles</code> returns this quaternion converted to Euler rotation angles
-     * (yaw,roll,pitch).<br/> Note that the result is not always 100% accurate due to the
-     * implications of euler angles.
+     * <code>toAngles</code> returns this quaternion converted to Euler rotation angles (yaw,roll,pitch).<br/> Note that
+     * the result is not always 100% accurate due to the implications of euler angles.
      *
-     * @param angles the float[] in which the angles should be stored, or null if you want a new
-     *               float[] to be created
+     * @param angles the float[] in which the angles should be stored, or null if you want a new float[] to be created
      * @return the float[] in which the angles are stored.
      * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm">http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm</a>
      */
-    public float[] toAngles(float[] angles) {
+    @NotNull
+    public float[] toAngles(@Nullable float[] angles) {
 
         if (angles == null) {
             angles = new float[3];
@@ -637,7 +674,8 @@ public class Rotation {
      * @param result матрица, в которую занести нужно результат.
      * @return результат в виде матрицы.
      */
-    public final Matrix3f toRotationMatrix(final Matrix3f result) {
+    @NotNull
+    public final Matrix3f toRotationMatrix(@NotNull final Matrix3f result) {
 
         final float norm = norm();
 

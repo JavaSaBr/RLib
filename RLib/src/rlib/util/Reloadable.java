@@ -1,17 +1,16 @@
 package rlib.util;
 
 /**
- * Класс, реализовывающий этот интерфейс, должен уметь обновлятся на новый вариано самого себя.
+ * The interface for implementing the method for reloading the object to new version of the object.
  *
- * @author Ronn
- * @created 28.03.2012
+ * @author JavaSaBr
  */
 public interface Reloadable<E> {
 
     /**
-     * Обновится до состояния указанного объекта.
+     * Reload this object to version of the object.
      *
-     * @param update новый вариант объекта.
+     * @param updated the updated object.
      */
-    public void reload(E update);
+    void reload(E updated);
 }

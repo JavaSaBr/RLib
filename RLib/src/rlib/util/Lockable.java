@@ -1,19 +1,19 @@
 package rlib.util;
 
 /**
- * Интерфейс для блокируемых объектов.
+ * The interface for implementing the methods lock()/unlock() for any object.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Lockable {
 
     /**
-     * Заблокировать изминения.
+     * Lock this object.
      */
-    public void lock();
+    void lock();
 
     /**
-     * Разблокировать изминения.
+     * Unlock this object.
      */
-    public void unlock();
+    void unlock();
 }

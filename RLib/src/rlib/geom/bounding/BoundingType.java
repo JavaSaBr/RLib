@@ -3,7 +3,7 @@ package rlib.geom.bounding;
 /**
  * Тип формы из точек.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public enum BoundingType {
     /**

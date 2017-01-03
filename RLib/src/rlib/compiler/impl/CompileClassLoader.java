@@ -1,20 +1,23 @@
 package rlib.compiler.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.compiler.ByteSource;
 import rlib.util.Util;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Загрузчик откомпиленных классов в рантайме.
+ * The implementation of a class loader of compiled classes.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompileClassLoader extends ClassLoader {
 
     /**
-     * Байткод загруженных классов.
+     * The list of byte codes of loaded classes.
      */
+    @NotNull
     private final Array<ByteSource> byteCode;
 
     public CompileClassLoader() {
@@ -22,21 +25,20 @@ public class CompileClassLoader extends ClassLoader {
     }
 
     /**
-     * Добавить байткод класса.
+     * Add a new compiled class.
      */
-    public void addByteCode(final ByteSource byteSource) {
+    public void addByteCode(@NotNull final ByteSource byteSource) {
         byteCode.add(byteSource);
     }
 
     @Override
-    protected Class<?> findClass(final String name) throws ClassNotFoundException {
+    protected Class<?> findClass(@NotNull final String name) throws ClassNotFoundException {
+
         synchronized (byteCode) {
             if (byteCode.isEmpty()) return null;
-
             for (final ByteSource byteSource : byteCode) {
                 final byte[] bytes = byteSource.getByteSource();
-                final Class<?> result = Util.safeExecute(() -> defineClass(name, bytes, 0, bytes.length));
-                if (result != null) return result;
+                return Util.safeGet(() -> defineClass(name, bytes, 0, bytes.length));
             }
         }
 

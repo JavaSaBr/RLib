@@ -1,10 +1,14 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-потребитель на 2 аргумента.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface IntBiObjectConsumer<S, T> {
 
-    public void accept(int first, S second, T third);
+    void accept(int first, @Nullable S second, @Nullable T third);
 }

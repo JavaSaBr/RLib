@@ -10,7 +10,7 @@ import rlib.geom.bounding.BoundingType;
 /**
  * Модель формы коробки.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class OrientedBoundingBox extends AbstractBounding {
 
@@ -64,7 +64,7 @@ public final class OrientedBoundingBox extends AbstractBounding {
     @Override
     public Vector getResultCenter(final VectorBuffer buffer) {
 
-        final Vector vector = buffer.getNextVector();
+        final Vector vector = buffer.nextVector();
         vector.set(center);
 
         if (offset == Vector.ZERO) {
@@ -158,14 +158,14 @@ public final class OrientedBoundingBox extends AbstractBounding {
 
         float rhs;
 
-        final Vector diff = start.subtract(getResultCenter(buffer), buffer.getNextVector());
+        final Vector diff = start.subtract(getResultCenter(buffer), buffer.nextVector());
 
-        final Vector fWdU = buffer.getNextVector();
-        final Vector fAWdU = buffer.getNextVector();
-        final Vector fDdU = buffer.getNextVector();
+        final Vector fWdU = buffer.nextVector();
+        final Vector fAWdU = buffer.nextVector();
+        final Vector fDdU = buffer.nextVector();
 
-        final Vector fADdU = buffer.getNextVector();
-        final Vector fAWxDdU = buffer.getNextVector();
+        final Vector fADdU = buffer.nextVector();
+        final Vector fAWxDdU = buffer.nextVector();
 
         fWdU.setX(direction.dot(Vector.UNIT_X));
         fAWdU.setX(Math.abs(fWdU.getX()));
@@ -198,7 +198,7 @@ public final class OrientedBoundingBox extends AbstractBounding {
             return false;
         }
 
-        final Vector wCrossD = direction.cross(diff, buffer.getNextVector());
+        final Vector wCrossD = direction.cross(diff, buffer.nextVector());
 
         fAWxDdU.setX(Math.abs(wCrossD.dot(Vector.UNIT_X)));
 
@@ -234,7 +234,7 @@ public final class OrientedBoundingBox extends AbstractBounding {
         matrix.set(rotation);
         matrix.absoluteLocal();
 
-        final Vector vector = buffer.getNextVector();
+        final Vector vector = buffer.nextVector();
         vector.set(size);
 
         matrix.mult(vector, vector);

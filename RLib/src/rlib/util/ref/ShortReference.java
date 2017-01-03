@@ -2,10 +2,12 @@ package rlib.util.ref;
 
 import static rlib.util.ref.ReferenceType.SHORT;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Ссылка на тип данных short.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class ShortReference extends AbstractReference {
 
@@ -14,8 +16,9 @@ final class ShortReference extends AbstractReference {
      */
     private short value;
 
+    @NotNull
     @Override
-    public ReferenceType getReferenceType() {
+    public ReferenceType getType() {
         return SHORT;
     }
 

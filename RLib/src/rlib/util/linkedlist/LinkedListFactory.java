@@ -6,7 +6,7 @@ import rlib.util.linkedlist.impl.SortedLinkedList;
 /**
  * Утильный класс по работе со связанными списками.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class LinkedListFactory {
 

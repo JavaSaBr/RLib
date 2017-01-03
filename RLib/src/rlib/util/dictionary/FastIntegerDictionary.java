@@ -1,38 +1,69 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Реализация словаря с использованием примитивного int ключа.
+ * The fast implementation of {@link IntegerDictionary} without threadsafe supporting.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements UnsafeIntegerDictionary<V> {
 
     /**
-     * Кол-во элементов в словаре.
+     * The array of entries.
+     */
+    private IntegerEntry<V>[] content;
+
+    /**
+     * The next size value at which to resize (capacity * load factor).
+     */
+    private int threshold;
+
+    /**
+     * The count of values in this {@link Dictionary}.
      */
     private int size;
 
     protected FastIntegerDictionary() {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
     protected FastIntegerDictionary(final float loadFactor) {
-        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(loadFactor, DEFAULT_INITIAL_CAPACITY);
+    }
+
+    protected FastIntegerDictionary(final int initCapacity) {
+        this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     protected FastIntegerDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
-        this.size = 0;
-    }
-
-    protected FastIntegerDictionary(final int initCapacity) {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     @Override
-    public final void clear() {
-        super.clear();
-        size = 0;
+    public void setSize(final int size) {
+        this.size = size;
+    }
+
+    @Override
+    public void setContent(@NotNull final IntegerEntry<V>[] content) {
+        this.content = content;
+    }
+
+    @NotNull
+    @Override
+    public IntegerEntry<V>[] content() {
+        return content;
+    }
+
+    @Override
+    public void setThreshold(final int threshold) {
+        this.threshold = threshold;
+    }
+
+    @Override
+    public int getThreshold() {
+        return threshold;
     }
 
     @Override

@@ -1,9 +1,9 @@
 package rlib.util.array.impl;
 
 /**
- * Финальная версия быстрого сета.
+ * The final version of the {@link FastArraySet}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class FinalFastArraySet<E> extends FastArraySet<E> {
 

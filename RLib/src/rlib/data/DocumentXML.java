@@ -1,14 +1,17 @@
 package rlib.data;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Интерфейс для реализации парсера хмл.
+ * The interface for implementing a parser pf xml documents.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface DocumentXML<C> {
 
     /**
-     * Парс файла с получением результата.
+     * Parse this document and get the result.
      */
-    public C parse();
+    @NotNull
+    C parse();
 }

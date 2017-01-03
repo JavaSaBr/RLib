@@ -1,19 +1,23 @@
 package rlib.util.ref;
 
 /**
- * Базовая реализация ссылки.
+ * The base implementation of the {@link Reference}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public abstract class AbstractReference implements Reference {
+public abstract class AbstractReference implements UnsafeReference {
 
     protected AbstractReference() {
         super();
     }
 
     @Override
+    public boolean isThreadLocal() {
+        return false;
+    }
+
+    @Override
     public void release() {
-        final ReferenceType referenceType = getReferenceType();
-        referenceType.put(this);
+        getType().put(this);
     }
 }

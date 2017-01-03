@@ -1,18 +1,20 @@
 package rlib.concurrent.deadlock;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.management.ThreadInfo;
 
 /**
- * Интерфейс для реализации прослушки обнаружений дедлоков.
+ * The interface to implement a deadlock listener.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface DeadLockListener {
 
     /**
-     * Уведомление о дедлоке с предоставлением информации о заблоченном потоке.
+     * Notify about deadlock detecting.
      *
-     * @param info информация об потоке.
+     * @param info the information about thread.
      */
-    public void onDetected(ThreadInfo info);
+    void onDetected(@NotNull ThreadInfo info);
 }

@@ -1,10 +1,15 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-функция на 3 аргумента.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface SafeTripleFunction<F, S, T, R> {
 
-    public R apply(F first, S second, T third) throws Exception;
+    @Nullable
+    R apply(@Nullable F first, @Nullable S second, @Nullable T third) throws Exception;
 }

@@ -8,7 +8,7 @@ import rlib.geom.VectorBuffer;
 /**
  * Интерфейс для реализации формы из точек.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Bounding {
 

@@ -1,93 +1,137 @@
 package rlib.network.packet;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.ByteBuffer;
 
-import rlib.util.StringUtils;
-
 /**
- * Интерфейс для реализации отправляемых пакетов.
+ * Interface for implementing sendable packets.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public interface SendablePacket<C> extends Packet<C> {
+public interface SendablePacket extends Packet {
 
     /**
-     * Записать пакет в указанный буфер.
+     * Notifies about started preparing data for writing of this packet.
+     */
+    default void notifyStartedPreparing() {
+    }
+
+    /**
+     * Notifies about finished preparing data for writing of this packet.
+     */
+    default void notifyFinishedPreparing() {
+    }
+
+    /**
+     * Notifies about started writing data of this packet.
+     */
+    default void notifyStartedWriting() {
+    }
+
+    /**
+     * Notifies about finished writing data of this packet.
+     */
+    default void notifyFinishedWriting() {
+    }
+
+    /**
+     * Writes this packet to the buffer.
      *
-     * @param buffer локальный буффер.
+     * @param buffer the buffer for writing.
      */
-    public void write(ByteBuffer buffer);
+    void write(@NotNull ByteBuffer buffer);
 
     /**
-     * Записать 1 байт в указанный буффер.
+     * Writes 1 byte to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param value  the value for writing.
      */
-    public default void writeByte(final ByteBuffer buffer, final int value) {
+    default void writeByte(@NotNull final ByteBuffer buffer, final int value) {
         buffer.put((byte) value);
     }
 
     /**
-     * Записать 2 байта в указанный буффер.
+     * Writes 2 bytes to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param value  the value for writing.
      */
-    public default void writeChar(final ByteBuffer buffer, final char value) {
+    default void writeChar(@NotNull final ByteBuffer buffer, final char value) {
         buffer.putChar(value);
     }
 
     /**
-     * Записать 2 байта в указанный буффер.
+     * Writes 2 bytes to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param value  the value for writing.
      */
-    public default void writeChar(final ByteBuffer buffer, final int value) {
+    default void writeChar(@NotNull final ByteBuffer buffer, final int value) {
         buffer.putChar((char) value);
     }
 
     /**
-     * Записать 4 байта в указанный буффер.
+     * Writes 4 bytes to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param value  the value for writing.
      */
-    public default void writeFloat(final ByteBuffer buffer, final float value) {
+    default void writeFloat(@NotNull final ByteBuffer buffer, final float value) {
         buffer.putFloat(value);
     }
 
     /**
-     * Записать зоголовок пакета в указанный буффер.
+     * Write the header of this packet to the buffer.
      *
-     * @param length размер пакета.
+     * @param buffer the buffer.
+     * @param length the result length of this packet.
      */
-    public void writeHeader(ByteBuffer buffer, int length);
+    void writeHeader(@NotNull ByteBuffer buffer, int length);
 
     /**
-     * Записать 4 байта в указанный буффер.
+     * Writes 4 bytes to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param value  the value for writing.
      */
-    public default void writeInt(final ByteBuffer buffer, final int value) {
+    default void writeInt(@NotNull final ByteBuffer buffer, final int value) {
         buffer.putInt(value);
     }
 
     /**
-     * Записать 8 байт в указанный буффер.
+     * Writes 8 bytes to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param value  the value for writing.
      */
-    public default void writeLong(final ByteBuffer buffer, final long value) {
+    default void writeLong(@NotNull final ByteBuffer buffer, final long value) {
         buffer.putLong(value);
     }
 
     /**
-     * Установка на позицию для записи пакета.
+     * Prepares the position of the buffer for writing data from this packet.
      */
-    public void writePosition(ByteBuffer buffer);
+    void prepareWritePosition(@NotNull ByteBuffer buffer);
 
     /**
-     * Записать 2 байта в указанный буффер.
+     * Writes 2 bytes to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param value  the value for writing.
      */
-    public default void writeShort(final ByteBuffer buffer, final int value) {
+    default void writeShort(@NotNull final ByteBuffer buffer, final int value) {
         buffer.putShort((short) value);
     }
 
     /**
-     * Записать строку в указанный буффер.
+     * Writes the string to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param string the string for writing.
      */
-    public default void writeString(final ByteBuffer buffer, String string) {
-
-        if (string == null) {
-            string = StringUtils.EMPTY;
-        }
-
+    default void writeString(@NotNull final ByteBuffer buffer, @NotNull final String string) {
         for (int i = 0, length = string.length(); i < length; i++) {
             buffer.putChar(string.charAt(i));
         }

@@ -1,64 +1,68 @@
 package rlib.classpath;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Function;
 
 import rlib.util.array.Array;
 
 /**
- * Сканер classpath для последущего поиска нужных классов.
+ * THe interface to implement a classpath scanner.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ClassPathScanner {
 
-    public static final String JAR_EXTENSION = ".jar";
+    String JAR_EXTENSION = ".jar";
 
     /**
-     * Добавить в сканнер дополнительные классы.
+     * Add some classes to this scanner.
      *
-     * @param classes добавляемые классы.
+     * @param classes the classes.
      */
-    public void addClasses(Array<Class<?>> classes);
+    void addClasses(@NotNull Array<Class<?>> classes);
 
     /**
-     * Добавить в сканнер дополнительные ресурсы.
+     * Add some resources to this scanner.
      *
-     * @param resources добавляемые ресурсы.
+     * @param resources the resources.
      */
-    public void addResources(Array<String> resources);
+    void addResources(@NotNull Array<String> resources);
 
     /**
-     * Найти все реализации указанного интерфейса.
+     * Find all implementations of an interface class.
      *
-     * @param container      контейнер классов.
-     * @param interfaceClass интересуемый интерфейс.
+     * @param container      the container.
+     * @param interfaceClass the interface class.
      */
-    public <T, R extends T> void findImplements(Array<Class<R>> container, Class<T> interfaceClass);
+    <T, R extends T> void findImplements(@NotNull Array<Class<R>> container, @NotNull Class<T> interfaceClass);
 
     /**
-     * Найти всех наследников указанного класса.
+     * Find all inheriting classes of a parent class.
      *
-     * @param container   контейнер классов.
-     * @param parentClass наследуемый класс.
+     * @param container   the container.
+     * @param parentClass the parent class.
      */
-    public <T, R extends T> void findInherited(Array<Class<R>> container, Class<T> parentClass);
+    <T, R extends T> void findInherited(@NotNull Array<Class<R>> container, @NotNull Class<T> parentClass);
 
     /**
-     * Получить все найденные классы.
+     * Get all found classes.
      *
-     * @param container контейнер классов.
+     * @param container the container.
      */
-    public void getAll(Array<Class<?>> container);
+    void getAll(@NotNull Array<Class<?>> container);
 
     /**
-     * Получить все найденные ресурсы.
+     * Get all found resources.
      *
-     * @param container контейнер ресурсов.
+     * @param container the container.
      */
-    public void getAllResources(Array<String> container);
+    void getAllResources(@NotNull Array<String> container);
 
     /**
-     * Запустить сканирование classpath.
+     * Start scanning.
+     *
+     * @param filter the filter.
      */
-    public void scanning(Function<String, Boolean> filter);
+    void scanning(@NotNull Function<String, Boolean> filter);
 }

@@ -1,17 +1,17 @@
 package rlib.util.random;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.round;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import rlib.util.NumberUtils;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.round;
-
 /**
  * Реализация медленного рандоминайзера с очень естественным рандомом.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class RealRandom implements Random {
 

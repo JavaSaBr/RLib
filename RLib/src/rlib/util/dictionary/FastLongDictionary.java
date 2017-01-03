@@ -1,38 +1,69 @@
 package rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Реализация быстрого словаря с примитивным ключем long.
+ * The fast implementation of {@link LongDictionary} without threadsafe supporting.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastLongDictionary<V> extends AbstractLongDictionary<V> {
 
     /**
-     * Кол-во элементов в словаре.
+     * The array of entries.
+     */
+    private LongEntry<V>[] content;
+
+    /**
+     * The next size value at which to resize (capacity * load factor).
+     */
+    private int threshold;
+
+    /**
+     * The count of values in this {@link Dictionary}.
      */
     private int size;
 
     protected FastLongDictionary() {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
     protected FastLongDictionary(final float loadFactor) {
-        this(loadFactor, Dictionary.DEFAULT_INITIAL_CAPACITY);
+        this(loadFactor, DEFAULT_INITIAL_CAPACITY);
+    }
+
+    protected FastLongDictionary(final int initCapacity) {
+        this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     protected FastLongDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
-        this.size = 0;
-    }
-
-    protected FastLongDictionary(final int initCapacity) {
-        this(Dictionary.DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     @Override
-    public final void clear() {
-        super.clear();
-        size = 0;
+    public void setSize(final int size) {
+        this.size = size;
+    }
+
+    @Override
+    public void setContent(@NotNull final LongEntry<V>[] content) {
+        this.content = content;
+    }
+
+    @NotNull
+    @Override
+    public LongEntry<V>[] content() {
+        return content;
+    }
+
+    @Override
+    public void setThreshold(final int threshold) {
+        this.threshold = threshold;
+    }
+
+    @Override
+    public int getThreshold() {
+        return threshold;
     }
 
     @Override

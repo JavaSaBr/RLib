@@ -1,36 +1,38 @@
 package rlib.concurrent.lock.impl;
 
+import org.jetbrains.annotations.NotNull;
+
+import sun.misc.Contended;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.atomic.AtomicReference;
-import rlib.concurrent.util.ThreadUtils;
 
 /**
- * Реализация примитивного блокировщика при помощи {@link AtomicInteger} но с поддержкой рекурсивной
- * блокировки. Рекамендуется приминется в местах с не более чем средней конкурнции и с короткими
- * секциями блокировки.
+ * The implementation of the {@link Lock} based on using {@link AtomicInteger} with supporting
+ * reentrant calls.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
-public final class ReentrantAtomicLock implements Lock {
+public class ReentrantAtomicLock implements Lock {
 
     /**
-     * Статус блокировки.
+     * The status of lock.
      */
-    @sun.misc.Contended("lock")
+    @Contended("lock")
     private final AtomicReference<Thread> status;
 
     /**
-     * Уровень повторного вхождения.
+     * The level of locking.
      */
-    @sun.misc.Contended("lock")
+    @Contended("level")
     private final AtomicInteger level;
 
     /**
-     * Поле для слива результата временных вычислений.
+     * The field for consuming CPU.
      */
     private int sink;
 
@@ -40,57 +42,47 @@ public final class ReentrantAtomicLock implements Lock {
         this.sink = 1;
     }
 
-    /**
-     * @return статус блокировки.
-     */
-    private AtomicReference<Thread> getStatus() {
-        return status;
-    }
-
     @Override
     public void lock() {
 
         final Thread thread = Thread.currentThread();
-        final AtomicReference<Thread> status = getStatus();
 
         try {
-
             if (status.get() == thread) return;
-            while (!status.compareAndSet(null, thread)) {
-
-                // выполняем пачку элементарных бессмысленных операций для
-                // обеспечения интервала между проверками
-                final int value = sink;
-                int newValue = value * value;
-                newValue = value >>> 1;
-                newValue = value & newValue;
-                newValue = value ^ newValue;
-                newValue = newValue << value;
-                newValue = newValue | value;
-
-                sink = newValue;
-            }
-
+            while (!status.compareAndSet(null, thread)) consumeCPU();
         } finally {
             level.incrementAndGet();
         }
     }
 
-    @Override
-    public void lockInterruptibly() throws InterruptedException {
-        throw new RuntimeException("not supperted.");
+    protected void consumeCPU() {
+
+        final int value = sink;
+        int newValue = value * value;
+        newValue += value >>> 1;
+        newValue += value & newValue;
+        newValue += value ^ newValue;
+        newValue += newValue << value;
+        newValue += newValue | value;
+
+        sink = newValue;
     }
 
     @Override
+    public void lockInterruptibly() throws InterruptedException {
+        throw new UnsupportedOperationException();
+    }
+
+    @NotNull
+    @Override
     public Condition newCondition() {
-        throw new RuntimeException("not supperted.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean tryLock() {
 
         final Thread currentThread = Thread.currentThread();
-        final AtomicReference<Thread> status = getStatus();
 
         if (status.get() == currentThread) {
             level.incrementAndGet();
@@ -106,40 +98,14 @@ public final class ReentrantAtomicLock implements Lock {
     }
 
     @Override
-    public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
-
-        final Thread currentThread = Thread.currentThread();
-        final AtomicReference<Thread> status = getStatus();
-
-        if (status.get() == currentThread) {
-            level.incrementAndGet();
-            return true;
-        }
-
-        if (status.compareAndSet(null, currentThread)) {
-            level.incrementAndGet();
-            return true;
-        }
-
-        final long resultTime = unit.toMillis(time);
-
-        if (resultTime > 1) {
-            ThreadUtils.sleep(resultTime);
-        }
-
-        if (status.compareAndSet(null, currentThread)) {
-            level.incrementAndGet();
-            return true;
-        }
-
-        return false;
+    public boolean tryLock(final long time, @NotNull final TimeUnit unit) throws InterruptedException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void unlock() {
 
         final Thread thread = Thread.currentThread();
-        final AtomicReference<Thread> status = getStatus();
         if (status.get() != thread) return;
 
         if (level.decrementAndGet() == 0) {

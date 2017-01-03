@@ -1,5 +1,7 @@
 package rlib.classpath.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -17,7 +19,7 @@ import rlib.util.array.ArrayFactory;
 /**
  * Реализация сканера, который еще умеет из манифеста classpath доставать.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
 
@@ -88,19 +90,17 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
             LOGGER.warning(e1);
         }
 
-        result.trimToSize();
-
-        return result.array();
+        return result.toArray(String.class);
     }
 
+    @NotNull
     @Override
     protected String[] getPaths() {
 
         final Array<String> result = ArrayFactory.newArraySet(String.class);
         result.addAll(super.getPaths());
         result.addAll(getManifestClassPath());
-        result.trimToSize();
 
-        return result.array();
+        return result.toArray(String.class);
     }
 }

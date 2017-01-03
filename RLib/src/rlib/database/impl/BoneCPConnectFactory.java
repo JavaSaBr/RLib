@@ -3,6 +3,8 @@ package rlib.database.impl;
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -11,22 +13,21 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Фабрика подключений к БД.
+ * The implementation of connect factory base on {@link BoneCP}.
  *
- * @author Ronn
- * @created 27.03.2012
+ * @author JavaSaBr
  */
 public final class BoneCPConnectFactory implements ConnectFactory {
 
     private static final Logger LOGGER = LoggerManager.getLogger(BoneCPConnectFactory.class);
 
     /**
-     * Основной пул подключений.
+     * The source.
      */
     private BoneCP source;
 
     /**
-     * Выключение работы сервера с бд.
+     * Close the source.
      */
     public synchronized void close() {
         source.close();
@@ -39,12 +40,12 @@ public final class BoneCPConnectFactory implements ConnectFactory {
     }
 
     /**
-     * Инициализация фабрики подключений к БД.
+     * Init a connection pool.
      *
-     * @param config настройка пула подключений.
-     * @param driver драйвер БД.
+     * @param config the config.
+     * @param driver the driver.
      */
-    public synchronized void init(final BoneCPConfig config, final String driver) throws SQLException {
+    public synchronized void init(@NotNull final BoneCPConfig config, @NotNull final String driver) throws SQLException {
         try {
             Class.forName(driver).newInstance();
             source = new BoneCP(config);

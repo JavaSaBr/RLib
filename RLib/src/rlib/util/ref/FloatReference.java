@@ -2,15 +2,18 @@ package rlib.util.ref;
 
 import static rlib.util.ref.ReferenceType.FLOAT;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Ссылка на тип данных float.
+ * The reference to float value.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 final class FloatReference extends AbstractReference {
 
     /**
-     * Значение по ссылке.
+     * The value of this reference.
      */
     private float value;
 
@@ -24,13 +27,29 @@ final class FloatReference extends AbstractReference {
         this.value = value;
     }
 
+    @NotNull
     @Override
-    public ReferenceType getReferenceType() {
+    public ReferenceType getType() {
         return FLOAT;
     }
 
     @Override
+    public boolean equals(@Nullable final Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        final FloatReference that = (FloatReference) object;
+        return Float.compare(that.value, value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return (value != +0.0f ? Float.floatToIntBits(value) : 0);
+    }
+
+    @Override
     public String toString() {
-        return getClass().getSimpleName() + " [value=" + value + "]";
+        return "FloatReference{" +
+                "value=" + value +
+                "} " + super.toString();
     }
 }

@@ -1,55 +1,68 @@
 package rlib.logging;
 
 /**
- * Перечисление уровней логгирования.
+ * The list of logging levels.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public enum LoggerLevel {
-    INFO("INFO"),
-    DEBUG("DEBUG"),
-    WARNING("WARNING"),
-    ERROR("ERROR");
+    INFO("INFO", false),
+    DEBUG("DEBUG", false),
+    WARNING("WARNING", true),
+    ERROR("ERROR", true);
 
     public static final int LENGTH = values().length;
 
     /**
-     * титул сообщения
+     * The level title.
      */
     private String title;
 
     /**
-     * активен ли уровень
+     * The flag of activity.
      */
     private boolean enabled;
 
-    private LoggerLevel(final String title) {
+    /**
+     * The flag of force flushing.
+     */
+    private boolean forceFlush;
+
+    LoggerLevel(final String title, final boolean forceFlush) {
         this.title = title;
+        this.forceFlush = forceFlush;
     }
 
     /**
-     * @return титул сообщения.
+     * @return the level title.
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * @param title титул сообщения.
+     * @param title the level title.
      */
     public void setTitle(final String title) {
         this.title = title;
     }
 
     /**
-     * @return активен ли уровень.
+     * @return true if need force flush.
+     */
+    public boolean isForceFlush() {
+        return forceFlush;
+    }
+
+    /**
+     * @return true if this level is enabled.
      */
     public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     * @param enabled активен ли уровень.
+     * @param enabled the flag of activity.
      */
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;

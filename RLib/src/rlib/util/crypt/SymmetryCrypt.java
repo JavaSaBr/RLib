@@ -14,7 +14,7 @@ import javax.crypto.ShortBufferException;
 /**
  * Модель симметричного криптора с использованием RC4 алгоритма.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class SymmetryCrypt {
 

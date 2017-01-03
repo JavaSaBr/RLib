@@ -11,7 +11,7 @@ import rlib.logging.LoggerManager;
 /**
  * Набор утильных методов по работе с I/O.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class IOUtils {
 
@@ -19,7 +19,6 @@ public final class IOUtils {
 
     public static void close(final Closeable stream) {
         if (stream == null) return;
-
         try {
             stream.close();
         } catch (final IOException e) {

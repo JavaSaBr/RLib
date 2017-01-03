@@ -3,7 +3,7 @@ package rlib.geom.bounding;
 import static java.lang.Math.abs;
 
 /**
- * @author Ronn
+ * @author JavaSaBr
  */
 public class Intersects {
 

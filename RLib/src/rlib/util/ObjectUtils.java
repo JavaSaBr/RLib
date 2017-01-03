@@ -1,5 +1,7 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -9,12 +11,12 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+import rlib.util.pools.Reusable;
 
 /**
  * Класс для работы с объектами.
  *
- * @author Ronn
- * @created 07.04.2012
+ * @author JavaSaBr
  */
 public final class ObjectUtils {
 
@@ -38,7 +40,7 @@ public final class ObjectUtils {
                 final Method method = aClass.getDeclaredMethod("clone");
                 method.setAccessible(true);
 
-                return (T) method.invoke(original);
+                return ClassUtils.unsafeCast(method.invoke(original));
 
             } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 LOGGER.warning(e);
@@ -50,11 +52,7 @@ public final class ObjectUtils {
         final Object newObject = newInstance(aClass);
         reload(newObject, original);
 
-        return (T) newObject;
-    }
-
-    public static boolean equals(final Object first, final Object second) {
-        return first == second || first != null && first.equals(second);
+        return ClassUtils.unsafeCast(newObject);
     }
 
     /**
@@ -147,31 +145,20 @@ public final class ObjectUtils {
      * @param original обновляемый объект.
      * @param updated  объект, с которого нужно взять значения.
      */
-    public static <O, N extends O> void reload(final O original, final N updated) {
-
-        if (original == null || updated == null) {
-            return;
-        }
+    public static <O, N extends O> void reload(@NotNull final O original, @NotNull final N updated) {
 
         final Array<Field> array = ArrayFactory.newArray(Field.class);
 
         for (Class<?> cs = original.getClass(); cs != null; cs = cs.getSuperclass()) {
-
-            final Field[] fields = cs.getDeclaredFields();
-
-            for (final Field field : fields) {
-                array.add(field);
-            }
+            array.addAll(cs.getDeclaredFields());
         }
 
-        array.trimToSize();
+        array.forEach(field -> {
 
-        for (final Field field : array) {
+            final String fieldName = field.toString();
 
-            final String str = field.toString();
-
-            if (str.contains("final") || str.contains("static")) {
-                continue;
+            if (fieldName.contains("final") || fieldName.contains("static")) {
+                return;
             }
 
             field.setAccessible(true);
@@ -181,6 +168,15 @@ public final class ObjectUtils {
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 LOGGER.warning(e);
             }
-        }
+        });
+    }
+
+    /**
+     * Call the method {@link Reusable#release()} if the object instanceof {@link Reusable}.
+     *
+     * @param object the object.
+     */
+    public static void release(final Object object) {
+        if (object instanceof Reusable) ((Reusable) object).release();
     }
 }

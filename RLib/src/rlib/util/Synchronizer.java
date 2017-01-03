@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Lock;
 import rlib.concurrent.lock.LockFactory;
 
 /**
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class Synchronizer implements Lockable {
 
@@ -20,7 +20,7 @@ public final class Synchronizer implements Lockable {
     public volatile boolean locked;
 
     public Synchronizer() {
-        this.sync = LockFactory.newLock();
+        this.sync = LockFactory.newReentrantLock();
     }
 
     /**

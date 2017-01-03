@@ -12,7 +12,7 @@ import rlib.util.linkedlist.LinkedListFactory;
 /**
  * Инициализатор синглетонов в указанном порядке.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class InitializeManager {
 

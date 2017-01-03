@@ -1,5 +1,9 @@
 package rlib.data;
 
+import static java.lang.ThreadLocal.withInitial;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,15 +21,15 @@ import rlib.logging.LoggerManager;
 import rlib.util.IOUtils;
 
 /**
- * Базовая модель для парсера данных с xml файла.
+ * The base implementation of the parser of xml documents.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(DocumentXML.class);
 
-    protected static final ThreadLocal<DocumentBuilderFactory> LOCAL_FACTORY = ThreadLocal.withInitial(() -> {
+    protected static final ThreadLocal<DocumentBuilderFactory> LOCAL_FACTORY = withInitial(() -> {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringComments(true);
@@ -33,38 +37,42 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     });
 
     /**
-     * Поток файла.
+     * The stream of xml document.
      */
+    @Nullable
     protected InputStream stream;
 
     /**
-     * Отпарсенный xml фаил.
+     * the DOM model of this document.
      */
+    @Nullable
     protected Document document;
 
     /**
-     * Конечные данные.
+     * The result of parsing.
      */
+    @Nullable
     protected C result;
 
     public AbstractStreamDocument() {
         super();
     }
 
-    public AbstractStreamDocument(final InputStream stream) {
+    public AbstractStreamDocument(@NotNull final InputStream stream) {
         this.stream = stream;
     }
 
     /**
-     * Создание соответствующей коллекцией, в которой будет хранится результат.
+     * Creates the container of the result.
      */
+    @NotNull
     protected abstract C create();
 
+    @NotNull
     @Override
     public C parse() {
 
         final DocumentBuilderFactory factory = LOCAL_FACTORY.get();
-
         try {
             final DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(stream);
@@ -88,11 +96,11 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     }
 
     /**
-     * Процесс парсинга хмл файла.
+     * The process of parsing this DOM model.
      *
-     * @param document DOM представление xml файла.
+     * @param document the DOM model of this document.
      */
-    protected void parse(final Document document) {
+    protected void parse(@NotNull final Document document) {
         for (Node node = document.getFirstChild(); node != null; node = node.getNextSibling()) {
             if (node.getNodeType() != Node.ELEMENT_NODE) continue;
             parse(null, (Element) node);
@@ -100,12 +108,12 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     }
 
     /**
-     * Процесс парсинга хмл файла.
+     * The process of parsing this document.
      *
-     * @param parent  родительский элемент.
-     * @param element текущий элемент.
+     * @param parent  the parent element.
+     * @param element the current element.
      */
-    protected void parse(final Element parent, final Element element) {
+    protected void parse(@Nullable final Element parent, @NotNull final Element element) {
         handle(parent, element);
 
         for (Node node = element.getFirstChild(); node != null; node = node.getNextSibling()) {
@@ -115,18 +123,18 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     }
 
     /**
-     * Процесс парсинга хмл файла.
+     * The process of parsing this element.
      *
-     * @param parent  родительский элемент.
-     * @param element текущий элемент.
+     * @param parent  the parent element.
+     * @param element the current element.
      */
-    protected void handle(final Element parent, final Element element) {
+    protected void handle(@Nullable final Element parent, @NotNull final Element element) {
     }
 
     /**
-     * @param stream контент для парса.
+     * @param stream the stream to parsing.
      */
-    protected void setStream(final InputStream stream) {
+    protected void setStream(@NotNull final InputStream stream) {
         this.stream = stream;
     }
 }

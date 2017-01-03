@@ -1,29 +1,64 @@
 package rlib.util.dictionary;
 
 /**
- * Интерфейс для реализации механизмов работы в многопоточной среде со словарем.
+ * The interface with methods for supporting threadsafe for the {@link Dictionary}.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ConcurrentDictionary<K, V> extends Dictionary<K, V> {
 
     /**
-     * Блокировка изменение таблицы на время чтения его.
+     * Lock this dictionary for reading.
+     *
+     * @return the stamp of read lock or 0.
      */
-    public void readLock();
+    default long readLock() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
-     * Разблокировка изменения таблицы.
+     * Unlock the read lock.
+     *
+     * @param stamp the stamp of read lock.
      */
-    public void readUnlock();
+    default void readUnlock(final long stamp) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
-     * Блокировка чтений для изменения таблицы.
+     * Try to optimistic read.
+     *
+     * @return the stamp of optimistic read or 0 if it was failed.
      */
-    public void writeLock();
+    default long tryOptimisticRead() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
-     * Разблокировка чтения таблицы.
+     * Validate this stamp.
+     *
+     * @param stamp the stamp.
+     * @return true is this stamp is valid.
      */
-    public void writeUnlock();
+    default boolean validate(final long stamp) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Lock this array for writing.
+     *
+     * @return the stamp of write lock or 0.
+     */
+    default long writeLock() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Unlock the write lock.
+     *
+     * @param stamp the stamp of write lock.
+     */
+    default void writeUnlock(final long stamp) {
+        throw new UnsupportedOperationException();
+    }
 }

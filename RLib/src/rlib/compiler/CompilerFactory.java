@@ -1,23 +1,26 @@
 package rlib.compiler;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.tools.ToolProvider;
 
 import rlib.compiler.impl.CompilerImpl;
 
 /**
- * Фабрика компиляторов java кода на рантайме.
+ * The factory of java compilers.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompilerFactory {
 
     /**
-     * @return доступен ли компилятор.
+     * @return true if a compiler is available.
      */
     public static boolean isAvailableCompiler() {
         return ToolProvider.getSystemJavaCompiler() != null;
     }
 
+    @NotNull
     public static Compiler newDefaultCompiler() {
         return new CompilerImpl(true);
     }

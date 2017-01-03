@@ -1,42 +1,56 @@
 package rlib.database;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Модель запроса для очистки таблицы.
+ * The query to clean a table.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class CleaningQuery {
 
     /**
-     * Название таблицы, которую очищает запрос.
+     * The name of the table.
      */
+    @NotNull
     private final String name;
 
     /**
-     * Содержание запроса.
+     * The query.
      */
+    @NotNull
     private final String query;
 
     /**
      * @param name  имя таблицы
      * @param query запрос
      */
-    public CleaningQuery(final String name, final String query) {
+    public CleaningQuery(@NotNull final String name, @NotNull final String query) {
         this.name = name;
         this.query = query;
     }
 
     /**
-     * @return name название запроса.
+     * @return the name of the table.
      */
+    @NotNull
     public String getName() {
         return name;
     }
 
     /**
-     * @return query содержание запроса.
+     * @return the query.
      */
+    @NotNull
     public String getQuery() {
         return query;
+    }
+
+    @Override
+    public String toString() {
+        return "CleaningQuery{" +
+                "name='" + name + '\'' +
+                ", query='" + query + '\'' +
+                '}';
     }
 }

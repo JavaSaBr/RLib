@@ -1,5 +1,9 @@
 package rlib.geom.bounding.impl;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import rlib.geom.Matrix3f;
 import rlib.geom.Rotation;
 import rlib.geom.Vector;
@@ -7,14 +11,10 @@ import rlib.geom.VectorBuffer;
 import rlib.geom.bounding.Bounding;
 import rlib.geom.bounding.BoundingType;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 /**
  * Реализация формы коробки.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class AxisAlignedBoundingBox extends AbstractBounding {
 
@@ -87,7 +87,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
     @Override
     public Vector getResultCenter(final VectorBuffer buffer) {
 
-        final Vector vector = buffer.getNextVector();
+        final Vector vector = buffer.nextVector();
         vector.set(center);
 
         if (offset == Vector.ZERO) {
@@ -217,7 +217,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         matrix.set(rotation);
         matrix.absoluteLocal();
 
-        final Vector vector = buffer.getNextVector();
+        final Vector vector = buffer.nextVector();
         vector.set(size);
 
         matrix.mult(vector, vector);

@@ -12,14 +12,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import rlib.concurrent.lock.AsyncReadSyncWriteLock;
-import rlib.concurrent.lock.impl.PrimitiveAtomicReadWriteLock;
-import rlib.concurrent.lock.impl.SimpleReadWriteLock;
+import rlib.concurrent.lock.impl.AtomicReadWriteLock;
+import rlib.concurrent.lock.impl.ReentrantARSWLock;
 import rlib.concurrent.util.ThreadUtils;
 
 /**
  * Тест функционала блокировщика.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class TestPrimitiveAtomicReadWriteLock extends Assert {
 
@@ -30,8 +30,8 @@ public class TestPrimitiveAtomicReadWriteLock extends Assert {
 
         System.out.println(header + "start test...");
 
-        final AsyncReadSyncWriteLock atomicLock = new PrimitiveAtomicReadWriteLock();
-        final AsyncReadSyncWriteLock reentrantLock = new SimpleReadWriteLock();
+        final AsyncReadSyncWriteLock atomicLock = new AtomicReadWriteLock();
+        final AsyncReadSyncWriteLock reentrantLock = new ReentrantARSWLock();
 
         final ExecutorService service = Executors.newFixedThreadPool(10);
 

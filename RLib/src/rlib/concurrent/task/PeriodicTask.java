@@ -1,36 +1,34 @@
 package rlib.concurrent.task;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Интерфейс для реализации периодической азадчи.
+ * The interface to implement a periodic tasks.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface PeriodicTask<L> extends CallableTask<Boolean, L> {
 
     @Override
-    public default Boolean call(final L local, final long currentTime) {
-
-        if (update(local, currentTime)) {
-            return Boolean.TRUE;
-        }
-
+    default Boolean call(@NotNull final L local, final long currentTime) {
+        if (update(local, currentTime)) return Boolean.TRUE;
         return Boolean.FALSE;
     }
 
     /**
-     * Уведомление задачи о том что она была финиширована для исполнителя.
+     * Notify about finishing this task.
      *
-     * @param local контейнер локальных объектов.
+     * @param local the thread local container.
      */
-    public default void onFinish(final L local) {
+    default void onFinish(@NotNull final L local) {
     }
 
     /**
-     * Реализация процесса обновления задачи.
+     * Execute and update this task.
      *
-     * @param local       контейнер локальных объектов.
-     * @param currentTime текущее время.
-     * @return завершена ли работа задачи.
+     * @param local       the thread local container.
+     * @param currentTime the current time.
+     * @return true if this task is finished.
      */
-    public boolean update(L local, long currentTime);
+    boolean update(@NotNull L local, long currentTime);
 }

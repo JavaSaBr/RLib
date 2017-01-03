@@ -3,7 +3,7 @@ package rlib.util.linkedlist.impl;
 /**
  * Реализация {@link FastLinkedList} с сортировкой при вставке нового элемента.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class SortedLinkedList<E extends Comparable<E>> extends FastLinkedList<E> {
 

@@ -1,10 +1,12 @@
 package rlib.function;
 
 /**
- * Функциональный интерфейс.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface SafeRunnable {
 
-    public void run() throws Exception;
+    void run() throws Exception;
 }

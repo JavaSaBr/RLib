@@ -1,14 +1,14 @@
 package rlib.util;
 
 /**
- * Интерфейс, который помечает, что объект имеет имя.
+ * The interface about objects with name.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface Nameable {
 
     /**
-     * @return имя объекта.
+     * @return the name of this object.
      */
     public String getName();
 }

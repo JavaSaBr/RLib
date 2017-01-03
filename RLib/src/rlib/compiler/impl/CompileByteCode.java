@@ -1,5 +1,7 @@
 package rlib.compiler.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -10,15 +12,16 @@ import rlib.compiler.ByteSource;
 import rlib.compiler.Compiler;
 
 /**
- * Контейнер байткода класса в памяти.
+ * The implementation of byte code container.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class CompileByteCode extends SimpleJavaFileObject implements ByteSource {
 
     /**
-     * Контейнер байткода класса в памяти.
+     * The stream with byte code.
      */
+    @NotNull
     private final ByteArrayOutputStream outputStream;
 
     public CompileByteCode(final String name) {
@@ -26,11 +29,13 @@ public class CompileByteCode extends SimpleJavaFileObject implements ByteSource 
         this.outputStream = new ByteArrayOutputStream();
     }
 
+    @NotNull
     @Override
     public byte[] getByteSource() {
         return outputStream.toByteArray();
     }
 
+    @NotNull
     @Override
     public OutputStream openOutputStream() {
         return outputStream;

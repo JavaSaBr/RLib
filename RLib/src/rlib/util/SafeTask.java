@@ -4,15 +4,14 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Интерфейс для реализации безопасно исполняющейся задачи.
+ * The interface for implementing safe task.
  *
- * @author Ronn
- * @created 22.04.2012
+ * @author JavaSaBr
  */
 public interface SafeTask extends Runnable {
 
     @Override
-    public default void run() {
+    default void run() {
         try {
             runImpl();
         } catch (final Exception e) {
@@ -21,8 +20,5 @@ public interface SafeTask extends Runnable {
         }
     }
 
-    /**
-     * Безопасный исполнение задачи.
-     */
-    public void runImpl();
+    void runImpl();
 }

@@ -1,5 +1,8 @@
 package rlib.util;
 
+import static java.lang.Float.parseFloat;
+import static rlib.util.ClassUtils.unsafeCast;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -8,13 +11,10 @@ import rlib.geom.Vector;
 import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
-import static java.lang.Float.parseFloat;
-import static rlib.util.ClassUtils.unsafeCast;
-
 /**
  * Реализация таблицы разнородных параметров.
  *
- * @author Ronn
+ * @author JavaSaBr
  * @created 29.02.2012
  */
 public class VarTable {

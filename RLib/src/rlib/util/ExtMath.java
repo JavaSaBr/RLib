@@ -3,7 +3,7 @@ package rlib.util;
 /**
  * Набор дополнительных математических методов.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public final class ExtMath {
 

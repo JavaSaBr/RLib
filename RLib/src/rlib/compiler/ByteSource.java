@@ -1,14 +1,17 @@
 package rlib.compiler;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Интерфейс для реализации хранилища байткода скомпиленного класса.
+ * The interface for implementing byte source container.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public interface ByteSource {
 
     /**
-     * @return байт код скомпиленного класса.
+     * @return the byte code of the class.
      */
-    public byte[] getByteSource();
+    @NotNull
+    byte[] getByteSource();
 }

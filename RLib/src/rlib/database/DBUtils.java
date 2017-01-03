@@ -1,5 +1,7 @@
 package rlib.database;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,23 +11,21 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Набор утильных методов для работы с БД.
+ * The class with utility methods for working with DB.
  *
- * @author Ronn
- * @created 27.03.2012
+ * @author JavaSaBr
  */
 public final class DBUtils {
 
     private static final Logger LOGGER = LoggerManager.getLogger(DBUtils.class);
 
     /**
-     * Завершение использования указанного подключения.
+     * Close the connection.
      *
-     * @param connection подключение, с каторым завершена работа.
+     * @param connection the connection.
      */
-    public static void closeConnection(final Connection connection) {
+    public static void close(@Nullable final Connection connection) {
         if (connection == null) return;
-
         try {
             connection.close();
         } catch (final SQLException e) {
@@ -34,48 +34,47 @@ public final class DBUtils {
     }
 
     /**
-     * Закрыть подключение и запрос.
+     * Close the connection and the statement.
      *
-     * @param connection подключение, которое необходимо закрыть.
-     * @param statement  запрос, который необходимо закрыть.
+     * @param connection the connection.
+     * @param statement  the statement.
      */
-    public static void closeDatabaseCS(final Connection connection, final Statement statement) {
-        closeStatement(statement);
-        closeConnection(connection);
+    public static void close(@Nullable final Connection connection, @Nullable final Statement statement) {
+        close(statement);
+        close(connection);
     }
 
     /**
-     * Закрыть подключение, запрос и результат.
+     * Close the connection, the statement and the result set.
      *
-     * @param connection подключение, которое необходимо закрыть.
-     * @param statement  запрос, который необходимо закрыть.
-     * @param rset       резуьтат, который необходимо закрыть.
+     * @param connection the connection.
+     * @param statement  the statement.
+     * @param rset       the result set.
      */
-    public static void closeDatabaseCSR(final Connection connection, final Statement statement, final ResultSet rset) {
-        closeResultSet(rset);
-        closeStatement(statement);
-        closeConnection(connection);
+    public static void close(@Nullable final Connection connection, @Nullable final Statement statement, @Nullable final ResultSet rset) {
+        close(rset);
+        close(statement);
+        close(connection);
     }
 
     /**
-     * Закрыть запрос и результат.
+     * Close the statement and the result set.
      *
-     * @param statement запрос, который необходимо закрыть.
-     * @param rset      результат, который необходимо закрыть.
+     * @param statement the statement.
+     * @param rset      the result set.
      */
-    public static void closeDatabaseSR(final Statement statement, final ResultSet rset) {
-        closeResultSet(rset);
-        closeStatement(statement);
+    public static void close(@Nullable final Statement statement, @Nullable final ResultSet rset) {
+        close(rset);
+        close(statement);
     }
 
     /**
-     * Закрыть результат.
+     * Close the result set.
      *
-     * @param rset результат, который необходимо закрыть.
+     * @param rset the result set.
      */
-    public static void closeResultSet(final ResultSet rset) {
+    public static void close(@Nullable final ResultSet rset) {
         if (rset == null) return;
-
         try {
             rset.close();
         } catch (final SQLException e) {
@@ -84,13 +83,12 @@ public final class DBUtils {
     }
 
     /**
-     * Закрыть запрос.
+     * Close a statement.
      *
-     * @param statement запрос, который необходимо закрыть.
+     * @param statement the statement.
      */
-    public static void closeStatement(final Statement statement) {
+    public static void close(@Nullable final Statement statement) {
         if (statement == null) return;
-
         try {
             statement.close();
         } catch (final SQLException e) {

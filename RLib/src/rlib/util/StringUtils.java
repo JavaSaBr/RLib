@@ -3,6 +3,7 @@ package rlib.util;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,27 +11,26 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Набор методов для работы со строками.
+ * The class with utility methods for working with strings.
  *
- * @author Ronn
- * @created 27.03.2012
+ * @author JavaSaBr
  */
 public class StringUtils {
 
     private static final Logger LOGGER = LoggerManager.getLogger(StringUtils.class);
 
     /**
-     * Экземпляр пустой строки.
+     * The empty string.
      */
     public static final String EMPTY = "";
 
     /**
-     * Экземпляр пустого массива строк.
+     * The empty array of strings.
      */
     public static final String[] EMPTY_ARRAY = new String[0];
 
     /**
-     * Создаем регулярку для проверки почты.
+     * The pattern for validating email.
      */
     public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
@@ -43,12 +43,8 @@ public class StringUtils {
      * @return длинна строки в байтах.
      */
     public static int byteCount(final String string) {
-
-        if (string == null || string.isEmpty()) {
-            return 2;
-        }
-
-        return string.length() * 2 + 2;
+        if (string == null || string.isEmpty()) return 2;
+        return string.length() * 2;
     }
 
     /**
@@ -66,13 +62,8 @@ public class StringUtils {
      * Сравнение 2х строк с учетом регистра с прооверками на <code>null</code>.
      */
     public static int compare(final String first, final String second) {
-
-        if (first == null) {
-            return 1;
-        } else if (second == null) {
-            return -1;
-        }
-
+        if (first == null) return 1;
+        else if (second == null) return -1;
         return first.compareTo(second);
     }
 
@@ -80,13 +71,8 @@ public class StringUtils {
      * Сравнение 2х строк без учета регистра с прооверками на <code>null</code>.
      */
     public static int compareIgnoreCase(final String first, final String second) {
-
-        if (first == null) {
-            return 1;
-        } else if (second == null) {
-            return -1;
-        }
-
+        if (first == null) return 1;
+        else if (second == null) return -1;
         return first.compareToIgnoreCase(second);
     }
 
@@ -95,7 +81,6 @@ public class StringUtils {
      */
     public static boolean equals(final String first, final String second) {
         return !(first == null || second == null) && first.equals(second);
-
     }
 
     /**
@@ -132,10 +117,11 @@ public class StringUtils {
      */
     public static String generate(final int length) {
 
+        final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
         final char[] array = new char[length];
 
         for (int i = 0; i < length; i++) {
-            array[i] = (char) Rnd.nextInt('a', 'z');
+            array[i] = (char) localRandom.nextInt('a', 'z');
         }
 
         return String.valueOf(array);
@@ -179,10 +165,8 @@ public class StringUtils {
      * @return хэш пароля.
      */
     public static String passwordToHash(final String password) {
-
         final MessageDigest hashMD5 = LOCAL_HASH_MD.get();
         hashMD5.update(password.getBytes(), 0, password.length());
-
         return new BigInteger(1, hashMD5.digest()).toString(16);
     }
 }

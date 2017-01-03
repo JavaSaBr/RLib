@@ -1,19 +1,22 @@
 package rlib.util.pools.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.pools.Reusable;
 import rlib.util.pools.ReusablePool;
 
 /**
- * Реализация не потокобезопасного легковесного {@link ReusablePool}.
+ * The fast implementation of the {@link ReusablePool}. It isn't threadsafe.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public class FastReusablePool<E extends Reusable> implements ReusablePool<E> {
 
     /**
-     * Пул объектов.
+     * The storage of objects.
      */
     private final Array<E> pool;
 
@@ -27,17 +30,17 @@ public class FastReusablePool<E extends Reusable> implements ReusablePool<E> {
     }
 
     @Override
-    public void put(final E object) {
-        if (object == null) return;
+    public void put(@NotNull final E object) {
         object.free();
         pool.add(object);
     }
 
     @Override
-    public void remove(final E object) {
+    public void remove(@NotNull final E object) {
         pool.fastRemove(object);
     }
 
+    @Nullable
     @Override
     public E take() {
 

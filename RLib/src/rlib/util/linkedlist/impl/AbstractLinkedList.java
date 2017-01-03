@@ -8,7 +8,7 @@ import rlib.util.linkedlist.LinkedList;
 /**
  * Базовая реализация связанного списка.
  *
- * @author Ronn
+ * @author JavaSaBr
  */
 public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 
