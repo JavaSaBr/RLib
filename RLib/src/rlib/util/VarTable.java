@@ -1238,7 +1238,7 @@ public class VarTable {
             final String[] vals = ((String) object).split(",");
 
             final Vector vector = Vector.newInstance();
-            vector.setXYZ(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
+            vector.set(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
 
             return vector;
         }
@@ -1268,7 +1268,7 @@ public class VarTable {
             final String[] vals = ((String) object).split(",");
 
             final Vector vector = Vector.newInstance();
-            vector.setXYZ(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
+            vector.set(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
 
             return vector;
         }
