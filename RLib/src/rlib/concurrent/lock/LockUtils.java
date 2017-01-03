@@ -1,5 +1,8 @@
 package rlib.concurrent.lock;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -11,19 +14,19 @@ import rlib.function.ObjectIntFunction;
 import rlib.util.Lockable;
 
 /**
- * Утильный класс для работы с блокерами.
+ * The class with utility methods to work with locks.
  *
  * @author JavaSaBr
  */
 public class LockUtils {
 
     /**
-     * Выполнить какие-то действия над блокуемым объектом в блоке.
+     * Execute a function in locked block.
      *
-     * @param lockable объект который надо заблокировать и выполнить какие-то действия.
-     * @param consumer фунция с дейсвтиями над объектом.
+     * @param lockable the lockable object.
+     * @param consumer the function.
      */
-    public static <L extends Lockable> void runInLock(final L lockable, final Consumer<L> consumer) {
+    public static <L extends Lockable> void runInLock(@Nullable final L lockable, @NotNull final Consumer<L> consumer) {
         if (lockable == null) return;
         lockable.lock();
         try {
@@ -34,13 +37,14 @@ public class LockUtils {
     }
 
     /**
-     * Выполнить какие-то действия над блокуемым объектом в блоке.
+     * Execute a function in locked block.
      *
-     * @param lockable объект который надо заблокировать и выполнить какие-то действия.
-     * @param argument дополнительный аргумент.
-     * @param consumer фунция с дейсвтиями над объектом.
+     * @param lockable the lockable object.
+     * @param argument the additional argument.
+     * @param consumer the function.
      */
-    public static <L extends Lockable, F> void runInLock(final L lockable, final F argument, BiConsumer<L, F> consumer) {
+    public static <L extends Lockable, F> void runInLock(@Nullable final L lockable, @Nullable final F argument,
+                                                         @NotNull final BiConsumer<L, F> consumer) {
         if (lockable == null) return;
         lockable.lock();
         try {
@@ -51,14 +55,14 @@ public class LockUtils {
     }
 
     /**
-     * Выполнить какие-то действия над блокуемым объектом в блокированном блоке с возвратом
-     * результата.
+     * Execute a function in locked block.
      *
-     * @param lockable объект который надо заблокировать и выполнить какие-то действия.
-     * @param function фунция с дейсвтиями над объектом.
+     * @param lockable the lockable object.
+     * @param function the function.
      * @return результат работы функции либо null.
      */
-    public static <L extends Lockable, R> R getInLock(final L lockable, final Function<L, R> function) {
+    @Nullable
+    public static <L extends Lockable, R> R getInLock(@Nullable final L lockable, @NotNull final Function<L, R> function) {
         if (lockable == null) return null;
         lockable.lock();
         try {
@@ -69,14 +73,13 @@ public class LockUtils {
     }
 
     /**
-     * Выполнить какие-то действия над блокуемым объектом в блокированном блоке с возвратом
-     * результата.
+     * Execute a function in locked block.
      *
-     * @param lockable объект который надо заблокировать и выполнить какие-то действия.
-     * @param function фунция с дейсвтиями над объектом.
+     * @param lockable the lockable object.
+     * @param function the function.
      * @return результат работы функции либо -1.
      */
-    public static <L extends Lockable> int getInLockInt(final L lockable, final FunctionInt<L> function) {
+    public static <L extends Lockable> int getInLockInt(@Nullable final L lockable, @NotNull final FunctionInt<L> function) {
         if (lockable == null) return -1;
         lockable.lock();
         try {
@@ -87,15 +90,15 @@ public class LockUtils {
     }
 
     /**
-     * Выполнить какие-то действия над блокуемым объектом в блокированном блоке с возвратом
-     * результата.
+     * Execute a function in locked block.
      *
-     * @param lockable объект который надо заблокировать и выполнить какие-то действия.
-     * @param argument дополнительный аргумент.
-     * @param function фунция с дейсвтиями над объектом.
+     * @param lockable the lockable object.
+     * @param argument the additional argument.
+     * @param function the function.
      * @return результат работы функции либо null.
      */
-    public static <L extends Lockable, F, R> R getInLock(final L lockable, final F argument, BiFunction<L, F, R> function) {
+    @Nullable
+    public static <L extends Lockable, F, R> R getInLock(@Nullable final L lockable, @Nullable final F argument, @NotNull final BiFunction<L, F, R> function) {
         if (lockable == null) return null;
         lockable.lock();
         try {
@@ -106,15 +109,15 @@ public class LockUtils {
     }
 
     /**
-     * Выполнить какие-то действия над блокуемым объектом в блокированном блоке с возвратом
-     * результата.
+     * Execute a function in locked block.
      *
-     * @param lockable объект который надо заблокировать и выполнить какие-то действия.
-     * @param argument дополнительный аргумент.
-     * @param function фунция с дейсвтиями над объектом.
+     * @param lockable the lockable object.
+     * @param argument the additional argument.
+     * @param function the function.
      * @return результат работы функции либо null.
      */
-    public static <L extends Lockable, R> R getInLock(final L lockable, final int argument, ObjectIntFunction<L, R> function) {
+    @Nullable
+    public static <L extends Lockable, R> R getInLock(@Nullable final L lockable, final int argument, @NotNull final ObjectIntFunction<L, R> function) {
         if (lockable == null) return null;
         lockable.lock();
         try {
@@ -125,46 +128,84 @@ public class LockUtils {
     }
 
     /**
-     * Заблокировать 2 объекта.
+     * Lock two locks.
      *
-     * @param first  первый блокированный объект.
-     * @param second второй блокированный объект.
+     * @param first  the first lock.
+     * @param second the second lock.
      */
-    public static void lock(final Lockable first, final Lock second) {
+    public static void lock(@NotNull final Lockable first, @NotNull final Lock second) {
         first.lock();
         second.lock();
     }
 
     /**
-     * Заблокировать 2 объекта.
+     * Lock two lockable objects.
      *
-     * @param first  первый блокированный объект.
-     * @param second второй блокированный объект.
+     * @param first  the first lockable object.
+     * @param second the second lockable object.
      */
-    public static void lock(final Lockable first, final Lockable second) {
+    public static void lock(@NotNull final Lockable first, @NotNull final Lockable second) {
         first.lock();
         second.lock();
     }
 
     /**
-     * Разблокировать 2 объекта.
+     * Lock two comparable and lockable objects.
      *
-     * @param first  первый блокированный объект.
-     * @param second второй блокированный объект.
+     * @param first  the first lockable object.
+     * @param second the second lockable object.
      */
-    public static void unlock(final Lockable first, final Lock second) {
+    public static <T extends Comparable<T> & Lockable> void lock(@NotNull final T first, @NotNull final T second) {
+
+        final int result = first.compareTo(second);
+
+        if (result == 0 || result == -1) {
+            first.lock();
+            second.lock();
+        } else {
+            second.lock();
+            first.lock();
+        }
+    }
+
+    /**
+     * Unlock two locks.
+     *
+     * @param first  the first lock.
+     * @param second the second lock.
+     */
+    public static void unlock(@NotNull final Lock first, @NotNull final Lock second) {
         first.unlock();
         second.unlock();
     }
 
     /**
-     * Разблокировать 2 объекта.
+     * Unlock two lockable objects.
      *
-     * @param first  первый блокированный объект.
-     * @param second второй блокированный объект.
+     * @param first  the first lockable object.
+     * @param second the second lockable object.
      */
-    public static void unlock(final Lockable first, final Lockable second) {
+    public static void unlock(@NotNull final Lockable first, @NotNull final Lockable second) {
         first.unlock();
         second.unlock();
+    }
+
+    /**
+     * Unlock two comparable and lockable objects.
+     *
+     * @param first  the first lockable object.
+     * @param second the second lockable object.
+     */
+    public static <T extends Comparable<T> & Lockable> void unlock(@NotNull final T first, @NotNull final T second) {
+
+        final int result = first.compareTo(second);
+
+        if (result == 0 || result == -1) {
+            second.unlock();
+            first.unlock();
+        } else {
+            first.unlock();
+            second.unlock();
+        }
     }
 }

@@ -1,5 +1,8 @@
 package rlib.concurrent.deadlock;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
@@ -17,7 +20,7 @@ import rlib.util.array.ArrayFactory;
 import rlib.util.array.ConcurrentArray;
 
 /**
- * Модель поиска и обнаружения делоков.
+ * The implementation of a deadlock detector.
  *
  * @author JavaSaBr
  */
@@ -26,30 +29,37 @@ public class DeadLockDetector implements SafeTask {
     private static final Logger LOGGER = LoggerManager.getLogger(DeadLockDetector.class);
 
     /**
-     * Набор слушателей дедлоков.
+     * The list of listeners.
      */
+    @NotNull
     private final ConcurrentArray<DeadLockListener> listeners;
 
     /**
-     * Информация об состоянии потоков.
+     * The bean with information about threads.
      */
+    @NotNull
     private final ThreadMXBean mxThread;
 
     /**
-     * Сервис по запуску детектора.
+     * The scheduler.
      */
-    private final ScheduledExecutorService executor;
+    @NotNull
+    private final ScheduledExecutorService executorService;
 
     /**
-     * Ссылка на исполение детектора.
+     * The reference to a task.
      */
+    @Nullable
     private volatile ScheduledFuture<?> schedule;
 
     /**
-     * Интервал детектора.
+     * The checking interval.
      */
     private final int interval;
 
+    /**
+     * @param interval the checking interval.
+     */
     public DeadLockDetector(final int interval) {
 
         if (interval < 1) {
@@ -58,22 +68,23 @@ public class DeadLockDetector implements SafeTask {
 
         this.listeners = ArrayFactory.newConcurrentReentrantRWLockArray(DeadLockListener.class);
         this.mxThread = ManagementFactory.getThreadMXBean();
-        this.executor = Executors.newSingleThreadScheduledExecutor();
+        this.executorService = Executors.newSingleThreadScheduledExecutor();
         this.interval = interval;
     }
 
     /**
-     * Добавление слушателя мертвых блокировок.
+     * Add a new listener.
      *
-     * @param listener новый слушатель.
+     * @param listener the new listener.
      */
-    public void addListener(final DeadLockListener listener) {
+    public void addListener(@NotNull final DeadLockListener listener) {
         ArrayUtils.runInWriteLock(listeners, listener, Array::add);
     }
 
     /**
-     * @return список слушателей.
+     * @return the list of listeners.
      */
+    @NotNull
     public ConcurrentArray<DeadLockListener> getListeners() {
         return listeners;
     }
@@ -100,19 +111,30 @@ public class DeadLockDetector implements SafeTask {
     }
 
     /**
-     * Запуск детектора.
+     * @return the reference to a task.
      */
-    public synchronized void start() {
-        if (schedule != null) return;
-        schedule = executor.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
+    @Nullable
+    private ScheduledFuture<?> getSchedule() {
+        return schedule;
     }
 
     /**
-     * Остановка детектора.
+     * Start.
+     */
+    public synchronized void start() {
+        if (schedule != null) return;
+        schedule = executorService.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Stop.
      */
     public synchronized void stop() {
+
+        final ScheduledFuture<?> schedule = getSchedule();
         if (schedule == null) return;
         schedule.cancel(false);
-        schedule = null;
+
+        this.schedule = null;
     }
 }

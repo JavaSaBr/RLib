@@ -12,8 +12,8 @@ import rlib.concurrent.atomic.AtomicInteger;
 import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 
 /**
- * The implementation of the {@link AsyncReadSyncWriteLock} using the several {@link AtomicInteger}
- * without supporting reentrant calls.
+ * The implementation of the {@link AsyncReadSyncWriteLock} using the several {@link AtomicInteger} without supporting
+ * reentrant calls.
  *
  * @author JavaSaBr
  */
@@ -128,7 +128,7 @@ public class AtomicReadWriteLock implements AsyncReadSyncWriteLock, Lock {
     }
 
     /**
-     * Попытка добавиться к читающим потокам.
+     * Try to get read lock.
      */
     private boolean tryReadLock() {
         if (writeCount.get() != 0) return false;

@@ -1,29 +1,32 @@
 package rlib.concurrent.executor;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.Future;
 
 import rlib.concurrent.task.CallableTask;
 import rlib.concurrent.task.SimpleTask;
 
 /**
- * Интерфейс для реализации исполнителя задач.
+ * The interface to implement a task executor.
  *
  * @author JavaSaBr
  */
 public interface TaskExecutor<L> {
 
     /**
-     * Добавить на исполнение задачу.
+     * Execute a simple task.
      *
-     * @param task добавляемая задача.
+     * @param task the simple task.
      */
-    public void execute(SimpleTask<L> task);
+    void execute(@NotNull SimpleTask<L> task);
 
     /**
-     * Добавить на выполнение задачу с возможностью ожидания результата.
+     * Submit a callable task.
      *
-     * @param task добавляемая задача.
-     * @return ссылка на исполнение задачи.
+     * @param task the callable task.
+     * @return the reference to the task.
      */
-    public <R> Future<R> submit(CallableTask<R, L> task);
+    @NotNull
+    <R> Future<R> submit(@NotNull CallableTask<R, L> task);
 }

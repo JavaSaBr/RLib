@@ -1,5 +1,6 @@
 package rlib.network.packet.impl;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import rlib.concurrent.executor.TaskExecutor;
@@ -15,7 +16,7 @@ import rlib.util.pools.ReusablePool;
 public abstract class AbstractTaskReadablePacket<C, L> extends AbstractReadablePacket<C> implements SimpleTask<L> {
 
     @Override
-    public void execute(final L local, final long currentTime) {
+    public void execute(@NotNull final L local, final long currentTime) {
         notifyStartedReading();
         try {
             executeImpl(local, currentTime);

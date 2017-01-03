@@ -1,5 +1,7 @@
 package rlib.concurrent.executor.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
@@ -18,7 +20,7 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Реализация однопоточного исполнителя обновлений задач.
+ * The implementation of single thread periodic executor.
  *
  * @author JavaSaBr
  */
@@ -27,51 +29,61 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadPeriodicTaskExecutor.class);
 
     /**
-     * Список ожидающих исполнение задач.
+     * The list of waiting tasks.
      */
+    @NotNull
     private final Array<T> waitTasks;
 
     /**
-     * Список задач которые будут исполнены.
+     * The list of executing tasks.
      */
+    @NotNull
     private final Array<T> executeTasks;
 
     /**
-     * Список завершенных задач.
+     * The list of finished tasks.
      */
+    @NotNull
     private final Array<T> finishedTasks;
 
     /**
-     * Поток, в котором происходит исполнение задач.
+     * The executor thread.
      */
+    @NotNull
     private final Thread thread;
 
     /**
-     * Локальные объекты.
+     * The thread local objects.
      */
+    @NotNull
     private final L localObjects;
 
     /**
-     * Функция для выполнения завершения задач.
+     * The finishing function.
      */
-    private final Consumer<T> finishFunc = task -> task.onFinish(getLocalObjects());
+    @NotNull
+    private final Consumer<T> finishFunction = task -> task.onFinish(getLocalObjects());
 
     /**
-     * Находится ли исполнитель в ожидании.
+     * The waiting flag.
      */
+    @NotNull
     private final AtomicBoolean wait;
 
     /**
-     * Блокировщик.
+     * The synchronizator.
      */
+    @NotNull
     private final Lock lock;
 
     /**
-     * Интервал обновлений.
+     * The update interval.
      */
     private final int interval;
 
-    public SingleThreadPeriodicTaskExecutor(final Class<? extends Thread> threadClass, final int priority, final int interval, final String name, final Class<?> taskClass, final L localObjects) {
+    public SingleThreadPeriodicTaskExecutor(@NotNull final Class<? extends Thread> threadClass, final int priority,
+                                            final int interval, @NotNull final String name,
+                                            final Class<?> taskClass, @NotNull final L localObjects) {
         this.waitTasks = ArrayFactory.newArray(taskClass);
         this.executeTasks = ArrayFactory.newArray(taskClass);
         this.finishedTasks = ArrayFactory.newArray(taskClass);
@@ -89,7 +101,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     }
 
     @Override
-    public void addTask(final T task) {
+    public void addTask(@NotNull final T task) {
         lock();
         try {
 
@@ -108,26 +120,21 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
         }
     }
 
-    /**
-     * Проверка и обработка переданного контейнера локальных объектов.
-     *
-     * @param localObjects контейнер локальных объектов.
-     * @param thread       поток, который будет исполнять задачи.
-     * @return провереный контейнер.
-     */
-    protected L check(final L localObjects, final Thread thread) {
+    @NotNull
+    protected L check(@NotNull final L localObjects, @NotNull final Thread thread) {
         return localObjects;
     }
 
     /**
-     * Реализация обработки исполнения задач, выполняется в безопасной области.
+     * Execute tasks.
      *
-     * @param executeTasks     список задач на исполнение.
-     * @param finishedTasks    список зафинишированных задач.
-     * @param local            контейнер локальных объектов.
-     * @param startExecuteTime время начало исполнения.
+     * @param executeTasks     the execute tasks.
+     * @param finishedTasks    the finished tasks.
+     * @param local            the thread local objects.
+     * @param startExecuteTime the start time.
      */
-    protected void executeImpl(final Array<T> executeTasks, final Array<T> finishedTasks, final L local, final long startExecuteTime) {
+    protected void executeImpl(@NotNull final Array<T> executeTasks, @NotNull final Array<T> finishedTasks,
+                               @NotNull final L local, final long startExecuteTime) {
         for (final T task : executeTasks.array()) {
             if (task == null) break;
             if (task.call(local, startExecuteTime) == Boolean.TRUE) {
@@ -137,43 +144,48 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     }
 
     /**
-     * @return список задач которые будут исполнены.
+     * @return the list of executing tasks.
      */
+    @NotNull
     protected Array<T> getExecuteTasks() {
         return executeTasks;
     }
 
     /**
-     * @return список завершенных задач.
+     * @return the list of finished tasks.
      */
+    @NotNull
     protected Array<T> getFinishedTasks() {
         return finishedTasks;
     }
 
     /**
-     * @return интервал обновлений.
+     * @return the update interval.
      */
     public int getInterval() {
         return interval;
     }
 
     /**
-     * @return локальные объекты.
+     * @return the thread local objects.
      */
+    @NotNull
     protected L getLocalObjects() {
         return localObjects;
     }
 
     /**
-     * @return находится ли исполнитель в ожидании.
+     * @return the waiting flag.
      */
+    @NotNull
     public AtomicBoolean getWait() {
         return wait;
     }
 
     /**
-     * @return список ожидающих исполнение задач.
+     * @return the list of waiting tasks.
      */
+    @NotNull
     protected Array<T> getWaitTasks() {
         return waitTasks;
     }
@@ -184,28 +196,27 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     }
 
     /**
-     * Выполнение действий после исполнения задач.
+     * Handle tasks after executing.
      *
-     * @param executeTasks     список задач, которые были исполнены, но не обязательно
-     *                         финишированы.
-     * @param local            контейнер локальных объектов.
-     * @param startExecuteTime время начало исполнения задач.
+     * @param executedTasks    the list of executed tasks.
+     * @param local            the thread local objects.
+     * @param startExecuteTime the start executing time.
      */
-    protected void postExecute(final Array<T> executeTasks, final L local, final long startExecuteTime) {
+    protected void postExecute(@NotNull final Array<T> executedTasks, @NotNull final L local, final long startExecuteTime) {
     }
 
     /**
-     * Выполнение действий перед обновлением.
+     * Handle tasks before executing.
      *
-     * @param executeTasks     список задач, которые будут исполнятся.
-     * @param local            контейнер локальных объектов.
-     * @param startExecuteTime время начало исполнения задач.
+     * @param executeTasks     the list of execute tasks.
+     * @param local            the thread local objects.
+     * @param startExecuteTime the start executing time.
      */
-    protected void preExecute(final Array<T> executeTasks, final L local, final long startExecuteTime) {
+    protected void preExecute(@NotNull final Array<T> executeTasks, @NotNull final L local, final long startExecuteTime) {
     }
 
     @Override
-    public void removeTask(final T task) {
+    public void removeTask(@NotNull final T task) {
         lock();
         try {
             waitTasks.fastRemove(task);
@@ -274,7 +285,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
                         unlock();
                     }
 
-                    finishedTasks.forEach(finishFunc);
+                    finishedTasks.forEach(finishFunction);
                 }
 
             } catch (final Exception e) {

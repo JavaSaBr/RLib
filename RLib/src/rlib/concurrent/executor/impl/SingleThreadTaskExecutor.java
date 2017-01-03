@@ -1,5 +1,7 @@
 package rlib.concurrent.executor.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Constructor;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -18,7 +20,7 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Реализация однопоточного исполнителя задач.
+ * The implementation of single thread task executor.
  *
  * @author JavaSaBr
  */
@@ -27,36 +29,43 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
     protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadTaskExecutor.class);
 
     /**
-     * Список ожидающих исполнение задач.
+     * The list of waiting tasks.
      */
+    @NotNull
     private final Array<CallableTask<?, L>> waitTasks;
 
     /**
-     * Список задач которые будут исполнены.
+     * The list of executing task.
      */
+    @NotNull
     private final Array<CallableTask<?, L>> executeTasks;
 
     /**
-     * Поток, в котором происходит исполнение задач.
+     * The executor thread.
      */
+    @NotNull
     private final Thread thread;
 
     /**
-     * Локальные объекты.
+     * The thread local objects.
      */
+    @NotNull
     private final L localObjects;
 
     /**
-     * Находится ли исполнитель в ожидании.
+     * The waiting flag.
      */
+    @NotNull
     private final AtomicBoolean wait;
 
     /**
-     * Блокировщик.
+     * The synchronizer.
      */
+    @NotNull
     private final Lock lock;
 
-    public SingleThreadTaskExecutor(final Class<? extends Thread> threadClass, final int priority, final String name, final L local) {
+    public SingleThreadTaskExecutor(@NotNull final Class<? extends Thread> threadClass, final int priority,
+                                    @NotNull final String name, @NotNull final L local) {
         this.waitTasks = ArrayFactory.newArray(SimpleTask.class);
         this.executeTasks = ArrayFactory.newArray(SimpleTask.class);
         this.wait = new AtomicBoolean();
@@ -71,12 +80,13 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
         this.thread.start();
     }
 
-    protected L check(final L local, final Thread thread) {
+    @NotNull
+    protected L check(@NotNull final L local, @NotNull final Thread thread) {
         return local;
     }
 
     @Override
-    public void execute(final SimpleTask<L> task) {
+    public void execute(@NotNull final SimpleTask<L> task) {
         lock();
         try {
 
@@ -96,29 +106,33 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
     }
 
     /**
-     * @return список задач которые будут исполнены.
+     * @return the list of executing task.
      */
+    @NotNull
     protected Array<CallableTask<?, L>> getExecuteTasks() {
         return executeTasks;
     }
 
     /**
-     * @return локальные объекты.
+     * @return the thread local objects.
      */
+    @NotNull
     protected L getLocalObjects() {
         return localObjects;
     }
 
     /**
-     * @return находится ли исполнитель в ожидании.
+     * @return the waiting flag.
      */
+    @NotNull
     public AtomicBoolean getWait() {
         return wait;
     }
 
     /**
-     * @return список ожидающих исполнение задач.
+     * @return the list of waiting tasks.
      */
+    @NotNull
     protected Array<CallableTask<?, L>> getWaitTasks() {
         return waitTasks;
     }
@@ -179,8 +193,9 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
         }
     }
 
+    @NotNull
     @Override
-    public <R> Future<R> submit(final CallableTask<R, L> task) {
+    public <R> Future<R> submit(@NotNull final CallableTask<R, L> task) {
         throw new RuntimeException("not implemented.");
     }
 

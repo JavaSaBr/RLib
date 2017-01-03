@@ -1,7 +1,10 @@
 package rlib.concurrent.task;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Интерфейс для реализации задача с возвращаемся результатом.
+ * The interface to implement a callable tasks.
  *
  * @author JavaSaBr
  */
@@ -9,11 +12,12 @@ package rlib.concurrent.task;
 public interface CallableTask<R, L> {
 
     /**
-     * Вызов выполнение задачи.
+     * Execute this task.
      *
-     * @param local       контейнер локальных объектов.
-     * @param currentTime примерное текущее время выполнение вызова.
-     * @return результат выполнение задачи.
+     * @param local       the thread local container.
+     * @param currentTime the current time.
+     * @return the result.
      */
-    public R call(L local, long currentTime);
+    @Nullable
+    R call(@NotNull L local, long currentTime);
 }
