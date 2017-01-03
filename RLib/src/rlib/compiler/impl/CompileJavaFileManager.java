@@ -1,5 +1,7 @@
 package rlib.compiler.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 import javax.tools.FileObject;
@@ -12,23 +14,25 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Файловый менеджер по загрузке классов для компиляции.
+ * The manager to load byte source of classes.
  *
  * @author JavaSaBr
  */
 public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
 
     /**
-     * Список имен загруженных классов.
+     * The list of names of loaded classes.
      */
+    @NotNull
     private final Array<String> classNames;
 
     /**
-     * Загрузчик скомпиленных классов.
+     * The loaded of compiled classes.
      */
+    @NotNull
     private final CompileClassLoader loader;
 
-    public CompileJavaFileManager(final StandardJavaFileManager fileManager, final CompileClassLoader loader) {
+    public CompileJavaFileManager(@NotNull final StandardJavaFileManager fileManager, @NotNull final CompileClassLoader loader) {
         super(fileManager);
 
         this.loader = loader;
@@ -36,21 +40,23 @@ public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJa
     }
 
     /**
-     * Очистка списка имен последних загруженных классов.
+     * Clear the list of names of loaded classes.
      */
     public void clear() {
         classNames.clear();
     }
 
     /**
-     * @return список последних загруженны классов.
+     * @return the list of names of loaded classes.
      */
+    @NotNull
     public String[] getClassNames() {
         return classNames.toArray(new String[classNames.size()]);
     }
 
     @Override
-    public JavaFileObject getJavaFileForOutput(final Location location, final String name, final Kind kind, final FileObject sibling) throws IOException {
+    public JavaFileObject getJavaFileForOutput(@NotNull final Location location, @NotNull final String name,
+                                               @NotNull final Kind kind, @NotNull final FileObject sibling) throws IOException {
 
         final CompileByteCode byteCode = new CompileByteCode(name);
 

@@ -1,5 +1,7 @@
 package rlib.compiler.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,17 +11,17 @@ import java.nio.file.Paths;
 import javax.tools.SimpleJavaFileObject;
 
 /**
- * Объект исходного java кода.
+ * The implementation of java class source.
  *
  * @author JavaSaBr
  */
 public class JavaFileSource extends SimpleJavaFileObject {
 
-    protected JavaFileSource(final File file) {
+    protected JavaFileSource(@NotNull final File file) {
         super(file.toURI(), Kind.SOURCE);
     }
 
-    protected JavaFileSource(final Path path) {
+    protected JavaFileSource(@NotNull final Path path) {
         super(path.toUri(), Kind.SOURCE);
     }
 

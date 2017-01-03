@@ -6,7 +6,7 @@ import java.io.File;
 import java.nio.file.Path;
 
 /**
- * Интерфейс для реализации компилятора.
+ * The interface to implement a compiler.
  *
  * @author JavaSaBr
  */
@@ -16,37 +16,37 @@ public interface Compiler {
     String CLASS_EXTENSION = ".class";
 
     /**
-     * Скомпилировать указанные файлы.
+     * Compile files.
      *
-     * @param files список файлов исходников.
-     * @return список полученных классов.
+     * @param files the file list.
+     * @return the classes list.
      */
     @NotNull
     Class<?>[] compile(@NotNull File... files);
 
     /**
-     * Скомпилировать указанные файлы.
+     * Compile files.
      *
-     * @param paths список файлов исходников.
-     * @return список полученных классов.
+     * @param paths the file list.
+     * @return the classes list.
      */
     @NotNull
     Class<?>[] compile(@NotNull Path... paths);
 
     /**
-     * Скомпилировать все классы в указанных дерикториях.
+     * Compile all classes from directories.
      *
-     * @param files список дерикторий.
-     * @return скомпилированные классы.
+     * @param files the directory list.
+     * @return the classes list.
      */
     @NotNull
     Class<?>[] compileDirectory(@NotNull File... files);
 
     /**
-     * Скомпилировать все классы в указанных дерикториях.
+     * Compile all classes from directories.
      *
-     * @param paths список дерикторий.
-     * @return скомпилированные классы.
+     * @param paths the directory list.
+     * @return the classes list.
      */
     @NotNull
     Class<?>[] compileDirectory(@NotNull Path... paths);

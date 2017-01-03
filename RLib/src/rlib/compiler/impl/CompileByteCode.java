@@ -12,15 +12,16 @@ import rlib.compiler.ByteSource;
 import rlib.compiler.Compiler;
 
 /**
- * Контейнер байткода класса в памяти.
+ * The implementation of byte code container.
  *
  * @author JavaSaBr
  */
 public class CompileByteCode extends SimpleJavaFileObject implements ByteSource {
 
     /**
-     * Контейнер байткода класса в памяти.
+     * The stream with byte code.
      */
+    @NotNull
     private final ByteArrayOutputStream outputStream;
 
     public CompileByteCode(final String name) {
@@ -34,6 +35,7 @@ public class CompileByteCode extends SimpleJavaFileObject implements ByteSource 
         return outputStream.toByteArray();
     }
 
+    @NotNull
     @Override
     public OutputStream openOutputStream() {
         return outputStream;
