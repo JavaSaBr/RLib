@@ -3,6 +3,7 @@ package rlib.util.array.impl;
 import org.jetbrains.annotations.NotNull;
 
 import rlib.util.ArrayUtils;
+import rlib.util.ClassUtils;
 import rlib.util.array.Array;
 
 /**
@@ -53,6 +54,11 @@ public abstract class AbstractArray<E> implements Array<E> {
     @Override
     public final void free() {
         clear();
+    }
+
+    @Override
+    public AbstractArray<E> clone() throws CloneNotSupportedException {
+        return ClassUtils.unsafeCast(super.clone());
     }
 
     /**

@@ -1,5 +1,7 @@
 package rlib.classpath.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -91,6 +93,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
         return result.toArray(String.class);
     }
 
+    @NotNull
     @Override
     protected String[] getPaths() {
 

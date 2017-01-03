@@ -1,5 +1,8 @@
 package rlib.util.array.impl;
 
+import static java.lang.Math.max;
+import static rlib.util.ArrayUtils.copyOf;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -11,9 +14,6 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 import rlib.util.array.ConcurrentArray;
 import rlib.util.array.UnsafeArray;
-
-import static java.lang.Math.max;
-import static rlib.util.ArrayUtils.copyOf;
 
 /**
  * The base concurrent implementation of the array.
@@ -275,5 +275,13 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     @Override
     public UnsafeArray<E> asUnsafe() {
         return this;
+    }
+
+    @NotNull
+    @Override
+    public AbstractConcurrentArray<E> clone() throws CloneNotSupportedException {
+        final AbstractConcurrentArray<E> clone = (AbstractConcurrentArray<E>) super.clone();
+        clone.array = ArrayUtils.copyOf(array, size());
+        return clone;
     }
 }

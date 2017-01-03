@@ -1,5 +1,9 @@
 package rlib.classpath.impl;
 
+import static java.lang.reflect.Modifier.isAbstract;
+import static rlib.compiler.Compiler.SOURCE_EXTENSION;
+import static rlib.util.IOUtils.copy;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -25,12 +29,8 @@ import rlib.util.StringUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
-import static java.lang.reflect.Modifier.isAbstract;
-import static rlib.compiler.Compiler.SOURCE_EXTENSION;
-import static rlib.util.IOUtils.copy;
-
 /**
- * Реализация обычного сканера classpath.
+ * The base implementation of the {@link ClassPathScanner}.
  *
  * @author JavaSaBr
  */
@@ -43,22 +43,27 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     private static final String CLASS_EXTENSION = ".class";
 
     /**
-     * Загрузчик классов.
+     * The class loader.
      */
+    @NotNull
     private final ClassLoader loader;
 
     /**
-     * Найденные классы.
+     * The found classes.
      */
+    @NotNull
     private Class<?>[] classes;
 
     /**
-     * Найденные ресурсы.
+     * The found resources.
      */
+    @NotNull
     private String[] resources;
 
     public ClassPathScannerImpl() {
         this.loader = getClass().getClassLoader();
+        this.classes = new Class[0];
+        this.resources = new String[0];
     }
 
     @Override
@@ -118,44 +123,47 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     /**
-     * @return найденные классы.
+     * @return the found classes.
      */
+    @NotNull
     private Class<?>[] getClasses() {
         return classes;
     }
 
     /**
-     * @return найденные ресурсы.
+     * @return the found resources.
      */
+    @NotNull
     private String[] getResources() {
         return resources;
     }
 
     /**
-     * @return загрузчик классов.
+     * @return the class loader.
      */
+    @NotNull
     private ClassLoader getLoader() {
         return loader;
     }
 
     /**
-     * @return список путей к классам.
+     * @return the list of classpathes.
      */
+    @NotNull
     protected String[] getPaths() {
         return CLASS_PATH.split(PATH_SEPARATOR);
     }
 
     /**
-     * Загрузка класса по его имени в контейнер.
+     * Load a class by its name to container.
      *
-     * @param name      название класса.
-     * @param container контейнер загруженных классов.
+     * @param name      the name.
+     * @param container the container.
      */
-    private void loadClass(final String name, final Array<Class<?>> container) {
+    private void loadClass(@NotNull final String name, @NotNull final Array<Class<?>> container) {
         if (!name.endsWith(CLASS_EXTENSION)) return;
 
         String className;
-
         try {
 
             className = name.replace(CLASS_EXTENSION, StringUtils.EMPTY);
@@ -185,13 +193,14 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     /**
-     * Сканирование папки на наличие в ней классов, ресурсов или jar.
+     * Scan a directory and find here classes, resources or jars.
      *
-     * @param classes   контейнер загружаемых классов.
-     * @param resources контейнер загружаемых ресурсов.
-     * @param directory сканируемая папка.
+     * @param classes   the classes container.
+     * @param resources the resources container.
+     * @param directory the directory.
      */
-    private void scanningDirectory(final Path rootPath, final Array<Class<?>> classes, final Array<String> resources, final Path directory) {
+    private void scanningDirectory(@NotNull final Path rootPath, @NotNull final Array<Class<?>> classes,
+                                   @NotNull final Array<String> resources, @NotNull final Path directory) {
 
         try (final DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
 
@@ -233,19 +242,19 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 }
             }
 
-        } catch (IOException e1) {
-            LOGGER.warning(e1);
+        } catch (final IOException ex) {
+            LOGGER.warning(ex);
         }
     }
 
     /**
-     * Сканирование .jar для подгрузки классов.
+     * Scan a .jar to load classes.
      *
-     * @param classes   контейнер подгруженных классов.
-     * @param resources контейнер ресурсов.
-     * @param jarFile   ссылка на .jar фаил.
+     * @param classes   the classes container.
+     * @param resources the resources container.
+     * @param jarFile   the .jar file.
      */
-    private void scanningJar(final Array<Class<?>> classes, Array<String> resources, final Path jarFile) {
+    private void scanningJar(@NotNull final Array<Class<?>> classes, @NotNull Array<String> resources, @NotNull final Path jarFile) {
 
         if (!Files.exists(jarFile)) {
             LOGGER.warning("not exists " + jarFile);
@@ -284,13 +293,13 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     /**
-     * Сканирование .jar для подгрузки классов.
+     * Scan a .jar to load classes.
      *
-     * @param classes   контейнер подгруженных классов.
-     * @param resources контейнер ресурсов.
-     * @param jarFile   содержимоей jar файла.
+     * @param classes   the classes container.
+     * @param resources the resources container.
+     * @param jarFile   the input stream of a .jar.
      */
-    private void scanningJar(final Array<Class<?>> classes, Array<String> resources, final InputStream jarFile) {
+    private void scanningJar(@NotNull final Array<Class<?>> classes, @NotNull Array<String> resources, @NotNull final InputStream jarFile) {
 
         final ReuseBytesOutputStream rout = new ReuseBytesOutputStream();
         final ReuseBytesInputStream rin = new ReuseBytesInputStream();
@@ -325,10 +334,6 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
     @Override
     public void scanning(@NotNull final Function<String, Boolean> filter) {
-
-        if (classes != null || resources != null) {
-            throw new RuntimeException("scanning is already.");
-        }
 
         final String[] paths = getPaths();
 

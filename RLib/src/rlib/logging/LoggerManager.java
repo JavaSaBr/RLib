@@ -1,5 +1,7 @@
 package rlib.logging;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalTime;
@@ -18,45 +20,52 @@ import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
 /**
- * Менеджер логгирования, служит для получения, конфигурирования и записывания лога.
+ * The class for managing loggers.
  *
  * @author JavaSaBr
  */
 public class LoggerManager {
 
     /**
-     * таблица всех логгерров
+     * The dictionary with all created loggers.
      */
+    @NotNull
     private static final ObjectDictionary<String, Logger> LOGGERS = DictionaryFactory.newObjectDictionary();
 
     /**
-     * список слушателей логирования
+     * The list of listeners.
      */
+    @NotNull
     private static final ConcurrentArray<LoggerListener> LISTENERS = ArrayFactory.newConcurrentAtomicARSWLockArray(LoggerListener.class);
 
     /**
-     * список записчиков лога
+     * The list of writers.
      */
+    @NotNull
     private static final ConcurrentArray<Writer> WRITERS = ArrayFactory.newConcurrentAtomicARSWLockArray(Writer.class);
 
     /**
-     * синхронизатор записи лога
+     * The synchronizator.
      */
+    @NotNull
     private static final Lock SYNC = LockFactory.newAtomicLock();
 
     /**
-     * формат записи времени
+     * The date time formatter.
      */
+    @NotNull
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
 
     /**
-     * класс реализации логгера
+     * The implementation of a logger.
      */
+    @NotNull
     private static Class<? extends Logger> implementedClass = LoggerImpl.class;
 
     /**
-     * главный логгер
+     * The main logger.
      */
+    @NotNull
     private static final Logger LOGGER;
 
     static {
@@ -68,65 +77,55 @@ public class LoggerManager {
                 implementedClass = ClassUtils.unsafeCast(Class.forName(className));
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                implementedClass = LoggerImpl.class;
             }
-        }
-
-        if (implementedClass == null) {
-            implementedClass = LoggerImpl.class;
         }
 
         LOGGER = getLogger(LoggerManager.class);
     }
 
     /**
-     * Добавление слушателя логирования.
+     * Add a new listener,
      *
-     * @param listener добавляемый слушатель.
+     * @param listener the new listener.
      */
-    public static void addListener(final LoggerListener listener) {
-
-        if (listener == null) {
-            throw new IllegalArgumentException("listener is null.");
-        }
-
+    public static void addListener(@NotNull final LoggerListener listener) {
         ArrayUtils.runInWriteLock(LISTENERS, listener, Array::add);
     }
 
     /**
-     * Добавление записчика лога.
+     * Add a new writer.
      *
-     * @param writer записчик лога.
+     * @param writer the new writer.
      */
-    public static void addWriter(final Writer writer) {
-
-        if (writer == null) {
-            throw new IllegalArgumentException("writer is null.");
-        }
-
+    public static void addWriter(@NotNull final Writer writer) {
         ArrayUtils.runInWriteLock(WRITERS, writer, Array::add);
     }
 
     /**
-     * @return стандартный логгер.
+     * @return the main logger.
      */
+    @NotNull
     public static Logger getDefaultLogger() {
         return LOGGER;
     }
 
     /**
-     * @return список слушателей логирования.
+     * @return the list of listeners.
      */
+    @NotNull
     private static ConcurrentArray<LoggerListener> getListeners() {
         return LISTENERS;
     }
 
     /**
-     * Получение логера для указанного класса.
+     * Get or create a logger for the class.
      *
-     * @param cs класс, который запрашивает логгер
-     * @return индивидуальный логер для указанного класса.
+     * @param cs the class.
+     * @return the logger for the class.
      */
-    public static Logger getLogger(final Class<?> cs) {
+    @NotNull
+    public static Logger getLogger(@NotNull final Class<?> cs) {
 
         Logger logger = LOGGERS.get(cs.getName());
         if (logger != null) return logger;
@@ -139,34 +138,36 @@ public class LoggerManager {
     }
 
     /**
-     * @return список дополнительных записчиков лога.
+     * @return the list of writers.
      */
     private static ConcurrentArray<Writer> getWriters() {
         return WRITERS;
     }
 
     /**
-     * Удаления слушателя логирования.
+     * Remove a listener.
      *
-     * @param listener удаляемый слушатель.
+     * @param listener the listener.
      */
     public static void removeListener(final LoggerListener listener) {
-        LISTENERS.slowRemove(listener);
+        ArrayUtils.runInWriteLock(LISTENERS, listener, Array::slowRemove);
     }
 
     /**
-     * Удаление записчика лога.
+     * Remove a writer.
      *
-     * @param writer записчик лога.
+     * @param writer the writer.
      */
     public static void removeWriter(final Writer writer) {
-        WRITERS.slowRemove(writer);
+        ArrayUtils.runInWriteLock(WRITERS, writer, Array::slowRemove);
     }
 
     /**
-     * Процесс вывода сообщения в консоль и по возможности в фаил
+     * Process to writing message to a console and writers.
      *
-     * @param message содержание сообщения
+     * @param level   the level of the message.
+     * @param name    the name of owner.
+     * @param message the message.
      */
     public static void write(final LoggerLevel level, final String name, final String message) {
         if (!level.isEnabled()) return;

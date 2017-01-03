@@ -1,5 +1,8 @@
 package rlib.util.array.impl;
 
+import static java.lang.Math.max;
+import static rlib.util.ArrayUtils.copyOf;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -9,9 +12,6 @@ import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 import rlib.util.array.UnsafeArray;
-
-import static java.lang.Math.max;
-import static rlib.util.ArrayUtils.copyOf;
 
 /**
  * The fast implementation of the array. This array is not threadsafe.
@@ -264,5 +264,13 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     @Override
     public UnsafeArray<E> asUnsafe() {
         return this;
+    }
+
+    @NotNull
+    @Override
+    public FastArray<E> clone() throws CloneNotSupportedException {
+        final FastArray<E> clone = (FastArray<E>) super.clone();
+        clone.array = ArrayUtils.copyOf(array, size());
+        return clone;
     }
 }

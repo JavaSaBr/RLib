@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import rlib.function.ObjectFloatObjectConsumer;
 import rlib.function.ObjectIntPredicate;
 import rlib.function.ObjectLongObjectConsumer;
 import rlib.function.ObjectLongPredicate;
@@ -25,8 +26,8 @@ import rlib.util.ArrayUtils;
 import rlib.util.pools.Reusable;
 
 /**
- * Interface to implement dynamic arrays. Main advantages compared to an ArrayList, the ability to
- * iterate in the fastest way possible and without prejudice to GC: <p>
+ * Interface to implement dynamic arrays. Main advantages compared to an ArrayList, the ability to iterate in the
+ * fastest way possible and without prejudice to GC: <p>
  * <pre>
  * for(? element : array.array()) {
  *
@@ -41,7 +42,7 @@ import rlib.util.pools.Reusable;
  *
  * @author JavaSaBr
  */
-public interface Array<E> extends Iterable<E>, Serializable, Reusable {
+public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable {
 
     /**
      * Adds a new element to this array.
@@ -81,8 +82,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     Array<E> addAll(@NotNull Collection<? extends E> collection);
 
     /**
-     * Applies this function to each element of this array with replacing to result element from
-     * thia function.
+     * Applies this function to each element of this array with replacing to result element from thia function.
      *
      * @param function the function.
      */
@@ -325,6 +325,20 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
+     * Iterate this array using two arguments.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     */
+    default <F> void forEach(final float first, @Nullable final F second, @NotNull final ObjectFloatObjectConsumer<E, F> consumer) {
+        for (final E element : array()) {
+            if (element == null) break;
+            consumer.accept(element, first, second);
+        }
+    }
+
+    /**
      * Gets the element for the index.
      *
      * @param index the index of an element.
@@ -414,9 +428,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Removes all of this target's elements that are also contained in the specified array
-     * (optional operation).  After this call returns, this array will contain no elements in common
-     * with the specified array.
+     * Removes all of this target's elements that are also contained in the specified array (optional operation).  After
+     * this call returns, this array will contain no elements in common with the specified array.
      *
      * @param target array containing elements to be removed from this array.
      * @return <tt>true</tt> if this array changed as a result of the call.
@@ -435,9 +448,8 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable {
     }
 
     /**
-     * Retains only the elements in this array that are contained in the specified array (optional
-     * operation).  In other words, removes from this array all of its elements that are not
-     * contained in the specified array.
+     * Retains only the elements in this array that are contained in the specified array (optional operation).  In other
+     * words, removes from this array all of its elements that are not contained in the specified array.
      *
      * @param target array containing elements to be retained in this array.
      * @return <tt>true</tt> if this array changed as a result of the call.
