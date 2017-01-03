@@ -1,10 +1,14 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-потребитель на 1 аргумент.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface SafeConsumer<T> {
 
-    public void accept(T argument) throws Exception;
+    void accept(@Nullable T argument) throws Exception;
 }

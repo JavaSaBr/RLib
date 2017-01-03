@@ -83,11 +83,11 @@ public final class DBUtils {
     }
 
     /**
-     * Закрыть запрос.
+     * Close a statement.
      *
-     * @param statement запрос, который необходимо закрыть.
+     * @param statement the statement.
      */
-    public static void close(final Statement statement) {
+    public static void close(@Nullable final Statement statement) {
         if (statement == null) return;
         try {
             statement.close();

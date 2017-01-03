@@ -3,7 +3,7 @@ package rlib.function;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The function-consumer.
+ * The function.
  *
  * @author JavaSaBr
  */

@@ -19,8 +19,9 @@ import java.nio.file.StandardOpenOption;
 public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> {
 
     /**
-     * Путь к файлу.
+     * The file path.
      */
+    @NotNull
     protected final String filePath;
 
     public AbstractFileDocument(@NotNull final File file) {
@@ -42,8 +43,9 @@ public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> 
     }
 
     /**
-     * @return the path to file.
+     * @return the file path.
      */
+    @NotNull
     protected String getFilePath() {
         return filePath;
     }

@@ -1,5 +1,7 @@
 package rlib.database;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,7 +12,7 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Менеджер для очистки БД от ненужных записей. Хранит список запросов необходимых для очистки БД.
+ * THe manager to clean a DataBase.
  *
  * @author JavaSaBr
  */
@@ -19,31 +21,31 @@ public abstract class CleaningManager {
     private static final Logger LOGGER = LoggerManager.getLogger(CleaningManager.class);
 
     /**
-     * Список запросов для очистки.
+     * The list of cleaning queries.
      */
+    @NotNull
     public static final Array<CleaningQuery> QUERY = ArrayFactory.newArray(CleaningQuery.class);
 
     /**
-     * Добавление запроса для очистки БД.
+     * Add a cleaning query.
      *
-     * @param name  название таблицы.
-     * @param query запрос для очистки.
+     * @param name  the table name.
+     * @param query the query.
      */
-    public static void addQuery(final String name, final String query) {
+    public static void addQuery(@NotNull final String name, @NotNull final String query) {
         QUERY.add(new CleaningQuery(name, query));
     }
 
     /**
-     * Очистка БД.
+     * Clean the DB of the connection factory.
      */
-    public static void cleaning(final ConnectFactory connects) {
+    public static void cleaning(@NotNull final ConnectFactory connectFactory) {
 
         Connection con = null;
         Statement statement = null;
-
         try {
 
-            con = connects.getConnection();
+            con = connectFactory.getConnection();
             statement = con.createStatement();
 
             for (final CleaningQuery clean : QUERY) {

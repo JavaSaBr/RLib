@@ -1,10 +1,15 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-функция на 2 аргумента.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface SafeBiFunction<F, S, R> {
 
-    public R apply(F first, S second) throws Exception;
+    @Nullable
+    R apply(@Nullable F first, @Nullable S second) throws Exception;
 }

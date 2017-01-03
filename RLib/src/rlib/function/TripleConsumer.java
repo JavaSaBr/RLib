@@ -1,10 +1,14 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-потребитель на 3 аргумента.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface TripleConsumer<F, S, T> {
 
-    public void accept(F first, S second, T third);
+    void accept(@Nullable F first, @Nullable S second, @Nullable T third);
 }

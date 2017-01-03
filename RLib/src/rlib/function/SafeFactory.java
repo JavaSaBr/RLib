@@ -1,10 +1,15 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-фабрика.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface SafeFactory<R> {
 
-    public R get() throws Exception;
+    @Nullable
+    R get() throws Exception;
 }

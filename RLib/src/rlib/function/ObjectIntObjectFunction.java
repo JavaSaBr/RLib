@@ -1,10 +1,15 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-потребитель на 3 аргумента.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface ObjectIntObjectFunction<F, T, R> {
 
-    public R apply(F first, int second, T third);
+    @Nullable
+    R apply(@Nullable F first, int second, @Nullable T third);
 }

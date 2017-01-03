@@ -2,6 +2,8 @@ package rlib.database;
 
 import com.jolbox.bonecp.BoneCPConfig;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.SQLException;
 
 import rlib.database.impl.BoneCPConnectFactory;
@@ -13,7 +15,7 @@ import rlib.database.impl.BoneCPConnectFactory;
  */
 public final class ConnectFactories {
 
-    public static ConnectFactory newBoneCPConnectFactory(final BoneCPConfig config, final String driver) {
+    public static ConnectFactory newBoneCPConnectFactory(@NotNull final BoneCPConfig config, @NotNull final String driver) {
         try {
             final BoneCPConnectFactory factory = new BoneCPConnectFactory();
             factory.init(config, driver);

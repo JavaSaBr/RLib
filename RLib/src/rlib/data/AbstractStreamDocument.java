@@ -39,16 +39,19 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     /**
      * The stream of xml document.
      */
+    @Nullable
     protected InputStream stream;
 
     /**
      * the DOM model of this document.
      */
+    @Nullable
     protected Document document;
 
     /**
      * The result of parsing.
      */
+    @Nullable
     protected C result;
 
     public AbstractStreamDocument() {

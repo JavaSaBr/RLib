@@ -1,10 +1,14 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-условие на 3 аргумента.
+ * The function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface TriplePredicate<F, S, T> {
 
-    public boolean test(F first, S second, T third);
+    boolean test(@Nullable F first, @Nullable S second, @Nullable T third);
 }

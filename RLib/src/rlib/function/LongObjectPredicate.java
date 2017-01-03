@@ -1,10 +1,14 @@
 package rlib.function;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Функциональный интерфейс-потребитель на 2 аргумента.
+ * ФThe function.
+ *
+ * @author JavaSaBr
  */
 @FunctionalInterface
 public interface LongObjectPredicate<T> {
 
-    public boolean test(long first, T second);
+    boolean test(long first, @Nullable T second);
 }
