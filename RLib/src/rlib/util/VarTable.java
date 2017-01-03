@@ -3,8 +3,12 @@ package rlib.util;
 import static java.lang.Float.parseFloat;
 import static rlib.util.ClassUtils.unsafeCast;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import java.util.Objects;
 
 import rlib.geom.Rotation;
 import rlib.geom.Vector;
@@ -12,35 +16,39 @@ import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
 /**
- * Реализация таблицы разнородных параметров.
+ * THe utility class to contain different properties.
  *
  * @author JavaSaBr
- * @created 29.02.2012
  */
 public class VarTable {
 
     /**
-     * @return новый экземпляр таблицы.
+     * @return the new instance.
      */
+    @NotNull
     public static VarTable newInstance() {
         return new VarTable();
     }
 
     /**
-     * @param node хмл узел с атрибутами.
-     * @return новая таблица с атрибутами узла.
+     * @param node the xml node.
+     * @return the new table with attributes of the node.
      */
-    public static VarTable newInstance(final Node node) {
+    @NotNull
+    public static VarTable newInstance(@NotNull final Node node) {
         return newInstance().parse(node);
     }
 
-    public static VarTable newInstance(final Node node, final String childName, final String nameType, final String nameValue) {
+    @NotNull
+    public static VarTable newInstance(@NotNull final Node node, @NotNull final String childName,
+                                       @NotNull final String nameType, @NotNull final String nameValue) {
         return newInstance().parse(node, childName, nameType, nameValue);
     }
 
     /**
-     * Таблица параметров.
+     * The table with values.
      */
+    @NotNull
     private final ObjectDictionary<String, Object> values;
 
     public VarTable() {
@@ -48,27 +56,33 @@ public class VarTable {
     }
 
     /**
-     * Очистка таблицы.
+     * Clear this table.
      */
     public void clear() {
         values.clear();
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get the value by a key.
+     *
+     * @param key the key.
      */
-    public <T> T get(final String key) {
-        return unsafeCast(values.get(key));
+    @NotNull
+    public <T> T get(@NotNull final String key) {
+        final T result = unsafeCast(values.get(key));
+        if (result != null) return result;
+        throw new IllegalArgumentException("not found " + key);
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get the value by a key.
      *
-     * @param key  ключ параметра.
-     * @param type тип параметра.
-     * @return значение параметра.
+     * @param key  the key.
+     * @param type the type.
+     * @return the value.
      */
-    public <T> T get(final String key, final Class<T> type) {
+    @NotNull
+    public <T> T get(@NotNull final String key, @NotNull final Class<T> type) {
 
         final Object object = values.get(key);
 
@@ -82,14 +96,15 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get the value by a key.
      *
-     * @param key  ключ параметра.
-     * @param type тип параметра.
-     * @param def  значение по умолчанию.
-     * @return значение параметра.
+     * @param key  the key.
+     * @param type the type.
+     * @param def  the default value.
+     * @return the value.
      */
-    public <T, E extends T> T get(final String key, final Class<T> type, final E def) {
+    @NotNull
+    public <T, E extends T> T get(@NotNull final String key, @NotNull final Class<T> type, @NotNull final E def) {
 
         final Object object = values.get(key);
 
@@ -103,13 +118,14 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get the value by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the value.
      */
-    public <T> T get(final String key, final T def) {
+    @NotNull
+    public <T> T get(@NotNull final String key, @NotNull final T def) {
 
         final Object object = values.get(key);
         if (object == null) return def;
@@ -121,13 +137,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get an array by a key.
      *
-     * @param key  ключ параметра.
-     * @param type тип значений параметра.
-     * @return массив значений параметра.
+     * @param key  the key.
+     * @param type the type.
+     * @return the array.
      */
-    public <T> T[] getArray(final String key, final Class<T[]> type) {
+    @NotNull
+    public <T> T[] getArray(@NotNull final String key, @NotNull final Class<T[]> type) {
 
         final Object object = values.get(key);
 
@@ -141,14 +158,16 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get an array of a key.
      *
-     * @param key  ключ параметра.
-     * @param type тип значений параметра.
-     * @param def  список значений по умолчанию.
-     * @return массив значений параметра.
+     * @param key  the key.
+     * @param type the type.
+     * @param def  the default array.
+     * @return the array.
      */
-    public <T> T[] getArray(final String key, final Class<T[]> type, final T... def) {
+    @NotNull
+    @SafeVarargs
+    public final <T> T[] getArray(@NotNull final String key, @NotNull final Class<T[]> type, @NotNull final T... def) {
 
         final Object object = values.get(key);
 
@@ -162,12 +181,12 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a boolean value by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the value.
      */
-    public boolean getBoolean(final String key) {
+    public boolean getBoolean(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -183,13 +202,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a boolean value by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the value.
      */
-    public boolean getBoolean(final String key, final boolean def) {
+    public boolean getBoolean(@NotNull final String key, final boolean def) {
 
         final Object object = values.get(key);
 
@@ -205,14 +224,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a boolean array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the boolean array.
      */
-    public boolean[] getBooleanArray(final String key, final String regex) {
+    @NotNull
+    public boolean[] getBooleanArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -224,12 +243,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final boolean[] result = new boolean[strings.length];
 
-            final boolean[] result = new boolean[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Boolean.parseBoolean(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Boolean.parseBoolean(strings[i]);
             }
 
             return result;
@@ -239,15 +257,16 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a boolean array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default array.
+     * @return the boolean array.
      */
-    public boolean[] getBooleanArray(final String key, final String regex, final boolean... def) {
+    @NotNull
+    public boolean[] getBooleanArray(@NotNull final String key, @NotNull final String regex,
+                                     @NotNull final boolean... def) {
 
         final Object object = values.get(key);
 
@@ -259,12 +278,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final boolean[] result = new boolean[strings.length];
 
-            final boolean[] result = new boolean[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Boolean.parseBoolean(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Boolean.parseBoolean(strings[i]);
             }
 
             return result;
@@ -274,12 +292,12 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a byte value by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the byte.
      */
-    public byte getByte(final String key) {
+    public byte getByte(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -295,13 +313,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a byte value by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the byte.
      */
-    public byte getByte(final String key, final byte def) {
+    public byte getByte(@NotNull final String key, final byte def) {
 
         final Object object = values.get(key);
 
@@ -317,14 +335,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a byte array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the byte array.
      */
-    public byte[] getByteArray(final String key, final String regex) {
+    @NotNull
+    public byte[] getByteArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -336,12 +354,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final byte[] result = new byte[strings.length];
 
-            final byte[] result = new byte[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Byte.parseByte(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Byte.parseByte(strings[i]);
             }
 
             return result;
@@ -351,15 +368,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a byte array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default byte array.
+     * @return the byte array.
      */
-    public byte[] getByteArray(final String key, final String regex, final byte... def) {
+    public byte[] getByteArray(@NotNull final String key, @NotNull final String regex, @NotNull final byte... def) {
 
         final Object object = values.get(key);
 
@@ -371,12 +387,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final byte[] result = new byte[strings.length];
 
-            final byte[] result = new byte[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Byte.parseByte(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Byte.parseByte(strings[i]);
             }
 
             return result;
@@ -386,12 +401,12 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a double value by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the value.
      */
-    public double getDouble(final String key) {
+    public double getDouble(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -407,13 +422,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a double value by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the value.
      */
-    public double getDouble(final String key, final double def) {
+    public double getDouble(@NotNull final String key, final double def) {
 
         final Object object = values.get(key);
 
@@ -429,14 +444,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a double array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the double array.
      */
-    public double[] getDoubleArray(final String key, final String regex) {
+    @NotNull
+    public double[] getDoubleArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -448,12 +463,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final double[] result = new double[strings.length];
 
-            final double[] result = new double[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Double.parseDouble(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Double.parseDouble(strings[i]);
             }
 
             return result;
@@ -463,15 +477,15 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a double array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default array.
+     * @return the double array.
      */
-    public double[] getDoubleArray(final String key, final String regex, final double... def) {
+    @NotNull
+    public double[] getDoubleArray(@NotNull final String key, @NotNull final String regex, @NotNull final double... def) {
 
         final Object object = values.get(key);
 
@@ -483,12 +497,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final double[] result = new double[strings.length];
 
-            final double[] result = new double[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Double.parseDouble(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Double.parseDouble(strings[i]);
             }
 
             return result;
@@ -498,13 +511,14 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get an enum value by a key.
      *
-     * @param key  ключ параметра.
-     * @param type тип параметра.
-     * @return значение параметра.
+     * @param key  the key.
+     * @param type the type of enum.
+     * @return the value.
      */
-    public <T extends Enum<T>> T getEnum(final String key, final Class<T> type) {
+    @NotNull
+    public <T extends Enum<T>> T getEnum(@NotNull final String key, @NotNull final Class<T> type) {
 
         final Object object = values.get(key);
 
@@ -520,14 +534,15 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get an enum value by a key.
      *
-     * @param key  ключ параметра.
-     * @param type тип параметра.
-     * @param def  значение по умолчанию.
-     * @return значение параметра.
+     * @param key  the key.
+     * @param type the type of enum.
+     * @param def  the default value.
+     * @return the value.
      */
-    public <T extends Enum<T>> T getEnum(final String key, final Class<T> type, final T def) {
+    @NotNull
+    public <T extends Enum<T>> T getEnum(@NotNull final String key, @NotNull final Class<T> type, @NotNull final T def) {
 
         final Object object = values.get(key);
 
@@ -543,15 +558,15 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get an enum array by a key.
      *
-     * @param key   ключ параметра.
-     * @param type  тип значений параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param type  the type of enum.
+     * @param regex the regex to split if a value is string.
+     * @return the enum array.
      */
-    public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex) {
+    @NotNull
+    public <T extends Enum<T>> T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -563,12 +578,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final T[] result = unsafeCast(java.lang.reflect.Array.newInstance(type, strings.length));
 
-            final T[] result = unsafeCast(java.lang.reflect.Array.newInstance(type, strs.length));
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Enum.valueOf(type, strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Enum.valueOf(type, strings[i]);
             }
 
             return result;
@@ -578,16 +592,16 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get an enum array by a key.
      *
-     * @param key   ключ параметра.
-     * @param type  тип значений параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param type  the type of enum.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default array.
+     * @return the enum array.
      */
-    public <T extends Enum<T>> T[] getEnumArray(final String key, final Class<T> type, final String regex, final T... def) {
+    @NotNull
+    public <T extends Enum<T>> T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type, @NotNull final String regex, @NotNull final T... def) {
 
         final Object object = values.get(key);
 
@@ -599,12 +613,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final T[] result = unsafeCast(java.lang.reflect.Array.newInstance(type, strings.length));
 
-            final T[] result = unsafeCast(java.lang.reflect.Array.newInstance(type, strs.length));
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Enum.valueOf(type, strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Enum.valueOf(type, strings[i]);
             }
 
             return result;
@@ -614,12 +627,12 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a float value by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the float value.
      */
-    public float getFloat(final String key) {
+    public float getFloat(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -635,13 +648,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a float value by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the float value.
      */
-    public float getFloat(final String key, final float def) {
+    public float getFloat(@NotNull final String key, final float def) {
 
         final Object object = values.get(key);
 
@@ -657,14 +670,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a float array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the float array.
      */
-    public float[] getFloatArray(final String key, final String regex) {
+    @NotNull
+    public float[] getFloatArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -676,12 +689,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final float[] result = new float[strings.length];
 
-            final float[] result = new float[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Float.parseFloat(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Float.parseFloat(strings[i]);
             }
 
             return result;
@@ -691,15 +703,15 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a float array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default array.
+     * @return the float array.
      */
-    public float[] getFloatArray(final String key, final String regex, final float... def) {
+    @NotNull
+    public float[] getFloatArray(@NotNull final String key, @NotNull final String regex, @NotNull final float... def) {
 
         final Object object = values.get(key);
 
@@ -711,12 +723,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final float[] result = new float[strings.length];
 
-            final float[] result = new float[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Float.parseFloat(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Float.parseFloat(strings[i]);
             }
 
             return result;
@@ -726,12 +737,12 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get an integer value by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the integer value.
      */
-    public int getInteger(final String key) {
+    public int getInteger(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -747,13 +758,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get an integer value by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the integer value.
      */
-    public int getInteger(final String key, final int def) {
+    public int getInteger(@NotNull final String key, final int def) {
 
         final Object object = values.get(key);
 
@@ -769,14 +780,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get an integer value by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the integer value.
      */
-    public int[] getIntegerArray(final String key, final String regex) {
+    @NotNull
+    public int[] getIntegerArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -788,12 +799,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final int[] result = new int[strings.length];
 
-            final int[] result = new int[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Integer.parseInt(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Integer.parseInt(strings[i]);
             }
 
             return result;
@@ -803,15 +813,15 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get an integer value by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default value.
+     * @return the integer value.
      */
-    public int[] getIntegerArray(final String key, final String regex, final int... def) {
+    @NotNull
+    public int[] getIntegerArray(@NotNull final String key, @NotNull final String regex, @NotNull final int... def) {
 
         final Object object = values.get(key);
 
@@ -823,12 +833,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final int[] result = new int[strings.length];
 
-            final int[] result = new int[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Integer.parseInt(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Integer.parseInt(strings[i]);
             }
 
             return result;
@@ -838,12 +847,12 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a long value by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the long value.
      */
-    public long getLong(final String key) {
+    public long getLong(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -861,13 +870,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a long value by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the long value.
      */
-    public long getLong(final String key, final long def) {
+    public long getLong(@NotNull final String key, final long def) {
 
         final Object object = values.get(key);
 
@@ -885,14 +894,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a long array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the long array.
      */
-    public long[] getLongArray(final String key, final String regex) {
+    @NotNull
+    public long[] getLongArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -904,12 +913,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final long[] result = new long[strings.length];
 
-            final long[] result = new long[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Long.parseLong(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Long.parseLong(strings[i]);
             }
 
             return result;
@@ -919,15 +927,15 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a long array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default array.
+     * @return the long array.
      */
-    public long[] getLongArray(final String key, final String regex, final long... def) {
+    @NotNull
+    public long[] getLongArray(@NotNull final String key, @NotNull final String regex, @NotNull final long... def) {
 
         final Object object = values.get(key);
 
@@ -939,12 +947,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final long[] result = new long[strings.length];
 
-            final long[] result = new long[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Long.parseLong(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Long.parseLong(strings[i]);
             }
 
             return result;
@@ -954,12 +961,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a rotation by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the rotation.
      */
-    public Rotation getRotation(final String key) {
+    @NotNull
+    public Rotation getRotation(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -971,10 +979,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] vals = ((String) object).split(",");
+            final String[] values = ((String) object).split(",");
 
             final Rotation rotation = Rotation.newInstance();
-            rotation.setXYZW(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3]));
+            rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]),
+                    parseFloat(values[2]), parseFloat(values[3]));
 
             return rotation;
         }
@@ -983,13 +992,14 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a rotation by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the rotation.
      */
-    public Rotation getRotation(final String key, final Rotation def) {
+    @NotNull
+    public Rotation getRotation(@NotNull final String key, @NotNull final Rotation def) {
 
         final Object object = values.get(key);
 
@@ -1001,10 +1011,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] vals = ((String) object).split(",");
+            final String[] values = ((String) object).split(",");
 
             final Rotation rotation = Rotation.newInstance();
-            rotation.setXYZW(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]), parseFloat(vals[3]));
+            rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]),
+                    parseFloat(values[2]), parseFloat(values[3]));
 
             return rotation;
         }
@@ -1013,12 +1024,12 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a short value by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the short value.
      */
-    public short getShort(final String key) {
+    public short getShort(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -1034,13 +1045,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a short value by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default value.
+     * @return the short value.
      */
-    public short getShort(final String key, final short def) {
+    public short getShort(@NotNull final String key, final short def) {
 
         final Object object = values.get(key);
 
@@ -1056,14 +1067,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a short array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the short array.
      */
-    public short[] getShortArray(final String key, final String regex) {
+    @NotNull
+    public short[] getShortArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -1075,12 +1086,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final short[] result = new short[strings.length];
 
-            final short[] result = new short[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Short.parseShort(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Short.parseShort(strings[i]);
             }
 
             return result;
@@ -1090,15 +1100,15 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a short array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default array.
+     * @return the short array.
      */
-    public short[] getShortArray(final String key, final String regex, final short... def) {
+    @NotNull
+    public short[] getShortArray(@NotNull final String key, @NotNull final String regex, @NotNull final short... def) {
 
         final Object object = values.get(key);
 
@@ -1110,12 +1120,11 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] strs = object.toString().split(regex);
+            final String[] strings = object.toString().split(regex);
+            final short[] result = new short[strings.length];
 
-            final short[] result = new short[strs.length];
-
-            for (int i = 0, length = strs.length; i < length; i++) {
-                result[i] = Short.parseShort(strs[i]);
+            for (int i = 0, length = strings.length; i < length; i++) {
+                result[i] = Short.parseShort(strings[i]);
             }
 
             return result;
@@ -1125,12 +1134,13 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a string by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the string.
      */
-    public String getString(final String key) {
+    @NotNull
+    public String getString(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -1144,13 +1154,14 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a string by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default string.
+     * @return the string.
      */
-    public String getString(final String key, final String def) {
+    @NotNull
+    public String getString(@NotNull final String key, @NotNull final String def) {
 
         final Object object = values.get(key);
 
@@ -1164,14 +1175,14 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a string array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the string array.
      */
-    public String[] getStringArray(final String key, final String regex) {
+    @NotNull
+    public String[] getStringArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -1187,15 +1198,15 @@ public class VarTable {
     }
 
     /**
-     * Получение массива значений параметра по ключу.
+     * Get a string array by a key.
      *
-     * @param key   ключ параметра.
-     * @param regex регулярное выражение для разбития строки значения параметра на массив нужных
-     *              значений.
-     * @param def   набор значений параметра по умолчанию.
-     * @return массив значений параметра.
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default array.
+     * @return the string array.
      */
-    public String[] getStringArray(final String key, final String regex, final String... def) {
+    @NotNull
+    public String[] getStringArray(@NotNull final String key, @NotNull final String regex, @NotNull final String... def) {
 
         final Object object = values.get(key);
 
@@ -1211,19 +1222,21 @@ public class VarTable {
     }
 
     /**
-     * @return все пропаршенные параметры.
+     * @return the table with values.
      */
+    @NotNull
     public ObjectDictionary<String, Object> getValues() {
         return values;
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a vector by a key.
      *
-     * @param key ключ параметра.
-     * @return значение параметра.
+     * @param key the key.
+     * @return the vector.
      */
-    public Vector getVector(final String key) {
+    @NotNull
+    public Vector getVector(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -1235,10 +1248,10 @@ public class VarTable {
 
         if (object instanceof String) {
 
-            final String[] vals = ((String) object).split(",");
+            final String[] values = ((String) object).split(",");
 
             final Vector vector = Vector.newInstance();
-            vector.set(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
+            vector.set(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]));
 
             return vector;
         }
@@ -1247,13 +1260,14 @@ public class VarTable {
     }
 
     /**
-     * Получение значение параметра по ключу.
+     * Get a vector by a key.
      *
-     * @param key ключ параметра.
-     * @param def значение по умолчанию.
-     * @return значение параметра.
+     * @param key the key.
+     * @param def the default vector..
+     * @return the vector.
      */
-    public Vector getVector(final String key, final Vector def) {
+    @NotNull
+    public Vector getVector(@NotNull final String key, @NotNull final Vector def) {
 
         final Object object = values.get(key);
 
@@ -1277,22 +1291,17 @@ public class VarTable {
     }
 
     /**
-     * Очистка таблицы и внесение в нее значений атрибутов элемента XML документа.
+     * Clear and fill this table by attributes from a xml node.
      *
-     * @param node узел из XML документа с атрибутами.
+     * @param node the xml node.
      */
-    public VarTable parse(final Node node) {
+    public VarTable parse(@Nullable final Node node) {
         values.clear();
 
-        if (node == null) {
-            return this;
-        }
+        if (node == null) return this;
 
         final NamedNodeMap attributes = node.getAttributes();
-
-        if (attributes == null) {
-            return this;
-        }
+        if (attributes == null) return this;
 
         for (int i = 0, length = attributes.getLength(); i < length; i++) {
             final Node item = attributes.item(i);
@@ -1303,25 +1312,25 @@ public class VarTable {
     }
 
     /**
-     * Очистка таблицы и внесенее в нее параметров из дочерних элементов указанного узла с
-     * указанными именами атрибутов и узлов. <p>
+     * Clear and fill this table using children of a xml node:
      * <pre>
      * 	< element >
-     * 		< child name="name" valu="value" />
-     * 		< child name="name" valu="value" />
-     * 		< child name="name" valu="value" />
-     * 		< child name="name" valu="value" />
+     * 		< child name="name" value="value" />
+     * 		< child name="name" value="value" />
+     * 		< child name="name" value="value" />
+     * 		< child name="name" value="value" />
      * 	< /element >
      *
      * vars.parse(node, "child", "name", "value")
      * </pre>
      *
-     * @param node      узел, который надо отпарсить.
-     * @param childName название элемента, у которого будет браться параметр.
-     * @param nameType  название атрибута, задающее название параметра.
-     * @param nameValue название атрибута, задающее значение параметра.
+     * @param node      the xml node.
+     * @param childName the name of a child element.
+     * @param nameName  the name of name attribute.
+     * @param nameValue the name of value attribute.
      */
-    public VarTable parse(final Node node, final String childName, final String nameType, final String nameValue) {
+    public VarTable parse(@Nullable final Node node, @NotNull final String childName,
+                          @NotNull final String nameName, @NotNull final String nameValue) {
         values.clear();
 
         if (node == null) {
@@ -1336,7 +1345,7 @@ public class VarTable {
 
             final NamedNodeMap attributes = child.getAttributes();
 
-            final Node nameNode = attributes.getNamedItem(nameType);
+            final Node nameNode = attributes.getNamedItem(nameName);
             final Node valueNode = attributes.getNamedItem(nameValue);
 
             if (nameNode == null || valueNode == null) {
@@ -1350,21 +1359,31 @@ public class VarTable {
     }
 
     /**
-     * Вставка значения параметра в таблицу.
+     * Set a value by a key.
      *
-     * @param key   название параметра.
-     * @param value значение параметра.
+     * @param key   the key.
+     * @param value the value.
      */
-    public void set(final String key, final Object value) {
-        values.put(key, value);
+    public void set(@NotNull final String key, @NotNull final Object value) {
+        values.put(key, Objects.requireNonNull(value));
     }
 
     /**
-     * Копирование параметров из указанной таблицы в эту, текущие параметры не очищаются.
+     * Clear a value by a key.
      *
-     * @param vars копируемая таблица параметров.
+     * @param key the key.
      */
-    public VarTable set(final VarTable vars) {
+    public void clear(@NotNull final String key) {
+        values.remove(key);
+    }
+
+    /**
+     * Copy all values from a other table.
+     *
+     * @param vars the other table.
+     */
+    @NotNull
+    public VarTable set(@NotNull final VarTable vars) {
         values.put(vars.getValues());
         return this;
     }

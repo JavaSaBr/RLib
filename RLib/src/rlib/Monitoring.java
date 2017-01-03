@@ -1,137 +1,156 @@
 package rlib;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
-import java.text.DateFormat;
-import java.util.Date;
+
+import rlib.util.Util;
 
 /**
- * Модель мониторинга состояния процесса.
+ * The class with method to monitor process state.
  *
  * @author JavaSaBr
- * @created 24.04.2012
  */
-public abstract class Monitoring {
+public final class Monitoring {
 
-    /**
-     * менеджер распределения памяти
-     */
-    private static MemoryMXBean memoryMXBean;
-    /**
-     * менеджер ОС на которой запущена программа
-     */
-    private static OperatingSystemMXBean operatingSystemMXBean;
-    /**
-     * менеджер запущенного процесса
-     */
-    private static RuntimeMXBean runtimeMxBean;
-    /**
-     * менеджер потоков
-     */
-    private static ThreadMXBean threadMXBean;
+    @NotNull
+    private static final Monitoring INSTANCE = new Monitoring();
 
-    /**
-     * Иницилазиация.
-     */
-    public static void init() {
-        memoryMXBean = ManagementFactory.getMemoryMXBean();
-        operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-        runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-        threadMXBean = ManagementFactory.getThreadMXBean();
+    @NotNull
+    public static Monitoring getInstance() {
+        return INSTANCE;
     }
 
     /**
-     * @return кол-во демон потоков.
+     * The memory manager.
      */
-    public static int getDeamonThreadCount() {
+    @NotNull
+    private final MemoryMXBean memoryMXBean;
+
+    /**
+     * The OS manager.
+     */
+    @NotNull
+    private final OperatingSystemMXBean operatingSystemMXBean;
+
+    /**
+     * The runtime manager.
+     */
+    @NotNull
+    private final RuntimeMXBean runtimeMxBean;
+
+    /**
+     * The thread manager.
+     */
+    @NotNull
+    private final ThreadMXBean threadMXBean;
+
+    /**
+     * @return the daemon thread count.
+     */
+    public int getDaemonThreadCount() {
         return threadMXBean.getDaemonThreadCount();
     }
 
     /**
-     * @return версия java, на которой запущен процесс.
+     * @return the java version.
      */
-    public static String getJavaVersion() {
+    @NotNull
+    public String getJavaVersion() {
         return runtimeMxBean.getSpecVersion();
     }
 
     /**
-     * @return кол-во доступных процессорных ядер
+     * @return the process count.
      */
-    public static int getProcessorCount() {
+    public int getProcessorCount() {
         return operatingSystemMXBean.getAvailableProcessors();
     }
 
     /**
-     * @return дата старта процесса.
+     * @return the startup date.
      */
-    public static String getStartDate() {
-        return DateFormat.getInstance().format(new Date(runtimeMxBean.getStartTime()));
+    @NotNull
+    public String getStartDate() {
+        return Util.formatTime(runtimeMxBean.getStartTime());
     }
 
     /**
      * @return время старта процесса.
      */
-    public static long getStartTime() {
+    public long getStartTime() {
         return runtimeMxBean.getStartTime();
     }
 
     /**
-     * @return архитектуру системы, на которой запущен процесс.
+     * @return the arch of system.
      */
-    public static String getSystemArch() {
+    @NotNull
+    public String getSystemArch() {
         return operatingSystemMXBean.getArch();
     }
 
     /**
-     * @return процентную нагрузку процесса на систему.
+     * @return the system load.
      */
-    public static double getSystemLoadAverage() {
+    @NotNull
+    public double getSystemLoadAverage() {
         return operatingSystemMXBean.getSystemLoadAverage();
     }
 
     /**
-     * @return название системы.
+     * @return the system name.
      */
-    public static String getSystemName() {
+    @NotNull
+    public String getSystemName() {
         return operatingSystemMXBean.getName();
     }
 
     /**
-     * @return версию системы.
+     * @return the system version.
      */
-    public static String getSystemVersion() {
+    @NotNull
+    public String getSystemVersion() {
         return operatingSystemMXBean.getVersion();
     }
 
     /**
-     * @return кол-во созданных потоков.
+     * @return the count of created threads.
      */
-    public static int getThreadCount() {
+    public int getThreadCount() {
         return threadMXBean.getThreadCount();
     }
 
     /**
-     * @return сколько уже милисекунд работает процесс.
+     * @return the up time.
      */
-    public static long getUpTime() {
+    public long getUpTime() {
         return runtimeMxBean.getUptime();
     }
 
     /**
-     * @return кол-во использованных МБ оперативной памяти.
+     * @return the memory usage (mb).
      */
-    public static int getUsedMemory() {
+    public int getUsedMemory() {
         return (int) (memoryMXBean.getHeapMemoryUsage().getUsed() / 1024 / 1024);
     }
 
     /**
-     * @return название виртуальной машины.
+     * @return the VM name.
      */
-    public static String getVMName() {
+    @NotNull
+    public String getVMName() {
         return runtimeMxBean.getVmName();
     }
 
+    private Monitoring() {
+        memoryMXBean = ManagementFactory.getMemoryMXBean();
+        operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+        runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        threadMXBean = ManagementFactory.getThreadMXBean();
+    }
 }
