@@ -1,5 +1,7 @@
 package rlib.io.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -8,19 +10,20 @@ import java.util.Arrays;
 import rlib.io.ReusableStream;
 
 /**
- * Реализация переиспользуемого выходного стрима на массиве байтов.
+ * The implementation of reusable output stream.
  *
  * @author JavaSaBr
  */
 public final class ReuseBytesOutputStream extends OutputStream implements ReusableStream {
 
     /**
-     * Данные стрима.
+     * The data buffer.
      */
+    @NotNull
     protected byte[] data;
 
     /**
-     * Размер записи в стрим.
+     * The size of stream.
      */
     protected int size;
 
@@ -34,10 +37,10 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     @Override
-    public void initFor(byte[] buffer, int offset, int length) {
+    public void initFor(@NotNull final byte[] buffer, final int offset, final int length) {
 
         if (offset != 0) {
-            throw new IllegalArgumentException("don't support offset.");
+            throw new IllegalArgumentException("doesn't support offset.");
         }
 
         this.data = buffer;
@@ -45,9 +48,9 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     /**
-     * Проверка и при необходиомсти увеличение размера массива данных под нужную длинну.
+     * Check needing resizing the buffer.
      *
-     * @param minCapacity интересуемая длинна массива.
+     * @param minCapacity the min capacity.
      */
     private void checkLength(final int minCapacity) {
         if (minCapacity - data.length > 0) {
@@ -60,8 +63,9 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     /**
-     * @return данные стрима.
+     * @return the data buffer.
      */
+    @NotNull
     public byte[] getData() {
         return data;
     }
@@ -72,9 +76,9 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     /**
-     * Процесс увеличение размера массива данных.
+     * Resize the data buffer.
      *
-     * @param minCapacity требуемаяд линна.
+     * @param minCapacity the min capacity.
      */
     private void resizeData(final int minCapacity) {
 
@@ -99,7 +103,7 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     /**
-     * @return размер записи в стрим.
+     * @return the size of this stream.
      */
     public int size() {
         return size;
@@ -115,7 +119,7 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     @Override
-    public void write(final byte[] buffer, final int offset, final int length) {
+    public void write(@NotNull final byte[] buffer, final int offset, final int length) {
 
         if (offset < 0 || offset > buffer.length || length < 0 || offset + length - buffer.length > 0) {
             throw new IndexOutOfBoundsException();

@@ -1,5 +1,7 @@
 package rlib.idfactory.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -14,69 +16,73 @@ import rlib.idfactory.IdGenerator;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.ArrayUtils;
-import rlib.util.SafeTask;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.IntegerArray;
 import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.IntegerDictionary;
 
 /**
- * Модель фабрики ид основаной на BitSet
+ * THe BitSet implementation of a ID generator.
  *
  * @author JavaSaBr
  */
-public final class BitSetIdGenerator implements IdGenerator, SafeTask {
+public final class BitSetIdGenerator implements IdGenerator, Runnable {
 
     private static final Logger LOGGER = LoggerManager.getLogger(BitSetIdGenerator.class);
 
     /**
-     * Первый ид.
+     * The first ID.
      */
     public static final int FIRST_ID = 0x10000000;
 
     /**
-     * Последний ид.
+     * The last ID.
      */
     public static final int LAST_ID = 0x7FFFFFFF;
 
     /**
-     * Кол-во свободных ид.
+     * The count of free ID.s
      */
     public static final int FREE_ID_SIZE = LAST_ID - FIRST_ID;
 
     /**
-     * Сервис для отложенного исполнения.
+     * The executor service.
      */
-    private final ScheduledExecutorService executor;
+    @NotNull
+    private final ScheduledExecutorService executorService;
 
     /**
-     * Фабрика подключений к БД.
+     * The connection factory.
      */
-    private final ConnectFactory connects;
+    @NotNull
+    private final ConnectFactory connectFactory;
 
     /**
-     * Свободные иды.
+     * The tables.
+     */
+    @NotNull
+    private final String[][] tables;
+
+    /**
+     * The free IDs set.
      */
     private volatile BitSet freeIds;
 
     /**
-     * Кол-во свободных ид.
+     * The count of free IDs.
      */
     private AtomicInteger freeIdCount;
 
     /**
-     * Следующие свободные ид.
+     * The next free IDs.
      */
     private AtomicInteger nextFreeId;
 
-    /**
-     * Список извлекаемых таблиц и полей.
-     */
-    private final String[][] tables;
-
-    public BitSetIdGenerator(final ConnectFactory connects, final ScheduledExecutorService executor, final String[][] tables) {
-        this.executor = executor;
-        this.connects = connects;
+    public BitSetIdGenerator(@NotNull final ConnectFactory connectFactory,
+                             @NotNull final ScheduledExecutorService executorService,
+                             @NotNull final String[][] tables) {
+        this.executorService = executorService;
+        this.connectFactory = connectFactory;
         this.tables = tables;
     }
 
@@ -107,9 +113,6 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
         return newID + FIRST_ID;
     }
 
-    /**
-     * Увеличение и обновление бит сета.
-     */
     protected synchronized void increaseBitSetCapacity() {
 
         final BitSet newBitSet = new BitSet(PrimeFinder.nextPrime(usedIds() * 11 / 10));
@@ -128,81 +131,77 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
 
             freeIdCount = new AtomicInteger(FREE_ID_SIZE);
 
-            if (tables != null) {
+            final IntegerDictionary<String> useIds = DictionaryFactory.newIntegerDictionary();
+            final IntegerArray clearIds = ArrayFactory.newIntegerArray();
+            final IntegerArray extractedIds = ArrayFactory.newIntegerArray();
 
-                final IntegerDictionary<String> useIds = DictionaryFactory.newIntegerDictionary();
+            Connection con = null;
+            Statement statement = null;
+            ResultSet rset = null;
+            try {
 
-                final IntegerArray clearIds = ArrayFactory.newIntegerArray();
-                final IntegerArray extractedIds = ArrayFactory.newIntegerArray();
+                con = connectFactory.getConnection();
+                statement = con.createStatement();
 
-                Connection con = null;
-                Statement statement = null;
-                ResultSet rset = null;
+                for (final String[] table : tables) {
 
-                try {
+                    rset = statement.executeQuery("SELECT " + table[1] + " FROM " + table[0]);
 
-                    con = connects.getConnection();
-                    statement = con.createStatement();
+                    while (rset.next()) {
 
-                    for (final String[] table : tables) {
+                        final int objectId = rset.getInt(1);
 
-                        rset = statement.executeQuery("SELECT " + table[1] + " FROM " + table[0]);
-
-                        while (rset.next()) {
-
-                            final int objectId = rset.getInt(1);
-
-                            if (!useIds.containsKey(objectId)) {
-                                extractedIds.add(objectId);
-                                useIds.put(objectId, table[0]);
-                            } else {
-                                clearIds.add(objectId);
-                                LOGGER.warning("recurrence was found and '" + objectId + "' in the table `" + table[0] + "`, which is already in the table `" + useIds.get(objectId) + "`.");
-                            }
-                        }
-
-                        if (!clearIds.isEmpty()) {
-
-                            DBUtils.close(rset);
-
-                            for (final int id : clearIds.array()) {
-                                statement.executeUpdate("DELETE FROM " + table[0] + " WHERE " + table[1] + " = " + id + " LIMIT 1");
-                            }
+                        if (!useIds.containsKey(objectId)) {
+                            extractedIds.add(objectId);
+                            useIds.put(objectId, table[0]);
+                        } else {
+                            clearIds.add(objectId);
+                            LOGGER.warning("recurrence was found and '" + objectId + "' in the table `" + table[0] + "`, which is already in the table `" + useIds.get(objectId) + "`.");
                         }
                     }
-                } finally {
-                    DBUtils.close(con, statement, rset);
-                }
 
-                final int[] extracted = new int[extractedIds.size()];
+                    if (!clearIds.isEmpty()) {
 
-                for (int i = 0, length = extractedIds.size(); i < length; i++) {
-                    extracted[i] = extractedIds.get(i);
-                }
+                        DBUtils.close(rset);
 
-                LOGGER.info("extracted " + extracted.length + " ids.");
-
-                ArrayUtils.sort(extracted);
-
-                for (final int objectId : extracted) {
-
-                    final int id = objectId - FIRST_ID;
-
-                    if (id < 0) {
-                        LOGGER.warning("objectId " + objectId + " in DB is less than minimum ID of " + FIRST_ID + ".");
-                        continue;
+                        for (final int id : clearIds.array()) {
+                            statement.executeUpdate("DELETE FROM " + table[0] + " WHERE " + table[1] + " = " + id + " LIMIT 1");
+                        }
                     }
-
-                    freeIds.set(objectId - FIRST_ID);
-                    freeIdCount.decrementAndGet();
                 }
+            } finally {
+                DBUtils.close(con, statement, rset);
             }
+
+            final int[] extracted = new int[extractedIds.size()];
+
+            for (int i = 0, length = extractedIds.size(); i < length; i++) {
+                extracted[i] = extractedIds.get(i);
+            }
+
+            LOGGER.info("extracted " + extracted.length + " ids.");
+
+            ArrayUtils.sort(extracted);
+
+            for (final int objectId : extracted) {
+
+                final int id = objectId - FIRST_ID;
+
+                if (id < 0) {
+                    LOGGER.warning("objectId " + objectId + " in DB is less than minimum ID of " + FIRST_ID + ".");
+                    continue;
+                }
+
+                freeIds.set(objectId - FIRST_ID);
+                freeIdCount.decrementAndGet();
+            }
+
         } catch (final Exception e) {
             LOGGER.warning(e);
         }
 
         nextFreeId = new AtomicInteger(freeIds.nextClearBit(0));
-        executor.scheduleAtFixedRate(this, 300000, 300000, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(this, 300000, 300000, TimeUnit.MILLISECONDS);
         LOGGER.info(freeIds.size() + " id's available.");
     }
 
@@ -221,14 +220,14 @@ public final class BitSetIdGenerator implements IdGenerator, SafeTask {
     }
 
     @Override
-    public void runImpl() {
+    public void run() {
         if (reachingBitSetCapacity()) {
             increaseBitSetCapacity();
         }
     }
 
     /**
-     * @return уол-во свободных ид.
+     * @return the count of free IDs.
      */
     public synchronized int size() {
         return freeIdCount.get();

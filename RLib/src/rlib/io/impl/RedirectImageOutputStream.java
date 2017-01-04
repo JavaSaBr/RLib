@@ -1,5 +1,7 @@
 package rlib.io.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -7,19 +9,19 @@ import java.io.OutputStream;
 import javax.imageio.stream.ImageOutputStreamImpl;
 
 /**
- * Реализация перенаправителя стрима.
+ * The implementation of a redirector image input stream.
  *
  * @author JavaSaBr
  */
 public class RedirectImageOutputStream extends ImageOutputStreamImpl {
 
     /**
-     * Перенаправляющий выходящий поток.
+     * The output stream.
      */
     private OutputStream out;
 
     /**
-     * Перенаправляющий входящий поток.
+     * The input stream.
      */
     private InputStream in;
 
@@ -33,26 +35,26 @@ public class RedirectImageOutputStream extends ImageOutputStreamImpl {
     }
 
     @Override
-    public int read(final byte[] b, final int off, final int len) throws IOException {
+    public int read(@NotNull final byte[] b, final int off, final int len) throws IOException {
         return in.read(b, off, len);
     }
 
     /**
-     * @param in перенаправляющий входящий поток.
+     * @param in the input stream.
      */
-    public void setIn(final InputStream in) {
+    public void setIn(@NotNull final InputStream in) {
         this.in = in;
     }
 
     /**
-     * @param out перенаправляющий выходящий поток.
+     * @param out the output stream.
      */
-    public void setOut(final OutputStream out) {
+    public void setOut(@NotNull final OutputStream out) {
         this.out = out;
     }
 
     @Override
-    public void write(final byte[] b, final int off, final int len) throws IOException {
+    public void write(@NotNull final byte[] b, final int off, final int len) throws IOException {
         out.write(b, off, len);
     }
 

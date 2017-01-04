@@ -5,26 +5,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 import rlib.idfactory.IdGenerator;
 
 /**
- * Модель простого генератора ид.
+ * The simple implementation of an ID generator.
  *
  * @author JavaSaBr
  */
 public final class SimpleIdGenerator implements IdGenerator {
 
     /**
-     * Промежуток генерирование ид.
+     * The IDs range.
      */
     private final int start;
     private final int end;
 
     /**
-     * Следующий ид.
+     * The next id.
      */
     private final AtomicInteger nextId;
 
     /**
-     * @param start стартовый ид генератора.
-     * @param end   конечный ид генератора.
+     * @param start the start ID.
+     * @param end   the last ID.
      */
     public SimpleIdGenerator(final int start, final int end) {
         this.start = start;

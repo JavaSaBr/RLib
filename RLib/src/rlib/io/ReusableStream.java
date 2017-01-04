@@ -1,25 +1,27 @@
 package rlib.io;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 /**
- * Интерфейсд ля реализации переиспользуемых стримов.
+ * The interface to implement a reusable streams.
  *
  * @author JavaSaBr
  */
 public interface ReusableStream {
 
     /**
-     * Перезапустить стрим.
+     * Reset this stream.
      */
-    public void reset() throws IOException;
+    void reset() throws IOException;
 
     /**
-     * Инициализация потока под указанный буфер.
+     * Initialize this string using the buffer.
      *
-     * @param buffer буффер данных.
-     * @param offset отступ.
-     * @param length длинна.
+     * @param buffer the buffer data.
+     * @param offset the offset.
+     * @param length the length.
      */
-    public void initFor(byte[] buffer, int offset, int length);
+    void initFor(@NotNull byte[] buffer, int offset, int length);
 }

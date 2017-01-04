@@ -1,5 +1,7 @@
 package rlib.idfactory;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.ScheduledExecutorService;
 
 import rlib.database.ConnectFactory;
@@ -7,31 +9,35 @@ import rlib.idfactory.impl.BitSetIdGenerator;
 import rlib.idfactory.impl.SimpleIdGenerator;
 
 /**
- * Фабрика ид генераторов.
+ * The factory of IDs generators.
  *
  * @author JavaSaBr
  */
 public class IdGeneratorFactory {
 
     /**
-     * Получение генератора ид на основе BitSet.
+     * Create a new ID generator which uses BitSet and works with DB.
      *
-     * @param connects фабрика подключения к БД.
-     * @param executor исполнитель.
-     * @param tables   таблицы извлекаемых ид из БД.
-     * @return новый генератор.
+     * @param connectFactory  the connection factory.
+     * @param executorService the executorService service.
+     * @param tables          the tables with IDs.
+     * @return the new generator.
      */
-    public static IdGenerator newBitSetIdGenerator(final ConnectFactory connects, final ScheduledExecutorService executor, final String[][] tables) {
-        return new BitSetIdGenerator(connects, executor, tables);
+    @NotNull
+    public static IdGenerator newBitSetIdDBGenerator(@NotNull final ConnectFactory connectFactory,
+                                                     @NotNull final ScheduledExecutorService executorService,
+                                                     @NotNull final String[][] tables) {
+        return new BitSetIdGenerator(connectFactory, executorService, tables);
     }
 
     /**
-     * Создание простого генератора ид в указанном промежутке.
+     * Create a simple id generator.
      *
-     * @param start стартовый ид.
-     * @param end   конечный ид.
-     * @return новый генератор.
+     * @param start the start ID.
+     * @param end   the last ID.
+     * @return the new ID generator.
      */
+    @NotNull
     public static IdGenerator newSimpleIdGenerator(final int start, final int end) {
         return new SimpleIdGenerator(start, end);
     }

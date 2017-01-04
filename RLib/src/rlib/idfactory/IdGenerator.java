@@ -1,37 +1,39 @@
 package rlib.idfactory;
 
 /**
- * Интерфейс для реализации генератора ид.
+ * The interface to implement an id factory.
  *
  * @author JavaSaBr
  */
 public interface IdGenerator {
 
     /**
-     * @return новый свободный ид.
+     * Get a next free ID.
+     *
+     * @return the next free ID.
      */
-    public default int getNextId() {
+    default int getNextId() {
         return 0;
     }
 
     /**
-     * Подготовка фабрики.
+     * Prepare.
      */
-    public default void prepare() {
+    default void prepare() {
     }
 
     /**
-     * Добавление нового освободившегося ид.
+     * Free an used ID.
      *
-     * @param id освободившийся ид.
+     * @param id the released ID.
      */
-    public default void releaseId(final int id) {
+    default void releaseId(final int id) {
     }
 
     /**
-     * @return кол-во использованных ид.
+     * @return the count of used IDs.
      */
-    public default int usedIds() {
+    default int usedIds() {
         return 0;
     }
 }

@@ -1,49 +1,54 @@
 package rlib.io.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 import rlib.io.ReusableStream;
+import rlib.util.ArrayUtils;
 
 /**
- * Реализация переиспользуемого входящего стрима на массиве байтов.
+ * The implementation of reusable input stream.
  *
  * @author JavaSaBr
  */
 public final class ReuseBytesInputStream extends InputStream implements ReusableStream {
 
     /**
-     * Буффер данных
+     * The data buffer.
      */
+    @NotNull
     protected byte buffer[];
 
     /**
-     * Позиция для чтения.
+     * The position.
      */
     protected int pos;
 
     /**
-     * Длинна буффера.
+     * The count bytes.
      */
     protected int count;
 
     public ReuseBytesInputStream() {
+        this.buffer = ArrayUtils.EMPTY_BYTE_ARRAY;
     }
 
-    public ReuseBytesInputStream(byte buffer[]) {
+    public ReuseBytesInputStream(@NotNull final byte buffer[]) {
         this.buffer = buffer;
         this.pos = 0;
         this.count = buffer.length;
     }
 
-    public ReuseBytesInputStream(byte buffer[], int offset, int length) {
+    public ReuseBytesInputStream(@NotNull final byte buffer[], final int offset, final int length) {
         this.buffer = buffer;
         this.pos = offset;
         this.count = Math.min(offset + length, buffer.length);
     }
 
     @Override
-    public void initFor(byte[] buffer, int offset, int length) {
+    public void initFor(@NotNull final byte[] buffer, final int offset, final int length) {
         this.buffer = buffer;
         this.pos = offset;
         this.count = length;
@@ -55,11 +60,9 @@ public final class ReuseBytesInputStream extends InputStream implements Reusable
     }
 
     @Override
-    public synchronized int read(byte buffer[], int offset, int length) {
+    public synchronized int read(@NotNull final byte buffer[], int offset, int length) {
 
-        if (buffer == null) {
-            throw new NullPointerException();
-        } else if (offset < 0 || length < 0 || length > buffer.length - offset) {
+        if (offset < 0 || length < 0 || length > buffer.length - offset) {
             throw new IndexOutOfBoundsException();
         }
 
