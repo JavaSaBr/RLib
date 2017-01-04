@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.ArrayUtils;
-import rlib.util.SafeTask;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 import rlib.util.array.ConcurrentArray;
@@ -24,7 +23,7 @@ import rlib.util.array.ConcurrentArray;
  *
  * @author JavaSaBr
  */
-public class DeadLockDetector implements SafeTask {
+public class DeadLockDetector implements Runnable {
 
     private static final Logger LOGGER = LoggerManager.getLogger(DeadLockDetector.class);
 
@@ -90,7 +89,7 @@ public class DeadLockDetector implements SafeTask {
     }
 
     @Override
-    public void runImpl() {
+    public void run() {
 
         final long[] threadIds = mxThread.findDeadlockedThreads();
         if (threadIds.length < 1) return;

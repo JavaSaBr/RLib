@@ -1,5 +1,7 @@
 package rlib.util.crypt;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -12,34 +14,37 @@ import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 
 /**
- * Модель симметричного криптора с использованием RC4 алгоритма.
+ * The symmetry crypt based on RC4.
  *
  * @author JavaSaBr
  */
 public class SymmetryCrypt {
 
     /**
-     * Криптовщик.
+     * The crypter.
      */
-    private volatile Cipher ecipher;
+    @NotNull
+    private final Cipher ecipher;
 
     /**
-     * Декриптовщик.
+     * The encrypter.
      */
-    private volatile Cipher dcipher;
+    @NotNull
+    private final Cipher dcipher;
 
     /**
-     * Ключ шифрования
+     * THe secret key.
      */
-    private volatile SecretKey secretKey;
+    @NotNull
+    private final SecretKey secretKey;
 
     /**
      * @param key 8 символов.
      */
-    public SymmetryCrypt(final String key) throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException {
+    public SymmetryCrypt(@NotNull final String key) throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException {
 
-        ecipher = Cipher.getInstance("RC4");
-        dcipher = Cipher.getInstance("RC4");
+        final Cipher ecipher = Cipher.getInstance("RC4");
+        final Cipher dcipher = Cipher.getInstance("RC4");
 
         final byte[] bytes = key.getBytes("UTF-8");
 
@@ -65,29 +70,34 @@ public class SymmetryCrypt {
 
         ecipher.init(Cipher.ENCRYPT_MODE, secretKey);
         dcipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+        this.ecipher = ecipher;
+        this.dcipher = dcipher;
     }
 
     /**
-     * Расшифровать массив байтов.
+     * Decrypt data.
      *
-     * @param in     исходный массив.
-     * @param offset отступ в исходном массиве.
-     * @param length длинна дешифруемого части.
-     * @param out    выходной массив.
+     * @param in     the encrypted data.
+     * @param offset the offset.
+     * @param length the length.
+     * @param out    the buffer to store decrypted data.
      */
-    public void decrypt(final byte[] in, final int offset, final int length, final byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+    public void decrypt(@NotNull final byte[] in, final int offset, final int length, @NotNull final byte[] out)
+            throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
         dcipher.doFinal(in, offset, length, out, offset);
     }
 
     /**
-     * Зашифровать массив байтов.
+     * Encrypt data.
      *
-     * @param in     исходный массив.
-     * @param offset отступ в исходном массиве.
-     * @param length длинна шифруемой части.
-     * @param out    выходной массив.
+     * @param in     the decrypted data.
+     * @param offset the offset.
+     * @param length the length.
+     * @param out    the buffer to store encrypted data.
      */
-    public void encrypt(final byte[] in, final int offset, final int length, final byte[] out) throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
+    public void encrypt(@NotNull final byte[] in, final int offset, final int length, @NotNull final byte[] out)
+            throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
         ecipher.doFinal(in, offset, length, out, offset);
     }
 }
