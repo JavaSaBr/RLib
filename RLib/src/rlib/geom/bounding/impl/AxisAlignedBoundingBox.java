@@ -4,65 +4,70 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.geom.Matrix3f;
-import rlib.geom.Rotation;
-import rlib.geom.Vector;
-import rlib.geom.VectorBuffer;
+import rlib.geom.Quaternion4f;
+import rlib.geom.Vector3f;
+import rlib.geom.Vector3fBuffer;
 import rlib.geom.bounding.Bounding;
 import rlib.geom.bounding.BoundingType;
 
 /**
- * Реализация формы коробки.
+ * The implementation AxisAlignedBoundingBox.
  *
  * @author JavaSaBr
  */
 public class AxisAlignedBoundingBox extends AbstractBounding {
 
     /**
-     * Матрица для промежуточных вычислений.
+     * The matrix.
      */
+    @NotNull
     private final Matrix3f matrix;
 
     /**
-     * Вектор, описывающий размер формы.
+     * The vector size.
      */
-    private final Vector size;
+    @NotNull
+    private final Vector3f size;
 
     /**
-     * Размер формы по x.
+     * The size X.
      */
     protected float sizeX;
 
     /**
-     * Размер формы по y.
+     * The size Y.
      */
     protected float sizeY;
 
     /**
-     * Размер формы по z.
+     * The size Z.
      */
     protected float sizeZ;
 
     /**
-     * Отступ формы от цента по Х
+     * The offset X.
      */
     protected float offsetX;
 
     /**
-     * Отступ формы от цента по Y
+     * The offset Y.
      */
     protected float offsetY;
 
     /**
-     * Отступ формы от цента по Z
+     * The offset Z.
      */
     protected float offsetZ;
 
-    public AxisAlignedBoundingBox(final Vector center, final Vector offset, final float sizeX, final float sizeY, final float sizeZ) {
+    public AxisAlignedBoundingBox(@NotNull final Vector3f center, @NotNull final Vector3f offset,
+                                  final float sizeX, final float sizeY, final float sizeZ) {
         super(center, offset);
 
         this.matrix = Matrix3f.newInstance();
-        this.size = Vector.newInstance(sizeX, sizeY, sizeZ);
+        this.size = Vector3f.newInstance(sizeX, sizeY, sizeZ);
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -74,23 +79,25 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
     }
 
     @Override
-    public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
-        final Vector center = getResultCenter(buffer);
+    public boolean contains(final float x, final float y, final float z, @NotNull final Vector3fBuffer buffer) {
+        final Vector3f center = getResultCenter(buffer);
         return abs(center.getX() - x) < sizeX && abs(center.getY() - y) < sizeY && abs(center.getZ() - z) < sizeZ;
     }
 
+    @NotNull
     @Override
     public BoundingType getBoundingType() {
         return BoundingType.AXIS_ALIGNED_BOX;
     }
 
+    @NotNull
     @Override
-    public Vector getResultCenter(final VectorBuffer buffer) {
+    public Vector3f getResultCenter(@NotNull final Vector3fBuffer buffer) {
 
-        final Vector vector = buffer.nextVector();
+        final Vector3f vector = buffer.nextVector();
         vector.set(center);
 
-        if (offset == Vector.ZERO) {
+        if (offset == Vector3f.ZERO) {
             return vector;
         }
 
@@ -98,28 +105,28 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
     }
 
     /**
-     * @return размер формы по X.
+     * @return the size X.
      */
-    public final float getSizeX() {
+    protected final float getSizeX() {
         return sizeX;
     }
 
     /**
-     * @return размер формы по Y.
+     * @return the size Y.
      */
-    public final float getSizeY() {
+    protected final float getSizeY() {
         return sizeY;
     }
 
     /**
-     * @return размер формы по Z.
+     * @return the size Z.
      */
-    public final float getSizeZ() {
+    protected final float getSizeZ() {
         return sizeZ;
     }
 
     @Override
-    public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
+    public boolean intersects(@NotNull final Bounding bounding, @NotNull final Vector3fBuffer buffer) {
         switch (bounding.getBoundingType()) {
             case EMPTY: {
                 return false;
@@ -128,8 +135,8 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
 
                 final AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
 
-                final Vector target = box.getResultCenter(buffer);
-                final Vector center = getResultCenter(buffer);
+                final Vector3f target = box.getResultCenter(buffer);
+                final Vector3f center = getResultCenter(buffer);
 
                 final float sizeX = getSizeX();
                 final float sizeY = getSizeY();
@@ -149,8 +156,8 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
 
                 final BoundingSphere sphere = (BoundingSphere) bounding;
 
-                final Vector target = sphere.getResultCenter(buffer);
-                final Vector center = getResultCenter(buffer);
+                final Vector3f target = sphere.getResultCenter(buffer);
+                final Vector3f center = getResultCenter(buffer);
 
                 final float radius = sphere.getRadius();
 
@@ -173,7 +180,8 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
     }
 
     @Override
-    public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
+    public boolean intersects(@NotNull final Vector3f start, @NotNull final Vector3f direction,
+                              @NotNull final Vector3fBuffer buffer) {
 
         final float divX = 1.0F / (Float.compare(direction.getX(), 0) == 0 ? 0.00001F : direction.getX());
         final float divY = 1.0F / (Float.compare(direction.getY(), 0) == 0 ? 0.00001F : direction.getY());
@@ -183,7 +191,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         final float sizeY = getSizeY() * 0.5F;
         final float sizeZ = getSizeZ() * 0.5F;
 
-        final Vector center = getResultCenter(buffer);
+        final Vector3f center = getResultCenter(buffer);
 
         final float minX = center.getX() - sizeX;
         final float minY = center.getY() - sizeY;
@@ -208,16 +216,17 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " size = " + size + ", sizeX = " + sizeX + ", sizeY = " + sizeY + ", sizeZ = " + sizeZ + ", center = " + center + ", offset = " + offset;
+        return getClass().getSimpleName() + " size = " + size + ", sizeX = " + sizeX +
+                ", sizeY = " + sizeY + ", sizeZ = " + sizeZ + ", center = " + center + ", offset = " + offset;
     }
 
     @Override
-    public void update(final Rotation rotation, final VectorBuffer buffer) {
+    public void update(@NotNull final Quaternion4f rotation, @NotNull final Vector3fBuffer buffer) {
 
         matrix.set(rotation);
         matrix.absoluteLocal();
 
-        final Vector vector = buffer.nextVector();
+        final Vector3f vector = buffer.nextVector();
         vector.set(size);
 
         matrix.mult(vector, vector);
@@ -226,7 +235,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         sizeY = abs(vector.getY());
         sizeZ = abs(vector.getZ());
 
-        if (offset == Vector.ZERO) {
+        if (offset == Vector3f.ZERO) {
             return;
         }
 

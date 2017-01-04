@@ -2,29 +2,31 @@ package rlib.geom.bounding.impl;
 
 import static java.lang.Math.abs;
 
-import rlib.geom.Vector;
-import rlib.geom.VectorBuffer;
+import org.jetbrains.annotations.NotNull;
+
+import rlib.geom.Vector3f;
+import rlib.geom.Vector3fBuffer;
 import rlib.geom.bounding.Bounding;
 import rlib.geom.bounding.BoundingType;
 
 /**
- * Реализация формы сферы.
+ * The implementation of sphere bounding.
  *
  * @author JavaSaBr
  */
 public class BoundingSphere extends AbstractBounding {
 
     /**
-     * Радиус сферы.
+     * The sphere radius.
      */
     protected float radius;
 
     /**
-     * Квадрат радиуса сферы.
+     * The square radius.
      */
     protected float squareRadius;
 
-    public BoundingSphere(final Vector center, final Vector offset, final float radius) {
+    public BoundingSphere(@NotNull final Vector3f center, @NotNull final Vector3f offset, final float radius) {
         super(center, offset);
 
         this.radius = radius;
@@ -32,30 +34,32 @@ public class BoundingSphere extends AbstractBounding {
     }
 
     @Override
-    public boolean contains(final float x, final float y, final float z, final VectorBuffer buffer) {
-        final Vector center = getResultCenter(buffer);
+    public boolean contains(final float x, final float y, final float z, @NotNull final Vector3fBuffer buffer) {
+        final Vector3f center = getResultCenter(buffer);
         return center.distanceSquared(x, y, z) < squareRadius;
     }
 
+    @NotNull
     @Override
     public BoundingType getBoundingType() {
         return BoundingType.SPHERE;
     }
 
     /**
-     * @return радиус сферы.
+     * @return the sphere radius.
      */
     public float getRadius() {
         return radius;
     }
 
+    @NotNull
     @Override
-    public Vector getResultCenter(final VectorBuffer buffer) {
+    public Vector3f getResultCenter(@NotNull final Vector3fBuffer buffer) {
 
-        final Vector vector = buffer.nextVector();
+        final Vector3f vector = buffer.nextVector();
         vector.set(center);
 
-        if (offset == Vector.ZERO) {
+        if (offset == Vector3f.ZERO) {
             return vector;
         }
 
@@ -63,7 +67,7 @@ public class BoundingSphere extends AbstractBounding {
     }
 
     @Override
-    public boolean intersects(final Bounding bounding, final VectorBuffer buffer) {
+    public boolean intersects(@NotNull final Bounding bounding, @NotNull final Vector3fBuffer buffer) {
         switch (bounding.getBoundingType()) {
             case EMPTY: {
                 return false;
@@ -72,7 +76,7 @@ public class BoundingSphere extends AbstractBounding {
 
                 final BoundingSphere sphere = (BoundingSphere) bounding;
 
-                final Vector diff = getResultCenter(buffer);
+                final Vector3f diff = getResultCenter(buffer);
                 diff.subtractLocal(sphere.getResultCenter(buffer));
 
                 final float rsum = getRadius() + sphere.getRadius();
@@ -83,22 +87,12 @@ public class BoundingSphere extends AbstractBounding {
 
                 final AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
 
-                final Vector center = getResultCenter(buffer);
-                final Vector target = box.getResultCenter(buffer);
+                final Vector3f center = getResultCenter(buffer);
+                final Vector3f target = box.getResultCenter(buffer);
 
-                if (!(abs(target.getX() - center.getX()) < getRadius() + box.getSizeX())) {
-                    return false;
-                }
-
-                if (!(abs(target.getY() - center.getY()) < getRadius() + box.getSizeY())) {
-                    return false;
-                }
-
-                if (!(abs(target.getZ() - center.getZ()) < getRadius() + box.getSizeZ())) {
-                    return false;
-                }
-
-                return true;
+                return abs(target.getX() - center.getX()) < getRadius() + box.getSizeX() &&
+                        abs(target.getY() - center.getY()) < getRadius() + box.getSizeY() &&
+                        abs(target.getZ() - center.getZ()) < getRadius() + box.getSizeZ();
             }
         }
 
@@ -106,9 +100,9 @@ public class BoundingSphere extends AbstractBounding {
     }
 
     @Override
-    public boolean intersects(final Vector start, final Vector direction, final VectorBuffer buffer) {
+    public boolean intersects(@NotNull final Vector3f start, @NotNull final Vector3f direction, @NotNull final Vector3fBuffer buffer) {
 
-        final Vector diff = buffer.nextVector();
+        final Vector3f diff = buffer.nextVector();
         diff.set(start).subtractLocal(getResultCenter(buffer));
 
         final float a = start.dot(diff) - squareRadius;

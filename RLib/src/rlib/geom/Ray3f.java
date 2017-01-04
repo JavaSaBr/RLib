@@ -11,30 +11,30 @@ import rlib.util.pools.Reusable;
  *
  * @author JavaSaBr
  */
-public class Ray implements Reusable {
+public class Ray3f implements Reusable {
 
     /**
      * The start point.
      */
-    protected Vector start;
+    protected Vector3f start;
 
     /**
      * The direction of a ray.
      */
-    protected Vector direction;
+    protected Vector3f direction;
 
     /**
      * @return the direction of a ray.
      */
     @NotNull
-    public final Vector getDirection() {
+    public final Vector3f getDirection() {
         return Objects.requireNonNull(direction);
     }
 
     /**
      * @param direction the direction of a ray.
      */
-    public final void setDirection(@NotNull final Vector direction) {
+    public final void setDirection(@NotNull final Vector3f direction) {
         this.direction = direction;
     }
 
@@ -42,20 +42,20 @@ public class Ray implements Reusable {
      * @return the start point.
      */
     @NotNull
-    public final Vector getStart() {
+    public final Vector3f getStart() {
         return Objects.requireNonNull(start);
     }
 
     /**
      * @param start the start point.
      */
-    public final void setStart(@NotNull final Vector start) {
+    public final void setStart(@NotNull final Vector3f start) {
         this.start = start;
     }
 
     @Override
     public String toString() {
-        return "Ray{" +
+        return "Ray3f{" +
                 "start=" + start +
                 ", direction=" + direction +
                 '}';

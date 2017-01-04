@@ -10,8 +10,8 @@ import org.w3c.dom.Node;
 
 import java.util.Objects;
 
-import rlib.geom.Rotation;
-import rlib.geom.Vector;
+import rlib.geom.Quaternion4f;
+import rlib.geom.Vector3f;
 import rlib.util.dictionary.DictionaryFactory;
 import rlib.util.dictionary.ObjectDictionary;
 
@@ -970,21 +970,21 @@ public class VarTable {
      * @return the rotation.
      */
     @NotNull
-    public Rotation getRotation(@NotNull final String key) {
+    public Quaternion4f getRotation(@NotNull final String key) {
 
         final Object object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        } else if (object instanceof Rotation) {
-            return (Rotation) object;
+        } else if (object instanceof Quaternion4f) {
+            return (Quaternion4f) object;
         }
 
         if (object instanceof String) {
 
             final String[] values = ((String) object).split(",");
 
-            final Rotation rotation = Rotation.newInstance();
+            final Quaternion4f rotation = Quaternion4f.newInstance();
             rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]),
                     parseFloat(values[2]), parseFloat(values[3]));
 
@@ -1002,21 +1002,21 @@ public class VarTable {
      * @return the rotation.
      */
     @NotNull
-    public Rotation getRotation(@NotNull final String key, @NotNull final Rotation def) {
+    public Quaternion4f getRotation(@NotNull final String key, @NotNull final Quaternion4f def) {
 
         final Object object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        } else if (object instanceof Rotation) {
-            return (Rotation) object;
+        } else if (object instanceof Quaternion4f) {
+            return (Quaternion4f) object;
         }
 
         if (object instanceof String) {
 
             final String[] values = ((String) object).split(",");
 
-            final Rotation rotation = Rotation.newInstance();
+            final Quaternion4f rotation = Quaternion4f.newInstance();
             rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]),
                     parseFloat(values[2]), parseFloat(values[3]));
 
@@ -1240,21 +1240,21 @@ public class VarTable {
      * @return the vector.
      */
     @NotNull
-    public Vector getVector(@NotNull final String key) {
+    public Vector3f getVector(@NotNull final String key) {
 
         final Object object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
-        } else if (object instanceof Vector) {
-            return (Vector) object;
+        } else if (object instanceof Vector3f) {
+            return (Vector3f) object;
         }
 
         if (object instanceof String) {
 
             final String[] values = ((String) object).split(",");
 
-            final Vector vector = Vector.newInstance();
+            final Vector3f vector = Vector3f.newInstance();
             vector.set(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]));
 
             return vector;
@@ -1271,21 +1271,21 @@ public class VarTable {
      * @return the vector.
      */
     @NotNull
-    public Vector getVector(@NotNull final String key, @NotNull final Vector def) {
+    public Vector3f getVector(@NotNull final String key, @NotNull final Vector3f def) {
 
         final Object object = values.get(key);
 
         if (object == null) {
             return def;
-        } else if (object instanceof Vector) {
-            return (Vector) object;
+        } else if (object instanceof Vector3f) {
+            return (Vector3f) object;
         }
 
         if (object instanceof String) {
 
             final String[] vals = ((String) object).split(",");
 
-            final Vector vector = Vector.newInstance();
+            final Vector3f vector = Vector3f.newInstance();
             vector.set(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
 
             return vector;

@@ -7,7 +7,8 @@ import static java.lang.Math.abs;
  */
 public class Intersects {
 
-    public static boolean intersects(final float start, final float dir, final float min, final float max, final float enter, final float exit) {
+    public static boolean intersects(final float start, final float dir, final float min,
+                                     final float max, final float enter, final float exit) {
 
         if (abs(dir) < 1.0E-8) {
             return start >= min && start <= max;
@@ -33,5 +34,4 @@ public class Intersects {
     private Intersects() {
         throw new RuntimeException();
     }
-
 }

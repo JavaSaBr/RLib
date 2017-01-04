@@ -1,21 +1,12 @@
 package rlib.geom.bounding;
 
 /**
- * Тип формы из точек.
+ * The list of bounding types.
  *
  * @author JavaSaBr
  */
 public enum BoundingType {
-    /**
-     * Коробка.
-     */
     AXIS_ALIGNED_BOX,
-    /**
-     * Сфера.
-     */
     SPHERE,
-    /**
-     * Пустой.
-     */
     EMPTY,
 }

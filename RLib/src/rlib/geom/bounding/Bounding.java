@@ -1,103 +1,120 @@
 package rlib.geom.bounding;
 
-import rlib.geom.Ray;
-import rlib.geom.Rotation;
-import rlib.geom.Vector;
-import rlib.geom.VectorBuffer;
+import org.jetbrains.annotations.NotNull;
+
+import rlib.geom.Quaternion4f;
+import rlib.geom.Ray3f;
+import rlib.geom.Vector3f;
+import rlib.geom.Vector3fBuffer;
 
 /**
- * Интерфейс для реализации формы из точек.
+ * The interface to implement a bounding of objects.
  *
  * @author JavaSaBr
  */
 public interface Bounding {
 
     /**
-     * Входит ли в форму указанная точка.
+     * Check this bounding that it contains a point.
      *
-     * @param x      координата точки.
-     * @param y      координата точки.
-     * @param z      координата точки.
-     * @param buffer векторный буффер.
-     * @return входит ли точка.
+     * @param x      the x coordinate.
+     * @param y      the y coordinate.
+     * @param z      the z coordinate.
+     * @param buffer the vector buffer.
+     * @return true if this bounding contains the point.
      */
-    public boolean contains(float x, float y, float z, VectorBuffer buffer);
+    boolean contains(float x, float y, float z, @NotNull Vector3fBuffer buffer);
 
     /**
-     * Входит ли в форму указанная точка.
+     * Check this bounding that it contains a point
      *
-     * @param point  определяемая точка.
-     * @param buffer векторный буффер.
-     * @return входит ли.
+     * @param point  the point
+     * @param buffer the vector buffer.
+     * @return true if this bounding contains the point.
      */
-    public boolean contains(Vector point, VectorBuffer buffer);
+    boolean contains(@NotNull Vector3f point, @NotNull Vector3fBuffer buffer);
 
     /**
-     * Определение дистанции от центра формы до указанной точки.
+     * Get a distance from a center of a bounding to a point.
      *
-     * @param point целевая точка.
-     * @return дистанция до точки.
+     * @param point the point.
+     * @return the distance.
      */
-    public float distanceTo(Vector point);
+    float distanceTo(@NotNull Vector3f point);
 
     /**
-     * @return тип формы.
-     */
-    public BoundingType getBoundingType();
-
-    /**
-     * @return центр формы.
-     */
-    public Vector getCenter();
-
-    /**
-     * @param center новый центр.
-     */
-    public void setCenter(Vector center);
-
-    /**
-     * @return смещение вектора.
-     */
-    public Vector getOffset();
-
-    /**
-     * @param buffer буффер векторов.
-     * @return итоговый вектор центра формы.
-     */
-    public Vector getResultCenter(VectorBuffer buffer);
-
-    /**
-     * Проверка пересечения с формой.
+     * Get a type of a bounding.
      *
-     * @param bounding проверяемая форма.
-     * @return пересекаются ли формы.
+     * @return the type.
      */
-    public boolean intersects(Bounding bounding, VectorBuffer buffer);
+    @NotNull
+    BoundingType getBoundingType();
 
     /**
-     * Пересекает ли указанный луч эту форму.
+     * Get a center of a bounding.
      *
-     * @param ray    целевой луч.
-     * @param buffer буфер векторов.
-     * @return перескает ли.
+     * @return the center.
      */
-    public boolean intersects(Ray ray, VectorBuffer buffer);
+    @NotNull
+    Vector3f getCenter();
 
     /**
-     * Пересекает ли указанный луч эту форму.
+     * Change a center of a bounding.
      *
-     * @param start     точка начало луча.
-     * @param direction направление луча.
-     * @param buffer    буфер векторов.
-     * @return пересекает ли.
+     * @param center the new center.
      */
-    public boolean intersects(Vector start, Vector direction, VectorBuffer buffer);
+    void setCenter(@NotNull Vector3f center);
 
     /**
-     * Обновление формы с учетом вращения.
+     * Get an offset of a bounding.
      *
-     * @param rotation раворот формы.
-     * @param buffer   векторный буффер.
+     * @return the offset.
      */
-    public void update(Rotation rotation, VectorBuffer buffer);
+    @NotNull
+    Vector3f getOffset();
+
+    /**
+     * Get a result center of a bounding.
+     *
+     * @param buffer the vector buffer.
+     * @return the result center.
+     */
+    @NotNull
+    Vector3f getResultCenter(@NotNull Vector3fBuffer buffer);
+
+    /**
+     * Check this bounding that it intersects with an other bounding.
+     *
+     * @param bounding the other bounding.
+     * @param buffer   the vector buffer.
+     * @return true if this bounding interests with other bounding.
+     */
+    boolean intersects(@NotNull Bounding bounding, @NotNull Vector3fBuffer buffer);
+
+    /**
+     * Check this bounding that it intersects with a ray.
+     *
+     * @param ray    the ray.
+     * @param buffer the vector buffer.
+     * @return true if this bounding interests with the ray.
+     */
+    boolean intersects(@NotNull Ray3f ray, @NotNull Vector3fBuffer buffer);
+
+    /**
+     * Check this bounding that it intersects with a ray.
+     *
+     * @param start     the start point of the ray.
+     * @param direction the direction of the ray.
+     * @param buffer    the vector buffer.
+     * @return true if this bounding interests with the ray.
+     */
+    boolean intersects(@NotNull Vector3f start, @NotNull Vector3f direction, @NotNull Vector3fBuffer buffer);
+
+    /**
+     * Update a rotation of a bounding.
+     *
+     * @param rotation the rotation.
+     * @param buffer   the vector buffer.
+     */
+    void update(@NotNull Quaternion4f rotation, @NotNull Vector3fBuffer buffer);
 }

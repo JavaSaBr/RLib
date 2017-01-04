@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public interface VectorBuffer {
+public interface Vector3fBuffer {
 
     /**
      * @return the next vector.
      */
     @NotNull
-    Vector nextVector();
+    Vector3f nextVector();
 }

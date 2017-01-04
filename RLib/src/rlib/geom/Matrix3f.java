@@ -75,7 +75,7 @@ public final class Matrix3f implements Reusable {
      * @return the result.
      */
     @NotNull
-    public Vector mult(@NotNull final Vector vector, @NotNull final Vector result) {
+    public Vector3f mult(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
 
         final float x = vector.x;
         final float y = vector.y;
@@ -112,7 +112,7 @@ public final class Matrix3f implements Reusable {
      * @return this updated matrix.
      */
     @NotNull
-    public Matrix3f set(@NotNull final Rotation rotation) {
+    public Matrix3f set(@NotNull final Quaternion4f rotation) {
         return rotation.toRotationMatrix(this);
     }
 

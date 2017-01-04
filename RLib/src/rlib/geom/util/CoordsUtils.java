@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import rlib.geom.Vector;
+import rlib.geom.Vector3f;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
@@ -31,10 +31,10 @@ public final class CoordsUtils {
      * @return массив позиций.
      */
     @NotNull
-    public static Vector[] arcCoords(final float x, final float y, final float z, final int heading,
-                                     final int radius, final int count, final int degree, final int width) {
+    public static Vector3f[] arcCoords(final float x, final float y, final float z, final int heading,
+                                       final int radius, final int count, final int degree, final int width) {
 
-        final Vector[] vectors = new Vector[count];
+        final Vector3f[] vectors = new Vector3f[count];
 
         final float current = AngleUtils.headingToDegree(heading) - degree;
 
@@ -45,7 +45,7 @@ public final class CoordsUtils {
 
         for (int i = 0; i < count; i++) {
 
-            final Vector vector = Vector.newInstance();
+            final Vector3f vector = Vector3f.newInstance();
 
             final float radians = AngleUtils.degreeToRadians(min + angle * i);
 
@@ -146,15 +146,15 @@ public final class CoordsUtils {
      */
     @SuppressWarnings("unchecked")
     @NotNull
-    public static Vector[] circularCoords(final float x, final float y, final float z, final int radius, final int count) {
+    public static Vector3f[] circularCoords(final float x, final float y, final float z, final int radius, final int count) {
 
-        final Vector[] locs = new Vector[count];
+        final Vector3f[] locs = new Vector3f[count];
 
         final float angle = 360F / count;
 
         for (int i = 1; i <= count; i++) {
 
-            final Vector loc = Vector.newInstance();
+            final Vector3f loc = Vector3f.newInstance();
 
             final float radians = AngleUtils.degreeToRadians(i * angle);
 
@@ -181,8 +181,8 @@ public final class CoordsUtils {
      * @return массив точек.
      */
     @NotNull
-    public static Vector[] getCircularPoints(@NotNull final Vector[] source, final float x, final float y,
-                                             final float z, final int count, final int radius) {
+    public static Vector3f[] getCircularPoints(@NotNull final Vector3f[] source, final float x, final float y,
+                                               final float z, final int count, final int radius) {
 
         if (count < 1) {
             return source;
@@ -197,7 +197,7 @@ public final class CoordsUtils {
             final float newX = x + radius * (float) Math.cos(radians);
             final float newY = y + radius * (float) Math.sin(radians);
 
-            final Vector point = source[i - 1];
+            final Vector3f point = source[i - 1];
 
             point.set(newX, newY, z);
         }
@@ -216,8 +216,8 @@ public final class CoordsUtils {
      * @return новая точка.
      */
     @NotNull
-    public static Vector randomCoords(@NotNull final Vector loc, final float x, final float y, final float z,
-                                      final int radiusMin, final int radiusMax) {
+    public static Vector3f randomCoords(@NotNull final Vector3f loc, final float x, final float y, final float z,
+                                        final int radiusMin, final int radiusMax) {
 
         final ThreadLocalRandom current = ThreadLocalRandom.current();
 

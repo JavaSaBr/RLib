@@ -12,39 +12,39 @@ import rlib.util.ExtMath;
  *
  * @author JavaSaBr
  */
-public final class Vector {
+public final class Vector3f {
 
     /**
      * нулнвой вектор
      */
-    public final static Vector ZERO = new Vector(0, 0, 0);
+    public final static Vector3f ZERO = new Vector3f(0, 0, 0);
 
     /**
      * вектор в бесконечность
      */
-    public final static Vector NAN = new Vector(Float.NaN, Float.NaN, Float.NaN);
+    public final static Vector3f NAN = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
 
     /**
      * вектор в сторону оси X
      */
-    public final static Vector UNIT_X = new Vector(1, 0, 0);
+    public final static Vector3f UNIT_X = new Vector3f(1, 0, 0);
     /**
      * вектор в сторону оси Y
      */
-    public final static Vector UNIT_Y = new Vector(0, 1, 0);
+    public final static Vector3f UNIT_Y = new Vector3f(0, 1, 0);
 
     /**
      * вектор в сторону оси Z
      */
-    public final static Vector UNIT_Z = new Vector(0, 0, 1);
+    public final static Vector3f UNIT_Z = new Vector3f(0, 0, 1);
 
     /**
      * вектор в сторону XYZ
      */
-    public final static Vector UNIT_XYZ = new Vector(1, 1, 1);
+    public final static Vector3f UNIT_XYZ = new Vector3f(1, 1, 1);
 
-    public final static Vector POSITIVE_INFINITY = new Vector(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-    public final static Vector NEGATIVE_INFINITY = new Vector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    public final static Vector3f POSITIVE_INFINITY = new Vector3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+    public final static Vector3f NEGATIVE_INFINITY = new Vector3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
     /**
      * Проверка на валидность вектора.
@@ -52,7 +52,7 @@ public final class Vector {
      * @param vector проверяемый вектор.
      * @return валиден ли вектор.
      */
-    public static boolean isValidVector(@Nullable final Vector vector) {
+    public static boolean isValidVector(@Nullable final Vector3f vector) {
 
         if (vector == null) {
             return false;
@@ -66,18 +66,18 @@ public final class Vector {
     }
 
     @NotNull
-    public static Vector newInstance() {
-        return new Vector();
+    public static Vector3f newInstance() {
+        return new Vector3f();
     }
 
     @NotNull
-    public static Vector newInstance(final float x, final float y, final float z) {
-        return new Vector(x, y, z);
+    public static Vector3f newInstance(final float x, final float y, final float z) {
+        return new Vector3f(x, y, z);
     }
 
     @NotNull
-    public static Vector newInstance(@NotNull final float[] vals) {
-        return new Vector(vals[0], vals[1], vals[2]);
+    public static Vector3f newInstance(@NotNull final float[] vals) {
+        return new Vector3f(vals[0], vals[1], vals[2]);
     }
 
     /**
@@ -87,11 +87,11 @@ public final class Vector {
     protected float y;
     protected float z;
 
-    private Vector() {
+    private Vector3f() {
         super();
     }
 
-    private Vector(final float x, final float y, final float z) {
+    private Vector3f(final float x, final float y, final float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -101,7 +101,7 @@ public final class Vector {
      * Локальное добавление координат к вектору.
      */
     @NotNull
-    public Vector addLocal(final float addX, final float addY, final float addZ) {
+    public Vector3f addLocal(final float addX, final float addY, final float addZ) {
         x += addX;
         y += addY;
         z += addZ;
@@ -112,7 +112,7 @@ public final class Vector {
      * Локальное добавление указанного вектора.
      */
     @NotNull
-    public Vector addLocal(@NotNull final Vector vec) {
+    public Vector3f addLocal(@NotNull final Vector3f vec) {
         return addLocal(vec.x, vec.y, vec.z);
     }
 
@@ -126,7 +126,7 @@ public final class Vector {
      * @return результирующий веткор.
      */
     @NotNull
-    public Vector cross(final float otherX, final float otherY, final float otherZ, @NotNull final Vector result) {
+    public Vector3f cross(final float otherX, final float otherY, final float otherZ, @NotNull final Vector3f result) {
 
         final float resX = y * otherZ - z * otherY;
         final float resY = z * otherX - x * otherZ;
@@ -144,7 +144,7 @@ public final class Vector {
      * @return результирующий вектор.
      */
     @NotNull
-    public Vector cross(@NotNull final Vector vector) {
+    public Vector3f cross(@NotNull final Vector3f vector) {
         return cross(vector, newInstance());
     }
 
@@ -156,7 +156,7 @@ public final class Vector {
      * @return результирующий веткор.
      */
     @NotNull
-    public Vector cross(@NotNull final Vector vector, @NotNull final Vector result) {
+    public Vector3f cross(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
         return cross(vector.x, vector.y, vector.z, result);
     }
 
@@ -169,7 +169,7 @@ public final class Vector {
      * @return этот же вектор.
      */
     @NotNull
-    public Vector crossLocal(final float otherX, final float otherY, final float otherZ) {
+    public Vector3f crossLocal(final float otherX, final float otherY, final float otherZ) {
 
         final float tempx = y * otherZ - z * otherY;
         final float tempy = z * otherX - x * otherZ;
@@ -188,7 +188,7 @@ public final class Vector {
      * @return этот же вектор.
      */
     @NotNull
-    public Vector crossLocal(@NotNull final Vector vector) {
+    public Vector3f crossLocal(@NotNull final Vector3f vector) {
         return crossLocal(vector.x, vector.y, vector.z);
     }
 
@@ -198,7 +198,7 @@ public final class Vector {
      * @param vector целевой вектор.
      * @return расстояние до вектора.
      */
-    public float distance(@NotNull final Vector vector) {
+    public float distance(@NotNull final Vector3f vector) {
         return ExtMath.sqrt(distanceSquared(vector));
     }
 
@@ -225,7 +225,7 @@ public final class Vector {
      * @param vector целевой вектор.
      * @return квадрат расстояния до вектора.
      */
-    public float distanceSquared(@NotNull final Vector vector) {
+    public float distanceSquared(@NotNull final Vector3f vector) {
         return distanceSquared(vector.x, vector.y, vector.z);
     }
 
@@ -235,7 +235,7 @@ public final class Vector {
      * @param vector вектор, на который умножаем.
      * @return результат произведения.
      */
-    public float dot(@NotNull final Vector vector) {
+    public float dot(@NotNull final Vector3f vector) {
         return x * vector.x + y * vector.y + z * vector.z;
     }
 
@@ -250,7 +250,7 @@ public final class Vector {
             return false;
         }
 
-        final Vector other = (Vector) obj;
+        final Vector3f other = (Vector3f) obj;
 
         if (floatToIntBits(x) != floatToIntBits(other.x)) {
             return false;
@@ -268,7 +268,7 @@ public final class Vector {
     }
 
     @NotNull
-    public Vector setX(final float x) {
+    public Vector3f setX(final float x) {
         this.x = x;
         return this;
     }
@@ -278,7 +278,7 @@ public final class Vector {
     }
 
     @NotNull
-    public Vector setY(final float y) {
+    public Vector3f setY(final float y) {
         this.y = y;
         return this;
     }
@@ -288,7 +288,7 @@ public final class Vector {
     }
 
     @NotNull
-    public Vector setZ(final float z) {
+    public Vector3f setZ(final float z) {
         this.z = z;
         return this;
     }
@@ -313,7 +313,7 @@ public final class Vector {
     /**
      * Локальное умножение вектора.
      */
-    public Vector multLocal(final float scalar) {
+    public Vector3f multLocal(final float scalar) {
         return multLocal(scalar, scalar, scalar);
     }
 
@@ -321,7 +321,7 @@ public final class Vector {
      * Локальное умножение вектора.
      */
     @NotNull
-    public Vector multLocal(final float x, final float y, final float z) {
+    public Vector3f multLocal(final float x, final float y, final float z) {
         this.x *= x;
         this.y *= y;
         this.z *= z;
@@ -332,7 +332,7 @@ public final class Vector {
      * Локальное умножение вектора.
      */
     @NotNull
-    public Vector multLocal(@NotNull final Vector vector) {
+    public Vector3f multLocal(@NotNull final Vector3f vector) {
         return multLocal(vector.getX(), vector.getY(), vector.getZ());
     }
 
@@ -340,7 +340,7 @@ public final class Vector {
      * Получение противоположного вектора.
      */
     @NotNull
-    public Vector negate() {
+    public Vector3f negate() {
         return newInstance(-getX(), -getY(), -getZ());
     }
 
@@ -348,7 +348,7 @@ public final class Vector {
      * Изменение вектора на противоположное.
      */
     @NotNull
-    public Vector negateLocal() {
+    public Vector3f negateLocal() {
         x = -x;
         y = -y;
         z = -z;
@@ -359,23 +359,23 @@ public final class Vector {
      * Конвектирование вектора в еденичный.
      */
     @NotNull
-    public Vector normalize() {
+    public Vector3f normalize() {
 
         float length = x * x + y * y + z * z;
 
         if (length != 1F && length != 0F) {
             length = 1.0F / ExtMath.sqrt(length);
-            return new Vector(x * length, y * length, z * length);
+            return new Vector3f(x * length, y * length, z * length);
         }
 
-        return new Vector(x, y, z);
+        return new Vector3f(x, y, z);
     }
 
     /**
      * Конвектирование вектора в еденичный.
      */
     @NotNull
-    public Vector normalizeLocal() {
+    public Vector3f normalizeLocal() {
 
         float length = x * x + y * y + z * z;
 
@@ -390,12 +390,12 @@ public final class Vector {
     }
 
     @NotNull
-    public Vector set(@NotNull final Vector vector) {
+    public Vector3f set(@NotNull final Vector3f vector) {
         return set(vector.getX(), vector.getY(), vector.getZ());
     }
 
     @NotNull
-    public Vector set(final float x, final float y, final float z) {
+    public Vector3f set(final float x, final float y, final float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -410,7 +410,7 @@ public final class Vector {
      * @return разность между текущим и указанным вектором.
      */
     @NotNull
-    public Vector subtract(@NotNull final Vector vector, @NotNull final Vector result) {
+    public Vector3f subtract(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
         result.x = x - vector.x;
         result.y = y - vector.y;
         result.z = z - vector.z;
@@ -426,7 +426,7 @@ public final class Vector {
      * @return итоговый вектор.
      */
     @NotNull
-    public Vector subtractLocal(final float subX, final float subY, final float subZ) {
+    public Vector3f subtractLocal(final float subX, final float subY, final float subZ) {
         x -= subX;
         y -= subY;
         z -= subZ;
@@ -440,13 +440,13 @@ public final class Vector {
      * @return итоговый вектор.
      */
     @NotNull
-    public Vector subtractLocal(@NotNull final Vector vector) {
+    public Vector3f subtractLocal(@NotNull final Vector3f vector) {
         return subtractLocal(vector.x, vector.y, vector.z);
     }
 
     @Override
     public String toString() {
-        return "Vector{" +
+        return "Vector3f{" +
                 "x=" + x +
                 ", y=" + y +
                 ", z=" + z +
