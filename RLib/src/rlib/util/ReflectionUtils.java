@@ -1,6 +1,10 @@
 package rlib.util;
 
+import static rlib.util.ArrayUtils.contains;
 import static rlib.util.ClassUtils.unsafeCast;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 
@@ -8,110 +12,152 @@ import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
 /**
- * Набор утильных методов по работе с рефлексией.
+ * The class with utility reflection methods.
  *
  * @author JavaSaBr
  */
 public final class ReflectionUtils {
 
     /**
-     * Получние всех полей указанного класса.
+     * Get all fields of a class.
      *
-     * @param container  контейнер полей.
-     * @param cs         нужный нам класс.
-     * @param last       до какого класса извлекаем.
-     * @param declared   извлекать ли приватные поля.
-     * @param exceptions исключаемые поля.
+     * @param container  the field container.
+     * @param cs         the class.
+     * @param last       the last class.
+     * @param declared   the flag of getting private fields.
+     * @param exceptions exception fields.
      */
-    public static void addAllFields(final Array<Field> container, final Class<?> cs, final Class<?> last, final boolean declared, final String... exceptions) {
+    public static void addAllFields(@NotNull final Array<Field> container, @NotNull final Class<?> cs,
+                                    @NotNull final Class<?> last, final boolean declared, @Nullable final String... exceptions) {
 
         Class<?> next = cs;
 
         while (next != null && next != last) {
 
             final Field[] fields = declared ? next.getDeclaredFields() : next.getFields();
-
             next = next.getSuperclass();
-
             if (fields.length < 1) continue;
 
             if (exceptions == null || exceptions.length < 1) {
                 container.addAll(fields);
             } else {
-
-                for (final Field field : fields) {
-
-                    if (ArrayUtils.contains(exceptions, field.getName())) {
-                        continue;
-                    }
-
-                    container.add(field);
-                }
+                ArrayUtils.forEach(fields, toCheck -> !contains(exceptions, toCheck.getName()), container::add);
             }
         }
     }
 
     /**
-     * Получние всех полей указанного класса.
+     * Get all fields of a class.
      *
-     * @param cs         нужный нам класс.
-     * @param last       до какого класса извлекаем.
-     * @param declared   извлекать ли приватные поля.
-     * @param exceptions исключаемые поля.
+     * @param cs         the class.
+     * @param last       the last class.
+     * @param declared   the flag of getting private fields.
+     * @param exceptions exception fields.
      */
-    public static Array<Field> getAllFields(final Class<?> cs, final Class<?> last, final boolean declared, final String... exceptions) {
+    public static Array<Field> getAllFields(@NotNull final Class<?> cs, @NotNull final Class<?> last,
+                                            final boolean declared, @Nullable final String... exceptions) {
         final Array<Field> container = ArrayFactory.newArray(Field.class);
         addAllFields(container, cs, last, declared, exceptions);
         return container;
     }
 
     /**
-     * Получение значение поля объекта по названию поля.
+     * Get a field value.
      *
-     * @param object    объект, чье поле хотим прочитать.
-     * @param fieldName название поле объекта.
-     * @return значение поля объекта.
+     * @param object    the object.
+     * @param fieldName the field name.
+     * @return the value.
      */
-    public static <T> T getFieldValue(final Object object, final String fieldName) {
+    @Nullable
+    public static <T> T getFieldValue(@NotNull final Object object, @NotNull final String fieldName) {
         try {
             final Field field = object.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
             return unsafeCast(field.get(object));
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (final NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Получение значение статического поля класса.
+     * Get a field value.
      *
-     * @param type      интересуемый класс в котором хотим прочитать статическое поле.
-     * @param fieldName название статического поля.
-     * @return значение статического поля.
+     * @param object the object.
+     * @param field  the field.
+     * @return the value.
      */
-    public static <T> T getStaticFieldValue(final Class<?> type, final String fieldName) {
+    @Nullable
+    public static <T> T getFieldValue(@NotNull final Object object, @NotNull final Field field) {
+        try {
+            return unsafeCast(field.get(object));
+        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Set a field value.
+     *
+     * @param object the object.
+     * @param field  the field.
+     * @param value  the value.
+     */
+    public static void setFieldValue(@NotNull final Object object, @NotNull final Field field, @NotNull Object value) {
+        try {
+            field.set(object, value);
+        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Get a static field value.
+     *
+     * @param type      the class.
+     * @param fieldName the field name.
+     * @return the value.
+     */
+    @Nullable
+    public static <T> T getStaticFieldValue(@NotNull final Class<?> type, @NotNull final String fieldName) {
         try {
             final Field field = type.getDeclaredField(fieldName);
             field.setAccessible(true);
             return unsafeCast(field.get(null));
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (final NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Изменение значения статического поля класса.
+     * Get a static field value.
      *
-     * @param type      класс в котором меняем статическое поле.
-     * @param fieldName название статического поля.
-     * @param value     новое значение статического поля.
+     * @param type  the class.
+     * @param field the field.
+     * @return the value.
      */
-    public static void setStaticFieldValue(final Class<?> type, final String fieldName, final Object value) {
+    @Nullable
+    public static <T> T getStaticFieldValue(@NotNull final Class<?> type, @NotNull final Field field) {
+        try {
+            return unsafeCast(field.get(null));
+        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Change a static field value.
+     *
+     * @param type      the class.
+     * @param fieldName thr field name.
+     * @param value     the new value.
+     */
+    public static void setStaticFieldValue(@NotNull final Class<?> type, @NotNull final String fieldName,
+                                           @NotNull final Object value) {
         try {
             final Field field = type.getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(null, value);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (final NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

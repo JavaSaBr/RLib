@@ -1,6 +1,6 @@
 package rlib.network;
 
-import rlib.util.Lockable;
+import rlib.concurrent.lock.Lockable;
 
 /**
  * Интерфейс для реализации сетевого подключения.

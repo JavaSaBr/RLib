@@ -97,7 +97,6 @@ public final class Monitoring {
     /**
      * @return the system load.
      */
-    @NotNull
     public double getSystemLoadAverage() {
         return operatingSystemMXBean.getSystemLoadAverage();
     }

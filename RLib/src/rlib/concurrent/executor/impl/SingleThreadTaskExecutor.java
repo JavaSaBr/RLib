@@ -9,13 +9,13 @@ import java.util.concurrent.locks.Lock;
 
 import rlib.concurrent.executor.TaskExecutor;
 import rlib.concurrent.lock.LockFactory;
+import rlib.concurrent.lock.Lockable;
 import rlib.concurrent.task.CallableTask;
 import rlib.concurrent.task.SimpleTask;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.ClassUtils;
-import rlib.util.Lockable;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 

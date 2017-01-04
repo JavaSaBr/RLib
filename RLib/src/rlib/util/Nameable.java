@@ -1,7 +1,7 @@
 package rlib.util;
 
 /**
- * The interface about objects with name.
+ * The interface to mark an object that it has a name.
  *
  * @author JavaSaBr
  */
@@ -10,5 +10,5 @@ public interface Nameable {
     /**
      * @return the name of this object.
      */
-    public String getName();
+    String getName();
 }

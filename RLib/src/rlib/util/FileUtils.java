@@ -1,5 +1,8 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -25,7 +28,7 @@ import rlib.util.array.ArrayFactory;
 import rlib.util.array.UnsafeArray;
 
 /**
- * Класс для работы с файлами.
+ * The clss with utility methods.
  *
  * @author JavaSaBr
  */
@@ -33,6 +36,7 @@ public class FileUtils {
 
     private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
 
+    @NotNull
     public static final ArrayComparator<Path> FILE_PATH_LENGTH_COMPARATOR = (first, second) -> {
 
         final int firstLength = first.getNameCount();
@@ -47,6 +51,7 @@ public class FileUtils {
         return firstLength - secondLength;
     };
 
+    @NotNull
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile(
             "# Match a valid Windows filename (unspecified file system).          \n" +
                     "^                                # Anchor to start of string.        \n" +
@@ -63,6 +68,7 @@ public class FileUtils {
                     "$                                # Anchor to end of string.            ",
             Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
 
+    @NotNull
     private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<Path>() {
 
         @Override
@@ -79,25 +85,27 @@ public class FileUtils {
     };
 
     /**
-     * Проверка валидности названия файла.
+     * Check a string on valid file name.
      *
-     * @param filename название файла.
-     * @return валидное ли название файла.
+     * @param filename the string with file name.
+     * @return true if the file name is valid.
      */
-    public static boolean isValidName(final String filename) {
+    public static boolean isValidName(@Nullable final String filename) {
+        if (StringUtils.isEmpty(filename)) return false;
         final Matcher matcher = FILE_NAME_PATTERN.matcher(filename);
         return matcher.matches();
     }
 
     /**
-     * Рекурсивное получение всех файлов в папке с учетом расширения.
+     * Recursive add all files to a container in a folder.
      *
-     * @param container   контейнер файлов.
-     * @param dir         папка.
-     * @param withFolders добавлять ли папки в результат.
-     * @param extensions  набор нужных расширений.
+     * @param container   the file container.
+     * @param dir         the folder.
+     * @param withFolders need to add folders.
+     * @param extensions  extensions filter.
      */
-    public static void addFilesTo(final Array<Path> container, final Path dir, final boolean withFolders, final String... extensions) {
+    public static void addFilesTo(@NotNull final Array<Path> container, @NotNull final Path dir, final boolean withFolders,
+                                  @Nullable final String... extensions) {
 
         if (Files.isDirectory(dir) && withFolders) {
             container.add(dir);
@@ -118,36 +126,38 @@ public class FileUtils {
             }
 
         } catch (final IOException e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * Определят, подходит ли по расширению фаил.
+     * Check an extension of a file.
      *
-     * @param extensions набор расширений.
-     * @param path       проверяемый фаил.
-     * @return подходит ли.
+     * @param extensions the checked extensions.
+     * @param path       the file.
+     * @return true if the file has a checked extension.
      */
-    public static boolean containsExtensions(final String[] extensions, final Path path) {
-        return path != null && containsExtensions(extensions, path.toString());
+    public static boolean containsExtensions(@Nullable final String[] extensions, @NotNull final Path path) {
+        return containsExtensions(extensions, path.toString());
     }
 
     /**
-     * Определят, подходит ли по расширению фаил.
+     * Check an extension of a path.
      *
-     * @param extensions набор расширений.
-     * @param path       проверяемый фаил.
-     * @return подходит ли.
+     * @param extensions the checked extensions.
+     * @param path       the path.
+     * @return true if the path has a checked extension.
      */
-    public static boolean containsExtensions(final String[] extensions, final String path) {
-        return ArrayUtils.find(extensions, path, (extension, p) -> p.endsWith(extension)) != null;
+    public static boolean containsExtensions(@Nullable final String[] extensions, @NotNull final String path) {
+        return ArrayUtils.find(extensions, path, (extension, str) -> str.endsWith(extension)) != null;
     }
 
     /**
-     * Удаление файла.
+     * Delete a file.
+     *
+     * @param path the file to delete.
      */
-    public static void delete(final Path path) {
+    public static void delete(@NotNull final Path path) {
         try {
             deleteImpl(path);
         } catch (final IOException e) {
@@ -155,7 +165,12 @@ public class FileUtils {
         }
     }
 
-    private static void deleteImpl(final Path path) throws IOException {
+    /**
+     * Delete a file or a folder.
+     *
+     * @param path the file or folder.
+     */
+    private static void deleteImpl(@NotNull final Path path) throws IOException {
         if (!Files.isDirectory(path)) {
             Files.delete(path);
         } else {
@@ -164,12 +179,12 @@ public class FileUtils {
     }
 
     /**
-     * Получение расширения файла.
+     * Get an extension of a path.
      *
-     * @param path путь файла чье расширение надо получить.
-     * @return расширение этого файла.
+     * @param path the path.
+     * @return the extension or the path if the path doesn't have an extension.
      */
-    public static String getExtension(final String path) {
+    public static String getExtension(@Nullable final String path) {
         if (StringUtils.isEmpty(path)) return path;
         final int index = path.lastIndexOf('.');
         if (index == -1) return path;
@@ -177,36 +192,38 @@ public class FileUtils {
     }
 
     /**
-     * Получение расширения файла.
+     * Get an extension of a file.
      *
-     * @param file файл чье расширение надо получить.
-     * @return расширение этого файла.
+     * @param file the file.
+     * @return the extension or the file name if the file doesn't have an extension.
      */
-    public static String getExtension(final Path file) {
+    public static String getExtension(@NotNull final Path file) {
         if (Files.isDirectory(file)) return StringUtils.EMPTY;
         return getExtension(Objects.toString(file.getFileName()));
     }
 
     /**
-     * Рекурсивное получение всех файлов в папке с учетом расширения.
+     * Recursive get all files of a folder.
      *
-     * @param dir        папка.
-     * @param extensions набор нужных расширений.
-     * @return список всех найденных файлов.
+     * @param dir        the folder.
+     * @param extensions the extension filter.
+     * @return the list of all files.
      */
-    public static Array<Path> getFiles(final Path dir, final String... extensions) {
+    @NotNull
+    public static Array<Path> getFiles(@NotNull final Path dir, @Nullable final String... extensions) {
         return getFiles(dir, false, extensions);
     }
 
     /**
-     * Рекурсивное получение всех файлов в папке с учетом расширения.
+     * Recursive get all files of a folder.
      *
-     * @param dir         папка.
-     * @param withFolders вместе с папками.
-     * @param extensions  набор нужных расширений.
-     * @return список всех найденных файлов.
+     * @param dir         the folder.
+     * @param withFolders need include folders.
+     * @param extensions  the extension filter.
+     * @return the list of all files.
      */
-    public static Array<Path> getFiles(final Path dir, final boolean withFolders, final String... extensions) {
+    @NotNull
+    public static Array<Path> getFiles(@NotNull final Path dir, final boolean withFolders, @Nullable final String... extensions) {
 
         final Array<Path> result = ArrayFactory.newArray(Path.class);
 
@@ -219,18 +236,18 @@ public class FileUtils {
     }
 
     /**
-     * Получаем все файлы в пакете нужных форматов.
+     * Get all files in a package.
      *
-     * @param pckg    пакет.
-     * @param formats набор нужных форматов.
-     * @return все файлы.
+     * @param pckg       the package.
+     * @param extensions the extensions filter.
+     * @return the array of files.
      */
-    public static Path[] getFiles(final Package pckg, final String... formats) {
+    @NotNull
+    public static Path[] getFiles(@NotNull final Package pckg, @Nullable final String... extensions) {
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         Enumeration<URL> urls = null;
-
         try {
             urls = classLoader.getResources(pckg.getName().replace('.', '/'));
         } catch (final IOException e) {
@@ -254,8 +271,8 @@ public class FileUtils {
             final Path file = Paths.get(path);
 
             if (Files.isDirectory(file)) {
-                files.addAll(getFiles(file, formats));
-            } else if (formats == null || formats.length < 1 || containsExtensions(formats, path)) {
+                files.addAll(getFiles(file, extensions));
+            } else if (extensions == null || extensions.length < 1 || containsExtensions(extensions, path)) {
                 files.add(file);
             }
         }
@@ -264,12 +281,13 @@ public class FileUtils {
     }
 
     /**
-     * Получение имени файла без расширения.
+     * Get a file name without extension.
      *
-     * @param filename имя файла.
-     * @return имя файла без расширения.
+     * @param filename the file name.
+     * @return the file name without extension.
      */
-    public static String getNameWithoutExtension(final String filename) {
+    @NotNull
+    public static String getNameWithoutExtension(@NotNull final String filename) {
         if (StringUtils.isEmpty(filename)) return filename;
 
         final int index = filename.lastIndexOf('.');
@@ -279,12 +297,13 @@ public class FileUtils {
     }
 
     /**
-     * Получение имени файла без расширения.
+     * Get a file name without extension.
      *
-     * @param file файл для получения имени.
-     * @return имя файла бе расширения.
+     * @param file the file.
+     * @return the file name without extension.
      */
-    public static String getNameWithoutExtension(final Path file) {
+    @NotNull
+    public static String getNameWithoutExtension(@NotNull final Path file) {
 
         final String filename = file.getFileName().toString();
         if (StringUtils.isEmpty(filename)) return filename;
@@ -296,12 +315,13 @@ public class FileUtils {
     }
 
     /**
-     * Чтение текста из файла по указанному пути.
+     * Read a file by a path.
      *
-     * @param path путь к файлу.
+     * @param path the path to file.
+     * @return the all content of the file.
      */
-    public static String read(final String path) {
-        if (path == null) return null;
+    @NotNull
+    public static String read(@NotNull final String path) {
 
         final StringBuilder content = new StringBuilder();
 
@@ -319,19 +339,20 @@ public class FileUtils {
             }
 
         } catch (final IOException e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
 
         return content.toString();
     }
 
     /**
-     * Чтение текста из файла.
+     * Read a file.
      *
-     * @param file читаемый файл.
+     * @param file the file.
+     * @return the all content of the file.
      */
-    public static String read(final Path file) {
-        if (file == null) return null;
+    @NotNull
+    public static String read(@NotNull final Path file) {
 
         final StringBuilder content = new StringBuilder();
 
@@ -349,20 +370,21 @@ public class FileUtils {
             }
 
         } catch (final IOException e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
 
         return content.toString();
     }
 
     /**
-     * Получение свободного имени для указанного файла в указанной директории.
+     * Find a first free file name in a directory.
      *
-     * @param directory проверяемая директория.
-     * @param file      проверяемый файл.
-     * @return свободное имя.
+     * @param directory the directory.
+     * @param file      the checked file.
+     * @return the first free name.
      */
-    public static String getFirstFreeName(final Path directory, final Path file) {
+    @NotNull
+    public static String getFirstFreeName(@NotNull final Path directory, @NotNull final Path file) {
 
         String initFileName = file.getFileName().toString();
 
@@ -387,10 +409,11 @@ public class FileUtils {
      *
      * @param path the path for converting.
      * @return the URL of the path.
-     * @throws MalformedURLException If a protocol handler for the URL could not be found, or if
-     *                               some other error occurred while constructing the URL.
+     * @throws MalformedURLException If a protocol handler for the URL could not be found, or if some other error
+     *                               occurred while constructing the URL.
      */
-    public static URL toUrl(final Path path) throws MalformedURLException {
+    @NotNull
+    public static URL toUrl(@NotNull final Path path) throws MalformedURLException {
         return path.toUri().toURL();
     }
 }

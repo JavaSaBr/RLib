@@ -1,5 +1,10 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,89 +37,121 @@ public class StringUtils {
     /**
      * The pattern for validating email.
      */
-    public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+" +
+            "(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = ThreadLocal.withInitial(StringUtils::getHashMD5);
 
     /**
-     * Рассчет длинны строки для пакета
+     * Check a string email/
      *
-     * @param string интересуемая строка.
-     * @return длинна строки в байтах.
+     * @param email the string email.
+     * @return true if the email is correct.
      */
-    public static int byteCount(final String string) {
-        if (string == null || string.isEmpty()) return 2;
-        return string.length() * 2;
-    }
-
-    /**
-     * Проверка на корректность почтового адресса.
-     *
-     * @param email проверяемый адресс.
-     * @return корректно ли введен.
-     */
-    public static boolean checkEmail(final String email) {
+    public static boolean checkEmail(@NotNull final String email) {
         final Matcher matcher = EMAIL_PATTERN.matcher(email);
         return matcher.matches();
     }
 
     /**
-     * Сравнение 2х строк с учетом регистра с прооверками на <code>null</code>.
+     * Compare two strings.
+     *
+     * @param first  the first string.
+     * @param second the second string.
+     * @return 1 if the first string is null or is greater then second, 0 if the first string is the same or -1.
      */
-    public static int compare(final String first, final String second) {
+    public static int compare(@Nullable final String first, @Nullable final String second) {
         if (first == null) return 1;
         else if (second == null) return -1;
         return first.compareTo(second);
     }
 
     /**
-     * Сравнение 2х строк без учета регистра с прооверками на <code>null</code>.
+     * Compare two strings with ignoring case.
+     *
+     * @param first  the first string.
+     * @param second the second string.
+     * @return 1 if the first string is null or is greater then second, 0 if the first string is the same or -1.
      */
-    public static int compareIgnoreCase(final String first, final String second) {
+    public static int compareIgnoreCase(@Nullable final String first, @Nullable final String second) {
         if (first == null) return 1;
         else if (second == null) return -1;
         return first.compareToIgnoreCase(second);
     }
 
     /**
-     * Сравнение 2х строк.
+     * Compare two strings.
+     *
+     * @param first  the first string.
+     * @param second the second string.
+     * @return true if these strings are equal.
      */
-    public static boolean equals(final String first, final String second) {
+    public static boolean equals(@Nullable final String first, @Nullable final String second) {
         return !(first == null || second == null) && first.equals(second);
     }
 
     /**
-     * Сравнение 2х строк без учета регистра.
+     * Compare two strings with ignoring case.
+     *
+     * @param first  the first string.
+     * @param second the second string.
+     * @return true if these strings are equal.
      */
-    public static boolean equalsIgnoreCase(final String first, final String second) {
+    public static boolean equalsIgnoreCase(@Nullable final String first, @Nullable final String second) {
         return !(first == null || second == null) && first.equalsIgnoreCase(second);
     }
 
     /**
-     * Конверктация эксепшена в строку.
+     * Print stack trace of an exception to a string.
      *
-     * @param throwable полученный эксепшен.
-     * @return строковое представление.
+     * @param throwable the exception.
+     * @return the stack trace.
      */
-    public static String format(final Throwable throwable) {
-
-        final StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
-
-        builder.append(" : stack trace:\n");
-
-        for (final StackTraceElement stack : throwable.getStackTrace()) {
-            builder.append(stack).append("\n");
-        }
-
-        return builder.toString();
+    @NotNull
+    public static String toString(@NotNull final Throwable throwable) {
+        return toString(throwable, 6);
     }
 
     /**
-     * Генерирование случайной строки указанной длинны.
+     * Print stack trace of an exception to a string.
      *
-     * @param length длинна строки.
-     * @return итоговая строка.
+     * @param throwable the exception.
+     * @param deepLevel the max level of deep.
+     * @return the stack trace.
      */
+    @NotNull
+    public static String toString(@NotNull final Throwable throwable, final int deepLevel) {
+
+        StringWriter writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+
+        throwable.printStackTrace(printWriter);
+
+        StringBuilder stackTrace = new StringBuilder(writer.toString());
+
+        int level = 0;
+
+        for (Throwable cause = throwable.getCause(); cause != null && level < deepLevel; cause = cause.getCause(), level++) {
+
+            writer = new StringWriter();
+            printWriter = new PrintWriter(writer);
+
+            cause.printStackTrace(printWriter);
+
+            stackTrace.append("\n caused by ");
+            stackTrace.append(writer.toString());
+        }
+
+        return stackTrace.toString();
+    }
+
+    /**
+     * Generate a random string.
+     *
+     * @param length the length.
+     * @return the new string.
+     */
+    @NotNull
     public static String generate(final int length) {
 
         final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
@@ -128,7 +165,7 @@ public class StringUtils {
     }
 
     /**
-     * @return получаение алгоритма хеша.
+     * @return the md5 message digest.
      */
     private static MessageDigest getHashMD5() {
 
@@ -142,31 +179,35 @@ public class StringUtils {
     }
 
     /**
-     * @return является ли строка пустой.
+     * Check a string.
+     *
+     * @param string the string.
+     * @return true if the string null or empty.
      */
-    public static boolean isEmpty(final String string) {
+    public static boolean isEmpty(@Nullable final String string) {
         return string == null || string.isEmpty();
     }
 
     /**
-     * Получение длинны указанной строки.
+     * Get a length of a string.
      *
-     * @param string интересуемая строка.
-     * @return длинна строки или же 0 в случае если она пуста или <code>null</code>
+     * @param string the string.
+     * @return length or 0 if a string is null or empty.
      */
     public static int length(final String string) {
         return string == null ? 0 : string.length();
     }
 
     /**
-     * Получение хэша пароля.
+     * Encode a string to hash MD5.
      *
-     * @param password пароль.
-     * @return хэш пароля.
+     * @param string a string.
+     * @return the encoded string.
      */
-    public static String passwordToHash(final String password) {
+    @NotNull
+    public static String toMD5(@NotNull final String string) {
         final MessageDigest hashMD5 = LOCAL_HASH_MD.get();
-        hashMD5.update(password.getBytes(), 0, password.length());
+        hashMD5.update(string.getBytes(), 0, string.length());
         return new BigInteger(1, hashMD5.digest()).toString(16);
     }
 }

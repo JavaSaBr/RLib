@@ -8,7 +8,7 @@ package rlib.util;
 public final class ExtMath {
 
     /**
-     * Конвертированное в float число PI.
+     * The value PI as a float. (180 degrees).
      */
     public static final float PI = (float) Math.PI;
 
@@ -18,20 +18,19 @@ public final class ExtMath {
     public static final float HALF_PI = 0.5f * PI;
 
     /**
-     * Получение арккосинуса указанного значения. Если указанное значение меньше -1, то возвратиться
-     * число ПИ, если же больше 1, то вернеться 0.
+     * Returns the arc cosine of a value.<br> Special cases: <ul><li>If value is smaller than -1, then the result is PI.
+     * <li>If the argument is greater than 1, then the result is 0.</ul>
      *
-     * @param value интересуемое значение.
-     * @return угол в радианах.
+     * @param value The value to arc cosine.
+     * @return The angle, in radians.
+     * @see java.lang.Math#acos(double)
      */
     public static float acos(final float value) {
 
         if (-1.0F < value) {
-
-            if (value < 1.0F) {
+            if (value < 1.0f) {
                 return (float) Math.acos(value);
             }
-
             return 0.0F;
         }
 
@@ -39,18 +38,18 @@ public final class ExtMath {
     }
 
     /**
-     * Returns the arc sine of a value.<br> Special cases: <ul> <li>If fValue is smaller than -1,
-     * then the result is -HALF_PI. <li>If the argument is greater than 1, then the result is
-     * HALF_PI. </ul>
+     * Returns the arc sine of a value.<br> Special cases: <ul> <li>If value is smaller than -1, then the result is
+     * -HALF_PI. <li>If the argument is greater than 1, then the result is HALF_PI. </ul>
      *
-     * @param fValue The value to arc sine.
+     * @param value The value to arc sine.
      * @return the angle in radians.
      * @see java.lang.Math#asin(double)
      */
-    public static float asin(float fValue) {
-        if (-1.0f < fValue) {
-            if (fValue < 1.0f) {
-                return (float) Math.asin(fValue);
+    public static float asin(final float value) {
+
+        if (-1.0F < value) {
+            if (value < 1.0F) {
+                return (float) Math.asin(value);
             }
 
             return HALF_PI;
@@ -59,15 +58,21 @@ public final class ExtMath {
         return -HALF_PI;
     }
 
-    public static float atan2(float fY, float fX) {
-        return (float) Math.atan2(fY, fX);
+    /**
+     * A direct call to Math.atan2.
+     *
+     * @return Math.atan2(y, x)
+     * @see java.lang.Math#atan2(double, double)
+     */
+    public static float atan2(final float y, final float x) {
+        return (float) Math.atan2(y, x);
     }
 
     /**
-     * Возвращает косинус угла указанного значения. Прямой вызов {@link Math#cos(double)}
+     * Returns cosine of an angle. Direct call to java.lang.Math
      *
-     * @param value значение угла для вычисление косинуса.
-     * @return косинус указанного угла.
+     * @param value The angle to cosine.
+     * @return the cosine of the angle.
      * @see Math#cos(double)
      */
     public static float cos(final float value) {
@@ -75,20 +80,21 @@ public final class ExtMath {
     }
 
     /**
-     * Получение обратного корня указанного числа.
+     * Returns 1/sqrt(value)
      *
-     * @param value интересуемое число.
-     * @return 1 / sqrt(value).
+     * @param value The value to process.
+     * @return 1/sqrt(value)
+     * @see java.lang.Math#sqrt(double)
      */
     public static float invSqrt(final float value) {
-        return 1.0F / sqrt(value);
+        return (float) (1.0f / Math.sqrt(value));
     }
 
     /**
-     * Получение синуса указанного угла, прямой вызов {@link Math#sin(double)}.
+     * Returns the sine of an angle. Direct call to java.lang.Math
      *
-     * @param value интересуемое значение угла.
-     * @return синус указанного угла.
+     * @param value The angle to sine.
+     * @return the sine of the angle.
      * @see Math#sin(double)
      */
     public static float sin(final float value) {
@@ -96,11 +102,11 @@ public final class ExtMath {
     }
 
     /**
-     * Получение корня указанного значения, прямой вызов {@link Math#sqrt(double)}.
+     * Returns the square root of a given value.
      *
-     * @param value интересуемое значение.
-     * @return корень указанного значения.
-     * @see Math#sqrt(double)
+     * @param value The value to sqrt.
+     * @return The square root of the given value.
+     * @see java.lang.Math#sqrt(double)
      */
     public static float sqrt(final float value) {
         return (float) Math.sqrt(value);

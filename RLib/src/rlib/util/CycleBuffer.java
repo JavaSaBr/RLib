@@ -1,5 +1,8 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -25,11 +28,13 @@ public final class CycleBuffer<T> {
      */
     private int order;
 
-    public CycleBuffer(final Class<?> type, final int size, final Supplier<T> factory) {
+    public CycleBuffer(@NotNull final Class<?> type, final int size, @NotNull final Supplier<T> factory) {
         this(type, size, factory, null);
     }
 
-    public CycleBuffer(final Class<?> type, final int size, final Supplier<T> factory, final Consumer<T> handler) {
+    public CycleBuffer(@NotNull final Class<?> type, final int size, @NotNull final Supplier<T> factory,
+                       @Nullable final Consumer<T> handler) {
+
         if (size < 2) throw new RuntimeException("size is less to 2.");
 
         this.buffer = ArrayUtils.create(type, size);
@@ -42,7 +47,9 @@ public final class CycleBuffer<T> {
     }
 
     /**
-     * @return следующий объект.
+     * Get a next free object.
+     *
+     * @return the next free object.
      */
     public T next() {
         if (order >= buffer.length) order = 0;

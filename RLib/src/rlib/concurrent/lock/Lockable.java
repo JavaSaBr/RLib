@@ -1,7 +1,7 @@
-package rlib.util;
+package rlib.concurrent.lock;
 
 /**
- * The interface for implementing the methods lock()/unlock() for any object.
+ * The interface to mark a object that it has a lock/unlock methods.
  *
  * @author JavaSaBr
  */

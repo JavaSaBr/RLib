@@ -11,7 +11,6 @@ import java.util.function.Function;
 
 import rlib.function.FunctionInt;
 import rlib.function.ObjectIntFunction;
-import rlib.util.Lockable;
 
 /**
  * The class with utility methods to work with locks.

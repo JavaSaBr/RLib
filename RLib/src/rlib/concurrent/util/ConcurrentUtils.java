@@ -5,11 +5,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
+import rlib.concurrent.lock.Lockable;
 import rlib.function.ObjectIntFunction;
 import rlib.function.ObjectLongFunction;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
-import rlib.util.Lockable;
 
 /**
  * THe utility class with methods to work in concurrent cases.

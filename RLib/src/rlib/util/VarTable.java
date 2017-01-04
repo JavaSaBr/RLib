@@ -485,7 +485,8 @@ public class VarTable {
      * @return the double array.
      */
     @NotNull
-    public double[] getDoubleArray(@NotNull final String key, @NotNull final String regex, @NotNull final double... def) {
+    public double[] getDoubleArray(@NotNull final String key, @NotNull final String regex,
+                                   @NotNull final double... def) {
 
         final Object object = values.get(key);
 
@@ -566,7 +567,8 @@ public class VarTable {
      * @return the enum array.
      */
     @NotNull
-    public <T extends Enum<T>> T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type, @NotNull final String regex) {
+    public <T extends Enum<T>> T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type,
+                                                @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -601,7 +603,8 @@ public class VarTable {
      * @return the enum array.
      */
     @NotNull
-    public <T extends Enum<T>> T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type, @NotNull final String regex, @NotNull final T... def) {
+    public <T extends Enum<T>> T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type,
+                                                @NotNull final String regex, @NotNull final T... def) {
 
         final Object object = values.get(key);
 
@@ -1206,7 +1209,8 @@ public class VarTable {
      * @return the string array.
      */
     @NotNull
-    public String[] getStringArray(@NotNull final String key, @NotNull final String regex, @NotNull final String... def) {
+    public String[] getStringArray(@NotNull final String key, @NotNull final String regex,
+                                   @NotNull final String... def) {
 
         final Object object = values.get(key);
 

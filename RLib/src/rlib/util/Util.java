@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 import java.util.function.Consumer;
 
 import rlib.function.SafeBiConsumer;
@@ -28,10 +27,9 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Утильный класс с набором статических вспомогательных методов.
+ * The utility class.
  *
  * @author JavaSaBr
- * @created 27.03.2012
  */
 public final class Util {
 
@@ -41,27 +39,21 @@ public final class Util {
     private static final ThreadLocal<Date> LOCAL_DATE = withInitial(Date::new);
 
     /**
-     * Добавение параметров, указывающих что бы соединение к БД работало с UTF-8 кодировкой.
+     * Check a port.
      *
-     * @param properties проперти соединения к БД.
+     * @param host the host.
+     * @param port the port.
+     * @return true if the port is free.
      */
-    public static void addUTFToMySQLConnectionProperties(final Properties properties) {
-        properties.setProperty("useUnicode", "true");
-        properties.setProperty("characterEncoding", "UTF-8");
-    }
-
-    /**
-     * Проверяет, занят ли указанный порт на указанном хосте.
-     *
-     * @param host проверяемый хост.
-     * @param port проверяемый порт.
-     * @return свободен ли порт.
-     */
-    public static boolean checkFreePort(final String host, final int port) {
+    public static boolean checkFreePort(@NotNull final String host, final int port) {
 
         try {
-            final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
+
+            final ServerSocket serverSocket = host.equalsIgnoreCase("*") ?
+                    new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
+
             serverSocket.close();
+
         } catch (final IOException e) {
             return false;
         }
@@ -70,13 +62,13 @@ public final class Util {
     }
 
     /**
-     * Проверяет, заняты ли указанные порты на указанном хосте.
+     * Check ports.
      *
-     * @param host  проверяемый хост.
-     * @param ports проверяемые порты.
-     * @return свободны ли все порты.
+     * @param host  the host.
+     * @param ports the ports.
+     * @return true if all ports are free.
      */
-    public static boolean checkFreePorts(final String host, final int[] ports) throws InterruptedException {
+    public static boolean checkFreePorts(@NotNull final String host, @NotNull final int... ports) throws InterruptedException {
 
         for (final int port : ports) {
             try {
@@ -91,8 +83,11 @@ public final class Util {
     }
 
     /**
-     * Форматирует время в секундах в дни/часы/минуты/секунды
+     * Format a time to a string date using a format days/hours/minutes/second.
+     *
+     * @param time the timestamp.
      */
+    @NotNull
     public static String formatTime(final long time) {
 
         final Date date = LOCAL_DATE.get();
@@ -103,9 +98,13 @@ public final class Util {
     }
 
     /**
-     * Метод конвертирования HEX представления строки в обычную.
+     * Convert a string to a HEX string.
+     *
+     * @param string the string.
+     * @return the HEX string.
      */
-    public static String fromHEX(final String string) {
+    @NotNull
+    public static String fromHEX(@NotNull final String string) {
 
         final char[] array = string.toCharArray();
 
@@ -120,10 +119,10 @@ public final class Util {
     }
 
     /**
-     * Получение ближайшего свободного порта от указанного.
+     * Get a nearest free port from a port.
      *
-     * @param port стартовый порт.
-     * @return свободный порт или -1, если такого нет.
+     * @param port the start port.
+     * @return the free port or -1.
      */
     public static int getFreePort(final int port) {
 
@@ -137,12 +136,13 @@ public final class Util {
     }
 
     /**
-     * Получение папки, где лежит джарка указанного класса.
+     * Get a folder of a class.
      *
-     * @param cs класс, для котого ищем папку с джаркой.
-     * @return адресс папки с джаркой.
+     * @param cs the class.
+     * @return the path to the folder.
      */
-    public static Path getRootFolderFromClass(final Class<?> cs) {
+    @NotNull
+    public static Path getRootFolderFromClass(@NotNull final Class<?> cs) {
 
         String className = cs.getName();
 
@@ -198,34 +198,29 @@ public final class Util {
             }
 
             return file;
+
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * @return путь к корневому каталогу приложения.
-     */
-    public static String getRootPath() {
-        return ".";
-    }
-
-    /**
-     * Получить short шы массива байтов.
+     * Get a short value from a byte array.
      *
-     * @param bytes  массив байтов.
-     * @param offset отступ в массиве.
-     * @return значение в short.
+     * @param bytes  the byte array.
+     * @param offset the offset.
+     * @return the short value.
      */
     public static short getShort(final byte[] bytes, final int offset) {
         return (short) (bytes[offset + 1] << 8 | bytes[offset] & 0xff);
     }
 
     /**
-     * Получение имя пользователя текущей системы.
+     * Get a username of a computer user.
      *
-     * @return имя пользователя системы.
+     * @return the username.
      */
+    @NotNull
     public static String getUserName() {
         return System.getProperty("user.name");
     }
@@ -236,17 +231,19 @@ public final class Util {
      * @param array массив байтов.
      * @return строка с дампом.
      */
+    @NotNull
     public static String hexdump(final byte[] array, final int size) {
         return hexdump(array, 0, size);
     }
 
     /**
-     * Формирования дампа байтов в хексе.
+     * Prepare a hexdump for a byte array.
      *
-     * @param array массив байтов.
-     * @return строка с дампом.
+     * @param array the byte array.
+     * @return the string dump.
      */
-    public static String hexdump(final byte[] array, final int offset, final int size) {
+    @NotNull
+    public static String hexdump(@NotNull final byte[] array, final int offset, final int size) {
 
         final StringBuilder builder = new StringBuilder();
 
@@ -311,56 +308,58 @@ public final class Util {
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execute a function with auto-converting checked exception to runtime.
      *
-     * @param runnable выполняемая задача.
+     * @param function the function.
      */
-    public static void safeExecute(@NotNull final SafeRunnable runnable) {
+    public static void run(@NotNull final SafeRunnable function) {
         try {
-            runnable.run();
+            function.run();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execuate a function with handling an exception.
      *
-     * @param runnable     выполняемая задача.
-     * @param errorHandler обработчик ошибок.
+     * @param function     the function.
+     * @param errorHandler the handler.
      */
-    public static void safeExecute(@NotNull final SafeRunnable runnable, @NotNull final Consumer<Exception> errorHandler) {
+    public static void run(@NotNull final SafeRunnable function, @NotNull final Consumer<Exception> errorHandler) {
         try {
-            runnable.run();
+            function.run();
         } catch (final Exception e) {
             errorHandler.accept(e);
         }
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execute a function with auto-converting checked exception to runtime.
      *
-     * @param factory выполняемая задача.
+     * @param function the function.
+     * @return the result.
      */
-    @NotNull
-    public static <R> R safeGet(@NotNull final SafeFactory<R> factory) {
+    @Nullable
+    public static <R> R get(@NotNull final SafeFactory<R> function) {
         try {
-            return factory.get();
+            return function.get();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execuate a function with handling an exception.
      *
-     * @param factory      выполняемая задача.
-     * @param errorHandler обработчик ошибок.
+     * @param function     the function.
+     * @param errorHandler the handler.
+     * @return the result.
      */
     @Nullable
-    public static <R> R safeGet(@NotNull final SafeFactory<R> factory, @NotNull final Consumer<Exception> errorHandler) {
+    public static <R> R get(@NotNull final SafeFactory<R> function, @NotNull final Consumer<Exception> errorHandler) {
         try {
-            return factory.get();
+            return function.get();
         } catch (final Exception e) {
             errorHandler.accept(e);
         }
@@ -368,27 +367,28 @@ public final class Util {
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execute a function with auto-converting checked exception to runtime.
      *
-     * @param first    первый аргумент.
-     * @param consumer выполняемая задача.
+     * @param first    the first argument.
+     * @param function the function.
      */
-    public static <F> void safeExecute(@Nullable final F first, @NotNull final SafeConsumer<F> consumer) {
+    public static <F> void run(@Nullable final F first, @NotNull final SafeConsumer<F> function) {
         try {
-            consumer.accept(first);
+            function.accept(first);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execute a function with auto-converting checked exception to runtime.
      *
-     * @param first    первый аргумент.
-     * @param function выполняемая задача.
+     * @param first    the first argument.
+     * @param function the function.
+     * @return the result.
      */
-    @NotNull
-    public static <F, R> R safeGet(@Nullable final F first, @NotNull final SafeFunction<F, R> function) {
+    @Nullable
+    public static <F, R> R get(@Nullable final F first, @NotNull final SafeFunction<F, R> function) {
         try {
             return function.apply(first);
         } catch (final Exception e) {
@@ -396,32 +396,33 @@ public final class Util {
         }
     }
 
-
     /**
-     * Безопасное выполнение задачи.
+     * Execute a function with auto-converting checked exception to runtime.
      *
-     * @param first        первый аргумент.
-     * @param consumer     выполняемая задача.
-     * @param errorHandler обработчик ошибок.
+     * @param first        the first argument.
+     * @param function     the function.
+     * @param errorHandler the handler.
      */
-    @Nullable
-    public static <F> void safeExecute(@Nullable final F first, @NotNull final SafeConsumer<F> consumer, @NotNull final Consumer<Exception> errorHandler) {
+    public static <F> void run(@Nullable final F first, @NotNull final SafeConsumer<F> function,
+                               @NotNull final Consumer<Exception> errorHandler) {
         try {
-            consumer.accept(first);
+            function.accept(first);
         } catch (final Exception e) {
             errorHandler.accept(e);
         }
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execute a function with auto-converting checked exception to runtime.
      *
-     * @param first        первый аргумент.
-     * @param function     выполняемая задача.
-     * @param errorHandler обработчик ошибок.
+     * @param first        the first argument.
+     * @param function     the function.
+     * @param errorHandler the handler.
+     * @return the result.
      */
     @Nullable
-    public static <F, R> R safeGet(@Nullable final F first, @NotNull final SafeFunction<F, R> function, @NotNull final Consumer<Exception> errorHandler) {
+    public static <F, R> R get(@Nullable final F first, @NotNull final SafeFunction<F, R> function,
+                               @NotNull final Consumer<Exception> errorHandler) {
         try {
             return function.apply(first);
         } catch (final Exception e) {
@@ -437,7 +438,7 @@ public final class Util {
      * @param second   второй аргумент.
      * @param consumer выполняемая задача.
      */
-    public static <F, S> void safeExecute(@Nullable final F first, @Nullable final S second, final SafeBiConsumer<F, S> consumer) {
+    public static <F, S> void run(@Nullable final F first, @Nullable final S second, final SafeBiConsumer<F, S> consumer) {
         try {
             consumer.accept(first, second);
         } catch (final Exception e) {
@@ -446,25 +447,30 @@ public final class Util {
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execute a function with auto-converting checked exception to runtime.
      *
-     * @param first        первый аргумент.
-     * @param second       второй аргумент.
-     * @param consumer     выполняемая задача.
-     * @param errorHandler обработчик ошибок.
+     * @param first        the first argument.
+     * @param second       the second argument.
+     * @param function     the function.
+     * @param errorHandler the handler.
      */
-    public static <F, S> void safeExecute(@Nullable final F first, @Nullable final S second, @NotNull final SafeBiConsumer<F, S> consumer, @NotNull final Consumer<Exception> errorHandler) {
+    public static <F, S> void run(@Nullable final F first, @Nullable final S second, @NotNull final SafeBiConsumer<F, S> function,
+                                  @NotNull final Consumer<Exception> errorHandler) {
         try {
-            consumer.accept(first, second);
+            function.accept(first, second);
         } catch (final Exception e) {
             errorHandler.accept(e);
         }
     }
 
     /**
-     * Метод конвертирования строки в HEX представление.
+     * Convert a string to HEX string.
+     *
+     * @param string the original string.
+     * @return the hex string.
      */
-    public static String toHEX(final String string) {
+    @NotNull
+    public static String toHEX(@NotNull final String string) {
 
         final StringBuilder builder = new StringBuilder(string.length() * 2);
 
@@ -488,18 +494,6 @@ public final class Util {
         return builder.toString();
     }
 
-    public static String toString(final Throwable throwable) {
-
-        final StringBuilder builder = new StringBuilder(throwable.getClass().getSimpleName() + " : " + throwable.getMessage());
-
-        builder.append(" : stack trace:\n");
-
-        for (final StackTraceElement stack : throwable.getStackTrace()) {
-            builder.append(stack).append("\n");
-        }
-
-        return builder.toString();
-    }
 
     private Util() {
         throw new RuntimeException();

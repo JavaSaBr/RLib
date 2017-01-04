@@ -1,5 +1,7 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The interface for implementing the method for reloading the object to new version of the object.
  *
@@ -12,5 +14,5 @@ public interface Reloadable<E> {
      *
      * @param updated the updated object.
      */
-    void reload(E updated);
+    void reload(@NotNull E updated);
 }

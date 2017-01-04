@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Класс с утильными методами по работе с классами.
+ * The class with utility methods.
  *
  * @author JavaSaBr
  */

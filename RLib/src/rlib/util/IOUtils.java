@@ -1,5 +1,8 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +12,7 @@ import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
- * Набор утильных методов по работе с I/O.
+ * The class with utility methods.
  *
  * @author JavaSaBr
  */
@@ -17,24 +20,30 @@ public final class IOUtils {
 
     private static final Logger LOGGER = LoggerManager.getLogger(IOUtils.class);
 
-    public static void close(final Closeable stream) {
-        if (stream == null) return;
+    /**
+     * Close a closeable object.
+     *
+     * @param closeable the closeable object.
+     */
+    public static void close(@Nullable final Closeable closeable) {
+        if (closeable == null) return;
         try {
-            stream.close();
+            closeable.close();
         } catch (final IOException e) {
-            LOGGER.warning(e);
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * Копирование данных.
+     * Copy data from a source stream to a destination stream.
      *
-     * @param in        поток-источник данных.
-     * @param out       поток-место куда копировать.
-     * @param buffer    буффер для копирования.
-     * @param needClose нужно ли закрыть потоки.
+     * @param in        the source stream.
+     * @param out       the destination stream.
+     * @param buffer    the buffer.
+     * @param needClose true if need to close streams.
      */
-    public static void copy(final InputStream in, final OutputStream out, final byte[] buffer, final boolean needClose) throws IOException {
+    public static void copy(@NotNull final InputStream in, @NotNull final OutputStream out, @NotNull final byte[] buffer,
+                            final boolean needClose) throws IOException {
 
         for (int i = in.read(buffer); i != -1; i = in.read(buffer)) {
             out.write(buffer, 0, i);

@@ -9,13 +9,13 @@ import java.util.function.Consumer;
 
 import rlib.concurrent.executor.PeriodicTaskExecutor;
 import rlib.concurrent.lock.LockFactory;
+import rlib.concurrent.lock.Lockable;
 import rlib.concurrent.task.PeriodicTask;
 import rlib.concurrent.util.ConcurrentUtils;
 import rlib.concurrent.util.ThreadUtils;
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.util.ClassUtils;
-import rlib.util.Lockable;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
