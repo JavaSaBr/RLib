@@ -1,38 +1,38 @@
 package rlib.monitoring;
 
-import javax.management.MXBean;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Реализация менеджера по мониторингу состояния Java процесса с помощью {@link MXBean}.
+ * The class to monitor a state a Java process.
  *
  * @author JavaSaBr
  */
 public final class MonitoringManager {
 
-    private static MonitoringManager instance;
+    @NotNull
+    private static final MonitoringManager INSTANCE = new MonitoringManager();
 
+    @NotNull
     public static MonitoringManager getInstance() {
-
-        if (instance == null) {
-            instance = new MonitoringManager();
-        }
-
-        return instance;
+        return INSTANCE;
     }
 
     /**
-     * Мониторинг использования памяти в Java процессе.
+     * The memory monitoring.
      */
+    @NotNull
     private final MemoryMonitoring memoryMonitoring;
 
     /**
-     * Мониторинг работы Java процесса.
+     * The runtime monitoring.
      */
+    @NotNull
     private final RuntimeMonitoring runtimeMonitoring;
 
     /**
-     * Мониторинг состояния потоков Java процесса.
+     * The threads monitoring.
      */
+    @NotNull
     private final ThreadMonitoring threadMonitoring;
 
     private MonitoringManager() {
@@ -42,22 +42,25 @@ public final class MonitoringManager {
     }
 
     /**
-     * @return мониторинг использования памяти в Java процессе.
+     * @return the memory monitoring.
      */
+    @NotNull
     public MemoryMonitoring getMemoryMonitoring() {
         return memoryMonitoring;
     }
 
     /**
-     * @return мониторинг работы Java процесса.
+     * @return the runtime monitoring.
      */
+    @NotNull
     public RuntimeMonitoring getRuntimeMonitoring() {
         return runtimeMonitoring;
     }
 
     /**
-     * @return мониторинг состояния потоков Java процесса.
+     * @return the threads monitoring.
      */
+    @NotNull
     public ThreadMonitoring getThreadMonitoring() {
         return threadMonitoring;
     }

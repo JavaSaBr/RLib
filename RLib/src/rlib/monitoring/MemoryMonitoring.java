@@ -1,5 +1,8 @@
 package rlib.monitoring;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryPoolMXBean;
@@ -7,8 +10,7 @@ import java.lang.management.MemoryUsage;
 import java.util.List;
 
 /**
- * Реализация мониторинга использования памяти Java процессом, дает информацияю о использовании Java
- * Heap в целом, так и информация о использовании конкретных областей Java Heap и native memory.
+ * The class to monitor memory usage.
  *
  * @author JavaSaBr
  */
@@ -22,13 +24,15 @@ public class MemoryMonitoring {
     public static final String MEMORY_POOL_OLD_GEN = "PS Old Gen";
 
     /**
-     * Менеджеры работы областей памяти.
+     * The list of memory pools.
      */
+    @NotNull
     private final List<MemoryPoolMXBean> memoryPoolMXBeans;
 
     /**
-     * Менеджер работ общего управления памятью.
+     * The memory manager.
      */
+    @NotNull
     private final MemoryMXBean memoryMXBean;
 
     public MemoryMonitoring() {
@@ -37,76 +41,77 @@ public class MemoryMonitoring {
     }
 
     /**
-     * Поиск нужного бина области памяти по его названию.
+     * Find a memory pool been by a name.
      *
-     * @param name название области памяти.
-     * @return бин этой области.
+     * @param name the name.
+     * @return the found bean or null.
      */
-    private MemoryPoolMXBean findMemoryPoolMXBeen(final String name) {
-
-        for (final MemoryPoolMXBean mxBean : memoryPoolMXBeans) {
-            if (mxBean.getName().contains(name)) {
-                return mxBean;
-            }
-        }
-
-        return null;
+    @Nullable
+    private MemoryPoolMXBean findMemoryPoolMXBeen(@NotNull final String name) {
+        return memoryPoolMXBeans.stream()
+                .filter(bean -> bean.getName().contains(name))
+                .findAny().orElse(null);
     }
 
     /**
-     * @return максимальный размр Java Heap для текущего Java процесса.
+     * Get max heap size.
+     *
+     * @return the max heap size.
      */
     public long getHeapMaxSize() {
         return getHeapMaxSize(memoryMXBean.getHeapMemoryUsage());
     }
 
-    private long getHeapMaxSize(final MemoryUsage memoryUsage) {
+    private long getHeapMaxSize(@NotNull final MemoryUsage memoryUsage) {
         return memoryUsage.getMax();
     }
 
     /**
-     * @return текущий размера Java Heap.
+     * Get current heap size.
+     *
+     * @return the current heap size.
      */
     public long getHeapSize() {
         return getHeapSize(memoryMXBean.getHeapMemoryUsage());
     }
 
-    private long getHeapSize(final MemoryUsage memoryUsage) {
+    private long getHeapSize(@NotNull final MemoryUsage memoryUsage) {
         return memoryUsage.getCommitted();
     }
 
     /**
-     * Рассчиттывает сколько было использовано под хранения данных в Java Heap памяти, от текущего
-     * размера Java Heap.
+     * Get heap usage percent.
      *
-     * @return процент использования Java Heap.
+     * @return the heap usage percent.
      */
     public double getHeapUsagePercent() {
         return getHeapUsagePercent(memoryMXBean.getHeapMemoryUsage());
     }
 
-    private double getHeapUsagePercent(final MemoryUsage memoryUsage) {
+    private double getHeapUsagePercent(@NotNull final MemoryUsage memoryUsage) {
         return getHeapUsedSize(memoryUsage) / (double) getHeapSize(memoryUsage) * 100;
     }
 
     /**
-     * @return кол-во используемой памяти для хранения данных из Java Heap.
+     * Get heap usage size.
+     *
+     * @return the heap usage size.
      */
     public long getHeapUsedSize() {
         return getHeapUsedSize(memoryMXBean.getHeapMemoryUsage());
     }
 
-    private long getHeapUsedSize(final MemoryUsage memoryUsage) {
+    private long getHeapUsedSize(@NotNull final MemoryUsage memoryUsage) {
         return memoryUsage.getUsed();
     }
 
     /**
-     * Получение максимального размера области памяти указанного названия.
+     * Get max size of a memory pool.
      *
-     * @param name название области памяти.
-     * @return максимальный размер этой области.
+     * @param name the name of a memory pool.
+     * @return the max size.
      */
-    public long getMemoryPoolMaxSize(final String name) {
+    public long getMemoryPoolMaxSize(@NotNull final String name) {
 
         final MemoryPoolMXBean mxBean = findMemoryPoolMXBeen(name);
 
@@ -115,17 +120,16 @@ public class MemoryMonitoring {
         }
 
         final MemoryUsage usage = mxBean.getUsage();
-
         return usage.getMax();
     }
 
     /**
-     * Получение текущего размера области памяти указанного названия.
+     * Get current size a memory pool.
      *
-     * @param name название области памяти.
-     * @return текущий размер этой области.
+     * @param name the name of a memory pool.
+     * @return the current size.
      */
-    public long getMemoryPoolSize(final String name) {
+    public long getMemoryPoolSize(@NotNull final String name) {
 
         final MemoryPoolMXBean mxBean = findMemoryPoolMXBeen(name);
 
@@ -134,17 +138,16 @@ public class MemoryMonitoring {
         }
 
         final MemoryUsage usage = mxBean.getUsage();
-
         return usage.getCommitted();
     }
 
     /**
-     * Получение использованного размера области памяти указанного названия.
+     * Get used size a memory pool.
      *
-     * @param name название области памяти.
-     * @return использованный размер этой области.
+     * @param name the name of a memory pool.
+     * @return the used size.
      */
-    public long getMemoryPoolUsed(final String name) {
+    public long getMemoryPoolUsed(@NotNull final String name) {
 
         final MemoryPoolMXBean mxBean = findMemoryPoolMXBeen(name);
 
@@ -153,7 +156,6 @@ public class MemoryMonitoring {
         }
 
         final MemoryUsage usage = mxBean.getUsage();
-
         return usage.getUsed();
     }
 

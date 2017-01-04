@@ -1,5 +1,9 @@
 package rlib.monitoring;
 
+import static java.lang.ThreadLocal.withInitial;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
@@ -7,36 +11,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Реализация мониторинга работы Java процесса и его окружения.
+ * The class to monitor a runtime state of a java process.
  *
  * @author JavaSaBr
  */
 public class RuntimeMonitoring {
 
-    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+    @NotNull
+    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(SimpleDateFormat::new);
 
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat();
-        }
-    };
-
-    private static final ThreadLocal<Date> LOCAL_DATE = new ThreadLocal<Date>() {
-
-        @Override
-        protected Date initialValue() {
-            return new Date();
-        }
-    };
+    @NotNull
+    private static final ThreadLocal<Date> LOCAL_DATE = withInitial(Date::new);
 
     /**
-     * Менеджер по анализу работы ОС, на которой запущен Java процесс.
+     * The OS manager.
      */
+    @NotNull
     private final OperatingSystemMXBean operatingSystemMXBean;
 
     /**
-     * Менеджер по работе процесса.
+     * The runtime manager.
      */
+    @NotNull
     private final RuntimeMXBean runtimeMXBean;
 
     public RuntimeMonitoring() {
@@ -69,5 +65,4 @@ public class RuntimeMonitoring {
 
         return builder.toString();
     }
-
 }
