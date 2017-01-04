@@ -104,7 +104,7 @@ public final class ArrayUtils {
     public static int[] combine(@Nullable final int[] base, @Nullable final int[] added) {
 
         if (base == null) {
-            return added == null? new int[0] : added;
+            return added == null ? new int[0] : added;
         } else if (added == null || added.length < 1) {
             return base;
         }
@@ -130,7 +130,7 @@ public final class ArrayUtils {
     public static <T, E extends T> T[] combine(@Nullable final T[] base, @Nullable final E[] added, @NotNull final Class<T> type) {
 
         if (base == null) {
-            return added == null? create(type, 0) : added;
+            return added == null ? create(type, 0) : added;
         } else if (added == null || added.length < 1) {
             return base;
         }
@@ -162,8 +162,8 @@ public final class ArrayUtils {
     /**
      * Check an array on contains an object.
      *
-     * @param array the array.
-     * @param object   the object.
+     * @param array  the array.
+     * @param object the object.
      * @return true of the array contains the object.
      */
     public static boolean contains(@NotNull final Object[] array, @Nullable final Object object) {
@@ -174,52 +174,56 @@ public final class ArrayUtils {
     }
 
     /**
-     * Копирование массива с созданием нового на указанный размер больше.
+     * Copy and extend an array.
      *
-     * @param old   исходный массив.
-     * @param added сила расширения.
-     * @return новый массив.
+     * @param old   the source array.
+     * @param added the added size.
+     * @return the new array.
      */
-    public static byte[] copyOf(final byte[] old, final int added) {
+    @NotNull
+    public static byte[] copyOf(@NotNull final byte[] old, final int added) {
         final byte[] copy = new byte[old.length + added];
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
         return copy;
     }
 
     /**
-     * Копирование массива с созданием нового на указанный размер больше.
+     * Copy and extend an array.
      *
-     * @param old   исходный массив.
-     * @param added сила расширения.
-     * @return новый массив.
+     * @param old   the source array.
+     * @param added the added size.
+     * @return the new array.
      */
-    public static int[] copyOf(final int[] old, final int added) {
+    @NotNull
+    public static int[] copyOf(@NotNull final int[] old, final int added) {
         final int[] copy = new int[old.length + added];
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
         return copy;
     }
 
     /**
-     * Копирование массива с созданием нового на указанный размер больше.
+     * Copy and extend an array.
      *
-     * @param old   исходный массив.
-     * @param added сила расширения.
-     * @return новый массив.
+     * @param old   the source array.
+     * @param added the added size.
+     * @return the new array.
      */
-    public static long[] copyOf(final long[] old, final int added) {
+    @NotNull
+    public static long[] copyOf(@NotNull final long[] old, final int added) {
         final long[] copy = new long[old.length + added];
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
         return copy;
     }
 
     /**
-     * Копирование массива с созданием нового на указанный размер больше.
+     * Copy and extend an array.
      *
-     * @param old   исходный массив.
-     * @param added сила расширения.
-     * @return новый массив.
+     * @param old   the source array.
+     * @param added the added size.
+     * @return the new array.
      */
-    public static <T> T[] copyOf(final T[] old, final int added) {
+    @NotNull
+    public static <T> T[] copyOf(@NotNull final T[] old, final int added) {
 
         final Class<? extends Object[]> newType = old.getClass();
         final T[] copy = unsafeCast(create(newType.getComponentType(), old.length + added));
@@ -230,14 +234,15 @@ public final class ArrayUtils {
     }
 
     /**
-     * Копируем часть из массива и создаем новый массив из этой части.
+     * Copy a part of an array to a new array.
      *
-     * @param original исходный массив.
-     * @param from     с какого индекса.
-     * @param to       по какой индекс.
-     * @return новый массив.
+     * @param original the source array.
+     * @param from     the start element.
+     * @param to       the last element.
+     * @return the new array.
      */
-    public static int[] copyOfRange(final int[] original, final int from, final int to) {
+    @NotNull
+    public static int[] copyOfRange(@NotNull final int[] original, final int from, final int to) {
 
         final int newLength = to - from;
         final int[] copy = new int[newLength];
@@ -248,14 +253,15 @@ public final class ArrayUtils {
     }
 
     /**
-     * Копируем часть из массива и создаем новый массив из этой части.
+     * Copy a part of an array to a new array.
      *
-     * @param original исходный массив.
-     * @param from     с какого индекса.
-     * @param to       по какой индекс.
-     * @return новый массив.
+     * @param original the source array.
+     * @param from     the start element.
+     * @param to       the last element.
+     * @return the new array.
      */
-    public static long[] copyOfRange(final long[] original, final int from, final int to) {
+    @NotNull
+    public static long[] copyOfRange(@NotNull final long[] original, final int from, final int to) {
 
         final int newLength = to - from;
         final long[] copy = new long[newLength];
@@ -266,14 +272,15 @@ public final class ArrayUtils {
     }
 
     /**
-     * Копируем часть из массива и создаем новый массив из этой части.
+     * Copy a part of an array to a new array.
      *
-     * @param original исходный массив.
-     * @param from     с какого индекса.
-     * @param to       по какой индекс.
-     * @return новый массив.
+     * @param original the source array.
+     * @param from     the start element.
+     * @param to       the last element.
+     * @return the new array.
      */
-    public static <T> T[] copyOfRange(final T[] original, final int from, final int to) {
+    @NotNull
+    public static <T> T[] copyOfRange(@NotNull final T[] original, final int from, final int to) {
 
         final Class<? extends Object[]> newType = original.getClass();
         final int newLength = to - from;
@@ -286,25 +293,25 @@ public final class ArrayUtils {
     }
 
     /**
-     * Создание массива указанного типа.
+     * Create an array by a type.
      *
-     * @param type тир массива.
-     * @param size размер массива.
-     * @return новый массив.
+     * @param type the array type.
+     * @param size the size.
+     * @return the new array.
      */
     @NotNull
-    public static <T> T[] create(final Class<?> type, final int size) {
+    public static <T> T[] create(@NotNull final Class<?> type, final int size) {
         return unsafeCast(java.lang.reflect.Array.newInstance(type, size));
     }
 
     /**
-     * Находит индекс объекта в указанном массиве.
+     * Find an index of a object in an array.
      *
-     * @param array  массив.
-     * @param object искомый объект.
-     * @return индекс оюъекта.
+     * @param array  the array.
+     * @param object the object.
+     * @return the object index or -1.
      */
-    public static int indexOf(final Object[] array, final Object object) {
+    public static int indexOf(@NotNull final Object[] array, @Nullable final Object object) {
 
         int index = 0;
 
@@ -317,59 +324,64 @@ public final class ArrayUtils {
     }
 
     /**
-     * Сортировка массива, недопустимы нулевые значения.
+     * Sort an array.
      *
-     * @param array сортируемый массив.
+     * @param array the array.
      */
-    public static void sort(final Comparable<?>[] array) {
+    public static void sort(@NotNull final Comparable<?>[] array) {
         java.util.Arrays.sort(array);
     }
 
     /**
-     * Сортировка массива, недопустимы нулевые значения.
+     * Sort an array.
      *
-     * @param array сортируемый массив.
+     * @param array the array.
      */
-    public static void sort(final int[] array) {
+    public static void sort(@NotNull final int[] array) {
         java.util.Arrays.sort(array);
     }
 
     /**
-     * Сортировка массива, недопустимы нулевые значения.
+     * Sort an array.
      *
-     * @param array сортируемый массив.
+     * @param array     the array.
+     * @param fromIndex the start index.
+     * @param toIndex   the last index.
      */
-    public static void sort(final int[] array, final int fromIndex, final int toIndex) {
+    public static void sort(@NotNull final int[] array, final int fromIndex, final int toIndex) {
         java.util.Arrays.sort(array, fromIndex, toIndex);
     }
 
     /**
-     * Сортировка массива, недопустимы нулевые значения.
+     * Sort an array.
      *
-     * @param array сортируемый массив.
+     * @param array     the array.
+     * @param fromIndex the start index.
+     * @param toIndex   the last index.
      */
-    public static void sort(final long[] array, final int fromIndex, final int toIndex) {
+    public static void sort(@NotNull final long[] array, final int fromIndex, final int toIndex) {
         java.util.Arrays.sort(array, fromIndex, toIndex);
     }
 
     /**
-     * Сортировка массива компаратором.
+     * Sort an array.
      *
-     * @param array      сортируемый массив.
-     * @param comparator компаратор для массива.
+     * @param array      the array.
+     * @param comparator the comparator.
      */
-    public static <T> void sort(final T[] array, final Comparator<? super T> comparator) {
+    public static <T> void sort(@NotNull final T[] array, @NotNull final Comparator<? super T> comparator) {
         java.util.Arrays.sort(array, comparator);
     }
 
     /**
-     * Конфектирует массив объектов строку.
+     * Convert an array to a string presentation.
      *
-     * @param array массив объектов.
-     * @return строковый вариант.
+     * @param array the array.
+     * @return the string presentation.
      */
-    public static String toString(final Array<?> array) {
-        if (array == null) return "[]";
+    @NotNull
+    public static String toString(@NotNull final Array<?> array) {
+        if (array.isEmpty()) return "[]";
 
         final String className = array.array().getClass().getSimpleName();
         final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
@@ -385,11 +397,12 @@ public final class ArrayUtils {
     }
 
     /**
-     * Writing the array like a string.
+     * Convert an array to a string presentation.
      *
      * @param array the array.
-     * @return the string presentation of the array.
+     * @return the string presentation.
      */
+    @NotNull
     public static String toString(@NotNull final IntegerArray array) {
 
         final String className = array.array().getClass().getSimpleName();
@@ -406,11 +419,12 @@ public final class ArrayUtils {
     }
 
     /**
-     * Writing the array like a string.
+     * Convert an array to a string presentation.
      *
      * @param array the array.
-     * @return the string presentation of the array.
+     * @return the string presentation.
      */
+    @NotNull
     public static String toString(@NotNull final LongArray array) {
 
         final String className = array.array().getClass().getSimpleName();
@@ -427,17 +441,17 @@ public final class ArrayUtils {
     }
 
     /**
-     * Writing the array like a string.
+     * Convert an array to a string presentation.
      *
      * @param array the array.
-     * @return the string presentation of the array.
+     * @return the string presentation.
      */
     public static String toString(@Nullable int[] array) {
         return toString(array, ", ", true, true);
     }
 
     /**
-     * Writing the array like a string.
+     * Convert an array to a string presentation.
      *
      * @param array        the array.
      * @param separator    the separator.
@@ -445,7 +459,8 @@ public final class ArrayUtils {
      * @param needBrackets true if need adding brackets.
      * @return the string presentation of the array.
      */
-    public static String toString(@Nullable int[] array, @NotNull final String separator, final boolean needType, final boolean needBrackets) {
+    public static String toString(@Nullable int[] array, @NotNull final String separator,
+                                  final boolean needType, final boolean needBrackets) {
 
         if (array == null) {
             array = EMPTY_INT_ARRAY;
@@ -468,7 +483,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Writing the array like a string.
+     * Convert an array to a string presentation.
      *
      * @param array the array.
      * @return the string presentation of the array.
@@ -478,7 +493,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Writing the array like a string.
+     * Convert an array to a string presentation.
      *
      * @param array        the array.
      * @param separator    the separator.
@@ -486,7 +501,8 @@ public final class ArrayUtils {
      * @param needBrackets true if need adding brackets.
      * @return the string presentation of the array.
      */
-    public static String toString(@Nullable Object[] array, @NotNull final String separator, final boolean needType, final boolean needBrackets) {
+    public static String toString(@Nullable Object[] array, @NotNull final String separator,
+                                  final boolean needType, final boolean needBrackets) {
 
         if (array == null) {
             array = EMPTY_OBJECT_ARRAY;
@@ -509,13 +525,15 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
+     * Execute and get a result of a function in write lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param function функция получения чего-то.
-     * @return результат функции.
+     * @param array    the array.
+     * @param function the function.
+     * @return the result of the function.
      */
-    public static <T, R> R getInWriteLock(final ConcurrentArray<T> array, final Function<Array<T>, R> function) {
+    @Nullable
+    public static <T, R> R getInWriteLock(@NotNull final ConcurrentArray<T> array,
+                                          @NotNull final Function<Array<T>, R> function) {
         if (array.isEmpty()) return null;
         final long stamp = array.writeLock();
         try {
@@ -526,43 +544,47 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
+     * Execute a function in write lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param consumer функция действия.
+     * @param array    the array.
+     * @param function the function.
      */
-    public static <T> void runInWriteLock(final ConcurrentArray<T> array, final Consumer<Array<T>> consumer) {
+    public static <T> void runInWriteLock(@NotNull final ConcurrentArray<T> array,
+                                          @NotNull final Consumer<Array<T>> function) {
         final long stamp = array.writeLock();
         try {
-            consumer.accept(array);
+            function.accept(array);
         } finally {
             array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
+     * Execute a function in read lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param consumer функция действия.
+     * @param array    the array.
+     * @param function the function.
      */
-    public static <T> void runInReadLock(final ConcurrentArray<T> array, final Consumer<Array<T>> consumer) {
+    public static <T> void runInReadLock(@NotNull final ConcurrentArray<T> array,
+                                         @NotNull final Consumer<Array<T>> function) {
         final long stamp = array.readLock();
         try {
-            consumer.accept(array);
+            function.accept(array);
         } finally {
             array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
+     * Execute and get a result of a function in read lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param function функция действия.
-     * @return результат действия функции.
+     * @param array    the array.
+     * @param function the function.
+     * @return the result of the function.
      */
-    public static <T, R> R getInReadLock(final ConcurrentArray<T> array, final Function<Array<T>, R> function) {
+    @Nullable
+    public static <T, R> R getInReadLock(@NotNull final ConcurrentArray<T> array,
+                                         @NotNull final Function<Array<T>, R> function) {
         if (array.isEmpty()) return null;
         final long stamp = array.readLock();
         try {
@@ -573,13 +595,14 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение суммирование массива в блоке {@link ConcurrentArray#readLock()}.
+     * Execute and sum a result of a function in read lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param function функция получения сумы.
-     * @return итоговая сумма.
+     * @param array    the array.
+     * @param function the function.
+     * @return the sum.
      */
-    public static <T> int sumInReadLock(final ConcurrentArray<T> array, final FunctionInt<T> function) {
+    public static <T> int sumInReadLock(@NotNull final ConcurrentArray<T> array,
+                                        @NotNull final FunctionInt<T> function) {
         if (array.isEmpty()) return 0;
         final long stamp = array.readLock();
         try {
@@ -599,14 +622,16 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
+     * Execute and get a result of a function in write lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param argument дополнительный аргумент.
-     * @param function функция действия.
-     * @return результат действия функции.
+     * @param array    the array.
+     * @param argument the argument.
+     * @param function the function.
+     * @return the result of the function.
      */
-    public static <T, V, R> R getInWriteLock(final ConcurrentArray<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
+    @Nullable
+    public static <T, V, R> R getInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
+                                             @NotNull final BiFunction<Array<T>, V, R> function) {
         if (array.isEmpty()) return null;
         final long stamp = array.writeLock();
         try {
@@ -617,30 +642,33 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
+     * Execute a function in write lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param argument дополнительный аргумент.
-     * @param consumer функция действия.
+     * @param array    the array.
+     * @param argument the argument.
+     * @param function the function.
      */
-    public static <T, V> void runInWriteLock(final ConcurrentArray<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
+    public static <T, V> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
+                                             @NotNull final BiConsumer<Array<T>, V> function) {
         final long stamp = array.writeLock();
         try {
-            consumer.accept(array, argument);
+            function.accept(array, argument);
         } finally {
             array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
+     * Execute and get a result of a function in read lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param argument дополнительный аргумент.
-     * @param function функция действия.
-     * @return результат действия функции.
+     * @param array    the array.
+     * @param argument the argument.
+     * @param function the function.
+     * @return the result of the function.
      */
-    public static <T, V, R> R getInReadLock(final ConcurrentArray<T> array, final V argument, final BiFunction<Array<T>, V, R> function) {
+    @Nullable
+    public static <T, V, R> R getInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
+                                            @NotNull final BiFunction<Array<T>, V, R> function) {
         if (array.isEmpty()) return null;
         final long stamp = array.readLock();
         try {
@@ -651,14 +679,16 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
+     * Execute and get a result of a function in read lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param argument дополнительный аргумент.
-     * @param function функция действия.
-     * @return результат действия функции.
+     * @param array    the array.
+     * @param argument the argument.
+     * @param function the function.
+     * @return the result of the function.
      */
-    public static <T, V, R> R getInReadLock(final ConcurrentArray<T> array, final int argument, final ObjectIntFunction<Array<T>, R> function) {
+    @Nullable
+    public static <T, R> R getInReadLock(@NotNull final ConcurrentArray<T> array, final int argument,
+                                         @NotNull final ObjectIntFunction<Array<T>, R> function) {
         if (array.isEmpty()) return null;
         final long stamp = array.readLock();
         try {
@@ -669,14 +699,16 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
+     * Execute and get a result of a function in read lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param argument дополнительный аргумент.
-     * @param function функция действия.
-     * @return результат действия функции.
+     * @param array    the array.
+     * @param argument the argument.
+     * @param function the function.
+     * @return the result of the function.
      */
-    public static <T, V, R> R getInReadLockL(final ConcurrentArray<T> array, final long argument, final ObjectLongFunction<Array<T>, R> function) {
+    @Nullable
+    public static <T, V, R> R getInReadLockL(@NotNull final ConcurrentArray<T> array, final long argument,
+                                             @NotNull final ObjectLongFunction<Array<T>, R> function) {
         if (array.isEmpty()) return null;
         final long stamp = array.readLock();
         try {
@@ -687,144 +719,151 @@ public final class ArrayUtils {
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
+     * Execute a function in read lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param argument дополнительный аргумент.
-     * @param consumer функция действия.
+     * @param array    the array.
+     * @param argument the argument.
+     * @param function the function.
      */
-    public static <T, V> void runInReadLock(final ConcurrentArray<T> array, final V argument, final BiConsumer<Array<T>, V> consumer) {
+    public static <T, V> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
+                                            @NotNull final BiConsumer<Array<T>, V> function) {
         final long stamp = array.readLock();
         try {
-            consumer.accept(array, argument);
+            function.accept(array, argument);
         } finally {
             array.readUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
+     * Execute a function in write lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param first    первый дополнительный аргумент.
-     * @param second   второй дополнительный аргумент.
-     * @param consumer функция действия.
+     * @param array    the array.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
      */
-    public static <T, F, S> void runInWriteLock(final ConcurrentArray<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
+    public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
+                                                @Nullable S second, @NotNull final TripleConsumer<Array<T>, F, S> function) {
         final long stamp = array.writeLock();
         try {
-            consumer.accept(array, first, second);
+            function.accept(array, first, second);
         } finally {
             array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#writeLock()}.
+     * Execute a function in write lock of an array.
      *
-     * @param array     массив с которым надо работать.
-     * @param first     первый дополнительный аргумент.
-     * @param second    второй дополнительный аргумент.
-     * @param predicate условие выполнения.
-     * @param consumer  функция действия.
+     * @param array    the array.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param filter   the filter.
+     * @param function the function.
      */
-    public static <T, F, S> void runInWriteLock(final ConcurrentArray<T> array, final F first, S second, final TriplePredicate<Array<T>, F, S> predicate, final TripleConsumer<Array<T>, F, S> consumer) {
+    public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
+                                                @Nullable final S second, @NotNull final TriplePredicate<Array<T>, F, S> filter,
+                                                @NotNull final TripleConsumer<Array<T>, F, S> function) {
         final long stamp = array.writeLock();
         try {
-            if (predicate.test(array, first, second)) consumer.accept(array, first, second);
+            if (filter.test(array, first, second)) function.accept(array, first, second);
         } finally {
             array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Выполнение какого-то действия над массивом в блоке {@link ConcurrentArray#readLock()}.
+     * Execute a function in read lock of an array.
      *
-     * @param array    массив с которым надо работать.
-     * @param first    первый дополнительный аргумент.
-     * @param second   второй дополнительный аргумент.
-     * @param consumer функция действия.
+     * @param array    the array.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
      */
-    public static <T, F, S> void runInReadLock(final ConcurrentArray<T> array, final F first, S second, final TripleConsumer<Array<T>, F, S> consumer) {
+    public static <T, F, S> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
+                                               @Nullable final S second, @NotNull final TripleConsumer<Array<T>, F, S> function) {
         final long stamp = array.readLock();
         try {
-            consumer.accept(array, first, second);
+            function.accept(array, first, second);
         } finally {
             array.readUnlock(stamp);
         }
     }
 
     /**
-     * Перенос всех данных из одного массива в другой.
+     * Move all elements from a source array to a destination array.
      *
-     * @param source      массив откуда надо перенести данные.
-     * @param destination массив в который надо перенести данные.
-     * @param clearSource нужно ли после этого очищасть исходный массив.
+     * @param source      the source array.
+     * @param destination the destination array.
+     * @param clearSource need clears the source array after moving.
      */
-    public static <F extends S, S> void move(final Array<F> source, final Array<S> destination, final boolean clearSource) {
+    public static <F extends S, S> void move(@NotNull final Array<F> source, @NotNull final Array<S> destination,
+                                             final boolean clearSource) {
         if (source.isEmpty()) return;
         destination.addAll(source);
         if (clearSource) source.clear();
     }
 
     /**
-     * Перенос всех данных из одного массива в другой с очисткой после этого первого массива.
+     * Move all elements from a source array to a destination array.
      *
-     * @param source      массив откуда надо перенести данные.
-     * @param destination массив в который надо перенести данные.
+     * @param source      the source array.
+     * @param destination the destination array.
      */
-    public static <F extends S, S> void move(final Array<F> source, final Array<S> destination) {
+    public static <F extends S, S> void move(@NotNull final Array<F> source, @NotNull final Array<S> destination) {
         move(source, destination, true);
     }
 
     /**
-     * Добавление элемента в массив в блоке synchronized.
+     * Add an object ot an array in a synchronize block.
      *
-     * @param array  массив, в который надо добавить элемент.
-     * @param object добавляемый элемент.
+     * @param array  the array.
+     * @param object the object.
      */
-    public static <T, V extends T> void addInSynchronizeTo(final Array<T> array, final V object) {
+    public static <T, V extends T> void addInSynchronizeTo(@NotNull final Array<T> array, @NotNull final V object) {
         synchronized (array) {
             array.add(object);
         }
     }
 
     /**
-     * Быстрое удаление элемента из массива в блоке synchronized.
+     * Fast remove an object from an array in a synchronize block.
      *
-     * @param array  массив, в котором надо удалить элемент.
-     * @param object удаляемый элемент.
+     * @param array  the array.
+     * @param object the object.
      */
-    public static <T, V extends T> void fastRemoveInSynchronizeTo(final Array<T> array, final V object) {
+    public static <T, V extends T> void fastRemoveInSynchronizeTo(@NotNull final Array<T> array, @NotNull final V object) {
         synchronized (array) {
             array.fastRemove(object);
         }
     }
 
     /**
-     * Обработка элемента массива.
+     * Apply a function to each element of an array.
      *
-     * @param array    массив для обработки элементов.
-     * @param consumer обработчик элемента.
+     * @param array    the array.
+     * @param function the function.
      */
-    public static <T> void forEach(final T[] array, final Consumer<T> consumer) {
+    public static <T> void forEach(@Nullable final T[] array, @NotNull final Consumer<T> function) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            consumer.accept(element);
+            function.accept(element);
         }
     }
 
     /**
-     * Обработка элемента массива.
+     * Apply a function to each filtered element of an array.
      *
-     * @param array     массив для обработки элементов.
-     * @param condition условие для приминения функции на элемент.
-     * @param consumer  обработчик элемента.
+     * @param array     the array.
+     * @param condition the condition.
+     * @param function  the function.
      */
-    public static <T> void forEach(final T[] array, final Predicate<T> condition, final Consumer<T> consumer) {
+    public static <T> void forEach(@Nullable final T[] array, @NotNull final Predicate<T> condition,
+                                   @NotNull final Consumer<T> function) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            if (condition.test(element)) consumer.accept(element);
+            if (condition.test(element)) function.accept(element);
         }
     }
 
@@ -835,7 +874,8 @@ public final class ArrayUtils {
      * @param argument the additional argument.
      * @param consumer the consumer.
      */
-    public static <F> void forEach(@Nullable final int[] array, @Nullable final F argument, @NotNull final IntObjectConsumer<F> consumer) {
+    public static <F> void forEach(@Nullable final int[] array, @Nullable final F argument,
+                                   @NotNull final IntObjectConsumer<F> consumer) {
         if (array == null || array.length < 1) return;
         for (final int element : array) {
             consumer.accept(element, argument);
@@ -849,7 +889,8 @@ public final class ArrayUtils {
      * @param argument the additional argument.
      * @param consumer the consumer.
      */
-    public static <F> void forEach(@Nullable final double[] array, @Nullable final F argument, @NotNull final DoubleObjectConsumer<F> consumer) {
+    public static <F> void forEach(@Nullable final double[] array, @Nullable final F argument,
+                                   @NotNull final DoubleObjectConsumer<F> consumer) {
         if (array == null || array.length < 1) return;
         for (final double element : array) {
             consumer.accept(element, argument);
@@ -857,13 +898,14 @@ public final class ArrayUtils {
     }
 
     /**
-     * Обработка элемента массива с дополнительным аргументом.
+     * Apply the consumer for each element of the array.
      *
-     * @param array    массив для обработки элементов.
-     * @param argument дополнительный аргумент.
-     * @param consumer обработчик элемента.
+     * @param array    the array.
+     * @param argument the additional argument.
+     * @param consumer the consumer.
      */
-    public static <T, F> void forEach(final T[] array, final F argument, final BiConsumer<T, F> consumer) {
+    public static <T, F> void forEach(@Nullable final T[] array, @Nullable final F argument,
+                                      @NotNull final BiConsumer<T, F> consumer) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
             consumer.accept(element, argument);
@@ -871,135 +913,141 @@ public final class ArrayUtils {
     }
 
     /**
-     * Обработка элемента массива с дополнительным аргументом.
+     * Handle elements of an array.
      *
-     * @param array      массив для обработки элементов.
-     * @param argument   дополнительный аргумент.
-     * @param getElement функция получения под элемента.
-     * @param consumer   обработчик элемента.
+     * @param array         the array.
+     * @param argument      the additional argument.
+     * @param getElement    the function to get sub element.
+     * @param finalFunction the final function.
      */
-    public static <T, F, R> void forEach(final T[] array, final F argument, final Function<T, R> getElement, final BiConsumer<R, F> consumer) {
+    public static <T, F, R> void forEach(@Nullable final T[] array, @Nullable final F argument,
+                                         @NotNull final Function<T, R> getElement, @NotNull final BiConsumer<R, F> finalFunction) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
             final R subElement = getElement.apply(element);
-            if (subElement != null) consumer.accept(subElement, argument);
+            if (subElement != null) finalFunction.accept(subElement, argument);
         }
     }
 
     /**
-     * Обработка элемента массива с дополнительным аргументом.
+     * Apply a function to each filtered element of an array.
      *
-     * @param array       массив для обработки элементов.
-     * @param argument    дополнительный аргумент.
-     * @param conditional условие обработки элемента.
-     * @param consumer    обработчик элемента.
+     * @param array     the array.
+     * @param argument  the additional argument.
+     * @param condition the condition.
+     * @param function  the function.
      */
-    public static <T, F> void forEach(final T[] array, final F argument, final Predicate<T> conditional, final BiConsumer<T, F> consumer) {
+    public static <T, F> void forEach(@Nullable final T[] array, @Nullable final F argument,
+                                      @NotNull final Predicate<T> condition, @NotNull final BiConsumer<T, F> function) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            if (conditional.test(element)) {
-                consumer.accept(element, argument);
+            if (condition.test(element)) {
+                function.accept(element, argument);
             }
         }
     }
 
     /**
-     * Обработка под элемента массива с дополнительным аргументом.
+     * Apply a function to each filtered element of an array.
      *
-     * @param array      массив для обработки элементов.
-     * @param argument   дополнительный аргумент.
-     * @param firstCond  условие отбора элемента массива.
-     * @param getElement функция извлечения под элемента массива.
-     * @param consumer   обработчик под элемента.
+     * @param array         the array.
+     * @param argument      the additional argument.
+     * @param condition     the condition.
+     * @param getElement    the function to get sub element.
+     * @param finalFunction the final function.
      */
-    public static <T, R, F> void forEach(final T[] array, final F argument, final Predicate<T> firstCond, final Function<T, R> getElement, final BiConsumer<R, F> consumer) {
+    public static <T, R, F> void forEach(@Nullable final T[] array, @Nullable final F argument,
+                                         @NotNull final Predicate<T> condition, @NotNull final Function<T, R> getElement,
+                                         @NotNull final BiConsumer<R, F> finalFunction) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            if (!firstCond.test(element)) continue;
+            if (!condition.test(element)) continue;
             final R subElement = getElement.apply(element);
-            consumer.accept(subElement, argument);
+            finalFunction.accept(subElement, argument);
         }
     }
 
     /**
-     * Обработка элемента массива с дополнительными аргументами.
+     * Apply a function to each element of an array.
      *
-     * @param array    массив для обработки элементов.
-     * @param first    первый дополнительный аргумент.
-     * @param second   второй дополнительный аргумент.
-     * @param consumer обработчик под элемента.
+     * @param array    the array.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
      */
-    public static <T, F, S> void forEach(final T[] array, final F first, final S second, final TripleConsumer<T, F, S> consumer) {
+    public static <T, F, S> void forEach(@Nullable final T[] array, @Nullable final F first, @Nullable final S second,
+                                         @NotNull final TripleConsumer<T, F, S> function) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            consumer.accept(element, first, second);
+            function.accept(element, first, second);
         }
     }
 
     /**
-     * Обработка под элемента массива с дополнительными аргументами.
+     * Apply a function to each sub-element of an array.
      *
-     * @param array      массив для обработки элементов.
-     * @param first      первый дополнительный аргумент.
-     * @param second     второй дополнительный аргумент.
-     * @param getElement функция извлечения под элемента массива.
-     * @param consumer   обработчик под элемента.
+     * @param array      the array.
+     * @param first      the first argument.
+     * @param second     the second argument.
+     * @param getElement the function to get sub element.
+     * @param function   the function.
      */
-    public static <T, R, F, S> void forEach(final T[] array, final F first, final S second, final TripleFunction<T, F, S, R> getElement, final TripleConsumer<R, F, S> consumer) {
+    public static <T, R, F, S> void forEach(@Nullable final T[] array, @Nullable final F first, @Nullable final S second,
+                                            @NotNull final TripleFunction<T, F, S, R> getElement,
+                                            @NotNull final TripleConsumer<R, F, S> function) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
             final R subElement = getElement.apply(element, first, second);
-            consumer.accept(subElement, first, second);
+            function.accept(subElement, first, second);
         }
     }
 
     /**
-     * Поиск индекса элемента в массиве с дополнительным аргументом.
+     * Find an index of an element in an array using condition.
      *
-     * @param array     массив для поиска элемента.
-     * @param argument  дополнительный аргумент.
-     * @param condition условие отбора элемента.
-     * @return индекс первого элемента, удовлетворяющего условия либо -1.
+     * @param array     the array.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @return the index of the element or -1.
      */
-    public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<T, F> condition) {
-        return indexOf(array, argument, condition, 0, array.length);
+    public static <T, F> int indexOf(@Nullable final T[] array, @Nullable final F argument,
+                                     @NotNull final BiPredicate<T, F> condition) {
+        return indexOf(array, argument, condition, 0, array == null ? 0 : array.length);
     }
 
     /**
-     * Поиск индекса элемента в массиве с дополнительным аргументом.
+     * Find an index of an element in an array using condition in a range.
      *
-     * @param array      массив для поиска элемента.
-     * @param argument   дополнительный аргумент.
-     * @param condition  условие отбора элемента.
-     * @param startIndex индекс ячейки с которой начинать.
-     * @param endIndex   последний индекс проверяемой ячейки.
-     * @return индекс первого элемента, удовлетворяющего условия либо -1.
+     * @param array      the array.
+     * @param argument   the argument.
+     * @param condition  the condition.
+     * @param startIndex the start index.
+     * @param endIndex   the end index.
+     * @return the index of the element or -1.
      */
-    public static <T, F> int indexOf(final T[] array, final F argument, final BiPredicate<T, F> condition, final int startIndex, final int endIndex) {
+    public static <T, F> int indexOf(@Nullable final T[] array, @Nullable final F argument,
+                                     @NotNull final BiPredicate<T, F> condition, final int startIndex, final int endIndex) {
         if (array == null || array.length < 1) return -1;
         for (int i = startIndex; i < endIndex; i++) {
-            if (condition.test(array[i], argument)) {
-                return i;
-            }
+            if (condition.test(array[i], argument)) return i;
         }
-
         return -1;
     }
 
     /**
-     * Функция подсчета кол-ва элементов удовлетворяющие указанному условию.
+     * Calculate a count of interesting elements of an array.
      *
-     * @param array     массив для подсчета элементов.
-     * @param predicate условие учета элемента.
-     * @return кол-во нужных элементов.
+     * @param array     the array.
+     * @param condition the condition.
+     * @return the count of elements.
      */
-    public static <T> int count(final T[] array, final Predicate<T> predicate) {
+    public static <T> int count(@Nullable final T[] array, @NotNull final Predicate<T> condition) {
         if (array == null || array.length < 1) return 0;
 
         int count = 0;
 
         for (final T element : array) {
-            if (predicate.test(element)) {
+            if (condition.test(element)) {
                 count++;
             }
         }
@@ -1008,13 +1056,14 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск элемента в массиве.
+     * Find an element in an array using a condition.
      *
-     * @param array     массив для поиска элемента.
-     * @param condition условие отбора элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array     the array.
+     * @param condition the condition.
+     * @return the element or null.
      */
-    public static <T> T find(final T[] array, final Predicate<T> condition) {
+    @Nullable
+    public static <T> T find(@Nullable final T[] array, @NotNull final Predicate<T> condition) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
@@ -1025,14 +1074,16 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск элемента в массиве с дополнительным аргументом.
+     * Find an element in an array using a condition.
      *
-     * @param array     массив для поиска элемента.
-     * @param argument  дополнительный аргумент.
-     * @param condition условие отбора элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array     the array.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @return the element or null.
      */
-    public static <T, F> T find(final T[] array, final F argument, final BiPredicate<T, F> condition) {
+    @Nullable
+    public static <T, F> T find(@Nullable final T[] array, @Nullable final F argument,
+                                @NotNull final BiPredicate<T, F> condition) {
         if (array == null || array.length < 1) return null;
         for (final T element : array) {
             if (condition.test(element, argument)) return element;
@@ -1041,36 +1092,39 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск под-элемента в массиве с дополнительным аргументом.
+     * Find a sub-element in an array using a function to get a sub-element + a condition.
      *
-     * @param array      массив для поиска элемента.
-     * @param argument   дополнительный аргумент.
-     * @param getElement функция извлечения под элемента массива.
-     * @param secondCond условие отбора под элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array      the array.
+     * @param argument   the argument.
+     * @param getElement the function to get a sub-element.
+     * @param condition  the condition.
+     * @return the element or null.
      */
-    public static <T, R, F> R find(final T[] array, final F argument, final Function<T, R> getElement, final BiPredicate<R, F> secondCond) {
+    @Nullable
+    public static <T, R, F> R find(@Nullable final T[] array, @Nullable final F argument,
+                                   @NotNull final Function<T, R> getElement, @NotNull final BiPredicate<R, F> condition) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
             final R subElement = getElement.apply(element);
-            if (secondCond.test(subElement, argument)) return subElement;
+            if (condition.test(subElement, argument)) return subElement;
         }
 
         return null;
     }
 
     /**
-     * Поиск под-элемента в массиве с дополнительным аргументом.
+     * Find a sub-element in an array using a function to get a sub-element + conditions.
      *
-     * @param array      массив для поиска элемента.
-     * @param argument   дополнительный аргумент.
-     * @param condition  условие для выполнения функции получения под элемента.
-     * @param getElement функция извлечения под элемента массива.
-     * @param secondCond условие отбора под элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array      the array.
+     * @param argument   the argument.
+     * @param getElement the function to get a sub-element.
+     * @param condition  the condition.
+     * @return the element or null.
      */
-    public static <T, R, F> R find(final T[] array, final F argument, final Predicate<T> condition, final Function<T, R> getElement, final BiPredicate<R, F> secondCond) {
+    public static <T, R, F> R find(@Nullable final T[] array, @Nullable final F argument,
+                                   @NotNull final Predicate<T> condition, @NotNull final Function<T, R> getElement,
+                                   @NotNull final BiPredicate<R, F> secondCond) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
@@ -1083,14 +1137,15 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск элемента в массиве с дополнительным аргументом.
+     * Find an element in an array using a condition.
      *
-     * @param array     массив для поиска элемента.
-     * @param argument  дополнительный аргумент.
-     * @param condition условие отбора элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array     the array.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @return the element or null.
      */
-    public static <T> T find(final T[] array, final int argument, final ObjectIntPredicate<T> condition) {
+    @Nullable
+    public static <T> T find(@Nullable final T[] array, final int argument, @NotNull final ObjectIntPredicate<T> condition) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
@@ -1101,15 +1156,17 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск под-элемента в массиве с дополнительным аргументом.
+     * Find a sub-element in an array using a function to get a sub-element + a condition.
      *
-     * @param array      массив для поиска элемента.
-     * @param argument   дополнительный аргумент.
-     * @param getElement функция извлечения под элемента массива.
-     * @param condition  условие отбора под элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array      the array.
+     * @param argument   the argument.
+     * @param getElement the function to get a sub-element.
+     * @param condition  the condition.
+     * @return the element or null.
      */
-    public static <T, R> R find(final T[] array, final int argument, final Function<T, R> getElement, final ObjectIntPredicate<R> condition) {
+    @Nullable
+    public static <T, R> R find(@Nullable final T[] array, final int argument, @NotNull final Function<T, R> getElement,
+                                @NotNull final ObjectIntPredicate<R> condition) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
@@ -1123,16 +1180,18 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск под-элемента в массиве с дополнительным аргументом.
+     * Find a sub-element in an array using a function to get a sub-element + conditions.
      *
-     * @param array      массив для поиска элемента.
-     * @param argument   дополнительный аргумент.
-     * @param firstCond  условие по элементу массива.
-     * @param getElement функция извлечения под элемента массива.
-     * @param secondCond условие отбора под элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array      the array.
+     * @param argument   the argument.
+     * @param firstCond  the first condition.
+     * @param getElement the function to get a sub-element.
+     * @param secondCond the second condition.
+     * @return the element or null.
      */
-    public static <T, R> R find(final T[] array, final int argument, Predicate<T> firstCond, final Function<T, R> getElement, final ObjectIntPredicate<R> secondCond) {
+    @Nullable
+    public static <T, R> R find(@Nullable final T[] array, final int argument, @NotNull final Predicate<T> firstCond,
+                                @NotNull final Function<T, R> getElement, @NotNull final ObjectIntPredicate<R> secondCond) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
@@ -1147,16 +1206,18 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск под-элемента в массиве с дополнительным аргументом.
+     * Find a sub-element in an array using a function to get a sub-element + conditions.
      *
-     * @param array      массив для поиска элемента.
-     * @param argument   дополнительный аргумент.
-     * @param firstCond  условие по элементу массива.
-     * @param getElement функция извлечения под элемента массива.
-     * @param secondCond условие отбора под элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array      the array.
+     * @param argument   the argument.
+     * @param firstCond  the first condition.
+     * @param getElement the function to get a sub-element.
+     * @param secondCond the second condition.
+     * @return the element or null.
      */
-    public static <T, R> R findL(final T[] array, final long argument, final Predicate<T> firstCond, final Function<T, R> getElement, final ObjectLongPredicate<R> secondCond) {
+    @Nullable
+    public static <T, R> R findL(@Nullable final T[] array, final long argument, @NotNull final Predicate<T> firstCond,
+                                 @NotNull final Function<T, R> getElement, @NotNull final ObjectLongPredicate<R> secondCond) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
@@ -1171,14 +1232,15 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск под-элемента в массиве с дополнительным аргументом.
+     * Find an element in an array using a condition.
      *
-     * @param array     массив для поиска элемента.
-     * @param argument  дополнительный аргумент.
-     * @param condition условие отбора элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array     the array.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @return the element or null.
      */
-    public static <T> T findL(final T[] array, final long argument, final ObjectLongPredicate<T> condition) {
+    @Nullable
+    public static <T> T findL(@Nullable final T[] array, final long argument, @NotNull final ObjectLongPredicate<T> condition) {
         if (array == null || array.length < 1) return null;
         for (final T element : array) {
             if (condition.test(element, argument)) return element;
@@ -1187,15 +1249,16 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск под-элемента в массиве с дополнительным аргументом.
+     * Find an element in an array using a condition.
      *
-     * @param array      массив для поиска элемента.
-     * @param argument   дополнительный аргумент.
-     * @param getElement функция извлечения под элемента массива.
-     * @param condition  условие отбора элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array     the array.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @return the element or null.
      */
-    public static <T, R> R findL(final T[] array, final long argument, final Function<T, R> getElement, final ObjectLongPredicate<R> condition) {
+    @Nullable
+    public static <T, R> R findL(@Nullable final T[] array, final long argument, @NotNull final Function<T, R> getElement,
+                                 @NotNull final ObjectLongPredicate<R> condition) {
         if (array == null || array.length < 1) return null;
 
         for (final T element : array) {
@@ -1209,15 +1272,17 @@ public final class ArrayUtils {
     }
 
     /**
-     * Поиск элемента в массиве c двумя дополнительными аргументами.
+     * Find an element in an array using a condition.
      *
-     * @param array     массив для поиска элемента.
-     * @param first     первый дополнительный аргумент.
-     * @param second    второй дополнительный аргумент.
-     * @param condition условие отбора элемента.
-     * @return первый подходящий элемент либо null.
+     * @param array     the array.
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param condition the condition.
+     * @return the element or null.
      */
-    public static <T, F, S> T find(final T[] array, final F first, final S second, final TriplePredicate<T, F, S> condition) {
+    @Nullable
+    public static <T, F, S> T find(@Nullable final T[] array, @Nullable final F first, @Nullable final S second,
+                                   @NotNull final TriplePredicate<T, F, S> condition) {
         if (array == null || array.length < 1) return null;
         for (final T element : array) {
             if (condition.test(element, first, second)) {
