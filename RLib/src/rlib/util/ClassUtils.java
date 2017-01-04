@@ -1,7 +1,13 @@
 package rlib.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 
 /**
  * The class with utility methods.
@@ -10,67 +16,83 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class ClassUtils {
 
-    public static <T> Class<T> getClass(final String name) {
+    private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
+
+    /**
+     * Get a class for a name.
+     *
+     * @param name the name of a class.
+     * @return the class or null.
+     */
+    @Nullable
+    public static <T> Class<T> getClass(@NotNull final String name) {
         try {
             return unsafeCast(Class.forName(name));
         } catch (final ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            LOGGER.warning(e);
+            return null;
         }
     }
 
     /**
-     * Получение конструктора по указанным параметрам указанного класса.
+     * Get a constructor of a class.
      *
-     * @param cs      интересуемый класс.
-     * @param classes набор параметров конструктора.
-     * @return конструктор класса.
+     * @param cs      the class.
+     * @param classes the types of arguments.
+     * @return the constructor or null.
      */
-    public static <T> Constructor<T> getConstructor(final Class<?> cs, final Class<?>... classes) {
+    @Nullable
+    public static <T> Constructor<T> getConstructor(@NotNull final Class<?> cs, @Nullable final Class<?>... classes) {
         try {
             return unsafeCast(cs.getConstructor(classes));
-        } catch (NoSuchMethodException | SecurityException e) {
-            throw new RuntimeException(e);
+        } catch (final NoSuchMethodException | SecurityException e) {
+            LOGGER.warning(e);
+            return null;
         }
     }
 
     /**
-     * Получение конструктора класса по его имени и набору параметров.
+     * Get a constructor of a class.
      *
-     * @param className название класса.
-     * @param classes   список параметров конструктора.
-     * @return конструктор класса.
+     * @param className      the class name.
+     * @param classes the types of arguments.
+     * @return the constructor or null.
      */
-    public static <T> Constructor<T> getConstructor(final String className, final Class<?>... classes) {
+    @Nullable
+    public static <T> Constructor<T> getConstructor(@NotNull final String className, @Nullable final Class<?>... classes) {
         try {
             final Class<?> cs = Class.forName(className);
             return unsafeCast(cs.getConstructor(classes));
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (final NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+            LOGGER.warning(e);
+            return null;
         }
     }
 
     /**
-     * Создание нового экземпляра класса через стандартный конструктор.
+     * Create a new instance of a class.
      *
-     * @param cs интересуемый класс.
-     * @return новый экземпляр класса.
+     * @param cs the class.
+     * @return the new instance.
      */
-    public static <T> T newInstance(final Class<?> cs) {
+    @NotNull
+    public static <T> T newInstance(@NotNull final Class<?> cs) {
         try {
             return unsafeCast(cs.newInstance());
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (final InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Создание нового экземпляра класса через указанный конструктор.
+     * Create a new instance of a class using a constructor.
      *
-     * @param constructor конструктор класса.
-     * @param objects     набор параметров дял конструктора.
-     * @return новый экземпляр класса.
+     * @param constructor the constructor.
+     * @param objects     the arguments.
+     * @return the new instance.
      */
-    public static <T> T newInstance(final Constructor<?> constructor, final Object... objects) {
+    @NotNull
+    public static <T> T newInstance(@NotNull final Constructor<?> constructor, @Nullable final Object... objects) {
         try {
             return unsafeCast(constructor.newInstance(objects));
         } catch (final InvocationTargetException e) {
@@ -80,43 +102,53 @@ public final class ClassUtils {
         }
     }
 
-    public static <T> T newInstance(final String className) {
+    /**
+     * Create a new instance of a class.
+     *
+     * @param className the class name.
+     * @return the new instance.
+     */
+    @NotNull
+    public static <T> T newInstance(@NotNull final String className) {
         try {
             return unsafeCast(Class.forName(className).newInstance());
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Небезопасный каст переданного объекта в требуемый тип.
+     * Unsafe cast an object.
      *
-     * @param object объект который надо скастить.
-     * @return объект скастенный в нужный тип.
+     * @param object the object.
+     * @return the casted object.
      */
-    public static <T> T unsafeCast(final Object object) {
+    @NotNull
+    public static <T> T unsafeCast(@NotNull final Object object) {
         return (T) object;
     }
 
     /**
-     * Небезопасный каст переданного объекта в требуемый тип.
+     * Unsafe cast an object to a type.
      *
-     * @param object объект который надо скастить.
-     * @param type   тип в который хотим скастить объект.
-     * @return объект скастенный в нужный тип.
+     * @param object the object.
+     * @param type the target type.
+     * @return the casted object.
      */
-    public static <T> T unsafeCast(final Class<T> type, final Object object) {
+    @NotNull
+    public static <T> T unsafeCast(@NotNull final Class<T> type, @NotNull final Object object) {
         return type.cast(object);
     }
 
     /**
-     * Безопасный каст переданного объекта в требуемый тип.
+     * Safe cast an object to a type.
      *
-     * @param object объект который надо скастить.
-     * @param type   тип в который хотим скастить объект.
-     * @return объект скастенный в нужный тип либо null если он не подходит по типу.
+     * @param object the object.
+     * @param type the target type.
+     * @return the casted object or null.
      */
-    public static <T> T cast(final Class<T> type, final Object object) {
+    @Nullable
+    public static <T> T cast(@NotNull final Class<T> type, @NotNull final Object object) {
         return type.isInstance(object) ? type.cast(object) : null;
     }
 

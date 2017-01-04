@@ -1,225 +1,228 @@
 package rlib.logging;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Интерфейс для реализации логгера.
+ * The interface to implement a logger.
  *
  * @author JavaSaBr
  */
 public interface Logger {
 
     /**
-     * Вывод отладочного сообщение.
+     * Print a debug message.
      *
-     * @param cs      класс объекта, посылающего сообщение.
-     * @param message содержание сообщения.
+     * @param cs      the class of a sender.
+     * @param message the message.
      */
-    public void debug(Class<?> cs, String message);
+    void debug(@NotNull Class<?> cs, @NotNull String message);
 
     /**
-     * Вывод отладочного сообщение.
+     * Print a debug message.
      *
-     * @param owner   объект, посылающий сообщение .
-     * @param message содержание сообщения.
+     * @param owner   the owner of the message.
+     * @param message the message.
      */
-    public void debug(Object owner, String message);
+    void debug(@NotNull Object owner, @NotNull String message);
 
     /**
-     * Вывод отладочного сообщение.
+     * Print a debug message.
      *
-     * @param message содержание сообщения.
+     * @param message the message.
      */
-    public void debug(String message);
+    void debug(@NotNull String message);
 
     /**
-     * Вывод отладочного сообщение.
+     * Print a debug message.
      *
-     * @param name    имя объекта, посылающего сообщение.
-     * @param message содержание сообщения.
+     * @param name    the name of a sender.
+     * @param message the message.
      */
-    public void debug(String name, String message);
+    void debug(@NotNull String name, @NotNull String message);
 
     /**
-     * Вывод критического сообщение.
+     * Print an error message.
      *
-     * @param cs      класс объекта, посылающего сообщение.
-     * @param message содержание сообщения.
+     * @param cs      the class of a sender.
+     * @param message the message.
      */
-    public void error(Class<?> cs, String message);
+    void error(@NotNull Class<?> cs, @NotNull String message);
 
     /**
-     * Вывод критического эксепшена.
+     * Print an error message.
      *
-     * @param cs        класс объекта, посылающего сообщение.
-     * @param exception сам эксепшен.
+     * @param cs        the class of a sender.
+     * @param exception the exception.
      */
-    public void error(Class<?> cs, Throwable exception);
+    void error(@NotNull Class<?> cs, @NotNull Throwable exception);
 
     /**
-     * Вывод критического сообщение.
+     * Print an error message.
      *
-     * @param owner   объект, посылающий сообщение.
-     * @param message содержание сообщения.
+     * @param owner   the owner of the message.
+     * @param message the message.
      */
-    public void error(Object owner, String message);
+    void error(@NotNull Object owner, @NotNull String message);
 
     /**
-     * Вывод критического эксепшена.
+     * Print an error message.
      *
-     * @param owner     объект, посылающий эксепшен.
-     * @param exception сам эксепшен.
+     * @param owner     the owner of the message.
+     * @param exception the exception.
      */
-    public void error(Object owner, Throwable exception);
+    void error(@NotNull Object owner, @NotNull Throwable exception);
 
     /**
-     * Вывод критического сообщение.
+     * Print an error message.
      *
-     * @param message содержание сообщения.
+     * @param message the message.
      */
-    public void error(String message);
+    void error(@NotNull String message);
 
     /**
-     * Вывод критического сообщение.
+     * Print an error message.
      *
-     * @param name    имя объекта, посылающего сообщение.
-     * @param message содержание сообщения.
+     * @param name    the name of a sender.
+     * @param message the message.
      */
-    public void error(String name, String message);
+    void error(@NotNull String name, @NotNull String message);
 
     /**
-     * Вывод критического эксепшена.
+     * Print an error message.
      *
-     * @param name      имя объекта, посылающего сообщение.
-     * @param exception сам эксепшен.
+     * @param name      the name of a sender.
+     * @param exception the exception.
      */
-    public void error(String name, Throwable exception);
+    void error(@NotNull String name, @NotNull Throwable exception);
 
     /**
-     * Вывод критического эксепшена.
+     * Print an error message.
      *
-     * @param exception сам эксепшен.
+     * @param exception the exception.
      */
-    public void error(Throwable exception);
+    void error(@NotNull Throwable exception);
 
     /**
-     * @return имя логера.
+     * @return the logger name.
      */
-    public String getName();
+    @NotNull
+    String getName();
 
     /**
-     * @param name имя логера.
+     * @param name the logger name.
      */
-    public void setName(String name);
+    void setName(@NotNull String name);
 
     /**
-     * Вывод информативного сообщение.
+     * Print an information message.
      *
-     * @param cs      класс объекта, посылающего сообщение.
-     * @param message содержание сообщения.
+     * @param cs      the class of a sender.
+     * @param message the message.
      */
-    public void info(Class<?> cs, String message);
+    void info(@NotNull Class<?> cs, @NotNull String message);
 
     /**
-     * Вывод информативного сообщение.
+     * Print an information message.
      *
-     * @param owner   объект, посылающий сообщение .
-     * @param message содержание сообщения.
+     * @param owner   the owner of the message.
+     * @param message the message.
      */
-    public void info(Object owner, String message);
+    void info(@NotNull Object owner, @NotNull String message);
 
     /**
-     * Вывод информативного сообщение.
+     * Print an information message.
      *
-     * @param message содержание сообщения.
+     * @param message the message.
      */
-    public void info(String message);
+    void info(@NotNull String message);
 
     /**
-     * Вывод информативного сообщение.
+     * Print an information message.
      *
-     * @param name    имя объекта, посылающего сообщение.
-     * @param message содержание сообщения.
+     * @param name    the name of a sender.
+     * @param message the message.
      */
-    public void info(String name, String message);
+    void info(@NotNull String name, @NotNull String message);
 
     /**
-     * @return активно ли отображения отладочных сообщений.
+     * @return true if debug is enabled.
      */
-    public boolean isEnabledDebug();
+    boolean isEnabledDebug();
 
     /**
-     * @return активно ли отображения критических сообщений.
+     * @return true if errors is enabled.
      */
-    public boolean isEnabledError();
+    boolean isEnabledError();
 
     /**
-     * @return активно ли отображения информационных сообщений.
+     * @return true if information is enabled.
      */
-    public boolean isEnabledInfo();
+    boolean isEnabledInfo();
 
     /**
-     * @return активно ли отображения важных сообщений.
+     * @return true if warnings is enabled.
      */
-    public boolean isEnabledWarning();
+    boolean isEnabledWarning();
 
     /**
-     * Вывод важного сообщение.
+     * Print a warning message.
      *
-     * @param cs      класс объекта, посылающего сообщение.
-     * @param message содержание сообщения.
+     * @param cs      the class of a sender.
+     * @param message the message.
      */
-    public void warning(Class<?> cs, String message);
+    void warning(@NotNull Class<?> cs, @NotNull String message);
 
     /**
-     * Вывод важного эксепшена.
+     * Print a warning message.
      *
-     * @param cs        класс объекта, посылающего сообщение.
-     * @param exception сам эксепшен.
+     * @param cs        the class of a sender.
+     * @param exception the exception.
      */
-    public void warning(Class<?> cs, Throwable exception);
+    void warning(@NotNull Class<?> cs, @NotNull Throwable exception);
 
     /**
-     * Вывод важного сообщение.
+     * Print a warning message.
      *
-     * @param owner   объект, посылающий сообщение.
-     * @param message содержание сообщения.
+     * @param owner   the owner of the message.
+     * @param message the message.
      */
-    public void warning(Object owner, String message);
+    void warning(@NotNull Object owner, @NotNull String message);
 
     /**
-     * Вывод важного эксепшена.
+     * Print a warning message.
      *
-     * @param owner     объект, посылающий эксепшен.
-     * @param exception сам эксепшен.
+     * @param owner     the owner of the message,
+     * @param exception the exception.
      */
-    public void warning(Object owner, Throwable exception);
+    void warning(@NotNull Object owner, @NotNull Throwable exception);
 
     /**
-     * Вывод важного сообщение.
+     * Print a warning message.
      *
-     * @param message содержание сообщения.
+     * @param message the message.
      */
-    public void warning(String message);
+    void warning(@NotNull String message);
 
     /**
-     * Вывод важного сообщение.
+     * Print a warning message.
      *
-     * @param name    имя объекта, посылающего сообщение.
-     * @param message содержание сообщения.
+     * @param name    the name of a sender.
+     * @param message the message.
      */
-    public void warning(String name, String message);
+    void warning(@NotNull String name, @NotNull String message);
 
     /**
-     * Вывод важного эксепшена.
+     * Print a warning message.
      *
-     * @param name      имя объекта, посылающего сообщение.
-     * @param exception сам эксепшен.
+     * @param name      the name of a sender.
+     * @param exception the exception.
      */
-    public void warning(String name, Throwable exception);
+    void warning(@NotNull String name, @NotNull Throwable exception);
 
     /**
-     * Вывод важного эксепшена.
+     * Print a warning message.
      *
-     * @param exception сам эксепшен.
+     * @param exception the exception.
      */
-    public void warning(Throwable exception);
+    void warning(@NotNull Throwable exception);
 }

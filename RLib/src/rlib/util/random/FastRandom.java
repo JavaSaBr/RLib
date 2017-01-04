@@ -1,5 +1,7 @@
 package rlib.util.random;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Реализация быстрого рандоминайзера на основе псевдорандом генератора.
  *
@@ -17,7 +19,7 @@ public final class FastRandom implements Random {
     }
 
     @Override
-    public void byteArray(final byte[] array, final int offset, int length) {
+    public void byteArray(@NotNull final byte[] array, final int offset, int length) {
 
         length += offset;
 

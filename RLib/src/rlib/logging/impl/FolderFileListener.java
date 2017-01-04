@@ -1,5 +1,7 @@
 package rlib.logging.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
@@ -11,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import rlib.logging.LoggerListener;
 
 /**
- * Реализация слушателя логирования с записью в создаваемый файл в указанной папке.
+ * The implementation of a logger listener to save log to files in a directory.
  *
  * @author JavaSaBr
  */
@@ -20,16 +22,17 @@ public class FolderFileListener implements LoggerListener {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyy-MM-dd_HH-mm-ss");
 
     /**
-     * Ссылка на папку, где нужно создать фаил для лога.
+     * The folder with log files.
      */
+    @NotNull
     private final Path folder;
 
     /**
-     * Записчик лога в фаил.
+     * The current writer.
      */
     private Writer writer;
 
-    public FolderFileListener(final Path folder) {
+    public FolderFileListener(@NotNull final Path folder) {
 
         if (!Files.isDirectory(folder)) {
             throw new IllegalArgumentException("file is not directory.");
@@ -48,8 +51,11 @@ public class FolderFileListener implements LoggerListener {
     }
 
     /**
-     * @return записчик в фаил.
+     * Get or create a writer.
+     *
+     * @return the writer.
      */
+    @NotNull
     public Writer getWriter() throws IOException {
 
         if (writer == null) {
@@ -64,7 +70,7 @@ public class FolderFileListener implements LoggerListener {
     }
 
     @Override
-    public void println(final String text) {
+    public void println(@NotNull final String text) {
         try {
             final Writer writer = getWriter();
             writer.append(text);

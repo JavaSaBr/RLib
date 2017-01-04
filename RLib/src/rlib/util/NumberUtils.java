@@ -40,7 +40,9 @@ public final class NumberUtils {
      * Конвектирование байтов в int.
      */
     public static long makeLong(final byte[] bytes) {
-        return ((long) bytes[7] & 0xFF) << 56 | ((long) bytes[6] & 0xFF) << 48 | ((long) bytes[5] & 0xFF) << 40 | ((long) bytes[4] & 0xFF) << 32 | ((long) bytes[3] & 0xFF) << 24 | ((long) bytes[2] & 0xFF) << 16 | ((long) bytes[1] & 0xFF) << 8 | (long) bytes[0] & 0xFF;
+        return ((long) bytes[7] & 0xFF) << 56 | ((long) bytes[6] & 0xFF) << 48 | ((long) bytes[5] & 0xFF) << 40 |
+                ((long) bytes[4] & 0xFF) << 32 | ((long) bytes[3] & 0xFF) << 24 | ((long) bytes[2] & 0xFF) << 16 |
+                ((long) bytes[1] & 0xFF) << 8 | (long) bytes[0] & 0xFF;
     }
 
     public static boolean equals(float first, float second) {

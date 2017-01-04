@@ -6,6 +6,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$/RLib">
       <sourceFolder url="file://$MODULE_DIR$/RLib/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/RLib/test-src" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

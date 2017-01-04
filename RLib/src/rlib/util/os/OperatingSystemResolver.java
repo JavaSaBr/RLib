@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * Реализация класса для определения информации об текущей ОС.
+ * THe resolver of OS information.
  *
  * @author JavaSaBr
  */

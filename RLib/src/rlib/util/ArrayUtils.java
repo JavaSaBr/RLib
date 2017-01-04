@@ -30,30 +30,43 @@ import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
 
 /**
- * The list of methods for working with arrays.
+ * The class with utility methods.
  *
  * @author JavaSaBr
  */
 public final class ArrayUtils {
 
+    @NotNull
     public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
+    @NotNull
     public static final Enum[] EMPTY_ENUM_ARRAY = new Enum[0];
 
+    @NotNull
     public static final int[] EMPTY_INT_ARRAY = new int[0];
+
+    @NotNull
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+
+    @NotNull
     public static final short[] EMPTY_SHORT_ARRAY = new short[0];
+
+    @NotNull
     public static final long[] EMPTY_LONG_ARRAY = new long[0];
+
+    @NotNull
     public static final char[] EMPTY_CHAR_ARRAY = new char[0];
 
     /**
-     * Добавляет элемент в массив с расширением массива на +1.
+     * Add an element to an array and extend or create the array if need.
      *
-     * @param array   исходный массив.
-     * @param element добавляемый элемент.
-     * @param type    тип массива.
-     * @return новый массив с указанным элементом в конце.
+     * @param array   the array.
+     * @param element the element.
+     * @param type    the type of array.
+     * @return the result array with added element.
      */
-    public static <T> T[] addToArray(T[] array, final T element, final Class<T> type) {
+    @NotNull
+    public static <T> T[] addToArray(@Nullable T[] array, @NotNull final T element, @NotNull final Class<T> type) {
 
         if (array == null) {
             array = create(type, 1);
@@ -70,27 +83,28 @@ public final class ArrayUtils {
     }
 
     /**
-     * Зануление всех элементов массива.
+     * Clear all elements of an array.
      *
-     * @param array массив, элементы которого нужно занулить.
+     * @param array the array.
      */
-    public static void clear(final Object[] array) {
+    public static void clear(@NotNull final Object[] array) {
         for (int i = 0, length = array.length; i < length; i++) {
             array[i] = null;
         }
     }
 
     /**
-     * Совместить 2 массива в один.
+     * Combine two arrays.
      *
-     * @param base  исходный массив.
-     * @param added добавочный массив.
-     * @return новый общий массив.
+     * @param base  the source array.
+     * @param added the add array.
+     * @return the combined array.
      */
-    public static int[] combine(final int[] base, final int[] added) {
+    @NotNull
+    public static int[] combine(@Nullable final int[] base, @Nullable final int[] added) {
 
         if (base == null) {
-            return added;
+            return added == null? new int[0] : added;
         } else if (added == null || added.length < 1) {
             return base;
         }
@@ -106,17 +120,17 @@ public final class ArrayUtils {
     }
 
     /**
-     * Совмещение 2х масивов в 1.
+     * Combine two arrays.
      *
-     * @param base  базовый массив.
-     * @param added добавляемый массив.
-     * @param type  тип массива.
-     * @return новый массив.
+     * @param base  the source array.
+     * @param added the add array.
+     * @return the combined array.
      */
-    public static <T, E extends T> T[] combine(final T[] base, final E[] added, final Class<T> type) {
+    @NotNull
+    public static <T, E extends T> T[] combine(@Nullable final T[] base, @Nullable final E[] added, @NotNull final Class<T> type) {
 
         if (base == null) {
-            return added;
+            return added == null? create(type, 0) : added;
         } else if (added == null || added.length < 1) {
             return base;
         }
@@ -132,13 +146,13 @@ public final class ArrayUtils {
     }
 
     /**
-     * Проверка на содержания в массиве указанного значения.
+     * Check an array on contains an value.
      *
-     * @param array проверяемый массив.
-     * @param val   искомое значение.
-     * @return содержит ли массив указанное значение.
+     * @param array the array.
+     * @param val   the value.
+     * @return true of the array contains the value.
      */
-    public static boolean contains(final int[] array, final int val) {
+    public static boolean contains(@NotNull final int[] array, final int val) {
         for (final int value : array) {
             if (value == val) return true;
         }
@@ -146,13 +160,13 @@ public final class ArrayUtils {
     }
 
     /**
-     * Проверка на содержания в массиве указанного значения.
+     * Check an array on contains an object.
      *
-     * @param array  проверяемый массив.
-     * @param object искомое значение.
-     * @return содержит ли массив указанное значение.
+     * @param array the array.
+     * @param object   the object.
+     * @return true of the array contains the object.
      */
-    public static boolean contains(final Object[] array, final Object object) {
+    public static boolean contains(@NotNull final Object[] array, @Nullable final Object object) {
         for (final Object element : array) {
             if (Objects.equals(element, object)) return true;
         }

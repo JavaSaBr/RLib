@@ -1267,7 +1267,7 @@ public class VarTable {
      * Get a vector by a key.
      *
      * @param key the key.
-     * @param def the default vector..
+     * @param def the default vector.
      * @return the vector.
      */
     @NotNull

@@ -2,79 +2,82 @@ package rlib.util;
 
 import static java.lang.Math.min;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.ByteBuffer;
 
 /**
- * Класс с утильными методами для работы с буферами.
+ * The class with utility methods.
  *
  * @author JavaSaBr
  */
 public class BufferUtils {
 
     /**
-     * Переместить данные указанного буфера в другой указанный буфер.
+     * Move data and flip from a buffer to a destination.
      *
-     * @param buffer      буфер чьи данные надо перенести.
-     * @param destination буффер в который надо перенести эти данные.
+     * @param buffer      the source buffer.
+     * @param destination the destination buffer.
      */
-    public static void moveAndFlip(final ByteBuffer buffer, final ByteBuffer destination) {
+    public static void moveAndFlip(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination) {
         destination.put(buffer);
         destination.flip();
     }
 
     /**
-     * Переместить данные указанного буфера в другой указанный буфер.
+     * Move data and flip from a buffer to a destination.
      *
-     * @param buffer               буфер чьи данные надо перенести.
-     * @param destination          буффер в который надо перенести эти данные.
-     * @param needClearDestination нужно ли очищать целевой буффер перед переносом в него данных.
+     * @param buffer      the source buffer.
+     * @param destination the destination buffer.
+     * @param needClearDestination true if need to clear the destination buffer before moving.
      */
-    public static void moveAndFlip(final ByteBuffer buffer, final ByteBuffer destination, final boolean needClearDestination) {
+    public static void moveAndFlip(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination,
+                                   final boolean needClearDestination) {
         if (needClearDestination) destination.clear();
         moveAndFlip(buffer, destination);
     }
 
     /**
-     * Скопировать данные указанного буфера в другой указанный буфер.
+     * Copy data and flip from a buffer to a destination.
      *
-     * @param buffer      буфер чьи данные надо скопировать.
-     * @param destination буффер в который надо скопировать эти данные.
+     * @param buffer      the source buffer.
+     * @param destination the destination buffer.
      */
-    public static void copyAndFlip(final ByteBuffer buffer, final ByteBuffer destination) {
+    public static void copyAndFlip(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination) {
         destination.put(buffer.array(), buffer.position(), min(destination.remaining(), buffer.remaining()));
         destination.flip();
     }
 
     /**
-     * Скопировать данные указанного буфера в другой указанный буфер.
+     * Copy data from a buffer to a destination.
      *
-     * @param buffer      буфер чьи данные надо скопировать.
-     * @param destination буффер в который надо скопировать эти данные.
+     * @param buffer      the source buffer.
+     * @param destination the destination buffer.
      */
-    public static void copy(final ByteBuffer buffer, final ByteBuffer destination) {
+    public static void copy(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination) {
         destination.put(buffer.array(), buffer.position(), min(destination.remaining(), buffer.remaining()));
     }
 
     /**
-     * Скопировать данные указанного буфера в другой указанный буфер.
+     * Copy data and flip from a buffer to a destination.
      *
-     * @param buffer               буфер чьи данные надо скопировать.
-     * @param destination          буффер в который надо скопировать эти данные.
-     * @param needClearDestination нужно ли очищать целевой буффер перед копированием в него
-     *                             данных.
+     * @param buffer      the source buffer.
+     * @param destination the destination buffer.
+     * @param needClearDestination true if need to clear the destination buffer before copying.
      */
-    public static void copyAndFlip(final ByteBuffer buffer, final ByteBuffer destination, final boolean needClearDestination) {
+    public static void copyAndFlip(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination,
+                                   final boolean needClearDestination) {
         if (needClearDestination) destination.clear();
         copyAndFlip(buffer, destination);
     }
 
     /**
-     * Перемещение данных из буффера в указанный буффер.
+     * Move data from a buffer to a destination.
      *
-     * @param buffer      буффер данные которого надо перенести.
-     * @param destination целевой буффер для переноса.
+     * @param buffer      the source buffer.
+     * @param destination the destination buffer.
      */
-    public static void move(final ByteBuffer buffer, final ByteBuffer destination) {
+    public static void move(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination) {
         destination.put(buffer);
     }
 }

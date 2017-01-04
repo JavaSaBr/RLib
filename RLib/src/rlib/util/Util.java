@@ -68,12 +68,16 @@ public final class Util {
      * @param ports the ports.
      * @return true if all ports are free.
      */
-    public static boolean checkFreePorts(@NotNull final String host, @NotNull final int... ports) throws InterruptedException {
+    public static boolean checkFreePorts(@NotNull final String host, @NotNull final int... ports)
+            throws InterruptedException {
 
         for (final int port : ports) {
             try {
-                final ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
+
+                final ServerSocket serverSocket = host.equalsIgnoreCase("*") ?
+                        new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
                 serverSocket.close();
+
             } catch (final IOException e) {
                 return false;
             }
@@ -350,7 +354,7 @@ public final class Util {
     }
 
     /**
-     * Execuate a function with handling an exception.
+     * Execute a function with handling an exception.
      *
      * @param function     the function.
      * @param errorHandler the handler.

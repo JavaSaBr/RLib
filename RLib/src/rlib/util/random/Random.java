@@ -1,74 +1,76 @@
 package rlib.util.random;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Интерфейс для реализации рандоминайзера.
+ * The interface to implement a random.
  *
  * @author JavaSaBr
  */
 public interface Random {
 
     /**
-     * Заполнение массива случайными значениями.
+     * Fill an array random values.
      *
-     * @param array  заполняемый массив.
-     * @param offset отступ в массиве.
-     * @param length кол-во заполняемых байтов.
+     * @param array  the array.
+     * @param offset the offset.
+     * @param length the length.
      */
-    public void byteArray(byte[] array, int offset, int length);
+    void byteArray(@NotNull byte[] array, int offset, int length);
 
     /**
-     * Рассчет срабатывания шанса.
+     * Try to get success.
      *
-     * @param chance шанс от 0.0 до 100.0.
-     * @return сработал ли шанс.
+     * @param chance the chance from 0 to 100.
+     * @return true if the chance was successful.
      */
-    public boolean chance(float chance);
+    boolean chance(float chance);
 
     /**
-     * Рассчет срабатывания шанса.
+     * Try to get success.
      *
-     * @param chance шанс от 0 до 100.
-     * @return сработал ли шанс.
+     * @param chance the chance from 0 to 100.
+     * @return true if the chance was successful.
      */
-    public boolean chance(int chance);
+    boolean chance(int chance);
 
     /**
-     * Генерация случайного вещественного числа.
+     * Get a next random float value.
      *
-     * @return число от 0.0 до 1.0
+     * @return the next value from 0.0 to 1.0.
      */
-    public float nextFloat();
+    float nextFloat();
 
     /**
-     * Генерация случайного целого числа.
+     * Get a next random int value.
      *
-     * @return число от -2.5ккк до 2.5ккк
+     * @return the next value from int_min to int_max.
      */
-    public int nextInt();
+    int nextInt();
 
     /**
-     * Возвращает случайное число [0, max].
+     * Get a next random int value.
      *
-     * @param max максимальное число.
-     * @return случайное число [0, max]
+     * @param max the max value.
+     * @return the next value [0, max].
      */
-    public int nextInt(int max);
+    int nextInt(int max);
 
     /**
-     * Возвращает случайное число [min, max].
+     * Get a next random int value.
      *
-     * @param min минимальное число.
-     * @param max максимальное число.
-     * @return случайное число [min, max]
+     * @param max the max value.
+     * @param min the min value.
+     * @return the next value [min, max].
      */
-    public int nextInt(int min, int max);
+    int nextInt(int min, int max);
 
     /**
-     * Возвращает случайное число [min, max].
+     * Get a next random long value.
      *
-     * @param min минимальное число.
-     * @param max максимальное число.
-     * @return случайное число [min, max]
+     * @param max the max value.
+     * @param min the min value.
+     * @return the next value [min, max].
      */
-    public long nextLong(long min, long max);
+    long nextLong(long min, long max);
 }

@@ -30,7 +30,7 @@ import rlib.util.pools.Reusable;
 public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusable {
 
     @Override
-    public default void forEach(final Consumer<? super E> consumer) {
+    default void forEach(final Consumer<? super E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             consumer.accept(node.getItem());
         }
@@ -42,7 +42,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param predicate фильтр элементов.
      * @param consumer  функция для обработки элементов.
      */
-    public default void forEach(final Predicate<E> predicate, final Consumer<? super E> consumer) {
+    default void forEach(final Predicate<E> predicate, final Consumer<? super E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             final E item = node.getItem();
             if (predicate.test(item)) consumer.accept(item);
@@ -55,7 +55,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param argument дополнительный аргумент.
      * @param consumer функция для обработки элементов.
      */
-    public default <T> void forEach(final T argument, final BiConsumer<T, E> consumer) {
+    default <T> void forEach(final T argument, final BiConsumer<T, E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             consumer.accept(argument, node.getItem());
         }
@@ -68,7 +68,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param predicate фильтр элементов.
      * @param consumer  функция для обработки элементов.
      */
-    public default <T> void forEach(final T argument, final BiPredicate<E, T> predicate, final BiConsumer<T, E> consumer) {
+    default <T> void forEach(final T argument, final BiPredicate<E, T> predicate, final BiConsumer<T, E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             final E item = node.getItem();
             if (predicate.test(item, argument)) consumer.accept(argument, item);
@@ -83,7 +83,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param predicate фильтр элементов.
      * @param consumer  функция для обработки элементов.
      */
-    public default <F, S> void forEach(final F first, final S second, final TriplePredicate<E, F, S> predicate, final TripleConsumer<F, S, E> consumer) {
+    default <F, S> void forEach(final F first, final S second, final TriplePredicate<E, F, S> predicate, final TripleConsumer<F, S, E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             final E item = node.getItem();
             if (predicate.test(item, first, second)) consumer.accept(first, second, item);
@@ -97,7 +97,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param second   второй дополнительный аргумент.
      * @param consumer функция для обработки элементов.
      */
-    public default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
+    default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             consumer.accept(first, second, node.getItem());
         }
@@ -110,7 +110,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param second   второй дополнительный аргумент.
      * @param consumer функция для обработки элементов.
      */
-    public default <F> void forEach(final long first, final F second, final LongBiObjectConsumer<F, E> consumer) {
+    default <F> void forEach(final long first, final F second, final LongBiObjectConsumer<F, E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             consumer.accept(first, second, node.getItem());
         }
@@ -121,7 +121,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      *
      * @param function применяемая функция.
      */
-    public default void apply(final Function<? super E, ? extends E> function) {
+    default void apply(final Function<? super E, ? extends E> function) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             node.setItem(function.apply(node.getItem()));
         }
@@ -133,28 +133,28 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param index номер в списке.
      * @return искомый элемент.
      */
-    public E get(int index);
+    E get(int index);
 
     /**
      * @return первый узел списка.
      */
-    public Node<E> getFirstNode();
+    Node<E> getFirstNode();
 
     /**
      * @return последний узел списка.
      */
-    public Node<E> getLastNode();
+    Node<E> getLastNode();
 
     /**
      * @param object интересуемый объект.
      * @return номер его в списке.
      */
-    public int indexOf(Object object);
+    int indexOf(Object object);
 
     /**
      * Returns the (non-null) Node at the specified element index.
      */
-    public default Node<E> node(int index) {
+    default Node<E> node(int index) {
 
         final int size = size();
 
@@ -183,13 +183,13 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
     /**
      * Блокировка изменения массива на время чтения его.
      */
-    public default void readLock() {
+    default void readLock() {
     }
 
     /**
      * Разблокировка изменения массива.
      */
-    public default void readUnlock() {
+    default void readUnlock() {
     }
 
     /**
@@ -198,7 +198,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param index индекс элемента.
      * @return удаленный элемент.
      */
-    public default E remove(int index) {
+    default E remove(int index) {
         return unlink(node(index));
     }
 
@@ -207,7 +207,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      *
      * @return первый элемент в очереди.
      */
-    public E take();
+    E take();
 
     /**
      * Удаление узла в списке.
@@ -215,17 +215,17 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param node удаляемый узел.
      * @return удаленный элемент из узла.
      */
-    public E unlink(Node<E> node);
+    E unlink(Node<E> node);
 
     /**
      * Блокировка чтений для изменения массива.
      */
-    public default void writeLock() {
+    default void writeLock() {
     }
 
     /**
      * Разблокировка чтения массива.
      */
-    public default void writeUnlock() {
+    default void writeUnlock() {
     }
 }

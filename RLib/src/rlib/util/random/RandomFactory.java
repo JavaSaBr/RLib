@@ -1,24 +1,17 @@
 package rlib.util.random;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Фарика рандоминайзеров.
+ * The factory of randoms implementations.
  *
  * @author JavaSaBr
  */
 public final class RandomFactory {
 
-    /**
-     * @return создание быстрого псевдо генератора.
-     */
+    @NotNull
     public static Random newFastRandom() {
         return new FastRandom();
-    }
-
-    /**
-     * @return создание медленного реалистичного генератора.
-     */
-    public static Random newRealRandom() {
-        return new RealRandom();
     }
 
     private RandomFactory() {

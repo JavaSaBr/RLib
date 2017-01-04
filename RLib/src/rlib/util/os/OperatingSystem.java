@@ -1,29 +1,32 @@
 package rlib.util.os;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
- * Класс для описание ОС.
+ * THe class with description of an Operation System.
  *
  * @author JavaSaBr
  */
 public class OperatingSystem {
 
     /**
-     * Название ОС.
+     * The name.
      */
     private String name;
 
     /**
-     * Версия ОС.
+     * The version.
      */
     private String version;
 
     /**
-     * Архитектура ОС.
+     * The arch.
      */
     private String arch;
 
     /**
-     * Название дистрибутива ОС.
+     * The distribution.
      */
     private String distribution;
 
@@ -33,58 +36,62 @@ public class OperatingSystem {
     }
 
     /**
-     * @return архитектура ОС.
+     * @return the arch.
      */
+    @NotNull
     public String getArch() {
         return arch;
     }
 
     /**
-     * @param arch архитектура ОС.
+     * @param arch the arch.
      */
-    public void setArch(final String arch) {
+    public void setArch(@NotNull final String arch) {
         this.arch = arch;
     }
 
     /**
-     * @return название дистрибутива ОС.
+     * @return the distribution.
      */
+    @Nullable
     public String getDistribution() {
         return distribution;
     }
 
     /**
-     * @param platform название дистрибутива ОС.
+     * @param distribution the distribution.
      */
-    public void setDistribution(final String platform) {
-        this.distribution = platform;
+    public void setDistribution(@Nullable final String distribution) {
+        this.distribution = distribution;
     }
 
     /**
-     * @return название ОС.
+     * @return the name.
      */
+    @NotNull
     public String getName() {
         return name;
     }
 
     /**
-     * @param name название ОС.
+     * @param name the name.
      */
-    public void setName(final String name) {
+    public void setName(@NotNull final String name) {
         this.name = name;
     }
 
     /**
-     * @return версия ОС.
+     * @return the version.
      */
+    @NotNull
     public String getVersion() {
         return version;
     }
 
     /**
-     * @param version версия ОС.
+     * @param version the version.
      */
-    public void setVersion(final String version) {
+    public void setVersion(@NotNull final String version) {
         this.version = version;
     }
 

@@ -1,5 +1,7 @@
 package rlib.logging;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The list of logging levels.
  *
@@ -16,6 +18,7 @@ public enum LoggerLevel {
     /**
      * The level title.
      */
+    @NotNull
     private String title;
 
     /**
@@ -36,6 +39,7 @@ public enum LoggerLevel {
     /**
      * @return the level title.
      */
+    @NotNull
     public String getTitle() {
         return title;
     }
@@ -43,6 +47,7 @@ public enum LoggerLevel {
     /**
      * @param title the level title.
      */
+    @NotNull
     public void setTitle(final String title) {
         this.title = title;
     }

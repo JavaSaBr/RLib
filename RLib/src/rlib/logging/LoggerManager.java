@@ -140,6 +140,7 @@ public class LoggerManager {
     /**
      * @return the list of writers.
      */
+    @NotNull
     private static ConcurrentArray<Writer> getWriters() {
         return WRITERS;
     }
@@ -149,7 +150,7 @@ public class LoggerManager {
      *
      * @param listener the listener.
      */
-    public static void removeListener(final LoggerListener listener) {
+    public static void removeListener(@NotNull final LoggerListener listener) {
         ArrayUtils.runInWriteLock(LISTENERS, listener, Array::slowRemove);
     }
 
@@ -158,7 +159,7 @@ public class LoggerManager {
      *
      * @param writer the writer.
      */
-    public static void removeWriter(final Writer writer) {
+    public static void removeWriter(@NotNull final Writer writer) {
         ArrayUtils.runInWriteLock(WRITERS, writer, Array::slowRemove);
     }
 
@@ -169,7 +170,7 @@ public class LoggerManager {
      * @param name    the name of owner.
      * @param message the message.
      */
-    public static void write(final LoggerLevel level, final String name, final String message) {
+    public static void write(@NotNull final LoggerLevel level, @NotNull final String name, @NotNull final String message) {
         if (!level.isEnabled()) return;
 
         SYNC.lock();
@@ -196,7 +197,7 @@ public class LoggerManager {
         }
     }
 
-    private static void append(final Writer writer, final String toWrite) {
+    private static void append(@NotNull final Writer writer, @NotNull final String toWrite) {
         try {
             writer.append(toWrite);
             writer.append('\n');

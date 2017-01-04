@@ -1,5 +1,7 @@
 package rlib.manager;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
@@ -10,7 +12,7 @@ import rlib.util.linkedlist.LinkedList;
 import rlib.util.linkedlist.LinkedListFactory;
 
 /**
- * Инициализатор синглетонов в указанном порядке.
+ * The manager to initialize singletons in some order.
  *
  * @author JavaSaBr
  */
@@ -18,12 +20,14 @@ public final class InitializeManager {
 
     private static final Logger LOGGER = LoggerManager.getLogger(InitializeManager.class);
 
+    @NotNull
     private static final String METHOD_NAME = "getInstance";
 
+    @NotNull
     private static final LinkedList<Class<?>> QUEUE = LinkedListFactory.newLinkedList(Class.class);
 
     /**
-     * Инициализация зарегестрированных классов.
+     * Initialize.
      */
     public synchronized static void initialize() {
 
@@ -51,18 +55,25 @@ public final class InitializeManager {
     }
 
     /**
-     * Регистрация класса, имеющего статический метод getInstance().
+     * Add a class with static method names 'getInstance'.
      */
-    public synchronized static void register(final Class<?> cs) {
+    public static synchronized void register(@NotNull final Class<?> cs) {
+
+        try {
+            cs.getMethod(METHOD_NAME);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+
         QUEUE.add(cs);
     }
 
     /**
-     * Проверка валидности очереди инициализации класса.
+     * Valid an order of a class.
      *
-     * @param cs проверяемый класс.
+     * @param cs the class.
      */
-    public static void valid(final Class<?> cs) {
+    public static synchronized void valid(@NotNull final Class<?> cs) {
         if (QUEUE.getFirst() != cs) {
             Thread.dumpStack();
         }

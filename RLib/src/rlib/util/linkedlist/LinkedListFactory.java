@@ -1,32 +1,22 @@
 package rlib.util.linkedlist;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.util.linkedlist.impl.FastLinkedList;
 import rlib.util.linkedlist.impl.SortedLinkedList;
 
 /**
- * Утильный класс по работе со связанными списками.
+ * The factory of linked list implementations.
  *
  * @author JavaSaBr
  */
 public final class LinkedListFactory {
 
-    /**
-     * Создание быстрого связанного списка.
-     *
-     * @param type тип элементов в списке.
-     * @return новый связанный список.
-     */
-    public static <E> LinkedList<E> newLinkedList(final Class<?> type) {
+    public static <E> LinkedList<E> newLinkedList(@NotNull final Class<?> type) {
         return new FastLinkedList<>(type);
     }
 
-    /**
-     * Создание быстрого отсортированного списка.
-     *
-     * @param type тип элементов.
-     * @return отсортированный связанный список.
-     */
-    public static <E extends Comparable<E>> LinkedList<E> newSortedLinkedList(final Class<?> type) {
+    public static <E extends Comparable<E>> LinkedList<E> newSortedLinkedList(@NotNull final Class<?> type) {
         return new SortedLinkedList<>(type);
     }
 
