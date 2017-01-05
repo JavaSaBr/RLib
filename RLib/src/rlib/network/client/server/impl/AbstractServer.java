@@ -62,11 +62,11 @@ public abstract class AbstractServer<C extends ServerConnection, T extends Netwo
     }
 
     /**
-     * Execue a packet.
+     * Execute a packet.
      *
      * @param packet the packet.
      */
-    protected abstract void execute(RP packet);
+    protected abstract void execute(@NotNull RP packet);
 
     @NotNull
     @Override

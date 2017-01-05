@@ -18,7 +18,8 @@ import rlib.network.server.client.Client;
  *
  * @author JavaSaBr
  */
-public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends NetworkCrypt, RP extends ReadablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
+public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends NetworkCrypt, RP extends ReadablePacket,
+        SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
 
@@ -137,7 +138,6 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
     @Override
     public final void sendPacket(@NotNull final SendablePacket packet) {
         if (isClosed()) return;
-
         final C connection = getConnection();
         connection.sendPacket(packet);
     }

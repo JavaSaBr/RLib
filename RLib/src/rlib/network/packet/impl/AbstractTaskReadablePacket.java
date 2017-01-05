@@ -8,8 +8,8 @@ import rlib.concurrent.task.SimpleTask;
 import rlib.util.pools.ReusablePool;
 
 /**
- * The base implementation of the {@link AbstractReadablePacket} with implementing {@link
- * SimpleTask}  for executing in the {@link TaskExecutor}.
+ * The base implementation of the {@link AbstractReadablePacket} with implementing {@link SimpleTask}  for executing in
+ * the {@link TaskExecutor}.
  *
  * @author JavaSaBr
  */
@@ -40,7 +40,7 @@ public abstract class AbstractTaskReadablePacket<C, L> extends AbstractReadableP
     /**
      * The method for implementing of executing of this packet.
      */
-    protected abstract void executeImpl(L local, long currentTime);
+    protected abstract void executeImpl(@NotNull L local, long currentTime);
 
     /**
      * @return true if this packet hast to execute in the same thread.

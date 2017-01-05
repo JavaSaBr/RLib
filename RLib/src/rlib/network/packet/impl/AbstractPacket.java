@@ -19,23 +19,29 @@ public abstract class AbstractPacket<C> implements Packet {
     protected static final Logger LOGGER = LoggerManager.getLogger(Packet.class);
 
     /**
-     * The owner of this packet.
-     */
-    protected volatile C owner;
-
-    /**
      * The name of this packet.
      */
-    protected volatile String name;
+    @NotNull
+    protected final String name;
+
+    /**
+     * The owner of this packet.
+     */
+    @Nullable
+    protected volatile C owner;
+
+    public AbstractPacket() {
+        this.name = getNameImpl();
+    }
+
+    @NotNull
+    protected String getNameImpl() {
+        return getClass().getName();
+    }
 
     @NotNull
     @Override
     public final String getName() {
-
-        if (name == null) {
-            name = getClass().getSimpleName();
-        }
-
         return name;
     }
 
@@ -46,8 +52,8 @@ public abstract class AbstractPacket<C> implements Packet {
     }
 
     @Override
-    public void setOwner(@NotNull final Object owner) {
-        this.owner = unsafeCast(owner);
+    public void setOwner(@Nullable final Object owner) {
+        this.owner = owner == null ? null : unsafeCast(owner);
     }
 
     @Override

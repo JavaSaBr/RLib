@@ -16,7 +16,7 @@ import rlib.network.packet.SendablePacket;
 public interface Server<C extends ServerConnection, RP extends ReadablePacket, SP extends SendablePacket> {
 
     /**
-     * Close.
+     * Close this server.
      */
     void close();
 
@@ -43,6 +43,7 @@ public interface Server<C extends ServerConnection, RP extends ReadablePacket, S
      *
      * @return the connection.
      */
+    @NotNull
     C getConnection();
 
     /**

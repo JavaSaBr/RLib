@@ -18,7 +18,7 @@ import rlib.network.packet.SendablePacket;
 public interface Client<A, P, C extends AsyncConnection, RP extends ReadablePacket, SP extends SendablePacket> {
 
     /**
-     * Close.
+     * Close this client.
      */
     void close();
 

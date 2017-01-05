@@ -45,9 +45,13 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
     @NotNull
     private final AcceptHandler acceptHandler;
 
-    public DefaultServerNetwork(@NotNull final NetworkConfig config, @NotNull final AcceptHandler acceptHandler) throws IOException {
+    public DefaultServerNetwork(@NotNull final NetworkConfig config, @NotNull final AcceptHandler acceptHandler)
+            throws IOException {
         super(config);
-        this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
+
+        this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(),
+                new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
+
         this.channel = AsynchronousServerSocketChannel.open(group);
         this.acceptHandler = acceptHandler;
     }

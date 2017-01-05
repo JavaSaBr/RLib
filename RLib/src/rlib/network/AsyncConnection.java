@@ -26,9 +26,9 @@ public interface AsyncConnection<R, S> extends Lockable {
     /**
      * Set time of last activity.
      *
-     * @param lastActive the time of last activity.
+     * @param lastActivity the time of last activity.
      */
-    void setLastActivity(long lastActive);
+    void setLastActivity(long lastActivity);
 
     /**
      * @return true if this connection is closed.

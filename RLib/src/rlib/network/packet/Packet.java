@@ -27,5 +27,5 @@ public interface Packet {
      *
      * @param owner the new owner of this packet.
      */
-    void setOwner(@NotNull Object owner);
+    void setOwner(@Nullable Object owner);
 }

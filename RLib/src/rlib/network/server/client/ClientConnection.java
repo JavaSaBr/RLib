@@ -11,9 +11,12 @@ import rlib.network.packet.SendablePacket;
  *
  * @author JavaSaBr
  */
-public interface ClientConnection<T extends Client, R extends ReadablePacket, S extends SendablePacket> extends AsyncConnection<R, S> {
+public interface ClientConnection<T extends Client, R extends ReadablePacket, S extends SendablePacket>
+        extends AsyncConnection<R, S> {
 
     /**
+     * Get a client of this connection.
+     *
      * @return the client.
      */
     @Nullable

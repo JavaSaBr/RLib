@@ -42,7 +42,7 @@ public abstract class AcceptHandler implements CompletionHandler<AsynchronousSoc
     /**
      * Handle an exception.
      *
-     * @param exc the exception.
+     * @param e the exception.
      */
-    protected abstract void onFailed(@NotNull Throwable exc);
+    protected abstract void onFailed(@NotNull Throwable e);
 }

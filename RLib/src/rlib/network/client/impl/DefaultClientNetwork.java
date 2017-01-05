@@ -45,6 +45,7 @@ public final class DefaultClientNetwork extends AbstractAsynchronousNetwork impl
 
         this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(),
                 new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
+
         this.connectHandler = connectHandler;
     }
 
@@ -52,10 +53,8 @@ public final class DefaultClientNetwork extends AbstractAsynchronousNetwork impl
     public void connect(@NotNull final InetSocketAddress serverAddress) {
 
         try {
-
             if (channel != null) channel.close();
             channel = AsynchronousSocketChannel.open(group);
-
         } catch (final IOException e) {
             LOGGER.warning(this, e);
         }
