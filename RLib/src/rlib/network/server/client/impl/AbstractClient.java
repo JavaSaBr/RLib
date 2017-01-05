@@ -1,50 +1,53 @@
 package rlib.network.server.client.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.AsyncConnection;
-import rlib.network.GameCrypt;
+import rlib.network.NetworkCrypt;
 import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 import rlib.network.server.client.Client;
 
 /**
- * Базовая реализация клиента для сервера.
+ * The base implementation of a client.
  *
  * @author JavaSaBr
  */
-public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends GameCrypt, RP extends ReadablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
+public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends NetworkCrypt, RP extends ReadablePacket, SP extends SendablePacket> implements Client<A, O, C, RP, SP> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(Client.class);
 
     /**
-     * Подкючение клиента к серверу
+     * The client connection.
      */
-    protected volatile C connection;
+    protected final C connection;
 
     /**
-     * Владелец подключения.
+     * The owner of this connection.
      */
     protected volatile O owner;
 
     /**
-     * Аккаунт клиента.
+     * The client account.
      */
     protected volatile A account;
 
     /**
-     * Криптор клиента.
+     * The crypt.
      */
     protected volatile T crypt;
 
     /**
-     * Закрыт ли клиент.
+     * The flag of closing this connection.
      */
     protected volatile boolean closed;
 
-    public AbstractClient(final C connection, final T crypt) {
+    public AbstractClient(@NotNull final C connection, @NotNull final T crypt) {
         this.connection = connection;
         this.crypt = crypt;
     }
@@ -53,63 +56,63 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
     public void close() {
 
         final C connection = getConnection();
-
-        if (connection != null) {
-            connection.close();
-        }
+        connection.close();
 
         setClosed(true);
     }
 
     @Override
-    public void decrypt(final ByteBuffer data, final int offset, final int length) {
+    public void decrypt(@NotNull final ByteBuffer data, final int offset, final int length) {
         crypt.decrypt(data.array(), offset, length);
     }
 
     @Override
-    public void encrypt(final ByteBuffer data, final int offset, final int length) {
+    public void encrypt(@NotNull final ByteBuffer data, final int offset, final int length) {
         crypt.encrypt(data.array(), offset, length);
     }
 
     /**
-     * @param packet выполняемый пакет.
+     * @param packet the packet.
      */
-    protected abstract void execute(RP packet);
+    protected abstract void execute(@NotNull RP packet);
 
+    @Nullable
     @Override
     public final A getAccount() {
         return account;
     }
 
     @Override
-    public final void setAccount(final A account) {
+    public final void setAccount(@Nullable final A account) {
         this.account = account;
     }
 
+    @NotNull
     @Override
     public final C getConnection() {
         return connection;
     }
 
+    @Nullable
     @Override
     public final O getOwner() {
         return owner;
     }
 
     @Override
-    public final void setOwner(final O owner) {
+    public final void setOwner(@Nullable final O owner) {
         this.owner = owner;
     }
 
     /**
-     * @return закрыт ли клиент.
+     * @return true if this client is closed.
      */
     public boolean isClosed() {
         return closed;
     }
 
     /**
-     * @param closed закрыт ли клиент.
+     * @param closed true if this client is closed.
      */
     protected void setClosed(final boolean closed) {
         this.closed = closed;
@@ -117,13 +120,11 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
 
     @Override
     public final boolean isConnected() {
-        return !isClosed() && connection != null && !connection.isClosed();
+        return !isClosed() && !connection.isClosed();
     }
 
     @Override
-    public final void readPacket(final RP packet, final ByteBuffer buffer) {
-        if (packet == null) return;
-
+    public final void readPacket(@NotNull final RP packet, @NotNull final ByteBuffer buffer) {
         packet.setOwner(this);
         packet.setBuffer(buffer);
         try {
@@ -134,33 +135,16 @@ public abstract class AbstractClient<A, O, C extends AsyncConnection, T extends 
     }
 
     @Override
-    public final void sendPacket(final SendablePacket packet) {
+    public final void sendPacket(@NotNull final SendablePacket packet) {
         if (isClosed()) return;
 
         final C connection = getConnection();
-        if (connection != null) connection.sendPacket(packet);
+        connection.sendPacket(packet);
     }
 
     @Override
     public void successfulConnection() {
         LOGGER.info(this, getHostAddress() + " successful connection.");
-    }
-
-    /**
-     * Смена сетевого подключения для этого клиента.
-     *
-     * @param connection сетевое подключение.
-     */
-    protected void switchTo(final C connection) {
-
-        final C current = getConnection();
-        if (current == connection) return;
-
-        if (!current.isClosed()) {
-            current.close();
-        }
-
-        this.connection = connection;
     }
 
     @Override

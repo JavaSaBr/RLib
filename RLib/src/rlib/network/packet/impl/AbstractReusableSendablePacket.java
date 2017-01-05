@@ -8,8 +8,8 @@ import rlib.concurrent.atomic.AtomicInteger;
 import rlib.util.pools.Reusable;
 
 /**
- * The reusable implementation of the {@link AbstractSendablePacket} using the counter for
- * controlling the life cycle of this packet.
+ * The reusable implementation of the {@link AbstractSendablePacket} using the counter for controlling the life cycle of
+ * this packet.
  *
  * @author JavaSaBr
  */
@@ -18,6 +18,7 @@ public abstract class AbstractReusableSendablePacket<C> extends AbstractSendable
     /**
      * Counter with the number of pending sendings.
      */
+    @NotNull
     protected final AtomicInteger counter;
 
     public AbstractReusableSendablePacket() {
@@ -39,28 +40,32 @@ public abstract class AbstractReusableSendablePacket<C> extends AbstractSendable
     protected abstract void completeImpl();
 
     /**
-     * Уменьшить кол-во отправок этого пакета на 1.
+     * Decrease sending count.
      */
     public final void decreaseSends() {
         counter.decrementAndGet();
     }
 
     /**
-     * Уменьшить кол-во отправок этого пакета на указанное кол-во.
+     * Decrease sending count.
+     *
+     * @param count the count.
      */
     public void decreaseSends(final int count) {
         counter.subAndGet(count);
     }
 
     /**
-     * Увеличить кол-во отправок этого пакета на 1.
+     * Increase sending count.
      */
     public void increaseSends() {
         counter.incrementAndGet();
     }
 
     /**
-     * Увеличить кол-во отправок этого пакета на указанное кол-во.
+     * Increase sending count.
+     *
+     * @param count the count.
      */
     public void increaseSends(final int count) {
         counter.addAndGet(count);

@@ -1,25 +1,28 @@
 package rlib.network.server.client;
 
+import org.jetbrains.annotations.Nullable;
+
 import rlib.network.AsyncConnection;
 import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
- * Интерфейс для реализации асинхронного коннекта к игровому клиенту.
+ * The interface to implement a client connection.
  *
  * @author JavaSaBr
  */
 public interface ClientConnection<T extends Client, R extends ReadablePacket, S extends SendablePacket> extends AsyncConnection<R, S> {
 
     /**
-     * @return клиент.
+     * @return the client.
      */
-    public T getClient();
+    @Nullable
+    T getClient();
 
     /**
-     * Установка клиента.
+     * The client.
      *
-     * @param client клиент.
+     * @param client the client.
      */
-    public void setClient(T client);
+    void setClient(@Nullable T client);
 }

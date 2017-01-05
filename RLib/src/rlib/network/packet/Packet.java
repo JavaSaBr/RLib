@@ -1,5 +1,8 @@
 package rlib.network.packet;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * The interface for implementing a network packet.
  *
@@ -10,17 +13,19 @@ public interface Packet {
     /**
      * @return the name of this packet.
      */
-    public String getName();
+    @NotNull
+    String getName();
 
     /**
      * @return the owner of this packet.
      */
-    public Object getOwner();
+    @Nullable
+    Object getOwner();
 
     /**
      * Sets the new owner of this packet.
      *
      * @param owner the new owner of this packet.
      */
-    public void setOwner(Object owner);
+    void setOwner(@NotNull Object owner);
 }

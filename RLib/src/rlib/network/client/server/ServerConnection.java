@@ -1,23 +1,27 @@
 package rlib.network.client.server;
 
+import org.jetbrains.annotations.Nullable;
+
 import rlib.network.AsyncConnection;
 import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
- * Интерфейс для реализации асинхронного подключения к серверу.
+ * The interface to implement a server connection.
  *
  * @author JavaSaBr
  */
-public interface ServerConnection<T extends Server, R extends ReadablePacket, S extends SendablePacket> extends AsyncConnection<R, S> {
+public interface ServerConnection<T extends Server, R extends ReadablePacket, S extends SendablePacket>
+        extends AsyncConnection<R, S> {
 
     /**
-     * @return сервер.
+     * @return the server.
      */
-    public T getServer();
+    @Nullable
+    T getServer();
 
     /**
-     * @param server сервер.
+     * @param server the server.
      */
-    public void setServer(T server);
+    void setServer(@Nullable T server);
 }

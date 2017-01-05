@@ -1,5 +1,7 @@
 package rlib.network.packet.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,8 +10,6 @@ import java.nio.ByteBuffer;
 import rlib.network.packet.ReadablePacket;
 import rlib.util.Util;
 import rlib.util.pools.Reusable;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * The base implementation of the readable packet.
@@ -21,6 +21,7 @@ public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implem
     /**
      * The current buffer for reading.
      */
+    @Nullable
     protected volatile ByteBuffer buffer;
 
     /**
@@ -41,9 +42,7 @@ public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implem
     @NotNull
     @Override
     public ByteBuffer getBuffer() {
-        final ByteBuffer toReturn = buffer;
-        requireNonNull(toReturn);
-        return toReturn;
+        return requireNonNull(buffer);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package rlib.network.server;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -8,24 +11,24 @@ import java.nio.channels.CompletionHandler;
 import rlib.network.AsynchronousNetwork;
 
 /**
- * Интерфейс для реализации модели асинхронной серверной сети.
+ * The interface to implement a server network.
  *
  * @author JavaSaBr
  */
 public interface ServerNetwork extends AsynchronousNetwork {
 
     /**
-     * Отдать хандлер на ожидание конекта клиента.
+     * Put a handler to wait for a new connection.
      *
-     * @param attachment дополнительный объект.
-     * @param handler    обработчик.
+     * @param attachment the additional argument.
+     * @param handler    the handler.
      */
-    public <A> void accept(A attachment, CompletionHandler<AsynchronousSocketChannel, ? super A> handler);
+    <A> void accept(@Nullable A attachment, @NotNull CompletionHandler<AsynchronousSocketChannel, ? super A> handler);
 
     /**
-     * Бинд сокета под сеть.
+     * Start a server using a socket address.
      *
-     * @param address адресс сокета.
+     * @param address the socket address.
      */
-    public void bind(SocketAddress address) throws IOException;
+    void bind(@NotNull SocketAddress address) throws IOException;
 }

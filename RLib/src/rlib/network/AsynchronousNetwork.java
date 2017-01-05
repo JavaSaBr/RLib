@@ -1,36 +1,51 @@
 package rlib.network;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.ByteBuffer;
 
 /**
- * Интерфейс для реализации модели асинхронной сети.
+ * The interface to implement an asynchronous network.
  *
  * @author JavaSaBr
  */
 public interface AsynchronousNetwork {
 
     /**
-     * @return конфигурация сети.
+     * Get a config of this network.
+     *
+     * @return the config.
      */
-    public NetworkConfig getConfig();
+    @NotNull
+    NetworkConfig getConfig();
 
     /**
-     * @return получить из пула свободный буфер для чтения.
+     * Get a new read buffer to use.
+     *
+     * @return the new buffer.
      */
-    public ByteBuffer takeReadBuffer();
+    @NotNull
+    ByteBuffer takeReadBuffer();
 
     /**
-     * @return получить из пула свободный буффер для записи.
+     * Get a new write buffer to use.
+     *
+     * @return the new buffer.
      */
-    public ByteBuffer takeWriteBuffer();
+    @NotNull
+    ByteBuffer takeWriteBuffer();
 
     /**
-     * @param buffer складываем освобожденнй буффер чтения в пул.
+     * Put an old read buffer.
+     *
+     * @param buffer the old buffer.
      */
-    public void putReadBuffer(ByteBuffer buffer);
+    void putReadBuffer(@NotNull ByteBuffer buffer);
 
     /**
-     * @param buffer складываем освобожденнй буффер записи в пул.
+     * Put an old write buffer.
+     *
+     * @param buffer the old buffer.
      */
-    public void putWriteBuffer(ByteBuffer buffer);
+    void putWriteBuffer(@NotNull ByteBuffer buffer);
 }

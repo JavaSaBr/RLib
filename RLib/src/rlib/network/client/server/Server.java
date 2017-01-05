@@ -1,12 +1,14 @@
 package rlib.network.client.server;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.ByteBuffer;
 
 import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
- * Интерфейс для реализации сервера для игрового клиента.
+ * The interface to implement a server.
  *
  * @author JavaSaBr
  */
@@ -14,50 +16,52 @@ import rlib.network.packet.SendablePacket;
 public interface Server<C extends ServerConnection, RP extends ReadablePacket, SP extends SendablePacket> {
 
     /**
-     * Отключиться от сервера.
+     * Close.
      */
-    public void close();
+    void close();
 
     /**
-     * Декриптовать массив байтов.
+     * Decrypt data.
      *
-     * @param data   массив байтов.
-     * @param offset отступ от начала массива.
-     * @param length размер массива, который нужно декриптовать.
+     * @param data   the data.
+     * @param offset the offset.
+     * @param length the length.
      */
-    public void decrypt(ByteBuffer data, int offset, int length);
+    void decrypt(@NotNull ByteBuffer data, int offset, int length);
 
     /**
-     * Закриптовать массив байтов.
+     * Encrypt data.
      *
-     * @param data   массив байтов.
-     * @param offset отступ от начала массива.
-     * @param length размер массива, который нужно закриптовать.
+     * @param data   the data.
+     * @param offset the offset.
+     * @param length the length.
      */
-    public void encrypt(ByteBuffer data, int offset, int length);
+    void encrypt(@NotNull ByteBuffer data, int offset, int length);
 
     /**
-     * @return коннект к серверу.
-     */
-    public C getConnection();
-
-    /**
-     * @return на связи ли еще сервер.
-     */
-    public boolean isConnected();
-
-    /**
-     * Читаем пакет и добавляем в очередь на обработку.
+     * Get a connection to server.
      *
-     * @param packet читаемый пакет.
-     * @param buffer читаемый буффер данных.
+     * @return the connection.
      */
-    public void readPacket(RP packet, ByteBuffer buffer);
+    C getConnection();
 
     /**
-     * Отправка пакета серверу.
-     *
-     * @param packet отпраляемый пакет.
+     * @return true of this server connected.
      */
-    public void sendPacket(SP packet);
+    boolean isConnected();
+
+    /**
+     * Read and handle a packet.
+     *
+     * @param packet the packet.
+     * @param buffer the data.
+     */
+    void readPacket(@NotNull RP packet, @NotNull ByteBuffer buffer);
+
+    /**
+     * Send a packet to server.
+     *
+     * @param packet the packet.
+     */
+    void sendPacket(@NotNull SP packet);
 }

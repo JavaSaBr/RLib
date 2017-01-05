@@ -1,43 +1,49 @@
 package rlib.network;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.concurrent.lock.Lockable;
 
 /**
- * Интерфейс для реализации сетевого подключения.
+ * The interface to implement an async connection.
  *
  * @author JavaSaBr
  */
 public interface AsyncConnection<R, S> extends Lockable {
 
     /**
-     * Закрытие коннекта.
+     * Close this connection.
      */
-    public void close();
+    void close();
 
     /**
-     * @return время последней активности коннекта.
-     */
-    public long getLastActive();
-
-    /**
-     * @param lastActive время последней активности коннекта.
-     */
-    public void setLastActive(long lastActive);
-
-    /**
-     * @return закрыт ли коннект.
-     */
-    public boolean isClosed();
-
-    /**
-     * Добавить пакет в очередь на отправку.
+     * Get time of last activity.
      *
-     * @param packet отправляемый пакет.
+     * @return the time of last activity.
      */
-    public void sendPacket(S packet);
+    long getLastActivity();
 
     /**
-     * Активация ожидания чтения пакетов.
+     * Set time of last activity.
+     *
+     * @param lastActive the time of last activity.
      */
-    public void startRead();
+    void setLastActivity(long lastActive);
+
+    /**
+     * @return true if this connection is closed.
+     */
+    boolean isClosed();
+
+    /**
+     * Add a packet to queue to send.
+     *
+     * @param packet the send packet.
+     */
+    void sendPacket(@NotNull S packet);
+
+    /**
+     * Activate a read process.
+     */
+    void startRead();
 }

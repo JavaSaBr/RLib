@@ -1,10 +1,13 @@
 package rlib.network.packet.impl;
 
+import static rlib.util.ClassUtils.unsafeCast;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.packet.Packet;
-
-import static rlib.util.ClassUtils.unsafeCast;
 
 /**
  * The base implementation of the {@link Packet}.
@@ -25,6 +28,7 @@ public abstract class AbstractPacket<C> implements Packet {
      */
     protected volatile String name;
 
+    @NotNull
     @Override
     public final String getName() {
 
@@ -35,13 +39,14 @@ public abstract class AbstractPacket<C> implements Packet {
         return name;
     }
 
+    @Nullable
     @Override
     public C getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(final Object owner) {
+    public void setOwner(@NotNull final Object owner) {
         this.owner = unsafeCast(owner);
     }
 

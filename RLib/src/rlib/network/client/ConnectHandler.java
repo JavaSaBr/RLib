@@ -1,36 +1,39 @@
 package rlib.network.client;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 /**
- * Интерфейс для реализации обработчика подключения к серверу.
+ * The interface to implement a connection handler.
  *
  * @author JavaSaBr
  */
 public interface ConnectHandler extends CompletionHandler<Void, AsynchronousSocketChannel> {
 
     @Override
-    public default void completed(final Void result, final AsynchronousSocketChannel attachment) {
+    default void completed(@Nullable final Void result, @NotNull final AsynchronousSocketChannel attachment) {
         onConnect(attachment);
     }
 
     @Override
-    public default void failed(final Throwable exc, final AsynchronousSocketChannel attachment) {
+    default void failed(@NotNull final Throwable exc, @NotNull final AsynchronousSocketChannel attachment) {
         onFailed(exc);
     }
 
     /**
-     * Обработка подключения к серверу.
+     * Handle a new connection.
      *
-     * @param channel канал с сервером.
+     * @param channel the channel.
      */
-    public void onConnect(final AsynchronousSocketChannel channel);
+    void onConnect(@NotNull final AsynchronousSocketChannel channel);
 
     /**
-     * Обработка ошибки подключения к серверу.
+     * Handle an exception.
      *
-     * @param exc ошибка подключения.
+     * @param exc the exception.
      */
-    public void onFailed(final Throwable exc);
+    void onFailed(@NotNull final Throwable exc);
 }

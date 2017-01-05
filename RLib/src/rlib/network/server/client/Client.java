@@ -1,5 +1,8 @@
 package rlib.network.server.client;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 
 import rlib.network.AsyncConnection;
@@ -7,7 +10,7 @@ import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
- * Интерфейс для реализации игрового клиента в ММО играх.
+ * The interface to implement a client.
  *
  * @author JavaSaBr
  */
@@ -15,80 +18,84 @@ import rlib.network.packet.SendablePacket;
 public interface Client<A, P, C extends AsyncConnection, RP extends ReadablePacket, SP extends SendablePacket> {
 
     /**
-     * Закрыть клиент.
+     * Close.
      */
-    public void close();
+    void close();
 
     /**
-     * Декриптовать массив байтов.
+     * Decrypt data.
      *
-     * @param data   массив байтов.
-     * @param offset отступ от начала массива.
-     * @param length размер массива, который нужно декриптовать.
+     * @param data   the data.
+     * @param offset the offset.
+     * @param length the length.
      */
-    public void decrypt(ByteBuffer data, int offset, int length);
+    void decrypt(@NotNull ByteBuffer data, int offset, int length);
 
     /**
-     * Закриптовать массив байтов.
+     * Encrypt data.
      *
-     * @param data   массив байтов.
-     * @param offset отступ от начала массива.
-     * @param length размер массива, который нужно закриптовать.
+     * @param data   the data.
+     * @param offset the offset.
+     * @param length the length.
      */
-    public void encrypt(ByteBuffer data, int offset, int length);
+    void encrypt(@NotNull ByteBuffer data, int offset, int length);
 
     /**
-     * @return аккаунт этого клиента.
+     * @return the client account.
      */
-    public A getAccount();
+    @Nullable
+    A getAccount();
 
     /**
-     * @param account аккаунт клиента.
+     * @param account the client account.
      */
-    public void setAccount(A account);
+    void setAccount(@Nullable A account);
 
     /**
-     * @return коннект клиента.
+     * @return the client connection.
      */
-    public C getConnection();
+    @NotNull
+    C getConnection();
 
     /**
-     * @return адресс клиента.
+     * @return the host address.
      */
-    public String getHostAddress();
+    @NotNull
+    String getHostAddress();
 
     /**
-     * @return владелец этого клиента.
+     * @return the owner.
      */
-    public P getOwner();
+    @Nullable
+    P getOwner();
 
     /**
-     * @param owner владелец этого клиента.
+     * @param owner the owner.
      */
-    public void setOwner(P owner);
+    void setOwner(@Nullable P owner);
 
     /**
-     * @return на связи ли еще клиент.
+     * @return true if this connection is connected.
      */
-    public boolean isConnected();
+    boolean isConnected();
 
     /**
-     * Читаем пакет и добавляем в очередь на обработку.
+     * Read and handle a packet.
      *
-     * @param packet читаемый пакет.
-     * @param buffer читаемый буффер данных.
+     * @param packet the packet.
+     * @param buffer the read buffer.
      */
-    public void readPacket(RP packet, ByteBuffer buffer);
+    void readPacket(@NotNull RP packet, @NotNull ByteBuffer buffer);
 
     /**
-     * Отправка пакета клиенту.
+     * Send a packet to a client.
      *
-     * @param packet отпраляемый пакет.
+     * @param packet the packet.
      */
-    public void sendPacket(SP packet);
+    void sendPacket(@NotNull SP packet);
 
     /**
-     * Обработка успешного подключения.
+     * Handle successful connect.
      */
-    public void successfulConnection();
+    void successfulConnection();
 }

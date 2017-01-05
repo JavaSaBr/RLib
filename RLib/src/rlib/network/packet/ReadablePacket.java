@@ -118,7 +118,8 @@ public interface ReadablePacket extends Packet {
      * @param offset the offset for reading.
      * @param length the length for reading.
      */
-    default void readBytes(@NotNull final ByteBuffer buffer, @NotNull final byte[] array, final int offset, final int length) {
+    default void readBytes(@NotNull final ByteBuffer buffer, @NotNull final byte[] array,
+                           final int offset, final int length) {
         buffer.get(array, offset, length);
     }
 

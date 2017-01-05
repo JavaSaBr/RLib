@@ -19,7 +19,7 @@ import rlib.util.linkedlist.LinkedList;
 import rlib.util.linkedlist.LinkedListFactory;
 
 /**
- * Базовая модель асинхронного конекта.
+ * The base implementation of the Async Connection.
  *
  * @author JavaSaBr
  */
@@ -28,63 +28,73 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     protected static final Logger LOGGER = LoggerManager.getLogger(AsyncConnection.class);
 
     /**
-     * Модель сети, в которой это соединение.
+     * The network.
      */
+    @NotNull
     protected final N network;
 
     /**
-     * Список ожидающих пакетов на отправку
+     * The list of waited packets.
      */
+    @NotNull
     protected final LinkedList<S> waitPackets;
 
     /**
-     * Канал соединения.
+     * The channel.
      */
+    @NotNull
     protected final AsynchronousSocketChannel channel;
 
     /**
-     * Промежуточный буффер с присылаемыми данными
+     * The read buffer.
      */
+    @NotNull
     protected final ByteBuffer readBuffer;
 
     /**
-     * Промежуточный буффер с отсылаемыми данными
+     * The write buffer.
      */
+    @NotNull
     protected final ByteBuffer writeBuffer;
 
     /**
-     * Находится ли соединение в ожидании отправки пакетов.
+     * The state of writing.
      */
+    @NotNull
     protected final AtomicBoolean isWriting;
 
     /**
-     * Флаг закрытости соединения.
+     * The state of closed.
      */
+    @NotNull
     protected final AtomicBoolean closed;
 
     /**
-     * Настройки сети.
+     * The config.
      */
+    @NotNull
     protected final NetworkConfig config;
 
     /**
-     * Блокировщик
+     * The locker.
      */
+    @NotNull
     protected final Lock lock;
 
     /**
-     * Время последней активности соединения.
+     * The time of lst activity.
      */
-    protected volatile long lastActive;
+    protected volatile long lastActivity;
 
     /**
-     * Обработчик чтения пакетов.
+     * The read handler.
      */
+    @NotNull
     private final CompletionHandler<Integer, AbstractAsyncConnection> readHandler = new CompletionHandler<Integer, AbstractAsyncConnection>() {
 
         @Override
         public void completed(final Integer result, final AbstractAsyncConnection connection) {
-            setLastActive(System.currentTimeMillis());
+            setLastActivity(System.currentTimeMillis());
 
             if (result == -1) {
                 finish();
@@ -112,13 +122,14 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     };
 
     /**
-     * Обработчик записи пакетов.
+     * The write handler.
      */
+    @NotNull
     private final CompletionHandler<Integer, S> writeHandler = new CompletionHandler<Integer, S>() {
 
         @Override
         public void completed(final Integer result, final S packet) {
-            setLastActive(System.currentTimeMillis());
+            setLastActivity(System.currentTimeMillis());
 
             if (result == -1) {
                 finish();
@@ -147,7 +158,8 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
         }
     };
 
-    public AbstractAsyncConnection(@NotNull final N network, @NotNull final AsynchronousSocketChannel channel, @NotNull final Class<S> sendableType) {
+    public AbstractAsyncConnection(@NotNull final N network, @NotNull final AsynchronousSocketChannel channel,
+                                   @NotNull final Class<S> sendableType) {
         this.lock = LockFactory.newReentrantLock();
         this.channel = channel;
         this.waitPackets = LinkedListFactory.newLinkedList(sendableType);
@@ -161,7 +173,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * Очистка от ожидающих отправки пакетов.
+     * Clear waited packets.
      */
     protected void clearWaitPackets() {
         waitPackets.clear();
@@ -192,14 +204,14 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * Обработка остановки коннекта.
+     * Handle finish of this connection.
      */
     protected void finish() {
         close();
     }
 
     /**
-     * @return канал соединения.
+     * @return the channel.
      */
     @NotNull
     protected AsynchronousSocketChannel getChannel() {
@@ -207,17 +219,17 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     @Override
-    public final long getLastActive() {
-        return lastActive;
+    public final long getLastActivity() {
+        return lastActivity;
     }
 
     @Override
-    public final void setLastActive(final long lastActive) {
-        this.lastActive = lastActive;
+    public final void setLastActivity(final long lastActivity) {
+        this.lastActivity = lastActivity;
     }
 
     /**
-     * @return блокировщик.
+     * @return the locker.
      */
     @NotNull
     public Lock getLock() {
@@ -225,7 +237,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * @return модель сети, в которой этот коннект.
+     * @return the network.
      */
     @NotNull
     protected N getNetwork() {
@@ -233,7 +245,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * @return буффер для чтения пакета.
+     * @return the read buffer.
      */
     @NotNull
     protected final ByteBuffer getReadBuffer() {
@@ -241,7 +253,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * @return Обработчик чтения пакетов.
+     * @return the read handler.
      */
     @NotNull
     protected CompletionHandler<Integer, AbstractAsyncConnection> getReadHandler() {
@@ -249,7 +261,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * @return список ожидающих пакетов на отправку.
+     * @return the list of waited packets.
      */
     @NotNull
     protected LinkedList<S> getWaitPackets() {
@@ -257,7 +269,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * @return буффер для записи пакета.
+     * @return the write buffer.
      */
     @NotNull
     protected final ByteBuffer getWriteBuffer() {
@@ -265,7 +277,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * @return Обработчик записи пакетов.
+     * @return the write handler.
      */
     @NotNull
     protected CompletionHandler<Integer, S> getWriteHandler() {
@@ -285,10 +297,10 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * Проверка готовности пакета к обработке.
+     * Check a buffer on ready to read.
      *
-     * @param buffer прочтенный пакет.
-     * @return можно ли начинать обработку.
+     * @param buffer the read buffer.
+     * @return true if the buffer is ready.
      */
     protected boolean isReady(@NotNull final ByteBuffer buffer) {
         return true;
@@ -300,26 +312,26 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * Перенос данных с пакета в буффер.
+     * Write a packet to a write buffer.
      *
-     * @param packet отправляемый пакет.
-     * @param buffer буффер, в который надо перенести.
-     * @return этот же буффер.
+     * @param packet the packet.
+     * @param buffer the write buffer.
+     * @return the write buffer.
      */
     @NotNull
     protected abstract ByteBuffer writePacketToBuffer(@NotNull S packet, @NotNull ByteBuffer buffer);
 
     /**
-     * Обработка завершения отправки пакета.
+     * Handle a completed packet.
      *
-     * @param packet отправленый пакет.
+     * @param packet the sent packet.
      */
     protected abstract void completed(@NotNull S packet);
 
     /**
-     * Чтение и обработка клиентского пакета.
+     * Read and handle a packet.
      *
-     * @param buffer буффер данных.
+     * @param buffer the read buffer.
      */
     protected abstract void readPacket(@NotNull ByteBuffer buffer);
 
@@ -350,7 +362,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
                 ", channel=" + channel +
                 ", isWriting=" + isWriting +
                 ", closed=" + closed +
-                ", lastActive=" + lastActive +
+                ", lastActivity=" + lastActivity +
                 '}';
     }
 
@@ -360,7 +372,7 @@ public abstract class AbstractAsyncConnection<N extends AsynchronousNetwork, R, 
     }
 
     /**
-     * Запись следующего ожидающего пакета.
+     * Write a next packet.
      */
     protected final void writeNextPacket() {
         lock();

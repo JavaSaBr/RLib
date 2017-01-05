@@ -1,5 +1,8 @@
 package rlib.network.server.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.AsynchronousChannelGroup;
@@ -16,7 +19,7 @@ import rlib.network.server.AcceptHandler;
 import rlib.network.server.ServerNetwork;
 
 /**
- * Базовая модель асинхронной сети.
+ * The base implementation of a server network.
  *
  * @author JavaSaBr
  */
@@ -25,21 +28,24 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
     protected static final Logger LOGGER = LoggerManager.getLogger(ServerNetwork.class);
 
     /**
-     * Группа асинхронных каналов.
+     * The asynchronous channel group.
      */
+    @NotNull
     private final AsynchronousChannelGroup group;
 
     /**
-     * Асинхронный серверый канал.
+     * The asynchronous server socket channel.
      */
+    @NotNull
     private final AsynchronousServerSocketChannel channel;
 
     /**
-     * Обработчик новых подключений.
+     * The accept handler.
      */
+    @NotNull
     private final AcceptHandler acceptHandler;
 
-    public DefaultServerNetwork(final NetworkConfig config, final AcceptHandler acceptHandler) throws IOException {
+    public DefaultServerNetwork(@NotNull final NetworkConfig config, @NotNull final AcceptHandler acceptHandler) throws IOException {
         super(config);
         this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(), new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
         this.channel = AsynchronousServerSocketChannel.open(group);
@@ -47,12 +53,12 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
     }
 
     @Override
-    public <A> void accept(final A attachment, final CompletionHandler<AsynchronousSocketChannel, ? super A> handler) {
+    public <A> void accept(@Nullable final A attachment, @NotNull final CompletionHandler<AsynchronousSocketChannel, ? super A> handler) {
         channel.accept(attachment, handler);
     }
 
     @Override
-    public void bind(final SocketAddress address) throws IOException {
+    public void bind(@NotNull final SocketAddress address) throws IOException {
         channel.bind(address);
         channel.accept(channel, acceptHandler);
     }

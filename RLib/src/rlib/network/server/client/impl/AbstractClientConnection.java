@@ -13,26 +13,31 @@ import rlib.network.server.client.Client;
 import rlib.network.server.client.ClientConnection;
 
 /**
- * Базовая реализация асинхронного клиентского подключения.
+ * The base implementation of a client connection.
  *
  * @author JavaSaBr
  */
-public abstract class AbstractClientConnection<T extends Client, R extends ReadablePacket, S extends SendablePacket> extends AbstractAsyncConnection<ServerNetwork, R, S> implements ClientConnection<T, R, S> {
+public abstract class AbstractClientConnection<T extends Client, R extends ReadablePacket, S extends SendablePacket>
+        extends AbstractAsyncConnection<ServerNetwork, R, S> implements ClientConnection<T, R, S> {
 
     /**
-     * Подключенный клиент.
+     * The client.
      */
+    @Nullable
     protected T client;
 
-    public AbstractClientConnection(@NotNull final ServerNetwork network, @NotNull final AsynchronousSocketChannel channel, @NotNull final Class<S> sendableType) {
+    public AbstractClientConnection(@NotNull final ServerNetwork network, @NotNull final AsynchronousSocketChannel channel,
+                                    @NotNull final Class<S> sendableType) {
         super(network, channel, sendableType);
     }
 
     @Override
     protected void finish() {
-        client.close();
+        final T client = getClient();
+        if (client != null) client.close();
     }
 
+    @Nullable
     @Override
     public final T getClient() {
         return client;

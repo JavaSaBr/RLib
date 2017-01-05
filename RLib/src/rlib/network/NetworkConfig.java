@@ -1,70 +1,74 @@
 package rlib.network;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Интерфейся для конфигурирования асинхронной сети.
+ * The interface to implement a network config.
  *
  * @author JavaSaBr
  */
 public interface NetworkConfig {
 
     /**
-     * @return название группы сети.
+     * @return thread group name.
      */
+    @NotNull
     default String getGroupName() {
         return "NetworkThread";
     }
 
     /**
-     * @return кол-во потоков в группе сети.
+     * @return thread group size.
      */
     default int getGroupSize() {
         return 1;
     }
 
     /**
-     * @return размер читаемого буфера сети.
+     * @return the size of read buffers.
      */
     default int getReadBufferSize() {
         return 2048;
     }
 
     /**
-     * @return использовать ли буфера байтов в нативной памяти.
+     * @return true if need to use direct buffers.
      */
     default boolean isDirectByteBuffer() {
         return false;
     }
 
     /**
-     * @return класс потоков сети
+     * @return the thread class.
      */
+    @NotNull
     default Class<? extends Thread> getThreadClass() {
         return Thread.class;
     }
 
     /**
-     * @return приоритет потокв сети.
+     * @return the thread priority.
      */
     default int getThreadPriority() {
         return Thread.NORM_PRIORITY;
     }
 
     /**
-     * @return размер записываемого буфера.
+     * @return the size of write buffers.
      */
     default int getWriteBufferSize() {
         return 2048;
     }
 
     /**
-     * @return отображать ли ошибки при чтении из сети.
+     * @return true if need to show read exceptions.
      */
     default boolean isVisibleReadException() {
         return false;
     }
 
     /**
-     * @return отображать ли ошибки при записи в сеть.
+     * @return true if need to show write exceptions.
      */
     default boolean isVisibleWriteException() {
         return false;

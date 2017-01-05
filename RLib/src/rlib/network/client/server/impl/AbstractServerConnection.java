@@ -15,20 +15,23 @@ import rlib.network.packet.ReadablePacket;
 import rlib.network.packet.SendablePacket;
 
 /**
- * Базовая модель асинхронного конекта к серверу.
+ * The base implementation a server connection.
  *
  * @author JavaSaBr
  */
-public abstract class AbstractServerConnection<T extends Server, R extends ReadablePacket, S extends SendablePacket> extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {
+public abstract class AbstractServerConnection<T extends Server, R extends ReadablePacket, S extends SendablePacket>
+        extends AbstractAsyncConnection<ClientNetwork, R, S> implements ServerConnection<T, R, S> {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ServerConnection.class);
 
     /**
-     * Сервер.
+     * The server.
      */
+    @Nullable
     protected T server;
 
-    public AbstractServerConnection(@NotNull final ClientNetwork network, @NotNull final AsynchronousSocketChannel channel, @NotNull final Class<S> sendableType) {
+    public AbstractServerConnection(@NotNull final ClientNetwork network, @NotNull final AsynchronousSocketChannel channel,
+                                    @NotNull final Class<S> sendableType) {
         super(network, channel, sendableType);
     }
 
@@ -44,6 +47,7 @@ public abstract class AbstractServerConnection<T extends Server, R extends Reada
         }
     }
 
+    @Nullable
     @Override
     public T getServer() {
         return server;

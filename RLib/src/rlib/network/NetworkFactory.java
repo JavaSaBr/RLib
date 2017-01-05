@@ -1,5 +1,8 @@
 package rlib.network;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 
 import rlib.logging.Logger;
@@ -12,7 +15,7 @@ import rlib.network.server.ServerNetwork;
 import rlib.network.server.impl.DefaultServerNetwork;
 
 /**
- * Фабрика для создания серверной и клиетнской сети.
+ * The network factory.
  *
  * @author JavaSaBr
  */
@@ -21,14 +24,15 @@ public final class NetworkFactory {
     private static final Logger LOGGER = LoggerManager.getLogger(NetworkFactory.class);
 
     /**
-     * Создание стандартной реализации клиентской асинхронной сети.
+     * Create a default asynchronous client network.
      *
-     * @param config         конфигурация сети.
-     * @param connectHandler обработчик подключения к серверу.
-     * @return клиентская сеть либо <code>null</code> если произошла ошибка.
+     * @param config         the network config.
+     * @param connectHandler the connect handler.
+     * @return the client network or null.
      */
-    public static ClientNetwork newDefaultAsynchronousClientNetwork(final NetworkConfig config, final ConnectHandler connectHandler) {
-
+    @Nullable
+    public static ClientNetwork newDefaultAsynchronousClientNetwork(@NotNull final NetworkConfig config,
+                                                                    @NotNull final ConnectHandler connectHandler) {
         try {
             return new DefaultClientNetwork(config, connectHandler);
         } catch (final IOException e) {
@@ -39,14 +43,15 @@ public final class NetworkFactory {
     }
 
     /**
-     * Создание стандартной реализации серверной асинхронной серверной сети.
+     * Create a default asynchronous server network.
      *
-     * @param config        конфигурация сети.
-     * @param acceptHandler обработчик новых подключений.
-     * @return серверная сеть либо <code>null</code> если произошла ошибка.
+     * @param config        the network config.
+     * @param acceptHandler the accept handler.
+     * @return the client network or null.
      */
-    public static ServerNetwork newDefaultAsynchronousServerNetwork(final NetworkConfig config, final AcceptHandler acceptHandler) {
-
+    @Nullable
+    public static ServerNetwork newDefaultAsynchronousServerNetwork(@NotNull final NetworkConfig config,
+                                                                    @NotNull final AcceptHandler acceptHandler) {
         try {
             return new DefaultServerNetwork(config, acceptHandler);
         } catch (final IOException e) {
