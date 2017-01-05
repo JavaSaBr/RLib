@@ -1,28 +1,32 @@
 package rlib.util.linkedlist.impl;
 
-import rlib.util.linkedlist.LinkedList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import rlib.util.pools.Reusable;
 
 /**
- * Реализация узла для {@link LinkedList}.
+ * The node of the LinkedList.
  *
  * @author JavaSaBr
  */
 public final class Node<E> implements Reusable {
 
     /**
-     * Содержимый элемент.
+     * The item.
      */
     private E item;
 
     /**
-     * Ссылка на предыдущий узел.
+     * The prev node.
      */
+    @Nullable
     private Node<E> prev;
 
     /**
-     * Ссылка на след. узел.
+     * The next node.
      */
+    @Nullable
     private Node<E> next;
 
     @Override
@@ -33,44 +37,47 @@ public final class Node<E> implements Reusable {
     }
 
     /**
-     * @return хранимый элемент.
+     * @return yhe item.
      */
+    @NotNull
     public E getItem() {
         return item;
     }
 
     /**
-     * @param item хранимый элемент.
+     * @param item yhe item.
      */
-    public void setItem(final E item) {
+    public void setItem(@Nullable final E item) {
         this.item = item;
     }
 
     /**
-     * @return следующий узел.
+     * @return yhe next node.
      */
+    @Nullable
     public Node<E> getNext() {
         return next;
     }
 
     /**
-     * @param next следующий узел.
+     * @param next yhe next node.
      */
-    public void setNext(final Node<E> next) {
+    public void setNext(@Nullable final Node<E> next) {
         this.next = next;
     }
 
     /**
-     * @return предыдущий узел.
+     * @return yhe prev node.
      */
+    @Nullable
     public Node<E> getPrev() {
         return prev;
     }
 
     /**
-     * @param prev предыдущий узел.
+     * @param prev yhe prev node.
      */
-    public void setPrev(final Node<E> prev) {
+    public void setPrev(@Nullable final Node<E> prev) {
         this.prev = prev;
     }
 }

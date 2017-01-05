@@ -1,7 +1,11 @@
 package rlib.util.linkedlist.impl;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 /**
- * Реализация {@link FastLinkedList} с сортировкой при вставке нового элемента.
+ * The implementation of {@link FastLinkedList} with to sort on put an element.
  *
  * @author JavaSaBr
  */
@@ -14,11 +18,8 @@ public class SortedLinkedList<E extends Comparable<E>> extends FastLinkedList<E>
     }
 
     @Override
-    public boolean add(final E element) {
-
-        if (element == null) {
-            throw new RuntimeException("element is null.");
-        }
+    public boolean add(@NotNull final E element) {
+        Objects.requireNonNull(element);
 
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 

@@ -1,5 +1,8 @@
 package rlib.util.linkedlist;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.Deque;
 import java.util.function.BiConsumer;
@@ -15,9 +18,8 @@ import rlib.util.linkedlist.impl.Node;
 import rlib.util.pools.Reusable;
 
 /**
- * Интерфей с для реализации связанного списка. Главное преймущество, это переиспользование узлов
- * списка и быстрая итерация с уменьшением нагрузки на GC. Создаются с помощью {@link
- * LinkedListFactory}. <p>
+ * Интерфей с для реализации связанного списка. Главное преймущество, это переиспользование узлов списка и быстрая
+ * итерация с уменьшением нагрузки на GC. Создаются с помощью {@link LinkedListFactory}. <p>
  * <pre>
  * for(Node&lt;E&gt; node = getFirstNode(); node != null; node = node.getNext()) {
  * 	? item = node.getItem();
@@ -30,124 +32,136 @@ import rlib.util.pools.Reusable;
 public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusable {
 
     @Override
-    default void forEach(final Consumer<? super E> consumer) {
+    default void forEach(@NotNull final Consumer<? super E> consumer) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             consumer.accept(node.getItem());
         }
     }
 
     /**
-     * Итерирование списка.
+     * Apply a function to each filtered element.
      *
-     * @param predicate фильтр элементов.
-     * @param consumer  функция для обработки элементов.
+     * @param condition the condition.
+     * @param function  the function.
      */
-    default void forEach(final Predicate<E> predicate, final Consumer<? super E> consumer) {
+    default void forEach(@NotNull final Predicate<E> condition, @NotNull final Consumer<? super E> function) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             final E item = node.getItem();
-            if (predicate.test(item)) consumer.accept(item);
+            if (condition.test(item)) function.accept(item);
         }
     }
 
     /**
-     * Итерирование списка с дополнительным аргументом.
+     * Apply a function to each element.
      *
-     * @param argument дополнительный аргумент.
-     * @param consumer функция для обработки элементов.
+     * @param argument the argument.
+     * @param function the function.
      */
-    default <T> void forEach(final T argument, final BiConsumer<T, E> consumer) {
+    default <T> void forEach(@Nullable final T argument, @NotNull final BiConsumer<T, E> function) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-            consumer.accept(argument, node.getItem());
+            function.accept(argument, node.getItem());
         }
     }
 
     /**
-     * Итерирование списка с дополнительным аргументом.
+     * Apply a function to each filtered element.
      *
-     * @param argument  дополнительный аргумент.
-     * @param predicate фильтр элементов.
-     * @param consumer  функция для обработки элементов.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @param function  the function.
      */
-    default <T> void forEach(final T argument, final BiPredicate<E, T> predicate, final BiConsumer<T, E> consumer) {
-        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-            final E item = node.getItem();
-            if (predicate.test(item, argument)) consumer.accept(argument, item);
-        }
-    }
-
-    /**
-     * Итерирование массива с дополнительным аргументом.
-     *
-     * @param first     первый аргумент.
-     * @param second    второй аргумент.
-     * @param predicate фильтр элементов.
-     * @param consumer  функция для обработки элементов.
-     */
-    default <F, S> void forEach(final F first, final S second, final TriplePredicate<E, F, S> predicate, final TripleConsumer<F, S, E> consumer) {
+    default <T> void forEach(@Nullable final T argument, @NotNull final BiPredicate<E, T> condition,
+                             @NotNull final BiConsumer<T, E> function) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             final E item = node.getItem();
-            if (predicate.test(item, first, second)) consumer.accept(first, second, item);
+            if (condition.test(item, argument)) function.accept(argument, item);
         }
     }
 
     /**
-     * Итерирование массива с двумя дополнительными аргументомами.
+     * Apply a function to each filtered element.
      *
-     * @param first    первый дополнительный аргумент.
-     * @param second   второй дополнительный аргумент.
-     * @param consumer функция для обработки элементов.
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param condition the condition.
+     * @param function  the function.
      */
-    default <F, S> void forEach(final F first, final S second, final TripleConsumer<F, S, E> consumer) {
+    default <F, S> void forEach(@Nullable final F first, @Nullable final S second,
+                                @NotNull final TriplePredicate<E, F, S> condition,
+                                @NotNull final TripleConsumer<F, S, E> function) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-            consumer.accept(first, second, node.getItem());
+            final E item = node.getItem();
+            if (condition.test(item, first, second)) function.accept(first, second, item);
         }
     }
 
     /**
-     * Итерирование массива с двумя дополнительными аргументомами.
+     * Apply a function to each element.
      *
-     * @param first    первый дополнительный аргумент.
-     * @param second   второй дополнительный аргумент.
-     * @param consumer функция для обработки элементов.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
      */
-    default <F> void forEach(final long first, final F second, final LongBiObjectConsumer<F, E> consumer) {
+    default <F, S> void forEach(@Nullable final F first, @Nullable final S second,
+                                @NotNull final TripleConsumer<F, S, E> function) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-            consumer.accept(first, second, node.getItem());
+            function.accept(first, second, node.getItem());
         }
     }
 
     /**
-     * Применить функцию замены всех элементов.
+     * Apply a function to each element.
      *
-     * @param function применяемая функция.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
      */
-    default void apply(final Function<? super E, ? extends E> function) {
+    default <F> void forEach(final long first, final F second, @NotNull final LongBiObjectConsumer<F, E> function) {
+        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+            function.accept(first, second, node.getItem());
+        }
+    }
+
+    /**
+     * Apply a function to each element to replace an original element.
+     *
+     * @param function the function.
+     */
+    default void apply(@NotNull final Function<? super E, ? extends E> function) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             node.setItem(function.apply(node.getItem()));
         }
     }
 
     /**
-     * Получение элемента по номеру в списке.
+     * Gets an element for an index.
      *
-     * @param index номер в списке.
-     * @return искомый элемент.
+     * @param index the index of an element.
+     * @return the element for the index.
      */
     E get(int index);
 
     /**
-     * @return первый узел списка.
+     * Get a first node.
+     *
+     * @return the first node.
      */
+    @Nullable
     Node<E> getFirstNode();
 
     /**
-     * @return последний узел списка.
+     * Get a last node.
+     *
+     * @return the last node.
      */
+    @Nullable
     Node<E> getLastNode();
 
     /**
-     * @param object интересуемый объект.
-     * @return номер его в списке.
+     * Finds an index of an object in this list.
+     *
+     * @param object the object to find.
+     * @return the index of the object or -1.
      */
     int indexOf(Object object);
 
@@ -181,51 +195,30 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
     }
 
     /**
-     * Блокировка изменения массива на время чтения его.
-     */
-    default void readLock() {
-    }
-
-    /**
-     * Разблокировка изменения массива.
-     */
-    default void readUnlock() {
-    }
-
-    /**
-     * Удаление элемента из списка по индексу.
+     * Removes an element for an index without reordering.
      *
-     * @param index индекс элемента.
-     * @return удаленный элемент.
+     * @param index the index of the element.
+     * @return the removed element.
      */
     default E remove(int index) {
         return unlink(node(index));
     }
 
     /**
-     * Получание с удалением первого элемента.
+     * Take and remove a first element.
      *
-     * @return первый элемент в очереди.
+     * @return the first element or null.
      */
+    @Nullable
     E take();
 
     /**
-     * Удаление узла в списке.
+     * Remove a node from this list.
      *
-     * @param node удаляемый узел.
-     * @return удаленный элемент из узла.
+     * @param node the node.
+     * @return the removed element.
      */
-    E unlink(Node<E> node);
+    @Nullable
+    E unlink(@NotNull Node<E> node);
 
-    /**
-     * Блокировка чтений для изменения массива.
-     */
-    default void writeLock() {
-    }
-
-    /**
-     * Разблокировка чтения массива.
-     */
-    default void writeUnlock() {
-    }
 }

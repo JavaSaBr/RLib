@@ -1,12 +1,17 @@
 package rlib.util.linkedlist.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
+import rlib.util.ClassUtils;
 import rlib.util.linkedlist.LinkedList;
 
 /**
- * Базовая реализация связанного списка.
+ * The base implementation of the LinkedList.
  *
  * @author JavaSaBr
  */
@@ -15,39 +20,35 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
     private static final long serialVersionUID = 8034712584065781997L;
 
     /**
-     * Тип элементов в коллекции.
+     * The element type.
      */
+    @NotNull
     protected final Class<E> type;
 
-    @SuppressWarnings("unchecked")
-    public AbstractLinkedList(final Class<?> type) {
-        this.type = (Class<E>) type;
+    public AbstractLinkedList(@NotNull final Class<?> type) {
+        this.type = ClassUtils.unsafeCast(type);
     }
 
     @Override
-    public boolean addAll(final Collection<? extends E> collection) {
+    public boolean addAll(@NotNull final Collection<? extends E> collection) {
 
         for (final E object : collection) {
-            if (!add(object)) {
-                return false;
-            }
+            if (!add(object)) return false;
         }
 
         return true;
     }
 
     @Override
-    public boolean contains(final Object object) {
+    public boolean contains(@Nullable final Object object) {
         return indexOf(object) != -1;
     }
 
     @Override
-    public boolean containsAll(final Collection<?> collection) {
+    public boolean containsAll(@NotNull final Collection<?> collection) {
 
         for (final Object object : collection) {
-            if (!contains(object)) {
-                return false;
-            }
+            if (!contains(object)) return false;
         }
 
         return true;
@@ -88,8 +89,11 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
     }
 
     /**
-     * @return тип элементов в коллекции.
+     * Get an element type.
+     *
+     * @return the element type.
      */
+    @NotNull
     protected Class<E> getType() {
         return type;
     }
@@ -100,13 +104,8 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
         int index = 0;
 
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-
             final E item = node.getItem();
-
-            if (item.equals(object)) {
-                return index;
-            }
-
+            if (Objects.equals(item, object)) return index;
             index++;
         }
 
@@ -186,12 +185,10 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
     }
 
     @Override
-    public boolean removeAll(final Collection<?> collection) {
+    public boolean removeAll(@NotNull final Collection<?> collection) {
 
         for (final Object object : collection) {
-            if (!remove(object)) {
-                return false;
-            }
+            if (!remove(object)) return false;
         }
 
         return true;
@@ -232,7 +229,7 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
     }
 
     @Override
-    public boolean retainAll(final Collection<?> collection) {
+    public boolean retainAll(@NotNull final Collection<?> collection) {
 
         for (final E object : this) {
             if (!collection.contains(object) && !remove(object)) {

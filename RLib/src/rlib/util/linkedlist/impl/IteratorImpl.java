@@ -1,72 +1,80 @@
 package rlib.util.linkedlist.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import rlib.util.linkedlist.LinkedList;
 
 /**
- * Реализация итератара для {@link LinkedList}
+ * The implementation of an iterator for the LinkedList.
  *
  * @author JavaSaBr
  */
 public class IteratorImpl<E> implements Iterator<E> {
 
     /**
-     * Режим итерирования с начала в конец.
+     * The iteration mode from start to end.
      */
     public static final int NEXT = 1;
 
     /**
-     * Режим итерирования с конца в начало.
+     * The iteration mode from end to start.
      */
     public static final int PREV = 2;
 
     /**
-     * Итерируемый список.
+     * The linked list.
      */
+    @NotNull
     private final LinkedList<E> list;
 
     /**
-     * Последний возвращаемый элемент.
+     * The last returned node.
      */
+    @Nullable
     private Node<E> lastReturned;
 
     /**
-     * Следующий элемент.
+     * The next node.
      */
     private Node<E> next;
 
     /**
-     * Режим итератора.
+     * The iteration mode.
      */
     private final int mode;
 
     /**
-     * Следующий индекс.
+     * The next index.
      */
     private int nextIndex;
 
-    protected IteratorImpl(final LinkedList<E> list, final int mode) {
+    protected IteratorImpl(@NotNull final LinkedList<E> list, final int mode) {
         this.nextIndex = 0;
         this.mode = mode;
         this.list = list;
         setNext(mode == NEXT ? list.getFirstNode() : mode == PREV ? list.getLastNode() : null);
     }
 
+    @Nullable
     private Node<E> getLastReturned() {
         return lastReturned;
     }
 
-    private void setLastReturned(final Node<E> lastReturned) {
+    private void setLastReturned(@Nullable final Node<E> lastReturned) {
         this.lastReturned = lastReturned;
     }
 
+    @NotNull
     private Node<E> getNext() {
-        return next;
+        return Objects.requireNonNull(next);
     }
 
-    private void setNext(final Node<E> next) {
+    private void setNext(@Nullable final Node<E> next) {
         this.next = next;
     }
 

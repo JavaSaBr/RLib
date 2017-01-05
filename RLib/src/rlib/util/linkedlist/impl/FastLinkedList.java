@@ -1,15 +1,18 @@
 package rlib.util.linkedlist.impl;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Function;
 
-import rlib.util.linkedlist.LinkedList;
 import rlib.util.pools.PoolFactory;
 import rlib.util.pools.ReusablePool;
 
 /**
- * Реадизация не потокобезопасного {@link LinkedList}.
+ * The non thread-safe implementation of the LinkedList.
  *
  * @author JavaSaBr
  */
@@ -18,52 +21,51 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
     private static final long serialVersionUID = 6627882787737291879L;
 
     /**
-     * Пул узлов.
+     * The node pool.
      */
+    @NotNull
     private final ReusablePool<Node<E>> pool;
 
     /**
-     * Первый элемент списка.
+     * The first element.
      */
+    @Nullable
     private Node<E> first;
+
     /**
-     * Последний элемент списка.
+     * The second element.
      */
+    @Nullable
     private Node<E> last;
 
     /**
-     * Размер списка.
+     * The size.
      */
     private int size;
 
-    public FastLinkedList(final Class<?> type) {
+    public FastLinkedList(@NotNull final Class<?> type) {
         super(type);
         this.pool = PoolFactory.newReusablePool(Node.class);
     }
 
     @Override
-    public boolean add(final E element) {
-
-        if (element == null) {
-            throw new NullPointerException("element is null.");
-        }
-
+    public boolean add(@NotNull final E element) {
         linkLast(element);
         return true;
     }
 
     @Override
-    public void addFirst(final E element) {
+    public void addFirst(@NotNull final E element) {
         linkFirst(element);
     }
 
     @Override
-    public void addLast(final E element) {
+    public void addLast(@NotNull final E element) {
         linkLast(element);
     }
 
     @Override
-    public void apply(final Function<? super E, ? extends E> function) {
+    public void apply(@NotNull final Function<? super E, ? extends E> function) {
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
             node.setItem(function.apply(node.getItem()));
         }
@@ -84,6 +86,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         size = 0;
     }
 
+    @NotNull
     @Override
     public Iterator<E> descendingIterator() {
         return new IteratorImpl<>(this, IteratorImpl.PREV);
@@ -94,78 +97,70 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         return index < size() >> 1 ? getFirst(index) : getLast(index);
     }
 
+    @Nullable
     protected final E getFirst(final int index) {
 
         int i = 0;
 
         for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-
-            if (i == index) {
-                return node.getItem();
-            }
-
+            if (i == index) return node.getItem();
             i++;
         }
 
         return null;
     }
 
+    @Nullable
     @Override
     public final Node<E> getFirstNode() {
         return first;
     }
 
     /**
-     * @param first первый узел.
+     * @param first the first node.
      */
-    protected void setFirstNode(final Node<E> first) {
+    protected void setFirstNode(@Nullable final Node<E> first) {
         this.first = first;
     }
 
+    @Nullable
     protected final E getLast(final int index) {
 
         int i = size() - 1;
 
         for (Node<E> node = getLastNode(); node != null; node = node.getPrev()) {
-
-            if (i == index) {
-                return node.getItem();
-            }
-
+            if (i == index) return node.getItem();
             i--;
         }
 
         return null;
     }
 
+    @Nullable
     @Override
     public final Node<E> getLastNode() {
         return last;
     }
 
     /**
-     * @param last последний узел.
+     * @param last the last node.
      */
-    protected void setLastNode(final Node<E> last) {
+    protected void setLastNode(@Nullable final Node<E> last) {
         this.last = last;
     }
 
     /**
-     * Получение нового узла по указанным параметрам.
+     * Get a new node.
      *
-     * @param prev предыдущий узел.
-     * @param item хранимый итем.
-     * @param next следующий узел.
-     * @return новый узел.
+     * @param prev the prev node.
+     * @param item the item.
+     * @param next the next node.
+     * @return the new node.
      */
-    protected Node<E> getNewNode(final Node<E> prev, final E item, final Node<E> next) {
+    @NotNull
+    protected Node<E> getNewNode(@Nullable final Node<E> prev, @NotNull final E item, @Nullable final Node<E> next) {
 
-        Node<E> node = getPool().take();
-
-        if (node == null) {
-            node = new Node<>();
-        }
-
+        final Node<E> node = getPool().take(Node::new);
         node.setItem(item);
         node.setNext(next);
         node.setPrev(prev);
@@ -174,13 +169,14 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
     }
 
     /**
-     * @return пул узлов.
+     * @return the pool.
      */
+    @NotNull
     protected ReusablePool<Node<E>> getPool() {
         return pool;
     }
 
-    protected final void insertAfter(final Node<E> node, final E item) {
+    protected final void insertAfter(@NotNull final Node<E> node, final E item) {
 
         final Node<E> next = node.getNext();
         final Node<E> newNode = getNewNode(node, item, next);
@@ -194,7 +190,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         node.setNext(newNode);
     }
 
-    protected final void insertBefore(final Node<E> node, final E item) {
+    protected final void insertBefore(@NotNull final Node<E> node, final E item) {
 
         final Node<E> prev = node.getPrev();
         final Node<E> newNode = getNewNode(prev, item, node);
@@ -208,15 +204,17 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         node.setPrev(newNode);
     }
 
+    @NotNull
     @Override
     public Iterator<E> iterator() {
         return new IteratorImpl<>(this, IteratorImpl.NEXT);
     }
 
-    protected final void linkFirst(final E eitem) {
+    protected final void linkFirst(@NotNull final E item) {
+        Objects.requireNonNull(item);
 
         final Node<E> first = getFirstNode();
-        final Node<E> newNode = getNewNode(null, eitem, first);
+        final Node<E> newNode = getNewNode(null, item, first);
 
         setFirstNode(newNode);
 
@@ -229,7 +227,8 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         size++;
     }
 
-    protected final void linkLast(final E item) {
+    protected final void linkLast(@NotNull final E item) {
+        Objects.requireNonNull(item);
 
         final Node<E> last = getLastNode();
         final Node<E> newNode = getNewNode(last, item, null);
@@ -297,6 +296,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         return removeFirst();
     }
 
+    @NotNull
     @Override
     public Object[] toArray() {
 
@@ -311,9 +311,10 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         return array;
     }
 
-    @SuppressWarnings("unchecked")
+    @NotNull
     @Override
-    public <T> T[] toArray(T[] array) {
+    @SuppressWarnings("unchecked")
+    public <T> T[] toArray(@NotNull T[] array) {
 
         final int size = size();
 
@@ -338,7 +339,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
     }
 
     @Override
-    public final E unlink(final Node<E> node) {
+    public final E unlink(@NotNull final Node<E> node) {
 
         final E element = node.getItem();
 
@@ -364,7 +365,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         return element;
     }
 
-    protected final E unlinkFirst(final Node<E> node) {
+    protected final E unlinkFirst(@NotNull final Node<E> node) {
 
         final E element = node.getItem();
 
@@ -385,7 +386,7 @@ public class FastLinkedList<E> extends AbstractLinkedList<E> {
         return element;
     }
 
-    protected final E unlinkLast(final Node<E> node) {
+    protected final E unlinkLast(@NotNull final Node<E> node) {
 
         final E element = node.getItem();
 

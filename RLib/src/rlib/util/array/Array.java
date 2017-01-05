@@ -330,7 +330,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Gets the element for the index.
+     * Gets an element for an index.
      *
      * @param index the index of an element.
      * @return the element for the index.
@@ -339,10 +339,10 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     E get(int index);
 
     /**
-     * Finds the index of the object in this array.
+     * Finds an index of an object in this list.
      *
      * @param object the object to find.
-     * @return the index of the objet or -1.
+     * @return the index of the object or -1.
      */
     default int indexOf(@NotNull final Object object) {
 
@@ -554,7 +554,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     void set(int index, @NotNull E element);
 
     /**
-     * Removes the element for the index without reordering.
+     * Removes an element for an index without reordering.
      *
      * @param index the index of the element.
      * @return the removed element.
@@ -568,7 +568,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Removes the element without reordering.
+     * Removes an element without reordering.
      *
      * @param object the element.
      * @return true if the element was removed.
