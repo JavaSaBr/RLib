@@ -1,13 +1,15 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.locks.StampedLock;
 
 import rlib.concurrent.lock.LockFactory;
 import rlib.util.array.ConcurrentArray;
 
 /**
- * The concurrent implementation of the array using {@link StampedLock} for {@link
- * ConcurrentArray#readLock()} and {@link ConcurrentArray#writeLock()}.
+ * The concurrent implementation of the array using {@link StampedLock} for {@link ConcurrentArray#readLock()} and
+ * {@link ConcurrentArray#writeLock()}.
  *
  * @author JavaSaBr
  */
@@ -20,11 +22,11 @@ public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
      */
     private final StampedLock lock;
 
-    public ConcurrentStampedLockArray(final Class<E> type) {
+    public ConcurrentStampedLockArray(@NotNull final Class<E> type) {
         this(type, 10);
     }
 
-    public ConcurrentStampedLockArray(final Class<E> type, final int size) {
+    public ConcurrentStampedLockArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
 
         this.lock = LockFactory.newStampedLock();

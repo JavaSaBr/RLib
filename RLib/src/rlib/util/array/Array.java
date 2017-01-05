@@ -42,44 +42,23 @@ import rlib.util.pools.Reusable;
  *
  * @author JavaSaBr
  */
-public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable {
-
-    /**
-     * Adds a new element to this array.
-     *
-     * @param object the new element.
-     * @return this array.
-     */
-    @NotNull
-    Array<E> add(@NotNull E object);
+public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneable {
 
     /**
      * Adds all elements from the array to this array.
      *
      * @param array the array with new elements.
-     * @return this array.
+     * @return true if this array was changed.
      */
-    @NotNull
-    Array<E> addAll(@NotNull Array<? extends E> array);
+    boolean addAll(@NotNull Array<? extends E> array);
 
     /**
      * Adds all elements from the array to this array.
      *
      * @param array the array with new elements.
-     * @return this array.
+     * @return true if this array was changed.
      */
-    @NotNull
-    Array<E> addAll(@NotNull E[] array);
-
-
-    /**
-     * Adds all elements from the collection to this array.
-     *
-     * @param collection the collection with new elements.
-     * @return this array.
-     */
-    @NotNull
-    Array<E> addAll(@NotNull Collection<? extends E> collection);
+    boolean addAll(@NotNull E[] array);
 
     /**
      * Applies this function to each element of this array with replacing to result element from thia function.
@@ -94,33 +73,26 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
     }
 
     /**
+     * Get a wrapped array of this array.
+     *
      * @return the wrapped array.
      */
     @NotNull
     E[] array();
 
-    /**
-     * @return the new string from this array.
-     */
     @NotNull
+    @Override
     default Stream<E> stream() {
         return Arrays.stream(array(), 0, size());
     }
 
-    /**
-     * Cleans this array.
-     *
-     * @return this array.
-     */
     @NotNull
-    Array<E> clear();
+    @Override
+    default Stream<E> parallelStream() {
+        return stream().parallel();
+    }
 
-    /**
-     * Checks exists of the element in this array.
-     *
-     * @param object the element.
-     * @return false if this object is null or doesn't exists in this array.
-     */
+    @Override
     default boolean contains(@NotNull final Object object) {
         for (final E element : array()) {
             if (element == null) break;
@@ -139,6 +111,18 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
         if (array.isEmpty()) return false;
 
         for (final Object element : array.array()) {
+            if (element == null) break;
+            if (!contains(element)) return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    default boolean containsAll(@NotNull final Collection<?> array) {
+        if (array.isEmpty()) return false;
+
+        for (final Object element : array) {
             if (element == null) break;
             if (!contains(element)) return false;
         }
@@ -242,99 +226,106 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
     }
 
     /**
-     * Итерирование массива.
+     * Apply a function to each filtered element.
      *
-     * @param predicate фильтр элементов.
-     * @param consumer  функция для обработки элементов.
+     * @param condition the condition.
+     * @param function  the function.
      */
-    default void forEach(@NotNull final Predicate<E> predicate, @NotNull final Consumer<? super E> consumer) {
+    default void forEach(@NotNull final Predicate<E> condition, @NotNull final Consumer<? super E> function) {
         for (final E element : array()) {
             if (element == null) break;
-            if (predicate.test(element)) consumer.accept(element);
+            if (condition.test(element)) function.accept(element);
         }
     }
 
     /**
-     * Итерирование массива с дополнительным аргументом.
+     * Apply a function to each element.
      *
-     * @param argument дополнительный аргумент.
-     * @param consumer функция для обработки элементов.
+     * @param argument the argument.
+     * @param function the function.
      */
-    default <T> void forEach(@Nullable final T argument, @NotNull final BiConsumer<E, T> consumer) {
+    default <T> void forEach(@Nullable final T argument, @NotNull final BiConsumer<E, T> function) {
         for (final E element : array()) {
             if (element == null) break;
-            consumer.accept(element, argument);
+            function.accept(element, argument);
         }
     }
 
     /**
-     * Итерирование массива с дополнительным аргументом.
+     * Apply a function to each filtered element.
      *
-     * @param argument  дополнительный аргумент.
-     * @param predicate фильтр элементов.
-     * @param consumer  функция для обработки элементов.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @param function  the function.
      */
-    default <T> void forEach(@Nullable final T argument, @NotNull final BiPredicate<E, T> predicate, @NotNull final BiConsumer<E, T> consumer) {
+    default <T> void forEach(@Nullable final T argument, @NotNull final BiPredicate<E, T> condition,
+                             @NotNull final BiConsumer<E, T> function) {
         for (final E element : array()) {
             if (element == null) break;
-            if (predicate.test(element, argument)) consumer.accept(element, argument);
+            if (condition.test(element, argument)) function.accept(element, argument);
         }
     }
 
     /**
-     * Итерирование массива с дополнительным аргументом.
-     *
-     * @param first     первый аргумент.
-     * @param second    второй аргумент.
-     * @param predicate фильтр элементов.
-     * @param consumer  функция для обработки элементов.
-     */
-    default <F, S> void forEach(@Nullable final F first, @Nullable final S second, @NotNull final TriplePredicate<E, F, S> predicate, @NotNull final TripleConsumer<E, F, S> consumer) {
-        for (final E element : array()) {
-            if (element == null) break;
-            if (predicate.test(element, first, second)) consumer.accept(element, first, second);
-        }
-    }
-
-    /**
-     * Итерирование массива с двумя дополнительными аргументомами.
-     *
-     * @param first    первый дополнительный аргумент.
-     * @param second   второй дополнительный аргумент.
-     * @param consumer функция для обработки элементов.
-     */
-    default <F, S> void forEach(@Nullable final F first, @Nullable final S second, @NotNull final TripleConsumer<E, F, S> consumer) {
-        for (final E element : array()) {
-            if (element == null) break;
-            consumer.accept(element, first, second);
-        }
-    }
-
-    /**
-     * Итерирование массива с двумя дополнительными аргументомами.
-     *
-     * @param first    первый дополнительный аргумент.
-     * @param second   второй дополнительный аргумент.
-     * @param consumer функция для обработки элементов.
-     */
-    default <F> void forEach(final long first, @Nullable final F second, @NotNull final ObjectLongObjectConsumer<E, F> consumer) {
-        for (final E element : array()) {
-            if (element == null) break;
-            consumer.accept(element, first, second);
-        }
-    }
-
-    /**
-     * Iterate this array using two arguments.
+     * Apply a function to each element.
      *
      * @param first    the first argument.
      * @param second   the second argument.
-     * @param consumer the function.
+     * @param function the function.
      */
-    default <F> void forEach(final float first, @Nullable final F second, @NotNull final ObjectFloatObjectConsumer<E, F> consumer) {
+    default <F, S> void forEach(@Nullable final F first, @Nullable final S second,
+                                @NotNull final TripleConsumer<E, F, S> function) {
         for (final E element : array()) {
             if (element == null) break;
-            consumer.accept(element, first, second);
+            function.accept(element, first, second);
+        }
+    }
+
+
+    /**
+     * Apply a function to each filtered element.
+     *
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param condition the condition.
+     * @param function  the function.
+     */
+    default <F, S> void forEach(@Nullable final F first, @Nullable final S second,
+                                @NotNull final TriplePredicate<E, F, S> condition,
+                                @NotNull final TripleConsumer<E, F, S> function) {
+        for (final E element : array()) {
+            if (element == null) break;
+            if (condition.test(element, first, second)) function.accept(element, first, second);
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     */
+    default <F> void forEach(final long first, @Nullable final F second,
+                             @NotNull final ObjectLongObjectConsumer<E, F> function) {
+        for (final E element : array()) {
+            if (element == null) break;
+            function.accept(element, first, second);
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     */
+    default <F> void forEach(final float first, @Nullable final F second,
+                             @NotNull final ObjectFloatObjectConsumer<E, F> function) {
+        for (final E element : array()) {
+            if (element == null) break;
+            function.accept(element, first, second);
         }
     }
 
@@ -366,13 +357,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
         return -1;
     }
 
-    /**
-     * @return true is this array is empty.
-     */
-    default boolean isEmpty() {
-        return size() < 1;
-    }
-
+    @NotNull
     @Override
     ArrayIterator<E> iterator();
 
@@ -447,6 +432,20 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
         return count == target.size();
     }
 
+    @Override
+    default boolean removeAll(@NotNull final Collection<?> target) {
+        if (target.isEmpty()) return false;
+
+        int count = 0;
+
+        for (final Object element : target) {
+            if (element == null) break;
+            if (fastRemove(element)) count++;
+        }
+
+        return count == target.size();
+    }
+
     /**
      * Retains only the elements in this array that are contained in the specified array (optional operation).  In other
      * words, removes from this array all of its elements that are not contained in the specified array.
@@ -468,11 +467,26 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
         return true;
     }
 
+    @Override
+    default boolean retainAll(@NotNull final Collection<?> target) {
+
+        final E[] array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            if (!target.contains(array[i])) {
+                fastRemove(i--);
+                length--;
+            }
+        }
+
+        return true;
+    }
+
     /**
-     * Ищет первый элемент удовлетворяющий условию.
+     * Search an element using a condition.
      *
-     * @param predicate условия отбора элемента.
-     * @return искомый объект либо null.
+     * @param predicate the condition.
+     * @return the found element or null.
      */
     @Nullable
     default E search(@NotNull final Predicate<E> predicate) {
@@ -484,11 +498,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
     }
 
     /**
-     * Ищет первый элемент удовлетворяющий условию c дополнительным аргументом.
+     * Search an element using a condition.
      *
-     * @param argument  дополнительный аргумент.
-     * @param predicate условия отбора элемента.
-     * @return искомый объект либо null.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return the found element or null.
      */
     @Nullable
     default <T> E search(@Nullable final T argument, @NotNull final BiPredicate<E, T> predicate) {
@@ -500,11 +514,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
     }
 
     /**
-     * Ищет первый элемент удовлетворяющий условию c дополнительным аргументом.
+     * Search an element using a condition.
      *
-     * @param argument  дополнительный аргумент.
-     * @param predicate условия отбора элемента.
-     * @return искомый объект либо null.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return the found element or null.
      */
     @Nullable
     default E search(final int argument, @NotNull final ObjectIntPredicate<E> predicate) {
@@ -516,11 +530,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
     }
 
     /**
-     * Ищет первый элемент удовлетворяющий условию c дополнительным аргументом.
+     * Search an element using a condition.
      *
-     * @param argument  дополнительный аргумент.
-     * @param predicate условия отбора элемента.
-     * @return искомый объект либо null.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return the found element or null.
      */
     @Nullable
     default E searchL(final long argument, @NotNull final ObjectLongPredicate<E> predicate) {
@@ -540,11 +554,6 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
     void set(int index, @NotNull E element);
 
     /**
-     * @return the count of elements in this {@link Array}.
-     */
-    int size();
-
-    /**
      * Removes the element for the index without reordering.
      *
      * @param index the index of the element.
@@ -552,6 +561,11 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
      */
     @NotNull
     E slowRemove(int index);
+
+    @Override
+    default boolean remove(final Object object) {
+        return slowRemove(object);
+    }
 
     /**
      * Removes the element without reordering.
@@ -572,13 +586,9 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
         return this;
     }
 
-    /**
-     * Copies this array to the array.
-     *
-     * @param newArray the new array.
-     */
     @NotNull
-    default <T extends E> T[] toArray(@NotNull final T[] newArray) {
+    @Override
+    default <T> T[] toArray(@NotNull final T[] newArray) {
 
         final E[] array = array();
 
@@ -604,7 +614,7 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
      * @param componentType the type of the new array.
      */
     @NotNull
-    default <T extends E> T[] toArray(@NotNull final Class<T> componentType) {
+    default <T> T[] toArray(@NotNull final Class<T> componentType) {
 
         final T[] newArray = ArrayUtils.create(componentType, size());
         final E[] array = array();
@@ -614,8 +624,25 @@ public interface Array<E> extends Iterable<E>, Serializable, Reusable, Cloneable
         return newArray;
     }
 
+    /**
+     * Get an unsafe interface of this array.
+     *
+     * @return the unsafe interface of this array.
+     */
     default UnsafeArray<E> asUnsafe() {
         if (this instanceof UnsafeArray) return (UnsafeArray<E>) this;
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    default boolean isEmpty() {
+        return size() < 1;
+    }
+
+    @NotNull
+    @Override
+    default Object[] toArray() {
+        final E[] array = array();
+        return Arrays.copyOf(array, size(), array.getClass());
     }
 }

@@ -1,5 +1,7 @@
 package rlib.util.array;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Comparator;
 
 /**
@@ -10,7 +12,7 @@ import java.util.Comparator;
 public interface ArrayComparator<T> extends Comparator<T> {
 
     @Override
-    public default int compare(final T first, final T second) {
+    default int compare(@Nullable final T first, @Nullable final T second) {
 
         if (first == null) {
             return 1;
@@ -24,8 +26,8 @@ public interface ArrayComparator<T> extends Comparator<T> {
     /**
      * Compare the two objects.
      *
-     * @return a negative integer, zero, or a positive integer as the first argument is less than,
-     * equal to, or greater than the second.
+     * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater
+     * than the second.
      */
-    public int compareImpl(T first, T second);
+    int compareImpl(@Nullable T first, @Nullable T second);
 }

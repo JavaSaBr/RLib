@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import rlib.concurrent.lock.AsyncReadSyncWriteLock;
 import rlib.concurrent.lock.LockFactory;
 import rlib.util.array.ConcurrentArray;
@@ -19,11 +21,11 @@ public class ConcurrentAtomicARSWLockArray<E> extends AbstractConcurrentArray<E>
      */
     private final AsyncReadSyncWriteLock lock;
 
-    public ConcurrentAtomicARSWLockArray(final Class<E> type) {
+    public ConcurrentAtomicARSWLockArray(@NotNull final Class<E> type) {
         this(type, 10);
     }
 
-    public ConcurrentAtomicARSWLockArray(final Class<E> type, final int size) {
+    public ConcurrentAtomicARSWLockArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
 
         this.lock = LockFactory.newAtomicARSWLock();

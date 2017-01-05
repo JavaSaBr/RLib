@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The final implementation of the {@link ConcurrentAtomicARSWLockArray}.
  *
@@ -7,11 +9,11 @@ package rlib.util.array.impl;
  */
 public final class FinalConcurrentAtomicARSWLockArray<E> extends ConcurrentAtomicARSWLockArray<E> {
 
-    public FinalConcurrentAtomicARSWLockArray(final Class<E> type) {
+    public FinalConcurrentAtomicARSWLockArray(@NotNull final Class<E> type) {
         super(type);
     }
 
-    public FinalConcurrentAtomicARSWLockArray(final Class<E> type, final int size) {
+    public FinalConcurrentAtomicARSWLockArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
     }
 }

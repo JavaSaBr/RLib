@@ -3,8 +3,8 @@ package rlib.util.array;
 import rlib.util.ArrayUtils;
 
 /**
- * Интерфейс для реализации динамического массива примитивного long. Главное преймущество по
- * сравнению с ArrayList, возможность работать с примитивами без ущерба для GC: <p>
+ * Интерфейс для реализации динамического массива примитивного long. Главное преймущество по сравнению с ArrayList,
+ * возможность работать с примитивами без ущерба для GC: <p>
  * <pre>
  * for(int i = 0, length = elements.size(); i &lt; length; i++) {
  *
@@ -21,27 +21,27 @@ public interface LongArray extends Iterable<Long> {
     /**
      * Добавление элемента в массив.
      */
-    public LongArray add(long element);
+    LongArray add(long element);
 
     /**
      * Добавление всех элементов массива в этот массив.
      */
-    public LongArray addAll(long[] array);
+    LongArray addAll(long[] array);
 
     /**
      * Добавление всех элементов массива в этот массив.
      */
-    public LongArray addAll(LongArray array);
+    LongArray addAll(LongArray array);
 
     /**
      * @return обернутый реализацией массив элементов.
      */
-    public long[] array();
+    long[] array();
 
     /**
      * Очистить массив.
      */
-    public LongArray clear();
+    LongArray clear();
 
     /**
      * Проверяет, содержит ли массив указанный элемент.
@@ -49,7 +49,7 @@ public interface LongArray extends Iterable<Long> {
      * @param element искомый элемент.
      * @return содержит ли.
      */
-    public default boolean contains(final long element) {
+    default boolean contains(final long element) {
 
         final long[] array = array();
 
@@ -66,7 +66,7 @@ public interface LongArray extends Iterable<Long> {
      * @param array проверяемый массив элементов.
      * @return содержит ли все элементы проверяемого массива.
      */
-    public default boolean containsAll(final long[] array) {
+    default boolean containsAll(final long[] array) {
 
         for (final long val : array) {
             if (!contains(val)) return false;
@@ -81,7 +81,7 @@ public interface LongArray extends Iterable<Long> {
      * @param array проверяемый массив элементов.
      * @return содержит ли все элементы проверяемого массива.
      */
-    public default boolean containsAll(final LongArray array) {
+    default boolean containsAll(final LongArray array) {
 
         final long[] elements = array.array();
 
@@ -100,7 +100,7 @@ public interface LongArray extends Iterable<Long> {
      * @param index индекс удаляемого элемента.
      * @return удален ли элемент.
      */
-    public boolean fastRemove(int index);
+    boolean fastRemove(int index);
 
     /**
      * Удаляет элемент с установкой последнего элемента на месте его.
@@ -108,7 +108,7 @@ public interface LongArray extends Iterable<Long> {
      * @param element удаляемый элемент.
      * @return удален ли элемент.
      */
-    public default boolean fastRemove(final long element) {
+    default boolean fastRemove(final long element) {
 
         final int index = indexOf(element);
         if (index > -1) fastRemove(index);
@@ -119,7 +119,7 @@ public interface LongArray extends Iterable<Long> {
     /**
      * @return первый элемент в массиве либо -1.
      */
-    public long first();
+    long first();
 
     /**
      * Извлекает элемент с указанным индексом.
@@ -127,7 +127,7 @@ public interface LongArray extends Iterable<Long> {
      * @param index индекс в массиве.
      * @return элемент по указанному индексу.
      */
-    public long get(int index);
+    long get(int index);
 
     /**
      * Найти первый индекс указанного элемента в массиве.
@@ -135,7 +135,7 @@ public interface LongArray extends Iterable<Long> {
      * @param element искомый элемент.
      * @return первый индекс элемента в массиве.
      */
-    public default int indexOf(final long element) {
+    default int indexOf(final long element) {
 
         final long[] array = array();
 
@@ -151,15 +151,15 @@ public interface LongArray extends Iterable<Long> {
     /**
      * @return является ли массив пустым.
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 
     @Override
-    public ArrayIterator<Long> iterator();
+    ArrayIterator<Long> iterator();
 
     /**
      * @return последний элемент в массиве либо -1.
      */
-    public long last();
+    long last();
 
     /**
      * Найти последний индекс указанного элемента в массиве.
@@ -167,7 +167,7 @@ public interface LongArray extends Iterable<Long> {
      * @param element искомый элемент.
      * @return последний индекс искомого элемента в массиве.
      */
-    public default int lastIndexOf(final long element) {
+    default int lastIndexOf(final long element) {
 
         final long[] array = array();
 
@@ -185,23 +185,23 @@ public interface LongArray extends Iterable<Long> {
     /**
      * @return первый элемент массива либо -1.
      */
-    public long poll();
+    long poll();
 
     /**
      * @return последний элемент массива либо -1.
      */
-    public long pop();
+    long pop();
 
     /**
      * Блокировка изменения массива на время чтения его.
      */
-    public default void readLock() {
+    default void readLock() {
     }
 
     /**
      * Разблокировка изменения массива.
      */
-    public default void readUnlock() {
+    default void readUnlock() {
     }
 
     /**
@@ -210,7 +210,7 @@ public interface LongArray extends Iterable<Long> {
      * @param target массив с элементами.
      * @return удалены ли все указанные элементы.
      */
-    public default boolean removeAll(final LongArray target) {
+    default boolean removeAll(final LongArray target) {
         if (target.isEmpty()) return true;
 
         final long[] array = target.array();
@@ -228,7 +228,7 @@ public interface LongArray extends Iterable<Long> {
      * @param target массив с элементами.
      * @return удалены ли все элементы.
      */
-    public default boolean retainAll(final LongArray target) {
+    default boolean retainAll(final LongArray target) {
 
         final long[] array = array();
 
@@ -245,7 +245,7 @@ public interface LongArray extends Iterable<Long> {
     /**
      * @return кол-во элементов в массиве.
      */
-    public int size();
+    int size();
 
     /**
      * Удаляет элемент по индексу со сдвигом всех элементов после него.
@@ -253,7 +253,7 @@ public interface LongArray extends Iterable<Long> {
      * @param index индекс удаляемого элемента.
      * @return удален ли элемент.
      */
-    public boolean slowRemove(int index);
+    boolean slowRemove(int index);
 
     /**
      * Удаляет элемент со сдвигом всех элементов после него.
@@ -261,7 +261,7 @@ public interface LongArray extends Iterable<Long> {
      * @param element удаляемый элемент.
      * @return удален ли элемент.
      */
-    public default boolean slowRemove(final long element) {
+    default boolean slowRemove(final long element) {
 
         final int index = indexOf(element);
         if (index > -1) slowRemove(index);
@@ -272,14 +272,14 @@ public interface LongArray extends Iterable<Long> {
     /**
      * Сортировка массива компаратором.
      */
-    public LongArray sort();
+    LongArray sort();
 
     /**
      * Копирует элементы коллекции в указаный массив, либо возвращает исходный в указанном типе.
      *
      * @param newArray массив, в который нужно перенести.
      */
-    public default long[] toArray(final long[] newArray) {
+    default long[] toArray(final long[] newArray) {
 
         final long[] array = array();
 
@@ -300,17 +300,17 @@ public interface LongArray extends Iterable<Long> {
      *
      * @return this.
      */
-    public LongArray trimToSize();
+    LongArray trimToSize();
 
     /**
      * Блокировка чтений для изменения массива.
      */
-    public default void writeLock() {
+    default void writeLock() {
     }
 
     /**
      * Разблокировка чтения массива.
      */
-    public default void writeUnlock() {
+    default void writeUnlock() {
     }
 }

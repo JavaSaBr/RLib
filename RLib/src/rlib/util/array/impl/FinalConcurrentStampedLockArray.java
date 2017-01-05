@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The final implementation of the {@link ConcurrentStampedLockArray}.
  *
@@ -7,11 +9,11 @@ package rlib.util.array.impl;
  */
 public final class FinalConcurrentStampedLockArray<E> extends ConcurrentStampedLockArray<E> {
 
-    public FinalConcurrentStampedLockArray(final Class<E> type) {
+    public FinalConcurrentStampedLockArray(@NotNull final Class<E> type) {
         super(type);
     }
 
-    public FinalConcurrentStampedLockArray(final Class<E> type, final int size) {
+    public FinalConcurrentStampedLockArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
     }
 }

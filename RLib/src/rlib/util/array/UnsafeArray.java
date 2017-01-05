@@ -1,11 +1,12 @@
 package rlib.util.array;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The interface with unsafe methods for the Array.
  *
- * @author JavaSaBr.
+ * @author JavaSaBr
  */
 public interface UnsafeArray<E> extends Array<E> {
 
@@ -20,9 +21,9 @@ public interface UnsafeArray<E> extends Array<E> {
      * Add the new element without any checks.
      *
      * @param object the new element.
-     * @return this array.
+     * @return true if this array was changed.
      */
-    default Array<E> unsafeAdd(@NotNull final E object) {
+    default boolean unsafeAdd(@NotNull final E object) {
         throw new UnsupportedOperationException();
     }
 
@@ -32,6 +33,7 @@ public interface UnsafeArray<E> extends Array<E> {
      * @param index the index.
      * @return the element or null.
      */
+    @Nullable
     default E unsafeGet(final int index) {
         throw new UnsupportedOperationException();
     }

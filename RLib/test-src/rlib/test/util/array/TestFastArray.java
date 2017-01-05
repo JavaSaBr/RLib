@@ -104,7 +104,10 @@ public class TestFastArray extends Assert {
         System.out.println(head + "test remove to ArrayList " + (System.currentTimeMillis() - time));
 
         array.clear();
-        array.add(1).add(1).add(1).add(2);
+        array.add(1);
+        array.add(1);
+        array.add(1);
+        array.add(2);
         array.addAll(added);
         array.addAll(array2.trimToSize().array());
 

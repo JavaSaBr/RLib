@@ -1,5 +1,8 @@
 package rlib.util.array.impl;
 
+import static java.lang.Math.max;
+import static rlib.util.ArrayUtils.copyOf;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -10,9 +13,6 @@ import rlib.util.ArrayUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayIterator;
 import rlib.util.array.UnsafeArray;
-
-import static java.lang.Math.max;
-import static rlib.util.ArrayUtils.copyOf;
 
 /**
  * The implementation of the array with synchronization all methods.
@@ -33,32 +33,30 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
      */
     private volatile E[] array;
 
-    public SynchronizedArray(final Class<E> type) {
+    public SynchronizedArray(@NotNull final Class<E> type) {
         this(type, 10);
     }
 
-    public SynchronizedArray(final Class<E> type, final int size) {
+    public SynchronizedArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
 
         this.size = new AtomicInteger();
     }
 
-    @NotNull
     @Override
-    public synchronized SynchronizedArray<E> add(@NotNull final E element) {
+    public synchronized boolean add(@NotNull final E element) {
 
         if (size() == array.length) {
             array = ArrayUtils.copyOf(array, array.length >> 1);
         }
 
         array[size.getAndIncrement()] = element;
-        return this;
+        return true;
     }
 
-    @NotNull
     @Override
-    public synchronized final SynchronizedArray<E> addAll(@NotNull final Array<? extends E> elements) {
-        if (elements.isEmpty()) return this;
+    public synchronized final boolean addAll(@NotNull final Array<? extends E> elements) {
+        if (elements.isEmpty()) return true;
 
         final int current = array.length;
         final int selfSize = size();
@@ -70,13 +68,12 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         }
 
         processAdd(elements, selfSize, targetSize);
-        return this;
+        return true;
     }
 
-    @NotNull
     @Override
-    public synchronized Array<E> addAll(@NotNull final Collection<? extends E> collection) {
-        if (collection.isEmpty()) return this;
+    public synchronized boolean addAll(@NotNull final Collection<? extends E> collection) {
+        if (collection.isEmpty()) return true;
 
         final int current = array.length;
         final int diff = size() + collection.size() - current;
@@ -86,12 +83,11 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         }
 
         for (final E element : collection) unsafeAdd(element);
-        return this;
+        return true;
     }
 
-    @NotNull
     @Override
-    public synchronized final Array<E> addAll(@NotNull final E[] elements) {
+    public synchronized final boolean addAll(@NotNull final E[] elements) {
 
         final int current = array.length;
         final int selfSize = size();
@@ -103,7 +99,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         }
 
         processAdd(elements, selfSize, targetSize);
-        return this;
+        return true;
     }
 
     @NotNull
@@ -140,6 +136,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         return array[index];
     }
 
+    @NotNull
     @Override
     public synchronized final ArrayIterator<E> iterator() {
         return new FinalArrayIterator<>(this);
@@ -161,7 +158,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
     }
 
     @Override
-    protected final void setArray(final E[] array) {
+    protected final void setArray(@NotNull final E[] array) {
         this.array = array;
     }
 
@@ -207,7 +204,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         return this;
     }
 
-    protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
+    protected void processAdd(@NotNull final Array<? extends E> elements, final int selfSize, final int targetSize) {
         // если надо срау большой массив добавить, то лучше черзе нативный метод
         if (targetSize > SIZE_BIG_ARRAY) {
             System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
@@ -222,7 +219,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         }
     }
 
-    protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
+    protected void processAdd(@NotNull final E[] elements, final int selfSize, final int targetSize) {
         // если надо срау большой массив добавить, то лучше черзе нативный метод
         if (targetSize > SIZE_BIG_ARRAY) {
             System.arraycopy(elements, 0, array, selfSize, targetSize);

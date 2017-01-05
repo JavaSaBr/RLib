@@ -6,9 +6,8 @@ import rlib.concurrent.lock.LockFactory;
 import rlib.util.array.ConcurrentArray;
 
 /**
- * The concurrent implementation of the array without duplications using {@link
- * LockFactory#newReentrantARSWLock()} for {@link ConcurrentArray#readLock()} and {@link
- * ConcurrentArray#writeLock()}.
+ * The concurrent implementation of the array without duplications using {@link LockFactory#newReentrantARSWLock()} for
+ * {@link ConcurrentArray#readLock()} and {@link ConcurrentArray#writeLock()}.
  *
  * @author JavaSaBr
  */
@@ -24,9 +23,8 @@ public class ConcurrentAtomicARSWLockArraySet<E> extends ConcurrentReentrantRWLo
         super(type, size);
     }
 
-    @NotNull
     @Override
-    public AbstractConcurrentArray<E> add(@NotNull final E element) {
-        return contains(element) ? this : super.add(element);
+    public boolean add(@NotNull final E element) {
+        return !contains(element) && super.add(element);
     }
 }

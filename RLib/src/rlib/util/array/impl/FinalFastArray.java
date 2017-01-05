@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The final version of the {@link FastArray}.
  *
@@ -7,11 +9,11 @@ package rlib.util.array.impl;
  */
 public final class FinalFastArray<E> extends FastArray<E> {
 
-    public FinalFastArray(final Class<E> type) {
+    public FinalFastArray(@NotNull final Class<E> type) {
         super(type);
     }
 
-    public FinalFastArray(final Class<E> type, final int size) {
+    public FinalFastArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
     }
 }

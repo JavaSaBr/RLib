@@ -39,16 +39,12 @@ public abstract class AbstractArray<E> implements Array<E> {
         setArray(ArrayUtils.create(type, size));
     }
 
-    @NotNull
     @Override
-    public Array<E> clear() {
-
+    public void clear() {
         if (!isEmpty()) {
             ArrayUtils.clear(array());
             setSize(0);
         }
-
-        return this;
     }
 
     @Override
@@ -64,12 +60,12 @@ public abstract class AbstractArray<E> implements Array<E> {
     /**
      * @param array the new array.
      */
-    protected abstract void setArray(E[] array);
+    protected abstract void setArray(@NotNull E[] array);
 
     /**
      * @param size the new size of the array.
      */
-    protected abstract void setSize(int size);
+    protected abstract void setSize(final int size);
 
     @Override
     public boolean fastRemove(@NotNull final Object object) {

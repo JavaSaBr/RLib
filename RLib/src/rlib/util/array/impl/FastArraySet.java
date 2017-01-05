@@ -21,14 +21,13 @@ public class FastArraySet<E> extends FastArray<E> {
         super(type, size);
     }
 
-    @NotNull
     @Override
-    public FastArray<E> add(@NotNull final E element) {
-        return contains(element) ? this : super.add(element);
+    public boolean add(@NotNull final E element) {
+        return !contains(element) && super.add(element);
     }
 
     @Override
-    protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
+    protected void processAdd(@NotNull final Array<? extends E> elements, final int selfSize, final int targetSize) {
         for (final E element : elements.array()) {
             if (element == null) break;
             if (!contains(element)) unsafeAdd(element);
@@ -36,7 +35,7 @@ public class FastArraySet<E> extends FastArray<E> {
     }
 
     @Override
-    protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
+    protected void processAdd(@NotNull final E[] elements, final int selfSize, final int targetSize) {
         for (final E element : elements) {
             if (element == null) break;
             if (!contains(element)) unsafeAdd(element);

@@ -3,8 +3,8 @@ package rlib.util.array;
 import rlib.util.ArrayUtils;
 
 /**
- * Интерфейс для реализации динамического массива примитивного int. Главное преймущество по
- * сравнению с ArrayList, возможность работать с примитивами без ущерба для GC: <p>
+ * Интерфейс для реализации динамического массива примитивного int. Главное преймущество по сравнению с ArrayList,
+ * возможность работать с примитивами без ущерба для GC: <p>
  * <pre>
  * for(int i = 0, length = elements.size(); i &lt; length; i++) {
  *
@@ -21,27 +21,27 @@ public interface IntegerArray extends Iterable<Integer> {
     /**
      * Добавление элемента в массив.
      */
-    public IntegerArray add(int element);
+    IntegerArray add(int element);
 
     /**
      * Добавление всех элементов массива в этот массив.
      */
-    public IntegerArray addAll(int[] array);
+    IntegerArray addAll(int[] array);
 
     /**
      * Добавление всех элементов массива в этот массив.
      */
-    public IntegerArray addAll(IntegerArray array);
+    IntegerArray addAll(IntegerArray array);
 
     /**
      * @return обернутый реализацией массив элементов.
      */
-    public int[] array();
+    int[] array();
 
     /**
      * Очистить массив.
      */
-    public IntegerArray clear();
+    IntegerArray clear();
 
     /**
      * Проверяет, содержит ли массив указанный элемент.
@@ -49,7 +49,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param element искомый элемент.
      * @return содержит ли.
      */
-    public default boolean contains(final int element) {
+    default boolean contains(final int element) {
 
         final int[] array = array();
 
@@ -66,7 +66,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param array проверяемый массив элементов.
      * @return содержит ли все элементы проверяемого массива.
      */
-    public default boolean containsAll(final int[] array) {
+    default boolean containsAll(final int[] array) {
 
         for (final int val : array) {
             if (!contains(val)) return false;
@@ -81,7 +81,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param array проверяемый массив элементов.
      * @return содержит ли все элементы проверяемого массива.
      */
-    public default boolean containsAll(final IntegerArray array) {
+    default boolean containsAll(final IntegerArray array) {
 
         final int[] elements = array.array();
 
@@ -100,7 +100,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param element удаляемый элемент.
      * @return удален ли элемент.
      */
-    public default boolean fastRemove(final int element) {
+    default boolean fastRemove(final int element) {
 
         final int index = indexOf(element);
         if (index > -1) fastRemoveByIndex(index);
@@ -114,12 +114,12 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param index индекс удаляемого элемента.
      * @return удален ли элемент.
      */
-    public boolean fastRemoveByIndex(int index);
+    boolean fastRemoveByIndex(int index);
 
     /**
      * @return первый элемент в массиве либо -1.
      */
-    public int first();
+    int first();
 
     /**
      * Извлекает элемент с указанным индексом.
@@ -127,7 +127,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param index индекс в массиве.
      * @return элемент по указанному индексу.
      */
-    public int get(int index);
+    int get(int index);
 
     /**
      * Найти первый индекс указанного элемента в массиве.
@@ -135,7 +135,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param element искомый элемент.
      * @return первый индекс элемента в массиве.
      */
-    public default int indexOf(final int element) {
+    default int indexOf(final int element) {
 
         final int[] array = array();
 
@@ -149,17 +149,17 @@ public interface IntegerArray extends Iterable<Integer> {
     /**
      * @return является ли массив пустым.
      */
-    public default boolean isEmpty() {
+    default boolean isEmpty() {
         return size() < 1;
     }
 
     @Override
-    public ArrayIterator<Integer> iterator();
+    ArrayIterator<Integer> iterator();
 
     /**
      * @return последний элемент в массиве либо -1.
      */
-    public int last();
+    int last();
 
     /**
      * Найти последний индекс указанного элемента в массиве.
@@ -167,7 +167,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param element искомый элемент.
      * @return последний индекс искомого элемента в массиве.
      */
-    public default int lastIndexOf(final int element) {
+    default int lastIndexOf(final int element) {
 
         final int[] array = array();
 
@@ -183,23 +183,23 @@ public interface IntegerArray extends Iterable<Integer> {
     /**
      * @return первый элемент массива либо -1.
      */
-    public int poll();
+    int poll();
 
     /**
      * @return последний элемент массива либо -1.
      */
-    public int pop();
+    int pop();
 
     /**
      * Блокировка изменения массива на время чтения его.
      */
-    public default void readLock() {
+    default void readLock() {
     }
 
     /**
      * Разблокировка изменения массива.
      */
-    public default void readUnlock() {
+    default void readUnlock() {
     }
 
     /**
@@ -208,7 +208,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param target массив с элементами.
      * @return удалены ли все указанные элементы.
      */
-    public default boolean removeAll(final IntegerArray target) {
+    default boolean removeAll(final IntegerArray target) {
         if (target.isEmpty()) return true;
 
         final int[] array = target.array();
@@ -226,7 +226,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param target массив с элементами.
      * @return удалены ли все элементы.
      */
-    public default boolean retainAll(final IntegerArray target) {
+    default boolean retainAll(final IntegerArray target) {
 
         final int[] array = array();
 
@@ -243,7 +243,7 @@ public interface IntegerArray extends Iterable<Integer> {
     /**
      * @return кол-во элементов в массиве.
      */
-    public int size();
+    int size();
 
     /**
      * Удаляет элемент со сдвигом всех элементов после него.
@@ -251,7 +251,7 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param element удаляемый элемент.
      * @return удален ли элемент.
      */
-    public default boolean slowRemove(final int element) {
+    default boolean slowRemove(final int element) {
 
         final int index = indexOf(element);
         if (index > -1) slowRemoveByIndex(index);
@@ -265,19 +265,19 @@ public interface IntegerArray extends Iterable<Integer> {
      * @param index индекс удаляемого элемента.
      * @return удален ли элемент.
      */
-    public boolean slowRemoveByIndex(int index);
+    boolean slowRemoveByIndex(int index);
 
     /**
      * Сортировка массива компаратором.
      */
-    public IntegerArray sort();
+    IntegerArray sort();
 
     /**
      * Копирует элементы коллекции в указаный массив, либо возвращает исходный в указанном типе.
      *
      * @param newArray массив, в который нужно перенести.
      */
-    public default int[] toArray(final int[] newArray) {
+    default int[] toArray(final int[] newArray) {
 
         final int[] array = array();
 
@@ -298,17 +298,17 @@ public interface IntegerArray extends Iterable<Integer> {
      *
      * @return this.
      */
-    public IntegerArray trimToSize();
+    IntegerArray trimToSize();
 
     /**
      * Блокировка чтений для изменения массива.
      */
-    public default void writeLock() {
+    default void writeLock() {
     }
 
     /**
      * Разблокировка чтения массива.
      */
-    public default void writeUnlock() {
+    default void writeUnlock() {
     }
 }

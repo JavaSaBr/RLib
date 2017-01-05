@@ -1,5 +1,7 @@
 package rlib.util.array.impl;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -27,11 +29,11 @@ public class ConcurrentReentrantRWLockArray<E> extends AbstractConcurrentArray<E
      */
     private final Lock writeLock;
 
-    public ConcurrentReentrantRWLockArray(final Class<E> type) {
+    public ConcurrentReentrantRWLockArray(@NotNull final Class<E> type) {
         this(type, 10);
     }
 
-    public ConcurrentReentrantRWLockArray(final Class<E> type, final int size) {
+    public ConcurrentReentrantRWLockArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
 
         final ReadWriteLock readWriteLock = LockFactory.newReentrantRWLock();

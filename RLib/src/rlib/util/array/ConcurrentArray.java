@@ -3,7 +3,7 @@ package rlib.util.array;
 /**
  * The interface with methods for supporting threadsafe for the Array.
  *
- * @author JavaSaBr.
+ * @author JavaSaBr
  */
 public interface ConcurrentArray<E> extends Array<E> {
 

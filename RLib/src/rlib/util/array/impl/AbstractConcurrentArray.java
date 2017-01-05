@@ -34,32 +34,30 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
      */
     private volatile E[] array;
 
-    public AbstractConcurrentArray(final Class<E> type) {
+    public AbstractConcurrentArray(@NotNull final Class<E> type) {
         this(type, 10);
     }
 
-    public AbstractConcurrentArray(final Class<E> type, final int size) {
+    public AbstractConcurrentArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
 
         this.size = new AtomicInteger();
     }
 
-    @NotNull
     @Override
-    public AbstractConcurrentArray<E> add(@NotNull final E element) {
+    public boolean add(@NotNull final E element) {
 
         if (size() == array.length) {
             array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
         }
 
         array[size.getAndIncrement()] = element;
-        return this;
+        return true;
     }
 
-    @NotNull
     @Override
-    public final AbstractConcurrentArray<E> addAll(@NotNull final Array<? extends E> elements) {
-        if (elements.isEmpty()) return this;
+    public final boolean addAll(@NotNull final Array<? extends E> elements) {
+        if (elements.isEmpty()) return false;
 
         final int current = array.length;
         final int selfSize = size();
@@ -71,13 +69,12 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         }
 
         processAdd(elements, selfSize, targetSize);
-        return this;
+        return true;
     }
 
-    @NotNull
     @Override
-    public final AbstractConcurrentArray<E> addAll(@NotNull final Collection<? extends E> collection) {
-        if (collection.isEmpty()) return this;
+    public final boolean addAll(@NotNull final Collection<? extends E> collection) {
+        if (collection.isEmpty()) return false;
 
         final int current = array.length;
         final int diff = size() + collection.size() - current;
@@ -87,13 +84,12 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         }
 
         for (final E element : collection) unsafeAdd(element);
-        return this;
+        return true;
     }
 
-    @NotNull
     @Override
-    public final Array<E> addAll(@NotNull final E[] elements) {
-        if (elements.length < 1) return this;
+    public final boolean addAll(@NotNull final E[] elements) {
+        if (elements.length < 1) return false;
 
         final int current = array.length;
         final int selfSize = size();
@@ -105,7 +101,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         }
 
         processAdd(elements, selfSize, targetSize);
-        return this;
+        return true;
     }
 
     @NotNull
@@ -154,6 +150,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         return array[index];
     }
 
+    @NotNull
     @Override
     public final ArrayIterator<E> iterator() {
         return new FinalArrayIterator<>(this);
@@ -175,7 +172,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     @Override
-    protected final void setArray(final E[] array) {
+    protected final void setArray(@NotNull final E[] array) {
         this.array = array;
     }
 
@@ -221,9 +218,9 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     @Override
-    public Array<E> unsafeAdd(@NotNull E object) {
+    public boolean unsafeAdd(@NotNull E object) {
         array[size.getAndIncrement()] = object;
-        return this;
+        return true;
     }
 
     @Override
