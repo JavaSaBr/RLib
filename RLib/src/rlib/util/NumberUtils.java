@@ -1,7 +1,7 @@
 package rlib.util;
 
 /**
- * Набор утильных методов по работе с числами.
+ * The utility class.
  *
  * @author JavaSaBr
  */
@@ -29,16 +29,10 @@ public final class NumberUtils {
         return value & 0xFFFFFFFFL;
     }
 
-    /**
-     * Конвектирование байтов в int.
-     */
     public static int makeInt(final byte byte1, final byte byte2, final byte byte3, final byte byte4) {
         return (byte4 & 0xFF) << 24 | (byte3 & 0xFF) << 16 | (byte2 & 0xFF) << 8 | byte1 & 0xFF;
     }
 
-    /**
-     * Конвектирование байтов в int.
-     */
     public static long makeLong(final byte[] bytes) {
         return ((long) bytes[7] & 0xFF) << 56 | ((long) bytes[6] & 0xFF) << 48 | ((long) bytes[5] & 0xFF) << 40 |
                 ((long) bytes[4] & 0xFF) << 32 | ((long) bytes[3] & 0xFF) << 24 | ((long) bytes[2] & 0xFF) << 16 |

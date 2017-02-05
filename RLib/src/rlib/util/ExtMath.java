@@ -1,7 +1,7 @@
 package rlib.util;
 
 /**
- * Набор дополнительных математических методов.
+ * The utility class.
  *
  * @author JavaSaBr
  */

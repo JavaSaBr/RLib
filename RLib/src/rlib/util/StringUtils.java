@@ -22,8 +22,6 @@ import rlib.logging.LoggerManager;
  */
 public class StringUtils {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(StringUtils.class);
-
     /**
      * The empty string.
      */
@@ -37,7 +35,7 @@ public class StringUtils {
     /**
      * The pattern for validating email.
      */
-    public static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+" +
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+" +
             "(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = ThreadLocal.withInitial(StringUtils::getHashMD5);
@@ -172,7 +170,7 @@ public class StringUtils {
         try {
             return MessageDigest.getInstance("MD5");
         } catch (final NoSuchAlgorithmException e) {
-            LOGGER.warning(e);
+            Util.print(StringUtils.class, e);
         }
 
         return null;

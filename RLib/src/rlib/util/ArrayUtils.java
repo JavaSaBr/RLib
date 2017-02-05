@@ -30,7 +30,7 @@ import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
 
 /**
- * The class with utility methods.
+ * The utility class.
  *
  * @author JavaSaBr
  */

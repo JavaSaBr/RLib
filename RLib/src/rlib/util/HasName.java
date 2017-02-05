@@ -5,7 +5,7 @@ package rlib.util;
  *
  * @author JavaSaBr
  */
-public interface Nameable {
+public interface HasName {
 
     /**
      * @return the name of this object.

@@ -1,15 +1,12 @@
 package rlib.util;
 
 import static java.lang.Float.parseFloat;
+import static java.util.Objects.requireNonNull;
 import static rlib.util.ClassUtils.unsafeCast;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
-import java.util.Objects;
-
 import rlib.geom.Quaternion4f;
 import rlib.geom.Vector3f;
 import rlib.util.dictionary.DictionaryFactory;
@@ -51,7 +48,7 @@ public class VarTable {
     @NotNull
     private final ObjectDictionary<String, Object> values;
 
-    public VarTable() {
+    private VarTable() {
         this.values = DictionaryFactory.newObjectDictionary();
     }
 
@@ -131,7 +128,10 @@ public class VarTable {
         if (object == null) return def;
 
         final Class<?> type = def.getClass();
-        if (type.isInstance(object)) return unsafeCast(object);
+
+        if (type.isInstance(object)) {
+            return requireNonNull(unsafeCast(object));
+        }
 
         return def;
     }
@@ -151,7 +151,7 @@ public class VarTable {
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (type.isInstance(object)) {
-            return unsafeCast(object);
+            return requireNonNull(unsafeCast(object));
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -174,7 +174,7 @@ public class VarTable {
         if (object == null) {
             return def;
         } else if (type.isInstance(object)) {
-            return unsafeCast(object);
+            return requireNonNull(unsafeCast(object));
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -239,21 +239,23 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof boolean[]) {
             return (boolean[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final boolean[] result = new boolean[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Boolean.parseBoolean(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseBooleanArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    private boolean[] parseBooleanArray(@NotNull final String regex, @NotNull final Object object) {
+
+        final String[] strings = object.toString().split(regex);
+        final boolean[] result = new boolean[strings.length];
+
+        for (int i = 0, length = strings.length; i < length; i++) {
+            result[i] = Boolean.parseBoolean(strings[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -274,18 +276,8 @@ public class VarTable {
             return def;
         } else if (object instanceof boolean[]) {
             return (boolean[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final boolean[] result = new boolean[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Boolean.parseBoolean(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseBooleanArray(regex, object);
         }
 
         return def;
@@ -350,21 +342,23 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof byte[]) {
             return (byte[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final byte[] result = new byte[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Byte.parseByte(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseByteArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    private byte[] parseByteArray(@NotNull final String regex, @NotNull final Object object) {
+
+        final String[] strings = object.toString().split(regex);
+        final byte[] result = new byte[strings.length];
+
+        for (int i = 0, length = strings.length; i < length; i++) {
+            result[i] = Byte.parseByte(strings[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -383,18 +377,8 @@ public class VarTable {
             return def;
         } else if (object instanceof byte[]) {
             return (byte[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final byte[] result = new byte[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Byte.parseByte(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseByteArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -459,21 +443,23 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof double[]) {
             return (double[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final double[] result = new double[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Double.parseDouble(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseDoubleArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    private double[] parseDoubleArray(@NotNull final String regex, @NotNull final Object object) {
+
+        final String[] strings = object.toString().split(regex);
+        final double[] result = new double[strings.length];
+
+        for (int i = 0, length = strings.length; i < length; i++) {
+            result[i] = Double.parseDouble(strings[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -494,18 +480,8 @@ public class VarTable {
             return def;
         } else if (object instanceof double[]) {
             return (double[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final double[] result = new double[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Double.parseDouble(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseDoubleArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -543,7 +519,8 @@ public class VarTable {
      * @return the value.
      */
     @NotNull
-    public <T extends Enum<T>> T getEnum(@NotNull final String key, @NotNull final Class<T> type, @NotNull final T def) {
+    public <T extends Enum<T>> T getEnum(@NotNull final String key, @NotNull final Class<T> type,
+                                         @NotNull final T def) {
 
         final Object object = values.get(key);
 
@@ -575,22 +552,25 @@ public class VarTable {
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Enum[]) {
-            return unsafeCast(object);
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final T[] result = unsafeCast(java.lang.reflect.Array.newInstance(type, strings.length));
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Enum.valueOf(type, strings[i]);
-            }
-
-            return result;
+            return requireNonNull(unsafeCast(object));
+        } else if (object instanceof String) {
+            return parseEnumArray(type, regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    private <T extends Enum<T>> T[] parseEnumArray(@NotNull final Class<T> type, @NotNull final String regex,
+                                                   @NotNull final Object object) {
+
+        final String[] strings = object.toString().split(regex);
+        final T[] result = requireNonNull(unsafeCast(ArrayUtils.create(type, strings.length)));
+
+        for (int i = 0, length = strings.length; i < length; i++) {
+            result[i] = Enum.valueOf(type, strings[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -611,19 +591,9 @@ public class VarTable {
         if (object == null) {
             return def;
         } else if (object instanceof Enum[]) {
-            return unsafeCast(object);
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final T[] result = unsafeCast(java.lang.reflect.Array.newInstance(type, strings.length));
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Enum.valueOf(type, strings[i]);
-            }
-
-            return result;
+            return requireNonNull(unsafeCast(object));
+        } else if (object instanceof String) {
+            return parseEnumArray(type, regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -688,21 +658,23 @@ public class VarTable {
             throw new IllegalArgumentException();
         } else if (object instanceof float[]) {
             return (float[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final float[] result = new float[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Float.parseFloat(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseFloatArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    private float[] parseFloatArray(@NotNull final String regex, @NotNull final Object object) {
+
+        final String[] strings = object.toString().split(regex);
+        final float[] result = new float[strings.length];
+
+        for (int i = 0, length = strings.length; i < length; i++) {
+            result[i] = Float.parseFloat(strings[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -722,18 +694,8 @@ public class VarTable {
             return def;
         } else if (object instanceof float[]) {
             return (float[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final float[] result = new float[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Float.parseFloat(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseFloatArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -798,21 +760,23 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof int[]) {
             return (int[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final int[] result = new int[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Integer.parseInt(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseIntegerArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    private int[] parseIntegerArray(@NotNull final String regex, @NotNull final Object object) {
+
+        final String[] strings = object.toString().split(regex);
+        final int[] result = new int[strings.length];
+
+        for (int i = 0, length = strings.length; i < length; i++) {
+            result[i] = Integer.parseInt(strings[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -832,18 +796,8 @@ public class VarTable {
             return def;
         } else if (object instanceof int[]) {
             return (int[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final int[] result = new int[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Integer.parseInt(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseIntegerArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -863,9 +817,7 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Long) {
             return (Long) object;
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Long.parseLong(object.toString());
         }
 
@@ -887,9 +839,7 @@ public class VarTable {
             return def;
         } else if (object instanceof Long) {
             return (Long) object;
-        }
-
-        if (object instanceof String) {
+        } else if (object instanceof String) {
             return Long.parseLong(object.toString());
         }
 
@@ -912,21 +862,23 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof long[]) {
             return (long[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final long[] result = new long[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Long.parseLong(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseLongArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    private long[] parseLongArray(@NotNull final String regex, @NotNull final Object object) {
+
+        final String[] strings = object.toString().split(regex);
+        final long[] result = new long[strings.length];
+
+        for (int i = 0, length = strings.length; i < length; i++) {
+            result[i] = Long.parseLong(strings[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -946,18 +898,8 @@ public class VarTable {
             return def;
         } else if (object instanceof long[]) {
             return (long[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final long[] result = new long[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Long.parseLong(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseLongArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -978,20 +920,23 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Quaternion4f) {
             return (Quaternion4f) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] values = ((String) object).split(",");
-
-            final Quaternion4f rotation = Quaternion4f.newInstance();
-            rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]),
-                    parseFloat(values[2]), parseFloat(values[3]));
-
-            return rotation;
+        } else if (object instanceof String) {
+            return parseRotation((String) object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    @NotNull
+    private Quaternion4f parseRotation(@NotNull final String object) {
+
+        final String[] values = object.split(",");
+
+        final Quaternion4f rotation = Quaternion4f.newInstance();
+        rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]),
+                parseFloat(values[2]), parseFloat(values[3]));
+
+        return rotation;
     }
 
     /**
@@ -1010,17 +955,8 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Quaternion4f) {
             return (Quaternion4f) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] values = ((String) object).split(",");
-
-            final Quaternion4f rotation = Quaternion4f.newInstance();
-            rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]),
-                    parseFloat(values[2]), parseFloat(values[3]));
-
-            return rotation;
+        } else if (object instanceof String) {
+            return parseRotation((String) object);
         }
 
         return def;
@@ -1085,21 +1021,23 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof short[]) {
             return (short[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final short[] result = new short[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Short.parseShort(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseShortArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    private short[] parseShortArray(@NotNull final String regex, @NotNull final Object object) {
+
+        final String[] strings = object.toString().split(regex);
+        final short[] result = new short[strings.length];
+
+        for (int i = 0, length = strings.length; i < length; i++) {
+            result[i] = Short.parseShort(strings[i]);
+        }
+
+        return result;
     }
 
     /**
@@ -1119,18 +1057,8 @@ public class VarTable {
             return def;
         } else if (object instanceof short[]) {
             return (short[]) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] strings = object.toString().split(regex);
-            final short[] result = new short[strings.length];
-
-            for (int i = 0, length = strings.length; i < length; i++) {
-                result[i] = Short.parseShort(strings[i]);
-            }
-
-            return result;
+        } else if (object instanceof String) {
+            return parseShortArray(regex, object);
         }
 
         throw new IllegalArgumentException("not found " + key);
@@ -1248,19 +1176,22 @@ public class VarTable {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Vector3f) {
             return (Vector3f) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] values = ((String) object).split(",");
-
-            final Vector3f vector = Vector3f.newInstance();
-            vector.set(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]));
-
-            return vector;
+        } else if (object instanceof String) {
+            return parseVector((String) object);
         }
 
         throw new IllegalArgumentException("not found " + key);
+    }
+
+    @NotNull
+    private Vector3f parseVector(@NotNull final String object) {
+
+        final String[] values = object.split(",");
+
+        final Vector3f vector = Vector3f.newInstance();
+        vector.set(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]));
+
+        return vector;
     }
 
     /**
@@ -1279,16 +1210,8 @@ public class VarTable {
             return def;
         } else if (object instanceof Vector3f) {
             return (Vector3f) object;
-        }
-
-        if (object instanceof String) {
-
-            final String[] vals = ((String) object).split(",");
-
-            final Vector3f vector = Vector3f.newInstance();
-            vector.set(parseFloat(vals[0]), parseFloat(vals[1]), parseFloat(vals[2]));
-
-            return vector;
+        } else if (object instanceof String) {
+            return parseVector((String) object);
         }
 
         return def;
@@ -1333,8 +1256,8 @@ public class VarTable {
      * @param nameName  the name of name attribute.
      * @param nameValue the name of value attribute.
      */
-    public VarTable parse(@Nullable final Node node, @NotNull final String childName,
-                          @NotNull final String nameName, @NotNull final String nameValue) {
+    public VarTable parse(@Nullable final Node node, @NotNull final String childName, @NotNull final String nameName,
+                          @NotNull final String nameValue) {
         values.clear();
 
         if (node == null) {
@@ -1369,7 +1292,7 @@ public class VarTable {
      * @param value the value.
      */
     public void set(@NotNull final String key, @NotNull final Object value) {
-        values.put(key, Objects.requireNonNull(value));
+        values.put(key, requireNonNull(value));
     }
 
     /**

@@ -1,12 +1,13 @@
 package rlib.util;
 
+import static java.lang.Class.forName;
+import static rlib.util.Util.print;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 
 /**
@@ -15,8 +16,6 @@ import rlib.logging.LoggerManager;
  * @author JavaSaBr
  */
 public final class ClassUtils {
-
-    private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
 
     /**
      * Get a class for a name.
@@ -27,9 +26,9 @@ public final class ClassUtils {
     @Nullable
     public static <T> Class<T> getClass(@NotNull final String name) {
         try {
-            return unsafeCast(Class.forName(name));
+            return unsafeCast(forName(name));
         } catch (final ClassNotFoundException e) {
-            LOGGER.warning(e);
+            print(ClassUtils.class, e);
             return null;
         }
     }
@@ -46,7 +45,7 @@ public final class ClassUtils {
         try {
             return unsafeCast(cs.getConstructor(classes));
         } catch (final NoSuchMethodException | SecurityException e) {
-            LOGGER.warning(e);
+            print(ClassUtils.class, e);
             return null;
         }
     }
@@ -61,10 +60,10 @@ public final class ClassUtils {
     @Nullable
     public static <T> Constructor<T> getConstructor(@NotNull final String className, @Nullable final Class<?>... classes) {
         try {
-            final Class<?> cs = Class.forName(className);
+            final Class<?> cs = forName(className);
             return unsafeCast(cs.getConstructor(classes));
         } catch (final NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            LOGGER.warning(e);
+            print(ClassUtils.class, e);
             return null;
         }
     }
@@ -78,6 +77,7 @@ public final class ClassUtils {
     @NotNull
     public static <T> T newInstance(@NotNull final Class<?> cs) {
         try {
+            //noinspection ConstantConditions
             return unsafeCast(cs.newInstance());
         } catch (final InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -94,6 +94,7 @@ public final class ClassUtils {
     @NotNull
     public static <T> T newInstance(@NotNull final Constructor<?> constructor, @Nullable final Object... objects) {
         try {
+            //noinspection ConstantConditions
             return unsafeCast(constructor.newInstance(objects));
         } catch (final InvocationTargetException e) {
             throw new RuntimeException(e.getTargetException());
@@ -111,7 +112,8 @@ public final class ClassUtils {
     @NotNull
     public static <T> T newInstance(@NotNull final String className) {
         try {
-            return unsafeCast(Class.forName(className).newInstance());
+            //noinspection ConstantConditions
+            return unsafeCast(forName(className).newInstance());
         } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -123,8 +125,8 @@ public final class ClassUtils {
      * @param object the object.
      * @return the casted object.
      */
-    @NotNull
-    public static <T> T unsafeCast(@NotNull final Object object) {
+    @Nullable
+    public static <T> T unsafeCast(@Nullable final Object object) {
         return (T) object;
     }
 
@@ -135,8 +137,8 @@ public final class ClassUtils {
      * @param type the target type.
      * @return the casted object.
      */
-    @NotNull
-    public static <T> T unsafeCast(@NotNull final Class<T> type, @NotNull final Object object) {
+    @Nullable
+    public static <T> T unsafeCast(@NotNull final Class<T> type, @Nullable final Object object) {
         return type.cast(object);
     }
 
@@ -148,7 +150,7 @@ public final class ClassUtils {
      * @return the casted object or null.
      */
     @Nullable
-    public static <T> T cast(@NotNull final Class<T> type, @NotNull final Object object) {
+    public static <T> T cast(@NotNull final Class<T> type, @Nullable final Object object) {
         return type.isInstance(object) ? type.cast(object) : null;
     }
 

@@ -28,13 +28,11 @@ import rlib.util.array.ArrayFactory;
 import rlib.util.array.UnsafeArray;
 
 /**
- * The clss with utility methods.
+ * The utility class.
  *
  * @author JavaSaBr
  */
 public class FileUtils {
-
-    private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
 
     @NotNull
     public static final ArrayComparator<Path> FILE_PATH_LENGTH_COMPARATOR = (first, second) -> {
@@ -112,7 +110,7 @@ public class FileUtils {
         }
 
         if (!Files.exists(dir)) {
-            LOGGER.warning("not found folder " + dir);
+            Util.print(FileUtils.class, "not found folder " + dir);
             return;
         }
 
@@ -251,7 +249,7 @@ public class FileUtils {
         try {
             urls = classLoader.getResources(pckg.getName().replace('.', '/'));
         } catch (final IOException e) {
-            LOGGER.warning(e);
+            Util.print(FileUtils.class, e);
         }
 
         if (urls == null) return new Path[0];
@@ -409,11 +407,13 @@ public class FileUtils {
      *
      * @param path the path for converting.
      * @return the URL of the path.
-     * @throws MalformedURLException If a protocol handler for the URL could not be found, or if some other error
-     *                               occurred while constructing the URL.
      */
     @NotNull
-    public static URL toUrl(@NotNull final Path path) throws MalformedURLException {
-        return path.toUri().toURL();
+    public static URL toUrl(@NotNull final Path path)  {
+        try {
+            return path.toUri().toURL();
+        } catch (final MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

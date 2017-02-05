@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 
 /**
- * The class with utility methods.
+ * The utility class.
  *
  * @author JavaSaBr
  */

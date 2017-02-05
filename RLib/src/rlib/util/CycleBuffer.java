@@ -16,11 +16,13 @@ public final class CycleBuffer<T> {
     /**
      * The array with buffered objects.
      */
+    @NotNull
     private final T[] buffer;
 
     /**
      * The handler of getting object from buffer.
      */
+    @Nullable
     private final Consumer<T> handler;
 
     /**

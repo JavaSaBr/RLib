@@ -33,9 +33,9 @@ import rlib.logging.LoggerManager;
  */
 public final class Util {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(Util.class);
+    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() ->
+            new SimpleDateFormat("HH:mm:ss:SSS"));
 
-    private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() -> new SimpleDateFormat("HH:mm:ss:SSS"));
     private static final ThreadLocal<Date> LOCAL_DATE = withInitial(Date::new);
 
     /**
@@ -498,6 +498,13 @@ public final class Util {
         return builder.toString();
     }
 
+    public static void print(@NotNull final Class<?> owner, @NotNull final Exception e) {
+        LoggerManager.getDefaultLogger().warning(owner, e);
+    }
+
+    public static void print(@NotNull final Class<?> owner, @NotNull final String message) {
+        LoggerManager.getDefaultLogger().warning(owner, message);
+    }
 
     private Util() {
         throw new RuntimeException();

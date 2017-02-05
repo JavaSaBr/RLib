@@ -22,8 +22,6 @@ import rlib.util.pools.Reusable;
  */
 public final class ObjectUtils {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(ObjectUtils.class);
-
     private static final ConcurrentObjectDictionary<Class<?>, Array<Field>> FIELDS_CACHE =
             DictionaryFactory.newConcurrentAtomicObjectDictionary();
 
@@ -95,8 +93,8 @@ public final class ObjectUtils {
         array.forEach(field -> {
             try {
                 field.set(original, field.get(target));
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                LOGGER.warning(e);
+            } catch (final IllegalArgumentException | IllegalAccessException e) {
+                Util.print(ObjectUtils.class, e);
             }
         });
 

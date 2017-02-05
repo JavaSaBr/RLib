@@ -18,8 +18,6 @@ import rlib.logging.LoggerManager;
  */
 public final class IOUtils {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(IOUtils.class);
-
     /**
      * Close a closeable object.
      *
