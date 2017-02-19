@@ -2,30 +2,22 @@ package rlib.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rlib.util.array.Array;
+import rlib.util.array.ArrayComparator;
+import rlib.util.array.ArrayFactory;
+import rlib.util.array.UnsafeArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.CharBuffer;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-import rlib.util.array.Array;
-import rlib.util.array.ArrayComparator;
-import rlib.util.array.ArrayFactory;
-import rlib.util.array.UnsafeArray;
 
 /**
  * The utility class.
@@ -183,10 +175,23 @@ public class FileUtils {
      * @return the extension or the path if the path doesn't have an extension.
      */
     public static String getExtension(@Nullable final String path) {
+        return getExtension(path, false);
+    }
+
+    /**
+     * Get an extension of a path.
+     *
+     * @param path        the path.
+     * @param toLowerCase true if need that extension was only in lower case.
+     * @return the extension or the path if the path doesn't have an extension.
+     */
+    public static String getExtension(@Nullable final String path, final boolean toLowerCase) {
         if (StringUtils.isEmpty(path)) return path;
         final int index = path.lastIndexOf('.');
         if (index == -1) return path;
-        return path.substring(index + 1, path.length());
+        final String result = path.substring(index + 1, path.length());
+        if (toLowerCase) return result.toLowerCase();
+        return result;
     }
 
     /**
@@ -198,6 +203,18 @@ public class FileUtils {
     public static String getExtension(@NotNull final Path file) {
         if (Files.isDirectory(file)) return StringUtils.EMPTY;
         return getExtension(Objects.toString(file.getFileName()));
+    }
+
+    /**
+     * Get an extension of a file.
+     *
+     * @param file the file.
+     * @param toLowerCase true if need that extension was only in lower case.
+     * @return the extension or the file name if the file doesn't have an extension.
+     */
+    public static String getExtension(@NotNull final Path file, final boolean toLowerCase) {
+        if (Files.isDirectory(file)) return StringUtils.EMPTY;
+        return getExtension(Objects.toString(file.getFileName()), toLowerCase);
     }
 
     /**
