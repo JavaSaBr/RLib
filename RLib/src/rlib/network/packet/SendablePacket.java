@@ -12,108 +12,121 @@ import java.nio.ByteBuffer;
 public interface SendablePacket extends Packet {
 
     /**
-     * Notifies about started preparing data for writing of this packet.
+     * Notify about started preparing data to write this packet.
      */
     default void notifyStartedPreparing() {
     }
 
     /**
-     * Notifies about finished preparing data for writing of this packet.
+     * Notify about finished preparing data to write this packet.
      */
     default void notifyFinishedPreparing() {
     }
 
     /**
-     * Notifies about started writing data of this packet.
+     * Notify about started writing data of this packet.
      */
     default void notifyStartedWriting() {
     }
 
     /**
-     * Notifies about finished writing data of this packet.
+     * Notify about finished writing data of this packet.
      */
     default void notifyFinishedWriting() {
     }
 
     /**
-     * Writes this packet to the buffer.
+     * Write this packet to the buffer.
      *
-     * @param buffer the buffer for writing.
+     * @param buffer the buffer.
      */
     void write(@NotNull ByteBuffer buffer);
 
     /**
-     * Writes 1 byte to the buffer.
+     * Write 1 byte to the buffer.
      *
      * @param buffer the buffer.
-     * @param value  the value for writing.
+     * @param value  the value.
      */
     default void writeByte(@NotNull final ByteBuffer buffer, final int value) {
         buffer.put((byte) value);
     }
 
     /**
-     * Writes 2 bytes to the buffer.
+     * Write packet type id of this packet to the buffer.
      *
      * @param buffer the buffer.
-     * @param value  the value for writing.
+     */
+    default void writePacketTypeId(@NotNull final ByteBuffer buffer) {
+        writeShort(buffer, getPacketType().getId());
+    }
+
+    /**
+     * Write 2 bytes to the buffer.
+     *
+     * @param buffer the buffer.
+     * @param value  the value.
      */
     default void writeChar(@NotNull final ByteBuffer buffer, final char value) {
         buffer.putChar(value);
     }
 
     /**
-     * Writes 2 bytes to the buffer.
+     * Write 2 bytes to the buffer.
      *
      * @param buffer the buffer.
-     * @param value  the value for writing.
+     * @param value  the value.
      */
     default void writeChar(@NotNull final ByteBuffer buffer, final int value) {
         buffer.putChar((char) value);
     }
 
     /**
-     * Writes 4 bytes to the buffer.
+     * Write 4 bytes to the buffer.
      *
      * @param buffer the buffer.
-     * @param value  the value for writing.
+     * @param value  the value.
      */
     default void writeFloat(@NotNull final ByteBuffer buffer, final float value) {
         buffer.putFloat(value);
     }
 
     /**
-     * Write the header of this packet to the buffer.
+     * Write size of the packet data to the buffer.
      *
-     * @param buffer the buffer.
-     * @param length the result length of this packet.
+     * @param buffer     the buffer.
+     * @param packetSize the result packet size.
      */
-    void writeHeader(@NotNull ByteBuffer buffer, int length);
+    default void writePacketSize(@NotNull final ByteBuffer buffer, final int packetSize) {
+        buffer.putShort(0, (short) packetSize);
+    }
 
     /**
-     * Writes 4 bytes to the buffer.
+     * Write 4 bytes to the buffer.
      *
      * @param buffer the buffer.
-     * @param value  the value for writing.
+     * @param value  the value.
      */
     default void writeInt(@NotNull final ByteBuffer buffer, final int value) {
         buffer.putInt(value);
     }
 
     /**
-     * Writes 8 bytes to the buffer.
+     * Write 8 bytes to the buffer.
      *
      * @param buffer the buffer.
-     * @param value  the value for writing.
+     * @param value  the value.
      */
     default void writeLong(@NotNull final ByteBuffer buffer, final long value) {
         buffer.putLong(value);
     }
 
     /**
-     * Prepares the position of the buffer for writing data from this packet.
+     * Prepare the start position in the buffer to write data from this packet.
      */
-    void prepareWritePosition(@NotNull ByteBuffer buffer);
+    default void prepareWritePosition(@NotNull final ByteBuffer buffer) {
+        buffer.position(2);
+    }
 
     /**
      * Writes 2 bytes to the buffer.
@@ -132,8 +145,30 @@ public interface SendablePacket extends Packet {
      * @param string the string for writing.
      */
     default void writeString(@NotNull final ByteBuffer buffer, @NotNull final String string) {
+        writeInt(buffer, string.length());
+
         for (int i = 0, length = string.length(); i < length; i++) {
             buffer.putChar(string.charAt(i));
         }
+    }
+
+    /**
+     * Write a data buffer to packet buffer.
+     *
+     * @param buffer thr packet buffer.
+     * @param data   the data buffer.
+     */
+    default void writeBuffer(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer data) {
+        buffer.put(data.array(), data.position(), data.limit());
+    }
+
+    /**
+     * Get a packet type of this packet.
+     *
+     * @return the packet type.
+     */
+    @NotNull
+    default SendablePacketType<? extends SendablePacket> getPacketType() {
+        throw new UnsupportedOperationException();
     }
 }

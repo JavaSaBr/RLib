@@ -3,18 +3,16 @@ package rlib.network.impl;
 import static java.nio.ByteBuffer.allocate;
 import static java.nio.ByteBuffer.allocateDirect;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
-
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteBuffer;
-import java.util.function.Function;
-
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.AsynchronousNetwork;
 import rlib.network.NetworkConfig;
 import rlib.util.pools.Pool;
 import rlib.util.pools.PoolFactory;
+
+import java.nio.ByteBuffer;
+import java.util.function.Function;
 
 /**
  * The base implementation of a async network.
@@ -23,6 +21,7 @@ import rlib.util.pools.PoolFactory;
  */
 public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork {
 
+    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(AsynchronousNetwork.class);
 
     /**

@@ -1,12 +1,8 @@
 package rlib.concurrent.executor.impl;
 
+import static java.util.Objects.requireNonNull;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Constructor;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-
+import org.jetbrains.annotations.Nullable;
 import rlib.concurrent.executor.TaskExecutor;
 import rlib.concurrent.lock.LockFactory;
 import rlib.concurrent.lock.Lockable;
@@ -18,6 +14,11 @@ import rlib.logging.LoggerManager;
 import rlib.util.ClassUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+
+import java.lang.reflect.Constructor;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
 
 /**
  * The implementation of single thread task executor.
@@ -65,7 +66,7 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
     private final Lock lock;
 
     public SingleThreadTaskExecutor(@NotNull final Class<? extends Thread> threadClass, final int priority,
-                                    @NotNull final String name, @NotNull final L local) {
+                                    @NotNull final String name, @Nullable final L local) {
         this.waitTasks = ArrayFactory.newArray(SimpleTask.class);
         this.executeTasks = ArrayFactory.newArray(SimpleTask.class);
         this.wait = new AtomicBoolean();
@@ -73,7 +74,7 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
 
         final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
 
-        this.thread = ClassUtils.newInstance(constructor, this, name);
+        this.thread = ClassUtils.newInstance(requireNonNull(constructor), this, name);
         this.thread.setPriority(priority);
         this.thread.setDaemon(true);
         this.localObjects = check(local, thread);
@@ -81,8 +82,8 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
     }
 
     @NotNull
-    protected L check(@NotNull final L local, @NotNull final Thread thread) {
-        return local;
+    protected L check(@Nullable final L local, @NotNull final Thread thread) {
+        return requireNonNull(local);
     }
 
     @Override

@@ -1,13 +1,12 @@
 package rlib.network.server;
 
 import org.jetbrains.annotations.NotNull;
+import rlib.logging.Logger;
+import rlib.logging.LoggerManager;
 
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
-
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
 
 /**
  * The base implementation of an accept handler.
@@ -16,6 +15,7 @@ import rlib.logging.LoggerManager;
  */
 public abstract class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
 
+    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(AcceptHandler.class);
 
     @Override

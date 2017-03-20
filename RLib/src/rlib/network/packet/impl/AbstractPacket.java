@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
+import rlib.network.ConnectionOwner;
 import rlib.network.packet.Packet;
 
 /**
@@ -14,8 +15,9 @@ import rlib.network.packet.Packet;
  *
  * @author JavaSaBr
  */
-public abstract class AbstractPacket<C> implements Packet {
+public abstract class AbstractPacket implements Packet {
 
+    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(Packet.class);
 
     /**
@@ -28,7 +30,7 @@ public abstract class AbstractPacket<C> implements Packet {
      * The owner of this packet.
      */
     @Nullable
-    protected volatile C owner;
+    protected volatile ConnectionOwner owner;
 
     public AbstractPacket() {
         this.name = getNameImpl();
@@ -47,7 +49,7 @@ public abstract class AbstractPacket<C> implements Packet {
 
     @Nullable
     @Override
-    public C getOwner() {
+    public ConnectionOwner getOwner() {
         return owner;
     }
 

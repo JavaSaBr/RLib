@@ -1,12 +1,8 @@
 package rlib.concurrent.executor.impl;
 
+import static java.util.Objects.requireNonNull;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Constructor;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-import java.util.function.Consumer;
-
+import org.jetbrains.annotations.Nullable;
 import rlib.concurrent.executor.PeriodicTaskExecutor;
 import rlib.concurrent.lock.LockFactory;
 import rlib.concurrent.lock.Lockable;
@@ -18,6 +14,11 @@ import rlib.logging.LoggerManager;
 import rlib.util.ClassUtils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
+
+import java.lang.reflect.Constructor;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.function.Consumer;
 
 /**
  * The implementation of single thread periodic executor.
@@ -83,7 +84,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
 
     public SingleThreadPeriodicTaskExecutor(@NotNull final Class<? extends Thread> threadClass, final int priority,
                                             final int interval, @NotNull final String name,
-                                            final Class<?> taskClass, @NotNull final L localObjects) {
+                                            final Class<?> taskClass, @Nullable final L localObjects) {
         this.waitTasks = ArrayFactory.newArray(taskClass);
         this.executeTasks = ArrayFactory.newArray(taskClass);
         this.finishedTasks = ArrayFactory.newArray(taskClass);
@@ -121,8 +122,8 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     }
 
     @NotNull
-    protected L check(@NotNull final L localObjects, @NotNull final Thread thread) {
-        return localObjects;
+    protected L check(@Nullable final L localObjects, @NotNull final Thread thread) {
+        return requireNonNull(localObjects);
     }
 
     /**

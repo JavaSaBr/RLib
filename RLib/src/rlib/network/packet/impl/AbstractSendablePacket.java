@@ -1,18 +1,17 @@
 package rlib.network.packet.impl;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteBuffer;
-
 import rlib.network.packet.SendablePacket;
 import rlib.util.Util;
+
+import java.nio.ByteBuffer;
 
 /**
  * The base implementation of the {@link SendablePacket}.
  *
  * @author JavaSaBr
  */
-public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implements SendablePacket {
+public abstract class AbstractSendablePacket extends AbstractPacket implements SendablePacket {
 
     /**
      * The memory barrier.
@@ -23,6 +22,10 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
      * The sink for the memory barrier.
      */
     protected int barrierSink;
+
+    protected AbstractSendablePacket() {
+        getPacketType();
+    }
 
     @Override
     public void write(@NotNull final ByteBuffer buffer) {
@@ -41,6 +44,7 @@ public abstract class AbstractSendablePacket<C> extends AbstractPacket<C> implem
      * The process of writing this packet to the buffer.
      */
     protected void writeImpl(@NotNull final ByteBuffer buffer) {
+        writePacketTypeId(buffer);
     }
 
     @Override

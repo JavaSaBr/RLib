@@ -2,9 +2,6 @@ package rlib.network;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-
 import rlib.logging.Logger;
 import rlib.logging.LoggerManager;
 import rlib.network.client.ClientNetwork;
@@ -14,6 +11,8 @@ import rlib.network.server.AcceptHandler;
 import rlib.network.server.ServerNetwork;
 import rlib.network.server.impl.DefaultServerNetwork;
 
+import java.io.IOException;
+
 /**
  * The network factory.
  *
@@ -21,6 +20,7 @@ import rlib.network.server.impl.DefaultServerNetwork;
  */
 public final class NetworkFactory {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(NetworkFactory.class);
 
     /**

@@ -1,15 +1,31 @@
 package rlib.network;
 
 import org.jetbrains.annotations.NotNull;
-
+import org.jetbrains.annotations.Nullable;
 import rlib.concurrent.lock.Lockable;
+import rlib.network.packet.SendablePacket;
 
 /**
  * The interface to implement an async connection.
  *
  * @author JavaSaBr
  */
-public interface AsyncConnection<R, S> extends Lockable {
+public interface AsyncConnection extends Lockable {
+
+    /**
+     * Get a connection owner.
+     *
+     * @return the connection owner.
+     */
+    @Nullable
+    ConnectionOwner getOwner();
+
+    /**
+     * Set the new connection owner.
+     *
+     * @param owner the connection owner.
+     */
+    void setOwner(@Nullable ConnectionOwner owner);
 
     /**
      * Close this connection.
@@ -38,12 +54,12 @@ public interface AsyncConnection<R, S> extends Lockable {
     /**
      * Add a packet to queue to send.
      *
-     * @param packet the send packet.
+     * @param packet the sendable packet.
      */
-    void sendPacket(@NotNull S packet);
+    void sendPacket(@NotNull SendablePacket packet);
 
     /**
-     * Activate a read process.
+     * Activate a reading packets process.
      */
     void startRead();
 }

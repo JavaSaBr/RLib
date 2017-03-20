@@ -1,28 +1,31 @@
 package rlib.network.packet.impl;
 
 import static java.util.Objects.requireNonNull;
-
+import static rlib.util.ClassUtils.getConstructor;
+import static rlib.util.ClassUtils.unsafeCast;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
-
 import rlib.network.packet.ReadablePacket;
+import rlib.util.ClassUtils;
 import rlib.util.Util;
 import rlib.util.pools.Reusable;
+import rlib.util.pools.ReusablePool;
+
+import java.lang.reflect.Constructor;
+import java.nio.ByteBuffer;
+import java.util.function.Supplier;
 
 /**
  * The base implementation of the readable packet.
  *
  * @author JavaSaBr
  */
-public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implements ReadablePacket, Reusable {
+public abstract class AbstractReadablePacket extends AbstractPacket implements ReadablePacket, Reusable {
 
     /**
-     * The current buffer for reading.
+     * The constructor of this packet.
      */
-    @Nullable
-    protected volatile ByteBuffer buffer;
+    @NotNull
+    private final Supplier<AbstractReadablePacket> constructor;
 
     /**
      * The memory barrier.
@@ -34,48 +37,44 @@ public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implem
      */
     protected int barrierSink;
 
-    @Override
-    public final int getAvailableBytes() {
-        return getBuffer().remaining();
+    protected AbstractReadablePacket() {
+        this.constructor = createConstructor();
     }
 
+    /**
+     * Create a constructor of this packet type.
+     *
+     * @return the constructor.
+     */
     @NotNull
-    @Override
-    public ByteBuffer getBuffer() {
-        return requireNonNull(buffer);
+    protected Supplier<AbstractReadablePacket> createConstructor() {
+        final Constructor<AbstractReadablePacket> constructor = requireNonNull(getConstructor(getClass()));
+        return () -> ClassUtils.newInstance(constructor);
     }
 
     @Override
-    public void setBuffer(@Nullable final ByteBuffer buffer) {
-        this.buffer = buffer;
-    }
-
-    @Override
-    public final boolean read() {
+    public boolean read(@NotNull final ByteBuffer buffer) {
         notifyStartedPreparing();
         try {
-            readImpl();
+            readImpl(buffer);
             return true;
         } catch (final Exception e) {
-            handleException(e);
+            handleException(buffer, e);
         } finally {
             notifyFinishedPreparing();
         }
         return false;
     }
 
-    protected void handleException(@NotNull final Exception e) {
-        final ByteBuffer toPrintBuffer = buffer;
+    protected void handleException(@NotNull final ByteBuffer buffer, @NotNull final Exception e) {
         LOGGER.warning(this, e);
-        if (toPrintBuffer == null) return;
-        LOGGER.warning(this, "buffer " + toPrintBuffer + "\n" + Util.hexdump(toPrintBuffer.array(), toPrintBuffer.limit()));
-    }
-
-    /**
-     * The process of reading the data for this packet.
-     */
-    protected void readImpl() {
-        readImpl(getBuffer());
+        if (buffer.isDirect()) {
+            final byte[] array = new byte[buffer.limit()];
+            buffer.get(array, 0, buffer.limit());
+            LOGGER.warning(this, "buffer " + buffer + "\n" + Util.hexdump(array, array.length));
+        } else {
+            LOGGER.warning(this, "buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.limit()));
+        }
     }
 
     /**
@@ -104,5 +103,22 @@ public abstract class AbstractReadablePacket<C> extends AbstractPacket<C> implem
     @Override
     public void notifyFinishedReading() {
         barrier = barrierSink + 1;
+        getPool().put(this);
+    }
+
+    @NotNull
+    @Override
+    public AbstractReadablePacket newInstance() {
+        return constructor.get();
+    }
+
+    /**
+     * Get the pool for storing executed packets.
+     *
+     * @return the pool for storing executed packets or null.
+     */
+    @NotNull
+    protected ReusablePool<AbstractReadablePacket> getPool() {
+        return requireNonNull(unsafeCast(getPacketType().getPool()));
     }
 }
