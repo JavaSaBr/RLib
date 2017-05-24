@@ -2,7 +2,7 @@ package rlib.network.packet.impl;
 
 import org.jetbrains.annotations.NotNull;
 import rlib.network.packet.SendablePacket;
-import rlib.util.Util;
+import rlib.util.Utils;
 
 import java.nio.ByteBuffer;
 
@@ -34,7 +34,7 @@ public abstract class AbstractSendablePacket extends AbstractPacket implements S
             writeImpl(buffer);
         } catch (final Exception e) {
             LOGGER.warning(this, e);
-            LOGGER.warning(this, "Buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.position()));
+            LOGGER.warning(this, "Buffer " + buffer + "\n" + Utils.hexdump(buffer.array(), buffer.position()));
         } finally {
             notifyFinishedWriting();
         }

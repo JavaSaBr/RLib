@@ -1,14 +1,12 @@
 package rlib.util;
 
 import static java.lang.Class.forName;
-import static rlib.util.Util.print;
+import static rlib.util.Utils.print;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
-import rlib.logging.LoggerManager;
 
 /**
  * The class with utility methods.

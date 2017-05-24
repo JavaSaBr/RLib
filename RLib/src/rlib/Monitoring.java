@@ -8,7 +8,7 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 
-import rlib.util.Util;
+import rlib.util.Utils;
 
 /**
  * The class with method to monitor process state.
@@ -76,7 +76,7 @@ public final class Monitoring {
      */
     @NotNull
     public String getStartDate() {
-        return Util.formatTime(runtimeMxBean.getStartTime());
+        return Utils.formatTime(runtimeMxBean.getStartTime());
     }
 
     /**

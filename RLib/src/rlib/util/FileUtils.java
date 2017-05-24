@@ -102,7 +102,7 @@ public class FileUtils {
         }
 
         if (!Files.exists(dir)) {
-            Util.print(FileUtils.class, "not found folder " + dir);
+            Utils.print(FileUtils.class, "not found folder " + dir);
             return;
         }
 
@@ -266,7 +266,7 @@ public class FileUtils {
         try {
             urls = classLoader.getResources(pckg.getName().replace('.', '/'));
         } catch (final IOException e) {
-            Util.print(FileUtils.class, e);
+            Utils.print(FileUtils.class, e);
         }
 
         if (urls == null) return new Path[0];

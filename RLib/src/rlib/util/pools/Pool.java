@@ -1,10 +1,13 @@
 package rlib.util.pools;
 
+import static java.util.Objects.requireNonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rlib.function.ObjectLongFunction;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.LongFunction;
 import java.util.function.Supplier;
 
 /**
@@ -64,6 +67,33 @@ public interface Pool<E> {
     default <T> E take(@Nullable final T argument, @NotNull final Function<T, E> factory) {
         final E take = take();
         return take != null ? take : factory.apply(argument);
+    }
+
+    /**
+     * Takes an object from this pool.
+     *
+     * @param argument the argument for the factory function.
+     * @param factory  the factory for creating new object if this pool is empty.
+     * @return taken object.
+     */
+    @NotNull
+    default E take(final long argument, @NotNull final LongFunction<E> factory) {
+        final E take = take();
+        return take != null ? take : factory.apply(argument);
+    }
+
+    /**
+     * Takes an object from this pool.
+     *
+     * @param first   the first argument for the factory function.
+     * @param second  the second argument for the factory function.
+     * @param factory the factory for creating new object if this pool is empty.
+     * @return taken object.
+     */
+    @NotNull
+    default <F> E take(@Nullable F first, final long second, @NotNull final ObjectLongFunction<F, E> factory) {
+        final E take = take();
+        return take != null ? take : requireNonNull(factory.apply(first, second));
     }
 
     /**

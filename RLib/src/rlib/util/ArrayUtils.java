@@ -1,33 +1,17 @@
 package rlib.util;
 
 import static rlib.util.ClassUtils.unsafeCast;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import rlib.function.DoubleObjectConsumer;
-import rlib.function.FunctionInt;
-import rlib.function.IntObjectConsumer;
-import rlib.function.ObjectIntFunction;
-import rlib.function.ObjectIntPredicate;
-import rlib.function.ObjectLongFunction;
-import rlib.function.ObjectLongPredicate;
-import rlib.function.TripleConsumer;
-import rlib.function.TripleFunction;
-import rlib.function.TriplePredicate;
+import rlib.function.*;
 import rlib.util.array.Array;
 import rlib.util.array.ConcurrentArray;
 import rlib.util.array.IntegerArray;
 import rlib.util.array.LongArray;
+
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.function.*;
 
 /**
  * The utility class.
@@ -231,6 +215,30 @@ public final class ArrayUtils {
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
 
         return copy;
+    }
+
+    /**
+     * Copy data form the source array to the destination array.
+     *
+     * @param source the source array.
+     * @param target the target array.
+     */
+    public static void copyTo(@NotNull final int[] source, final int[] target) {
+        System.arraycopy(source, 0, target, 0, source.length);
+    }
+
+    /**
+     * Copy data form the source array to the destination array.
+     *
+     * @param source       the source array.
+     * @param target       the target array.
+     * @param sourceOffset the source offset.
+     * @param targetOffset the target offset.
+     * @param length       the length of data.
+     */
+    public static void copyTo(@NotNull final int[] source, final int[] target, final int sourceOffset,
+                              final int targetOffset, final int length) {
+        System.arraycopy(source, sourceOffset, target, targetOffset, length);
     }
 
     /**

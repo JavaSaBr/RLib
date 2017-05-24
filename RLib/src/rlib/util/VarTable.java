@@ -32,12 +32,12 @@ public class VarTable {
      * @return the new table with attributes of the node.
      */
     @NotNull
-    public static VarTable newInstance(@NotNull final Node node) {
+    public static VarTable newInstance(@Nullable final Node node) {
         return newInstance().parse(node);
     }
 
     @NotNull
-    public static VarTable newInstance(@NotNull final Node node, @NotNull final String childName,
+    public static VarTable newInstance(@Nullable final Node node, @NotNull final String childName,
                                        @NotNull final String nameType, @NotNull final String nameValue) {
         return newInstance().parse(node, childName, nameType, nameValue);
     }

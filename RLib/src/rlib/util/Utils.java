@@ -1,9 +1,10 @@
 package rlib.util;
 
 import static java.lang.ThreadLocal.withInitial;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import rlib.function.*;
+import rlib.logging.LoggerManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,20 +19,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.function.Consumer;
 
-import rlib.function.SafeBiConsumer;
-import rlib.function.SafeConsumer;
-import rlib.function.SafeFactory;
-import rlib.function.SafeFunction;
-import rlib.function.SafeRunnable;
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-
 /**
  * The utility class.
  *
  * @author JavaSaBr
  */
-public final class Util {
+public final class Utils {
 
     private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() ->
             new SimpleDateFormat("HH:mm:ss:SSS"));
@@ -167,7 +160,7 @@ public final class Util {
 
         try {
 
-            final URL url = Util.class.getResource(className);
+            final URL url = Utils.class.getResource(className);
 
             String path = url.getPath();
             path = path.substring(0, path.length() - className.length());
@@ -506,7 +499,7 @@ public final class Util {
         LoggerManager.getDefaultLogger().warning(owner, message);
     }
 
-    private Util() {
+    private Utils() {
         throw new RuntimeException();
     }
 }

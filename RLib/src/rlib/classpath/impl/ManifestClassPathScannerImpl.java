@@ -12,7 +12,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import rlib.util.Util;
+import rlib.util.Utils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -40,7 +40,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
 
     public String[] getManifestClassPath() {
 
-        final Path root = Util.getRootFolderFromClass(rootClass);
+        final Path root = Utils.getRootFolderFromClass(rootClass);
         if (root == null) return new String[0];
 
         final Array<String> result = ArrayFactory.newArray(String.class);

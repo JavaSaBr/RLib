@@ -6,7 +6,7 @@ import static rlib.util.ClassUtils.unsafeCast;
 import org.jetbrains.annotations.NotNull;
 import rlib.network.packet.ReadablePacket;
 import rlib.util.ClassUtils;
-import rlib.util.Util;
+import rlib.util.Utils;
 import rlib.util.pools.Reusable;
 import rlib.util.pools.ReusablePool;
 
@@ -71,9 +71,9 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
         if (buffer.isDirect()) {
             final byte[] array = new byte[buffer.limit()];
             buffer.get(array, 0, buffer.limit());
-            LOGGER.warning(this, "buffer " + buffer + "\n" + Util.hexdump(array, array.length));
+            LOGGER.warning(this, "buffer " + buffer + "\n" + Utils.hexdump(array, array.length));
         } else {
-            LOGGER.warning(this, "buffer " + buffer + "\n" + Util.hexdump(buffer.array(), buffer.limit()));
+            LOGGER.warning(this, "buffer " + buffer + "\n" + Utils.hexdump(buffer.array(), buffer.limit()));
         }
     }
 

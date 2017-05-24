@@ -3,7 +3,7 @@ package rlib.compiler.impl;
 import org.jetbrains.annotations.NotNull;
 
 import rlib.compiler.ByteSource;
-import rlib.util.Util;
+import rlib.util.Utils;
 import rlib.util.array.Array;
 import rlib.util.array.ArrayFactory;
 
@@ -38,7 +38,7 @@ public class CompileClassLoader extends ClassLoader {
             if (byteCode.isEmpty()) return null;
             for (final ByteSource byteSource : byteCode) {
                 final byte[] bytes = byteSource.getByteSource();
-                return Util.get(() -> defineClass(name, bytes, 0, bytes.length));
+                return Utils.get(() -> defineClass(name, bytes, 0, bytes.length));
             }
         }
 

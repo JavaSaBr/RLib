@@ -3,7 +3,7 @@ package rlib.test;
 import org.junit.Assert;
 import org.junit.Test;
 
-import rlib.util.Util;
+import rlib.util.Utils;
 
 /**
  * @author JavaSaBr
@@ -22,13 +22,13 @@ public class TestHEXSTring extends Assert {
             string = string.replace("[", "");
             string = string.replace("]", "");
 
-            System.out.println(Util.fromHEX(string));
+            System.out.println(Utils.fromHEX(string));
         }
 
         s = "006b006500790077006f00720064005f006b00650079005f00310033";
 
-        final String hex = Util.toHEX(s);
-        final String result = Util.fromHEX("006b006500790077006f00720064005f006b00650079005f00310033");
+        final String hex = Utils.toHEX(s);
+        final String result = Utils.fromHEX("006b006500790077006f00720064005f006b00650079005f00310033");
 
         System.out.println(result);
     }

@@ -12,9 +12,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import rlib.logging.Logger;
-import rlib.logging.LoggerManager;
-
 /**
  * The class with utility methods for working with strings.
  *
@@ -170,7 +167,7 @@ public class StringUtils {
         try {
             return MessageDigest.getInstance("MD5");
         } catch (final NoSuchAlgorithmException e) {
-            Util.print(StringUtils.class, e);
+            Utils.print(StringUtils.class, e);
         }
 
         return null;
