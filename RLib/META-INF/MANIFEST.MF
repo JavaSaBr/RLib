@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Vendor: javasabr@gmail.com
-Implementation-Title: Rlib
-Implementation-Version: 3.0
