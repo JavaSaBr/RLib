@@ -5,6 +5,10 @@ Please see the file called LICENSE.
 
 ####Gradle
 
+
+```
+#!groovy
+
 allprojects {
     repositories {
         maven { url 'https://jitpack.io' }
@@ -14,8 +18,14 @@ allprojects {
 dependencies {
     compile 'com.github.JavaSaBr:RLib:6.0.0-SNAPSHOT'
 }
+```
+
     
 ####Maven
+
+```
+#!xml
+
 
 <repositories>
         <repository>
@@ -29,3 +39,4 @@ dependencies {
         <artifactId>RLib</artifactId>
         <version>6.0.0-SNAPSHOT</version>
     </dependency>
+```
