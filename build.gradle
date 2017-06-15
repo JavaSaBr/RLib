@@ -14,11 +14,11 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
-    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    compileOnly group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
     // https://mvnrepository.com/artifact/com.jolbox/bonecp
-    compile group: 'com.jolbox', name: 'bonecp', version: '0.8.0.RELEASE'
+    compileOnly group: 'com.jolbox', name: 'bonecp', version: '0.8.0.RELEASE'
     // https://mvnrepository.com/artifact/org.jetbrains/annotations
-    compile group: 'org.jetbrains', name: 'annotations', version: '13.0'
+    compileOnly group: 'org.jetbrains', name: 'annotations', version: '13.0'
 
     // https://mvnrepository.com/artifact/junit/junit
     testCompile group: 'junit', name: 'junit', version: '4.12'
