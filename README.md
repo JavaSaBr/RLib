@@ -1,9 +1,9 @@
 # License #
 Please see the file called LICENSE.
 
-##How to use
+## How to use
 
-####Gradle
+#### Gradle
 
 
 ```
@@ -21,7 +21,7 @@ dependencies {
 ```
 
     
-####Maven
+#### Maven
 
 ```
 #!xml
