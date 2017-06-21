@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'com.spaceshift'
-version = '6.0.0'
+version = '6.1.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -44,7 +44,7 @@ defaultTasks 'clean', 'install'
 // To specify a license in the pom:
 install {
     repositories.mavenInstaller {
-        pom.version = '6.0.0'
+        pom.version = '6.1.0'
         pom.artifactId = 'rlib'
         pom.project {
             licenses {

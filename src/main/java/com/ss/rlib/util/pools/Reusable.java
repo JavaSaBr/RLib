@@ -6,7 +6,7 @@ package com.ss.rlib.util.pools;
  *
  * @author JavaSaBr
  */
-public interface Reusable {
+public interface Reusable extends AutoCloseable {
 
     /**
      * Cleanup this object before storing to a pool.
@@ -24,5 +24,10 @@ public interface Reusable {
      * Stores this object to a pool.
      */
     default void release() {
+    }
+
+    @Override
+    default void close() {
+        release();
     }
 }
