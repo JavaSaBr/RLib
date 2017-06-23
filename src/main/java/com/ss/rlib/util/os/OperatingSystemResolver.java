@@ -75,6 +75,9 @@ public class OperatingSystemResolver {
         MAC_OS_VERSION_MAPPING.put(10.8, "Mountain Lion");
         MAC_OS_VERSION_MAPPING.put(10.9, "Mavericks");
         MAC_OS_VERSION_MAPPING.put(10.10, "Yosemite");
+        MAC_OS_VERSION_MAPPING.put(10.11, "El Capitan ");
+        MAC_OS_VERSION_MAPPING.put(10.12, "Sierra");
+        MAC_OS_VERSION_MAPPING.put(10.13, "High Sierra");
 
         DARWIN_VERSION_MAPPING.put(5, "Puma");
         DARWIN_VERSION_MAPPING.put(6, "Jaguar");

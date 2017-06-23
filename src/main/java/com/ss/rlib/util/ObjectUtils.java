@@ -1,10 +1,5 @@
 package com.ss.rlib.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Field;
-
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.rlib.util.dictionary.ConcurrentObjectDictionary;
@@ -12,6 +7,11 @@ import com.ss.rlib.util.dictionary.DictionaryFactory;
 import com.ss.rlib.util.dictionary.DictionaryUtils;
 import com.ss.rlib.util.dictionary.ObjectDictionary;
 import com.ss.rlib.util.pools.Reusable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
+import java.util.Objects;
 
 /**
  * The class with utility methods.
@@ -22,6 +22,28 @@ public final class ObjectUtils {
 
     private static final ConcurrentObjectDictionary<Class<?>, Array<Field>> FIELDS_CACHE =
             DictionaryFactory.newConcurrentAtomicObjectDictionary();
+
+    /**
+     * @see Objects#requireNonNull(Object, String)
+     */
+    @NotNull
+    public static <T> T notNull(@Nullable final T obj, @NotNull final String message) {
+        if (obj == null) {
+            throw new NullPointerException(message);
+        }
+        return obj;
+    }
+
+    /**
+     * @see Objects#requireNonNull(Object)
+     */
+    @NotNull
+    public static <T> T notNull(@Nullable final T obj) {
+        if (obj == null) {
+            throw new NullPointerException();
+        }
+        return obj;
+    }
 
     /**
      * Get a hash for a boolean value.
