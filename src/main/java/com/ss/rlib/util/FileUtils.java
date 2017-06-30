@@ -3,12 +3,14 @@ package com.ss.rlib.util;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayComparator;
 import com.ss.rlib.util.array.ArrayFactory;
+import com.ss.rlib.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.ss.rlib.util.array.UnsafeArray;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.CharBuffer;
@@ -351,6 +353,37 @@ public class FileUtils {
 
                 buffer.clear();
                 in.read(buffer);
+                buffer.flip();
+
+                content.append(buffer.array(), 0, buffer.limit());
+            }
+
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return content.toString();
+    }
+
+    /**
+     * Read an input stream.
+     *
+     * @param in the input stream.
+     * @return the all content of the input stream.
+     */
+    @NotNull
+    public static String read(@NotNull final InputStream in) {
+
+        final StringBuilder content = new StringBuilder();
+
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+
+            final CharBuffer buffer = CharBuffer.allocate(512);
+
+            while (reader.ready()) {
+
+                buffer.clear();
+                reader.read(buffer);
                 buffer.flip();
 
                 content.append(buffer.array(), 0, buffer.limit());

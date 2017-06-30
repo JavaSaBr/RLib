@@ -1344,6 +1344,14 @@ public class VarTable {
         return this;
     }
 
+    /**
+     * @param key the key.
+     * @return true if the value is exists.
+     */
+    public boolean has(@NotNull final String key) {
+        return values.containsKey(key);
+    }
+
     @Override
     public String toString() {
         return "VarTable: " + ("values = " + values);

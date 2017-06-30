@@ -29,7 +29,7 @@ public final class ObjectUtils {
     @NotNull
     public static <T> T notNull(@Nullable final T obj, @NotNull final String message) {
         if (obj == null) {
-            throw new NullPointerException(message);
+            throw new IllegalArgumentException(message);
         }
         return obj;
     }
@@ -40,7 +40,7 @@ public final class ObjectUtils {
     @NotNull
     public static <T> T notNull(@Nullable final T obj) {
         if (obj == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException("Argument is null.");
         }
         return obj;
     }
