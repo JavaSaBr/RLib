@@ -2,11 +2,16 @@ package com.ss.rlib.plugin.annotation;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.*;
+
 /**
  * The annotation to describe a plugin.
  *
  * @author JavaSaBr
  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE_USE)
 public @interface PluginDescription {
 
     /**
