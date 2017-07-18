@@ -1,14 +1,12 @@
 package com.ss.rlib.util;
 
-import static com.ss.rlib.util.ClassUtils.unsafeCast;
 import com.ss.rlib.function.*;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ConcurrentArray;
+import com.ss.rlib.util.array.IntegerArray;
 import com.ss.rlib.util.array.LongArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.ss.rlib.function.*;
-import com.ss.rlib.util.array.IntegerArray;
 
 import java.util.Comparator;
 import java.util.Objects;
@@ -26,6 +24,12 @@ public final class ArrayUtils {
      */
     @NotNull
     public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
+    /**
+     * The constant EMPTY_STRING_ARRAY.
+     */
+    @NotNull
+    public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
      * The constant EMPTY_ENUM_ARRAY.

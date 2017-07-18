@@ -7,7 +7,6 @@ version = '6.1.2'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-
 repositories {
     mavenCentral()
 }
@@ -44,7 +43,7 @@ defaultTasks 'clean', 'install'
 // To specify a license in the pom:
 install {
     repositories.mavenInstaller {
-        pom.version = '6.1.2'
+        pom.version = version
         pom.artifactId = 'rlib'
         pom.project {
             licenses {

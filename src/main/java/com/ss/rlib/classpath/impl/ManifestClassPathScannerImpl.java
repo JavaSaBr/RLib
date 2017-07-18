@@ -38,10 +38,13 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
     /**
      * Instantiates a new Manifest class path scanner.
      *
+     * @param classLoader  the class loader.
      * @param rootClass    the root class
      * @param classPathKey the class path key
      */
-    public ManifestClassPathScannerImpl(@NotNull final Class<?> rootClass, @NotNull final String classPathKey) {
+    public ManifestClassPathScannerImpl(@NotNull final ClassLoader classLoader, @NotNull final Class<?> rootClass,
+                                        @NotNull final String classPathKey) {
+        super(classLoader);
         this.rootClass = rootClass;
         this.classPathKey = classPathKey;
     }

@@ -32,6 +32,13 @@ public interface ClassPathScanner {
     void addResources(@NotNull Array<String> resources);
 
     /**
+     * Sets the flat of using system classpath.
+     *
+     * @param useSystemClasspath true if need to use system classpath.
+     */
+    void setUseSystemClasspath(final boolean useSystemClasspath);
+
+    /**
      * Find all implementations of an interface class.
      *
      * @param <T>            the type parameter
@@ -66,9 +73,23 @@ public interface ClassPathScanner {
     void getAllResources(@NotNull Array<String> container);
 
     /**
-     * Start scanning.
+     * Start scan.
      *
      * @param filter the filter.
      */
-    void scanning(@NotNull Function<String, Boolean> filter);
+    void scan(@NotNull Function<String, Boolean> filter);
+
+    /**
+     * Adds an additional path to scan.
+     *
+     * @param path the additional path.
+     */
+    void addAdditionalPath(@NotNull String path);
+
+    /**
+     * Adds additional paths to scan.
+     *
+     * @param paths the additional paths.
+     */
+    void addAdditionalPaths(@NotNull String[] paths);
 }

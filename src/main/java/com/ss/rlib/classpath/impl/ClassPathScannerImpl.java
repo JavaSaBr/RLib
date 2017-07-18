@@ -1,5 +1,6 @@
 package com.ss.rlib.classpath.impl;
 
+import static com.ss.rlib.util.ClassUtils.unsafeCast;
 import static java.lang.reflect.Modifier.isAbstract;
 import com.ss.rlib.classpath.ClassPathScanner;
 import com.ss.rlib.compiler.Compiler;
@@ -44,6 +45,12 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     private static final String CLASS_EXTENSION = ".class";
 
     /**
+     * The list of additional paths to scan.
+     */
+    @NotNull
+    private final Array<String> additionalPaths;
+
+    /**
      * The class loader.
      */
     @NotNull
@@ -62,10 +69,18 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     private String[] resources;
 
     /**
-     * Instantiates a new Class path scanner.
+     * The flag of using system classpath.
      */
-    public ClassPathScannerImpl() {
-        this.loader = getClass().getClassLoader();
+    private boolean useSystemClassPath;
+
+    /**
+     * Instantiates a new Class path scanner.
+     *
+     * @param classLoader the classloader.
+     */
+    public ClassPathScannerImpl(@NotNull final ClassLoader classLoader) {
+        this.additionalPaths = ArrayFactory.newArray(String.class);
+        this.loader = classLoader;
         this.classes = new Class[0];
         this.resources = new String[0];
     }
@@ -80,7 +95,6 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         this.resources = ArrayUtils.combine(this.resources, resources.toArray(new String[resources.size()]), String.class);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T, R extends T> void findImplements(@NotNull final Array<Class<R>> container, @NotNull final Class<T> interfaceClass) {
 
@@ -94,11 +108,10 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 continue;
             }
 
-            container.add((Class<R>) cs);
+            container.add(unsafeCast(cs));
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T, R extends T> void findInherited(@NotNull final Array<Class<R>> container, @NotNull final Class<T> parentClass) {
 
@@ -112,7 +125,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 continue;
             }
 
-            container.add((Class<R>) cs);
+            container.add(unsafeCast(cs));
         }
     }
 
@@ -151,12 +164,40 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     /**
-     * Get paths string [ ].
+     * Get a list of paths to scan.
      *
-     * @return the list of classpathes.
+     * @return the list of paths.
      */
     @NotNull
     protected String[] getPaths() {
+
+        final String[] systemClasspath = useSystemClasspath() ? getClassPathPaths() : ArrayUtils.EMPTY_STRING_ARRAY;
+        final Array<String> result = ArrayFactory.newArray(String.class,
+                additionalPaths.size() + systemClasspath.length);
+
+        result.addAll(systemClasspath);
+        result.addAll(additionalPaths);
+
+        return result.toArray(String.class);
+    }
+
+    /**
+     * @return true if need to scan the system classpath.
+     */
+    protected boolean useSystemClasspath() {
+        return useSystemClassPath;
+    }
+
+    @Override
+    public void setUseSystemClasspath(final boolean useSystemClasspath) {
+        this.useSystemClassPath = useSystemClasspath;
+    }
+
+    /**
+     * @return the list of paths of system classpath.
+     */
+    @NotNull
+    protected String[] getClassPathPaths() {
         return CLASS_PATH.split(PATH_SEPARATOR);
     }
 
@@ -205,22 +246,22 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      * @param resources the resources container.
      * @param directory the directory.
      */
-    private void scanningDirectory(@NotNull final Path rootPath, @NotNull final Array<Class<?>> classes,
-                                   @NotNull final Array<String> resources, @NotNull final Path directory) {
+    private void scanDirectory(@NotNull final Path rootPath, @NotNull final Array<Class<?>> classes,
+                               @NotNull final Array<String> resources, @NotNull final Path directory) {
 
         try (final DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
 
             for (final Path file : stream) {
 
                 if (Files.isDirectory(file)) {
-                    scanningDirectory(rootPath, classes, resources, file);
+                    scanDirectory(rootPath, classes, resources, file);
                     continue;
                 }
 
                 final String filename = file.getFileName().toString();
 
                 if (filename.endsWith(JAR_EXTENSION)) {
-                    scanningJar(classes, resources, file);
+                    scanJar(classes, resources, file);
                 } else if (filename.endsWith(CLASS_EXTENSION)) {
                     try {
 
@@ -260,7 +301,8 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      * @param resources the resources container.
      * @param jarFile   the .jar file.
      */
-    private void scanningJar(@NotNull final Array<Class<?>> classes, @NotNull Array<String> resources, @NotNull final Path jarFile) {
+    private void scanJar(@NotNull final Array<Class<?>> classes, @NotNull final Array<String> resources,
+                         @NotNull final Path jarFile) {
 
         if (!Files.exists(jarFile)) {
             LOGGER.warning("not exists " + jarFile);
@@ -274,27 +316,35 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
         try (final JarInputStream jin = new JarInputStream(Files.newInputStream(jarFile))) {
 
-            for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
-                if (entry.isDirectory()) continue;
-
-                final String name = entry.getName();
-
-                if (name.endsWith(JAR_EXTENSION)) {
-                    rout.reset();
-                    IOUtils.copy(jin, rout, buffer, false);
-                    rin.initFor(rout.getData(), 0, rout.size());
-                    scanningJar(classes, resources, rin);
-                } else if (name.endsWith(CLASS_EXTENSION)) {
-                    loadClass(name, classes);
-                } else if (!name.endsWith(Compiler.SOURCE_EXTENSION)) {
-                    resources.add(name);
-                }
-            }
+            scanJarInputStream(classes, resources, rout, rin, buffer, jin);
 
         } catch (final ZipException e) {
             LOGGER.warning("can't open zip file " + jarFile);
         } catch (final IOException e) {
             LOGGER.warning(e);
+        }
+    }
+
+    private void scanJarInputStream(@NotNull final Array<Class<?>> classes, @NotNull final Array<String> resources,
+                                    @NotNull final ReuseBytesOutputStream rout,
+                                    @NotNull final ReuseBytesInputStream rin, @NotNull final byte[] buffer,
+                                    @NotNull final JarInputStream jin) throws IOException {
+
+        for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
+            if (entry.isDirectory()) continue;
+
+            final String name = entry.getName();
+
+            if (name.endsWith(JAR_EXTENSION)) {
+                rout.reset();
+                IOUtils.copy(jin, rout, buffer, false);
+                rin.initFor(rout.getData(), 0, rout.size());
+                scanJar(classes, resources, rin);
+            } else if (name.endsWith(CLASS_EXTENSION)) {
+                loadClass(name, classes);
+            } else if (!name.endsWith(Compiler.SOURCE_EXTENSION)) {
+                resources.add(name);
+            }
         }
     }
 
@@ -305,7 +355,8 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      * @param resources the resources container.
      * @param jarFile   the input stream of a .jar.
      */
-    private void scanningJar(@NotNull final Array<Class<?>> classes, @NotNull Array<String> resources, @NotNull final InputStream jarFile) {
+    private void scanJar(@NotNull final Array<Class<?>> classes, @NotNull final Array<String> resources,
+                         @NotNull final InputStream jarFile) {
 
         final ReuseBytesOutputStream rout = new ReuseBytesOutputStream();
         final ReuseBytesInputStream rin = new ReuseBytesInputStream();
@@ -313,24 +364,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         final byte[] buffer = new byte[128];
 
         try (final JarInputStream jin = new JarInputStream(jarFile)) {
-
-            for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
-                if (entry.isDirectory()) continue;
-
-                final String name = entry.getName();
-
-                if (name.endsWith(JAR_EXTENSION)) {
-                    rout.reset();
-                    IOUtils.copy(jin, rout, buffer, false);
-                    rin.initFor(rout.getData(), 0, rout.size());
-                    scanningJar(classes, resources, rin);
-                } else if (name.endsWith(CLASS_EXTENSION)) {
-                    loadClass(name, classes);
-                } else if (!name.endsWith(Compiler.SOURCE_EXTENSION)) {
-                    resources.add(name);
-                }
-            }
-
+            scanJarInputStream(classes, resources, rout, rin, buffer, jin);
         } catch (final ZipException e) {
             LOGGER.warning("can't open zip file " + jarFile);
         } catch (final IOException e) {
@@ -339,7 +373,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public void scanning(@NotNull final Function<String, Boolean> filter) {
+    public void scan(@NotNull final Function<String, Boolean> filter) {
 
         final String[] paths = getPaths();
 
@@ -355,21 +389,33 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             }
 
             if (LOGGER.isEnabledInfo()) {
-                LOGGER.info("scanning " + file);
+                LOGGER.info("scan " + file);
             }
 
             final String filename = file.getFileName().toString();
 
             if (Files.isDirectory(file)) {
-                scanningDirectory(file, classes, resources, file);
+                scanDirectory(file, classes, resources, file);
             } else if (filename.endsWith(JAR_EXTENSION)) {
-                scanningJar(classes, resources, file);
+                scanJar(classes, resources, file);
             }
         }
 
         this.classes = classes.toArray(new Class[classes.size()]);
         this.resources = resources.toArray(new String[resources.size()]);
 
-        LOGGER.info("scanned for " + this.classes.length + " classes and " + this.resources.length + " resources.");
+        if (LOGGER.isEnabledInfo()) {
+            LOGGER.info("scanned for " + this.classes.length + " classes and " + this.resources.length + " resources.");
+        }
+    }
+
+    @Override
+    public void addAdditionalPath(@NotNull final String path) {
+        this.additionalPaths.add(path);
+    }
+
+    @Override
+    public void addAdditionalPaths(@NotNull final String[] paths) {
+        this.additionalPaths.addAll(additionalPaths);
     }
 }
