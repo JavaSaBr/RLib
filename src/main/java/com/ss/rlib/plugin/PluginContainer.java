@@ -47,7 +47,7 @@ public class PluginContainer {
     @NotNull
     public String getId() {
         final PluginDescription description = pluginClass.getAnnotation(PluginDescription.class);
-        return description.id;
+        return description.id();
     }
 
     @NotNull

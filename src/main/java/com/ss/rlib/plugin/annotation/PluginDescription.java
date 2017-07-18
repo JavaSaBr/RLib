@@ -1,6 +1,5 @@
 package com.ss.rlib.plugin.annotation;
 
-import com.ss.rlib.plugin.Version;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,18 +13,18 @@ public @interface PluginDescription {
      * The plugin id.
      */
     @NotNull
-    String id = "unknown";
+    String id() default "unknown";
 
     /**
      * Don't support yet.
      */
     @NotNull
     @Deprecated
-    String[] dependences = {};
+    String[] dependences() default {};
 
     /**
      * The plugin version.
      */
     @NotNull
-    Version version = new Version("0.1");
+    String version() default "0.1";
 }

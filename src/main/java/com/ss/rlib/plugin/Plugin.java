@@ -27,7 +27,7 @@ public interface Plugin {
     default String getId() {
         final Class<? extends Plugin> cs = getClass();
         final PluginDescription description = cs.getAnnotation(PluginDescription.class);
-        return description.id;
+        return description.id();
     }
 
     /**
