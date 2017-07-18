@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -157,7 +158,13 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
                 LOGGER.debug(this, "start to create a plugin " + pluginClass);
             }
 
-            final Plugin plugin = ClassUtils.newInstance(pluginClass);
+            final Constructor<Plugin> constructor = ClassUtils.getConstructor(pluginClass, PluginContainer.class);
+
+            if (constructor == null) {
+                throw new PluginException("Not found base constructor in the class " + constructor);
+            }
+
+            final Plugin plugin = ClassUtils.newInstance(constructor, container);
 
             plugins.put(plugin.getId(), plugin);
         }
