@@ -416,6 +416,6 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
     @Override
     public void addAdditionalPaths(@NotNull final String[] paths) {
-        this.additionalPaths.addAll(additionalPaths);
+        this.additionalPaths.addAll(paths);
     }
 }
