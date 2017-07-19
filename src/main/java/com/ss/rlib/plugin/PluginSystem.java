@@ -1,5 +1,6 @@
 package com.ss.rlib.plugin;
 
+import com.ss.rlib.util.array.Array;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,7 @@ public interface PluginSystem {
      * @return the list of all available plugin containers.
      */
     @NotNull
-    PluginContainer[] getPluginContainers();
+    Array<PluginContainer> getPluginContainers();
 
     /**
      * Gets a plugin container by the plugin id.
@@ -33,7 +34,7 @@ public interface PluginSystem {
      * @return the list of all available plugins.
      */
     @NotNull
-    Plugin[] getPlugins();
+    Array<Plugin> getPlugins();
 
     /**
      * Gets a plugin by the plugin id.
