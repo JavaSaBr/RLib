@@ -14,24 +14,42 @@ import java.nio.file.Path;
  */
 public class PluginContainer {
 
+    /**
+     * The plugin class.
+     */
     @NotNull
     private final Class<Plugin> pluginClass;
 
+    /**
+     * The class loader of this class.
+     */
     @NotNull
     private final URLClassLoader classLoader;
 
+    /**
+     * The classpath scanner of this plugin.
+     */
     @NotNull
     private final ClassPathScanner scanner;
 
+    /**
+     * The path to a plugin folder.
+     */
     @NotNull
     private final Path path;
 
+    /**
+     * The flag of that this container is of an embedded plugin.
+     */
+    private final boolean embedded;
+
     public PluginContainer(@NotNull final Class<Plugin> pluginClass, @NotNull final URLClassLoader classLoader,
-                           @NotNull final ClassPathScanner scanner, @NotNull final Path path) {
+                           @NotNull final ClassPathScanner scanner, @NotNull final Path path, final boolean embedded) {
         this.pluginClass = pluginClass;
         this.classLoader = classLoader;
         this.scanner = scanner;
         this.path = path;
+        this.embedded = embedded;
     }
 
     @NotNull
@@ -48,6 +66,13 @@ public class PluginContainer {
     public String getId() {
         final PluginDescription description = pluginClass.getAnnotation(PluginDescription.class);
         return description.id();
+    }
+
+    /**
+     * @return true if this container is of an embedded plugin.
+     */
+    public boolean isEmbedded() {
+        return embedded;
     }
 
     @NotNull

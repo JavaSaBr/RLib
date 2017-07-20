@@ -1,5 +1,6 @@
 package com.ss.rlib.plugin.impl;
 
+import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.rlib.classpath.ClassPathScanner;
 import com.ss.rlib.classpath.ClassPathScannerFactory;
 import com.ss.rlib.logging.Logger;
@@ -200,7 +201,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
                     continue;
                 }
 
-                preloadPluginContainers.add(loadPlugin(directory, baseLoader, null));
+                preloadPluginContainers.add(loadPlugin(directory, baseLoader, null, embedded));
             }
 
         } catch (final IOException e) {
@@ -214,9 +215,10 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
      * @param directory    the plugin directory.
      * @param parentLoader the parent class loader.
      * @param parents      the parent plugins.
+     * @param embedded     the embedded flag.
      */
     protected PluginContainer loadPlugin(@NotNull final Path directory, @NotNull final ClassLoader parentLoader,
-                                         @Nullable final PluginContainer[] parents) {
+                                         @Nullable final PluginContainer[] parents, final boolean embedded) {
 
         final Array<Path> files = FileUtils.getFiles(directory, ".jar");
 
@@ -247,7 +249,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         }
 
         final Class<Plugin> pluginClass = pluginImplementations.first();
-        return new PluginContainer(pluginClass, classLoader, scanner, directory);
+        return new PluginContainer(pluginClass, classLoader, scanner, directory, embedded);
     }
 
     /**
@@ -353,7 +355,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     public void removePlugin(@NotNull final Plugin plugin) {
 
         final String pluginId = plugin.getId();
-        final PluginContainer pluginContainer = pluginContainers.get(pluginId);
+        final PluginContainer pluginContainer = notNull(pluginContainers.get(pluginId));
 
         pluginContainers.remove(pluginId);
         plugins.remove(pluginId);
