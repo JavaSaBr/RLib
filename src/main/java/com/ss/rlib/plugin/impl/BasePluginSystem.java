@@ -339,16 +339,29 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     @Override
     public void installPlugin(@NotNull final Path file) {
 
-        final Path path = getInstallationPluginsPath();
+        final Path installPath = getInstallationPluginsPath();
 
-        if(path == null || !Files.exists(path)) {
-            throw new PluginException("The installation folder " + path + " doesn't exists.");
+        if (installPath == null || !Files.exists(installPath)) {
+            throw new PluginException("The installation folder " + installPath + " doesn't exists.");
         }
 
         final String folderName = FileUtils.getNameWithoutExtension(file);
-        final Path pluginFolder = path.resolve(folderName);
+        final Path pluginFolder = installPath.resolve(folderName);
 
-        FileUtils.unzip(path, pluginFolder);
+        if (Files.exists(pluginFolder)) {
+            FileUtils.delete(installPath);
+        }
+
+        Utils.run(() -> Files.createDirectories(pluginFolder));
+
+        FileUtils.unzip(installPath, pluginFolder);
+
+        final PluginContainer container = loadPlugin(pluginFolder, baseLoader, null, false);
+        final PluginContainer existsContainer = getPluginContainer(container.getId());
+
+        if (existsContainer != null && !pluginFolder.equals(existsContainer.getPath())) {
+            FileUtils.delete(existsContainer.getPath());
+        }
     }
 
     @Override
