@@ -21,10 +21,9 @@ public @interface PluginDescription {
     String id() default "unknown";
 
     /**
-     * Don't support yet.
+     * Dependences of this plugin.
      */
     @NotNull
-    @Deprecated
     String[] dependences() default {};
 
     /**
@@ -32,4 +31,16 @@ public @interface PluginDescription {
      */
     @NotNull
     String version() default "0.1";
+
+    /**
+     * The plugin name.
+     */
+    @NotNull
+    String name() default "no name";
+
+    /**
+     * The plugin description.
+     */
+    @NotNull
+    String description() default "no description";
 }

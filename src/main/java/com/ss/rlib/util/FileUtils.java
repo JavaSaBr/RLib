@@ -20,6 +20,8 @@ import java.util.Enumeration;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * The utility class.
@@ -466,6 +468,35 @@ public class FileUtils {
         try {
             return path.toUri().toURL();
         } catch (final MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Unzip the zip file to the destination folder.
+     *
+     * @param destination the destination folder.
+     * @param zipFile     the zip file.
+     */
+    public static void unzip(@NotNull final Path destination, @NotNull final Path zipFile) {
+
+        if (!Files.exists(destination)) {
+            throw new IllegalArgumentException("The folder " + destination + " doesn't exist.");
+        }
+
+        try (ZipInputStream zin = new ZipInputStream(Files.newInputStream(zipFile))) {
+            for (ZipEntry entry = zin.getNextEntry(); entry != null; entry = zin.getNextEntry()) {
+
+                final Path file = destination.resolve(entry.getName());
+
+                if (entry.isDirectory()) {
+                    Files.createDirectories(file);
+                } else {
+                    Files.copy(zin, destination);
+                }
+            }
+
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }

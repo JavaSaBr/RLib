@@ -333,4 +333,31 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     public Plugin getPlugin(final @NotNull String id) {
         return plugins.get(id);
     }
+
+    @Override
+    public void installPlugin(@NotNull final Path file) {
+
+        final Path path = getInstallationPluginsPath();
+
+        if(path == null || !Files.exists(path)) {
+            throw new PluginException("The installation folder " + path + " doesn't exists.");
+        }
+
+        final String folderName = FileUtils.getNameWithoutExtension(file);
+        final Path pluginFolder = path.resolve(folderName);
+
+        FileUtils.unzip(path, pluginFolder);
+    }
+
+    @Override
+    public void removePlugin(@NotNull final Plugin plugin) {
+
+        final String pluginId = plugin.getId();
+        final PluginContainer pluginContainer = pluginContainers.get(pluginId);
+
+        pluginContainers.remove(pluginId);
+        plugins.remove(pluginId);
+
+        FileUtils.delete(pluginContainer.getPath());
+    }
 }

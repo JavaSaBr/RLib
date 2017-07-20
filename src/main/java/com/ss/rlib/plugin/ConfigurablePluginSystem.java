@@ -34,4 +34,18 @@ public interface ConfigurablePluginSystem extends PluginSystem {
      * Initialize all plugins.
      */
     void initialize();
+
+    /**
+     * Install a new plugin.
+     *
+     * @param file the path to the plugin.
+     */
+    void installPlugin(@NotNull Path file);
+
+    /**
+     * Remove the plugin.
+     *
+     * @param plugin the plugin.
+     */
+    void removePlugin(@NotNull Plugin plugin);
 }
