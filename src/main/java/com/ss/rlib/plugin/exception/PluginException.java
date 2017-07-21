@@ -12,4 +12,8 @@ public class PluginException extends RuntimeException {
     public PluginException(@NotNull final String message) {
         super(message);
     }
+
+    public PluginException(@NotNull final String message, @NotNull final Throwable cause) {
+        super(message, cause);
+    }
 }

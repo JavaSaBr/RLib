@@ -9,7 +9,10 @@ import com.ss.rlib.plugin.ConfigurablePluginSystem;
 import com.ss.rlib.plugin.Plugin;
 import com.ss.rlib.plugin.PluginContainer;
 import com.ss.rlib.plugin.PluginSystem;
+import com.ss.rlib.plugin.annotation.PluginDescription;
+import com.ss.rlib.plugin.exception.InitializePluginException;
 import com.ss.rlib.plugin.exception.PluginException;
+import com.ss.rlib.plugin.exception.PreloadPluginException;
 import com.ss.rlib.util.ClassUtils;
 import com.ss.rlib.util.FileUtils;
 import com.ss.rlib.util.Utils;
@@ -162,10 +165,17 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             final Constructor<Plugin> constructor = ClassUtils.getConstructor(pluginClass, PluginContainer.class);
 
             if (constructor == null) {
-                throw new PluginException("Not found base constructor in the class " + constructor);
+                throw new InitializePluginException("Not found base constructor in the class " + pluginClass,
+                        container.getPath());
             }
 
-            final Plugin plugin = ClassUtils.newInstance(constructor, container);
+            final Plugin plugin;
+            try {
+                plugin = ClassUtils.newInstance(constructor, container);
+            } catch (final Exception e) {
+                throw new InitializePluginException("Found a problem with creating a plugin " + pluginClass,
+                        container.getPath(), e);
+            }
 
             plugins.put(plugin.getId(), plugin);
         }
@@ -174,12 +184,19 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             LOGGER.debug(this, "start to initialize all plugins.");
         }
 
-        plugins.forEach((s, plugin) -> plugin.initialize(this));
+        plugins.forEach((pluginId, plugin) -> {
+            try {
+                plugin.initialize(this);
+            } catch (final Exception e) {
+                final PluginContainer container = getPluginContainer(pluginId);
+                throw new InitializePluginException("Found a problem with initializing a plugin " + plugin,
+                        container.getPath(), e);
+            }
+        });
 
         if (LOGGER.isEnabledDebug()) {
             LOGGER.debug(this, "all plugins were initialized.");
         }
-
 
         setInitialized(true);
     }
@@ -241,14 +258,21 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         scanner.findImplements(pluginImplementations, Plugin.class);
 
         if (pluginImplementations.isEmpty()) {
-            throw new RuntimeException(
-                    "Not found an implementation of the Plugin interface in the plugin " + directory);
+            throw new PreloadPluginException(
+                    "Not found an implementation of the Plugin interface in the plugin " + directory, directory);
         } else if (pluginImplementations.size() > 1) {
-            throw new RuntimeException(
-                    "Found more than 1 implementations of the Plugin interface in the plugin " + directory);
+            throw new PreloadPluginException(
+                    "Found more than 1 implementations of the Plugin interface in the plugin " + directory, directory);
         }
 
         final Class<Plugin> pluginClass = pluginImplementations.first();
+        final PluginDescription description = pluginClass.getAnnotation(PluginDescription.class);
+
+        if (description == null) {
+            throw new PreloadPluginException(
+                    "Not found description annotation for the plugin " + pluginClass, directory);
+        }
+
         return new PluginContainer(pluginClass, classLoader, scanner, directory, embedded);
     }
 
@@ -336,8 +360,9 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         return plugins.get(id);
     }
 
+    @NotNull
     @Override
-    public void installPlugin(@NotNull final Path file) {
+    public Plugin installPlugin(@NotNull final Path file, boolean needInitialize) {
 
         final Path installPath = getInstallationPluginsPath();
 
@@ -354,7 +379,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
 
         Utils.run(() -> Files.createDirectories(pluginFolder));
 
-        FileUtils.unzip(installPath, pluginFolder);
+        FileUtils.unzip(installPath, file);
 
         final PluginContainer container = loadPlugin(pluginFolder, baseLoader, null, false);
         final PluginContainer existsContainer = getPluginContainer(container.getId());
@@ -362,6 +387,36 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         if (existsContainer != null && !pluginFolder.equals(existsContainer.getPath())) {
             FileUtils.delete(existsContainer.getPath());
         }
+
+        final Class<Plugin> pluginClass = container.getPluginClass();
+        final Constructor<Plugin> constructor = ClassUtils.getConstructor(pluginClass, PluginContainer.class);
+
+        if (constructor == null) {
+            throw new InitializePluginException("Not found base constructor in the class " + pluginClass,
+                    container.getPath());
+        }
+
+        final Plugin plugin;
+        try {
+            plugin = ClassUtils.newInstance(constructor, container);
+        } catch (final Exception e) {
+            throw new InitializePluginException("Found a problem with creating a plugin " + pluginClass,
+                    container.getPath(), e);
+        }
+
+        if (needInitialize) {
+            try {
+                plugin.initialize(this);
+            } catch (final Exception e) {
+                throw new InitializePluginException(
+                        "Found a problem with initializing a plugin " + plugin, container.getPath(), e);
+            }
+        }
+
+        pluginContainers.put(plugin.getId(), container);
+        plugins.put(plugin.getId(), plugin);
+
+        return plugin;
     }
 
     @Override

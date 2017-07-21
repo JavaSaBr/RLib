@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 
 /**
- * The exception about problems with preloading plugin.
+ * The exception about problems with pre-loading plugins.
+ *
+ * @author JavaSaBr
  */
 public class PreloadPluginException extends PluginException {
 
