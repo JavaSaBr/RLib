@@ -375,7 +375,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
 
         Utils.run(() -> Files.createDirectories(pluginFolder));
 
-        FileUtils.unzip(installPath, file);
+        FileUtils.unzip(pluginFolder, file);
 
         final PluginContainer container = loadPlugin(pluginFolder, baseLoader, null, false);
         final PluginContainer existsContainer = getPluginContainer(container.getId());
