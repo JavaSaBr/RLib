@@ -3,6 +3,7 @@ package com.ss.rlib.plugin;
 import com.ss.rlib.classpath.ClassPathScanner;
 import com.ss.rlib.plugin.annotation.PluginDescription;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -39,17 +40,46 @@ public class PluginContainer {
     private final Path path;
 
     /**
+     * The plugin id.
+     */
+    @NotNull
+    private final String id;
+
+    /**
+     * The name.
+     */
+    @NotNull
+    private final String name;
+
+    /**
+     * The description.
+     */
+    @NotNull
+    private final String description;
+
+    /**
+     * The version.
+     */
+    @NotNull
+    private final Version version;
+
+    /**
      * The flag of that this container is of an embedded plugin.
      */
     private final boolean embedded;
 
     public PluginContainer(@NotNull final Class<Plugin> pluginClass, @NotNull final URLClassLoader classLoader,
                            @NotNull final ClassPathScanner scanner, @NotNull final Path path, final boolean embedded) {
+        final PluginDescription description = pluginClass.getAnnotation(PluginDescription.class);
         this.pluginClass = pluginClass;
         this.classLoader = classLoader;
         this.scanner = scanner;
         this.path = path;
         this.embedded = embedded;
+        this.id = description.id();
+        this.name = description.name();
+        this.version = new Version(description.version());
+        this.description = description.description();
     }
 
     @NotNull
@@ -64,8 +94,37 @@ public class PluginContainer {
      */
     @NotNull
     public String getId() {
-        final PluginDescription description = pluginClass.getAnnotation(PluginDescription.class);
-        return description.id();
+        return id;
+    }
+
+    /**
+     * Get the version of this plugin.
+     *
+     * @return the plugin version.
+     */
+    @NotNull
+    public Version getVersion() {
+        return version;
+    }
+
+    /**
+     * Gets a name of this plugin.
+     *
+     * @return the name of this plugin.
+     */
+    @Nullable
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gets a description of this plugin.
+     *
+     * @return the description of this plugin.
+     */
+    @Nullable
+    public String getDescription() {
+        return description;
     }
 
     /**

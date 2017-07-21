@@ -32,6 +32,18 @@ public interface Plugin {
     }
 
     /**
+     * Get the version of this plugin.
+     *
+     * @return the plugin version.
+     */
+    @NotNull
+    default Version getVersion() {
+        final Class<? extends Plugin> cs = getClass();
+        final PluginDescription description = cs.getAnnotation(PluginDescription.class);
+        return new Version(description.version());
+    }
+
+    /**
      * Gets a name of this plugin.
      *
      * @return the name of this plugin.
