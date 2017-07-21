@@ -335,9 +335,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     @NotNull
     @Override
     public Array<PluginContainer> getPluginContainers() {
-        final Array<PluginContainer> containers = ArrayFactory.newArray(PluginContainer.class, pluginContainers.size());
-        pluginContainers.values(containers);
-        return containers;
+        return pluginContainers.values(PluginContainer.class);
     }
 
     @Override
@@ -349,9 +347,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     @NotNull
     @Override
     public Array<Plugin> getPlugins() {
-        final Array<Plugin> plugins = ArrayFactory.newArray(Plugin.class, this.plugins.size());
-        this.plugins.values(plugins);
-        return plugins;
+        return plugins.values(Plugin.class);
     }
 
     @Override

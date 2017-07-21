@@ -1,7 +1,5 @@
 package com.ss.rlib.util.dictionary;
 
-import static com.ss.rlib.util.array.ArrayFactory.newArray;
-
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.rlib.util.pools.Reusable;
