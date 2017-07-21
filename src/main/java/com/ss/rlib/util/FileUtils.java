@@ -492,7 +492,7 @@ public class FileUtils {
                 if (entry.isDirectory()) {
                     Files.createDirectories(file);
                 } else {
-                    Files.copy(zin, destination);
+                    Files.copy(zin, file, StandardCopyOption.REPLACE_EXISTING);
                 }
             }
 

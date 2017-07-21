@@ -370,7 +370,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         final Path pluginFolder = installPath.resolve(folderName);
 
         if (Files.exists(pluginFolder)) {
-            FileUtils.delete(installPath);
+            FileUtils.delete(pluginFolder);
         }
 
         Utils.run(() -> Files.createDirectories(pluginFolder));
