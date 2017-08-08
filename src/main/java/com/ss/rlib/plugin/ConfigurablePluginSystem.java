@@ -1,6 +1,7 @@
 package com.ss.rlib.plugin;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 
@@ -26,6 +27,13 @@ public interface ConfigurablePluginSystem extends PluginSystem {
     void configureEmbeddedPluginPath(@NotNull Path embeddedPluginPath);
 
     /**
+     * Set the app version.
+     *
+     * @param version the app version.
+     */
+    void setAppVersion(@Nullable Version version);
+
+    /**
      * Preload all plugins.
      */
     void preLoad();
@@ -40,8 +48,9 @@ public interface ConfigurablePluginSystem extends PluginSystem {
      *
      * @param file           the path to the plugin.
      * @param needInitialize true if need to initialize the plugin.
+     * @return the installed plugin or null.
      */
-    @NotNull
+    @Nullable
     Plugin installPlugin(@NotNull Path file, boolean needInitialize);
 
     /**
