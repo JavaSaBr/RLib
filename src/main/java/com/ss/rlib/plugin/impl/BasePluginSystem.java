@@ -5,10 +5,7 @@ import com.ss.rlib.classpath.ClassPathScanner;
 import com.ss.rlib.classpath.ClassPathScannerFactory;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
-import com.ss.rlib.plugin.ConfigurablePluginSystem;
-import com.ss.rlib.plugin.Plugin;
-import com.ss.rlib.plugin.PluginContainer;
-import com.ss.rlib.plugin.PluginSystem;
+import com.ss.rlib.plugin.*;
 import com.ss.rlib.plugin.annotation.PluginDescription;
 import com.ss.rlib.plugin.exception.InitializePluginException;
 import com.ss.rlib.plugin.exception.PluginException;
@@ -67,6 +64,12 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     private final ClassLoader baseLoader;
 
     /**
+     * The app version.
+     */
+    @Nullable
+    private Version appVersion;
+
+    /**
      * The path to folder with embedded plugins.
      */
     @Nullable
@@ -92,6 +95,11 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         this.preloadPluginContainers = ArrayFactory.newArray(PluginContainer.class);
         this.pluginContainers = DictionaryFactory.newObjectDictionary();
         this.plugins = DictionaryFactory.newObjectDictionary();
+    }
+
+    @Override
+    public void setAppVersion(@Nullable final Version appVersion) {
+        this.appVersion = appVersion;
     }
 
     @Override
@@ -218,7 +226,11 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
                     continue;
                 }
 
-                preloadPluginContainers.add(loadPlugin(directory, baseLoader, null, embedded));
+                final PluginContainer pluginContainer = loadPlugin(directory, baseLoader, null, embedded);
+
+                if (pluginContainer != null) {
+                    preloadPluginContainers.add(pluginContainer);
+                }
             }
 
         } catch (final IOException e) {
@@ -252,25 +264,44 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         final URLClassLoader classLoader = new URLClassLoader(urls);
         final ClassPathScanner scanner = ClassPathScannerFactory.newDefaultScanner(classLoader, additionalPaths);
         scanner.setUseSystemClasspath(false);
-        scanner.scan(file -> true);
+
+        try {
+            scanner.scan(file -> true);
+        } catch (final Throwable e) {
+            throw new PreloadPluginException(e.getMessage(), directory);
+        }
 
         final Array<Class<Plugin>> pluginImplementations = ArrayFactory.newArray(Class.class);
         scanner.findImplements(pluginImplementations, Plugin.class);
 
         if (pluginImplementations.isEmpty()) {
-            throw new PreloadPluginException(
-                    "Not found an implementation of the Plugin interface in the plugin " + directory, directory);
+            LOGGER.warning(this, "can't load the plugin from the directory" + directory +
+                    " because can't find any implementation of the plugin interface.");
+            return null;
         } else if (pluginImplementations.size() > 1) {
-            throw new PreloadPluginException(
-                    "Found more than 1 implementations of the Plugin interface in the plugin " + directory, directory);
+            LOGGER.warning(this, "can't load the plugin from the directory" + directory +
+                    " because found more than 1 implementation of the plugin interfaces.");
+            return null;
         }
 
         final Class<Plugin> pluginClass = pluginImplementations.first();
         final PluginDescription description = pluginClass.getAnnotation(PluginDescription.class);
 
         if (description == null) {
-            throw new PreloadPluginException(
-                    "Not found description annotation for the plugin " + pluginClass, directory);
+            LOGGER.warning(this, "can't load the plugin from the directory" + directory +
+                    " because can't find any plugin class with description.");
+            return null;
+        }
+
+        if (appVersion != null) {
+
+            final Version minVersion = new Version(description.minAppVersion());
+
+            if (minVersion.compareTo(appVersion) > 0) {
+                LOGGER.warning(this, "can't load the plugin " + description.id() +
+                        ", it requires the app version " + description.minAppVersion() + " or higher.");
+                return null;
+            }
         }
 
         return new PluginContainer(pluginClass, classLoader, scanner, directory, embedded);
@@ -356,7 +387,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         return plugins.get(id);
     }
 
-    @NotNull
+    @Nullable
     @Override
     public Plugin installPlugin(@NotNull final Path file, boolean needInitialize) {
 
@@ -378,6 +409,8 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         FileUtils.unzip(pluginFolder, file);
 
         final PluginContainer container = loadPlugin(pluginFolder, baseLoader, null, false);
+        if (container == null) return null;
+
         final PluginContainer existsContainer = getPluginContainer(container.getId());
 
         if (existsContainer != null && !pluginFolder.equals(existsContainer.getPath())) {

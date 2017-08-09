@@ -21,7 +21,7 @@ public @interface PluginDescription {
     String id() default "unknown";
 
     /**
-     * Dependences of this plugin.
+     * Dependencies of this plugin.
      */
     @NotNull
     String[] dependences() default {};
@@ -30,7 +30,13 @@ public @interface PluginDescription {
      * The plugin version.
      */
     @NotNull
-    String version() default "0.1";
+    String version() default "0.1.0";
+
+    /**
+     * The min version of application.
+     */
+    @NotNull
+    String minAppVersion() default "0.0.0";
 
     /**
      * The plugin name.
