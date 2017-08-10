@@ -15,37 +15,49 @@ import java.lang.annotation.*;
 public @interface PluginDescription {
 
     /**
-     * The plugin id.
+     * Get the plugin id.
+     *
+     * @return the plugin id.
      */
     @NotNull
     String id() default "unknown";
 
     /**
-     * Dependencies of this plugin.
+     * Get dependencies of this plugin.
+     *
+     * @return dependencies of this plugin.
      */
     @NotNull
     String[] dependences() default {};
 
     /**
-     * The plugin version.
+     * Get the plugin version.
+     *
+     * @return the plugin version.
      */
     @NotNull
     String version() default "0.1.0";
 
     /**
-     * The min version of application.
+     * Get the min version of application.
+     *
+     * @return the min version of application.
      */
     @NotNull
     String minAppVersion() default "0.0.0";
 
     /**
-     * The plugin name.
+     * Get the plugin name.
+     *
+     * @return the plugin name.
      */
     @NotNull
     String name() default "no name";
 
     /**
-     * The plugin description.
+     * Get the plugin description.
+     *
+     * @return the plugin description.
      */
     @NotNull
     String description() default "no description";

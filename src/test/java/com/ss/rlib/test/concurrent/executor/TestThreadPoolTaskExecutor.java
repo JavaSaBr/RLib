@@ -26,8 +26,13 @@ public class TestThreadPoolTaskExecutor extends Assert {
         System.out.println(header + " start test executor...");
 
         final GroupThreadFactory factory = new GroupThreadFactory("test_executor", Thread.class, Thread.NORM_PRIORITY);
+        final TaskExecutor<Object> executor = new ThreadPoolTaskExecutor<Object>(factory, 5, 5) {
 
-        final TaskExecutor<Void> executor = new ThreadPoolTaskExecutor<>(factory, 5, 5);
+            @Override
+            protected Object getLocalObjects(final Thread thread) {
+                return new Object();
+            }
+        };
 
         final AtomicInteger counter = new AtomicInteger();
 
@@ -40,7 +45,7 @@ public class TestThreadPoolTaskExecutor extends Assert {
 
         ThreadUtils.sleep(30);
 
-        assertTrue(counter.get() == TASK_LIMIT);
+        assertEquals(TASK_LIMIT, counter.get());
 
         System.out.println(header + " test executor finished.");
     }

@@ -245,6 +245,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
      * @param parentLoader the parent class loader.
      * @param parents      the parent plugins.
      * @param embedded     the embedded flag.
+     * @return the loaded plugin container.
      */
     protected PluginContainer loadPlugin(@NotNull final Path directory, @NotNull final ClassLoader parentLoader,
                                          @Nullable final PluginContainer[] parents, final boolean embedded) {
