@@ -36,7 +36,7 @@ public class Version implements Comparable<Version> {
         final int[] otherSegments = other.segments;
 
         for (int i = 0, min = min(segments.length, otherSegments.length); i < min; i++) {
-            if (segments[i] > otherSegments[i]) {
+            if (segments[i] < otherSegments[i]) {
                 return -1;
             } else if (segments[i] > otherSegments[i]) {
                 return 1;
