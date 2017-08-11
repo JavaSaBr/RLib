@@ -59,6 +59,16 @@ public class BasePlugin implements Plugin {
         return container.getName();
     }
 
+    /**
+     * The container of this plugin.
+     *
+     * @return the container.
+     */
+    @NotNull
+    protected PluginContainer getContainer() {
+        return container;
+    }
+
     @Override
     public void initialize(@NotNull final PluginSystem pluginSystem) {
 
