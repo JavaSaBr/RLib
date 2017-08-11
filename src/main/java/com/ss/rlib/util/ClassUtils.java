@@ -1,12 +1,13 @@
 package com.ss.rlib.util;
 
-import static java.lang.Class.forName;
 import static com.ss.rlib.util.Utils.print;
+import static java.lang.Class.forName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 /**
  * The class with utility methods.
@@ -67,6 +68,43 @@ public final class ClassUtils {
             print(ClassUtils.class, e);
             return null;
         }
+    }
+
+    /**
+     * Check existing constructor in the class.
+     *
+     * @param cs      the class.
+     * @param classes the types of arguments.
+     * @return true of this class has constructor wth the arguments.
+     */
+    public static boolean hasConstructor(@NotNull final Class<?> cs, @Nullable final Class<?>... classes) {
+
+        final Constructor<?>[] constructors = cs.getConstructors();
+        for (final Constructor<?> constructor : constructors) {
+            if (Arrays.equals(constructor.getParameterTypes(), classes)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check existing empty constructor in the class.
+     *
+     * @param cs      the class.
+     * @return true of this class has empty constructor.
+     */
+    public static boolean hasConstructor(@NotNull final Class<?> cs) {
+
+        final Constructor<?>[] constructors = cs.getConstructors();
+        for (final Constructor<?> constructor : constructors) {
+            if (constructor.getParameterCount() == 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
