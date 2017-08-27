@@ -27,7 +27,7 @@ public final class ReferenceFactory {
      * @return the reference.
      */
     public static <T extends Reference> @NotNull T takeFromPool(@NotNull final ReferenceType type) {
-        return unsafeCast(type.create());
+        return unsafeCast(type.take());
     }
 
     /**
@@ -37,7 +37,7 @@ public final class ReferenceFactory {
      * @return the reference.
      */
     public static <T extends Reference> @NotNull T takeFromTLPool(@NotNull final ReferenceType type) {
-        return unsafeCast(type.create());
+        return unsafeCast(type.takeThreadLocal());
     }
 
     private ReferenceFactory() {
