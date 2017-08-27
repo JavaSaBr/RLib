@@ -21,13 +21,17 @@ final class FloatReference extends AbstractReference {
     }
 
     @Override
+    public double getDouble() {
+        return value;
+    }
+
+    @Override
     public void setFloat(final float value) {
         this.value = value;
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public @NotNull ReferenceType getType() {
         return ReferenceType.FLOAT;
     }
 
@@ -42,6 +46,11 @@ final class FloatReference extends AbstractReference {
     @Override
     public int hashCode() {
         return (value != +0.0f ? Float.floatToIntBits(value) : 0);
+    }
+
+    @Override
+    public void free() {
+        this.value = 0;
     }
 
     @Override

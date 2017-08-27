@@ -124,8 +124,7 @@ public interface Reference extends Reusable {
      *
      * @return the object
      */
-    @Nullable
-    default Object getObject() {
+    default @Nullable Object getObject() {
         throw new UnsupportedOperationException();
     }
 
@@ -143,8 +142,7 @@ public interface Reference extends Reusable {
      *
      * @return the type
      */
-    @NotNull
-    default ReferenceType getType() {
+    default @NotNull ReferenceType getType() {
         throw new UnsupportedOperationException();
     }
 

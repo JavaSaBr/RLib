@@ -1,9 +1,10 @@
 package com.ss.rlib.util.ref;
 
+import static com.ss.rlib.util.ClassUtils.unsafeCast;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * THe factory for creating new references.
+ * THe factory to create new references.
  *
  * @author JavaSaBr
  */
@@ -15,9 +16,8 @@ public final class ReferenceFactory {
      * @param type the type of reference.
      * @return the new reference.
      */
-    @NotNull
-    public static Reference newRef(@NotNull final ReferenceType type) {
-        return type.create();
+    public static <T extends Reference> @NotNull T newRef(@NotNull final ReferenceType type) {
+        return unsafeCast(type.create());
     }
 
     /**
@@ -26,9 +26,8 @@ public final class ReferenceFactory {
      * @param type the type of reference.
      * @return the reference.
      */
-    @NotNull
-    public static Reference takeFromPool(@NotNull final ReferenceType type) {
-        return type.take();
+    public static <T extends Reference> @NotNull T takeFromPool(@NotNull final ReferenceType type) {
+        return unsafeCast(type.create());
     }
 
     /**
@@ -37,9 +36,8 @@ public final class ReferenceFactory {
      * @param type the type of reference.
      * @return the reference.
      */
-    @NotNull
-    public static Reference takeFromTLPool(@NotNull final ReferenceType type) {
-        return type.takeThreadLocal();
+    public static <T extends Reference> @NotNull T takeFromTLPool(@NotNull final ReferenceType type) {
+        return unsafeCast(type.create());
     }
 
     private ReferenceFactory() {

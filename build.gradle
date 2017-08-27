@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'com.spaceshift'
-version = '6.3.4'
+version = '6.3.5'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

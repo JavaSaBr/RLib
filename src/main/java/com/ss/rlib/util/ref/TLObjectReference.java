@@ -1,7 +1,7 @@
 package com.ss.rlib.util.ref;
 
+import static com.ss.rlib.util.ClassUtils.unsafeCast;
 import static com.ss.rlib.util.ref.ReferenceType.OBJECT;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,27 +10,25 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-final class TLObjectReference extends AbstractThreadLocalReference {
+final class TLObjectReference<T> extends AbstractThreadLocalReference {
 
     /**
      * The object of this reference.
      */
-    private Object ref;
+    private T object;
 
-    @Nullable
     @Override
-    public Object getObject() {
-        return ref;
+    public @Nullable T getObject() {
+        return object;
     }
 
     @Override
     public void setObject(@Nullable final Object object) {
-        this.ref = object;
+        this.object = unsafeCast(object);
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public @NotNull ReferenceType getType() {
         return OBJECT;
     }
 
@@ -39,18 +37,23 @@ final class TLObjectReference extends AbstractThreadLocalReference {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         final TLObjectReference that = (TLObjectReference) object;
-        return ref == that.ref;
+        return this.object == that.object;
     }
 
     @Override
     public int hashCode() {
-        return ref != null ? ref.hashCode() : 0;
+        return object != null ? object.hashCode() : 0;
+    }
+
+    @Override
+    public void free() {
+        this.object = null;
     }
 
     @Override
     public String toString() {
         return "TLObjectReference{" +
-                "ref=" + ref +
+                "object=" + object +
                 "} " + super.toString();
     }
 }

@@ -23,13 +23,27 @@ final class TLByteReference extends AbstractThreadLocalReference {
     }
 
     @Override
+    public int getInt() {
+        return value;
+    }
+
+    @Override
+    public short getShort() {
+        return value;
+    }
+
+    @Override
+    public long getLong() {
+        return value;
+    }
+
+    @Override
     public void setByte(final byte value) {
         this.value = value;
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public @NotNull ReferenceType getType() {
         return BYTE;
     }
 
@@ -44,6 +58,11 @@ final class TLByteReference extends AbstractThreadLocalReference {
     @Override
     public int hashCode() {
         return (int) value;
+    }
+
+    @Override
+    public void free() {
+        this.value = 0;
     }
 
     @Override

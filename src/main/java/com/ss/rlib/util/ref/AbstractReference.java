@@ -7,9 +7,6 @@ package com.ss.rlib.util.ref;
  */
 public abstract class AbstractReference implements UnsafeReference {
 
-    /**
-     * Instantiates a new Abstract reference.
-     */
     protected AbstractReference() {
         super();
     }

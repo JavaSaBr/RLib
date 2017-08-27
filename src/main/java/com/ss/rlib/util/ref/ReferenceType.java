@@ -74,7 +74,7 @@ public enum ReferenceType {
     }
 
     /**
-     * Put.
+     * Put the reference to the pool.
      *
      * @param reference put the reference to pool.
      */
@@ -83,13 +83,16 @@ public enum ReferenceType {
     }
 
     /**
-     * Put to thread local.
+     * Put the reference to thread local pool.
      *
      * @param reference put the reference to pool.
      */
     protected void putToThreadLocal(@NotNull final UnsafeReference reference) {
-        if (!reference.isThreadLocal())
+
+        if (!reference.isThreadLocal()) {
             throw new IllegalArgumentException("the reference " + reference + " is not thread local.");
+        }
+
         threadLocalPool.get().put(reference);
     }
 
@@ -98,8 +101,7 @@ public enum ReferenceType {
      *
      * @return take the reference from thread local or create new reference.
      */
-    @NotNull
-    protected Reference take() {
+    protected @NotNull Reference take() {
         return pool.take(factory);
     }
 
@@ -108,8 +110,7 @@ public enum ReferenceType {
      *
      * @return take the reference from thread local or create new reference.
      */
-    @NotNull
-    protected Reference takeThreadLocal() {
+    protected @NotNull Reference takeThreadLocal() {
         return threadLocalPool.get().take(threadLocalFactory);
     }
 
@@ -118,8 +119,7 @@ public enum ReferenceType {
      *
      * @return the new reference.
      */
-    @NotNull
-    protected Reference create() {
+    protected @NotNull Reference create() {
         return factory.get();
     }
 
@@ -128,7 +128,7 @@ public enum ReferenceType {
      *
      * @return the factory of references.
      */
-    protected Supplier<Reference> getFactory() {
+    protected Supplier<@NotNull Reference> getFactory() {
         return factory;
     }
 }
