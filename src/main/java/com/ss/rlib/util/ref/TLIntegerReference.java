@@ -21,13 +21,27 @@ final class TLIntegerReference extends AbstractThreadLocalReference {
     }
 
     @Override
+    public long getLong() {
+        return value;
+    }
+
+    @Override
     public void setInt(final int value) {
         this.value = value;
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public void setShort(final short value) {
+        this.value = value;
+    }
+
+    @Override
+    public void setByte(final byte value) {
+        this.value = value;
+    }
+
+    @Override
+    public @NotNull ReferenceType getType() {
         return ReferenceType.INTEGER;
     }
 
@@ -42,6 +56,11 @@ final class TLIntegerReference extends AbstractThreadLocalReference {
     @Override
     public int hashCode() {
         return value;
+    }
+
+    @Override
+    public void free() {
+        this.value = 0;
     }
 
     @Override

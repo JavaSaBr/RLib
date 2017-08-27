@@ -1,7 +1,7 @@
 package com.ss.rlib.util.ref;
 
+import static com.ss.rlib.util.ClassUtils.unsafeCast;
 import static com.ss.rlib.util.ref.ReferenceType.OBJECT;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,27 +10,25 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-final class ObjectReference extends AbstractReference {
+final class ObjectReference<T> extends AbstractReference {
 
     /**
      * The object of this reference.
      */
-    private Object object;
+    private T object;
 
-    @Nullable
     @Override
-    public Object getObject() {
+    public @Nullable T getObject() {
         return object;
     }
 
     @Override
     public void setObject(@Nullable final Object object) {
-        this.object = object;
+        this.object = unsafeCast(object);
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public @NotNull ReferenceType getType() {
         return OBJECT;
     }
 
@@ -45,6 +43,11 @@ final class ObjectReference extends AbstractReference {
     @Override
     public int hashCode() {
         return object != null ? object.hashCode() : 0;
+    }
+
+    @Override
+    public void free() {
+        this.object = null;
     }
 
     @Override

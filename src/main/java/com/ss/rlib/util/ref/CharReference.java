@@ -27,9 +27,8 @@ final class CharReference extends AbstractReference {
         this.value = value;
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public @NotNull ReferenceType getType() {
         return CHAR;
     }
 
@@ -39,12 +38,16 @@ final class CharReference extends AbstractReference {
         if (object == null || getClass() != object.getClass()) return false;
         final CharReference that = (CharReference) object;
         return value == that.value;
-
     }
 
     @Override
     public int hashCode() {
         return (int) value;
+    }
+
+    @Override
+    public void free() {
+        this.value = 0;
     }
 
     @Override

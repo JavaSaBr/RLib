@@ -25,9 +25,23 @@ final class LongReference extends AbstractReference {
         this.value = value;
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public void setByte(final byte value) {
+        this.value = value;
+    }
+
+    @Override
+    public void setShort(final short value) {
+        this.value = value;
+    }
+
+    @Override
+    public void setInt(final int value) {
+        this.value = value;
+    }
+
+    @Override
+    public @NotNull ReferenceType getType() {
         return ReferenceType.LONG;
     }
 
@@ -42,6 +56,11 @@ final class LongReference extends AbstractReference {
     @Override
     public int hashCode() {
         return (int) (value ^ (value >>> 32));
+    }
+
+    @Override
+    public void free() {
+        this.value = 0;
     }
 
     @Override

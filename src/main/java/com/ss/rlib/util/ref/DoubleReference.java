@@ -25,9 +25,13 @@ final class DoubleReference extends AbstractReference {
         this.value = value;
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public void setFloat(final float value) {
+        this.value = value;
+    }
+
+    @Override
+    public @NotNull ReferenceType getType() {
         return ReferenceType.DOUBLE;
     }
 
@@ -43,6 +47,11 @@ final class DoubleReference extends AbstractReference {
     public int hashCode() {
         long temp = Double.doubleToLongBits(value);
         return (int) (temp ^ (temp >>> 32));
+    }
+
+    @Override
+    public void free() {
+        this.value = 0;
     }
 
     @Override

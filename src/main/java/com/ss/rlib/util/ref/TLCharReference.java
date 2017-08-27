@@ -25,9 +25,8 @@ final class TLCharReference extends AbstractThreadLocalReference {
         this.value = value;
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public @NotNull ReferenceType getType() {
         return ReferenceType.CHAR;
     }
 
@@ -42,6 +41,11 @@ final class TLCharReference extends AbstractThreadLocalReference {
     @Override
     public int hashCode() {
         return (int) value;
+    }
+
+    @Override
+    public void free() {
+        this.value = 0;
     }
 
     @Override

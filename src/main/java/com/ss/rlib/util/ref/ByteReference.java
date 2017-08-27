@@ -23,13 +23,27 @@ final class ByteReference extends AbstractReference {
     }
 
     @Override
+    public short getShort() {
+        return value;
+    }
+
+    @Override
+    public int getInt() {
+        return value;
+    }
+
+    @Override
+    public long getLong() {
+        return value;
+    }
+
+    @Override
     public void setByte(final byte value) {
         this.value = value;
     }
 
-    @NotNull
     @Override
-    public ReferenceType getType() {
+    public @NotNull ReferenceType getType() {
         return BYTE;
     }
 
@@ -39,7 +53,11 @@ final class ByteReference extends AbstractReference {
         if (object == null || getClass() != object.getClass()) return false;
         final ByteReference that = (ByteReference) object;
         return value == that.value;
+    }
 
+    @Override
+    public void free() {
+        this.value = 0;
     }
 
     @Override
