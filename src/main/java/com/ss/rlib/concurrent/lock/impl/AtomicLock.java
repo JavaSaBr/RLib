@@ -3,8 +3,6 @@ package com.ss.rlib.concurrent.lock.impl;
 import com.ss.rlib.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 
-import sun.misc.Contended;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -23,7 +21,6 @@ public class AtomicLock implements Lock {
     /**
      * The status of lock.
      */
-    @Contended
     protected final AtomicInteger status;
 
     /**

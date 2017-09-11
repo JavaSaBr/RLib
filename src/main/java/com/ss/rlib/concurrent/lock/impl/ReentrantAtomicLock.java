@@ -3,7 +3,6 @@ package com.ss.rlib.concurrent.lock.impl;
 import com.ss.rlib.concurrent.atomic.AtomicInteger;
 import com.ss.rlib.concurrent.atomic.AtomicReference;
 import org.jetbrains.annotations.NotNull;
-import sun.misc.Contended;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -21,14 +20,12 @@ public class ReentrantAtomicLock implements Lock {
      * The status of lock.
      */
     @NotNull
-    @Contended("lock")
     private final AtomicReference<Thread> status;
 
     /**
      * The level of locking.
      */
     @NotNull
-    @Contended("level")
     private final AtomicInteger level;
 
     /**
