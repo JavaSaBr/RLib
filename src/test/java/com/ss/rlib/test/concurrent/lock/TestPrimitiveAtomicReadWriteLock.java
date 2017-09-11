@@ -1,7 +1,9 @@
 package com.ss.rlib.test.concurrent.lock;
 
-import org.junit.Assert;
-import org.junit.Test;
+import com.ss.rlib.concurrent.lock.AsyncReadSyncWriteLock;
+import com.ss.rlib.concurrent.lock.impl.AtomicReadWriteLock;
+import com.ss.rlib.concurrent.lock.impl.ReentrantARSWLock;
+import com.ss.rlib.concurrent.util.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,19 +13,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.ss.rlib.concurrent.lock.AsyncReadSyncWriteLock;
-import com.ss.rlib.concurrent.lock.impl.AtomicReadWriteLock;
-import com.ss.rlib.concurrent.lock.impl.ReentrantARSWLock;
-import com.ss.rlib.concurrent.util.ThreadUtils;
-
 /**
  * Тест функционала блокировщика.
  *
  * @author JavaSaBr
  */
-public class TestPrimitiveAtomicReadWriteLock extends Assert {
+public class TestPrimitiveAtomicReadWriteLock  {
 
-    @Test
     public void test() throws InterruptedException, ExecutionException {
 
         final String header = TestPrimitiveAtomicReadWriteLock.class.getSimpleName() + ": ";

@@ -1,5 +1,16 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-RC2'
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 group = 'com.spaceshift'
 version = '6.3.6'
@@ -7,8 +18,30 @@ version = '6.3.6'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+compileTestJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.compilerArgs += '-parameters'
+}
+
+ext.junitPlatformVersion = "1.0.0-M5"
+ext.junitJupiterVersion = "5.0.0-M5"
+ext.log4jVersion = '2.6.2'
+
+junitPlatform {
+    filters {
+        engines {
+        }
+        tags {
+        }
+    }
+    logManager 'org.apache.logging.log4j.jul.LogManager'
+}
+
 repositories {
     mavenCentral()
+    jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -19,8 +52,17 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains/annotations
     compileOnly group: 'org.jetbrains', name: 'annotations', version: '15.0'
 
-    // https://mvnrepository.com/artifact/junit/junit
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile "org.junit.platform:junit-platform-commons:$junitPlatformVersion"
+    testRuntime "org.junit.platform:junit-platform-engine:$junitPlatformVersion"
+
+    testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+
+    testRuntime "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    testRuntime "org.apache.logging.log4j:log4j-jul:$log4jVersion"
+
+    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
+    testCompile "org.junit.platform:junit-platform-launcher:$junitPlatformVersion"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -31,6 +73,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.1'
 }
 
 artifacts {
