@@ -1,24 +1,21 @@
 package com.ss.rlib.test.concurrent.executor;
 
-import com.ss.rlib.concurrent.executor.impl.ThreadPoolTaskExecutor;
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.ss.rlib.concurrent.GroupThreadFactory;
 import com.ss.rlib.concurrent.atomic.AtomicInteger;
 import com.ss.rlib.concurrent.executor.TaskExecutor;
+import com.ss.rlib.concurrent.executor.impl.ThreadPoolTaskExecutor;
 import com.ss.rlib.concurrent.util.ThreadUtils;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Реализация теста многопоточного исполнителя задач.
  *
  * @author JavaSaBr
  */
-public class TestThreadPoolTaskExecutor extends Assert {
+public class TestThreadPoolTaskExecutor {
 
     private static final int TASK_LIMIT = 100;
 
-    @Test
     public void test() {
 
         final String header = TestThreadPoolTaskExecutor.class.getSimpleName() + ": ";
@@ -45,7 +42,7 @@ public class TestThreadPoolTaskExecutor extends Assert {
 
         ThreadUtils.sleep(30);
 
-        assertEquals(TASK_LIMIT, counter.get());
+        Assertions.assertEquals(TASK_LIMIT, counter.get());
 
         System.out.println(header + " test executor finished.");
     }

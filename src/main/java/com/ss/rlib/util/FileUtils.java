@@ -81,6 +81,9 @@ public class FileUtils {
         }
     };
 
+    @NotNull
+    private static final Path[] EMPTY_PATHS = new Path[0];
+
     /**
      * Check a string on valid file name.
      *
@@ -94,7 +97,7 @@ public class FileUtils {
     }
 
     /**
-     * Recursive add all files to a container in a folder.
+     * Add recursive all files to the container from the folder.
      *
      * @param container   the file container.
      * @param dir         the folder.
@@ -113,7 +116,7 @@ public class FileUtils {
             return;
         }
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+        try (final DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (final Path path : stream) {
                 if (Files.isDirectory(path)) {
                     addFilesTo(container, path, withFolders, extensions);
@@ -128,7 +131,7 @@ public class FileUtils {
     }
 
     /**
-     * Check an extension of a file.
+     * Check the extensions of the file.
      *
      * @param extensions the checked extensions.
      * @param path       the file.
@@ -139,7 +142,7 @@ public class FileUtils {
     }
 
     /**
-     * Check an extension of a path.
+     * Check the extensions of the path.
      *
      * @param extensions the checked extensions.
      * @param path       the path.
@@ -150,7 +153,7 @@ public class FileUtils {
     }
 
     /**
-     * Delete a file.
+     * Delete the file.
      *
      * @param path the file to delete.
      */
@@ -163,7 +166,7 @@ public class FileUtils {
     }
 
     /**
-     * Delete a file or a folder.
+     * Delete the file or the folder.
      *
      * @param path the file or folder.
      */
@@ -176,76 +179,74 @@ public class FileUtils {
     }
 
     /**
-     * Get an extension of a path.
+     * Get an extension of the path.
      *
      * @param path the path.
      * @return the extension or the path if the path doesn't have an extension.
      */
-    public static String getExtension(@Nullable final String path) {
+    public static @NotNull String getExtension(@Nullable final String path) {
         return getExtension(path, false);
     }
 
     /**
-     * Get an extension of a path.
+     * Get an extension of the path.
      *
      * @param path        the path.
      * @param toLowerCase true if need that extension was only in lower case.
      * @return the extension or the path if the path doesn't have an extension.
      */
-    public static String getExtension(@Nullable final String path, final boolean toLowerCase) {
-        if (StringUtils.isEmpty(path)) return path;
+    public static @NotNull String getExtension(@Nullable final String path, final boolean toLowerCase) {
+        if (StringUtils.isEmpty(path)) return StringUtils.EMPTY;
         final int index = path.lastIndexOf('.');
-        if (index == -1) return path;
+        if (index == -1) return StringUtils.EMPTY;
         final String result = path.substring(index + 1, path.length());
         if (toLowerCase) return result.toLowerCase();
         return result;
     }
 
     /**
-     * Get an extension of a file.
+     * Get an extension of the file.
      *
      * @param file the file.
      * @return the extension or the file name if the file doesn't have an extension.
      */
-    public static String getExtension(@NotNull final Path file) {
+    public static @NotNull String getExtension(@NotNull final Path file) {
         if (Files.isDirectory(file)) return StringUtils.EMPTY;
         return getExtension(Objects.toString(file.getFileName()));
     }
 
     /**
-     * Get an extension of a file.
+     * Get an extension of the file.
      *
      * @param file        the file.
      * @param toLowerCase true if need that extension was only in lower case.
      * @return the extension or the file name if the file doesn't have an extension.
      */
-    public static String getExtension(@NotNull final Path file, final boolean toLowerCase) {
+    public static @NotNull String getExtension(@NotNull final Path file, final boolean toLowerCase) {
         if (Files.isDirectory(file)) return StringUtils.EMPTY;
         return getExtension(Objects.toString(file.getFileName()), toLowerCase);
     }
 
     /**
-     * Recursive get all files of a folder.
+     * Recursive get all files of the folder.
      *
      * @param dir        the folder.
      * @param extensions the extension filter.
      * @return the list of all files.
      */
-    @NotNull
-    public static Array<Path> getFiles(@NotNull final Path dir, @Nullable final String... extensions) {
+    public static @NotNull Array<Path> getFiles(@NotNull final Path dir, @Nullable final String... extensions) {
         return getFiles(dir, false, extensions);
     }
 
     /**
-     * Recursive get all files of a folder.
+     * Recursive get all files of the folder.
      *
      * @param dir         the folder.
      * @param withFolders need include folders.
      * @param extensions  the extension filter.
      * @return the list of all files.
      */
-    @NotNull
-    public static Array<Path> getFiles(@NotNull final Path dir, final boolean withFolders, @Nullable final String... extensions) {
+    public static @NotNull Array<Path> getFiles(@NotNull final Path dir, final boolean withFolders, @Nullable final String... extensions) {
 
         final Array<Path> result = ArrayFactory.newArray(Path.class);
 
@@ -258,14 +259,13 @@ public class FileUtils {
     }
 
     /**
-     * Get all files in a package.
+     * Get all files in the package.
      *
      * @param pckg       the package.
      * @param extensions the extensions filter.
      * @return the array of files.
      */
-    @NotNull
-    public static Path[] getFiles(@NotNull final Package pckg, @Nullable final String... extensions) {
+    public static @NotNull Path[] getFiles(@NotNull final Package pckg, @Nullable final String... extensions) {
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
@@ -276,7 +276,9 @@ public class FileUtils {
             Utils.print(FileUtils.class, e);
         }
 
-        if (urls == null) return new Path[0];
+        if (urls == null) {
+            return EMPTY_PATHS;
+        }
 
         final Array<Path> files = ArrayFactory.newArray(Path.class);
 
@@ -308,8 +310,7 @@ public class FileUtils {
      * @param filename the file name.
      * @return the file name without extension.
      */
-    @NotNull
-    public static String getNameWithoutExtension(@NotNull final String filename) {
+    public static @NotNull String getNameWithoutExtension(@NotNull final String filename) {
         if (StringUtils.isEmpty(filename)) return filename;
 
         final int index = filename.lastIndexOf('.');
@@ -324,8 +325,7 @@ public class FileUtils {
      * @param file the file.
      * @return the file name without extension.
      */
-    @NotNull
-    public static String getNameWithoutExtension(@NotNull final Path file) {
+    public static @NotNull String getNameWithoutExtension(@NotNull final Path file) {
 
         final String filename = file.getFileName().toString();
         if (StringUtils.isEmpty(filename)) return filename;
@@ -337,44 +337,26 @@ public class FileUtils {
     }
 
     /**
-     * Read a file by a path.
+     * Read the file as a string.
      *
      * @param path the path to file.
-     * @return the all content of the file.
+     * @return the string content of the file.
      */
-    @NotNull
-    public static String read(@NotNull final String path) {
-
-        final StringBuilder content = new StringBuilder();
-
-        try (final BufferedReader in = Files.newBufferedReader(Paths.get(path))) {
-
-            final CharBuffer buffer = CharBuffer.allocate(512);
-
-            while (in.ready()) {
-
-                buffer.clear();
-                in.read(buffer);
-                buffer.flip();
-
-                content.append(buffer.array(), 0, buffer.limit());
-            }
-
+    public static @NotNull String read(@NotNull final String path) {
+        try {
+            return read(Files.newInputStream(Paths.get(path)));
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-
-        return content.toString();
     }
 
     /**
-     * Read an input stream.
+     * Read the input stream as a string.
      *
      * @param in the input stream.
-     * @return the all content of the input stream.
+     * @return the string content of the input stream.
      */
-    @NotNull
-    public static String read(@NotNull final InputStream in) {
+    public static @NotNull String read(@NotNull final InputStream in) {
 
         final StringBuilder content = new StringBuilder();
 
@@ -399,45 +381,27 @@ public class FileUtils {
     }
 
     /**
-     * Read a file.
+     * Read the file as a string.
      *
      * @param file the file.
-     * @return the all content of the file.
+     * @return the string content of the file.
      */
-    @NotNull
-    public static String read(@NotNull final Path file) {
-
-        final StringBuilder content = new StringBuilder();
-
-        try (final BufferedReader in = Files.newBufferedReader(file)) {
-
-            final CharBuffer buffer = CharBuffer.allocate(512);
-
-            while (in.ready()) {
-
-                buffer.clear();
-                in.read(buffer);
-                buffer.flip();
-
-                content.append(buffer.array(), 0, buffer.limit());
-            }
-
+    public static @NotNull String read(@NotNull final Path file) {
+        try {
+            return read(Files.newInputStream(file));
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
-
-        return content.toString();
     }
 
     /**
-     * Find a first free file name in a directory.
+     * Find a first free file name in the directory.
      *
      * @param directory the directory.
      * @param file      the checked file.
      * @return the first free name.
      */
-    @NotNull
-    public static String getFirstFreeName(@NotNull final Path directory, @NotNull final Path file) {
+    public static @NotNull String getFirstFreeName(@NotNull final Path directory, @NotNull final Path file) {
 
         String initFileName = file.getFileName().toString();
 
@@ -463,8 +427,7 @@ public class FileUtils {
      * @param path the path for converting.
      * @return the URL of the path.
      */
-    @NotNull
-    public static URL toUrl(@NotNull final Path path)  {
+    public static @NotNull URL toUrl(@NotNull final Path path)  {
         try {
             return path.toUri().toURL();
         } catch (final MalformedURLException e) {
@@ -499,5 +462,49 @@ public class FileUtils {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Get a name of the file by the path and the separator.
+     *
+     * @param path      the path.
+     * @param separator the separator.
+     * @return the name.
+     */
+    public static @NotNull String getName(@NotNull final String path, final char separator) {
+
+        if (path.length() < 2) {
+            return path;
+        }
+
+        final int index = path.lastIndexOf(separator);
+
+        if (index == -1) {
+            return path;
+        }
+
+        return path.substring(index + 1, path.length());
+    }
+
+    /**
+     * Get a parent of the file by the path and the separator.
+     *
+     * @param path      the path.
+     * @param separator the separator.
+     * @return the parent.
+     */
+    public static @NotNull String getParent(@NotNull final String path, final char separator) {
+
+        if (path.length() < 2) {
+            return path;
+        }
+
+        final int index = path.lastIndexOf(separator);
+
+        if (index == -1) {
+            return path;
+        }
+
+        return path.substring(0, index);
     }
 }

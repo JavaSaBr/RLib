@@ -1,23 +1,20 @@
 package com.ss.rlib.test.util.array;
 
+import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import com.ss.rlib.util.array.UnsafeArray;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.ss.rlib.util.array.Array;
-import com.ss.rlib.util.array.UnsafeArray;
 
 /**
  * Теаст скорости и функционала FastArray.
  *
  * @author JavaSaBr
  */
-public class TestFastArray extends Assert {
+public class TestFastArray  {
 
-    @Test
     public void test() {
 
         final String head = TestFastArray.class.getSimpleName() + ": ";
@@ -111,7 +108,7 @@ public class TestFastArray extends Assert {
         array.addAll(added);
         array.addAll(array2.trimToSize().array());
 
-        assertTrue(array.size() == added.size() * 2 + 4);
+        Assertions.assertTrue(array.size() == added.size() * 2 + 4);
 
         for (int i = 0; i < array.size(); i++) {
             array.get(i).intValue();

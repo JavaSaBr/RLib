@@ -1,16 +1,12 @@
 package com.ss.rlib.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.ss.rlib.util.Utils;
 
 /**
  * @author JavaSaBr
  */
-public class TestHEXSTring extends Assert {
+public class TestHEXSTring {
 
-    @Test
     public void test() {
 
         System.out.println((3 % 10));
