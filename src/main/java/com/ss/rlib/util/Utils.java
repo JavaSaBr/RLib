@@ -86,8 +86,7 @@ public final class Utils {
      * @param time the timestamp.
      * @return the string
      */
-    @NotNull
-    public static String formatTime(final long time) {
+    public static @NotNull String formatTime(final long time) {
 
         final Date date = LOCAL_DATE.get();
         date.setTime(time);
@@ -102,8 +101,7 @@ public final class Utils {
      * @param string the string.
      * @return the HEX string.
      */
-    @NotNull
-    public static String fromHEX(@NotNull final String string) {
+    public static @NotNull String fromHEX(@NotNull final String string) {
 
         final char[] array = string.toCharArray();
 
@@ -140,8 +138,7 @@ public final class Utils {
      * @param cs the class.
      * @return the path to the folder.
      */
-    @NotNull
-    public static Path getRootFolderFromClass(@NotNull final Class<?> cs) {
+    public static @NotNull Path getRootFolderFromClass(@NotNull final Class<?> cs) {
 
         String className = cs.getName();
 
@@ -219,8 +216,7 @@ public final class Utils {
      *
      * @return the username.
      */
-    @NotNull
-    public static String getUserName() {
+    public static @NotNull String getUserName() {
         return System.getProperty("user.name");
     }
 
@@ -231,8 +227,7 @@ public final class Utils {
      * @param size  the size
      * @return строка с дампом.
      */
-    @NotNull
-    public static String hexdump(final byte[] array, final int size) {
+    public static @NotNull String hexdump(final byte[] array, final int size) {
         return hexdump(array, 0, size);
     }
 
@@ -244,8 +239,7 @@ public final class Utils {
      * @param size   the size
      * @return the string dump.
      */
-    @NotNull
-    public static String hexdump(@NotNull final byte[] array, final int offset, final int size) {
+    public static @NotNull String hexdump(@NotNull final byte[] array, final int offset, final int size) {
 
         final StringBuilder builder = new StringBuilder();
 
@@ -337,14 +331,13 @@ public final class Utils {
     }
 
     /**
-     * Execute a function with auto-converting checked exception to runtime.
+     * Execute the function with auto-converting checked exception to runtime.
      *
      * @param <R>      the type parameter
      * @param function the function.
      * @return the result.
      */
-    @Nullable
-    public static <R> R get(@NotNull final SafeFactory<R> function) {
+    public static <R> @NotNull R get(@NotNull final SafeFactory<@NotNull R> function) {
         try {
             return function.get();
         } catch (final Exception e) {
@@ -353,25 +346,42 @@ public final class Utils {
     }
 
     /**
-     * Execute a function with handling an exception.
+     * Execute the function with auto-converting checked exception to runtime.
+     *
+     * @param <R>      the type parameter
+     * @param function the function.
+     * @return the result.
+     */
+    public static <R> @Nullable R getNullable(@NotNull final SafeFactory<R> function) {
+        try {
+            return function.get();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with handling an exception.
      *
      * @param <R>          the type parameter
      * @param function     the function.
      * @param errorHandler the handler.
-     * @return the result.
+     * @return the result or null.
      */
-    @Nullable
-    public static <R> R get(@NotNull final SafeFactory<R> function, @NotNull final Consumer<Exception> errorHandler) {
+
+    public static <R> @Nullable R get(@NotNull final SafeFactory<@Nullable R> function,
+                                      @NotNull final Consumer<@NotNull Exception> errorHandler) {
         try {
             return function.get();
         } catch (final Exception e) {
             errorHandler.accept(e);
         }
+
         return null;
     }
 
     /**
-     * Execute a function with auto-converting checked exception to runtime.
+     * Execute the function with auto-converting checked exception to runtime.
      *
      * @param <F>      the type parameter
      * @param first    the first argument.
@@ -386,7 +396,7 @@ public final class Utils {
     }
 
     /**
-     * Execute a function with auto-converting checked exception to runtime.
+     * Execute the function with auto-converting checked exception to runtime.
      *
      * @param <F>      the type parameter
      * @param <R>      the type parameter
@@ -394,8 +404,25 @@ public final class Utils {
      * @param function the function.
      * @return the result.
      */
-    @Nullable
-    public static <F, R> R get(@Nullable final F first, @NotNull final SafeFunction<F, R> function) {
+    public static <F, R> @NotNull R get(@NotNull final F first,
+                                        @NotNull final SafeFunction<@NotNull F, @NotNull R> function) {
+        try {
+            return function.apply(first);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting checked exception to runtime.
+     *
+     * @param <F>      the type parameter
+     * @param <R>      the type parameter
+     * @param first    the first argument.
+     * @param function the function.
+     * @return the result or null.
+     */
+    public static <F, R> @Nullable R getNullable(@Nullable final F first, @NotNull final SafeFunction<F, R> function) {
         try {
             return function.apply(first);
         } catch (final Exception e) {
@@ -411,8 +438,8 @@ public final class Utils {
      * @param function     the function.
      * @param errorHandler the handler.
      */
-    public static <F> void run(@Nullable final F first, @NotNull final SafeConsumer<F> function,
-                               @NotNull final Consumer<Exception> errorHandler) {
+    public static <F> void run(@Nullable final F first, @NotNull final SafeConsumer<@Nullable F> function,
+                               @NotNull final Consumer<@NotNull Exception> errorHandler) {
         try {
             function.accept(first);
         } catch (final Exception e) {
@@ -428,16 +455,18 @@ public final class Utils {
      * @param first        the first argument.
      * @param function     the function.
      * @param errorHandler the handler.
-     * @return the result.
+     * @return the result or null.
      */
-    @Nullable
-    public static <F, R> R get(@Nullable final F first, @NotNull final SafeFunction<F, R> function,
-                               @NotNull final Consumer<Exception> errorHandler) {
+
+    public static <F, R> @Nullable R get(@Nullable final F first,
+                                         @NotNull final SafeFunction<@Nullable F, @Nullable R> function,
+                                         @NotNull final Consumer<@NotNull Exception> errorHandler) {
         try {
             return function.apply(first);
         } catch (final Exception e) {
             errorHandler.accept(e);
         }
+
         return null;
     }
 
@@ -483,8 +512,7 @@ public final class Utils {
      * @param string the original string.
      * @return the hex string.
      */
-    @NotNull
-    public static String toHEX(@NotNull final String string) {
+    public static @NotNull String toHEX(@NotNull final String string) {
 
         final StringBuilder builder = new StringBuilder(string.length() * 2);
 

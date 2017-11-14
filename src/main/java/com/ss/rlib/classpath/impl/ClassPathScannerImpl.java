@@ -388,9 +388,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 continue;
             }
 
-            if (LOGGER.isEnabledInfo()) {
-                LOGGER.info("scan " + file);
-            }
+            LOGGER.info(this, file, p -> "scan " + p);
 
             final String filename = file.getFileName().toString();
 
@@ -404,9 +402,8 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         this.classes = classes.toArray(new Class[classes.size()]);
         this.resources = resources.toArray(new String[resources.size()]);
 
-        if (LOGGER.isEnabledInfo()) {
-            LOGGER.info("scanned for " + this.classes.length + " classes and " + this.resources.length + " resources.");
-        }
+        LOGGER.info(this, this.classes, this.resources,
+                (cses, rses) -> "scanned for " + cses.length + " classes and " + rses.length + " resources.");
     }
 
     @Override

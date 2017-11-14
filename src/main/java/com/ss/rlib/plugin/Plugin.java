@@ -2,7 +2,6 @@ package com.ss.rlib.plugin;
 
 import com.ss.rlib.plugin.annotation.PluginDescription;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The interface to implement a plugin.
@@ -16,16 +15,14 @@ public interface Plugin {
      *
      * @return the class loader.
      */
-    @NotNull
-    ClassLoader getClassLoader();
+    @NotNull ClassLoader getClassLoader();
 
     /**
      * Get the ID of this plugin.
      *
      * @return the plugin id.
      */
-    @NotNull
-    default String getId() {
+    default @NotNull String getId() {
         final Class<? extends Plugin> cs = getClass();
         final PluginDescription description = cs.getAnnotation(PluginDescription.class);
         return description.id();
@@ -36,8 +33,7 @@ public interface Plugin {
      *
      * @return the plugin version.
      */
-    @NotNull
-    default Version getVersion() {
+    default @NotNull Version getVersion() {
         final Class<? extends Plugin> cs = getClass();
         final PluginDescription description = cs.getAnnotation(PluginDescription.class);
         return new Version(description.version());
@@ -48,8 +44,7 @@ public interface Plugin {
      *
      * @return the name of this plugin.
      */
-    @Nullable
-    default String getName() {
+    default @NotNull String getName() {
         final Class<? extends Plugin> cs = getClass();
         final PluginDescription description = cs.getAnnotation(PluginDescription.class);
         return description.name();
@@ -60,8 +55,7 @@ public interface Plugin {
      *
      * @return the description of this plugin.
      */
-    @Nullable
-    default String getDescription() {
+    default @NotNull String getDescription() {
         final Class<? extends Plugin> cs = getClass();
         final PluginDescription description = cs.getAnnotation(PluginDescription.class);
         return description.description();

@@ -50,8 +50,7 @@ public interface ConfigurablePluginSystem extends PluginSystem {
      * @param needInitialize true if need to initialize the plugin.
      * @return the installed plugin or null.
      */
-    @Nullable
-    Plugin installPlugin(@NotNull Path file, boolean needInitialize);
+    @Nullable Plugin installPlugin(@NotNull Path file, boolean needInitialize);
 
     /**
      * Remove the plugin.

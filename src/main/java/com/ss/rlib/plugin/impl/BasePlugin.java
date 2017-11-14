@@ -5,7 +5,6 @@ import com.ss.rlib.plugin.PluginContainer;
 import com.ss.rlib.plugin.PluginSystem;
 import com.ss.rlib.plugin.Version;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The base implementation of the {@link Plugin}.
@@ -25,8 +24,7 @@ public class BasePlugin implements Plugin {
     }
 
     @Override
-    @NotNull
-    public ClassLoader getClassLoader() {
+    public @NotNull ClassLoader getClassLoader() {
         return container.getClassLoader();
     }
 
@@ -35,27 +33,23 @@ public class BasePlugin implements Plugin {
         return container.isEmbedded();
     }
 
-    @NotNull
     @Override
-    public String getId() {
+    public @NotNull String getId() {
         return container.getId();
     }
 
-    @NotNull
     @Override
-    public Version getVersion() {
+    public @NotNull Version getVersion() {
         return container.getVersion();
     }
 
-    @Nullable
     @Override
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return container.getDescription();
     }
 
-    @Nullable
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return container.getName();
     }
 
@@ -64,13 +58,11 @@ public class BasePlugin implements Plugin {
      *
      * @return the container.
      */
-    @NotNull
-    protected PluginContainer getContainer() {
+    protected @NotNull PluginContainer getContainer() {
         return container;
     }
 
     @Override
     public void initialize(@NotNull final PluginSystem pluginSystem) {
-
     }
 }

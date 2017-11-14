@@ -3,7 +3,6 @@ package com.ss.rlib.plugin;
 import com.ss.rlib.classpath.ClassPathScanner;
 import com.ss.rlib.plugin.annotation.PluginDescription;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -82,8 +81,7 @@ public class PluginContainer {
         this.description = description.description();
     }
 
-    @NotNull
-    public Class<Plugin> getPluginClass() {
+    public @NotNull Class<Plugin> getPluginClass() {
         return pluginClass;
     }
 
@@ -92,8 +90,7 @@ public class PluginContainer {
      *
      * @return the ID.
      */
-    @NotNull
-    public String getId() {
+    public @NotNull String getId() {
         return id;
     }
 
@@ -102,8 +99,7 @@ public class PluginContainer {
      *
      * @return the plugin version.
      */
-    @NotNull
-    public Version getVersion() {
+    public @NotNull Version getVersion() {
         return version;
     }
 
@@ -112,8 +108,7 @@ public class PluginContainer {
      *
      * @return the name of this plugin.
      */
-    @Nullable
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
@@ -122,8 +117,7 @@ public class PluginContainer {
      *
      * @return the description of this plugin.
      */
-    @Nullable
-    public String getDescription() {
+    public @NotNull String getDescription() {
         return description;
     }
 
@@ -134,18 +128,15 @@ public class PluginContainer {
         return embedded;
     }
 
-    @NotNull
-    public ClassPathScanner getScanner() {
+    public @NotNull ClassPathScanner getScanner() {
         return scanner;
     }
 
-    @NotNull
-    public URLClassLoader getClassLoader() {
+    public @NotNull URLClassLoader getClassLoader() {
         return classLoader;
     }
 
-    @NotNull
-    public Path getPath() {
+    public @NotNull Path getPath() {
         return path;
     }
 

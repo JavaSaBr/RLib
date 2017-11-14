@@ -1,14 +1,9 @@
 package com.ss.rlib;
 
+import com.ss.rlib.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
-import java.lang.management.ThreadMXBean;
-
-import com.ss.rlib.util.Utils;
+import java.lang.management.*;
 
 /**
  * The class with method to monitor process state.
@@ -20,11 +15,6 @@ public final class Monitoring {
     @NotNull
     private static final Monitoring INSTANCE = new Monitoring();
 
-    /**
-     * Gets instance.
-     *
-     * @return the instance
-     */
     @NotNull
     public static Monitoring getInstance() {
         return INSTANCE;
@@ -68,8 +58,7 @@ public final class Monitoring {
      *
      * @return the java version.
      */
-    @NotNull
-    public String getJavaVersion() {
+    public @NotNull String getJavaVersion() {
         return runtimeMxBean.getSpecVersion();
     }
 
@@ -87,8 +76,7 @@ public final class Monitoring {
      *
      * @return the startup date.
      */
-    @NotNull
-    public String getStartDate() {
+    public @NotNull String getStartDate() {
         return Utils.formatTime(runtimeMxBean.getStartTime());
     }
 
@@ -106,8 +94,7 @@ public final class Monitoring {
      *
      * @return the arch of system.
      */
-    @NotNull
-    public String getSystemArch() {
+    public @NotNull String getSystemArch() {
         return operatingSystemMXBean.getArch();
     }
 
@@ -125,8 +112,7 @@ public final class Monitoring {
      *
      * @return the system name.
      */
-    @NotNull
-    public String getSystemName() {
+    public @NotNull String getSystemName() {
         return operatingSystemMXBean.getName();
     }
 
@@ -135,8 +121,7 @@ public final class Monitoring {
      *
      * @return the system version.
      */
-    @NotNull
-    public String getSystemVersion() {
+    public @NotNull String getSystemVersion() {
         return operatingSystemMXBean.getVersion();
     }
 
@@ -172,8 +157,7 @@ public final class Monitoring {
      *
      * @return the VM name.
      */
-    @NotNull
-    public String getVMName() {
+    public @NotNull String getVMName() {
         return runtimeMxBean.getVmName();
     }
 

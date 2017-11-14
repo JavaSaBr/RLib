@@ -19,8 +19,7 @@ public class XmlUtils {
      * @param name the name searched element.
      * @return the element or null.
      */
-    @Nullable
-    public static Element findFirstElement(@Nullable final Node node, @NotNull final String name) {
+    public static @Nullable Element findFirstElement(@Nullable final Node node, @NotNull final String name) {
         if (node == null) return null;
 
         for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
