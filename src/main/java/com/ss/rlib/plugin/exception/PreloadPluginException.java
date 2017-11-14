@@ -22,8 +22,7 @@ public class PreloadPluginException extends PluginException {
     /**
      * @return the path of the plugin.
      */
-    @NotNull
-    public Path getPath() {
+    public @NotNull Path getPath() {
         return path;
     }
 }

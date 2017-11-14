@@ -16,7 +16,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.JavaSaBr:RLib:6.4.1'
+    compile 'com.github.JavaSaBr:RLib:6.5.0'
 }
 ```
 
@@ -37,6 +37,6 @@ dependencies {
     <dependency>
         <groupId>com.github.JavaSaBr</groupId>
         <artifactId>RLib</artifactId>
-        <version>6.4.1</version>
+        <version>6.5.0</version>
     </dependency>
 ```

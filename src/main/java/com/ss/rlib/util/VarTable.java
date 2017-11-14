@@ -1,7 +1,7 @@
 package com.ss.rlib.util;
 
+import static com.ss.rlib.util.ObjectUtils.notNull;
 import static java.lang.Float.parseFloat;
-import static java.util.Objects.requireNonNull;
 import com.ss.rlib.geom.Quaternion4f;
 import com.ss.rlib.geom.Vector3f;
 import com.ss.rlib.util.dictionary.DictionaryFactory;
@@ -18,13 +18,7 @@ import org.w3c.dom.Node;
  */
 public class VarTable {
 
-    /**
-     * New instance var table.
-     *
-     * @return the new instance.
-     */
-    @NotNull
-    public static VarTable newInstance() {
+    public static @NotNull VarTable newInstance() {
         return new VarTable();
     }
 
@@ -34,8 +28,7 @@ public class VarTable {
      * @param node the xml node.
      * @return the new table with attributes of the node.
      */
-    @NotNull
-    public static VarTable newInstance(@Nullable final Node node) {
+    public static @NotNull VarTable newInstance(@Nullable final Node node) {
         return newInstance().parse(node);
     }
 
@@ -48,9 +41,8 @@ public class VarTable {
      * @param nameValue the name value
      * @return the var table
      */
-    @NotNull
-    public static VarTable newInstance(@Nullable final Node node, @NotNull final String childName,
-                                       @NotNull final String nameType, @NotNull final String nameValue) {
+    public static @NotNull VarTable newInstance(@Nullable final Node node, @NotNull final String childName,
+                                                @NotNull final String nameType, @NotNull final String nameValue) {
         return newInstance().parse(node, childName, nameType, nameValue);
     }
 
@@ -72,29 +64,27 @@ public class VarTable {
     }
 
     /**
-     * Get the value by a key.
+     * Get the value by the key.
      *
      * @param <T> the type parameter
      * @param key the key.
      * @return the t
      */
-    @NotNull
-    public <T> T get(@NotNull final String key) {
+    public <T> @NotNull T get(@NotNull final String key) {
         final T result = ClassUtils.unsafeCast(values.get(key));
         if (result != null) return result;
         throw new IllegalArgumentException("not found " + key);
     }
 
     /**
-     * Get the value by a key.
+     * Get the value by the key.
      *
      * @param <T>  the type parameter
      * @param key  the key.
      * @param type the type.
      * @return the value.
      */
-    @NotNull
-    public <T> T get(@NotNull final String key, @NotNull final Class<T> type) {
+    public <T> @NotNull T get(@NotNull final String key, @NotNull final Class<T> type) {
 
         final Object object = values.get(key);
 
@@ -108,7 +98,7 @@ public class VarTable {
     }
 
     /**
-     * Get the value by a key.
+     * Get the value by the key.
      *
      * @param <T>  the type parameter
      * @param <E>  the type parameter
@@ -117,8 +107,8 @@ public class VarTable {
      * @param def  the default value.
      * @return the value.
      */
-    @NotNull
-    public <T, E extends T> T get(@NotNull final String key, @NotNull final Class<T> type, @NotNull final E def) {
+    public <T, E extends T> @NotNull T get(@NotNull final String key, @NotNull final Class<T> type,
+                                           @NotNull final E def) {
 
         final Object object = values.get(key);
 
@@ -132,15 +122,38 @@ public class VarTable {
     }
 
     /**
-     * Get the value by a key.
+     * Get the value by the key.
+     *
+     * @param <T>  the type parameter
+     * @param <E>  the type parameter
+     * @param key  the key.
+     * @param type the type.
+     * @param def  the default value.
+     * @return the value.
+     */
+    public <T, E extends T> @NotNull T getNullable(@NotNull final String key, @NotNull final Class<T> type,
+                                                   @Nullable final E def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        } else if (type.isInstance(object)) {
+            return type.cast(object);
+        }
+
+        return def;
+    }
+
+    /**
+     * Get the value by the key.
      *
      * @param <T> the type parameter
      * @param key the key.
      * @param def the default value.
      * @return the value.
      */
-    @NotNull
-    public <T> T get(@NotNull final String key, @NotNull final T def) {
+    public <T> @NotNull T get(@NotNull final String key, @NotNull final T def) {
 
         final Object object = values.get(key);
         if (object == null) return def;
@@ -148,36 +161,57 @@ public class VarTable {
         final Class<?> type = def.getClass();
 
         if (type.isInstance(object)) {
-            return requireNonNull(ClassUtils.unsafeCast(object));
+            return notNull(ClassUtils.unsafeCast(object));
         }
 
         return def;
     }
 
     /**
-     * Get an array by a key.
+     * Get the value by the key.
+     *
+     * @param <T> the type parameter
+     * @param key the key.
+     * @param def the default value.
+     * @return the value.
+     */
+    public <T> @NotNull T getNullable(@NotNull final String key, @Nullable final T def) {
+
+        final Object object = values.get(key);
+        if (object == null || def == null) return def;
+
+        final Class<?> type = def.getClass();
+
+        if (type.isInstance(object)) {
+            return notNull(ClassUtils.unsafeCast(object));
+        }
+
+        return def;
+    }
+
+    /**
+     * Get an array by the key.
      *
      * @param <T>  the type parameter
      * @param key  the key.
      * @param type the type.
      * @return the array.
      */
-    @NotNull
-    public <T> T[] getArray(@NotNull final String key, @NotNull final Class<T[]> type) {
+    public <T> @NotNull T[] getArray(@NotNull final String key, @NotNull final Class<T[]> type) {
 
         final Object object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (type.isInstance(object)) {
-            return requireNonNull(ClassUtils.unsafeCast(object));
+            return notNull(ClassUtils.unsafeCast(object));
         }
 
         throw new IllegalArgumentException("not found " + key);
     }
 
     /**
-     * Get an array of a key.
+     * Get an array of the key.
      *
      * @param <T>  the type parameter
      * @param key  the key.
@@ -185,23 +219,23 @@ public class VarTable {
      * @param def  the default array.
      * @return the array.
      */
-    @NotNull
     @SafeVarargs
-    public final <T> T[] getArray(@NotNull final String key, @NotNull final Class<T[]> type, @NotNull final T... def) {
+    public final <T> @NotNull T[] getArray(@NotNull final String key, @NotNull final Class<T[]> type,
+                                           @NotNull final T... def) {
 
         final Object object = values.get(key);
 
         if (object == null) {
             return def;
         } else if (type.isInstance(object)) {
-            return requireNonNull(ClassUtils.unsafeCast(object));
+            return notNull(ClassUtils.unsafeCast(object));
         }
 
         throw new IllegalArgumentException("not found " + key);
     }
 
     /**
-     * Get a boolean value by a key.
+     * Get a boolean value by the key.
      *
      * @param key the key.
      * @return the value.
@@ -222,7 +256,7 @@ public class VarTable {
     }
 
     /**
-     * Get a boolean value by a key.
+     * Get a boolean value by the key.
      *
      * @param key the key.
      * @param def the default value.
@@ -244,14 +278,13 @@ public class VarTable {
     }
 
     /**
-     * Get a boolean array by a key.
+     * Get a boolean array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the boolean array.
      */
-    @NotNull
-    public boolean[] getBooleanArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull boolean[] getBooleanArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -279,16 +312,15 @@ public class VarTable {
     }
 
     /**
-     * Get a boolean array by a key.
+     * Get a boolean array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default array.
      * @return the boolean array.
      */
-    @NotNull
-    public boolean[] getBooleanArray(@NotNull final String key, @NotNull final String regex,
-                                     @NotNull final boolean... def) {
+    public @NotNull boolean[] getBooleanArray(@NotNull final String key, @NotNull final String regex,
+                                              @NotNull final boolean... def) {
 
         final Object object = values.get(key);
 
@@ -304,7 +336,7 @@ public class VarTable {
     }
 
     /**
-     * Get a byte value by a key.
+     * Get a byte value by the key.
      *
      * @param key the key.
      * @return the byte.
@@ -325,7 +357,7 @@ public class VarTable {
     }
 
     /**
-     * Get a byte value by a key.
+     * Get a byte value by the key.
      *
      * @param key the key.
      * @param def the default value.
@@ -347,14 +379,13 @@ public class VarTable {
     }
 
     /**
-     * Get a byte array by a key.
+     * Get a byte array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the byte array.
      */
-    @NotNull
-    public byte[] getByteArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull byte[] getByteArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -382,14 +413,15 @@ public class VarTable {
     }
 
     /**
-     * Get a byte array by a key.
+     * Get a byte array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default byte array.
      * @return the byte array.
      */
-    public byte[] getByteArray(@NotNull final String key, @NotNull final String regex, @NotNull final byte... def) {
+    public @NotNull byte[] getByteArray(@NotNull final String key, @NotNull final String regex,
+                                        @NotNull final byte... def) {
 
         final Object object = values.get(key);
 
@@ -405,7 +437,7 @@ public class VarTable {
     }
 
     /**
-     * Get a double value by a key.
+     * Get a double value by the key.
      *
      * @param key the key.
      * @return the value.
@@ -426,7 +458,7 @@ public class VarTable {
     }
 
     /**
-     * Get a double value by a key.
+     * Get a double value by the key.
      *
      * @param key the key.
      * @param def the default value.
@@ -448,14 +480,13 @@ public class VarTable {
     }
 
     /**
-     * Get a double array by a key.
+     * Get a double array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the double array.
      */
-    @NotNull
-    public double[] getDoubleArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull double[] getDoubleArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -483,16 +514,15 @@ public class VarTable {
     }
 
     /**
-     * Get a double array by a key.
+     * Get a double array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default array.
      * @return the double array.
      */
-    @NotNull
-    public double[] getDoubleArray(@NotNull final String key, @NotNull final String regex,
-                                   @NotNull final double... def) {
+    public @NotNull double[] getDoubleArray(@NotNull final String key, @NotNull final String regex,
+                                            @NotNull final double... def) {
 
         final Object object = values.get(key);
 
@@ -508,15 +538,14 @@ public class VarTable {
     }
 
     /**
-     * Get an enum value by a key.
+     * Get an enum value by the key.
      *
      * @param <T>  the type parameter
      * @param key  the key.
      * @param type the type of enum.
      * @return the value.
      */
-    @NotNull
-    public <T extends Enum<T>> T getEnum(@NotNull final String key, @NotNull final Class<T> type) {
+    public @NotNull <T extends Enum<T>> T getEnum(@NotNull final String key, @NotNull final Class<T> type) {
 
         final Object object = values.get(key);
 
@@ -532,7 +561,7 @@ public class VarTable {
     }
 
     /**
-     * Get an enum value by a key.
+     * Get an enum value by the key.
      *
      * @param <T>  the type parameter
      * @param key  the key.
@@ -540,9 +569,8 @@ public class VarTable {
      * @param def  the default value.
      * @return the value.
      */
-    @NotNull
-    public <T extends Enum<T>> T getEnum(@NotNull final String key, @NotNull final Class<T> type,
-                                         @NotNull final T def) {
+    public <T extends Enum<T>> @NotNull T getEnum(@NotNull final String key, @NotNull final Class<T> type,
+                                                  @NotNull final T def) {
 
         final Object object = values.get(key);
 
@@ -558,7 +586,7 @@ public class VarTable {
     }
 
     /**
-     * Get an enum array by a key.
+     * Get an enum array by the key.
      *
      * @param <T>   the type parameter
      * @param key   the key.
@@ -566,16 +594,15 @@ public class VarTable {
      * @param regex the regex to split if a value is string.
      * @return the enum array.
      */
-    @NotNull
-    public <T extends Enum<T>> T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type,
-                                                @NotNull final String regex) {
+    public <T extends Enum<T>> @NotNull T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type,
+                                                         @NotNull final String regex) {
 
         final Object object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof Enum[]) {
-            return requireNonNull(ClassUtils.unsafeCast(object));
+            return notNull(ClassUtils.unsafeCast(object));
         } else if (object instanceof String) {
             return parseEnumArray(type, regex, object);
         }
@@ -583,11 +610,11 @@ public class VarTable {
         throw new IllegalArgumentException("not found " + key);
     }
 
-    private <T extends Enum<T>> T[] parseEnumArray(@NotNull final Class<T> type, @NotNull final String regex,
-                                                   @NotNull final Object object) {
+    private <T extends Enum<T>> @NotNull T[] parseEnumArray(@NotNull final Class<T> type, @NotNull final String regex,
+                                                            @NotNull final Object object) {
 
         final String[] strings = object.toString().split(regex);
-        final T[] result = requireNonNull(ClassUtils.unsafeCast(ArrayUtils.create(type, strings.length)));
+        final T[] result = notNull(ClassUtils.unsafeCast(ArrayUtils.create(type, strings.length)));
 
         for (int i = 0, length = strings.length; i < length; i++) {
             result[i] = Enum.valueOf(type, strings[i]);
@@ -597,7 +624,7 @@ public class VarTable {
     }
 
     /**
-     * Get an enum array by a key.
+     * Get an enum array by the key.
      *
      * @param <T>   the type parameter
      * @param key   the key.
@@ -606,16 +633,16 @@ public class VarTable {
      * @param def   the default array.
      * @return the enum array.
      */
-    @NotNull
-    public <T extends Enum<T>> T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type,
-                                                @NotNull final String regex, @NotNull final T... def) {
+
+    public <T extends Enum<T>> @NotNull T[] getEnumArray(@NotNull final String key, @NotNull final Class<T> type,
+                                                         @NotNull final String regex, @NotNull final T... def) {
 
         final Object object = values.get(key);
 
         if (object == null) {
             return def;
         } else if (object instanceof Enum[]) {
-            return requireNonNull(ClassUtils.unsafeCast(object));
+            return notNull(ClassUtils.unsafeCast(object));
         } else if (object instanceof String) {
             return parseEnumArray(type, regex, object);
         }
@@ -624,7 +651,7 @@ public class VarTable {
     }
 
     /**
-     * Get a float value by a key.
+     * Get a float value by the key.
      *
      * @param key the key.
      * @return the float value.
@@ -645,7 +672,7 @@ public class VarTable {
     }
 
     /**
-     * Get a float value by a key.
+     * Get a float value by the key.
      *
      * @param key the key.
      * @param def the default value.
@@ -667,14 +694,13 @@ public class VarTable {
     }
 
     /**
-     * Get a float array by a key.
+     * Get a float array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the float array.
      */
-    @NotNull
-    public float[] getFloatArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull float[] getFloatArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -689,7 +715,7 @@ public class VarTable {
         throw new IllegalArgumentException("not found " + key);
     }
 
-    private float[] parseFloatArray(@NotNull final String regex, @NotNull final Object object) {
+    private @NotNull float[] parseFloatArray(@NotNull final String regex, @NotNull final Object object) {
 
         final String[] strings = object.toString().split(regex);
         final float[] result = new float[strings.length];
@@ -702,15 +728,15 @@ public class VarTable {
     }
 
     /**
-     * Get a float array by a key.
+     * Get a float array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default array.
      * @return the float array.
      */
-    @NotNull
-    public float[] getFloatArray(@NotNull final String key, @NotNull final String regex, @NotNull final float... def) {
+    public @NotNull float[] getFloatArray(@NotNull final String key, @NotNull final String regex,
+                                          @NotNull final float... def) {
 
         final Object object = values.get(key);
 
@@ -726,7 +752,7 @@ public class VarTable {
     }
 
     /**
-     * Get an integer value by a key.
+     * Get an integer value by the key.
      *
      * @param key the key.
      * @return the integer value.
@@ -747,7 +773,7 @@ public class VarTable {
     }
 
     /**
-     * Get an integer value by a key.
+     * Get an integer value by the key.
      *
      * @param key the key.
      * @param def the default value.
@@ -769,14 +795,13 @@ public class VarTable {
     }
 
     /**
-     * Get an integer value by a key.
+     * Get an integer value by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the integer value.
      */
-    @NotNull
-    public int[] getIntegerArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull int[] getIntegerArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -791,7 +816,7 @@ public class VarTable {
         throw new IllegalArgumentException("not found " + key);
     }
 
-    private int[] parseIntegerArray(@NotNull final String regex, @NotNull final Object object) {
+    private @NotNull int[] parseIntegerArray(@NotNull final String regex, @NotNull final Object object) {
 
         final String[] strings = object.toString().split(regex);
         final int[] result = new int[strings.length];
@@ -804,15 +829,15 @@ public class VarTable {
     }
 
     /**
-     * Get an integer value by a key.
+     * Get an integer value by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default value.
      * @return the integer value.
      */
-    @NotNull
-    public int[] getIntegerArray(@NotNull final String key, @NotNull final String regex, @NotNull final int... def) {
+    public @NotNull int[] getIntegerArray(@NotNull final String key, @NotNull final String regex,
+                                          @NotNull final int... def) {
 
         final Object object = values.get(key);
 
@@ -828,7 +853,7 @@ public class VarTable {
     }
 
     /**
-     * Get a long value by a key.
+     * Get a long value by the key.
      *
      * @param key the key.
      * @return the long value.
@@ -849,7 +874,7 @@ public class VarTable {
     }
 
     /**
-     * Get a long value by a key.
+     * Get a long value by the key.
      *
      * @param key the key.
      * @param def the default value.
@@ -871,14 +896,13 @@ public class VarTable {
     }
 
     /**
-     * Get a long array by a key.
+     * Get a long array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the long array.
      */
-    @NotNull
-    public long[] getLongArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull long[] getLongArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -893,7 +917,7 @@ public class VarTable {
         throw new IllegalArgumentException("not found " + key);
     }
 
-    private long[] parseLongArray(@NotNull final String regex, @NotNull final Object object) {
+    private @NotNull long[] parseLongArray(@NotNull final String regex, @NotNull final Object object) {
 
         final String[] strings = object.toString().split(regex);
         final long[] result = new long[strings.length];
@@ -906,15 +930,15 @@ public class VarTable {
     }
 
     /**
-     * Get a long array by a key.
+     * Get a long array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default array.
      * @return the long array.
      */
-    @NotNull
-    public long[] getLongArray(@NotNull final String key, @NotNull final String regex, @NotNull final long... def) {
+    public @NotNull long[] getLongArray(@NotNull final String key, @NotNull final String regex,
+                                        @NotNull final long... def) {
 
         final Object object = values.get(key);
 
@@ -930,13 +954,12 @@ public class VarTable {
     }
 
     /**
-     * Get a rotation by a key.
+     * Get a rotation by the key.
      *
      * @param key the key.
      * @return the rotation.
      */
-    @NotNull
-    public Quaternion4f getRotation(@NotNull final String key) {
+    public @NotNull Quaternion4f getRotation(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -951,27 +974,24 @@ public class VarTable {
         throw new IllegalArgumentException("not found " + key);
     }
 
-    @NotNull
-    private Quaternion4f parseRotation(@NotNull final String object) {
+    private @NotNull Quaternion4f parseRotation(@NotNull final String object) {
 
         final String[] values = object.split(",");
 
         final Quaternion4f rotation = Quaternion4f.newInstance();
-        rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]),
-                parseFloat(values[2]), parseFloat(values[3]));
+        rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]), parseFloat(values[3]));
 
         return rotation;
     }
 
     /**
-     * Get a rotation by a key.
+     * Get a rotation by the key.
      *
      * @param key the key.
      * @param def the default value.
      * @return the rotation.
      */
-    @NotNull
-    public Quaternion4f getRotation(@NotNull final String key, @NotNull final Quaternion4f def) {
+    public @NotNull Quaternion4f getRotation(@NotNull final String key, @NotNull final Quaternion4f def) {
 
         final Object object = values.get(key);
 
@@ -987,7 +1007,7 @@ public class VarTable {
     }
 
     /**
-     * Get a short value by a key.
+     * Get a short value by the key.
      *
      * @param key the key.
      * @return the short value.
@@ -1008,7 +1028,7 @@ public class VarTable {
     }
 
     /**
-     * Get a short value by a key.
+     * Get a short value by the key.
      *
      * @param key the key.
      * @param def the default value.
@@ -1030,14 +1050,13 @@ public class VarTable {
     }
 
     /**
-     * Get a short array by a key.
+     * Get a short array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the short array.
      */
-    @NotNull
-    public short[] getShortArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull short[] getShortArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -1052,7 +1071,7 @@ public class VarTable {
         throw new IllegalArgumentException("not found " + key);
     }
 
-    private short[] parseShortArray(@NotNull final String regex, @NotNull final Object object) {
+    private @NotNull short[] parseShortArray(@NotNull final String regex, @NotNull final Object object) {
 
         final String[] strings = object.toString().split(regex);
         final short[] result = new short[strings.length];
@@ -1065,15 +1084,15 @@ public class VarTable {
     }
 
     /**
-     * Get a short array by a key.
+     * Get a short array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default array.
      * @return the short array.
      */
-    @NotNull
-    public short[] getShortArray(@NotNull final String key, @NotNull final String regex, @NotNull final short... def) {
+    public @NotNull short[] getShortArray(@NotNull final String key, @NotNull final String regex,
+                                          @NotNull final short... def) {
 
         final Object object = values.get(key);
 
@@ -1089,13 +1108,12 @@ public class VarTable {
     }
 
     /**
-     * Get a string by a key.
+     * Get a string by the key.
      *
      * @param key the key.
      * @return the string.
      */
-    @NotNull
-    public String getString(@NotNull final String key) {
+    public @NotNull String getString(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -1109,14 +1127,13 @@ public class VarTable {
     }
 
     /**
-     * Get a string by a key.
+     * Get a string by the key.
      *
      * @param key the key.
      * @param def the default string.
      * @return the string.
      */
-    @NotNull
-    public String getString(@NotNull final String key, @NotNull final String def) {
+    public @NotNull String getString(@NotNull final String key, @NotNull final String def) {
 
         final Object object = values.get(key);
 
@@ -1130,14 +1147,33 @@ public class VarTable {
     }
 
     /**
-     * Get a string array by a key.
+     * Get a string by the key.
+     *
+     * @param key the key.
+     * @param def the default string.
+     * @return the string.
+     */
+    public @Nullable String getNullableString(@NotNull final String key, @Nullable final String def) {
+
+        final Object object = values.get(key);
+
+        if (object == null) {
+            return def;
+        } else if (object instanceof String) {
+            return object.toString();
+        }
+
+        return def;
+    }
+
+    /**
+     * Get a string array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the string array.
      */
-    @NotNull
-    public String[] getStringArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull String[] getStringArray(@NotNull final String key, @NotNull final String regex) {
 
         final Object object = values.get(key);
 
@@ -1153,16 +1189,15 @@ public class VarTable {
     }
 
     /**
-     * Get a string array by a key.
+     * Get a string array by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default array.
      * @return the string array.
      */
-    @NotNull
-    public String[] getStringArray(@NotNull final String key, @NotNull final String regex,
-                                   @NotNull final String... def) {
+    public @NotNull String[] getStringArray(@NotNull final String key, @NotNull final String regex,
+                                            @NotNull final String... def) {
 
         final Object object = values.get(key);
 
@@ -1188,13 +1223,12 @@ public class VarTable {
     }
 
     /**
-     * Get a vector by a key.
+     * Get a vector by the key.
      *
      * @param key the key.
      * @return the vector.
      */
-    @NotNull
-    public Vector3f getVector(@NotNull final String key) {
+    public @NotNull Vector3f getVector(@NotNull final String key) {
 
         final Object object = values.get(key);
 
@@ -1209,8 +1243,7 @@ public class VarTable {
         throw new IllegalArgumentException("not found " + key);
     }
 
-    @NotNull
-    private Vector3f parseVector(@NotNull final String object) {
+    private @NotNull Vector3f parseVector(@NotNull final String object) {
 
         final String[] values = object.split(",");
 
@@ -1221,14 +1254,13 @@ public class VarTable {
     }
 
     /**
-     * Get a vector by a key.
+     * Get a vector by the key.
      *
      * @param key the key.
      * @param def the default vector.
      * @return the vector.
      */
-    @NotNull
-    public Vector3f getVector(@NotNull final String key, @NotNull final Vector3f def) {
+    public @NotNull Vector3f getVector(@NotNull final String key, @NotNull final Vector3f def) {
 
         final Object object = values.get(key);
 
@@ -1249,7 +1281,7 @@ public class VarTable {
      * @param node the xml node.
      * @return the var table
      */
-    public VarTable parse(@Nullable final Node node) {
+    public @NotNull VarTable parse(@Nullable final Node node) {
         values.clear();
 
         if (node == null) return this;
@@ -1284,8 +1316,8 @@ public class VarTable {
      * @param nameValue the name of value attribute.
      * @return the var table
      */
-    public VarTable parse(@Nullable final Node node, @NotNull final String childName, @NotNull final String nameName,
-                          @NotNull final String nameValue) {
+    public @NotNull VarTable parse(@Nullable final Node node, @NotNull final String childName,
+                                   @NotNull final String nameName, @NotNull final String nameValue) {
         values.clear();
 
         if (node == null) {
@@ -1314,17 +1346,17 @@ public class VarTable {
     }
 
     /**
-     * Set a value by a key.
+     * Set a value by the key.
      *
      * @param key   the key.
      * @param value the value.
      */
     public void set(@NotNull final String key, @NotNull final Object value) {
-        values.put(key, requireNonNull(value));
+        values.put(key, notNull(value));
     }
 
     /**
-     * Clear a value by a key.
+     * Clear a value by the key.
      *
      * @param key the key.
      */
@@ -1338,8 +1370,7 @@ public class VarTable {
      * @param vars the other table.
      * @return the var table
      */
-    @NotNull
-    public VarTable set(@NotNull final VarTable vars) {
+    public @NotNull VarTable set(@NotNull final VarTable vars) {
         values.put(vars.getValues());
         return this;
     }

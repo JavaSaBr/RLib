@@ -1,7 +1,7 @@
 package com.ss.rlib.test.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.ss.rlib.util.FileUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -17,8 +17,8 @@ public class FileUtilsTest {
         final String path = "/some/folder/some/name.ololo";
         final String path2 = "D:\\some\\folder\\some\\name.ololo";
 
-        Assertions.assertEquals("name.ololo", FileUtils.getName(path, '/'));
-        Assertions.assertEquals("name.ololo", FileUtils.getName(path2, '\\'));
+        assertEquals("name.ololo", FileUtils.getName(path, '/'));
+        assertEquals("name.ololo", FileUtils.getName(path2, '\\'));
     }
 
     @Test
@@ -27,7 +27,7 @@ public class FileUtilsTest {
         final String path = "/some/folder/some/name.ololo";
         final String path2 = "D:\\some\\folder\\some\\name.ololo";
 
-        Assertions.assertEquals("/some/folder/some", FileUtils.getParent(path, '/'));
-        Assertions.assertEquals("D:\\some\\folder\\some", FileUtils.getParent(path2, '\\'));
+        assertEquals("/some/folder/some", FileUtils.getParent(path, '/'));
+        assertEquals("D:\\some\\folder\\some", FileUtils.getParent(path2, '\\'));
     }
 }

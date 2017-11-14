@@ -20,7 +20,7 @@ public class InitializePluginException extends PluginException {
     }
 
     public InitializePluginException(@NotNull final String message, @NotNull final Path path,
-                                      @NotNull final Exception e) {
+                                     @NotNull final Exception e) {
         super(message, e);
         this.path = path;
     }
@@ -28,8 +28,7 @@ public class InitializePluginException extends PluginException {
     /**
      * @return the path of the plugin.
      */
-    @NotNull
-    public Path getPath() {
+    public @NotNull Path getPath() {
         return path;
     }
 }

@@ -1,23 +1,24 @@
 package com.ss.rlib.logging;
 
-import com.ss.rlib.concurrent.lock.LockFactory;
+import static com.ss.rlib.util.ObjectUtils.notNull;
+import com.ss.rlib.function.TripleFunction;
 import com.ss.rlib.logging.impl.LoggerImpl;
 import com.ss.rlib.util.ArrayUtils;
-import com.ss.rlib.util.ClassUtils;
+import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.rlib.util.array.ConcurrentArray;
-import com.ss.rlib.util.dictionary.DictionaryFactory;
-import com.ss.rlib.util.dictionary.ObjectDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.locks.Lock;
-
-import com.ss.rlib.util.StringUtils;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * The class for managing loggers.
@@ -27,37 +28,13 @@ import com.ss.rlib.util.StringUtils;
 public class LoggerManager {
 
     /**
-     * The dictionary with all created loggers.
+     * The dictionary of all created loggers.
      */
     @NotNull
-    private static final ObjectDictionary<String, Logger> LOGGERS = DictionaryFactory.newObjectDictionary();
+    private static final ConcurrentMap<String, Logger> LOGGERS = new ConcurrentHashMap<>();
 
     /**
-     * The list of listeners.
-     */
-    @NotNull
-    private static final ConcurrentArray<LoggerListener> LISTENERS = ArrayFactory.newConcurrentAtomicARSWLockArray(LoggerListener.class);
-
-    /**
-     * The list of writers.
-     */
-    @NotNull
-    private static final ConcurrentArray<Writer> WRITERS = ArrayFactory.newConcurrentAtomicARSWLockArray(Writer.class);
-
-    /**
-     * The synchronizator.
-     */
-    @NotNull
-    private static final Lock SYNC = LockFactory.newAtomicLock();
-
-    /**
-     * The date time formatter.
-     */
-    @NotNull
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
-
-    /**
-     * The implementation of a logger.
+     * The current implementation of loggers.
      */
     @NotNull
     private static Class<? extends Logger> implementedClass = LoggerImpl.class;
@@ -74,8 +51,8 @@ public class LoggerManager {
 
         if (!StringUtils.isEmpty(className)) {
             try {
-                implementedClass = ClassUtils.unsafeCast(Class.forName(className));
-            } catch (ClassNotFoundException e) {
+                implementedClass = (Class<? extends Logger>) Class.forName(className);
+            } catch (final ClassNotFoundException e) {
                 e.printStackTrace();
                 implementedClass = LoggerImpl.class;
             }
@@ -85,7 +62,25 @@ public class LoggerManager {
     }
 
     /**
-     * Add a new listener,
+     * The list of listeners.
+     */
+    @NotNull
+    private static final ConcurrentArray<LoggerListener> LISTENERS = ArrayFactory.newConcurrentAtomicARSWLockArray(LoggerListener.class);
+
+    /**
+     * The list of writers.
+     */
+    @NotNull
+    private static final ConcurrentArray<Writer> WRITERS = ArrayFactory.newConcurrentAtomicARSWLockArray(Writer.class);
+
+    /**
+     * The date time formatter.
+     */
+    @NotNull
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
+
+    /**
+     * Add the new listener.
      *
      * @param listener the new listener.
      */
@@ -94,7 +89,7 @@ public class LoggerManager {
     }
 
     /**
-     * Add a new writer.
+     * Add the new writer.
      *
      * @param writer the new writer.
      */
@@ -103,20 +98,20 @@ public class LoggerManager {
     }
 
     /**
-     * Gets default logger.
+     * Get the main logger.
      *
      * @return the main logger.
      */
-    @NotNull
-    public static Logger getDefaultLogger() {
+    public static @NotNull Logger getDefaultLogger() {
         return LOGGER;
     }
 
     /**
+     * Get the list of listeners.
+     *
      * @return the list of listeners.
      */
-    @NotNull
-    private static ConcurrentArray<LoggerListener> getListeners() {
+    private static @NotNull ConcurrentArray<LoggerListener> getListeners() {
         return LISTENERS;
     }
 
@@ -126,29 +121,31 @@ public class LoggerManager {
      * @param cs the class.
      * @return the logger for the class.
      */
-    @NotNull
-    public static Logger getLogger(@NotNull final Class<?> cs) {
-
-        Logger logger = LOGGERS.get(cs.getName());
-        if (logger != null) return logger;
-
-        logger = ClassUtils.newInstance(implementedClass);
-        logger.setName(cs.getSimpleName());
-
-        LOGGERS.put(cs.getSimpleName(), logger);
-        return logger;
+    public static @NotNull Logger getLogger(@NotNull final Class<?> cs) {
+        return notNull(LOGGERS.computeIfAbsent(cs.getSimpleName(), LoggerManager::createLogger));
     }
 
     /**
+     * Get or create a logger for the name.
+     *
+     * @param name the name.
+     * @return the logger for the class.
+     */
+    public static @NotNull Logger getLogger(@NotNull final String name) {
+        return notNull(LOGGERS.computeIfAbsent(name, LoggerManager::createLogger));
+    }
+
+    /**
+     * Get the list of writers.
+     *
      * @return the list of writers.
      */
-    @NotNull
-    private static ConcurrentArray<Writer> getWriters() {
+    private static @NotNull ConcurrentArray<Writer> getWriters() {
         return WRITERS;
     }
 
     /**
-     * Remove a listener.
+     * Remove the listener.
      *
      * @param listener the listener.
      */
@@ -157,7 +154,7 @@ public class LoggerManager {
     }
 
     /**
-     * Remove a writer.
+     * Remove the writer.
      *
      * @param writer the writer.
      */
@@ -166,7 +163,7 @@ public class LoggerManager {
     }
 
     /**
-     * Process to writing message to a console and writers.
+     * Process of writing message to a console and writers.
      *
      * @param level   the level of the message.
      * @param name    the name of owner.
@@ -175,34 +172,140 @@ public class LoggerManager {
     public static void write(@NotNull final LoggerLevel level, @NotNull final String name, @NotNull final String message) {
         if (!level.isEnabled()) return;
 
-        SYNC.lock();
-        try {
+        final String timeStump = TIME_FORMATTER.format(LocalTime.now());
+        final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + message;
 
-            final String timeStump = TIME_FORMATTER.format(LocalTime.now());
-            final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + message;
+        write(level, result);
+    }
 
-            ArrayUtils.runInReadLock(getListeners(), result,
-                    (listeners, string) -> listeners.forEach(string, LoggerListener::println));
+    /**
+     * Process of writing message to a console and writers.
+     *
+     * @param level          the level of the message.
+     * @param name           the name of owner.
+     * @param messageFactory the message factory.
+     */
+    public static void write(@NotNull final LoggerLevel level, @NotNull final String name,
+                             @NotNull final Supplier<String> messageFactory) {
+        if (!level.isEnabled()) return;
 
-            ArrayUtils.runInReadLock(getWriters(), result,
-                    (writers, string) -> writers.forEach(string, LoggerManager::append));
+        final String timeStump = TIME_FORMATTER.format(LocalTime.now());
+        final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.get();
 
-            System.err.println(result);
+        write(level, result);
+    }
 
-            if (level.isForceFlush()) {
-                ArrayUtils.runInReadLock(getListeners(), result,
-                        (listeners, string) -> listeners.forEach(string, (listener, s) -> listener.flush()));
-            }
+    /**
+     * Process of writing message to a console and writers.
+     *
+     * @param level          the level of the message.
+     * @param name           the name of owner.
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    public static <T> void write(@NotNull final LoggerLevel level, @NotNull final String name, @NotNull final T arg,
+                                 @NotNull final Function<@NotNull T, String> messageFactory) {
+        if (!level.isEnabled()) return;
 
-        } finally {
-            SYNC.unlock();
+        final String timeStump = TIME_FORMATTER.format(LocalTime.now());
+        final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(arg);
+
+        write(level, result);
+    }
+
+    /**
+     * Process of writing message to a console and writers.
+     *
+     * @param level          the level of the message.
+     * @param name           the name of owner.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    public static <F, S> void write(@NotNull final LoggerLevel level, @NotNull final String name,
+                                    @NotNull final F first, @NotNull final S second,
+                                    @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+        if (!level.isEnabled()) return;
+
+        final String timeStump = TIME_FORMATTER.format(LocalTime.now());
+        final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(first, second);
+
+        write(level, result);
+    }
+
+    /**
+     * Process of writing message to a console and writers.
+     *
+     * @param level          the level of the message.
+     * @param name           the name of owner.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param third          the third arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    public static <F, S, T> void write(@NotNull final LoggerLevel level, @NotNull final String name,
+                                       @NotNull final F first, @NotNull final S second, @NotNull final T third,
+                                       @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+        if (!level.isEnabled()) return;
+
+        final String timeStump = TIME_FORMATTER.format(LocalTime.now());
+        final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(first, second, third);
+
+        write(level, result);
+    }
+
+    /**
+     * Process of writing the result message.
+     *
+     * @param level   the level of the result message.
+     * @param resultMessage the result message.
+     */
+    private static void write(@NotNull final LoggerLevel level, @NotNull final String resultMessage) {
+
+        ArrayUtils.runInReadLock(getListeners(), resultMessage,
+                (listeners, string) -> listeners.forEach(string, LoggerListener::println));
+
+        ArrayUtils.runInReadLock(getWriters(), resultMessage,
+                (writers, string) -> writers.forEach(string, LoggerManager::append));
+
+        System.err.println(resultMessage);
+
+        if (!level.isForceFlush()) {
+            return;
         }
+
+        ArrayUtils.runInReadLock(getListeners(),
+                (listeners) -> listeners.forEach(LoggerListener::flush));
+
+        ArrayUtils.runInReadLock(getWriters(),
+                writers -> writers.forEach(LoggerManager::flush));
+    }
+
+    private static @NotNull Logger createLogger(@NotNull final String name) {
+
+        final Logger newLogger;
+        try {
+            newLogger = implementedClass.newInstance();
+        } catch (final InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        newLogger.setName(name);
+
+        return newLogger;
     }
 
     private static void append(@NotNull final Writer writer, @NotNull final String toWrite) {
         try {
             writer.append(toWrite);
             writer.append('\n');
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void flush(@NotNull final Writer writer) {
+        try {
             writer.flush();
         } catch (final IOException e) {
             e.printStackTrace();

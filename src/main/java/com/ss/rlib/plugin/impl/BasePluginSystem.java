@@ -106,18 +106,15 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     public void preLoad() {
         if (isPreLoaded()) throw new PluginException("This system was already pre-loaded.");
 
-        if (LOGGER.isEnabledDebug()) {
-            LOGGER.debug(this, "start to pre-load all plugins.");
-        }
+        LOGGER.debug(this, "start to pre-load all plugins.");
 
         final Path embeddedPluginsPath = getEmbeddedPluginsPath();
         final Path installationPluginsPath = getInstallationPluginsPath();
 
         if (embeddedPluginsPath != null) {
 
-            if (LOGGER.isEnabledDebug()) {
-                LOGGER.debug(this, "try to pre-load embedded plugins from the folder " + embeddedPluginsPath + ".");
-            }
+            LOGGER.debug(this, embeddedPluginsPath,
+                    path -> "try to pre-load embedded plugins from the folder " + path + ".");
 
             if (!Files.exists(embeddedPluginsPath)) {
                 throw new PluginException("Can't read the path " + embeddedPluginsPath);
@@ -128,9 +125,8 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
 
         if (installationPluginsPath != null) {
 
-            if (LOGGER.isEnabledDebug()) {
-                LOGGER.debug(this, "try to pre-load installed plugins from the folder " + installationPluginsPath + ".");
-            }
+            LOGGER.debug(this, installationPluginsPath,
+                    path -> "try to pre-load installed plugins from the folder " + path + ".");
 
             if (!Files.exists(installationPluginsPath)) {
                 throw new PluginException("Can't read the path " + installationPluginsPath);
@@ -143,13 +139,10 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             pluginContainers.put(pluginContainer.getId(), pluginContainer);
         }
 
-        if (LOGGER.isEnabledDebug()) {
-            LOGGER.debug(this, "Pre-loaded: " + pluginContainers);
-        }
+        LOGGER.debug(this, pluginContainers,
+                containers -> "Pre-loaded: " + containers);
 
-        if (LOGGER.isEnabledDebug()) {
-            LOGGER.debug(this, "all plugins were pre-loaded.");
-        }
+        LOGGER.debug(this, "all plugins were pre-loaded.");
 
         setPreLoaded(true);
     }
@@ -158,17 +151,13 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     public void initialize() {
         if (isInitialized()) throw new PluginException("This system was already initialized.");
 
-        if (LOGGER.isEnabledDebug()) {
-            LOGGER.debug(this, "start to load all plugins.");
-        }
+        LOGGER.debug(this, "start to load all plugins.");
 
         for (final PluginContainer container : preloadPluginContainers) {
 
             final Class<Plugin> pluginClass = container.getPluginClass();
 
-            if (LOGGER.isEnabledDebug()) {
-                LOGGER.debug(this, "start to create a plugin " + pluginClass);
-            }
+            LOGGER.debug(this, pluginClass, cs -> "start to create a plugin " + cs);
 
             final Constructor<Plugin> constructor = ClassUtils.getConstructor(pluginClass, PluginContainer.class);
 
@@ -188,9 +177,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             plugins.put(plugin.getId(), plugin);
         }
 
-        if (LOGGER.isEnabledDebug()) {
-            LOGGER.debug(this, "start to initialize all plugins.");
-        }
+        LOGGER.debug(this, "start to initialize all plugins.");
 
         plugins.forEach((pluginId, plugin) -> {
             try {
@@ -202,9 +189,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             }
         });
 
-        if (LOGGER.isEnabledDebug()) {
-            LOGGER.debug(this, "all plugins were initialized.");
-        }
+        LOGGER.debug(this, "all plugins were initialized.");
 
         setInitialized(true);
     }
@@ -247,8 +232,9 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
      * @param embedded     the embedded flag.
      * @return the loaded plugin container.
      */
-    protected PluginContainer loadPlugin(@NotNull final Path directory, @NotNull final ClassLoader parentLoader,
-                                         @Nullable final PluginContainer[] parents, final boolean embedded) {
+    protected @Nullable PluginContainer loadPlugin(@NotNull final Path directory,
+                                                   @NotNull final ClassLoader parentLoader,
+                                                   @Nullable final PluginContainer[] parents, final boolean embedded) {
 
         final Array<Path> files = FileUtils.getFiles(directory, ".jar");
 
@@ -311,16 +297,14 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     /**
      * @return the path to folder with embedded plugins.
      */
-    @Nullable
-    protected Path getEmbeddedPluginsPath() {
+    protected @Nullable Path getEmbeddedPluginsPath() {
         return embeddedPluginsPath;
     }
 
     /**
      * @return the path to folder with installed plugins.
      */
-    @Nullable
-    protected Path getInstallationPluginsPath() {
+    protected @Nullable Path getInstallationPluginsPath() {
         return installationPluginsPath;
     }
 
@@ -364,33 +348,28 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         this.initialized = initialized;
     }
 
-    @NotNull
     @Override
-    public Array<PluginContainer> getPluginContainers() {
+    public @NotNull Array<PluginContainer> getPluginContainers() {
         return pluginContainers.values(PluginContainer.class);
     }
 
     @Override
-    @Nullable
-    public PluginContainer getPluginContainer(@NotNull final String id) {
+    public @Nullable PluginContainer getPluginContainer(@NotNull final String id) {
         return pluginContainers.get(id);
     }
 
-    @NotNull
     @Override
-    public Array<Plugin> getPlugins() {
+    public @NotNull Array<Plugin> getPlugins() {
         return plugins.values(Plugin.class);
     }
 
     @Override
-    @Nullable
-    public Plugin getPlugin(final @NotNull String id) {
+    public @Nullable Plugin getPlugin(final @NotNull String id) {
         return plugins.get(id);
     }
 
-    @Nullable
     @Override
-    public Plugin installPlugin(@NotNull final Path file, boolean needInitialize) {
+    public @Nullable Plugin installPlugin(@NotNull final Path file, boolean needInitialize) {
 
         final Path installPath = getInstallationPluginsPath();
 

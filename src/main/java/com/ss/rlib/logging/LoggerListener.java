@@ -3,21 +3,21 @@ package com.ss.rlib.logging;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The listener for listening logger events.
+ * The interface to implement a listener of logger events.
  *
  * @author JavaSaBr
  */
 public interface LoggerListener {
 
     /**
-     * Println.
+     * Print the result logger message.
      *
-     * @param text the new text.
+     * @param text the text.
      */
     void println(@NotNull String text);
 
     /**
-     * Flushes last data.
+     * Flush last data.
      */
     default void flush() {
     }

@@ -16,8 +16,7 @@ public interface PluginSystem {
      *
      * @return the list of all available plugin containers.
      */
-    @NotNull
-    Array<PluginContainer> getPluginContainers();
+    @NotNull Array<PluginContainer> getPluginContainers();
 
     /**
      * Gets a plugin container by the plugin id.
@@ -25,16 +24,14 @@ public interface PluginSystem {
      * @param id the plugin id.
      * @return the container or null.
      */
-    @Nullable
-    PluginContainer getPluginContainer(@NotNull String id);
+    @Nullable PluginContainer getPluginContainer(@NotNull String id);
 
     /**
      * Get all available plugins.
      *
      * @return the list of all available plugins.
      */
-    @NotNull
-    Array<Plugin> getPlugins();
+    @NotNull Array<Plugin> getPlugins();
 
     /**
      * Gets a plugin by the plugin id.
@@ -42,6 +39,5 @@ public interface PluginSystem {
      * @param id the plugin id.
      * @return the plugin or null.
      */
-    @Nullable
-    Plugin getPlugin(@NotNull final String id);
+    @Nullable Plugin getPlugin(@NotNull final String id);
 }

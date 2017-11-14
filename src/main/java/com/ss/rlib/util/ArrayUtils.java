@@ -74,7 +74,7 @@ public final class ArrayUtils {
     public static final char[] EMPTY_CHAR_ARRAY = new char[0];
 
     /**
-     * Add an element to an array and extend or create the array if need.
+     * Add the element to the array and extend or create the array if need.
      *
      * @param <T>     the type parameter
      * @param array   the array.
@@ -100,7 +100,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Clear all elements of an array.
+     * Clear all elements in the array.
      *
      * @param array the array.
      */
@@ -111,7 +111,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Combine two arrays.
+     * Combine the two arrays.
      *
      * @param base  the source array.
      * @param added the add array.
@@ -136,7 +136,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Combine two arrays.
+     * Combine the two arrays.
      *
      * @param <T>   the type parameter
      * @param <E>   the type parameter
@@ -165,11 +165,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Check an array on contains an value.
+     * Check the array on contains the value.
      *
      * @param array the array.
      * @param val   the value.
-     * @return true of the array contains the value.
+     * @return true if the array contains the value.
      */
     public static boolean contains(@NotNull final int[] array, final int val) {
         for (final int value : array) {
@@ -179,11 +179,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Check an array on contains an object.
+     * Check the array on contains the object.
      *
      * @param array  the array.
      * @param object the object.
-     * @return true of the array contains the object.
+     * @return true if the array contains the object.
      */
     public static boolean contains(@NotNull final Object[] array, @Nullable final Object object) {
         for (final Object element : array) {
@@ -193,7 +193,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy and extend an array.
+     * Copy and extend the array.
      *
      * @param old   the source array.
      * @param added the added size.
@@ -206,7 +206,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy and extend an array.
+     * Copy and extend the array.
      *
      * @param old   the source array.
      * @param added the added size.
@@ -219,7 +219,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy and extend an array.
+     * Copy and extend the array.
      *
      * @param old   the source array.
      * @param added the added size.
@@ -232,7 +232,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy and extend an array.
+     * Copy and extend the array.
      *
      * @param <T>   the type parameter
      * @param old   the source array.
@@ -274,7 +274,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy a part of an array to a new array.
+     * Copy a part of the array to a new array.
      *
      * @param original the source array.
      * @param from     the start element.
@@ -292,7 +292,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy a part of an array to a new array.
+     * Copy a part of the array to a new array.
      *
      * @param original the source array.
      * @param from     the start element.
@@ -310,7 +310,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy a part of an array to a new array.
+     * Copy a part of the array to a new array.
      *
      * @param <T>      the type parameter
      * @param original the source array.
@@ -331,7 +331,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Create an array by a type.
+     * Create the array by the type.
      *
      * @param <T>  the type parameter
      * @param type the array type.
@@ -343,11 +343,11 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an index of a object in an array.
+     * Find an index of the object in the array.
      *
      * @param array  the array.
      * @param object the object.
-     * @return the object index or -1.
+     * @return the object's index or -1.
      */
     public static int indexOf(@NotNull final Object[] array, @Nullable final Object object) {
 
@@ -362,7 +362,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Sort an array.
+     * Sort the array.
      *
      * @param array the array.
      */
@@ -371,7 +371,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Sort an array.
+     * Sort the array.
      *
      * @param array the array.
      */
@@ -380,7 +380,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Sort an array.
+     * Sort the array.
      *
      * @param array     the array.
      * @param fromIndex the start index.
@@ -391,7 +391,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Sort an array.
+     * Sort the array.
      *
      * @param array     the array.
      * @param fromIndex the start index.
@@ -402,7 +402,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Sort an array.
+     * Sort the array.
      *
      * @param <T>        the type parameter
      * @param array      the array.
@@ -413,7 +413,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a string presentation.
+     * Convert the array to a string presentation.
      *
      * @param array the array.
      * @return the string presentation.
@@ -435,7 +435,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a string presentation.
+     * Convert the array to a string presentation.
      *
      * @param array the array.
      * @return the string presentation.
@@ -456,7 +456,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a string presentation.
+     * Convert the array to a string presentation.
      *
      * @param array the array.
      * @return the string presentation.
@@ -561,7 +561,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a string presentation.
+     * Convert the array to a string presentation.
      *
      * @param array the array.
      * @return the string presentation of the array.
@@ -571,7 +571,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Convert an array to a string presentation.
+     * Convert the array to a string presentation.
      *
      * @param array        the array.
      * @param separator    the separator.
@@ -603,7 +603,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute and get a result of a function in write lock of an array.
+     * Execute and get a result of the function in write lock of the array.
      *
      * @param <T>      the type parameter
      * @param <R>      the type parameter
@@ -623,7 +623,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute a function in write lock of an array.
+     * Execute the function in write lock of the array.
      *
      * @param <T>      the type parameter
      * @param array    the array.
@@ -631,6 +631,7 @@ public final class ArrayUtils {
      */
     public static <T> void runInWriteLock(@NotNull final ConcurrentArray<T> array,
                                           @NotNull final Consumer<Array<T>> function) {
+        if (array.isEmpty()) return;
         final long stamp = array.writeLock();
         try {
             function.accept(array);
@@ -640,7 +641,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute a function in read lock of an array.
+     * Execute the function in read lock of the array.
      *
      * @param <T>      the type parameter
      * @param array    the array.
@@ -648,6 +649,7 @@ public final class ArrayUtils {
      */
     public static <T> void runInReadLock(@NotNull final ConcurrentArray<T> array,
                                          @NotNull final Consumer<Array<T>> function) {
+        if (array.isEmpty()) return;
         final long stamp = array.readLock();
         try {
             function.accept(array);
@@ -657,7 +659,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute and get a result of a function in read lock of an array.
+     * Execute and get a result of the function in read lock of the array.
      *
      * @param <T>      the type parameter
      * @param <R>      the type parameter
@@ -677,7 +679,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute and sum a result of a function in read lock of an array.
+     * Execute and sum a result of the function in read lock of the array.
      *
      * @param <T>      the type parameter
      * @param array    the array.
@@ -705,7 +707,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute and get a result of a function in write lock of an array.
+     * Execute and get a result of the function in write lock of the array.
      *
      * @param <T>      the type parameter
      * @param <V>      the type parameter
@@ -728,7 +730,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute a function in write lock of an array.
+     * Execute the function in write lock of the array.
      *
      * @param <T>      the type parameter
      * @param <V>      the type parameter
@@ -738,6 +740,7 @@ public final class ArrayUtils {
      */
     public static <T, V> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
                                              @NotNull final BiConsumer<Array<T>, V> function) {
+        if (array.isEmpty()) return;
         final long stamp = array.writeLock();
         try {
             function.accept(array, argument);
@@ -747,7 +750,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute and get a result of a function in read lock of an array.
+     * Execute and get a result of the function in read lock of the array.
      *
      * @param <T>      the type parameter
      * @param <V>      the type parameter
@@ -770,7 +773,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute and get a result of a function in read lock of an array.
+     * Execute and get a result of the function in read lock of the array.
      *
      * @param <T>      the type parameter
      * @param <R>      the type parameter
@@ -791,7 +794,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute and get a result of a function in read lock of an array.
+     * Execute and get a result of the function in read lock of the array.
      *
      * @param <T>      the type parameter
      * @param <R>      the type parameter
@@ -812,7 +815,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute a function in read lock of an array.
+     * Execute the function in read lock of the array.
      *
      * @param <T>      the type parameter
      * @param <V>      the type parameter
@@ -822,6 +825,7 @@ public final class ArrayUtils {
      */
     public static <T, V> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
                                             @NotNull final BiConsumer<Array<T>, V> function) {
+        if (array.isEmpty()) return;
         final long stamp = array.readLock();
         try {
             function.accept(array, argument);
@@ -831,7 +835,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute a function in write lock of an array.
+     * Execute the function in write lock of the array.
      *
      * @param <T>      the type parameter
      * @param <F>      the type parameter
@@ -842,7 +846,9 @@ public final class ArrayUtils {
      * @param function the function.
      */
     public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
-                                                @Nullable S second, @NotNull final TripleConsumer<Array<T>, F, S> function) {
+                                                @Nullable S second,
+                                                @NotNull final TripleConsumer<Array<T>, F, S> function) {
+        if (array.isEmpty()) return;
         final long stamp = array.writeLock();
         try {
             function.accept(array, first, second);
@@ -852,7 +858,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Execute a function in write lock of an array.
+     * Execute the function in write lock of the array.
      *
      * @param <T>      the type parameter
      * @param <F>      the type parameter
@@ -864,18 +870,24 @@ public final class ArrayUtils {
      * @param function the function.
      */
     public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
-                                                @Nullable final S second, @NotNull final TriplePredicate<Array<T>, F, S> filter,
+                                                @Nullable final S second,
+                                                @NotNull final TriplePredicate<Array<T>, F, S> filter,
                                                 @NotNull final TripleConsumer<Array<T>, F, S> function) {
+        if (array.isEmpty()) return;
         final long stamp = array.writeLock();
         try {
-            if (filter.test(array, first, second)) function.accept(array, first, second);
+
+            if (filter.test(array, first, second)) {
+                function.accept(array, first, second);
+            }
+
         } finally {
             array.writeUnlock(stamp);
         }
     }
 
     /**
-     * Execute a function in read lock of an array.
+     * Execute the function in read lock of the array.
      *
      * @param <T>      the type parameter
      * @param <F>      the type parameter
@@ -886,7 +898,9 @@ public final class ArrayUtils {
      * @param function the function.
      */
     public static <T, F, S> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
-                                               @Nullable final S second, @NotNull final TripleConsumer<Array<T>, F, S> function) {
+                                               @Nullable final S second,
+                                               @NotNull final TripleConsumer<Array<T>, F, S> function) {
+        if (array.isEmpty()) return;
         final long stamp = array.readLock();
         try {
             function.accept(array, first, second);
@@ -896,7 +910,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Move all elements from a source array to a destination array.
+     * Move all elements from the source array to the destination array.
      *
      * @param <F>         the type parameter
      * @param <S>         the type parameter
@@ -912,7 +926,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Move all elements from a source array to a destination array.
+     * Move all elements from the source array to the destination array.
      *
      * @param <F>         the type parameter
      * @param <S>         the type parameter
@@ -924,7 +938,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Add an object ot an array in a synchronize block.
+     * Add the object to the array in a synchronize block.
      *
      * @param <T>    the type parameter
      * @param <V>    the type parameter
@@ -938,21 +952,22 @@ public final class ArrayUtils {
     }
 
     /**
-     * Fast remove an object from an array in a synchronize block.
+     * Fast remove the object from the array in a synchronize block.
      *
      * @param <T>    the type parameter
      * @param <V>    the type parameter
      * @param array  the array.
      * @param object the object.
      */
-    public static <T, V extends T> void fastRemoveInSynchronizeTo(@NotNull final Array<T> array, @NotNull final V object) {
+    public static <T, V extends T> void fastRemoveInSynchronizeTo(@NotNull final Array<T> array,
+                                                                  @NotNull final V object) {
         synchronized (array) {
             array.fastRemove(object);
         }
     }
 
     /**
-     * Apply a function to each element of an array.
+     * Apply the function to each element of the array.
      *
      * @param <T>      the type parameter
      * @param array    the array.
@@ -966,7 +981,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Apply a function to each filtered element of an array.
+     * Apply the function to each filtered element of the array.
      *
      * @param <T>       the type parameter
      * @param array     the array.
@@ -977,7 +992,9 @@ public final class ArrayUtils {
                                    @NotNull final Consumer<T> function) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
-            if (condition.test(element)) function.accept(element);
+            if (condition.test(element)) {
+                function.accept(element);
+            }
         }
     }
 
@@ -1031,7 +1048,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Handle elements of an array.
+     * Handle elements of the array.
      *
      * @param <T>           the type parameter
      * @param <F>           the type parameter
@@ -1042,7 +1059,8 @@ public final class ArrayUtils {
      * @param finalFunction the final function.
      */
     public static <T, F, R> void forEach(@Nullable final T[] array, @Nullable final F argument,
-                                         @NotNull final Function<T, R> getElement, @NotNull final BiConsumer<R, F> finalFunction) {
+                                         @NotNull final Function<T, R> getElement,
+                                         @NotNull final BiConsumer<R, F> finalFunction) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
             final R subElement = getElement.apply(element);
@@ -1051,7 +1069,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Apply a function to each filtered element of an array.
+     * Apply the function to each filtered element of the array.
      *
      * @param <T>       the type parameter
      * @param <F>       the type parameter
@@ -1071,7 +1089,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Apply a function to each filtered element of an array.
+     * Apply the function to each filtered element of the array.
      *
      * @param <T>           the type parameter
      * @param <R>           the type parameter
@@ -1083,7 +1101,8 @@ public final class ArrayUtils {
      * @param finalFunction the final function.
      */
     public static <T, R, F> void forEach(@Nullable final T[] array, @Nullable final F argument,
-                                         @NotNull final Predicate<T> condition, @NotNull final Function<T, R> getElement,
+                                         @NotNull final Predicate<T> condition,
+                                         @NotNull final Function<T, R> getElement,
                                          @NotNull final BiConsumer<R, F> finalFunction) {
         if (array == null || array.length < 1) return;
         for (final T element : array) {
@@ -1094,7 +1113,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Apply a function to each element of an array.
+     * Apply the function to each element of the array.
      *
      * @param <T>      the type parameter
      * @param <F>      the type parameter
@@ -1113,7 +1132,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Apply a function to each sub-element of an array.
+     * Apply the function to each sub-element of the array.
      *
      * @param <T>        the type parameter
      * @param <R>        the type parameter
@@ -1125,7 +1144,8 @@ public final class ArrayUtils {
      * @param getElement the function to get sub element.
      * @param function   the function.
      */
-    public static <T, R, F, S> void forEach(@Nullable final T[] array, @Nullable final F first, @Nullable final S second,
+    public static <T, R, F, S> void forEach(@Nullable final T[] array, @Nullable final F first,
+                                            @Nullable final S second,
                                             @NotNull final TripleFunction<T, F, S, R> getElement,
                                             @NotNull final TripleConsumer<R, F, S> function) {
         if (array == null || array.length < 1) return;
@@ -1136,7 +1156,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an index of an element in an array using condition.
+     * Find an index of the element in the array using condition.
      *
      * @param <T>       the type parameter
      * @param <F>       the type parameter
@@ -1151,7 +1171,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an index of an element in an array using condition in a range.
+     * Find an index of the element in an array using condition in the range.
      *
      * @param <T>        the type parameter
      * @param <F>        the type parameter
@@ -1163,7 +1183,8 @@ public final class ArrayUtils {
      * @return the index of the element or -1.
      */
     public static <T, F> int indexOf(@Nullable final T[] array, @Nullable final F argument,
-                                     @NotNull final BiPredicate<T, F> condition, final int startIndex, final int endIndex) {
+                                     @NotNull final BiPredicate<T, F> condition, final int startIndex,
+                                     final int endIndex) {
         if (array == null || array.length < 1) return -1;
         for (int i = startIndex; i < endIndex; i++) {
             if (condition.test(array[i], argument)) return i;
@@ -1172,7 +1193,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Calculate a count of interesting elements of an array.
+     * Calculate a count of interesting elements of the array.
      *
      * @param <T>       the type parameter
      * @param array     the array.
@@ -1194,7 +1215,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an element in an array using a condition.
+     * Find an element in the array using the condition.
      *
      * @param <T>       the type parameter
      * @param array     the array.
@@ -1212,7 +1233,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an element in an array using a condition.
+     * Find an element in thr array using the condition.
      *
      * @param <T>       the type parameter
      * @param <F>       the type parameter
@@ -1231,7 +1252,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find a sub-element in an array using a function to get a sub-element + a condition.
+     * Find a sub-element in the array using the function to get a sub-element + the condition.
      *
      * @param <T>        the type parameter
      * @param <R>        the type parameter
@@ -1256,7 +1277,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find a sub-element in an array using a function to get a sub-element + conditions.
+     * Find a sub-element in the array using the function to get a sub-element + conditions.
      *
      * @param <T>        the type parameter
      * @param <R>        the type parameter
@@ -1284,7 +1305,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an element in an array using a condition.
+     * Find an element in the array using the condition.
      *
      * @param <T>       the type parameter
      * @param array     the array.
@@ -1305,7 +1326,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find a sub-element in an array using a function to get a sub-element + a condition.
+     * Find a sub-element in the array using the function to get a sub-element + the condition.
      *
      * @param <T>        the type parameter
      * @param <R>        the type parameter
@@ -1332,7 +1353,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find a sub-element in an array using a function to get a sub-element + conditions.
+     * Find a sub-element in the array using the function to get a sub-element + conditions.
      *
      * @param <T>        the type parameter
      * @param <R>        the type parameter
@@ -1365,7 +1386,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find a sub-element in an array using a function to get a sub-element + conditions.
+     * Find a sub-element in the array using the function to get a sub-element + conditions.
      *
      * @param <T>        the type parameter
      * @param <R>        the type parameter
@@ -1397,7 +1418,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an element in an array using a condition.
+     * Find an element in the array using the condition.
      *
      * @param <T>       the type parameter
      * @param array     the array.
@@ -1420,7 +1441,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an element in an array using a condition.
+     * Find an element in the array using the condition.
      *
      * @param <T>        the type parameter
      * @param <R>        the type parameter
@@ -1449,7 +1470,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Find an element in an array using a condition.
+     * Find an element in the array using the condition.
      *
      * @param <T>       the type parameter
      * @param <F>       the type parameter

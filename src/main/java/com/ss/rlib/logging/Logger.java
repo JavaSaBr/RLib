@@ -1,6 +1,10 @@
 package com.ss.rlib.logging;
 
+import com.ss.rlib.function.TripleFunction;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * The interface to implement a logger.
@@ -10,231 +14,420 @@ import org.jetbrains.annotations.NotNull;
 public interface Logger {
 
     /**
-     * Print a debug message.
-     *
-     * @param cs      the class of a sender.
-     * @param message the message.
-     */
-    void debug(@NotNull Class<?> cs, @NotNull String message);
-
-    /**
-     * Print a debug message.
+     * Print the debug message.
      *
      * @param owner   the owner of the message.
      * @param message the message.
      */
-    void debug(@NotNull Object owner, @NotNull String message);
+    default void debug(@NotNull Object owner, @NotNull String message) {
+        print(LoggerLevel.DEBUG, owner, message);
+    }
 
     /**
-     * Print a debug message.
+     * Print the debug message.
+     *
+     * @param owner          the owner of the message.
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    default <T> void debug(@NotNull Object owner, @NotNull final T arg,
+                           @NotNull final Function<@NotNull T, String> messageFactory) {
+        print(LoggerLevel.DEBUG, owner, arg, messageFactory);
+    }
+
+    /**
+     * Print the debug message.
+     *
+     * @param owner          the owner of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    default <F, S> void debug(@NotNull Object owner, @NotNull final F first, @NotNull final S second,
+                              @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+        print(LoggerLevel.DEBUG, owner, first, second, messageFactory);
+    }
+
+
+    /**
+     * Print the debug message.
+     *
+     * @param owner          the owner of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param third          the third arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    default <F, S, T> void debug(@NotNull Object owner, @NotNull final F first, @NotNull final S second,
+                                 @NotNull final T third,
+                                 @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+        print(LoggerLevel.DEBUG, owner, first, second, third, messageFactory);
+    }
+
+    /**
+     * Print the debug message.
      *
      * @param message the message.
      */
-    void debug(@NotNull String message);
+    default void debug(@NotNull String message) {
+        print(LoggerLevel.DEBUG, message);
+    }
 
     /**
-     * Print a debug message.
+     * Print the debug message.
      *
-     * @param name    the name of a sender.
-     * @param message the message.
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
      */
-    void debug(@NotNull String name, @NotNull String message);
+    default <T> void debug(@NotNull final T arg, @NotNull final Function<@NotNull T, String> messageFactory) {
+        print(LoggerLevel.DEBUG, arg, messageFactory);
+    }
 
     /**
-     * Print an error message.
+     * Print the debug message.
      *
-     * @param cs      the class of a sender.
-     * @param message the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
      */
-    void error(@NotNull Class<?> cs, @NotNull String message);
+    default <F, S> void debug(@NotNull final F first, @NotNull final S second,
+                              @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+        print(LoggerLevel.DEBUG, first, second, messageFactory);
+    }
+
 
     /**
-     * Print an error message.
+     * Print the debug message.
      *
-     * @param cs        the class of a sender.
-     * @param exception the exception.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param third          the third arg for the message factory.
+     * @param messageFactory the message factory.
      */
-    void error(@NotNull Class<?> cs, @NotNull Throwable exception);
+    default <F, S, T> void debug(@NotNull final F first, @NotNull final S second, @NotNull final T third,
+                                 @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+        print(LoggerLevel.DEBUG, first, second, third, messageFactory);
+    }
 
     /**
-     * Print an error message.
+     * Print the error message.
      *
      * @param owner   the owner of the message.
      * @param message the message.
      */
-    void error(@NotNull Object owner, @NotNull String message);
+    default void error(@NotNull Object owner, @NotNull String message) {
+        print(LoggerLevel.ERROR, owner, message);
+    }
 
     /**
-     * Print an error message.
+     * Print the error message.
      *
      * @param owner     the owner of the message.
      * @param exception the exception.
      */
-    void error(@NotNull Object owner, @NotNull Throwable exception);
+    default void error(@NotNull Object owner, @NotNull Throwable exception) {
+        print(LoggerLevel.ERROR, owner, exception);
+    }
 
     /**
-     * Print an error message.
+     * Print the error message.
      *
      * @param message the message.
      */
-    void error(@NotNull String message);
+    default void error(@NotNull String message) {
+        print(LoggerLevel.ERROR, message);
+    }
 
     /**
-     * Print an error message.
-     *
-     * @param name    the name of a sender.
-     * @param message the message.
-     */
-    void error(@NotNull String name, @NotNull String message);
-
-    /**
-     * Print an error message.
-     *
-     * @param name      the name of a sender.
-     * @param exception the exception.
-     */
-    void error(@NotNull String name, @NotNull Throwable exception);
-
-    /**
-     * Print an error message.
+     * Print the error message.
      *
      * @param exception the exception.
      */
-    void error(@NotNull Throwable exception);
+    default void error(@NotNull Throwable exception) {
+        print(LoggerLevel.ERROR, exception);
+    }
 
     /**
-     * Gets name.
+     * Get the name of this logger.
      *
      * @return the logger name.
      */
-    @NotNull
-    String getName();
+    @NotNull String getName();
 
     /**
-     * Sets name.
+     * Set the name of this logger.
      *
      * @param name the logger name.
      */
     void setName(@NotNull String name);
 
     /**
-     * Print an information message.
-     *
-     * @param cs      the class of a sender.
-     * @param message the message.
-     */
-    void info(@NotNull Class<?> cs, @NotNull String message);
-
-    /**
-     * Print an information message.
+     * Print the information message.
      *
      * @param owner   the owner of the message.
      * @param message the message.
      */
-    void info(@NotNull Object owner, @NotNull String message);
+    default void info(@NotNull Object owner, @NotNull String message) {
+        print(LoggerLevel.ERROR, owner, message);
+    }
 
     /**
-     * Print an information message.
+     * Print the information message.
+     *
+     * @param owner          the owner of the message.
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    default <T> void info(@NotNull Object owner, @NotNull final T arg,
+                          @NotNull final Function<@NotNull T, String> messageFactory) {
+        print(LoggerLevel.INFO, owner, arg, messageFactory);
+    }
+
+    /**
+     * Print the information message.
+     *
+     * @param owner          the owner of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    default <F, S> void info(@NotNull Object owner, @NotNull final F first, @NotNull final S second,
+                             @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+        print(LoggerLevel.INFO, owner, first, second, messageFactory);
+    }
+
+
+    /**
+     * Print the information message.
+     *
+     * @param owner          the owner of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param third          the third arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    default <F, S, T> void info(@NotNull Object owner, @NotNull final F first, @NotNull final S second,
+                                @NotNull final T third,
+                                @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+        print(LoggerLevel.INFO, owner, first, second, third, messageFactory);
+    }
+
+    /**
+     * Print the information message.
      *
      * @param message the message.
      */
-    void info(@NotNull String message);
+    default void info(@NotNull String message) {
+        print(LoggerLevel.INFO, message);
+    }
 
     /**
-     * Print an information message.
+     * Print the information message.
      *
-     * @param name    the name of a sender.
-     * @param message the message.
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
      */
-    void info(@NotNull String name, @NotNull String message);
+    default <T> void info(@NotNull final T arg, @NotNull final Function<@NotNull T, String> messageFactory) {
+        print(LoggerLevel.INFO, arg, messageFactory);
+    }
 
     /**
-     * Is enabled debug boolean.
+     * Print the information message.
      *
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    default <F, S> void info(@NotNull final F first, @NotNull final S second,
+                             @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+        print(LoggerLevel.INFO, first, second, messageFactory);
+    }
+
+
+    /**
+     * Print the information message.
+     *
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param third          the third arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    default <F, S, T> void info(@NotNull final F first, @NotNull final S second, @NotNull final T third,
+                                @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+        print(LoggerLevel.INFO, first, second, third, messageFactory);
+    }
+
+    /**
      * @return true if debug is enabled.
      */
-    boolean isEnabledDebug();
+    default boolean isEnabledDebug() {
+        return LoggerLevel.DEBUG.isEnabled();
+    }
 
     /**
-     * Is enabled error boolean.
-     *
      * @return true if errors is enabled.
      */
-    boolean isEnabledError();
+    default boolean isEnabledError() {
+        return LoggerLevel.ERROR.isEnabled();
+    }
 
     /**
-     * Is enabled info boolean.
-     *
      * @return true if information is enabled.
      */
-    boolean isEnabledInfo();
+    default boolean isEnabledInfo() {
+        return LoggerLevel.INFO.isEnabled();
+    }
 
     /**
-     * Is enabled warning boolean.
-     *
      * @return true if warnings is enabled.
      */
-    boolean isEnabledWarning();
+    default boolean isEnabledWarning() {
+        return LoggerLevel.WARNING.isEnabled();
+    }
 
     /**
-     * Print a warning message.
-     *
-     * @param cs      the class of a sender.
-     * @param message the message.
-     */
-    void warning(@NotNull Class<?> cs, @NotNull String message);
-
-    /**
-     * Print a warning message.
-     *
-     * @param cs        the class of a sender.
-     * @param exception the exception.
-     */
-    void warning(@NotNull Class<?> cs, @NotNull Throwable exception);
-
-    /**
-     * Print a warning message.
+     * Print the warning message.
      *
      * @param owner   the owner of the message.
      * @param message the message.
      */
-    void warning(@NotNull Object owner, @NotNull String message);
+    default void warning(@NotNull Object owner, @NotNull String message) {
+        print(LoggerLevel.WARNING, owner, message);
+    }
 
     /**
-     * Print a warning message.
+     * Print the warning message.
      *
      * @param owner     the owner of the message,
      * @param exception the exception.
      */
-    void warning(@NotNull Object owner, @NotNull Throwable exception);
+    default void warning(@NotNull Object owner, @NotNull Throwable exception) {
+        print(LoggerLevel.WARNING, owner, exception);
+    }
 
     /**
-     * Print a warning message.
+     * Print the warning message.
      *
      * @param message the message.
      */
-    void warning(@NotNull String message);
+    default void warning(@NotNull String message) {
+        print(LoggerLevel.WARNING, message);
+    }
 
     /**
-     * Print a warning message.
+     * Print the warning message.
      *
-     * @param name    the name of a sender.
+     * @param exception the exception.
+     */
+    default void warning(@NotNull Throwable exception) {
+        print(LoggerLevel.WARNING, exception);
+    }
+
+    /**
+     * Print the message.
+     *
+     * @param level   the level of the message.
+     * @param owner   the owner of the message.
      * @param message the message.
      */
-    void warning(@NotNull String name, @NotNull String message);
+    void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull String message);
 
     /**
-     * Print a warning message.
+     * Print the message.
      *
-     * @param name      the name of a sender.
-     * @param exception the exception.
+     * @param level   the level of the message.
+     * @param message the message.
      */
-    void warning(@NotNull String name, @NotNull Throwable exception);
+    void print(@NotNull LoggerLevel level, @NotNull String message);
 
     /**
-     * Print a warning message.
+     * Print the message.
      *
+     * @param level     the level of the message.
+     * @param owner     the owner of the message.
      * @param exception the exception.
      */
-    void warning(@NotNull Throwable exception);
+    void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull Throwable exception);
+
+    /**
+     * Print the message.
+     *
+     * @param level     the level of the message.
+     * @param exception the exception.
+     */
+    void print(@NotNull LoggerLevel level, @NotNull Throwable exception);
+
+    /**
+     * Print the message.
+     *
+     * @param level          the level of the message.
+     * @param owner          the owner of the message.
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    <T> void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull final T arg,
+                   @NotNull final Function<@NotNull T, String> messageFactory);
+
+    /**
+     * Print the message.
+     *
+     * @param level          the level of the message.
+     * @param owner          the owner of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    <F, S> void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull final F first,
+                      @NotNull final S second,
+                      @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory);
+
+
+    /**
+     * Print the message.
+     *
+     * @param level          the level of the message.
+     * @param owner          the owner of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param third          the third arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    <F, S, T> void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull final F first,
+                         @NotNull final S second, @NotNull final T third,
+                         @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory);
+
+    /**
+     * Print the message.
+     *
+     * @param level          the level of the message.
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    <T> void print(@NotNull LoggerLevel level, @NotNull final T arg,
+                   @NotNull final Function<@NotNull T, String> messageFactory);
+
+    /**
+     * Print the message.
+     *
+     * @param level          the level of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    <F, S> void print(@NotNull LoggerLevel level, @NotNull final F first, @NotNull final S second,
+                      @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory);
+
+
+    /**
+     * Print the message.
+     *
+     * @param level          the level of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param third          the third arg for the message factory.
+     * @param messageFactory the message factory.
+     */
+    <F, S, T> void print(@NotNull LoggerLevel level, @NotNull final F first, @NotNull final S second,
+                         @NotNull final T third,
+                         @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory);
 }
