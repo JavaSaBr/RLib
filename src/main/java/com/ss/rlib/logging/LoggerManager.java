@@ -262,11 +262,14 @@ public class LoggerManager {
      */
     private static void write(@NotNull final LoggerLevel level, @NotNull final String resultMessage) {
 
-        ArrayUtils.runInReadLock(getListeners(), resultMessage,
-                (listeners, string) -> listeners.forEach(string, LoggerListener::println));
+        final ConcurrentArray<LoggerListener> listeners = getListeners();
+        final ConcurrentArray<Writer> writers = getWriters();
 
-        ArrayUtils.runInReadLock(getWriters(), resultMessage,
-                (writers, string) -> writers.forEach(string, LoggerManager::append));
+        ArrayUtils.runInReadLock(listeners, resultMessage,
+                (array, string) -> array.forEach(string, LoggerListener::println));
+
+        ArrayUtils.runInReadLock(writers, resultMessage,
+                (array, string) -> array.forEach(string, LoggerManager::append));
 
         System.err.println(resultMessage);
 
@@ -274,11 +277,11 @@ public class LoggerManager {
             return;
         }
 
-        ArrayUtils.runInReadLock(getListeners(),
-                (listeners) -> listeners.forEach(LoggerListener::flush));
+        ArrayUtils.runInReadLock(listeners,
+                array -> array.forEach(LoggerListener::flush));
 
-        ArrayUtils.runInReadLock(getWriters(),
-                writers -> writers.forEach(LoggerManager::flush));
+        ArrayUtils.runInReadLock(writers,
+                array -> array.forEach(LoggerManager::flush));
     }
 
     private static @NotNull Logger createLogger(@NotNull final String name) {

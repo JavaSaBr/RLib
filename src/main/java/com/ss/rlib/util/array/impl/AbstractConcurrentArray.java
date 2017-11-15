@@ -1,19 +1,17 @@
 package com.ss.rlib.util.array.impl;
 
-import static java.lang.Math.max;
 import static com.ss.rlib.util.ArrayUtils.copyOf;
-
+import static java.lang.Math.max;
+import com.ss.rlib.concurrent.atomic.AtomicInteger;
+import com.ss.rlib.util.ArrayUtils;
+import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayIterator;
 import com.ss.rlib.util.array.ConcurrentArray;
+import com.ss.rlib.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
-
-import com.ss.rlib.concurrent.atomic.AtomicInteger;
-import com.ss.rlib.util.ArrayUtils;
-import com.ss.rlib.util.array.Array;
-import com.ss.rlib.util.array.UnsafeArray;
 
 /**
  * The base concurrent implementation of the array.
@@ -116,9 +114,8 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         return true;
     }
 
-    @NotNull
     @Override
-    public final E[] array() {
+    public final @NotNull E[] array() {
         return array;
     }
 
@@ -134,9 +131,8 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         }
     }
 
-    @NotNull
     @Override
-    public final E fastRemove(final int index) {
+    public final @NotNull E fastRemove(final int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
@@ -151,9 +147,8 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         return old;
     }
 
-    @NotNull
     @Override
-    public final E get(final int index) {
+    public final @NotNull E get(final int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
@@ -162,9 +157,8 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         return array[index];
     }
 
-    @NotNull
     @Override
-    public final ArrayIterator<E> iterator() {
+    public final @NotNull ArrayIterator<E> iterator() {
         return new FinalArrayIterator<>(this);
     }
 
@@ -198,9 +192,8 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         return size.get();
     }
 
-    @NotNull
     @Override
-    public final E slowRemove(final int index) {
+    public final @NotNull E slowRemove(final int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
@@ -230,7 +223,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     @Override
-    public boolean unsafeAdd(@NotNull E object) {
+    public boolean unsafeAdd(@NotNull final E object) {
         array[size.getAndIncrement()] = object;
         return true;
     }
@@ -241,7 +234,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     @Override
-    public void unsafeSet(int index, @NotNull E element) {
+    public void unsafeSet(final int index, @NotNull final E element) {
 
         if (array[index] != null) {
             size.decrementAndGet();
@@ -252,13 +245,13 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     /**
-     * Process add.
+     * Process of adding the elements.
      *
      * @param elements   the elements
      * @param selfSize   the self size
      * @param targetSize the target size
      */
-    protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
+    protected void processAdd(@NotNull final Array<? extends E> elements, final int selfSize, final int targetSize) {
         // если надо срау большой массив добавить, то лучше черзе нативный метод
         if (targetSize > SIZE_BIG_ARRAY) {
             System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
@@ -274,13 +267,13 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     /**
-     * Process add.
+     * Process of adding the elements.
      *
      * @param elements   the elements
      * @param selfSize   the self size
      * @param targetSize the target size
      */
-    protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
+    protected void processAdd(@NotNull final E[] elements, final int selfSize, final int targetSize) {
         // если надо срау большой массив добавить, то лучше черзе нативный метод
         if (targetSize > SIZE_BIG_ARRAY) {
             System.arraycopy(elements, 0, array, selfSize, targetSize);
@@ -296,13 +289,12 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     @Override
-    public UnsafeArray<E> asUnsafe() {
+    public @NotNull UnsafeArray<E> asUnsafe() {
         return this;
     }
 
-    @NotNull
     @Override
-    public AbstractConcurrentArray<E> clone() throws CloneNotSupportedException {
+    public @NotNull AbstractConcurrentArray<E> clone() throws CloneNotSupportedException {
         final AbstractConcurrentArray<E> clone = (AbstractConcurrentArray<E>) super.clone();
         clone.array = ArrayUtils.copyOf(array, size());
         return clone;

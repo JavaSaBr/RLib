@@ -15,7 +15,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * Interface to implement dynamic arrays. Main advantages compared to an ArrayList, the ability to iterate in the
+ * Interface to implement dynamic arrays. Main advantages compared to ArrayList is the ability to iterate in the
  * fastest way possible and without prejudice to GC:
  * <pre>
  * for(? element : array.array()) {
@@ -63,22 +63,19 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Get a wrapped array of this array.
+     * Get the wrapped array.
      *
      * @return the wrapped array.
      */
-    @NotNull
-    E[] array();
+    @NotNull E[] array();
 
-    @NotNull
     @Override
-    default Stream<E> stream() {
+    default @NotNull Stream<E> stream() {
         return Arrays.stream(array(), 0, size());
     }
 
-    @NotNull
     @Override
-    default Stream<E> parallelStream() {
+    default @NotNull Stream<E> parallelStream() {
         return stream().parallel();
     }
 
@@ -147,13 +144,12 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param index the index for removing the element.
      * @return the removed element.
      */
-    @NotNull
-    E fastRemove(int index);
+    @NotNull E fastRemove(int index);
 
     /**
      * Removes the specified element with reordering.
      *
-     * @param object the element for removing.
+     * @param object the element to remove.
      * @return <code>true</code> if the element was removed.
      */
     default boolean fastRemove(@NotNull final Object object) {
@@ -200,11 +196,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * First e.
+     * Try to get the first element of this array.
      *
-     * @return the first element of this array or null.
+     * @return the first element or null.
      */
-    default E first() {
+    default @Nullable E first() {
         if (isEmpty()) return null;
         return get(0);
     }
@@ -218,26 +214,29 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Apply a function to each filtered element.
+     * Apply the function to each filtered element.
      *
      * @param condition the condition.
      * @param function  the function.
      */
-    default void forEach(@NotNull final Predicate<E> condition, @NotNull final Consumer<? super E> function) {
+    default void forEach(@NotNull final Predicate<@NotNull E> condition,
+                         @NotNull final Consumer<@NotNull ? super E> function) {
         for (final E element : array()) {
             if (element == null) break;
-            if (condition.test(element)) function.accept(element);
+            if (condition.test(element)) {
+                function.accept(element);
+            }
         }
     }
 
     /**
-     * Apply a function to each element.
+     * Apply the function to each element.
      *
      * @param <T>      the type of an argument.
      * @param argument the argument.
      * @param function the function.
      */
-    default <T> void forEach(@Nullable final T argument, @NotNull final BiConsumer<E, T> function) {
+    default <T> void forEach(@Nullable final T argument, @NotNull final BiConsumer<@NotNull E, T> function) {
         for (final E element : array()) {
             if (element == null) break;
             function.accept(element, argument);
@@ -245,23 +244,25 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Apply a function to each filtered element.
+     * Apply the function to each filtered element.
      *
      * @param <T>       the type of an argument.
      * @param argument  the argument.
      * @param condition the condition.
      * @param function  the function.
      */
-    default <T> void forEach(@Nullable final T argument, @NotNull final BiPredicate<E, T> condition,
-                             @NotNull final BiConsumer<E, T> function) {
+    default <T> void forEach(@Nullable final T argument, @NotNull final BiPredicate<@NotNull E, T> condition,
+                             @NotNull final BiConsumer<@NotNull E, T> function) {
         for (final E element : array()) {
             if (element == null) break;
-            if (condition.test(element, argument)) function.accept(element, argument);
+            if (condition.test(element, argument)) {
+                function.accept(element, argument);
+            }
         }
     }
 
     /**
-     * Apply a function to each element.
+     * Apply the function to each element.
      *
      * @param <F>      the type parameter
      * @param <S>      the type parameter
@@ -270,7 +271,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param function the function.
      */
     default <F, S> void forEach(@Nullable final F first, @Nullable final S second,
-                                @NotNull final TripleConsumer<E, F, S> function) {
+                                @NotNull final TripleConsumer<@NotNull E, F, S> function) {
         for (final E element : array()) {
             if (element == null) break;
             function.accept(element, first, second);
@@ -279,7 +280,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
 
 
     /**
-     * Apply a function to each filtered element.
+     * Apply the function to each filtered element.
      *
      * @param <F>       the type parameter
      * @param <S>       the type parameter
@@ -289,16 +290,18 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param function  the function.
      */
     default <F, S> void forEach(@Nullable final F first, @Nullable final S second,
-                                @NotNull final TriplePredicate<E, F, S> condition,
-                                @NotNull final TripleConsumer<E, F, S> function) {
+                                @NotNull final TriplePredicate<@NotNull E, F, S> condition,
+                                @NotNull final TripleConsumer<@NotNull E, F, S> function) {
         for (final E element : array()) {
             if (element == null) break;
-            if (condition.test(element, first, second)) function.accept(element, first, second);
+            if (condition.test(element, first, second)) {
+                function.accept(element, first, second);
+            }
         }
     }
 
     /**
-     * Apply a function to each element.
+     * Apply the function to each element.
      *
      * @param <F>      the type parameter
      * @param first    the first argument.
@@ -306,7 +309,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param function the function.
      */
     default <F> void forEach(final long first, @Nullable final F second,
-                             @NotNull final ObjectLongObjectConsumer<E, F> function) {
+                             @NotNull final ObjectLongObjectConsumer<@NotNull E, F> function) {
         for (final E element : array()) {
             if (element == null) break;
             function.accept(element, first, second);
@@ -314,7 +317,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Apply a function to each element.
+     * Apply the function to each element.
      *
      * @param <F>      the type parameter
      * @param first    the first argument.
@@ -322,7 +325,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param function the function.
      */
     default <F> void forEach(final float first, @Nullable final F second,
-                             @NotNull final ObjectFloatObjectConsumer<E, F> function) {
+                             @NotNull final ObjectFloatObjectConsumer<@NotNull E, F> function) {
         for (final E element : array()) {
             if (element == null) break;
             function.accept(element, first, second);
@@ -330,16 +333,15 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Gets an element for an index.
+     * Gets the element by the index.
      *
-     * @param index the index of an element.
-     * @return the element for the index.
+     * @param index the index of the element.
+     * @return the element.
      */
-    @NotNull
-    E get(int index);
+    @NotNull E get(int index);
 
     /**
-     * Finds an index of an object in this list.
+     * Find an index of the object in this array.
      *
      * @param object the object to find.
      * @return the index of the object or -1.
@@ -357,27 +359,25 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         return -1;
     }
 
-    @NotNull
     @Override
-    ArrayIterator<E> iterator();
+    @NotNull ArrayIterator<E> iterator();
 
     /**
-     * Last e.
+     * Try to get the last element.
      *
-     * @return the last element of this array or null.
+     * @return the last element or null.
      */
-    @Nullable
-    default E last() {
+    default @Nullable E last() {
         final int size = size();
         if (size < 1) return null;
         return get(size - 1);
     }
 
     /**
-     * Finds the last index for the object in this array.
+     * Find the last index of the object in this array.
      *
      * @param object the object.
-     * @return the last index of the object in this array or -1.
+     * @return the last index or -1.
      */
     default int lastIndexOf(@NotNull final Object object) {
 
@@ -393,23 +393,21 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Gets and removes the first element from this array.
+     * Get and remove the first element from this array.
      *
      * @return the first element or null.
      */
-    @Nullable
-    default E poll() {
+    default @Nullable E poll() {
         if (isEmpty()) return null;
         return slowRemove(0);
     }
 
     /**
-     * Gets and removes the last element of this array.
+     * Get and remove the last element of this array.
      *
      * @return the last element or null.
      */
-    @Nullable
-    default E pop() {
+    default @Nullable E pop() {
         if (isEmpty()) return null;
         return fastRemove(size() - 1);
     }
@@ -485,13 +483,12 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Search an element using a condition.
+     * Search an element using the condition.
      *
      * @param predicate the condition.
      * @return the found element or null.
      */
-    @Nullable
-    default E search(@NotNull final Predicate<E> predicate) {
+    default @Nullable E search(@NotNull final Predicate<@NotNull E> predicate) {
         for (final E element : array()) {
             if (element == null) break;
             if (predicate.test(element)) return element;
@@ -500,15 +497,14 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Search an element using a condition.
+     * Search an element using the condition.
      *
      * @param <T>       the type parameter
      * @param argument  the argument.
      * @param predicate the condition.
      * @return the found element or null.
      */
-    @Nullable
-    default <T> E search(@Nullable final T argument, @NotNull final BiPredicate<E, T> predicate) {
+    default <T> @Nullable E search(@Nullable final T argument, @NotNull final BiPredicate<@NotNull E, T> predicate) {
         for (final E element : array()) {
             if (element == null) break;
             if (predicate.test(element, argument)) return element;
@@ -517,14 +513,13 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Search an element using a condition.
+     * Search an element using the condition.
      *
      * @param argument  the argument.
      * @param predicate the condition.
      * @return the found element or null.
      */
-    @Nullable
-    default E search(final int argument, @NotNull final ObjectIntPredicate<E> predicate) {
+    default  @Nullable E search(final int argument, @NotNull final ObjectIntPredicate<@NotNull E> predicate) {
         for (final E element : array()) {
             if (element == null) break;
             if (predicate.test(element, argument)) return element;
@@ -533,14 +528,13 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Search an element using a condition.
+     * Search an element using the condition.
      *
      * @param argument  the argument.
      * @param predicate the condition.
      * @return the found element or null.
      */
-    @Nullable
-    default E searchL(final long argument, @NotNull final ObjectLongPredicate<E> predicate) {
+    default @Nullable E searchL(final long argument, @NotNull final ObjectLongPredicate<@NotNull E> predicate) {
         for (final E element : array()) {
             if (element == null) break;
             if (predicate.test(element, argument)) return element;
@@ -549,21 +543,20 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Set the element for the index.
+     * Set the element by the index.
      *
-     * @param index   индекс, по которому нужно устоновить элемент.
-     * @param element элемент, который нужно добавит в массив.
+     * @param index   the element's index.
+     * @param element the new element.
      */
     void set(int index, @NotNull E element);
 
     /**
-     * Removes an element for an index without reordering.
+     * Remove the element by the index without reordering.
      *
      * @param index the index of the element.
      * @return the removed element.
      */
-    @NotNull
-    E slowRemove(int index);
+    @NotNull E slowRemove(int index);
 
     @Override
     default boolean remove(final Object object) {
@@ -571,7 +564,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Removes an element without reordering.
+     * Remove the element without reordering.
      *
      * @param object the element.
      * @return true if the element was removed.
@@ -579,20 +572,18 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     boolean slowRemove(@NotNull Object object);
 
     /**
-     * Sorts this array using the comparator.
+     * Sort this array using the comparator.
      *
      * @param comparator the comparator.
      * @return the array
      */
-    @NotNull
-    default Array<E> sort(@NotNull final ArrayComparator<E> comparator) {
+    default @NotNull Array<E> sort(@NotNull final ArrayComparator<@NotNull E> comparator) {
         ArrayUtils.sort(array(), comparator);
         return this;
     }
 
-    @NotNull
     @Override
-    default <T> T[] toArray(@NotNull final T[] newArray) {
+    default <T> @NotNull T[] toArray(@NotNull final T[] newArray) {
 
         final E[] array = array();
 
@@ -614,14 +605,13 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Copies this array to the new array.
+     * Copy this array to the new array.
      *
      * @param <T>           the type parameter
      * @param componentType the type of the new array.
-     * @return the t [ ]
+     * @return the copied array.
      */
-    @NotNull
-    default <T> T[] toArray(@NotNull final Class<T> componentType) {
+    default <T> @NotNull T[] toArray(@NotNull final Class<T> componentType) {
 
         final T[] newArray = ArrayUtils.create(componentType, size());
         final E[] array = array();
@@ -632,11 +622,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Get an unsafe interface of this array.
+     * Get the unsafe interface of this array.
      *
      * @return the unsafe interface of this array.
      */
-    default UnsafeArray<E> asUnsafe() {
+    default @NotNull UnsafeArray<E> asUnsafe() {
         if (this instanceof UnsafeArray) return (UnsafeArray<E>) this;
         throw new UnsupportedOperationException();
     }
@@ -646,9 +636,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         return size() < 1;
     }
 
-    @NotNull
     @Override
-    default Object[] toArray() {
+    default @NotNull Object[] toArray() {
         final E[] array = array();
         return Arrays.copyOf(array, size(), array.getClass());
     }

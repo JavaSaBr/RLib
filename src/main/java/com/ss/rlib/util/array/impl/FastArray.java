@@ -1,17 +1,15 @@
 package com.ss.rlib.util.array.impl;
 
-import static java.lang.Math.max;
 import static com.ss.rlib.util.ArrayUtils.copyOf;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.NoSuchElementException;
-
+import static java.lang.Math.max;
 import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayIterator;
 import com.ss.rlib.util.array.UnsafeArray;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.NoSuchElementException;
 
 /**
  * The fast implementation of the array. This array is not threadsafe.
@@ -284,6 +282,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         return array[index];
     }
 
+    @NotNull
     @Override
     public UnsafeArray<E> asUnsafe() {
         return this;
