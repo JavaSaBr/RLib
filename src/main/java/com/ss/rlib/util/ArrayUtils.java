@@ -630,8 +630,7 @@ public final class ArrayUtils {
      * @param function the function.
      */
     public static <T> void runInWriteLock(@NotNull final ConcurrentArray<T> array,
-                                          @NotNull final Consumer<Array<T>> function) {
-        if (array.isEmpty()) return;
+                                          @NotNull final Consumer<@NotNull Array<T>> function) {
         final long stamp = array.writeLock();
         try {
             function.accept(array);
@@ -648,7 +647,7 @@ public final class ArrayUtils {
      * @param function the function.
      */
     public static <T> void runInReadLock(@NotNull final ConcurrentArray<T> array,
-                                         @NotNull final Consumer<Array<T>> function) {
+                                         @NotNull final Consumer<@NotNull Array<T>> function) {
         if (array.isEmpty()) return;
         final long stamp = array.readLock();
         try {
@@ -739,8 +738,7 @@ public final class ArrayUtils {
      * @param function the function.
      */
     public static <T, V> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
-                                             @NotNull final BiConsumer<Array<T>, V> function) {
-        if (array.isEmpty()) return;
+                                             @NotNull final BiConsumer<@NotNull Array<T>, V> function) {
         final long stamp = array.writeLock();
         try {
             function.accept(array, argument);
@@ -824,7 +822,7 @@ public final class ArrayUtils {
      * @param function the function.
      */
     public static <T, V> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
-                                            @NotNull final BiConsumer<Array<T>, V> function) {
+                                            @NotNull final BiConsumer<@NotNull Array<T>, V> function) {
         if (array.isEmpty()) return;
         final long stamp = array.readLock();
         try {
@@ -847,8 +845,7 @@ public final class ArrayUtils {
      */
     public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
                                                 @Nullable S second,
-                                                @NotNull final TripleConsumer<Array<T>, F, S> function) {
-        if (array.isEmpty()) return;
+                                                @NotNull final TripleConsumer<@NotNull Array<T>, F, S> function) {
         final long stamp = array.writeLock();
         try {
             function.accept(array, first, second);
@@ -871,9 +868,8 @@ public final class ArrayUtils {
      */
     public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
                                                 @Nullable final S second,
-                                                @NotNull final TriplePredicate<Array<T>, F, S> filter,
-                                                @NotNull final TripleConsumer<Array<T>, F, S> function) {
-        if (array.isEmpty()) return;
+                                                @NotNull final TriplePredicate<@NotNull Array<T>, F, S> filter,
+                                                @NotNull final TripleConsumer<@NotNull Array<T>, F, S> function) {
         final long stamp = array.writeLock();
         try {
 
@@ -899,7 +895,7 @@ public final class ArrayUtils {
      */
     public static <T, F, S> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
                                                @Nullable final S second,
-                                               @NotNull final TripleConsumer<Array<T>, F, S> function) {
+                                               @NotNull final TripleConsumer<@NotNull Array<T>, F, S> function) {
         if (array.isEmpty()) return;
         final long stamp = array.readLock();
         try {
