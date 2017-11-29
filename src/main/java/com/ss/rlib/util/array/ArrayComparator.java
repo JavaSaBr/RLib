@@ -1,11 +1,12 @@
 package com.ss.rlib.util.array;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 
 /**
- * The interface for implementing a comparator for Array.
+ * The interface to implement a comparator for {@link Array}.
  *
  * @param <T> the type parameter
  * @author JavaSaBr
@@ -27,9 +28,10 @@ public interface ArrayComparator<T> extends Comparator<T> {
     /**
      * Compare the two objects.
      *
-     * @param first  the first
-     * @param second the second
-     * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
+     * @param first  the first.
+     * @param second the second.
+     * @return a negative integer, zero, or a positive integer as the first argument
+     * is less than, equal to, or greater than the second.
      */
-    int compareImpl(@Nullable T first, @Nullable T second);
+    int compareImpl(@NotNull T first, @NotNull T second);
 }

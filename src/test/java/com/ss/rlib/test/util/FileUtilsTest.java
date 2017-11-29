@@ -30,4 +30,10 @@ public class FileUtilsTest {
         assertEquals("/some/folder/some", FileUtils.getParent(path, '/'));
         assertEquals("D:\\some\\folder\\some", FileUtils.getParent(path2, '\\'));
     }
+
+    @Test
+    public void testNormalizeFileName() {
+        final String first = FileUtils.normalizeName("file*:?name!!@#$\"\"wefwef<>.png");
+        assertEquals("file___name!!@#$__wefwef__.png", first);
+    }
 }

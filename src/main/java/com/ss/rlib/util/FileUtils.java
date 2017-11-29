@@ -66,6 +66,9 @@ public class FileUtils {
             Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
 
     @NotNull
+    private static final Pattern NORMALIZE_FILE_NAME_PATTERN = Pattern.compile("[\\\\/:*?\"<>|]");
+
+    @NotNull
     private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<Path>() {
 
         @Override
@@ -87,13 +90,25 @@ public class FileUtils {
     /**
      * Check a string on valid file name.
      *
-     * @param filename the string with file name.
+     * @param filename the file name.
      * @return true if the file name is valid.
      */
     public static boolean isValidName(@Nullable final String filename) {
         if (StringUtils.isEmpty(filename)) return false;
         final Matcher matcher = FILE_NAME_PATTERN.matcher(filename);
         return matcher.matches();
+    }
+
+    /**
+     * Normalize the file name to a valid file name.
+     *
+     * @param filename the string with file name.
+     * @return normalized file name.
+     */
+    public static @NotNull String normalizeName(@Nullable final String filename) {
+        if (StringUtils.isEmpty(filename)) return "_";
+        final Matcher matcher = NORMALIZE_FILE_NAME_PATTERN.matcher(filename);
+        return matcher.replaceAll("_");
     }
 
     /**
