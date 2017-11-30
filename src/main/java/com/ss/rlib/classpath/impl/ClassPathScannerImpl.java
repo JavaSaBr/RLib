@@ -35,9 +35,7 @@ import java.util.zip.ZipException;
  */
 public class ClassPathScannerImpl implements ClassPathScanner {
 
-    /**
-     * The constant LOGGER.
-     */
+    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(ClassPathScanner.class);
 
     private static final String CLASS_PATH = System.getProperty("java.class.path");
@@ -73,11 +71,6 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      */
     private boolean useSystemClassPath;
 
-    /**
-     * Instantiates a new Class path scanner.
-     *
-     * @param classLoader the classloader.
-     */
     public ClassPathScannerImpl(@NotNull final ClassLoader classLoader) {
         this.additionalPaths = ArrayFactory.newArray(String.class);
         this.loader = classLoader;
@@ -99,7 +92,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     public <T, R extends T> void findImplements(@NotNull final Array<Class<R>> container, @NotNull final Class<T> interfaceClass) {
 
         if (!interfaceClass.isInterface()) {
-            throw new RuntimeException("class " + interfaceClass + " is not interface.");
+            throw new IllegalArgumentException("The class " + interfaceClass + " is not interface.");
         }
 
         for (final Class<?> cs : getClasses()) {
@@ -116,7 +109,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     public <T, R extends T> void findInherited(@NotNull final Array<Class<R>> container, @NotNull final Class<T> parentClass) {
 
         if (Modifier.isFinal(parentClass.getModifiers())) {
-            throw new RuntimeException("class " + parentClass + " is final class.");
+            throw new IllegalArgumentException("The class " + parentClass + " is final class.");
         }
 
         for (final Class<?> cs : getClasses()) {
@@ -142,24 +135,21 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     /**
      * @return the found classes.
      */
-    @NotNull
-    private Class<?>[] getClasses() {
+    private @NotNull Class<?>[] getClasses() {
         return classes;
     }
 
     /**
      * @return the found resources.
      */
-    @NotNull
-    private String[] getResources() {
+    private @NotNull String[] getResources() {
         return resources;
     }
 
     /**
      * @return the class loader.
      */
-    @NotNull
-    private ClassLoader getLoader() {
+    private @NotNull ClassLoader getLoader() {
         return loader;
     }
 
@@ -168,10 +158,9 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      *
      * @return the list of paths.
      */
-    @NotNull
-    protected String[] getPaths() {
+    protected @NotNull String[] getPathsToScan() {
 
-        final String[] systemClasspath = useSystemClasspath() ? getClassPathPaths() : ArrayUtils.EMPTY_STRING_ARRAY;
+        final String[] systemClasspath = useSystemClasspath() ? getClasspathPaths() : ArrayUtils.EMPTY_STRING_ARRAY;
         final Array<String> result = ArrayFactory.newArray(String.class,
                 additionalPaths.size() + systemClasspath.length);
 
@@ -196,8 +185,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     /**
      * @return the list of paths of system classpath.
      */
-    @NotNull
-    protected String[] getClassPathPaths() {
+    protected @NotNull String[] getClasspathPaths() {
         return CLASS_PATH.split(PATH_SEPARATOR);
     }
 
@@ -226,16 +214,18 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             className = result.toString();
 
         } catch (final Exception e) {
-            LOGGER.info("incorrect replace " + name + " to java path, separator " + File.separator);
+            LOGGER.warning(this, "Incorrect replaced " + name +
+                    " to java path, used separator " + File.separator);
             return;
         }
 
         try {
             container.add(getLoader().loadClass(className));
-        } catch (NoClassDefFoundError error) {
-            LOGGER.warning("can't load class: " + error.getMessage());
+        } catch (final NoClassDefFoundError error) {
+            LOGGER.warning(this, "Can't load class: " + className);
+            LOGGER.warning(this, error);
         } catch (final Throwable e) {
-            LOGGER.warning(e);
+            LOGGER.warning(this, e);
         }
     }
 
@@ -274,7 +264,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                         loadClass(path, classes);
 
                     } catch (final Exception e) {
-                        LOGGER.info("incorrect replace " + file + " from root " + rootPath);
+                        LOGGER.warning(this, "Incorrect replaced " + file + " from root " + rootPath);
                     }
 
                 } else if (!filename.endsWith(Compiler.SOURCE_EXTENSION)) {
@@ -305,7 +295,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                          @NotNull final Path jarFile) {
 
         if (!Files.exists(jarFile)) {
-            LOGGER.warning("not exists " + jarFile);
+            LOGGER.warning(this, "not exists " + jarFile);
             return;
         }
 
@@ -319,9 +309,10 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             scanJarInputStream(classes, resources, rout, rin, buffer, jin);
 
         } catch (final ZipException e) {
-            LOGGER.warning("can't open zip file " + jarFile);
+            LOGGER.warning(this, "Can't open zip file " + jarFile);
+            LOGGER.warning(this, e);
         } catch (final IOException e) {
-            LOGGER.warning(e);
+            LOGGER.warning(this, e);
         }
     }
 
@@ -366,16 +357,17 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         try (final JarInputStream jin = new JarInputStream(jarFile)) {
             scanJarInputStream(classes, resources, rout, rin, buffer, jin);
         } catch (final ZipException e) {
-            LOGGER.warning("can't open zip file " + jarFile);
+            LOGGER.warning(this, "can't open zip file " + jarFile);
+            LOGGER.warning(this, e);
         } catch (final IOException e) {
-            LOGGER.warning(e);
+            LOGGER.warning(this, e);
         }
     }
 
     @Override
     public void scan(@NotNull final Function<String, Boolean> filter) {
 
-        final String[] paths = getPaths();
+        final String[] paths = getPathsToScan();
 
         final Array<Class<?>> classes = ArrayFactory.newArray(Class.class);
         final Array<String> resources = ArrayFactory.newArray(String.class);
@@ -388,7 +380,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 continue;
             }
 
-            LOGGER.info(this, file, p -> "scan " + p);
+            LOGGER.debug(this, file, toScan -> "scan " + toScan);
 
             final String filename = file.getFileName().toString();
 
@@ -402,7 +394,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         this.classes = classes.toArray(new Class[classes.size()]);
         this.resources = resources.toArray(new String[resources.size()]);
 
-        LOGGER.info(this, this.classes, this.resources,
+        LOGGER.debug(this, getClasses(), getResources(),
                 (cses, rses) -> "scanned for " + cses.length + " classes and " + rses.length + " resources.");
     }
 

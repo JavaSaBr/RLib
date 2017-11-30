@@ -422,7 +422,8 @@ public final class Utils {
      * @param function the function.
      * @return the result or null.
      */
-    public static <F, R> @Nullable R getNullable(@Nullable final F first, @NotNull final SafeFunction<F, R> function) {
+    public static <F, R> @Nullable R getNullable(@Nullable final F first,
+                                                 @NotNull final SafeFunction<@Nullable F, @Nullable R> function) {
         try {
             return function.apply(first);
         } catch (final Exception e) {
