@@ -6,7 +6,6 @@ import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -35,13 +34,6 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
     @NotNull
     private final String classPathKey;
 
-    /**
-     * Instantiates a new Manifest class path scanner.
-     *
-     * @param classLoader  the class loader.
-     * @param rootClass    the root class
-     * @param classPathKey the class path key
-     */
     public ManifestClassPathScannerImpl(@NotNull final ClassLoader classLoader, @NotNull final Class<?> rootClass,
                                         @NotNull final String classPathKey) {
         super(classLoader);
@@ -54,65 +46,57 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
      *
      * @return the class paths.
      */
-    protected String[] getManifestClassPath() {
+    protected @NotNull String[] getManifestClassPath() {
 
         final Path root = Utils.getRootFolderFromClass(rootClass);
         final Array<String> result = ArrayFactory.newArray(String.class);
 
         final Thread currentThread = Thread.currentThread();
         final ClassLoader loader = currentThread.getContextClassLoader();
+        final Enumeration<URL> urls = Utils.get(loader, first -> first.getResources(JarFile.MANIFEST_NAME));
 
-        Enumeration<URL> urls;
+        while (urls.hasMoreElements()) {
 
-        try {
+            try {
 
-            urls = loader.getResources(JarFile.MANIFEST_NAME);
+                final URL url = urls.nextElement();
+                final InputStream is = url.openStream();
 
-            while (urls.hasMoreElements()) {
-
-                try {
-
-                    final URL url = urls.nextElement();
-                    final InputStream is = url.openStream();
-
-                    if (is != null) {
-
-                        final Manifest manifest = new Manifest(is);
-                        final Attributes attributes = manifest.getMainAttributes();
-
-                        final String value = attributes.getValue(classPathKey);
-                        if (value == null) continue;
-
-                        final String[] classpath = value.split(" ");
-
-                        for (final String path : classpath) {
-
-                            final Path file = root.resolve(path);
-
-                            if (Files.exists(file)) {
-                                result.add(file.toString());
-                            }
-                        }
-                    }
-
-                } catch (final Exception e) {
-                    LOGGER.warning(e);
+                if (is == null) {
+                    LOGGER.warning(this, "not found input stream for the url " + url);
+                    continue;
                 }
-            }
 
-        } catch (final IOException e1) {
-            LOGGER.warning(e1);
+                final Manifest manifest = new Manifest(is);
+                final Attributes attributes = manifest.getMainAttributes();
+
+                final String value = attributes.getValue(classPathKey);
+                if (value == null) continue;
+
+                final String[] classpath = value.split(" ");
+
+                for (final String path : classpath) {
+
+                    final Path file = root.resolve(path);
+
+                    if (Files.exists(file)) {
+                        result.add(file.toString());
+                    }
+                }
+
+            } catch (final Exception e) {
+                LOGGER.warning(this, e);
+            }
         }
 
         return result.toArray(String.class);
     }
 
-    @NotNull
     @Override
-    protected String[] getPaths() {
+    protected @NotNull String[] getPathsToScan() {
 
         final Array<String> result = ArrayFactory.newArraySet(String.class);
-        result.addAll(super.getPaths());
+        result.addAll(super.getPathsToScan());
         result.addAll(getManifestClassPath());
 
         return result.toArray(String.class);
