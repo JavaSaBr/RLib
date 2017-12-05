@@ -128,10 +128,20 @@ public class PluginContainer {
         return embedded;
     }
 
+    /**
+     * Get the scanner of this plugin.
+     *
+     * @return the scanner.
+     */
     public @NotNull ClassPathScanner getScanner() {
         return scanner;
     }
 
+    /**
+     * Get the class loader of this plugin.
+     *
+     * @return the class loader.
+     */
     public @NotNull URLClassLoader getClassLoader() {
         return classLoader;
     }

@@ -1,7 +1,15 @@
 package com.ss.rlib.idfactory.impl;
 
-import com.ss.rlib.database.ConnectFactory;
+import com.ss.rlib.database.ConnectionFactory;
+import com.ss.rlib.database.DBUtils;
+import com.ss.rlib.idfactory.IdGenerator;
+import com.ss.rlib.logging.Logger;
+import com.ss.rlib.logging.LoggerManager;
+import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.array.ArrayFactory;
+import com.ss.rlib.util.array.IntegerArray;
+import com.ss.rlib.util.dictionary.DictionaryFactory;
+import com.ss.rlib.util.dictionary.IntegerDictionary;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -12,17 +20,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.ss.rlib.database.DBUtils;
-import com.ss.rlib.idfactory.IdGenerator;
-import com.ss.rlib.logging.Logger;
-import com.ss.rlib.logging.LoggerManager;
-import com.ss.rlib.util.ArrayUtils;
-import com.ss.rlib.util.array.IntegerArray;
-import com.ss.rlib.util.dictionary.DictionaryFactory;
-import com.ss.rlib.util.dictionary.IntegerDictionary;
-
 /**
- * THe BitSet implementation of a ID generator.
+ * THe BitSet implementation of ID generator.
  *
  * @author JavaSaBr
  */
@@ -55,7 +54,7 @@ public final class BitSetIdGenerator implements IdGenerator, Runnable {
      * The connection factory.
      */
     @NotNull
-    private final ConnectFactory connectFactory;
+    private final ConnectionFactory connectionFactory;
 
     /**
      * The tables.
@@ -78,18 +77,11 @@ public final class BitSetIdGenerator implements IdGenerator, Runnable {
      */
     private AtomicInteger nextFreeId;
 
-    /**
-     * Instantiates a new Bit set id generator.
-     *
-     * @param connectFactory  the connect factory
-     * @param executorService the executor service
-     * @param tables          the tables
-     */
-    public BitSetIdGenerator(@NotNull final ConnectFactory connectFactory,
+    public BitSetIdGenerator(@NotNull final ConnectionFactory connectionFactory,
                              @NotNull final ScheduledExecutorService executorService,
                              @NotNull final String[][] tables) {
         this.executorService = executorService;
-        this.connectFactory = connectFactory;
+        this.connectionFactory = connectionFactory;
         this.tables = tables;
     }
 
@@ -150,7 +142,7 @@ public final class BitSetIdGenerator implements IdGenerator, Runnable {
             ResultSet rset = null;
             try {
 
-                con = connectFactory.getConnection();
+                con = connectionFactory.getConnection();
                 statement = con.createStatement();
 
                 for (final String[] table : tables) {

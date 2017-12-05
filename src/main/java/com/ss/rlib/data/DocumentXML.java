@@ -3,9 +3,9 @@ package com.ss.rlib.data;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The interface for implementing a parser pf xml documents.
+ * The interface to implement a parser of xml documents.
  *
- * @param <C> the type parameter
+ * @param <C> the result type.
  * @author JavaSaBr
  */
 public interface DocumentXML<C> {
@@ -13,8 +13,7 @@ public interface DocumentXML<C> {
     /**
      * Parse this document and get the result.
      *
-     * @return the c
+     * @return the result.
      */
-    @NotNull
-    C parse();
+    @NotNull C parse();
 }

@@ -1,15 +1,14 @@
 package com.ss.rlib.manager;
 
 import com.ss.rlib.logging.Logger;
-import com.ss.rlib.util.linkedlist.LinkedListFactory;
+import com.ss.rlib.logging.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
-
-import com.ss.rlib.logging.LoggerManager;
-import com.ss.rlib.util.linkedlist.LinkedList;
 
 /**
  * The manager to initialize singletons in some order.
@@ -24,7 +23,7 @@ public final class InitializeManager {
     private static final String METHOD_NAME = "getInstance";
 
     @NotNull
-    private static final LinkedList<Class<?>> QUEUE = LinkedListFactory.newLinkedList(Class.class);
+    private static final Deque<Class<?>> QUEUE = new ArrayDeque<>();
 
     /**
      * Initialize.
@@ -34,7 +33,6 @@ public final class InitializeManager {
         for (final Iterator<Class<?>> iterator = QUEUE.iterator(); iterator.hasNext(); ) {
 
             final Class<?> next = iterator.next();
-
             try {
 
                 final Method method = next.getMethod(METHOD_NAME);
@@ -55,15 +53,15 @@ public final class InitializeManager {
     }
 
     /**
-     * Add a class with static method names 'getInstance'.
+     * Add a class with static method 'getInstance' to initialization queue.
      *
-     * @param cs the cs
+     * @param cs the class.
      */
     public static synchronized void register(@NotNull final Class<?> cs) {
 
         try {
             cs.getMethod(METHOD_NAME);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 
@@ -71,13 +69,13 @@ public final class InitializeManager {
     }
 
     /**
-     * Valid an order of a class.
+     * Check validity of the class in initialization order.
      *
      * @param cs the class.
      */
     public static synchronized void valid(@NotNull final Class<?> cs) {
         if (QUEUE.getFirst() != cs) {
-            Thread.dumpStack();
+            throw new IllegalStateException("The class has invalid initialization position.");
         }
     }
 

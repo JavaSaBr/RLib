@@ -11,46 +11,47 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * THe manager to clean a DataBase.
+ * The manager to clean a DataBase.
  *
  * @author JavaSaBr
  */
 public abstract class CleaningManager {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(CleaningManager.class);
 
     /**
      * The list of cleaning queries.
      */
     @NotNull
-    public static final Array<CleaningQuery> QUERY = ArrayFactory.newArray(CleaningQuery.class);
+    private static final Array<CleaningQuery> QUERIES = ArrayFactory.newArray(CleaningQuery.class);
 
     /**
-     * Add a cleaning query.
+     * Add the cleaning query.
      *
-     * @param name  the table name.
-     * @param query the query.
+     * @param description the description.
+     * @param query       the query.
      */
-    public static void addQuery(@NotNull final String name, @NotNull final String query) {
-        QUERY.add(new CleaningQuery(name, query));
+    public static void addQuery(@NotNull final String description, @NotNull final String query) {
+        QUERIES.add(new CleaningQuery(description, query));
     }
 
     /**
      * Clean the DB of the connection factory.
      *
-     * @param connectFactory the connect factory
+     * @param connectionFactory the connect factory
      */
-    public static void cleaning(@NotNull final ConnectFactory connectFactory) {
+    public static void clean(@NotNull final ConnectionFactory connectionFactory) {
 
         Connection con = null;
         Statement statement = null;
         try {
 
-            con = connectFactory.getConnection();
+            con = connectionFactory.getConnection();
             statement = con.createStatement();
 
-            for (final CleaningQuery clean : QUERY) {
-                LOGGER.info(clean.getName().replace("{count}", String.valueOf(statement.executeUpdate(clean.getQuery()))) + ".");
+            for (final CleaningQuery clean : QUERIES) {
+                LOGGER.info(clean.getDescription().replace("{count}", String.valueOf(statement.executeUpdate(clean.getQuery()))) + ".");
             }
 
         } catch (final SQLException e) {

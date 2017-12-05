@@ -1,12 +1,11 @@
 package com.ss.rlib.idfactory;
 
-import com.ss.rlib.database.ConnectFactory;
+import com.ss.rlib.database.ConnectionFactory;
+import com.ss.rlib.idfactory.impl.BitSetIdGenerator;
+import com.ss.rlib.idfactory.impl.SimpleIdGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ScheduledExecutorService;
-
-import com.ss.rlib.idfactory.impl.BitSetIdGenerator;
-import com.ss.rlib.idfactory.impl.SimpleIdGenerator;
 
 /**
  * The factory of IDs generators.
@@ -18,16 +17,15 @@ public class IdGeneratorFactory {
     /**
      * Create a new ID generator which uses BitSet and works with DB.
      *
-     * @param connectFactory  the connection factory.
+     * @param connectionFactory  the connection factory.
      * @param executorService the executorService service.
      * @param tables          the tables with IDs.
      * @return the new generator.
      */
-    @NotNull
-    public static IdGenerator newBitSetIdDBGenerator(@NotNull final ConnectFactory connectFactory,
+    public static @NotNull IdGenerator newBitSetIdDBGenerator(@NotNull final ConnectionFactory connectionFactory,
                                                      @NotNull final ScheduledExecutorService executorService,
                                                      @NotNull final String[][] tables) {
-        return new BitSetIdGenerator(connectFactory, executorService, tables);
+        return new BitSetIdGenerator(connectionFactory, executorService, tables);
     }
 
     /**
@@ -37,8 +35,7 @@ public class IdGeneratorFactory {
      * @param end   the last ID.
      * @return the new ID generator.
      */
-    @NotNull
-    public static IdGenerator newSimpleIdGenerator(final int start, final int end) {
+    public static @NotNull IdGenerator newSimpleIdGenerator(final int start, final int end) {
         return new SimpleIdGenerator(start, end);
     }
 

@@ -25,11 +25,6 @@ public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> 
     @NotNull
     protected final String filePath;
 
-    /**
-     * Instantiates a new Abstract file document.
-     *
-     * @param file the file
-     */
     public AbstractFileDocument(@NotNull final File file) {
         this.filePath = file.getAbsolutePath();
         try {
@@ -39,11 +34,6 @@ public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> 
         }
     }
 
-    /**
-     * Instantiates a new Abstract file document.
-     *
-     * @param path the path
-     */
     public AbstractFileDocument(@NotNull final Path path) {
         this.filePath = path.toAbsolutePath().toString();
         try {
@@ -54,12 +44,11 @@ public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> 
     }
 
     /**
-     * Gets file path.
+     * Get the file path.
      *
      * @return the file path.
      */
-    @NotNull
-    protected String getFilePath() {
+    protected @NotNull String getFilePath() {
         return filePath;
     }
 }

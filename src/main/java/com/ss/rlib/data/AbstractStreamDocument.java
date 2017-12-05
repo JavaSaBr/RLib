@@ -58,18 +58,10 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     @Nullable
     protected C result;
 
-    /**
-     * Instantiates a new Abstract stream document.
-     */
     public AbstractStreamDocument() {
         super();
     }
 
-    /**
-     * Instantiates a new Abstract stream document.
-     *
-     * @param stream the stream
-     */
     public AbstractStreamDocument(@NotNull final InputStream stream) {
         this.stream = stream;
     }
@@ -77,14 +69,12 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     /**
      * Creates the container of the result.
      *
-     * @return the c
+     * @return the container of the result.
      */
-    @NotNull
-    protected abstract C create();
+    protected abstract @NotNull C create();
 
-    @NotNull
     @Override
-    public C parse() {
+    public @NotNull C parse() {
 
         final DocumentBuilderFactory factory = LOCAL_FACTORY.get();
         try {
@@ -98,7 +88,6 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
         }
 
         result = create();
-
         try {
             parse(document);
         } catch (final Exception e) {

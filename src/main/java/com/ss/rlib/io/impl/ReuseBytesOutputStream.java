@@ -3,7 +3,6 @@ package com.ss.rlib.io.impl;
 import com.ss.rlib.io.ReusableStream;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -26,18 +25,10 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
      */
     protected int size;
 
-    /**
-     * Instantiates a new Reuse bytes output stream.
-     */
     public ReuseBytesOutputStream() {
         this(32);
     }
 
-    /**
-     * Instantiates a new Reuse bytes output stream.
-     *
-     * @param size the size
-     */
     public ReuseBytesOutputStream(final int size) {
         if (size < 0) throw new IllegalArgumentException("Negative initial size: " + size);
         data = new byte[size];
@@ -66,16 +57,15 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
     }
 
     /**
-     * Get data byte [ ].
+     * Get the wrapped data array.
      *
-     * @return the data buffer.
+     * @return the wrapped data array.
      */
-    @NotNull
-    public byte[] getData() {
+    public @NotNull byte[] getData() {
         return data;
     }
 
@@ -112,9 +102,9 @@ public final class ReuseBytesOutputStream extends OutputStream implements Reusab
     }
 
     /**
-     * Size int.
+     * Get the current size.
      *
-     * @return the size of this stream.
+     * @return the current size.
      */
     public int size() {
         return size;
