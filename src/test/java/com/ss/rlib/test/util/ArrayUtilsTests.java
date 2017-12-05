@@ -14,7 +14,7 @@ import java.util.Collection;
  *
  * @author JavaSaBr
  */
-public class TestArrayUtils {
+public class ArrayUtilsTests {
 
     @Test
     public void testRunInReadLock1() {

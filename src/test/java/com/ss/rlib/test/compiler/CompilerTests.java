@@ -19,7 +19,7 @@ import java.net.URL;
 public class CompilerTests {
 
     @Test
-    public void compileOneSourceTest()
+    public void testCompileOneSource()
             throws URISyntaxException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         final URL javaSource = getClass().getResource("/java/source/TestCompileJavaSource.java");

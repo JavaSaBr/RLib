@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author JavaSaBr
  */
-public class TestLoggers {
+public class LoggerTests {
 
     @Test
     public void testCreateLogger() {

@@ -13,11 +13,11 @@ import java.util.List;
  *
  * @author JavaSaBr
  */
-public class TestFastArray  {
+public class FastArrayTests {
 
     public void test() {
 
-        final String head = TestFastArray.class.getSimpleName() + ": ";
+        final String head = FastArrayTests.class.getSimpleName() + ": ";
 
         System.out.println(head + "start test FastArray VS ArrayList...");
 

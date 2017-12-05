@@ -67,3 +67,23 @@ dependencies {
         final Method method = instance.getClass().getMethod("makeString");
         final Object result = method.invoke(instance);        
 ```
+
+### VarTable API
+
+```
+#!java
+
+        final VarTable vars = VarTable.newInstance();
+        vars.set("string", "Hello");
+        vars.set("intArray", toIntegerArray(1, 2, 3, 5));
+        vars.set("floatStringArray", "1.5,4.2,5.5");
+        vars.set("stringEnum", "FLOAT");
+        vars.set("enum", ReferenceType.BYTE);
+
+        final String string = vars.getString("string");
+        final int[] array = vars.getIntegerArray("intArray", "");
+        final float[] floatStringArray = vars.getFloatArray("floatStringArray", ",");
+        final ReferenceType stringEnum = vars.getEnum("stringEnum", ReferenceType.class);
+        final ReferenceType anEnum = vars.getEnum("enum", ReferenceType.class);
+        final ReferenceType unsafeGet = vars.get("enum");
+```
