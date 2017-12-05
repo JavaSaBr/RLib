@@ -12,9 +12,11 @@ import javax.tools.*;
 import javax.tools.JavaCompiler.CompilationTask;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 /**
  * The base implementation of a compiler using a compiler from JDK.
@@ -23,12 +25,14 @@ import java.nio.file.Path;
  */
 public class CompilerImpl implements Compiler {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(Compiler.class);
 
     /**
      * The constant EMPTY_CLASSES.
      */
-    public static final Class<?>[] EMPTY_CLASSES = new Class[0];
+    @NotNull
+    private static final Class<?>[] EMPTY_CLASSES = new Class[0];
 
     /**
      * The compile listener.
@@ -59,11 +63,6 @@ public class CompilerImpl implements Compiler {
      */
     private final boolean showDiagnostic;
 
-    /**
-     * Instantiates a new Compiler.
-     *
-     * @param showDiagnostic true if need to show reports.
-     */
     public CompilerImpl(final boolean showDiagnostic) {
         this.compiler = ToolProvider.getSystemJavaCompiler();
         this.listener = new CompileListener();
@@ -75,30 +74,34 @@ public class CompilerImpl implements Compiler {
         this.showDiagnostic = showDiagnostic;
     }
 
-    @NotNull
     @Override
-    public Class<?>[] compile(@NotNull final File... files) {
+    public @NotNull Class<?>[] compile(@NotNull final File... files) {
         if (files.length < 1) return EMPTY_CLASSES;
 
-        final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
-
-        for (final File file : files) {
-            javaSource.add(new JavaFileSource(file));
-        }
+        final Array<JavaFileObject> javaSource = Arrays.stream(files)
+                .map(JavaFileSource::new)
+                .collect(Array.collector(JavaFileObject.class));
 
         return compile(null, javaSource);
     }
 
-    @NotNull
     @Override
-    public Class<?>[] compile(@NotNull final Path... paths) {
+    public @NotNull Class<?>[] compile(@NotNull final Path... paths) {
         if (paths.length < 1) return EMPTY_CLASSES;
 
-        final Array<JavaFileObject> javaSource = ArrayFactory.newArray(JavaFileObject.class);
+        final Array<JavaFileObject> javaSource = Arrays.stream(paths)
+                .map(JavaFileSource::new)
+                .collect(Array.collector(JavaFileObject.class));
 
-        for (final Path path : paths) {
-            javaSource.add(new JavaFileSource(path));
-        }
+        return compile(null, javaSource);
+    }
+
+    @Override
+    public @NotNull Class<?>[] compile(@NotNull final URI... uris) {
+
+        final Array<JavaFileObject> javaSource = Arrays.stream(uris)
+                .map(JavaFileSource::new)
+                .collect(Array.collector(JavaFileObject.class));
 
         return compile(null, javaSource);
     }
@@ -110,7 +113,8 @@ public class CompilerImpl implements Compiler {
      * @param source  the list of sources.
      * @return the list of compiled classes.
      */
-    protected synchronized Class<?>[] compile(@Nullable final Iterable<String> options, @NotNull final Iterable<? extends JavaFileObject> source) {
+    protected synchronized @NotNull Class<?>[] compile(@Nullable final Iterable<String> options,
+                                                       @NotNull final Iterable<? extends JavaFileObject> source) {
 
         final JavaCompiler compiler = getCompiler();
 
@@ -125,7 +129,7 @@ public class CompilerImpl implements Compiler {
 
             final Diagnostic<JavaFileObject>[] diagnostics = listener.getDiagnostics();
 
-            if (isShowDiagnostic() && diagnostics.length > 1) {
+            if (isShowDiagnostic() && diagnostics.length > 0) {
 
                 LOGGER.warning("errors:");
 
@@ -135,7 +139,6 @@ public class CompilerImpl implements Compiler {
             }
 
             final Array<Class<?>> result = ArrayFactory.newArray(Class.class);
-
             final String[] classNames = fileManager.getClassNames();
 
             for (final String className : classNames) {
@@ -175,9 +178,8 @@ public class CompilerImpl implements Compiler {
         }
     }
 
-    @NotNull
     @Override
-    public Class<?>[] compileDirectory(@NotNull final File... files) {
+    public @NotNull Class<?>[] compileDirectory(@NotNull final File... files) {
 
         final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
@@ -215,9 +217,8 @@ public class CompilerImpl implements Compiler {
         }
     }
 
-    @NotNull
     @Override
-    public Class<?>[] compileDirectory(@NotNull Path... paths) {
+    public @NotNull Class<?>[] compileDirectory(@NotNull Path... paths) {
 
         final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
@@ -239,8 +240,7 @@ public class CompilerImpl implements Compiler {
      *
      * @return the java compiler.
      */
-    @NotNull
-    protected JavaCompiler getCompiler() {
+    protected @NotNull JavaCompiler getCompiler() {
         return compiler;
     }
 
@@ -249,8 +249,7 @@ public class CompilerImpl implements Compiler {
      *
      * @return the java files manager.
      */
-    @NotNull
-    protected CompileJavaFileManager getFileManager() {
+    protected @NotNull CompileJavaFileManager getFileManager() {
         return fileManager;
     }
 
@@ -259,8 +258,7 @@ public class CompilerImpl implements Compiler {
      *
      * @return the compile listener.
      */
-    @NotNull
-    protected CompileListener getListener() {
+    protected @NotNull CompileListener getListener() {
         return listener;
     }
 
@@ -269,8 +267,7 @@ public class CompilerImpl implements Compiler {
      *
      * @return the class loader.
      */
-    @NotNull
-    protected CompileClassLoader getLoader() {
+    protected @NotNull CompileClassLoader getLoader() {
         return loader;
     }
 

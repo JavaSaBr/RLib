@@ -12,50 +12,47 @@ import org.jetbrains.annotations.NotNull;
 public final class ClassPathScannerFactory {
 
     /**
-     * New default class path scanner.
+     * Create a new default class path scanner.
      *
-     * @return the class path scanner
+     * @return the new class path scanner.
      */
-    @NotNull
-    public static ClassPathScanner newDefaultScanner() {
+    public static @NotNull ClassPathScanner newDefaultScanner() {
         return new ClassPathScannerImpl(ClassPathScannerFactory.class.getClassLoader());
     }
 
     /**
-     * New default class path scanner.
+     * Create a new default class path scanner.
      *
-     * @param classLoader the classloader.
-     * @return the class path scanner
+     * @param classLoader the class loader.
+     * @return the new class path scanner.
      */
-    @NotNull
-    public static ClassPathScanner newDefaultScanner(@NotNull final ClassLoader classLoader) {
+    public static @NotNull ClassPathScanner newDefaultScanner(@NotNull final ClassLoader classLoader) {
         return new ClassPathScannerImpl(classLoader);
     }
 
     /**
-     * New default class path scanner.
+     * Create a new default class path scanner with additional class paths.
      *
-     * @param classLoader     the classloader.
-     * @param additionalPaths the additional paths.
-     * @return the class path scanner
+     * @param classLoader     the class loader.
+     * @param additionalPaths the additional class paths.
+     * @return the new class path scanner.
      */
-    @NotNull
-    public static ClassPathScanner newDefaultScanner(@NotNull final ClassLoader classLoader,
-                                                     @NotNull final String[] additionalPaths) {
+    public static @NotNull ClassPathScanner newDefaultScanner(@NotNull final ClassLoader classLoader,
+                                                              @NotNull final String[] additionalPaths) {
         final ClassPathScannerImpl scanner = new ClassPathScannerImpl(classLoader);
         scanner.addAdditionalPaths(additionalPaths);
         return scanner;
     }
 
     /**
-     * New manifest class path scanner.
+     * Create a new manifest class path scanner.
      *
-     * @param rootClass    the root class
-     * @param classPathKey the class path key
-     * @return the class path scanner
+     * @param rootClass    the root class.
+     * @param classPathKey the class path key.
+     * @return the new class path scanner.
      */
-    @NotNull
-    public static ClassPathScanner newManifestScanner(final Class<?> rootClass, final String classPathKey) {
+    public static @NotNull ClassPathScanner newManifestScanner(@NotNull final Class<?> rootClass,
+                                                               @NotNull final String classPathKey) {
         return new ManifestClassPathScannerImpl(ClassPathScannerFactory.class.getClassLoader(), rootClass, classPathKey);
     }
 

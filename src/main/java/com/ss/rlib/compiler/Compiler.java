@@ -3,6 +3,7 @@ package com.ss.rlib.compiler;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.net.URI;
 import java.nio.file.Path;
 
 /**
@@ -15,12 +16,12 @@ public interface Compiler {
     /**
      * The constant SOURCE_EXTENSION.
      */
-    String SOURCE_EXTENSION = ".java";
+    @NotNull String SOURCE_EXTENSION = ".java";
 
     /**
      * The constant CLASS_EXTENSION.
      */
-    String CLASS_EXTENSION = ".class";
+    @NotNull String CLASS_EXTENSION = ".class";
 
     /**
      * Compile files.
@@ -28,8 +29,7 @@ public interface Compiler {
      * @param files the file list.
      * @return the classes list.
      */
-    @NotNull
-    Class<?>[] compile(@NotNull File... files);
+    @NotNull Class<?>[] compile(@NotNull File... files);
 
     /**
      * Compile files.
@@ -37,8 +37,15 @@ public interface Compiler {
      * @param paths the file list.
      * @return the classes list.
      */
-    @NotNull
-    Class<?>[] compile(@NotNull Path... paths);
+    @NotNull Class<?>[] compile(@NotNull Path... paths);
+
+    /**
+     * Compile resources.
+     *
+     * @param uris the resource list.
+     * @return the classes list.
+     */
+    @NotNull Class<?>[] compile(@NotNull URI... uris);
 
     /**
      * Compile all classes from directories.
@@ -46,8 +53,7 @@ public interface Compiler {
      * @param files the directory list.
      * @return the classes list.
      */
-    @NotNull
-    Class<?>[] compileDirectory(@NotNull File... files);
+    @NotNull Class<?>[] compileDirectory(@NotNull File... files);
 
     /**
      * Compile all classes from directories.
@@ -55,6 +61,5 @@ public interface Compiler {
      * @param paths the directory list.
      * @return the classes list.
      */
-    @NotNull
-    Class<?>[] compileDirectory(@NotNull Path... paths);
+    @NotNull Class<?>[] compileDirectory(@NotNull Path... paths);
 }

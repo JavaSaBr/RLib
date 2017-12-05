@@ -1,6 +1,6 @@
 package com.ss.rlib.compiler.impl;
 
-import com.ss.rlib.compiler.ByteSource;
+import com.ss.rlib.compiler.ByteCode;
 import com.ss.rlib.compiler.Compiler;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ import java.net.URI;
  *
  * @author JavaSaBr
  */
-public class CompileByteCode extends SimpleJavaFileObject implements ByteSource {
+public class CompileByteCode extends SimpleJavaFileObject implements ByteCode {
 
     /**
      * The stream with byte code.
@@ -22,25 +22,18 @@ public class CompileByteCode extends SimpleJavaFileObject implements ByteSource 
     @NotNull
     private final ByteArrayOutputStream outputStream;
 
-    /**
-     * Instantiates a new Compile byte code.
-     *
-     * @param name the name
-     */
-    public CompileByteCode(final String name) {
+    public CompileByteCode(@NotNull final String name) {
         super(URI.create("byte:///" + name.replace('/', '.') + Compiler.CLASS_EXTENSION), Kind.CLASS);
         this.outputStream = new ByteArrayOutputStream();
     }
 
-    @NotNull
     @Override
-    public byte[] getByteSource() {
+    public @NotNull byte[] getByteCode() {
         return outputStream.toByteArray();
     }
 
-    @NotNull
     @Override
-    public OutputStream openOutputStream() {
+    public @NotNull OutputStream openOutputStream() {
         return outputStream;
     }
 }

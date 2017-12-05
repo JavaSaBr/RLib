@@ -1,7 +1,9 @@
 package com.ss.rlib.classpath;
 
 import com.ss.rlib.util.array.Array;
+import com.ss.rlib.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -39,24 +41,44 @@ public interface ClassPathScanner {
     void setUseSystemClasspath(final boolean useSystemClasspath);
 
     /**
-     * Find all implementations of an interface class.
+     * Find all implementations of the interface class.
      *
-     * @param <T>            the type parameter
-     * @param <R>            the type parameter
+     * @param interfaceClass the interface class.
+     * @return the list of found implementations.
+     */
+    default <T> @NotNull Array<Class<T>> findImplements(@NotNull final Class<T> interfaceClass) {
+        final Array<Class<T>> result = ArrayFactory.newArray(Class.class);
+        findImplements(result, interfaceClass);
+        return result;
+    }
+
+    /**
+     * Find all implementations of the interface class.
+     *
      * @param container      the container.
      * @param interfaceClass the interface class.
      */
-    <T, R extends T> void findImplements(@NotNull Array<Class<R>> container, @NotNull Class<T> interfaceClass);
+    <T> void findImplements(@NotNull Array<Class<T>> container, @NotNull Class<T> interfaceClass);
 
     /**
-     * Find all inheriting classes of a parent class.
+     * Find all inheriting classes of the parent class.
      *
-     * @param <T>         the type parameter
-     * @param <R>         the type parameter
+     * @param parentClass the parent class.
+     * @return the list of found inherited classes.
+     */
+    default <T> @NotNull Array<Class<T>> findInherited(@NotNull final Class<T> parentClass) {
+        final Array<Class<T>> result = ArrayFactory.newArray(Class.class);
+        findInherited(result, parentClass);
+        return result;
+    }
+
+    /**
+     * Find all inheriting classes of the parent class.
+     *
      * @param container   the container.
      * @param parentClass the parent class.
      */
-    <T, R extends T> void findInherited(@NotNull Array<Class<R>> container, @NotNull Class<T> parentClass);
+    <T> void findInherited(@NotNull Array<Class<T>> container, @NotNull Class<T> parentClass);
 
     /**
      * Get all found classes.
@@ -73,11 +95,18 @@ public interface ClassPathScanner {
     void getAllResources(@NotNull Array<String> container);
 
     /**
-     * Start scan.
+     * Start scanning classpath.
+     */
+    default void scan() {
+        scan(null);
+    }
+
+    /**
+     * Start scanning classpath.
      *
      * @param filter the filter.
      */
-    void scan(@NotNull Function<String, Boolean> filter);
+    void scan(@Nullable Function<String, Boolean> filter);
 
     /**
      * Adds an additional path to scan.

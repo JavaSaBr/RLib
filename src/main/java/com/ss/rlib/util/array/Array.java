@@ -1,5 +1,6 @@
 package com.ss.rlib.util.array;
 
+import static java.util.Collections.unmodifiableSet;
 import com.ss.rlib.function.*;
 import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.ClassUtils;
@@ -8,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collector.Characteristics;
 import java.util.stream.Stream;
 
 /**
@@ -33,6 +34,43 @@ import java.util.stream.Stream;
  * @author JavaSaBr
  */
 public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneable {
+
+    @NotNull Set<Characteristics> CH_ID = unmodifiableSet(EnumSet.of(Characteristics.IDENTITY_FINISH));
+
+    static <T> @NotNull Collector<T, Array<T>, Array<T>> collector(@NotNull final Class<T> type) {
+        return new Collector<T, Array<T>, Array<T>>() {
+
+            private final Supplier<Array<T>> supplier = () -> ArrayFactory.newArray(type);
+
+            @Override
+            public Supplier<Array<T>> supplier() {
+                return supplier;
+            }
+
+            @Override
+            public BiConsumer<Array<T>, T> accumulator() {
+                return Collection::add;
+            }
+
+            @Override
+            public BinaryOperator<Array<T>> combiner() {
+                return (source, toAdd) -> {
+                    source.addAll(toAdd);
+                    return source;
+                };
+            }
+
+            @Override
+            public Function<Array<T>, Array<T>> finisher() {
+                return array -> array;
+            }
+
+            @Override
+            public Set<Characteristics> characteristics() {
+                return CH_ID;
+            }
+        };
+    }
 
     /**
      * Adds all elements from the array to this array.

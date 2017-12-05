@@ -13,7 +13,7 @@ import javax.tools.ToolProvider;
 public class CompilerFactory {
 
     /**
-     * Is available compiler.
+     * Check availability compiler API in current runtime.
      *
      * @return true if a compiler is available.
      */
@@ -22,12 +22,11 @@ public class CompilerFactory {
     }
 
     /**
-     * New default compiler compiler.
+     * Create a new default compiler.
      *
-     * @return the compiler.
+     * @return the new compiler.
      */
-    @NotNull
-    public static Compiler newDefaultCompiler() {
+    public static @NotNull Compiler newDefaultCompiler() {
         return new CompilerImpl(true);
     }
 

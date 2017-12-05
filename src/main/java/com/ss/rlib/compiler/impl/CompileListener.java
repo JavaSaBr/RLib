@@ -1,6 +1,7 @@
 package com.ss.rlib.compiler.impl;
 
-import com.ss.rlib.util.ClassUtils;
+import static com.ss.rlib.util.ClassUtils.unsafeCast;
+import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +23,6 @@ public class CompileListener implements DiagnosticListener<JavaFileObject> {
     @NotNull
     private final Array<Diagnostic<? extends JavaFileObject>> diagnostics;
 
-    /**
-     * Instantiates a new Compile listener.
-     */
     public CompileListener() {
         this.diagnostics = ArrayFactory.newArray(Diagnostic.class);
     }
@@ -41,10 +39,9 @@ public class CompileListener implements DiagnosticListener<JavaFileObject> {
      *
      * @return the list of diagnostic reports.
      */
-    @NotNull
-    public Diagnostic<JavaFileObject>[] getDiagnostics() {
+    public @NotNull Diagnostic<JavaFileObject>[] getDiagnostics() {
         final Diagnostic[] array = diagnostics.toArray(Diagnostic.class);
-        return ClassUtils.unsafeCast(array);
+        return notNull(unsafeCast(array));
     }
 
     @Override

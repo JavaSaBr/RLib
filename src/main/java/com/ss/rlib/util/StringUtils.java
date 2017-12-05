@@ -22,19 +22,17 @@ public class StringUtils {
     /**
      * The empty string.
      */
+    @NotNull
     public static final String EMPTY = "";
-
-    /**
-     * The empty array of strings.
-     */
-    public static final String[] EMPTY_ARRAY = new String[0];
 
     /**
      * The pattern for validating email.
      */
+    @NotNull
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+" +
             "(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
+    @NotNull
     private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = ThreadLocal.withInitial(StringUtils::getHashMD5);
 
     /**
@@ -102,8 +100,7 @@ public class StringUtils {
      * @param throwable the exception.
      * @return the stack trace.
      */
-    @NotNull
-    public static String toString(@NotNull final Throwable throwable) {
+    public static @NotNull String toString(@NotNull final Throwable throwable) {
         return toString(throwable, 6);
     }
 
@@ -114,8 +111,7 @@ public class StringUtils {
      * @param deepLevel the max level of deep.
      * @return the stack trace.
      */
-    @NotNull
-    public static String toString(@NotNull final Throwable throwable, final int deepLevel) {
+    public static @NotNull String toString(@NotNull final Throwable throwable, final int deepLevel) {
 
         StringWriter writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
@@ -146,8 +142,7 @@ public class StringUtils {
      * @param length the length.
      * @return the new string.
      */
-    @NotNull
-    public static String generate(final int length) {
+    public static @NotNull String generate(final int length) {
 
         final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
         final char[] array = new char[length];
@@ -162,45 +157,51 @@ public class StringUtils {
     /**
      * @return the md5 message digest.
      */
-    private static MessageDigest getHashMD5() {
-
+    private static @NotNull MessageDigest getHashMD5() {
         try {
             return MessageDigest.getInstance("MD5");
         } catch (final NoSuchAlgorithmException e) {
-            Utils.print(StringUtils.class, e);
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 
     /**
-     * Check a string.
+     * Check the string.
      *
      * @param string the string.
-     * @return true if the string null or empty.
+     * @return true if the string is null or empty.
      */
     public static boolean isEmpty(@Nullable final String string) {
         return string == null || string.isEmpty();
     }
 
     /**
-     * Get a length of a string.
+     * Check the string.
+     *
+     * @param string the string.
+     * @return true if the string isn't empty.
+     */
+    public static boolean isNotEmpty(@Nullable final String string) {
+        return !isEmpty(string);
+    }
+
+    /**
+     * Get length of the string.
      *
      * @param string the string.
      * @return length or 0 if a string is null or empty.
      */
-    public static int length(final String string) {
+    public static int length(@Nullable final String string) {
         return string == null ? 0 : string.length();
     }
 
     /**
-     * Encode a string to hash MD5.
+     * Encode the string to hash MD5.
      *
      * @param string a string.
      * @return the encoded string.
      */
-    @NotNull
-    public static String toMD5(@NotNull final String string) {
+    public static @NotNull String toMD5(@NotNull final String string) {
         final MessageDigest hashMD5 = LOCAL_HASH_MD.get();
         hashMD5.update(string.getBytes(), 0, string.length());
         return new BigInteger(1, hashMD5.digest()).toString(16);

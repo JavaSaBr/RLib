@@ -14,6 +14,7 @@ import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,7 +90,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public <T, R extends T> void findImplements(@NotNull final Array<Class<R>> container, @NotNull final Class<T> interfaceClass) {
+    public <T> void findImplements(@NotNull final Array<Class<T>> container, @NotNull final Class<T> interfaceClass) {
 
         if (!interfaceClass.isInterface()) {
             throw new IllegalArgumentException("The class " + interfaceClass + " is not interface.");
@@ -106,7 +107,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public <T, R extends T> void findInherited(@NotNull final Array<Class<R>> container, @NotNull final Class<T> parentClass) {
+    public <T> void findInherited(@NotNull final Array<Class<T>> container, @NotNull final Class<T> parentClass) {
 
         if (Modifier.isFinal(parentClass.getModifiers())) {
             throw new IllegalArgumentException("The class " + parentClass + " is final class.");
@@ -365,7 +366,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public void scan(@NotNull final Function<String, Boolean> filter) {
+    public void scan(@Nullable final Function<String, Boolean> filter) {
 
         final String[] paths = getPathsToScan();
 
@@ -376,7 +377,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
             final Path file = Paths.get(path);
 
-            if (!Files.exists(file) || (!filter.apply(path))) {
+            if (!Files.exists(file) || (filter != null && !filter.apply(path))) {
                 continue;
             }
 
