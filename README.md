@@ -5,8 +5,7 @@ Please see the file called LICENSE.
 
 #### Gradle
 
-```
-#!groovy
+```groovy
 
 allprojects {
     repositories {
@@ -21,8 +20,7 @@ dependencies {
     
 #### Maven
 
-```
-#!xml
+```xml
 
 <repositories>
         <repository>
@@ -41,8 +39,7 @@ dependencies {
 ##Most interesting parts:
 ### Classpath Scanner API
 
-```
-#!java
+```java
 
         final ClassPathScanner scanner = ClassPathScannerFactory.newDefaultScanner();
         scanner.setUseSystemClasspath(true);
@@ -55,8 +52,7 @@ dependencies {
 
 ### Compiler API
 
-```
-#!java
+```java
 
         final URL javaSource = getClass().getResource("/java/source/TestCompileJavaSource.java");
         
@@ -70,8 +66,7 @@ dependencies {
 
 ### VarTable API
 
-```
-#!java
+```java
 
         final VarTable vars = VarTable.newInstance();
         vars.set("string", "Hello");
