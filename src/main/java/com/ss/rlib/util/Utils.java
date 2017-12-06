@@ -26,9 +26,11 @@ import java.util.function.Consumer;
  */
 public final class Utils {
 
+    @NotNull
     private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() ->
             new SimpleDateFormat("HH:mm:ss:SSS"));
 
+    @NotNull
     private static final ThreadLocal<Date> LOCAL_DATE = withInitial(Date::new);
 
     /**

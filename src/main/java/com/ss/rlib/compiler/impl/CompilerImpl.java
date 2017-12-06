@@ -4,6 +4,7 @@ import com.ss.rlib.compiler.Compiler;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.util.array.Array;
+import com.ss.rlib.util.array.ArrayCollectors;
 import com.ss.rlib.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +81,7 @@ public class CompilerImpl implements Compiler {
 
         final Array<JavaFileObject> javaSource = Arrays.stream(files)
                 .map(JavaFileSource::new)
-                .collect(Array.collector(JavaFileObject.class));
+                .collect(ArrayCollectors.simple(JavaFileObject.class));
 
         return compile(null, javaSource);
     }
@@ -91,7 +92,7 @@ public class CompilerImpl implements Compiler {
 
         final Array<JavaFileObject> javaSource = Arrays.stream(paths)
                 .map(JavaFileSource::new)
-                .collect(Array.collector(JavaFileObject.class));
+                .collect(ArrayCollectors.simple(JavaFileObject.class));
 
         return compile(null, javaSource);
     }
@@ -101,7 +102,7 @@ public class CompilerImpl implements Compiler {
 
         final Array<JavaFileObject> javaSource = Arrays.stream(uris)
                 .map(JavaFileSource::new)
-                .collect(Array.collector(JavaFileObject.class));
+                .collect(ArrayCollectors.simple(JavaFileObject.class));
 
         return compile(null, javaSource);
     }
