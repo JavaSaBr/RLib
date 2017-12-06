@@ -3,17 +3,16 @@ package com.ss.rlib.geom;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The interface to implement a buffer with vectors.
+ * The interface to implement a buffer of vectors.
  *
  * @author JavaSaBr
  */
 public interface Vector3fBuffer {
 
     /**
-     * Next vector vector 3 f.
+     * Take the next free vector.
      *
      * @return the next vector.
      */
-    @NotNull
-    Vector3f nextVector();
+    @NotNull Vector3f nextVector();
 }

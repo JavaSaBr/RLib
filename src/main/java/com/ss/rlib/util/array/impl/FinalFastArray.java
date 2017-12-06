@@ -10,21 +10,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class FinalFastArray<E> extends FastArray<E> {
 
-    /**
-     * Instantiates a new Final fast array.
-     *
-     * @param type the type
-     */
     public FinalFastArray(@NotNull final Class<E> type) {
         super(type);
     }
 
-    /**
-     * Instantiates a new Final fast array.
-     *
-     * @param type the type
-     * @param size the size
-     */
     public FinalFastArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
     }

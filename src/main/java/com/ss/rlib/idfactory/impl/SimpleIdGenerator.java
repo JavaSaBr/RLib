@@ -1,11 +1,11 @@
 package com.ss.rlib.idfactory.impl;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.ss.rlib.idfactory.IdGenerator;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
- * The simple implementation of an ID generator.
+ * The simple implementation of ID generator.
  *
  * @author JavaSaBr
  */
@@ -22,12 +22,6 @@ public final class SimpleIdGenerator implements IdGenerator {
      */
     private final AtomicInteger nextId;
 
-    /**
-     * Instantiates a new Simple id generator.
-     *
-     * @param start the start ID.
-     * @param end   the last ID.
-     */
     public SimpleIdGenerator(final int start, final int end) {
         this.start = start;
         this.end = end;

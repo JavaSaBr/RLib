@@ -1,14 +1,14 @@
 package com.ss.rlib.geom;
 
 import static java.lang.Float.floatToIntBits;
-
+import com.ss.rlib.util.ExtMath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.ss.rlib.util.ExtMath;
-
 /**
- * The type Vector 3 f.
+ * The implementation of vector with 3 float values.
+ *
+ * @author JavaSaBr
  */
 public final class Vector3f {
 
@@ -44,17 +44,30 @@ public final class Vector3f {
     /**
      * The constant POSITIVE_INFINITY.
      */
-    public final static Vector3f POSITIVE_INFINITY = new Vector3f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+    public final static Vector3f POSITIVE_INFINITY = new Vector3f(Float.POSITIVE_INFINITY,
+            Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+
     /**
      * The constant NEGATIVE_INFINITY.
      */
-    public final static Vector3f NEGATIVE_INFINITY = new Vector3f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    public final static Vector3f NEGATIVE_INFINITY = new Vector3f(Float.NEGATIVE_INFINITY,
+            Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+
 
     /**
-     * Is valid vector boolean.
+     * Create a new instance of the vector.
      *
-     * @param vector the vector
-     * @return the boolean
+     * @return the new instance.
+     */
+    public @NotNull static Vector3f newInstance() {
+        return new Vector3f();
+    }
+
+    /**
+     * Check the vector.
+     *
+     * @param vector the vector.
+     * @return true if the vector is valid.
      */
     public static boolean isValidVector(@Nullable final Vector3f vector) {
 
@@ -69,38 +82,27 @@ public final class Vector3f {
         return true;
     }
 
-    /**
-     * New instance vector 3 f.
-     *
-     * @return the vector 3 f
-     */
-    @NotNull
-    public static Vector3f newInstance() {
-        return new Vector3f();
-    }
 
     /**
-     * New instance vector 3 f.
+     * Create a new instance of the vector.
      *
-     * @param x the x
-     * @param y the y
-     * @param z the z
-     * @return the vector 3 f
+     * @param x the x value.
+     * @param y the y value.
+     * @param z the z value.
+     * @return the new instance.
      */
-    @NotNull
-    public static Vector3f newInstance(final float x, final float y, final float z) {
+    public static @NotNull Vector3f newInstance(final float x, final float y, final float z) {
         return new Vector3f(x, y, z);
     }
 
     /**
-     * New instance vector 3 f.
+     * Create a new instance of the vector.
      *
-     * @param vals the vals
-     * @return the vector 3 f
+     * @param values the array with values.
+     * @return the new instance.
      */
-    @NotNull
-    public static Vector3f newInstance(@NotNull final float[] vals) {
-        return new Vector3f(vals[0], vals[1], vals[2]);
+    public static @NotNull Vector3f newInstance(@NotNull final float[] values) {
+        return new Vector3f(values[0], values[1], values[2]);
     }
 
     /**
@@ -127,15 +129,14 @@ public final class Vector3f {
     }
 
     /**
-     * Add local vector 3 f.
+     * Add the values to the current vector.
      *
-     * @param addX the add x
-     * @param addY the add y
-     * @param addZ the add z
-     * @return the vector 3 f
+     * @param addX the add x.
+     * @param addY the add y.
+     * @param addZ the add z.
+     * @return the current vector.
      */
-    @NotNull
-    public Vector3f addLocal(final float addX, final float addY, final float addZ) {
+    public @NotNull Vector3f addLocal(final float addX, final float addY, final float addZ) {
         x += addX;
         y += addY;
         z += addZ;
@@ -143,27 +144,26 @@ public final class Vector3f {
     }
 
     /**
-     * Add local vector 3 f.
+     * Add the vector to the current vector.
      *
-     * @param vec the vec
-     * @return the vector 3 f
+     * @param vector the vector.
+     * @return the current vector.
      */
-    @NotNull
-    public Vector3f addLocal(@NotNull final Vector3f vec) {
-        return addLocal(vec.x, vec.y, vec.z);
+    public @NotNull Vector3f addLocal(@NotNull final Vector3f vector) {
+        return addLocal(vector.x, vector.y, vector.z);
     }
 
     /**
-     * Cross vector 3 f.
+     * Calculate a cross vector between the current vector and the coords.
      *
      * @param otherX the other x
      * @param otherY the other y
      * @param otherZ the other z
-     * @param result the result
-     * @return the vector 3 f
+     * @param result the result vector.
+     * @return the result vector.
      */
-    @NotNull
-    public Vector3f cross(final float otherX, final float otherY, final float otherZ, @NotNull final Vector3f result) {
+    public @NotNull Vector3f cross(final float otherX, final float otherY, final float otherZ,
+                                   @NotNull final Vector3f result) {
 
         final float resX = y * otherZ - z * otherY;
         final float resY = z * otherX - x * otherZ;
@@ -175,13 +175,12 @@ public final class Vector3f {
     }
 
     /**
-     * Cross vector 3 f.
+     * Calculate a cross vector between the current vector and the vector.
      *
-     * @param vector the vector
-     * @return the vector 3 f
+     * @param vector the vector.
+     * @return the result vector.
      */
-    @NotNull
-    public Vector3f cross(@NotNull final Vector3f vector) {
+    public @NotNull Vector3f cross(@NotNull final Vector3f vector) {
         return cross(vector, newInstance());
     }
 

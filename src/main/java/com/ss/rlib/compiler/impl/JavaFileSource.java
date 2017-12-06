@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.tools.SimpleJavaFileObject;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,22 +17,16 @@ import java.nio.file.Paths;
  */
 public class JavaFileSource extends SimpleJavaFileObject {
 
-    /**
-     * Instantiates a new Java file source.
-     *
-     * @param file the file
-     */
     protected JavaFileSource(@NotNull final File file) {
         super(file.toURI(), Kind.SOURCE);
     }
 
-    /**
-     * Instantiates a new Java file source.
-     *
-     * @param path the path
-     */
     protected JavaFileSource(@NotNull final Path path) {
         super(path.toUri(), Kind.SOURCE);
+    }
+
+    protected JavaFileSource(@NotNull final URI uri) {
+        super(uri, Kind.SOURCE);
     }
 
     @Override

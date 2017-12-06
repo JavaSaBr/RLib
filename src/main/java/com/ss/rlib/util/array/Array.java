@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.RandomAccess;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -32,7 +33,7 @@ import java.util.stream.Stream;
  * @param <E> the type parameter
  * @author JavaSaBr
  */
-public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneable {
+public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneable, RandomAccess {
 
     /**
      * Adds all elements from the array to this array.
@@ -278,7 +279,6 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         }
     }
 
-
     /**
      * Apply the function to each filtered element.
      *
@@ -308,8 +308,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param second   the second argument.
      * @param function the function.
      */
-    default <F> void forEach(final long first, @Nullable final F second,
-                             @NotNull final ObjectLongObjectConsumer<@NotNull E, F> function) {
+    default <F> void forEachL(final long first, @Nullable final F second,
+                              @NotNull final ObjectLongObjectConsumer<@NotNull E, F> function) {
         for (final E element : array()) {
             if (element == null) break;
             function.accept(element, first, second);
@@ -324,8 +324,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param second   the second argument.
      * @param function the function.
      */
-    default <F> void forEach(final float first, @Nullable final F second,
-                             @NotNull final ObjectFloatObjectConsumer<@NotNull E, F> function) {
+    default <F> void forEachF(final float first, @Nullable final F second,
+                              @NotNull final ObjectFloatObjectConsumer<@NotNull E, F> function) {
         for (final E element : array()) {
             if (element == null) break;
             function.accept(element, first, second);
@@ -578,7 +578,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the array
      */
     default @NotNull Array<E> sort(@NotNull final ArrayComparator<@NotNull E> comparator) {
-        ArrayUtils.sort(array(), comparator);
+        ArrayUtils.sort(array(), 0, size(), comparator);
         return this;
     }
 

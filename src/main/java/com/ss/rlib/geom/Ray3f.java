@@ -1,9 +1,7 @@
 package com.ss.rlib.geom;
 
 import com.ss.rlib.util.pools.Reusable;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of a ray.
@@ -13,58 +11,55 @@ import java.util.Objects;
 public class Ray3f implements Reusable {
 
     /**
-     * The start point.
+     * The start point of this ray.
      */
+    @Nullable
     protected Vector3f start;
 
     /**
-     * The direction of a ray.
+     * The direction of this ray.
      */
+    @Nullable
     protected Vector3f direction;
 
     /**
-     * Gets direction.
+     * Get the direction.
      *
-     * @return the direction of a ray.
+     * @return the direction.
      */
-    @NotNull
-    public final Vector3f getDirection() {
-        return Objects.requireNonNull(direction);
+    public final @Nullable Vector3f getDirection() {
+        return direction;
     }
 
     /**
-     * Sets direction.
+     * Set the direction.
      *
-     * @param direction the direction of a ray.
+     * @param direction the direction.
      */
-    public final void setDirection(@NotNull final Vector3f direction) {
+    public final void setDirection(@Nullable final Vector3f direction) {
         this.direction = direction;
     }
 
     /**
-     * Gets start.
+     * Get the start point.
      *
      * @return the start point.
      */
-    @NotNull
-    public final Vector3f getStart() {
-        return Objects.requireNonNull(start);
+    public final @Nullable Vector3f getStart() {
+        return start;
     }
 
     /**
-     * Sets start.
+     * Set the start point.
      *
      * @param start the start point.
      */
-    public final void setStart(@NotNull final Vector3f start) {
+    public final void setStart(@Nullable final Vector3f start) {
         this.start = start;
     }
 
     @Override
     public String toString() {
-        return "Ray3f{" +
-                "start=" + start +
-                ", direction=" + direction +
-                '}';
+        return "Ray3f{" + "start=" + start + ", direction=" + direction + '}';
     }
 }

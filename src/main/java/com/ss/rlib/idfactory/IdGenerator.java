@@ -13,7 +13,7 @@ public interface IdGenerator {
      * @return the next free ID.
      */
     default int getNextId() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     /**

@@ -1,10 +1,9 @@
 package com.ss.rlib.util.array.impl;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.ClassUtils;
 import com.ss.rlib.util.array.Array;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The base implementation of the {@link Array}.

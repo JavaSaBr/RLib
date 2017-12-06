@@ -4,11 +4,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * The interface for implementing the connection factory to database.
+ * The interface to implement a connection factory to database.
  *
  * @author JavaSaBr
  */
-public interface ConnectFactory {
+public interface ConnectionFactory {
 
     /**
      * Get new connection to database.

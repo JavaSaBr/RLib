@@ -10,10 +10,10 @@ import org.jetbrains.annotations.NotNull;
 public final class CleaningQuery {
 
     /**
-     * The name of the table.
+     * The description.
      */
     @NotNull
-    private final String name;
+    private final String description;
 
     /**
      * The query.
@@ -21,42 +21,31 @@ public final class CleaningQuery {
     @NotNull
     private final String query;
 
-    /**
-     * Instantiates a new Cleaning query.
-     *
-     * @param name  имя таблицы
-     * @param query запрос
-     */
-    public CleaningQuery(@NotNull final String name, @NotNull final String query) {
-        this.name = name;
+    public CleaningQuery(@NotNull final String description, @NotNull final String query) {
+        this.description = description;
         this.query = query;
     }
 
     /**
-     * Gets name.
+     * Get the description.
      *
-     * @return the name of the table.
+     * @return the description.
      */
-    @NotNull
-    public String getName() {
-        return name;
+    public @NotNull String getDescription() {
+        return description;
     }
 
     /**
-     * Gets query.
+     * Get the query.
      *
      * @return the query.
      */
-    @NotNull
-    public String getQuery() {
+    public @NotNull String getQuery() {
         return query;
     }
 
     @Override
     public String toString() {
-        return "CleaningQuery{" +
-                "name='" + name + '\'' +
-                ", query='" + query + '\'' +
-                '}';
+        return "CleaningQuery{" + "description='" + description + '\'' + ", query='" + query + '\'' + '}';
     }
 }

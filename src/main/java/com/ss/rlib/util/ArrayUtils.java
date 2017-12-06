@@ -413,6 +413,20 @@ public final class ArrayUtils {
     }
 
     /**
+     * Sort the array.
+     *
+     * @param <T>        the type parameter
+     * @param array      the array.
+     * @param fromIndex  the start index.
+     * @param toIndex    the last index.
+     * @param comparator the comparator.
+     */
+    public static <T> void sort(@NotNull final T[] array, final int fromIndex, final int toIndex,
+                                @NotNull final Comparator<? super T> comparator) {
+        java.util.Arrays.sort(array, fromIndex, toIndex, comparator);
+    }
+
+    /**
      * Convert the array to a string presentation.
      *
      * @param array the array.

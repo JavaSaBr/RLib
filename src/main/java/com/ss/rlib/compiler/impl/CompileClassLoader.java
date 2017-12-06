@@ -2,7 +2,7 @@ package com.ss.rlib.compiler.impl;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.ss.rlib.compiler.ByteSource;
+import com.ss.rlib.compiler.ByteCode;
 import com.ss.rlib.util.Utils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
@@ -18,32 +18,29 @@ public class CompileClassLoader extends ClassLoader {
      * The list of byte codes of loaded classes.
      */
     @NotNull
-    private final Array<ByteSource> byteCode;
+    private final Array<ByteCode> byteCode;
 
-    /**
-     * Instantiates a new Compile class loader.
-     */
     public CompileClassLoader() {
-        this.byteCode = ArrayFactory.newArray(ByteSource.class);
+        this.byteCode = ArrayFactory.newArray(ByteCode.class);
     }
 
     /**
      * Add a new compiled class.
      *
-     * @param byteSource the byte source
+     * @param byteCode the byte code
      */
-    public void addByteCode(@NotNull final ByteSource byteSource) {
-        byteCode.add(byteSource);
+    public void addByteCode(@NotNull final ByteCode byteCode) {
+        this.byteCode.add(byteCode);
     }
 
     @Override
-    protected Class<?> findClass(@NotNull final String name) throws ClassNotFoundException {
+    protected Class<?> findClass(@NotNull final String name) {
 
         synchronized (byteCode) {
             if (byteCode.isEmpty()) return null;
-            for (final ByteSource byteSource : byteCode) {
-                final byte[] bytes = byteSource.getByteSource();
-                return Utils.get(() -> defineClass(name, bytes, 0, bytes.length));
+            for (final ByteCode byteCode : this.byteCode) {
+                final byte[] content = byteCode.getByteCode();
+                return Utils.get(() -> defineClass(name, content, 0, content.length));
             }
         }
 

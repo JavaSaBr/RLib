@@ -9,10 +9,9 @@ import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
-import java.io.IOException;
 
 /**
- * The manager to load byte source of classes.
+ * The manager to load byte code of classes.
  *
  * @author JavaSaBr
  */
@@ -30,15 +29,9 @@ public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJa
     @NotNull
     private final CompileClassLoader loader;
 
-    /**
-     * Instantiates a new Compile java file manager.
-     *
-     * @param fileManager the file manager
-     * @param loader      the loader
-     */
-    public CompileJavaFileManager(@NotNull final StandardJavaFileManager fileManager, @NotNull final CompileClassLoader loader) {
+    public CompileJavaFileManager(@NotNull final StandardJavaFileManager fileManager,
+                                  @NotNull final CompileClassLoader loader) {
         super(fileManager);
-
         this.loader = loader;
         this.classNames = ArrayFactory.newArray(String.class);
     }
@@ -55,14 +48,13 @@ public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJa
      *
      * @return the list of names of loaded classes.
      */
-    @NotNull
-    public String[] getClassNames() {
+    public @NotNull String[] getClassNames() {
         return classNames.toArray(new String[classNames.size()]);
     }
 
     @Override
     public JavaFileObject getJavaFileForOutput(@NotNull final Location location, @NotNull final String name,
-                                               @NotNull final Kind kind, @NotNull final FileObject sibling) throws IOException {
+                                               @NotNull final Kind kind, @NotNull final FileObject sibling) {
 
         final CompileByteCode byteCode = new CompileByteCode(name);
 

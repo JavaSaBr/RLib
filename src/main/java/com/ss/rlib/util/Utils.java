@@ -26,9 +26,11 @@ import java.util.function.Consumer;
  */
 public final class Utils {
 
+    @NotNull
     private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() ->
             new SimpleDateFormat("HH:mm:ss:SSS"));
 
+    @NotNull
     private static final ThreadLocal<Date> LOCAL_DATE = withInitial(Date::new);
 
     /**
@@ -398,8 +400,6 @@ public final class Utils {
     /**
      * Execute the function with auto-converting checked exception to runtime.
      *
-     * @param <F>      the type parameter
-     * @param <R>      the type parameter
      * @param first    the first argument.
      * @param function the function.
      * @return the result.
@@ -408,6 +408,23 @@ public final class Utils {
                                         @NotNull final SafeFunction<@NotNull F, @NotNull R> function) {
         try {
             return function.apply(first);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting checked exception to runtime.
+     *
+     * @param first    the first argument.
+     * @param second    the second argument.
+     * @param function the function.
+     * @return the result.
+     */
+    public static <F, S, R> @NotNull R get(@NotNull final F first, @NotNull final S second,
+                                           @NotNull final SafeBiFunction<@NotNull F, @NotNull S, @NotNull R> function) {
+        try {
+            return function.apply(first, second);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }

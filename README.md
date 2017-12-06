@@ -5,9 +5,7 @@ Please see the file called LICENSE.
 
 #### Gradle
 
-
-```
-#!groovy
+```groovy
 
 allprojects {
     repositories {
@@ -16,18 +14,15 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.JavaSaBr:RLib:6.5.3'
+    compile 'com.github.JavaSaBr:RLib:6.6.0'
 }
 ```
-
     
 #### Maven
 
-```
-#!xml
+```xml
 
-
-<repositories>
+    <repositories>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -37,6 +32,122 @@ dependencies {
     <dependency>
         <groupId>com.github.JavaSaBr</groupId>
         <artifactId>RLib</artifactId>
-        <version>6.5.3</version>
+        <version>6.6.0</version>
     </dependency>
+```
+
+##Most interesting parts:
+### Classpath Scanner API
+
+```java
+
+    final ClassPathScanner scanner = ClassPathScannerFactory.newDefaultScanner();
+    scanner.setUseSystemClasspath(true);
+    scanner.scan();
+
+    final Array<Class<Collection>> implementations = scanner.findImplements(Collection.class);
+    final Array<Class<AbstractArray>> inherited = scanner.findInherited(AbstractArray.class);
+```
+
+### Compiler API
+
+```java
+
+    final URL javaSource = getClass().getResource("/java/source/TestCompileJavaSource.java");
+    
+    final Compiler compiler = CompilerFactory.newDefaultCompiler();
+    final Class<?>[] compiled = compiler.compile(javaSource.toURI());
+    
+    final Object instance = ClassUtils.newInstance(compiled[0]);
+    final Method method = instance.getClass().getMethod("makeString");
+    final Object result = method.invoke(instance);        
+```
+
+### VarTable API
+
+```java
+
+    final VarTable vars = VarTable.newInstance();
+    vars.set("string", "Hello");
+    vars.set("intArray", toIntegerArray(1, 2, 3, 5));
+    vars.set("floatStringArray", "1.5,4.2,5.5");
+    vars.set("stringEnum", "FLOAT");
+    vars.set("enum", ReferenceType.BYTE);
+
+    final String string = vars.getString("string");
+    final int[] array = vars.getIntegerArray("intArray", "");
+    final float[] floatStringArray = vars.getFloatArray("floatStringArray", ",");
+    final ReferenceType stringEnum = vars.getEnum("stringEnum", ReferenceType.class);
+    final ReferenceType anEnum = vars.getEnum("enum", ReferenceType.class);
+    final ReferenceType unsafeGet = vars.get("enum");
+```
+
+### Array API
+
+```java
+
+    final Array<Integer> array = ArrayFactory.asArray(2, 5, 1, 7, 6, 8, 4);
+    array.sort(Integer::compareTo);
+
+    // performance operations
+    final UnsafeArray<Integer> unsafe = array.asUnsafe();
+    // prepare the wrapped array to have the size
+    unsafe.prepareForSize(10);
+    unsafe.unsafeAdd(3);
+    unsafe.unsafeAdd(9);
+
+    final Integer first = array.first();
+    final Integer last = array.last();
+
+    // remove the element with saving ordering
+    array.slowRemove(1);
+    // remove the element without saving ordering
+    array.fastRemove(1);
+
+    // search API
+    Integer searched = array.search(integer -> integer == 2);
+    searched = array.search(2, (el, arg) -> el == arg);
+
+    // foreach API
+    array.forEach(5, (el, arg) -> System.out.println(el + arg));
+    array.forEach(5, 7, (el, firstArg, secondArg) -> System.out.println(el + firstArg + secondArg));
+    
+    // Stream Collector
+    final Array<Integer> result = IntStream.range(0, 1000)
+                    .mapToObj(value -> value)
+                    .collect(ArrayCollectors.simple(Integer.class));
+```
+
+### Concurrent Array API
+
+```java
+
+    final ConcurrentArray<Integer> array = ArrayFactory.newConcurrentAtomicARSWLockArray(Integer.class);
+    final long writeStamp = array.writeLock();
+    try {
+        array.addAll(ArrayFactory.toArray(9, 8, 7, 6, 5, 4, 3));
+        array.sort(Integer::compareTo);
+    } finally {
+        array.writeUnlock(writeStamp);
+    }
+
+    final long readStamp = array.readLock();
+    try {
+        final Integer first = array.first();
+        final Integer last = array.last();
+    } finally {
+        array.readUnlock(readStamp);
+    }
+
+    final Integer last = ArrayUtils.getInReadLock(array, Array::last);
+    final Integer result = ArrayUtils.getInReadLock(array, last,
+            (arr, target) -> arr.search(target, Integer::equals));
+
+    ArrayUtils.runInWriteLock(array, result + 1, Collection::add);
+    
+    // Stream Collector
+    final ConcurrentArray<Integer> result = IntStream.range(0, 1000)
+                    .parallel()
+                    .mapToObj(value -> value)
+                    .collect(ArrayCollectors.concurrent(Integer.class));
 ```

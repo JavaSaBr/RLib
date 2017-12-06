@@ -4,7 +4,6 @@ import com.ss.rlib.io.ReusableStream;
 import com.ss.rlib.util.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -30,31 +29,16 @@ public final class ReuseBytesInputStream extends InputStream implements Reusable
      */
     protected int count;
 
-    /**
-     * Instantiates a new Reuse bytes input stream.
-     */
     public ReuseBytesInputStream() {
         this.buffer = ArrayUtils.EMPTY_BYTE_ARRAY;
     }
 
-    /**
-     * Instantiates a new Reuse bytes input stream.
-     *
-     * @param buffer the buffer
-     */
     public ReuseBytesInputStream(@NotNull final byte buffer[]) {
         this.buffer = buffer;
         this.pos = 0;
         this.count = buffer.length;
     }
 
-    /**
-     * Instantiates a new Reuse bytes input stream.
-     *
-     * @param buffer the buffer
-     * @param offset the offset
-     * @param length the length
-     */
     public ReuseBytesInputStream(@NotNull final byte buffer[], final int offset, final int length) {
         this.buffer = buffer;
         this.pos = offset;
@@ -106,11 +90,11 @@ public final class ReuseBytesInputStream extends InputStream implements Reusable
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
     }
 
     @Override
-    public synchronized void reset() throws IOException {
+    public synchronized void reset() {
         this.pos = 0;
     }
 }

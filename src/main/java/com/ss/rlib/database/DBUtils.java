@@ -2,6 +2,7 @@ package com.ss.rlib.database;
 
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
@@ -16,6 +17,7 @@ import java.sql.Statement;
  */
 public final class DBUtils {
 
+    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(DBUtils.class);
 
     /**
@@ -50,7 +52,8 @@ public final class DBUtils {
      * @param statement  the statement.
      * @param rset       the result set.
      */
-    public static void close(@Nullable final Connection connection, @Nullable final Statement statement, @Nullable final ResultSet rset) {
+    public static void close(@Nullable final Connection connection, @Nullable final Statement statement,
+                             @Nullable final ResultSet rset) {
         close(rset);
         close(statement);
         close(connection);
