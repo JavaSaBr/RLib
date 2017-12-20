@@ -170,7 +170,6 @@ public class LoggerManager {
      * @param message the message.
      */
     public static void write(@NotNull final LoggerLevel level, @NotNull final String name, @NotNull final String message) {
-        if (!level.isEnabled()) return;
 
         final String timeStump = TIME_FORMATTER.format(LocalTime.now());
         final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + message;
@@ -187,7 +186,6 @@ public class LoggerManager {
      */
     public static void write(@NotNull final LoggerLevel level, @NotNull final String name,
                              @NotNull final Supplier<String> messageFactory) {
-        if (!level.isEnabled()) return;
 
         final String timeStump = TIME_FORMATTER.format(LocalTime.now());
         final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.get();
@@ -205,7 +203,6 @@ public class LoggerManager {
      */
     public static <T> void write(@NotNull final LoggerLevel level, @NotNull final String name, @NotNull final T arg,
                                  @NotNull final Function<@NotNull T, String> messageFactory) {
-        if (!level.isEnabled()) return;
 
         final String timeStump = TIME_FORMATTER.format(LocalTime.now());
         final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(arg);
@@ -225,7 +222,6 @@ public class LoggerManager {
     public static <F, S> void write(@NotNull final LoggerLevel level, @NotNull final String name,
                                     @NotNull final F first, @NotNull final S second,
                                     @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
-        if (!level.isEnabled()) return;
 
         final String timeStump = TIME_FORMATTER.format(LocalTime.now());
         final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(first, second);
@@ -246,7 +242,6 @@ public class LoggerManager {
     public static <F, S, T> void write(@NotNull final LoggerLevel level, @NotNull final String name,
                                        @NotNull final F first, @NotNull final S second, @NotNull final T third,
                                        @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
-        if (!level.isEnabled()) return;
 
         final String timeStump = TIME_FORMATTER.format(LocalTime.now());
         final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(first, second, third);

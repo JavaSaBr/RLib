@@ -14,7 +14,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.JavaSaBr:RLib:6.6.0'
+    compile 'com.github.JavaSaBr:RLib:6.6.1'
 }
 ```
     
@@ -150,4 +150,31 @@ dependencies {
                     .parallel()
                     .mapToObj(value -> value)
                     .collect(ArrayCollectors.concurrent(Integer.class));
+```
+
+### Logger API
+
+```java
+
+    // getting logger by class/name
+    final Logger logger = LoggerManager.getLogger(getClass());
+
+    // global enable/disable debug level
+    LoggerLevel.DEBUG.setEnabled(true);
+    
+    logger.debug("Simple message");
+    logger.debug(5, (val) -> "Lazy message with 5: " + val);
+    logger.debug(5, 10D, (val1, val2) -> "Lazy message with 5: " + val1 + " and 10: " + val2);
+    logger.debug("", "Message with a string owner.");
+    logger.debug("", 5, (val) -> "Lazy message with 5: " + val);
+    logger.debug("", 5, 10D, (val1, val2) -> "Lazy message with 5: " + val1 + " and 10: " + val2);
+    
+    // global disable debug level
+    LoggerLevel.DEBUG.setEnabled(false);
+    
+    // local enable debug level only for this logger instance
+    logger.setEnabled(LoggerLevel.DEBUG, true);
+    
+    // show debug message
+    logger.debug("Showed");
 ```
