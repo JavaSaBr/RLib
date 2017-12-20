@@ -168,7 +168,7 @@ public interface Logger {
      * @param message the message.
      */
     default void info(@NotNull Object owner, @NotNull String message) {
-        print(LoggerLevel.ERROR, owner, message);
+        print(LoggerLevel.INFO, owner, message);
     }
 
     /**
@@ -258,31 +258,33 @@ public interface Logger {
     }
 
     /**
-     * @return true if debug is enabled.
+     * Check of enabling the logger level.
+     *
+     * @return true if the level is enabled.
      */
-    default boolean isEnabledDebug() {
-        return LoggerLevel.DEBUG.isEnabled();
+    default boolean isEnabled(@NotNull final LoggerLevel level) {
+        return level.isEnabled();
     }
 
     /**
-     * @return true if errors is enabled.
+     * Override the enabling status of the logger level.
+     *
+     * @param level   the logger level.
+     * @param enabled true if need to be enabled.
+     * @return true if the status was changed.
      */
-    default boolean isEnabledError() {
-        return LoggerLevel.ERROR.isEnabled();
+    default boolean setEnabled(@NotNull final LoggerLevel level, final boolean enabled) {
+        return false;
     }
 
     /**
-     * @return true if information is enabled.
+     * Remove overriding of enabling status if the logger level.
+     *
+     * @param level the logger level.
+     * @return true if the status was changed.
      */
-    default boolean isEnabledInfo() {
-        return LoggerLevel.INFO.isEnabled();
-    }
-
-    /**
-     * @return true if warnings is enabled.
-     */
-    default boolean isEnabledWarning() {
-        return LoggerLevel.WARNING.isEnabled();
+    default boolean applyDefault(@NotNull final LoggerLevel level) {
+        return false;
     }
 
     /**

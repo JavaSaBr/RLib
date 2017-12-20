@@ -29,5 +29,9 @@ public class LoggerTests {
         logger.debug("", "Message with a string owner.");
         logger.debug("", 5, (integer) -> "Lazy message with 5: " + integer);
         logger.debug("", 5, 10D, (integer, aDouble) -> "Lazy message with 5: " + integer + " and 10: " + aDouble);
+        LoggerLevel.DEBUG.setEnabled(false);
+        logger.debug("Not showed");
+        logger.setEnabled(LoggerLevel.DEBUG, true);
+        logger.debug("Showed");
     }
 }

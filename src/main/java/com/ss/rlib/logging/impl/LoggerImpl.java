@@ -17,6 +17,14 @@ import java.util.function.Function;
  */
 public final class LoggerImpl implements Logger {
 
+    @NotNull
+    private static final LoggerLevel[] VALUES = LoggerLevel.values();
+
+    /**
+     * The table of override enabled statuses.
+     */
+    private final Boolean[] override;
+
     /**
      * The logger name.
      */
@@ -25,6 +33,7 @@ public final class LoggerImpl implements Logger {
 
     public LoggerImpl() {
         this.name = "<empty name>";
+        this.override = new Boolean[VALUES.length];
     }
 
     @Override
@@ -39,62 +48,63 @@ public final class LoggerImpl implements Logger {
 
     @Override
     public void info(@NotNull final Object owner, @NotNull final String message) {
+        if (!isEnabled(LoggerLevel.INFO)) return;
         LoggerManager.write(LoggerLevel.INFO, owner.getClass().getSimpleName(), message);
     }
 
     @Override
     public void info(@NotNull final String message) {
+        if (!isEnabled(LoggerLevel.INFO)) return;
         LoggerManager.write(LoggerLevel.INFO, getName(), message);
     }
 
     @Override
-    public boolean isEnabledDebug() {
-        return LoggerLevel.DEBUG.isEnabled();
+    public boolean isEnabled(@NotNull final LoggerLevel level) {
+        final Boolean value = override[level.ordinal()];
+        return value != null && value || level.isEnabled();
     }
 
     @Override
-    public boolean isEnabledError() {
-        return LoggerLevel.ERROR.isEnabled();
+    public boolean setEnabled(@NotNull final LoggerLevel level, final boolean enabled) {
+        override[level.ordinal()] = enabled;
+        return true;
     }
 
     @Override
-    public boolean isEnabledInfo() {
-        return LoggerLevel.INFO.isEnabled();
-    }
-
-    @Override
-    public boolean isEnabledWarning() {
-        return LoggerLevel.WARNING.isEnabled();
+    public boolean applyDefault(@NotNull final LoggerLevel level) {
+        override[level.ordinal()] = null;
+        return true;
     }
 
     @Override
     public void print(@NotNull final LoggerLevel level, @NotNull final String message) {
+        if (!isEnabled(level)) return;
         LoggerManager.write(level, getName(), message);
     }
 
     @Override
     public void print(@NotNull final LoggerLevel level, @NotNull final Object owner, @NotNull final String message) {
-        if (!level.isEnabled()) return;
+        if (!isEnabled(level)) return;
         LoggerManager.write(level, owner.getClass().getSimpleName(), message);
     }
 
     @Override
     public void print(@NotNull final LoggerLevel level, @NotNull final Object owner,
                       @NotNull final Throwable exception) {
-        if (!level.isEnabled()) return;
+        if (!isEnabled(level)) return;
         LoggerManager.write(level, owner.getClass().getSimpleName(), StringUtils.toString(exception));
     }
 
     @Override
     public void print(@NotNull final LoggerLevel level, @NotNull final Throwable exception) {
-        if (!level.isEnabled()) return;
+        if (!isEnabled(level)) return;
         LoggerManager.write(level, getName(), StringUtils.toString(exception));
     }
 
     @Override
     public <T> void print(@NotNull final LoggerLevel level, @NotNull final Object owner, @NotNull final T arg,
                           @NotNull final Function<@NotNull T, String> messageFactory) {
-        if (!level.isEnabled()) return;
+        if (!isEnabled(level)) return;
         LoggerManager.write(level, owner.getClass().getSimpleName(), arg, messageFactory);
     }
 
@@ -102,7 +112,7 @@ public final class LoggerImpl implements Logger {
     public <F, S> void print(@NotNull final LoggerLevel level, @NotNull final Object owner, @NotNull final F first,
                              @NotNull final S second,
                              @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
-        if (!level.isEnabled()) return;
+        if (!isEnabled(level)) return;
         LoggerManager.write(level, owner.getClass().getSimpleName(), first, second, messageFactory);
 
     }
@@ -111,7 +121,7 @@ public final class LoggerImpl implements Logger {
     public <F, S, T> void print(@NotNull final LoggerLevel level, @NotNull final Object owner, @NotNull final F first,
                                 @NotNull final S second, @NotNull final T third,
                                 @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
-        if (!level.isEnabled()) return;
+        if (!isEnabled(level)) return;
         LoggerManager.write(level, owner.getClass().getSimpleName(), first, second, third, messageFactory);
 
     }
