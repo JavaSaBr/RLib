@@ -32,6 +32,7 @@ public class ArrayTests {
         unsafe.prepareForSize(10);
         unsafe.unsafeAdd(3);
         unsafe.unsafeAdd(9);
+        unsafe.unsafeAdd(10);
 
         Assertions.assertEquals(10, array.size());
 
