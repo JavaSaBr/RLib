@@ -1,8 +1,8 @@
 package com.ss.rlib.network;
 
-import org.jetbrains.annotations.NotNull;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.SendablePacket;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
@@ -14,45 +14,33 @@ import java.nio.ByteBuffer;
 public interface ConnectionOwner {
 
     /**
-     * Close this server.
+     * Destroy this owner.
      */
-    void close();
+    void destroy();
 
     /**
-     * Decrypt data.
+     * Get the network crypt of this owner.
      *
-     * @param data   the data.
-     * @param offset the offset.
-     * @param length the length.
+     * @return the network crypt.
      */
-    void decrypt(@NotNull ByteBuffer data, int offset, int length);
+    @NotNull NetworkCrypt getCrypt();
 
     /**
-     * Encrypt data.
-     *
-     * @param data   the data.
-     * @param offset the offset.
-     * @param length the length.
-     */
-    void encrypt(@NotNull ByteBuffer data, int offset, int length);
-
-    /**
-     * Get a connection to server.
+     * Get the connection.
      *
      * @return the connection.
      */
-    @NotNull
-    AsyncConnection getConnection();
+    @NotNull AsyncConnection getConnection();
 
     /**
-     * Is connected boolean.
+     * Check if the owner is ready to work.
      *
-     * @return true of this server connected.
+     * @return true if this owner is ready to work.
      */
-    boolean isConnected();
+    boolean isReady();
 
     /**
-     * Read and handle a packet.
+     * Read and handle the packet.
      *
      * @param packet the packet.
      * @param buffer the data.
@@ -60,7 +48,7 @@ public interface ConnectionOwner {
     void readPacket(@NotNull ReadablePacket packet, @NotNull ByteBuffer buffer);
 
     /**
-     * Send a packet to server.
+     * Send the packet to the owner.
      *
      * @param packet the packet.
      */

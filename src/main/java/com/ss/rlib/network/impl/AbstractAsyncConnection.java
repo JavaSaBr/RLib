@@ -1,14 +1,10 @@
 package com.ss.rlib.network.impl;
 
 import static com.ss.rlib.network.packet.ReadablePacketType.getPacketType;
-import static java.util.Objects.requireNonNull;
-import com.ss.rlib.concurrent.lock.LockFactory;
+import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
-import com.ss.rlib.network.AsyncConnection;
-import com.ss.rlib.network.AsynchronousNetwork;
-import com.ss.rlib.network.ConnectionOwner;
-import com.ss.rlib.network.NetworkConfig;
+import com.ss.rlib.network.*;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.ReadablePacketType;
 import com.ss.rlib.network.packet.SendablePacket;
@@ -25,10 +21,10 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.StampedLock;
 
 /**
- * The base implementation of the Async Connection.
+ * The base implementation of {@link AsyncConnection}.
  *
  * @author JavaSaBr
  */
@@ -43,10 +39,12 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * The constant SIZE_BYTES_SIZE.
      */
     protected static final int SIZE_BYTES_SIZE = 2;
+
     /**
      * The constant READ_PACKET_LIMIT.
      */
     protected static final int READ_PACKET_LIMIT = 1000;
+
     /**
      * The constant WAIT_SEGMENT_LIMIT.
      */
@@ -56,7 +54,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * The network.
      */
     @NotNull
-    protected final AsynchronousNetwork network;
+    protected final AsyncNetwork network;
 
     /**
      * The list of waited packets.
@@ -92,7 +90,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * The count of received segments of a large packet.
      */
     @NotNull
-    protected final AtomicInteger waitCount;
+    protected final AtomicInteger waitCounter;
 
     /**
      * The state of writing.
@@ -116,7 +114,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * The locker.
      */
     @NotNull
-    protected final Lock lock;
+    protected final StampedLock lock;
 
     /**
      * The connection's owner.
@@ -137,7 +135,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
         @Override
         public void completed(@NotNull final Integer result, @NotNull final AbstractAsyncConnection connection) {
-            setLastActivity(System.currentTimeMillis());
+            updateLastActivity();
 
             if (result == -1) {
                 finish();
@@ -147,7 +145,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             final ByteBuffer buffer = getReadBuffer();
             buffer.flip();
             try {
-                if (isReady(buffer)) readPacket(buffer);
+                if (isReadyToRead(buffer)) readPacket(buffer);
             } catch (final Exception e) {
                 LOGGER.error(this, e);
             } finally {
@@ -159,8 +157,14 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
         @Override
         public void failed(@NotNull final Throwable exc, @NotNull final AbstractAsyncConnection attachment) {
-            if (config.isVisibleReadException()) LOGGER.warning(this, exc);
-            if (!isClosed()) finish();
+
+            if (config.isVisibleReadException()) {
+                LOGGER.warning(this, exc);
+            }
+
+            if (!isClosed()) {
+                finish();
+            }
         }
     };
 
@@ -172,7 +176,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
         @Override
         public void completed(@NotNull final Integer result, @NotNull final SendablePacket packet) {
-            setLastActivity(System.currentTimeMillis());
+            updateLastActivity();
 
             if (result == -1) {
                 finish();
@@ -180,13 +184,14 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             }
 
             final ByteBuffer buffer = getWriteBuffer();
-
             if (buffer.remaining() > 0) {
                 channel.write(buffer, packet, this);
                 return;
             }
 
-            if (isWriting.compareAndSet(true, false)) writeNextPacket();
+            if (isWriting.compareAndSet(true, false)) {
+                writeNextPacket();
+            }
         }
 
         @Override
@@ -197,20 +202,15 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             }
 
             if (isClosed()) return;
-            if (isWriting.compareAndSet(true, false)) writeNextPacket();
+            if (isWriting.compareAndSet(true, false)) {
+                writeNextPacket();
+            }
         }
     };
 
-    /**
-     * Instantiates a new Abstract async connection.
-     *
-     * @param network      the network
-     * @param channel      the channel
-     * @param sendableType the sendable type
-     */
-    public AbstractAsyncConnection(@NotNull final AsynchronousNetwork network, @NotNull final AsynchronousSocketChannel channel,
+    public AbstractAsyncConnection(@NotNull final AsyncNetwork network, @NotNull final AsynchronousSocketChannel channel,
                                    @NotNull final Class<? extends SendablePacket> sendableType) {
-        this.lock = LockFactory.newReentrantLock();
+        this.lock = new StampedLock();
         this.channel = channel;
         this.waitPackets = LinkedListFactory.newLinkedList(sendableType);
         this.network = network;
@@ -221,17 +221,15 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
         this.isWriting = new AtomicBoolean(false);
         this.closed = new AtomicBoolean(false);
         this.waitBuffer = network.takeReadBuffer();
-        this.waitCount = new AtomicInteger();
+        this.waitCounter = new AtomicInteger();
     }
 
     /**
      * Clear waited packets.
      */
     protected void clearWaitPackets() {
-
-        waitPackets.forEach(packet -> packet instanceof AbstractReusableSendablePacket,
+        waitPackets.forEach(AbstractReusableSendablePacket.class::isInstance,
                 packet -> ((AbstractReusableSendablePacket) packet).forceComplete());
-
         waitPackets.clear();
     }
 
@@ -241,25 +239,30 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     }
 
     @Override
-    @Nullable
-    public ConnectionOwner getOwner() {
+    public @Nullable ConnectionOwner getOwner() {
         return owner;
     }
 
     @Override
     public void close() {
-        lock();
+        if (isClosed()) return;
+        final long stamp = lock.writeLock();
         try {
 
-            if (isClosed()) return;
+            if (isClosed()) {
+                return;
+            }
+
             setClosed(true);
 
             final AsynchronousSocketChannel channel = getChannel();
-            if (channel.isOpen()) channel.close();
+            if (channel.isOpen()) {
+                channel.close();
+            }
 
             clearWaitPackets();
 
-            final AsynchronousNetwork network = getNetwork();
+            final AsyncNetwork network = getNetwork();
             network.putReadBuffer(getReadBuffer());
             network.putWriteBuffer(getWriteBuffer());
             network.putReadBuffer(getWaitBuffer());
@@ -267,7 +270,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
         } catch (final IOException e) {
             LOGGER.warning(this, e);
         } finally {
-            unlock();
+            lock.unlockWrite(stamp);
         }
     }
 
@@ -276,26 +279,26 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      */
     protected void finish() {
         final ConnectionOwner owner = getOwner();
-        if (owner != null) owner.close();
+        if (owner != null) {
+            owner.destroy();
+        }
     }
 
     /**
-     * Gets wait buffer.
+     * Get the wait buffer.
      *
      * @return the wait buffer to receive a large packet.
      */
-    @NotNull
-    protected ByteBuffer getWaitBuffer() {
+    protected @NotNull ByteBuffer getWaitBuffer() {
         return waitBuffer;
     }
 
     /**
-     * Gets remote address.
+     * Get the remote address.
      *
      * @return the remote address.
      */
-    @NotNull
-    public String getRemoteAddress() {
+    public @NotNull String getRemoteAddress() {
 
         final AsynchronousSocketChannel channel = getChannel();
         try {
@@ -308,7 +311,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     }
 
     /**
-     * Get data size of the packet.
+     * Get the data size of the packet.
      *
      * @param buffer the packet data buffer.
      * @return the packet size.
@@ -318,137 +321,120 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     }
 
     /**
-     * Gets wait count.
+     * Get the wait counter.
      *
-     * @return the count of received segments of a large packet.
+     * @return the counter of received segments of a large packet.
      */
-    @NotNull
-    protected AtomicInteger getWaitCount() {
-        return waitCount;
+    protected @NotNull AtomicInteger getWaitCounter() {
+        return waitCounter;
     }
 
     /**
-     * Gets channel.
+     * Get the channel.
      *
      * @return the channel.
      */
-    @NotNull
-    protected AsynchronousSocketChannel getChannel() {
+    protected @NotNull AsynchronousSocketChannel getChannel() {
         return channel;
     }
 
     @Override
-    public final long getLastActivity() {
+    public long getLastActivity() {
         return lastActivity;
     }
 
-    @Override
-    public final void setLastActivity(final long lastActivity) {
+    /**
+     * Set the time of last activity.
+     *
+     * @param lastActivity the time of last activity.
+     */
+    protected void setLastActivity(final long lastActivity) {
         this.lastActivity = lastActivity;
     }
 
     /**
-     * Gets lock.
-     *
-     * @return the locker.
+     * Update the time of last activity.
      */
-    @NotNull
-    public Lock getLock() {
-        return lock;
+    protected void updateLastActivity() {
+        setLastActivity(System.currentTimeMillis());
     }
 
     /**
-     * Gets network.
+     * Get the network.
      *
      * @return the network.
      */
-    @NotNull
-    protected AsynchronousNetwork getNetwork() {
+    protected @NotNull AsyncNetwork getNetwork() {
         return network;
     }
 
     /**
-     * Gets read buffer.
+     * Get the read buffer.
      *
      * @return the read buffer.
      */
-    @NotNull
-    protected final ByteBuffer getReadBuffer() {
+    protected @NotNull ByteBuffer getReadBuffer() {
         return readBuffer;
     }
 
     /**
-     * Gets read handler.
+     * Get the read handler.
      *
      * @return the read handler.
      */
-    @NotNull
-    protected CompletionHandler<Integer, AbstractAsyncConnection> getReadHandler() {
+    protected @NotNull CompletionHandler<Integer, AbstractAsyncConnection> getReadHandler() {
         return readHandler;
     }
 
     /**
-     * Gets wait packets.
+     * Get the list of wait packets.
      *
      * @return the list of waited packets.
      */
-    @NotNull
-    protected LinkedList<SendablePacket> getWaitPackets() {
+    protected @NotNull LinkedList<SendablePacket> getWaitPackets() {
         return waitPackets;
     }
 
     /**
-     * Gets write buffer.
+     * Get the write buffer.
      *
      * @return the write buffer.
      */
-    @NotNull
-    protected final ByteBuffer getWriteBuffer() {
+    protected @NotNull ByteBuffer getWriteBuffer() {
         return writeBuffer;
     }
 
     /**
-     * Gets write handler.
+     * Get the write handler.
      *
      * @return the write handler.
      */
-    @NotNull
-    protected CompletionHandler<Integer, SendablePacket> getWriteHandler() {
+    protected @NotNull CompletionHandler<Integer, SendablePacket> getWriteHandler() {
         return writeHandler;
     }
 
     @Override
-    public final boolean isClosed() {
+    public boolean isClosed() {
         return closed.get();
     }
 
     /**
-     * Sets closed.
+     * Set true if this connection is closed.
      *
-     * @param closed закрыт ли конект.
+     * @param closed true if this connection is closed.
      */
-    protected final void setClosed(final boolean closed) {
+    protected void setClosed(final boolean closed) {
         this.closed.getAndSet(closed);
     }
 
     /**
-     * Check a buffer on ready to read.
+     * Check the buffer if this is ready to read.
      *
-     * @param buffer the read buffer.
-     * @return true if the buffer is ready.
+     * @param buffer the buffer.
+     * @return true if the buffer is ready to read .
      */
-    protected boolean isReady(@NotNull final ByteBuffer buffer) {
+    protected boolean isReadyToRead(@NotNull final ByteBuffer buffer) {
         return true;
-    }
-
-    @Override
-    public void lock() {
-        lock.lock();
-    }
-
-    @Override
-    public void unlock() {
-        lock.unlock();
     }
 
     /**
@@ -458,9 +444,10 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      */
     protected void readPacket(@NotNull final ByteBuffer buffer) {
 
-        final ConnectionOwner owner = requireNonNull(getOwner());
+        final ConnectionOwner owner = notNull(getOwner());
+        final NetworkCrypt crypt = owner.getCrypt();
         final ByteBuffer waitBuffer = getWaitBuffer();
-        final AtomicInteger waitCount = getWaitCount();
+        final AtomicInteger waitCount = getWaitCounter();
 
         int currentCount = waitCount.get();
 
@@ -485,10 +472,8 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             waitBuffer.clear();
         }
 
-        for (int i = 0, limit = 0, size = 0; buffer.remaining() >= SIZE_BYTES_SIZE && i < READ_PACKET_LIMIT; i++) {
-
+        for (int i = 0, limit = 0, size; buffer.remaining() >= SIZE_BYTES_SIZE && i < READ_PACKET_LIMIT; i++) {
             size = getPacketSize(buffer);
-
             limit += size;
 
             // если пакет не вместился в этот буффер, складываем его в ожидающий
@@ -503,7 +488,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
                 return;
             }
 
-            owner.decrypt(buffer, buffer.position(), size - SIZE_BYTES_SIZE);
+            decrypt(buffer, crypt, buffer.position(), size - SIZE_BYTES_SIZE);
 
             final ReadablePacket packet = createPacketFor(buffer);
 
@@ -521,27 +506,54 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     }
 
     /**
-     * Write a packet to a write buffer.
+     * Write the packet to the write buffer.
      *
      * @param packet the packet.
      * @param buffer the write buffer.
      * @return the write buffer.
      */
-    @NotNull
-    protected ByteBuffer writePacketToBuffer(@NotNull final SendablePacket packet, final @NotNull ByteBuffer buffer) {
-        buffer.clear();
+    protected @NotNull ByteBuffer writePacketToBuffer(@NotNull final SendablePacket packet, final @NotNull ByteBuffer buffer) {
 
+        buffer.clear();
         packet.prepareWritePosition(buffer);
         packet.write(buffer);
-
         buffer.flip();
-
         packet.writePacketSize(buffer, buffer.limit());
 
-        final ConnectionOwner owner = requireNonNull(getOwner());
-        owner.encrypt(buffer, SIZE_BYTES_SIZE, buffer.limit() - SIZE_BYTES_SIZE);
+        final ConnectionOwner owner = notNull(getOwner());
+        final NetworkCrypt crypt = owner.getCrypt();
+
+        encrypt(buffer, crypt, SIZE_BYTES_SIZE, buffer.limit() - SIZE_BYTES_SIZE);
 
         return buffer;
+    }
+
+    /**
+     * Decrypt data using the crypt of the connection owner.
+     *
+     * @param buffer the data buffer.
+     * @param crypt  the crypt.
+     * @param offset the offset.
+     * @param length the length.
+     */
+    protected void decrypt(@NotNull final ByteBuffer buffer, @NotNull final NetworkCrypt crypt, final int offset,
+                           final int length) {
+        if (crypt.isNull()) return;
+        crypt.decrypt(buffer.array(), offset, length);
+    }
+
+    /**
+     * Encrypt data using the crypt of the connection owner.
+     *
+     * @param buffer the data buffer.
+     * @param crypt  the crypt.
+     * @param offset the offset.
+     * @param length the length.
+     */
+    protected void encrypt(@NotNull final ByteBuffer buffer, @NotNull final NetworkCrypt crypt, final int offset,
+                           final int length) {
+        if (crypt.isNull()) return;
+        crypt.encrypt(buffer.array(), offset, length);
     }
 
     /**
@@ -550,8 +562,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * @param buffer the buffer
      * @return the readable packet
      */
-    @Nullable
-    protected ReadablePacket createPacketFor(@NotNull final ByteBuffer buffer) {
+    protected @Nullable ReadablePacket createPacketFor(@NotNull final ByteBuffer buffer) {
         if (buffer.remaining() < SIZE_BYTES_SIZE) return null;
 
         final int packetTypeId = buffer.getShort() & 0xFFFF;
@@ -574,28 +585,27 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     @Override
     public final void sendPacket(@NotNull final SendablePacket packet) {
         if (isClosed()) return;
-
-        lock();
+        final long stamp = lock.writeLock();
         try {
             if (isClosed()) return;
             waitPackets.add(packet);
         } finally {
-            unlock();
+            lock.unlockWrite(stamp);
         }
-
         writeNextPacket();
     }
 
     @Override
     public final void startRead() {
-        channel.read(readBuffer, this, readHandler);
+        channel.read(readBuffer, this, getReadHandler());
     }
 
     /**
      * Write a next packet.
      */
     protected final void writeNextPacket() {
-        lock();
+        if (isClosed()) return;
+        final long stamp = lock.writeLock();
         try {
 
             if (isClosed() || !isWriting.compareAndSet(false, true)) {
@@ -603,7 +613,6 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             }
 
             final SendablePacket waitPacket = waitPackets.poll();
-
             if (waitPacket == null) {
                 isWriting.set(false);
                 return;
@@ -615,13 +624,13 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             completed(waitPacket);
 
         } finally {
-            unlock();
+            lock.unlockWrite(stamp);
         }
     }
 
     @Override
     public String toString() {
-        return "AbstractAsyncConnection{" + "network=" + network + ", waitPackets=" + waitPackets + ", channel=" +
+        return getClass().getSimpleName() + "{" + "network=" + network + ", waitPackets=" + waitPackets + ", channel=" +
                 channel + ", isWriting=" + isWriting + ", closed=" + closed + ", lastActivity=" + lastActivity + '}';
     }
 }

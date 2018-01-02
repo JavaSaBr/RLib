@@ -2,7 +2,7 @@ package com.ss.rlib.network.server.impl;
 
 import com.ss.rlib.concurrent.GroupThreadFactory;
 import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.impl.AbstractAsynchronousNetwork;
+import com.ss.rlib.network.impl.AbstractAsyncNetwork;
 import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ import java.nio.channels.CompletionHandler;
  *
  * @author JavaSaBr
  */
-public final class DefaultServerNetwork extends AbstractAsynchronousNetwork implements ServerNetwork {
+public final class DefaultServerNetwork extends AbstractAsyncNetwork implements ServerNetwork {
 
     /**
      * The asynchronous channel group.

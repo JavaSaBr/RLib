@@ -10,6 +10,13 @@ import org.jetbrains.annotations.NotNull;
 public interface NetworkCrypt {
 
     /**
+     * @return true if this crypt doesn't crypt data.
+     */
+    default boolean isNull() {
+        return true;
+    }
+
+    /**
      * Decrypt a byte array.
      *
      * @param data   the byte array.

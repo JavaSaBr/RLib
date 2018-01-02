@@ -1,51 +1,42 @@
 package com.ss.rlib.network.server;
 
 import org.jetbrains.annotations.NotNull;
-import com.ss.rlib.logging.Logger;
-import com.ss.rlib.logging.LoggerManager;
 
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 /**
- * The base implementation of an accept handler.
+ * The interface to implement a handler of accepted connections.
  *
  * @author JavaSaBr
  */
-public abstract class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
-
-    /**
-     * The constant LOGGER.
-     */
-    @NotNull
-    protected static final Logger LOGGER = LoggerManager.getLogger(AcceptHandler.class);
+public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
 
     @Override
-    public void completed(@NotNull final AsynchronousSocketChannel result,
-                          @NotNull final AsynchronousServerSocketChannel serverChannel) {
+    default void completed(@NotNull final AsynchronousSocketChannel result,
+                           @NotNull final AsynchronousServerSocketChannel serverChannel) {
         serverChannel.accept(serverChannel, this);
         onAccept(result);
     }
 
     @Override
-    public void failed(@NotNull final Throwable exc,
-                       @NotNull final AsynchronousServerSocketChannel serverChannel) {
+    default void failed(@NotNull final Throwable exc, @NotNull final AsynchronousServerSocketChannel serverChannel) {
         serverChannel.accept(serverChannel, this);
         onFailed(exc);
     }
 
     /**
-     * Handle a new client connection.
+     * Handle the new client connection.
      *
-     * @param channel the channel.
+     * @param channel the client channel.
      */
-    protected abstract void onAccept(@NotNull AsynchronousSocketChannel channel);
+    void onAccept(@NotNull AsynchronousSocketChannel channel);
 
     /**
-     * Handle an exception.
+     * Handle the exception.
      *
-     * @param e the exception.
+     * @param exception the exception.
      */
-    protected abstract void onFailed(@NotNull Throwable e);
+    void onFailed(@NotNull Throwable exception);
 }

@@ -5,7 +5,7 @@ import static java.nio.ByteBuffer.allocateDirect;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
-import com.ss.rlib.network.AsynchronousNetwork;
+import com.ss.rlib.network.AsyncNetwork;
 import com.ss.rlib.network.NetworkConfig;
 import com.ss.rlib.util.pools.PoolFactory;
 import org.jetbrains.annotations.NotNull;
@@ -15,17 +15,17 @@ import java.nio.ByteBuffer;
 import java.util.function.Function;
 
 /**
- * The base implementation of a async network.
+ * The base implementation of {@link AsyncNetwork}.
  *
  * @author JavaSaBr
  */
-public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork {
+public abstract class AbstractAsyncNetwork implements AsyncNetwork {
 
     /**
      * The constant LOGGER.
      */
     @NotNull
-    protected static final Logger LOGGER = LoggerManager.getLogger(AsynchronousNetwork.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(AsyncNetwork.class);
 
     /**
      * The pool with read buffers.
@@ -45,58 +45,45 @@ public abstract class AbstractAsynchronousNetwork implements AsynchronousNetwork
     @NotNull
     protected final NetworkConfig config;
 
-    /**
-     * Instantiates a new Abstract asynchronous network.
-     *
-     * @param config the config
-     */
-    protected AbstractAsynchronousNetwork(@NotNull final NetworkConfig config) {
+    protected AbstractAsyncNetwork(@NotNull final NetworkConfig config) {
         this.config = config;
         this.readBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
         this.writeBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
     }
 
-    @NotNull
     @Override
-    public NetworkConfig getConfig() {
+    public @NotNull NetworkConfig getConfig() {
         return config;
     }
 
-    @NotNull
     @Override
-    public ByteBuffer takeReadBuffer() {
-
+    public @NotNull ByteBuffer takeReadBuffer() {
         final ByteBuffer buffer = readBufferPool.take(config, readBufferFactory());
         buffer.clear();
-
         return buffer;
     }
 
     /**
-     * Read buffer factory function.
+     * Get the read buffers factory.
      *
-     * @return the read buffer factory.
+     * @return the read buffers factory.
      */
-    @NotNull
-    protected Function<NetworkConfig, ByteBuffer> readBufferFactory() {
+    protected @NotNull Function<NetworkConfig, ByteBuffer> readBufferFactory() {
         return conf -> (conf.isDirectByteBuffer() ?
                 allocateDirect(conf.getReadBufferSize()) : allocate(conf.getReadBufferSize())).order(LITTLE_ENDIAN);
     }
 
-    @NotNull
     @Override
-    public ByteBuffer takeWriteBuffer() {
-
+    public @NotNull ByteBuffer takeWriteBuffer() {
         final ByteBuffer buffer = writeBufferPool.take(config, writeBufferFactory());
         buffer.clear();
-
         return buffer;
     }
 
     /**
-     * Write buffer factory function.
+     * Get the write buffers factory.
      *
-     * @return the write buffer factory.
+     * @return the write buffers factory.
      */
     protected Function<NetworkConfig, ByteBuffer> writeBufferFactory() {
         return conf -> (conf.isDirectByteBuffer() ?

@@ -1,6 +1,6 @@
 package com.ss.rlib.network.server;
 
-import com.ss.rlib.network.AsynchronousNetwork;
+import com.ss.rlib.network.AsyncNetwork;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ import java.nio.channels.CompletionHandler;
  *
  * @author JavaSaBr
  */
-public interface ServerNetwork extends AsynchronousNetwork {
+public interface ServerNetwork extends AsyncNetwork {
 
     /**
      * Put a handler to wait for a new connection.

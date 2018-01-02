@@ -12,14 +12,14 @@ import java.nio.channels.AsynchronousSocketChannel;
 import com.ss.rlib.concurrent.GroupThreadFactory;
 import com.ss.rlib.network.NetworkConfig;
 import com.ss.rlib.network.client.ConnectHandler;
-import com.ss.rlib.network.impl.AbstractAsynchronousNetwork;
+import com.ss.rlib.network.impl.AbstractAsyncNetwork;
 
 /**
  * The base implementation of a async client network.
  *
  * @author JavaSaBr
  */
-public final class DefaultClientNetwork extends AbstractAsynchronousNetwork implements ClientNetwork {
+public final class DefaultClientNetwork extends AbstractAsyncNetwork implements ClientNetwork {
 
     /**
      * The asynchronous channel group.

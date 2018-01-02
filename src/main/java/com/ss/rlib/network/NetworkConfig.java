@@ -14,8 +14,7 @@ public interface NetworkConfig {
      *
      * @return thread group name.
      */
-    @NotNull
-    default String getGroupName() {
+    default @NotNull String getGroupName() {
         return "NetworkThread";
     }
 
@@ -51,8 +50,7 @@ public interface NetworkConfig {
      *
      * @return the thread class.
      */
-    @NotNull
-    default Class<? extends Thread> getThreadClass() {
+    default @NotNull Class<? extends Thread> getThreadClass() {
         return Thread.class;
     }
 
