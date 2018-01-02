@@ -1,18 +1,17 @@
 package com.ss.rlib.network.packet.impl;
 
-import static java.util.Objects.requireNonNull;
-import static com.ss.rlib.util.ClassUtils.unsafeCast;
+import static com.ss.rlib.util.ObjectUtils.notNull;
+import com.ss.rlib.concurrent.atomic.AtomicInteger;
 import com.ss.rlib.util.ClassUtils;
 import com.ss.rlib.util.pools.Reusable;
 import com.ss.rlib.util.pools.ReusablePool;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.ss.rlib.concurrent.atomic.AtomicInteger;
 
 import java.nio.ByteBuffer;
 
 /**
- * The reusable implementation of the {@link AbstractSendablePacket} using the counter for controlling the life cycle of
+ * The reusable implementation of {@link AbstractSendablePacket} using the counter to control the life cycle of
  * this packet.
  *
  * @author JavaSaBr
@@ -30,10 +29,7 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
      */
     @Nullable
     protected ReusablePool<AbstractReusableSendablePacket> pool;
-
-    /**
-     * Instantiates a new Abstract reusable sendable packet.
-     */
+    
     public AbstractReusableSendablePacket() {
         this.counter = new AtomicInteger();
     }
@@ -58,10 +54,9 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
     /**
      * @return the pool to store used packet.
      */
-    @NotNull
-    private ReusablePool<AbstractReusableSendablePacket> getPool() {
+    private @NotNull ReusablePool<AbstractReusableSendablePacket> getPool() {
         if (pool != null) return pool;
-        return requireNonNull(ClassUtils.unsafeCast(getPacketType().getPool()));
+        return notNull(ClassUtils.unsafeCast(getPacketType().getPool()));
     }
 
     /**
@@ -72,19 +67,17 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
     }
 
     /**
-     * New instance t.
+     * Get a new instance of this packet.
      *
-     * @param <T> the type parameter
      * @return the new instance.
      */
-    @NotNull
-    public final <T extends AbstractReusableSendablePacket> T newInstance() {
+    public final <T extends AbstractReusableSendablePacket> @NotNull T newInstance() {
         final AbstractReusableSendablePacket result = getPool().take(getClass(), ClassUtils::newInstance);
-        return requireNonNull(ClassUtils.unsafeCast(result));
+        return notNull(ClassUtils.unsafeCast(result));
     }
 
     /**
-     * Sets pool.
+     * Set the pool.
      *
      * @param pool the pool to store used packet.
      */

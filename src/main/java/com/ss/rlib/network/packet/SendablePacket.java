@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 
 /**
- * Interface for implementing sendable packets.
+ * Interface to implement a sendable packet.
  *
  * @author JavaSaBr
  */
@@ -169,8 +169,7 @@ public interface SendablePacket extends Packet {
      *
      * @return the packet type.
      */
-    @NotNull
-    default SendablePacketType<? extends SendablePacket> getPacketType() {
+    default @NotNull SendablePacketType<? extends SendablePacket> getPacketType() {
         throw new UnsupportedOperationException();
     }
 }

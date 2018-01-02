@@ -1,7 +1,6 @@
 package com.ss.rlib.network.packet;
 
-import static java.util.Objects.requireNonNull;
-import static com.ss.rlib.util.ClassUtils.unsafeCast;
+import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.ClassUtils;
 import com.ss.rlib.util.array.Array;
@@ -21,43 +20,37 @@ import org.jetbrains.annotations.Nullable;
 public class ReadablePacketType<R extends ReadablePacket> {
 
     /**
-     * The list of registered sendable packet types.
+     * The list of registered readable packet types.
      */
     @NotNull
     private final static Array<ReadablePacketType<?>> REGISTERED_TYPES = ArrayFactory.newArray(ReadablePacketType.class);
 
     /**
-     * The array of packet type id to packet type.
+     * The map of packet ids to packet types.
      */
     @NotNull
-    private static final ReadablePacketType<?>[] TYPES = ArrayUtils.create(ReadablePacketType.class,
-            Short.MAX_VALUE * 2);
+    private static final ReadablePacketType<?>[] TYPES = ArrayUtils.create(ReadablePacketType.class, Short.MAX_VALUE * 2);
 
     /**
-     * Get the type of packet by its packet type id.
+     * Get the packet type by the packet id.
      *
-     * @param <T> the type parameter
      * @param id  the packet id.
      * @return the type of the packet.
      */
-    @NotNull
-    public static <T extends ReadablePacket> ReadablePacketType<T> getPacketType(final int id) {
-        return requireNonNull(ClassUtils.unsafeCast(TYPES[id]));
+    public static <T extends ReadablePacket> @NotNull ReadablePacketType<T> getPacketType(final int id) {
+        return notNull(ClassUtils.unsafeCast(TYPES[id]));
     }
 
     /**
-     * Register new packet type.
+     * Register a new packet type.
      *
      * @param packetType the packet type.
      */
     private static void register(@NotNull final ReadablePacketType<?> packetType) {
 
-        final ReadablePacketType result = REGISTERED_TYPES.search(packetType.getId(), (exists, toCheck) ->
-                exists.getId() == toCheck);
-
+        final ReadablePacketType result = REGISTERED_TYPES.search(packetType.getId(), (exists, toCheck) -> exists.getId() == toCheck);
         if (result != null) {
-            throw new RuntimeException(
-                    "Have found duplicate packet type id for the " + packetType.getName() + " and " + result.getName());
+            throw new RuntimeException("Have found duplicate packet type id for the " + packetType.getName() + " and " + result.getName());
         }
 
         REGISTERED_TYPES.add(packetType);
@@ -87,63 +80,51 @@ public class ReadablePacketType<R extends ReadablePacket> {
      */
     private final int id;
 
-    /**
-     * Instantiates a new Readable packet type.
-     *
-     * @param example the example packet of the type.
-     * @param id      the packet type id.
-     */
     public ReadablePacketType(@NotNull final R example, final int id) {
         final Class<? extends ReadablePacket> cs = example.getClass();
         this.name = cs.getSimpleName();
         this.example = example;
         this.id = id;
-        this.pool = Reusable.class.isAssignableFrom(cs) ?
-                PoolFactory.newConcurrentAtomicARSWLockReusablePool(ClassUtils.unsafeCast(cs)) : null;
+        this.pool = Reusable.class.isAssignableFrom(cs) ? PoolFactory.newConcurrentAtomicARSWLockReusablePool(ClassUtils.unsafeCast(cs)) : null;
         register(this);
     }
 
     /**
-     * Gets id.
+     * Get the packet id.
      *
-     * @return the packet type id.
+     * @return the packet id.
      */
     public int getId() {
         return id;
     }
 
     /**
-     * Gets name.
+     * Get the name.
      *
      * @return the name of the type.
      */
-    @NotNull
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
     /**
-     * Gets pool.
+     * Get the pool.
      *
      * @return the pool of packets to reuse them.
      */
-    @NotNull
-    public final ReusablePool<Reusable> getPool() {
-        return requireNonNull(pool, "This type is not reusable packet.");
+    public @NotNull ReusablePool<Reusable> getPool() {
+        return notNull(pool, "This type is not reusable packet.");
     }
 
     /**
-     * Create a new instance of this packet type.
+     * Create a new instance of a packet.
      *
      * @return the new instance.
      */
-    @NotNull
-    public R newInstance() {
-
+    public @NotNull R newInstance() {
         if (!(example instanceof Reusable)) {
-            return requireNonNull(ClassUtils.unsafeCast(example.newInstance()));
+            return notNull(ClassUtils.unsafeCast(example.newInstance()));
         }
-
-        return requireNonNull(ClassUtils.unsafeCast(getPool().take(example, packet -> ClassUtils.unsafeCast(packet.newInstance()))));
+        return notNull(ClassUtils.unsafeCast(getPool().take(example, packet -> ClassUtils.unsafeCast(packet.newInstance()))));
     }
 }

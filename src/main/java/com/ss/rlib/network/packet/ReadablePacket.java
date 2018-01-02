@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 
 /**
- * The interface for implementing readable network packets.
+ * The interface to implement a readable network packet.
  *
  * @author JavaSaBr
  */
@@ -123,8 +123,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer.
      * @return the read string.
      */
-    @NotNull
-    default String readString(@NotNull final ByteBuffer buffer) {
+    default @NotNull String readString(@NotNull final ByteBuffer buffer) {
 
         final int length = readInt(buffer);
         final char[] array = new char[length];
@@ -141,8 +140,7 @@ public interface ReadablePacket extends Packet {
      *
      * @return the packet type.
      */
-    @NotNull
-    default ReadablePacketType<? extends ReadablePacket> getPacketType() {
+    default @NotNull ReadablePacketType<? extends ReadablePacket> getPacketType() {
         throw new UnsupportedOperationException();
     }
 
@@ -151,8 +149,7 @@ public interface ReadablePacket extends Packet {
      *
      * @return the new instance.
      */
-    @NotNull
-    default ReadablePacket newInstance() {
+    default @NotNull ReadablePacket newInstance() {
         return ClassUtils.newInstance(getClass());
     }
 }

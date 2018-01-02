@@ -1,21 +1,19 @@
 package com.ss.rlib.network.packet.impl;
 
-import static java.util.Objects.requireNonNull;
-import static com.ss.rlib.util.ClassUtils.getConstructor;
-import static com.ss.rlib.util.ClassUtils.unsafeCast;
+import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.util.ClassUtils;
+import com.ss.rlib.util.Utils;
 import com.ss.rlib.util.pools.Reusable;
 import com.ss.rlib.util.pools.ReusablePool;
 import org.jetbrains.annotations.NotNull;
-import com.ss.rlib.util.Utils;
 
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.util.function.Supplier;
 
 /**
- * The base implementation of the readable packet.
+ * The base implementation of {@link ReadablePacket}.
  *
  * @author JavaSaBr
  */
@@ -36,10 +34,7 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
      * The sink for the memory barrier.
      */
     protected int barrierSink;
-
-    /**
-     * Instantiates a new Abstract readable packet.
-     */
+    
     protected AbstractReadablePacket() {
         this.constructor = createConstructor();
     }
@@ -49,9 +44,8 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
      *
      * @return the constructor.
      */
-    @NotNull
-    protected Supplier<AbstractReadablePacket> createConstructor() {
-        final Constructor<AbstractReadablePacket> constructor = requireNonNull(ClassUtils.getConstructor(getClass()));
+    protected @NotNull Supplier<AbstractReadablePacket> createConstructor() {
+        final Constructor<AbstractReadablePacket> constructor = notNull(ClassUtils.getConstructor(getClass()));
         return () -> ClassUtils.newInstance(constructor);
     }
 
@@ -70,13 +64,13 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
     }
 
     /**
-     * Handle exception.
+     * Handle the exception.
      *
-     * @param buffer the buffer
-     * @param e      the e
+     * @param buffer    the data buffer.
+     * @param exception the exception.
      */
-    protected void handleException(@NotNull final ByteBuffer buffer, @NotNull final Exception e) {
-        LOGGER.warning(this, e);
+    protected void handleException(@NotNull final ByteBuffer buffer, @NotNull final Exception exception) {
+        LOGGER.warning(this, exception);
         if (buffer.isDirect()) {
             final byte[] array = new byte[buffer.limit()];
             buffer.get(array, 0, buffer.limit());
@@ -115,9 +109,8 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
         getPool().put(this);
     }
 
-    @NotNull
     @Override
-    public AbstractReadablePacket newInstance() {
+    public @NotNull AbstractReadablePacket newInstance() {
         return constructor.get();
     }
 
@@ -126,8 +119,7 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
      *
      * @return the pool for storing executed packets or null.
      */
-    @NotNull
-    protected ReusablePool<AbstractReadablePacket> getPool() {
-        return requireNonNull(ClassUtils.unsafeCast(getPacketType().getPool()));
+    protected @NotNull ReusablePool<AbstractReadablePacket> getPool() {
+        return notNull(ClassUtils.unsafeCast(getPacketType().getPool()));
     }
 }

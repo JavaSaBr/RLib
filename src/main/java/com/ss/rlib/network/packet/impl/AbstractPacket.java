@@ -1,18 +1,15 @@
 package com.ss.rlib.network.packet.impl;
 
-import static com.ss.rlib.util.ClassUtils.unsafeCast;
-
 import com.ss.rlib.logging.Logger;
+import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.network.ConnectionOwner;
 import com.ss.rlib.network.packet.Packet;
 import com.ss.rlib.util.ClassUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.ss.rlib.logging.LoggerManager;
-
 /**
- * The base implementation of the {@link Packet}.
+ * The base implementation of {@link Packet}.
  *
  * @author JavaSaBr
  */
@@ -36,32 +33,26 @@ public abstract class AbstractPacket implements Packet {
     @Nullable
     protected volatile ConnectionOwner owner;
 
-    /**
-     * Instantiates a new Abstract packet.
-     */
     public AbstractPacket() {
         this.name = getNameImpl();
     }
 
     /**
-     * Gets name.
+     * Get the name.
      *
      * @return the name
      */
-    @NotNull
-    protected String getNameImpl() {
+    protected @NotNull String getNameImpl() {
         return getClass().getName();
     }
 
-    @NotNull
     @Override
-    public final String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
-    @Nullable
     @Override
-    public ConnectionOwner getOwner() {
+    public @Nullable ConnectionOwner getOwner() {
         return owner;
     }
 
@@ -72,9 +63,6 @@ public abstract class AbstractPacket implements Packet {
 
     @Override
     public String toString() {
-        return "AbstractPacket{" +
-                "owner=" + owner +
-                ", name='" + name + '\'' +
-                '}';
+        return getClass().getSimpleName() + "{" + "owner=" + owner + ", name='" + name + '\'' + '}';
     }
 }
