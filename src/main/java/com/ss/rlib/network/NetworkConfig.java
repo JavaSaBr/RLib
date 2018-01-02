@@ -9,6 +9,32 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface NetworkConfig {
 
+    @NotNull NetworkConfig DEFAULT_SERVER = new NetworkConfig() {
+
+        @Override
+        public int getGroupSize() {
+            return 2;
+        }
+
+        @Override
+        public @NotNull String getGroupName() {
+            return "ServerNetworkThread";
+        }
+    };
+
+    @NotNull NetworkConfig DEFAULT_CLIENT = new NetworkConfig() {
+
+        @Override
+        public int getGroupSize() {
+            return 1;
+        }
+
+        @Override
+        public @NotNull String getGroupName() {
+            return "ClientNetworkThread";
+        }
+    };
+
     /**
      * Gets group name.
      *

@@ -1,5 +1,6 @@
 package com.ss.rlib.network;
 
+import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -17,6 +18,13 @@ public interface AsyncNetwork {
      * @return the config.
      */
     @NotNull NetworkConfig getConfig();
+
+    /**
+     * Get the readable packet registry.
+     *
+     * @return the readable packet registry.
+     */
+    @NotNull ReadablePacketRegistry getPacketRegistry();
 
     /**
      * Get a new read buffer to use.
@@ -45,4 +53,9 @@ public interface AsyncNetwork {
      * @param buffer the old buffer.
      */
     void putWriteBuffer(@NotNull ByteBuffer buffer);
+
+    /**
+     * Shutdown this network.
+     */
+    void shutdown();
 }

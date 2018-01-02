@@ -1,6 +1,11 @@
 package com.ss.rlib.network.client.impl;
 
+import com.ss.rlib.concurrent.GroupThreadFactory;
+import com.ss.rlib.network.NetworkConfig;
 import com.ss.rlib.network.client.ClientNetwork;
+import com.ss.rlib.network.client.ConnectHandler;
+import com.ss.rlib.network.impl.AbstractAsyncNetwork;
+import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,11 +13,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousSocketChannel;
-
-import com.ss.rlib.concurrent.GroupThreadFactory;
-import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.client.ConnectHandler;
-import com.ss.rlib.network.impl.AbstractAsyncNetwork;
 
 /**
  * The base implementation of a async client network.
@@ -39,16 +39,10 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
     @Nullable
     private AsynchronousSocketChannel channel;
 
-    /**
-     * Instantiates a new Default client network.
-     *
-     * @param config         the config
-     * @param connectHandler the connect handler
-     * @throws IOException the io exception
-     */
-    public DefaultClientNetwork(@NotNull final NetworkConfig config, @NotNull final ConnectHandler connectHandler)
-            throws IOException {
-        super(config);
+    public DefaultClientNetwork(@NotNull final NetworkConfig config,
+                                @NotNull final ReadablePacketRegistry packetRegistry,
+                                @NotNull final ConnectHandler connectHandler) throws IOException {
+        super(config, packetRegistry);
 
         this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(),
                 new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
@@ -60,12 +54,37 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
     public void connect(@NotNull final InetSocketAddress serverAddress) {
 
         try {
-            if (channel != null) channel.close();
+
+            if (channel != null) {
+                channel.close();
+            }
+
             channel = AsynchronousSocketChannel.open(group);
+
         } catch (final IOException e) {
             LOGGER.warning(this, e);
         }
 
-        channel.connect(serverAddress, channel, connectHandler);
+        channel.connect(serverAddress, this, connectHandler);
+    }
+
+    @Override
+    public void shutdown() {
+        group.shutdown();
+
+        if (channel == null || !channel.isOpen()) {
+            return;
+        }
+
+        try {
+            channel.close();
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public @Nullable AsynchronousSocketChannel getChannel() {
+        return channel;
     }
 }

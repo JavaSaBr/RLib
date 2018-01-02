@@ -7,6 +7,7 @@ import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.network.AsyncNetwork;
 import com.ss.rlib.network.NetworkConfig;
+import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import com.ss.rlib.util.pools.PoolFactory;
 import org.jetbrains.annotations.NotNull;
 import com.ss.rlib.util.pools.Pool;
@@ -40,15 +41,27 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
     protected final Pool<ByteBuffer> writeBufferPool;
 
     /**
+     * The readable packet registry.
+     */
+    @NotNull
+    protected final ReadablePacketRegistry registry;
+
+    /**
      * The network config.
      */
     @NotNull
     protected final NetworkConfig config;
 
-    protected AbstractAsyncNetwork(@NotNull final NetworkConfig config) {
+    protected AbstractAsyncNetwork(@NotNull final NetworkConfig config, @NotNull final ReadablePacketRegistry registry) {
         this.config = config;
+        this.registry = registry;
         this.readBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
         this.writeBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
+    }
+
+    @Override
+    public @NotNull ReadablePacketRegistry getPacketRegistry() {
+        return registry;
     }
 
     @Override

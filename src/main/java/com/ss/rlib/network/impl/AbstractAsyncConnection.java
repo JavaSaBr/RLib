@@ -1,15 +1,12 @@
 package com.ss.rlib.network.impl;
 
-import static com.ss.rlib.network.packet.ReadablePacketType.getPacketType;
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.network.*;
 import com.ss.rlib.network.packet.ReadablePacket;
-import com.ss.rlib.network.packet.ReadablePacketType;
 import com.ss.rlib.network.packet.SendablePacket;
 import com.ss.rlib.network.packet.impl.AbstractReusableSendablePacket;
-import com.ss.rlib.util.ClassUtils;
 import com.ss.rlib.util.linkedlist.LinkedList;
 import com.ss.rlib.util.linkedlist.LinkedListFactory;
 import org.jetbrains.annotations.NotNull;
@@ -564,11 +561,9 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      */
     protected @Nullable ReadablePacket createPacketFor(@NotNull final ByteBuffer buffer) {
         if (buffer.remaining() < SIZE_BYTES_SIZE) return null;
-
-        final int packetTypeId = buffer.getShort() & 0xFFFF;
-        final ReadablePacketType<ReadablePacket> packetType = getPacketType(packetTypeId);
-
-        return ClassUtils.unsafeCast(packetType.newInstance());
+        final int packetId = buffer.getShort() & 0xFFFF;
+        return getNetwork().getPacketRegistry()
+                .findById(packetId);
     }
 
     /**

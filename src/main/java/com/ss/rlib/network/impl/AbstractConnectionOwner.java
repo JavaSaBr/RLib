@@ -73,13 +73,6 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
         return crypt;
     }
 
-    /**
-     * Execute the packet.
-     *
-     * @param packet the packet.
-     */
-    protected abstract void execute(@NotNull ReadablePacket packet);
-
     @Override
     public @NotNull AsyncConnection getConnection() {
         return connection;
@@ -101,9 +94,7 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
     @Override
     public void readPacket(@NotNull final ReadablePacket packet, @NotNull final ByteBuffer buffer) {
         packet.setOwner(this);
-        if (packet.read(buffer)) {
-            execute(packet);
-        }
+        packet.read(buffer);
     }
 
     @Override

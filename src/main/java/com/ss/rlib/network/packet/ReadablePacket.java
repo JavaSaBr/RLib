@@ -1,6 +1,5 @@
 package com.ss.rlib.network.packet;
 
-import com.ss.rlib.util.ClassUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -11,30 +10,6 @@ import java.nio.ByteBuffer;
  * @author JavaSaBr
  */
 public interface ReadablePacket extends Packet {
-
-    /**
-     * Notify about started preparing data to read this packet.
-     */
-    default void notifyStartedPreparing() {
-    }
-
-    /**
-     * Notify about finished preparing data to read this packet.
-     */
-    default void notifyFinishedPreparing() {
-    }
-
-    /**
-     * Notify about started reading data of this packet.
-     */
-    default void notifyStartedReading() {
-    }
-
-    /**
-     * Notify about finished reading data of this packet.
-     */
-    default void notifyFinishedReading() {
-    }
 
     /**
      * Read this packet.
@@ -133,23 +108,5 @@ public interface ReadablePacket extends Packet {
         }
 
         return new String(array);
-    }
-
-    /**
-     * Get a packet type of this packet.
-     *
-     * @return the packet type.
-     */
-    default @NotNull ReadablePacketType<? extends ReadablePacket> getPacketType() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Create a new instance of this packet.
-     *
-     * @return the new instance.
-     */
-    default @NotNull ReadablePacket newInstance() {
-        return ClassUtils.newInstance(getClass());
     }
 }

@@ -1,5 +1,6 @@
 package com.ss.rlib.network.packet.impl;
 
+import com.ss.rlib.network.annotation.PacketDescription;
 import org.jetbrains.annotations.NotNull;
 import com.ss.rlib.network.packet.SendablePacket;
 import com.ss.rlib.util.Utils;
@@ -14,32 +15,22 @@ import java.nio.ByteBuffer;
 public abstract class AbstractSendablePacket extends AbstractPacket implements SendablePacket {
 
     /**
-     * The memory barrier.
+     * The packet id.
      */
-    protected volatile int barrier;
+    private int packetId;
 
-    /**
-     * The sink for the memory barrier.
-     */
-    protected int barrierSink;
-
-    /**
-     * Instantiates a new Abstract sendable packet.
-     */
     protected AbstractSendablePacket() {
-        getPacketType();
+        final PacketDescription description = getClass().getAnnotation(PacketDescription.class);
+        this.packetId = description.id();
     }
 
     @Override
     public void write(@NotNull final ByteBuffer buffer) {
-        notifyStartedWriting();
         try {
             writeImpl(buffer);
         } catch (final Exception e) {
             LOGGER.warning(this, e);
             LOGGER.warning(this, "Buffer " + buffer + "\n" + Utils.hexdump(buffer.array(), buffer.position()));
-        } finally {
-            notifyFinishedWriting();
         }
     }
 
@@ -49,26 +40,11 @@ public abstract class AbstractSendablePacket extends AbstractPacket implements S
      * @param buffer the buffer
      */
     protected void writeImpl(@NotNull final ByteBuffer buffer) {
-        writePacketTypeId(buffer);
+        writePacketId(buffer);
     }
 
     @Override
-    public void notifyStartedPreparing() {
-        barrierSink = barrier;
-    }
-
-    @Override
-    public void notifyFinishedPreparing() {
-        barrier = barrierSink + 1;
-    }
-
-    @Override
-    public void notifyStartedWriting() {
-        barrierSink = barrier;
-    }
-
-    @Override
-    public void notifyFinishedWriting() {
-        barrier = barrierSink + 1;
+    public int getPacketId() {
+        return packetId;
     }
 }
