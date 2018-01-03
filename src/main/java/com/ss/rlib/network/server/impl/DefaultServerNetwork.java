@@ -67,16 +67,6 @@ public final class DefaultServerNetwork extends AbstractAsyncNetwork implements 
     @Override
     public void shutdown() {
         group.shutdown();
-
-        if (!channel.isOpen()) {
-            return;
-        }
-
-        try {
-            channel.close();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

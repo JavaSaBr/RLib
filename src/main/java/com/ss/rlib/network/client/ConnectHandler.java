@@ -35,6 +35,7 @@ public interface ConnectHandler extends CompletionHandler<Void, ClientNetwork> {
             final Server server = serverFactory.apply(connection);
             connection.setOwner(server);
             connection.startRead();
+            network.setCurrentServer(server);
         };
     }
 

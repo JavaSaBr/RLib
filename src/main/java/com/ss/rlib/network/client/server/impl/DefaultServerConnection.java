@@ -8,6 +8,7 @@ import com.ss.rlib.network.packet.SendablePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 
 /**
@@ -31,5 +32,14 @@ public class DefaultServerConnection extends AbstractAsyncConnection implements 
     @Override
     public @Nullable Server getOwner() {
         return (Server) super.getOwner();
+    }
+
+    @Override
+    protected void doClose() throws IOException {
+        super.doClose();
+        final ClientNetwork clientNetwork = (ClientNetwork) getNetwork();
+        if (clientNetwork.getCurrentServer() == getOwner()) {
+            clientNetwork.setCurrentServer(null);
+        }
     }
 }

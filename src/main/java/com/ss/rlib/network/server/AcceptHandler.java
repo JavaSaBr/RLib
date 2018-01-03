@@ -5,12 +5,14 @@ import com.ss.rlib.network.server.client.ClientConnection;
 import com.ss.rlib.network.server.client.impl.DefaultClient;
 import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.StandardSocketOptions;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -24,11 +26,13 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
      * Create a simple accept handler.
      *
      * @param connectionFactory the connection factory.
-     * @param clientFactory the client factory.
+     * @param clientFactory     the client factory.
+     * @param clientConsumer    the client consumer.
      * @return the accept handler.
      */
     static @NotNull AcceptHandler newSimple(@NotNull final BiFunction<@NotNull ServerNetwork, @NotNull AsynchronousSocketChannel, @NotNull ClientConnection> connectionFactory,
-                                            @NotNull final Function<@NotNull ClientConnection, @NotNull Client> clientFactory) {
+                                            @NotNull final Function<@NotNull ClientConnection, @NotNull Client> clientFactory,
+                                            @Nullable final Consumer<@NotNull Client> clientConsumer) {
         return (channel, network) -> {
 
             try {
@@ -43,6 +47,10 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
             connection.setOwner(client);
             client.notifyConnected();
             connection.startRead();
+
+            if (clientConsumer != null) {
+                clientConsumer.accept(client);
+            }
         };
     }
 
@@ -52,7 +60,17 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
      * @return the accept handler.
      */
     static @NotNull AcceptHandler newDefault() {
-        return newSimple(DefaultClientConnection::new, DefaultClient::new);
+        return newSimple(DefaultClientConnection::new, DefaultClient::new, null);
+    }
+
+    /**
+     * Create a default accept handler.
+     *
+     * @param consumer the client consumer.
+     * @return the accept handler.
+     */
+    static @NotNull AcceptHandler newDefault(@NotNull final Consumer<@NotNull Client> consumer) {
+        return newSimple(DefaultClientConnection::new, DefaultClient::new, consumer);
     }
 
     @Override

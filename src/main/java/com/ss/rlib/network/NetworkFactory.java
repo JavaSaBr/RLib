@@ -59,6 +59,18 @@ public final class NetworkFactory {
     /**
      * Create a default asynchronous server network.
      *
+     * @param registry      the readable packet registry.
+     * @param acceptHandler the accept handler.
+     * @return the client network.
+     */
+    public static @NotNull ServerNetwork newDefaultAsyncServerNetwork(@NotNull final ReadablePacketRegistry registry,
+                                                                      @NotNull final AcceptHandler acceptHandler) {
+        return newDefaultAsyncServerNetwork(NetworkConfig.DEFAULT_SERVER, registry, acceptHandler);
+    }
+
+    /**
+     * Create a default asynchronous server network.
+     *
      * @param config        the network config.
      * @param registry      the readable packet registry.
      * @param acceptHandler the accept handler.

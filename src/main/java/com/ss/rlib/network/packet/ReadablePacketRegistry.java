@@ -29,15 +29,22 @@ public class ReadablePacketRegistry {
         scanner.setUseSystemClasspath(true);
         scanner.scan();
 
-        final Array<Class<ReadablePacket>> classes = scanner.findImplements(ReadablePacket.class);
-        final Array<Class<? extends ReadablePacket>> result = classes.stream().filter(readablePacketClass ->
-                readablePacketClass.getAnnotation(PacketDescription.class) != null)
-                .collect(ArrayCollectors.simple(ClassUtils.unsafeCast(Class.class)));
+        return of(scanner);
+    }
 
-        final ReadablePacketRegistry registry = new ReadablePacketRegistry();
-        registry.register(result);
+    /**
+     * Creates a new default readable packet registry by the array of classes.
+     *
+     * @param mainClass the main class of application.
+     * @return the new packet registry.
+     */
+    public static @NotNull ReadablePacketRegistry newDefault(@NotNull final Class<?> mainClass) {
 
-        return registry;
+        final ClassPathScanner scanner = ClassPathScannerFactory.newManifestScanner(mainClass);
+        scanner.setUseSystemClasspath(false);
+        scanner.scan();
+
+        return of(scanner);
     }
 
     /**

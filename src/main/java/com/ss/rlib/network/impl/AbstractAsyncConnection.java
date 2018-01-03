@@ -245,30 +245,34 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
         if (isClosed()) return;
         final long stamp = lock.writeLock();
         try {
-
-            if (isClosed()) {
-                return;
-            }
-
+            if (isClosed()) return;
             setClosed(true);
-
-            final AsynchronousSocketChannel channel = getChannel();
-            if (channel.isOpen()) {
-                channel.close();
-            }
-
-            clearWaitPackets();
-
-            final AsyncNetwork network = getNetwork();
-            network.putReadBuffer(getReadBuffer());
-            network.putWriteBuffer(getWriteBuffer());
-            network.putReadBuffer(getWaitBuffer());
-
+            doClose();
         } catch (final IOException e) {
             LOGGER.warning(this, e);
         } finally {
             lock.unlockWrite(stamp);
         }
+    }
+
+    /**
+     * Does the process of closing this connection.
+     *
+     * @throws IOException if found some problem during closing a channel.
+     */
+    protected void doClose() throws IOException {
+
+        final AsynchronousSocketChannel channel = getChannel();
+        if (channel.isOpen()) {
+            channel.close();
+        }
+
+        clearWaitPackets();
+
+        final AsyncNetwork network = getNetwork();
+        network.putReadBuffer(getReadBuffer());
+        network.putWriteBuffer(getWriteBuffer());
+        network.putReadBuffer(getWaitBuffer());
     }
 
     /**
