@@ -33,8 +33,7 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
      *
      * @param buffer the buffer for reading.
      */
-    protected void readImpl(@NotNull final ByteBuffer buffer) {
-    }
+    protected abstract void readImpl(@NotNull final ByteBuffer buffer);
 
     /**
      * Handle the exception.

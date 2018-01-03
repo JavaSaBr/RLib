@@ -6,10 +6,12 @@ import com.ss.rlib.network.client.impl.DefaultClientNetwork;
 import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
+import com.ss.rlib.network.server.client.Client;
 import com.ss.rlib.network.server.impl.DefaultServerNetwork;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * The network factory.
@@ -54,6 +56,18 @@ public final class NetworkFactory {
      */
     public static @NotNull ServerNetwork newDefaultAsyncServerNetwork(@NotNull final ReadablePacketRegistry registry) {
         return newDefaultAsyncServerNetwork(NetworkConfig.DEFAULT_SERVER, registry, AcceptHandler.newDefault());
+    }
+
+    /**
+     * Create a default asynchronous server network.
+     *
+     * @param registry       the readable packet registry.
+     * @param clientConsumer the client consumer.
+     * @return the client network.
+     */
+    public static @NotNull ServerNetwork newDefaultAsyncServerNetwork(@NotNull final ReadablePacketRegistry registry,
+                                                                      @NotNull final Consumer<@NotNull Client> clientConsumer) {
+        return newDefaultAsyncServerNetwork(NetworkConfig.DEFAULT_SERVER, registry, AcceptHandler.newDefault(clientConsumer));
     }
 
     /**

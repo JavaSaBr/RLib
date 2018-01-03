@@ -7,7 +7,6 @@ import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
 import com.ss.rlib.network.packet.impl.AbstractSendablePacket;
-import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
 import com.ss.rlib.util.Utils;
@@ -118,10 +117,10 @@ public class NetworkTests {
     @BeforeAll
     public static void createNetwork() throws IOException {
         final ReadablePacketRegistry packetRegistry = ReadablePacketRegistry.of(ServerPackets.MessageRequest.class);
-        serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(packetRegistry, AcceptHandler.newDefault(WAITED_CLIENT::complete));
+        serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(packetRegistry, WAITED_CLIENT::complete);
         serverNetwork.bind(SERVER_ADDRESS);
         clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(ReadablePacketRegistry.of(ClientPackets.MessageResponse.class));
-        clientNetwork.asyncConnect(SERVER_ADDRESS);
+        clientNetwork.connect(SERVER_ADDRESS);
     }
 
     @Test

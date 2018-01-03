@@ -19,7 +19,7 @@ import java.util.Optional;
 public class ReadablePacketRegistry {
 
     /**
-     * Creates a new default readable packet registry by the array of classes.
+     * Creates a new default readable packet registry.
      *
      * @return the new packet registry.
      */
@@ -33,7 +33,7 @@ public class ReadablePacketRegistry {
     }
 
     /**
-     * Creates a new default readable packet registry by the array of classes.
+     * Creates a new default readable packet registry by the result of scanning classpath of the main class.
      *
      * @param mainClass the main class of application.
      * @return the new packet registry.
@@ -48,7 +48,7 @@ public class ReadablePacketRegistry {
     }
 
     /**
-     * Creates a new default readable packet registry by the array of classes.
+     * Creates a new default readable packet registry by the classpath scanner.
      *
      * @param scanner the classpath scanner.
      * @return the new packet registry.
