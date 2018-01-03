@@ -61,11 +61,18 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
         final long stamp = lock.writeLock();
         try {
             if (isDestroyed()) return;
-            getConnection().close();
+            doDestroy();
             setDestroyed(true);
         } finally {
             lock.unlockWrite(stamp);
         }
+    }
+
+    /**
+     * The process of destroying.
+     */
+    protected void doDestroy() {
+        getConnection().close();
     }
 
     @Override
@@ -93,8 +100,7 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
 
     @Override
     public void readPacket(@NotNull final ReadablePacket packet, @NotNull final ByteBuffer buffer) {
-        packet.setOwner(this);
-        packet.read(buffer);
+        packet.read(this, buffer);
     }
 
     @Override

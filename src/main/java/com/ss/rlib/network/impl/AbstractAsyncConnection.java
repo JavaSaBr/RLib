@@ -5,6 +5,7 @@ import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.network.*;
 import com.ss.rlib.network.packet.ReadablePacket;
+import com.ss.rlib.network.packet.ReusableSendablePacket;
 import com.ss.rlib.network.packet.SendablePacket;
 import com.ss.rlib.network.packet.impl.AbstractReusableSendablePacket;
 import com.ss.rlib.util.linkedlist.LinkedList;
@@ -242,16 +243,15 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
     @Override
     public void close() {
-        if (isClosed()) return;
-        final long stamp = lock.writeLock();
+
+        if (!closed.compareAndSet(false, true)) {
+            return;
+        }
+
         try {
-            if (isClosed()) return;
-            setClosed(true);
             doClose();
         } catch (final IOException e) {
             LOGGER.warning(this, e);
-        } finally {
-            lock.unlockWrite(stamp);
         }
     }
 
@@ -360,12 +360,8 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
         setLastActivity(System.currentTimeMillis());
     }
 
-    /**
-     * Get the network.
-     *
-     * @return the network.
-     */
-    protected @NotNull AsyncNetwork getNetwork() {
+    @Override
+    public @NotNull AsyncNetwork getNetwork() {
         return network;
     }
 
@@ -576,8 +572,8 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * @param packet the sent packet.
      */
     protected void completed(@NotNull final SendablePacket packet) {
-        if (packet instanceof AbstractReusableSendablePacket) {
-            ((AbstractReusableSendablePacket) packet).complete();
+        if (packet instanceof ReusableSendablePacket) {
+            ((ReusableSendablePacket) packet).complete();
         }
     }
 
@@ -586,7 +582,6 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
         if (isClosed()) return;
         final long stamp = lock.writeLock();
         try {
-            if (isClosed()) return;
             waitPackets.add(packet);
         } finally {
             lock.unlockWrite(stamp);
@@ -603,28 +598,28 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * Write a next packet.
      */
     protected final void writeNextPacket() {
-        if (isClosed()) return;
+        if (isClosed() || !isWriting.compareAndSet(false, true)) {
+            return;
+        }
+
+        SendablePacket waitPacket;
+
         final long stamp = lock.writeLock();
         try {
-
-            if (isClosed() || !isWriting.compareAndSet(false, true)) {
-                return;
-            }
-
-            final SendablePacket waitPacket = waitPackets.poll();
-            if (waitPacket == null) {
-                isWriting.set(false);
-                return;
-            }
-
-            final AsynchronousSocketChannel channel = getChannel();
-            channel.write(writePacketToBuffer(waitPacket, getWriteBuffer()), waitPacket, getWriteHandler());
-
-            completed(waitPacket);
-
+            waitPacket = waitPackets.poll();
         } finally {
             lock.unlockWrite(stamp);
         }
+
+        if (waitPacket == null) {
+            isWriting.set(false);
+            return;
+        }
+
+        final AsynchronousSocketChannel channel = getChannel();
+        channel.write(writePacketToBuffer(waitPacket, getWriteBuffer()), waitPacket, getWriteHandler());
+
+        completed(waitPacket);
     }
 
     @Override

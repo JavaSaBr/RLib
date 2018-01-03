@@ -19,6 +19,13 @@ public interface AsyncConnection {
     @Nullable ConnectionOwner getOwner();
 
     /**
+     * Get the connection network.
+     *
+     * @return the connection network.
+     */
+    @NotNull AsyncNetwork getNetwork();
+
+    /**
      * Set the new connection owner.
      *
      * @param owner the connection owner.

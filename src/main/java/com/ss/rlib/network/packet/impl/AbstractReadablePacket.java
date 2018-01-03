@@ -1,5 +1,6 @@
 package com.ss.rlib.network.packet.impl;
 
+import com.ss.rlib.network.ConnectionOwner;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.util.Utils;
 import com.ss.rlib.util.pools.Reusable;
@@ -18,9 +19,9 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
     }
 
     @Override
-    public boolean read(@NotNull final ByteBuffer buffer) {
+    public boolean read(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
         try {
-            readImpl(buffer);
+            readImpl(owner, buffer);
             return true;
         } catch (final Exception e) {
             handleException(buffer, e);
@@ -33,7 +34,7 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
      *
      * @param buffer the buffer for reading.
      */
-    protected abstract void readImpl(@NotNull final ByteBuffer buffer);
+    protected abstract void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer);
 
     /**
      * Handle the exception.

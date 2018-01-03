@@ -1,5 +1,6 @@
 package com.ss.rlib.network.packet;
 
+import com.ss.rlib.network.ConnectionOwner;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -14,10 +15,11 @@ public interface ReadablePacket extends Packet {
     /**
      * Read this packet.
      *
+     * @param owner  the owner.
      * @param buffer the buffer to read data.
      * @return true if reading was success.
      */
-    boolean read(@NotNull final ByteBuffer buffer);
+    boolean read(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer);
 
     /**
      * Read 1 byte from this packet.

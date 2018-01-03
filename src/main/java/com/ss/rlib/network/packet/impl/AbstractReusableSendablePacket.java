@@ -65,6 +65,20 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
     }
 
     /**
+     * Notify about started preparing data.
+     */
+    protected void notifyStartedPreparing() {
+        barrierSink = barrier;
+    }
+
+    /**
+     * Notify about finished preparing data.
+     */
+    protected void notifyFinishedPreparing() {
+        barrier = barrierSink + 1;
+    }
+
+    /**
      * Notify about started writing data.
      */
     protected void notifyStartedWriting() {
@@ -75,6 +89,20 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
      * Notify about finished writing data.
      */
     protected void notifyFinishedWriting() {
+        barrier = barrierSink + 1;
+    }
+
+    /**
+     * Notify about started storing instance to a pool.
+     */
+    protected void notifyStartedStoring() {
+        barrierSink = barrier;
+    }
+
+    /**
+     * Notify about finished storing instance to a pool.
+     */
+    protected void notifyFinishedStoring() {
         barrier = barrierSink + 1;
     }
 
@@ -111,14 +139,20 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
      */
     protected @NotNull Pool<ReusableSendablePacket> getPool() {
         if (pool != null) return pool;
-        return getThreadLocalPool();
+        pool = getThreadLocalPool();
+        return pool;
     }
 
     /**
      * Implementation of handling completion of packet sending.
      */
     protected void completeImpl() {
-        getPool().put(this);
+        notifyStartedStoring();
+        try {
+            getPool().put(this);
+        } finally {
+            notifyFinishedStoring();
+        }
     }
 
     /**

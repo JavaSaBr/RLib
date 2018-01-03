@@ -32,4 +32,9 @@ public class DefaultClientConnection extends AbstractAsyncConnection implements 
     public @Nullable Client getOwner() {
         return (Client) super.getOwner();
     }
+
+    @Override
+    public @NotNull ServerNetwork getNetwork() {
+        return (ServerNetwork) super.getNetwork();
+    }
 }

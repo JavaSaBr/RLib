@@ -1,5 +1,6 @@
 package com.ss.rlib.test.network;
 
+import com.ss.rlib.network.ConnectionOwner;
 import com.ss.rlib.network.NetworkFactory;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.client.ClientNetwork;
@@ -46,7 +47,7 @@ public class NetworkTests {
         public static class MessageRequest extends AbstractReadablePacket {
 
             @Override
-            protected void readImpl(@NotNull final ByteBuffer buffer) {
+            protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
                 final String message = readString(buffer);
                 System.out.println("Server: received \"" + message + "\"");
                 checkClientMessage.complete(message);
@@ -103,7 +104,7 @@ public class NetworkTests {
         public static class MessageResponse extends AbstractReadablePacket {
 
             @Override
-            protected void readImpl(@NotNull final ByteBuffer buffer) {
+            protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
                 final String message = readString(buffer);
                 System.out.println("client: received \"" + message + "\"");
                 checkServerMessage.complete(message);
