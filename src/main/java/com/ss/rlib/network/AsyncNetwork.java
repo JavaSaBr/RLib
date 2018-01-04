@@ -34,6 +34,13 @@ public interface AsyncNetwork {
     @NotNull ByteBuffer takeReadBuffer();
 
     /**
+     * Get a new wait buffer to use.
+     *
+     * @return the new wait buffer.
+     */
+    @NotNull ByteBuffer takeWaitBuffer();
+
+    /**
      * Get a new write buffer to use.
      *
      * @return the new buffer.
@@ -46,6 +53,13 @@ public interface AsyncNetwork {
      * @param buffer the old buffer.
      */
     void putReadBuffer(@NotNull ByteBuffer buffer);
+
+    /**
+     * Store the old wait buffer.
+     *
+     * @param buffer the old wait buffer.
+     */
+    void putWaitBuffer(@NotNull ByteBuffer buffer);
 
     /**
      * Store the old write buffer.

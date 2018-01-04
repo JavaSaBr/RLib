@@ -35,6 +35,12 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
     protected final Pool<ByteBuffer> readBufferPool;
 
     /**
+     * The pool with wait buffers.
+     */
+    @NotNull
+    protected final Pool<ByteBuffer> waitBufferPool;
+
+    /**
      * The pool with write buffers.
      */
     @NotNull
@@ -56,6 +62,7 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
         this.config = config;
         this.registry = registry;
         this.readBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
+        this.waitBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
         this.writeBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
     }
 
@@ -87,6 +94,23 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
     }
 
     @Override
+    public @NotNull ByteBuffer takeWaitBuffer() {
+        final ByteBuffer buffer = writeBufferPool.take(config, waitBufferFactory());
+        buffer.clear();
+        return buffer;
+    }
+
+    /**
+     * Get the wait buffers factory.
+     *
+     * @return the wait buffers factory.
+     */
+    protected @NotNull Function<NetworkConfig, ByteBuffer> waitBufferFactory() {
+        return conf -> (conf.isDirectByteBuffer() ?
+                allocateDirect(conf.getReadBufferSize() * 2) : allocate(conf.getReadBufferSize() * 2)).order(LITTLE_ENDIAN);
+    }
+
+    @Override
     public @NotNull ByteBuffer takeWriteBuffer() {
         final ByteBuffer buffer = writeBufferPool.take(config, writeBufferFactory());
         buffer.clear();
@@ -106,6 +130,11 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
     @Override
     public void putReadBuffer(@NotNull final ByteBuffer buffer) {
         readBufferPool.put(buffer);
+    }
+
+    @Override
+    public void putWaitBuffer(@NotNull final ByteBuffer buffer) {
+        waitBufferPool.put(buffer);
     }
 
     @Override

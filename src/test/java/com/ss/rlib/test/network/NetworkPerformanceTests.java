@@ -8,13 +8,17 @@ import com.ss.rlib.network.NetworkConfig;
 import com.ss.rlib.network.NetworkFactory;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.client.ClientNetwork;
+import com.ss.rlib.network.client.ConnectHandler;
 import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
-import com.ss.rlib.network.packet.impl.AbstractReusableSendablePacket;
+import com.ss.rlib.network.packet.impl.AbstractSendablePacket;
 import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
+import com.ss.rlib.network.server.client.ClientConnection;
+import com.ss.rlib.network.server.client.impl.DefaultClient;
+import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
 import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
@@ -28,19 +32,60 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAccumulator;
 
 /**
  * The test ot test performance of reusable packets of network.
  *
  * @author JavaSaBr
  */
-public class NetworkReusablePerformanceTests {
+public class NetworkPerformanceTests {
 
     @NotNull
     private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(3434);
+
+    @NotNull
+    private static final LongAccumulator SERVER_READ_DATA = new LongAccumulator((left, right) -> left + right, 0);
+
+    private static final int CLIENT_PACKET_SIZE = 2 + 2 + 4 + ("Message".length() * 2);
+
+    private static class TestClient extends DefaultClient {
+
+        public TestClient(@NotNull final ClientConnection connection) {
+            super(connection);
+        }
+    }
+
+    private static class TestClientConnection extends DefaultClientConnection {
+
+        public TestClientConnection(@NotNull final ServerNetwork network,
+                                    @NotNull final AsynchronousSocketChannel channel) {
+            super(network, channel);
+        }
+
+        @Override
+        protected void handleReadData(@NotNull final Integer result) {
+            super.handleReadData(result);
+            if (result > 0) {
+                SERVER_READ_DATA.accumulate(result);
+            }
+        }
+
+        @Override
+        protected int readPacket(@NotNull final ByteBuffer buffer) {
+            final int remaining = buffer.remaining();
+            final int expectedPackets = remaining / CLIENT_PACKET_SIZE;
+            final int resultCount = super.readPacket(buffer);
+            if (resultCount < expectedPackets) {
+                return 0;
+            }
+            return resultCount;
+        }
+    }
 
     private static final NetworkConfig SERVER_CONFIG = new NetworkConfig() {
         @Override
@@ -59,13 +104,37 @@ public class NetworkReusablePerformanceTests {
         }
     };
 
+    private static final NetworkConfig CLIENT_CONFIG = new NetworkConfig() {
+
+        @Override
+        public int getGroupSize() {
+            return 2;
+        }
+
+        @Override
+        public boolean isVisibleReadException() {
+            return true;
+        }
+
+        @Override
+        public boolean isVisibleWriteException() {
+            return true;
+        }
+    };
+
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(4);
 
-    private static final int CLIENT_COUNT = 2;
-    private static final int CLIENT_PACKETS_PER_CLIENT = 100;
+    private static final int CLIENT_COUNT = 100;
+    private static final int CLIENT_PACKETS_PER_CLIENT = 1000;
 
     @NotNull
     private static final AtomicLong RECEIVED_SERVER_PACKETS = new AtomicLong(0);
+
+    @NotNull
+    private static final AtomicLong SENT_SERVER_PACKETS = new AtomicLong(0);
+
+    @NotNull
+    private static final AtomicLong WROTE_SERVER_PACKETS = new AtomicLong(0);
 
     @NotNull
     private static final AtomicLong RECEIVED_CLIENT_PACKETS = new AtomicLong(0);
@@ -81,19 +150,14 @@ public class NetworkReusablePerformanceTests {
             @Override
             protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
                 final String message = readString(buffer);
-
                 RECEIVED_CLIENT_PACKETS.incrementAndGet();
                 EXECUTOR_SERVICE.execute(() -> {
-
-                    final MessageResponse response = MessageResponse.newInstance(message);
-                    response.increaseSends();
-
-                    ArrayUtils.runInReadLock(AVAILABLE_CLIENTS, response, (clients, packet) -> {
-                        packet.increaseSends(clients.size());
-                        clients.forEach(packet, ConnectionOwner::sendPacket);
+                    ArrayUtils.runInReadLock(AVAILABLE_CLIENTS, new MessageResponse(message), (clients, packet) -> {
+                        clients.forEach(packet, (client, messageResponse) -> {
+                            client.sendPacket(messageResponse);
+                            SENT_SERVER_PACKETS.incrementAndGet();
+                        });
                     });
-
-                    response.complete();
                 });
             }
         }
@@ -102,34 +166,20 @@ public class NetworkReusablePerformanceTests {
          * It's a packet which a server sends to a client.
          */
         @PacketDescription(id = 2)
-        public static class MessageResponse extends AbstractReusableSendablePacket {
-
-            private static final MessageResponse EXAMPLE = new MessageResponse();
-
-            public static @NotNull MessageResponse newInstance(@NotNull final String message) {
-                final MessageResponse packet = EXAMPLE.newInstance();
-                packet.notifyFinishedPreparing();
-                packet.message = message;
-                packet.notifyFinishedPreparing();
-                return packet;
-            }
+        public static class MessageResponse extends AbstractSendablePacket {
 
             @NotNull
-            private String message;
+            private final String message;
 
-            public MessageResponse() {
-                message = "";
+            public MessageResponse(@NotNull final String message) {
+                this.message = message;
             }
 
             @Override
             protected void writeImpl(@NotNull final ByteBuffer buffer) {
                 super.writeImpl(buffer);
                 writeString(buffer, message);
-            }
-
-            @Override
-            public void free() {
-                message = "";
+                WROTE_SERVER_PACKETS.incrementAndGet();
             }
         }
     }
@@ -140,35 +190,19 @@ public class NetworkReusablePerformanceTests {
          * It's a packet which a client sends to a server.
          */
         @PacketDescription(id = 1)
-        public static class MessageRequest extends AbstractReusableSendablePacket {
-
-            private static final MessageRequest EXAMPLE = new MessageRequest();
-
-            public static @NotNull MessageRequest newInstance(@NotNull final String message) {
-                final MessageRequest packet = EXAMPLE.newInstance();
-                packet.notifyFinishedPreparing();
-                packet.message = message;
-                packet.notifyFinishedPreparing();
-                packet.increaseSends();
-                return packet;
-            }
+        public static class MessageRequest extends AbstractSendablePacket {
 
             @NotNull
-            private String message;
+            private final String message;
 
-            public MessageRequest() {
-                message = "";
+            public MessageRequest(@NotNull final String message) {
+                this.message = message;
             }
 
             @Override
             protected void writeImpl(@NotNull final ByteBuffer buffer) {
                 super.writeImpl(buffer);
                 writeString(buffer, message);
-            }
-
-            @Override
-            public void free() {
-                message = "";
             }
         }
 
@@ -181,7 +215,7 @@ public class NetworkReusablePerformanceTests {
             @Override
             protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
                 readString(buffer);
-                RECEIVED_SERVER_PACKETS.getAndIncrement();
+                RECEIVED_SERVER_PACKETS.incrementAndGet();
             }
         }
     }
@@ -198,13 +232,14 @@ public class NetworkReusablePerformanceTests {
         final ReadablePacketRegistry clientRegistry = ReadablePacketRegistry.of(ClientPackets.MessageResponse.class);
 
         serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(SERVER_CONFIG, serverRegistry,
-                AcceptHandler.newDefault(client -> ArrayUtils.runInWriteLock(AVAILABLE_CLIENTS, client, Array::add)));
+                AcceptHandler.newSimple(TestClientConnection::new, TestClient::new,
+                        client -> ArrayUtils.runInWriteLock(AVAILABLE_CLIENTS, client, Array::add)));
         serverNetwork.bind(SERVER_ADDRESS);
         serverNetwork.setDestroyedHandler(client -> ArrayUtils.runInWriteLock(AVAILABLE_CLIENTS, client, Array::fastRemove));
 
         for (int i = 0; i < CLIENT_COUNT; i++) {
 
-            final ClientNetwork clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(clientRegistry);
+            final ClientNetwork clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(CLIENT_CONFIG, clientRegistry, ConnectHandler.newDefault());
             clientNetwork.asyncConnect(SERVER_ADDRESS);
 
             CLIENT_NETWORKS.add(clientNetwork);
@@ -227,17 +262,18 @@ public class NetworkReusablePerformanceTests {
                 final Server server = notNull(clientNetwork.getCurrentServer());
 
                 for (int i = 0; i < CLIENT_PACKETS_PER_CLIENT; i++) {
-                    server.sendPacket(ClientPackets.MessageRequest.newInstance("Message_" + i));
+                    server.sendPacket(new ClientPackets.MessageRequest("Message"));
                 }
 
             }, "SendPacketThread_" + order++);
             thread.start();
         }
 
+        final int totalServerReadBytes = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_PACKET_SIZE;
         final int totalClientPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT;
         final int totalServerPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_COUNT;
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50; i++) {
             ThreadUtils.sleep(500);
 
             final long receiverClientPackets = RECEIVED_CLIENT_PACKETS.get();
@@ -253,8 +289,13 @@ public class NetworkReusablePerformanceTests {
             break;
         }
 
-        Assertions.assertEquals(totalClientPackets, RECEIVED_CLIENT_PACKETS.get());
-        Assertions.assertEquals(totalServerPackets, RECEIVED_SERVER_PACKETS.get());
+        Assertions.assertEquals(totalServerReadBytes, SERVER_READ_DATA.get(),
+                "Expected read bytes from clients: " + totalClientPackets + ", read: " + SERVER_READ_DATA);
+        Assertions.assertEquals(totalClientPackets, RECEIVED_CLIENT_PACKETS.get(),
+                "Expected packets from clients: " + totalClientPackets + ", received: " + RECEIVED_CLIENT_PACKETS);
+        Assertions.assertEquals(totalServerPackets, RECEIVED_SERVER_PACKETS.get(),
+                "Expected packets from server: " + totalServerPackets + ", received: " + RECEIVED_SERVER_PACKETS +
+                        ", sent : " + SENT_SERVER_PACKETS + ", wrote " + WROTE_SERVER_PACKETS.get());
     }
 
     @AfterAll
