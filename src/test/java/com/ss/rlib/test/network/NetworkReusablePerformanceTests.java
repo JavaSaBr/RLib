@@ -61,7 +61,7 @@ public class NetworkReusablePerformanceTests {
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(4);
 
-    private static final int CLIENT_COUNT = 2;
+    private static final int CLIENT_COUNT = 100;
     private static final int CLIENT_PACKETS_PER_CLIENT = 100;
 
     @NotNull
@@ -81,7 +81,6 @@ public class NetworkReusablePerformanceTests {
             @Override
             protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
                 final String message = readString(buffer);
-
                 RECEIVED_CLIENT_PACKETS.incrementAndGet();
                 EXECUTOR_SERVICE.execute(() -> {
 
@@ -253,8 +252,10 @@ public class NetworkReusablePerformanceTests {
             break;
         }
 
-        Assertions.assertEquals(totalClientPackets, RECEIVED_CLIENT_PACKETS.get());
-        Assertions.assertEquals(totalServerPackets, RECEIVED_SERVER_PACKETS.get());
+        Assertions.assertEquals(totalClientPackets, RECEIVED_CLIENT_PACKETS.get(),
+                "Expected packets from clients: " + totalClientPackets + ", received: " + RECEIVED_CLIENT_PACKETS);
+        Assertions.assertEquals(totalServerPackets, RECEIVED_SERVER_PACKETS.get(),
+                "Expected packets from server: " + totalServerPackets + ", received: " + RECEIVED_SERVER_PACKETS);
     }
 
     @AfterAll

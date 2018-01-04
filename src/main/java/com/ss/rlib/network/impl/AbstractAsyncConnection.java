@@ -448,10 +448,6 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             buffer.put(waitBuffer.array(), prevPosition, min(waitBuffer.remaining(), buffer.remaining()));
             buffer.flip();
 
-            buffer.getShort();
-            final int packetId = buffer.getShort() & 0xFFFF;
-            buffer.position(buffer.position() - 4);
-
             // обновляем позицию в ожидаемом буфере после сброса части данных в обычный буффер
             waitBuffer.position(waitBuffer.position() + buffer.limit());
 
@@ -490,9 +486,6 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
                     buffer.clear();
                     buffer.put(waitBuffer.array(), newPosition, min(waitBuffer.remaining(), buffer.remaining()));
                     buffer.flip();
-
-                    final int packetId = buffer.getShort() & 0xFFFF;
-                    buffer.position(buffer.position() - 2);
 
                     // сдвигаем позицию на кол-во сколько скинули данных в буффер
                     waitBuffer.position(waitBuffer.position() + buffer.limit());

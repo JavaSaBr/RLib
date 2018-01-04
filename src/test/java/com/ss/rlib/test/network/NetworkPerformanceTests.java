@@ -74,17 +74,6 @@ public class NetworkPerformanceTests {
                 SERVER_READ_DATA.accumulate(result);
             }
         }
-
-        @Override
-        protected int readPacket(@NotNull final ByteBuffer buffer) {
-            final int remaining = buffer.remaining();
-            final int expectedPackets = remaining / CLIENT_PACKET_SIZE;
-            final int resultCount = super.readPacket(buffer);
-            if (resultCount < expectedPackets) {
-                return 0;
-            }
-            return resultCount;
-        }
     }
 
     private static final NetworkConfig SERVER_CONFIG = new NetworkConfig() {
