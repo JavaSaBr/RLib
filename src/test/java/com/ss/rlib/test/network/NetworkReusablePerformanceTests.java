@@ -12,6 +12,7 @@ import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
 import com.ss.rlib.network.packet.impl.AbstractReusableWritablePacket;
+import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
 import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
@@ -62,7 +63,7 @@ public class NetworkReusablePerformanceTests {
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(4);
 
     private static final int CLIENT_COUNT = 100;
-    private static final int CLIENT_PACKETS_PER_CLIENT = 100;
+    private static final int CLIENT_PACKETS_PER_CLIENT = 1000;
 
     @NotNull
     private static final AtomicLong RECEIVED_SERVER_PACKETS = new AtomicLong(0);
@@ -82,7 +83,7 @@ public class NetworkReusablePerformanceTests {
             protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
                 final String message = readString(buffer);
                 RECEIVED_CLIENT_PACKETS.incrementAndGet();
-                EXECUTOR_SERVICE.execute(() -> {
+                /*EXECUTOR_SERVICE.execute(() -> {
 
                     final MessageResponse response = MessageResponse.newInstance(message);
                     response.increaseSends();
@@ -93,7 +94,7 @@ public class NetworkReusablePerformanceTests {
                     });
 
                     response.complete();
-                });
+                });*/
             }
         }
 
@@ -114,7 +115,7 @@ public class NetworkReusablePerformanceTests {
             }
 
             @NotNull
-            private String message;
+            private volatile String message;
 
             public MessageResponse() {
                 message = "";
@@ -141,14 +142,15 @@ public class NetworkReusablePerformanceTests {
         @PacketDescription(id = 1)
         public static class MessageRequest extends AbstractReusableWritablePacket {
 
+            public static final AtomicLong INSTANCES = new AtomicLong(0);
+
             private static final MessageRequest EXAMPLE = new MessageRequest();
 
             public static @NotNull MessageRequest newInstance(@NotNull final String message) {
                 final MessageRequest packet = EXAMPLE.newInstance();
-                packet.notifyFinishedPreparing();
+                packet.notifyStartedPreparing();
                 packet.message = message;
                 packet.notifyFinishedPreparing();
-                packet.increaseSends();
                 return packet;
             }
 
@@ -156,6 +158,7 @@ public class NetworkReusablePerformanceTests {
             private String message;
 
             public MessageRequest() {
+                INSTANCES.incrementAndGet();
                 message = "";
             }
 
@@ -168,6 +171,26 @@ public class NetworkReusablePerformanceTests {
             @Override
             public void free() {
                 message = "";
+            }
+        }
+
+        /**
+         * It's a packet which a client sends to a server.
+         */
+        @PacketDescription(id = 1)
+        public static class MessageNotReusableRequest extends AbstractWritablePacket {
+
+            @NotNull
+            private final String message;
+
+            public MessageNotReusableRequest(@NotNull final String message) {
+                this.message = message;
+            }
+
+            @Override
+            protected void writeImpl(@NotNull final ByteBuffer buffer) {
+                super.writeImpl(buffer);
+                writeString(buffer, message);
             }
         }
 
@@ -226,7 +249,8 @@ public class NetworkReusablePerformanceTests {
                 final Server server = notNull(clientNetwork.getCurrentServer());
 
                 for (int i = 0; i < CLIENT_PACKETS_PER_CLIENT; i++) {
-                    server.sendPacket(ClientPackets.MessageRequest.newInstance("Message_" + i));
+                    //server.sendPacket(ClientPackets.MessageRequest.newInstance("Message_" + i));
+                    server.sendPacket(new ClientPackets.MessageNotReusableRequest("Message"));
                 }
 
             }, "SendPacketThread_" + order++);
@@ -246,11 +270,13 @@ public class NetworkReusablePerformanceTests {
 
             final long receivedServerPackets = RECEIVED_SERVER_PACKETS.get();
             if (receivedServerPackets < totalServerPackets) {
-                continue;
+               // continue;
             }
 
             break;
         }
+
+        final long instances = ClientPackets.MessageRequest.INSTANCES.get();
 
         Assertions.assertEquals(totalClientPackets, RECEIVED_CLIENT_PACKETS.get(),
                 "Expected packets from clients: " + totalClientPackets + ", received: " + RECEIVED_CLIENT_PACKETS);

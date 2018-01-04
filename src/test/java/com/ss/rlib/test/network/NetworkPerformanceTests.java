@@ -36,7 +36,6 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.LongAccumulator;
 
 /**
  * The test ot test performance of reusable packets of network.
@@ -47,11 +46,6 @@ public class NetworkPerformanceTests {
 
     @NotNull
     private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(3434);
-
-    @NotNull
-    private static final LongAccumulator SERVER_READ_DATA = new LongAccumulator((left, right) -> left + right, 0);
-
-    private static final int CLIENT_PACKET_SIZE = 2 + 2 + 4 + ("Message".length() * 2);
 
     private static class TestClient extends DefaultClient {
 
@@ -65,14 +59,6 @@ public class NetworkPerformanceTests {
         public TestClientConnection(@NotNull final ServerNetwork network,
                                     @NotNull final AsynchronousSocketChannel channel) {
             super(network, channel);
-        }
-
-        @Override
-        protected void handleReadData(@NotNull final Integer result) {
-            super.handleReadData(result);
-            if (result > 0) {
-                SERVER_READ_DATA.accumulate(result);
-            }
         }
     }
 
@@ -251,14 +237,13 @@ public class NetworkPerformanceTests {
                 final Server server = notNull(clientNetwork.getCurrentServer());
 
                 for (int i = 0; i < CLIENT_PACKETS_PER_CLIENT; i++) {
-                    server.sendPacket(new ClientPackets.MessageRequest("Message"));
+                    server.sendPacket(new ClientPackets.MessageRequest("Message_" + i));
                 }
 
             }, "SendPacketThread_" + order++);
             thread.start();
         }
 
-        final int totalServerReadBytes = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_PACKET_SIZE;
         final int totalClientPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT;
         final int totalServerPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_COUNT;
 
@@ -278,8 +263,6 @@ public class NetworkPerformanceTests {
             break;
         }
 
-        Assertions.assertEquals(totalServerReadBytes, SERVER_READ_DATA.get(),
-                "Expected read bytes from clients: " + totalClientPackets + ", read: " + SERVER_READ_DATA);
         Assertions.assertEquals(totalClientPackets, RECEIVED_CLIENT_PACKETS.get(),
                 "Expected packets from clients: " + totalClientPackets + ", received: " + RECEIVED_CLIENT_PACKETS);
         Assertions.assertEquals(totalServerPackets, RECEIVED_SERVER_PACKETS.get(),

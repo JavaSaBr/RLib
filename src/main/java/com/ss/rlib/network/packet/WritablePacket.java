@@ -150,4 +150,10 @@ public interface WritablePacket extends Packet {
     default void writeBuffer(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer data) {
         buffer.put(data.array(), data.position(), data.limit());
     }
+
+    /**
+     * Notify this packet that it was added to queue to send.
+     */
+    default void notifyAddedToSend() {
+    }
 }

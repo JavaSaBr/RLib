@@ -35,7 +35,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
      * The pool to store this packet after using.
      */
     @Nullable
-    protected Pool<ReusableWritablePacket> pool;
+    protected volatile Pool<ReusableWritablePacket> pool;
 
     /**
      * The memory barrier.

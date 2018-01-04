@@ -105,6 +105,7 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
 
     @Override
     public void sendPacket(@NotNull final WritablePacket packet) {
+        packet.notifyAddedToSend();
         connection.sendPacket(packet);
     }
 
