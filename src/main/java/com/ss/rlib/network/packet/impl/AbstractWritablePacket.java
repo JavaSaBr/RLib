@@ -2,24 +2,24 @@ package com.ss.rlib.network.packet.impl;
 
 import com.ss.rlib.network.annotation.PacketDescription;
 import org.jetbrains.annotations.NotNull;
-import com.ss.rlib.network.packet.SendablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import com.ss.rlib.util.Utils;
 
 import java.nio.ByteBuffer;
 
 /**
- * The base implementation of the {@link SendablePacket}.
+ * The base implementation of the {@link WritablePacket}.
  *
  * @author JavaSaBr
  */
-public abstract class AbstractSendablePacket extends AbstractPacket implements SendablePacket {
+public abstract class AbstractWritablePacket extends AbstractPacket implements WritablePacket {
 
     /**
      * The packet id.
      */
     private int packetId;
 
-    protected AbstractSendablePacket() {
+    protected AbstractWritablePacket() {
         final PacketDescription description = getClass().getAnnotation(PacketDescription.class);
         this.packetId = description.id();
     }

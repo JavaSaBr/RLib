@@ -2,7 +2,7 @@ package com.ss.rlib.network.packet.impl;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.rlib.concurrent.atomic.AtomicInteger;
-import com.ss.rlib.network.packet.ReusableSendablePacket;
+import com.ss.rlib.network.packet.ReusableWritablePacket;
 import com.ss.rlib.util.ClassUtils;
 import com.ss.rlib.util.pools.Pool;
 import com.ss.rlib.util.pools.PoolFactory;
@@ -14,15 +14,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The reusable implementation of {@link AbstractSendablePacket} using the counter to control the life cycle of
+ * The reusable implementation of {@link AbstractWritablePacket} using the counter to control the life cycle of
  * this packet.
  *
  * @author JavaSaBr
  */
-public abstract class AbstractReusableSendablePacket extends AbstractSendablePacket implements ReusableSendablePacket {
+public abstract class AbstractReusableWritablePacket extends AbstractWritablePacket implements ReusableWritablePacket {
 
     @NotNull
-    protected static final ThreadLocal<Map<Class<? extends ReusableSendablePacket>, Pool<ReusableSendablePacket>>> LOCAL_POOLS = ThreadLocal.withInitial(HashMap::new);
+    protected static final ThreadLocal<Map<Class<? extends ReusableWritablePacket>, Pool<ReusableWritablePacket>>>
+            LOCAL_POOLS = ThreadLocal.withInitial(HashMap::new);
 
     /**
      * The counter of pending sendings.
@@ -34,7 +35,7 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
      * The pool to store this packet after using.
      */
     @Nullable
-    protected Pool<ReusableSendablePacket> pool;
+    protected Pool<ReusableWritablePacket> pool;
 
     /**
      * The memory barrier.
@@ -46,7 +47,7 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
      */
     protected int barrierSink;
 
-    public AbstractReusableSendablePacket() {
+    public AbstractReusableWritablePacket() {
         this.counter = new AtomicInteger();
     }
 
@@ -124,8 +125,8 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
      *
      * @return thread local pool.
      */
-    protected @NotNull Pool<ReusableSendablePacket> getThreadLocalPool() {
-        final Map<Class<? extends ReusableSendablePacket>, Pool<ReusableSendablePacket>> poolMap = LOCAL_POOLS.get();
+    protected @NotNull Pool<ReusableWritablePacket> getThreadLocalPool() {
+        final Map<Class<? extends ReusableWritablePacket>, Pool<ReusableWritablePacket>> poolMap = LOCAL_POOLS.get();
         return poolMap.computeIfAbsent(getClass(), PoolFactory::newConcurrentStampedLockReusablePool);
     }
 
@@ -137,7 +138,7 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
     /**
      * @return the pool to store used packet.
      */
-    protected @NotNull Pool<ReusableSendablePacket> getPool() {
+    protected @NotNull Pool<ReusableWritablePacket> getPool() {
         if (pool != null) return pool;
         pool = getThreadLocalPool();
         return pool;
@@ -160,17 +161,17 @@ public abstract class AbstractReusableSendablePacket extends AbstractSendablePac
      *
      * @return the new instance.
      */
-    public <T extends ReusableSendablePacket> @NotNull T newInstance() {
+    public <T extends ReusableWritablePacket> @NotNull T newInstance() {
 
-        final Pool<ReusableSendablePacket> pool = getPool();
-        final ReusableSendablePacket result = pool.take(getClass(), ClassUtils::newInstance);
+        final Pool<ReusableWritablePacket> pool = getPool();
+        final ReusableWritablePacket result = pool.take(getClass(), ClassUtils::newInstance);
         result.setPool(pool);
 
         return notNull(ClassUtils.unsafeCast(result));
     }
 
     @Override
-    public final void setPool(@NotNull final Pool<ReusableSendablePacket> pool) {
+    public final void setPool(@NotNull final Pool<ReusableWritablePacket> pool) {
         this.pool = pool;
     }
 

@@ -6,9 +6,9 @@ import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.network.*;
 import com.ss.rlib.network.packet.ReadablePacket;
-import com.ss.rlib.network.packet.ReusableSendablePacket;
-import com.ss.rlib.network.packet.SendablePacket;
-import com.ss.rlib.network.packet.impl.AbstractReusableSendablePacket;
+import com.ss.rlib.network.packet.ReusableWritablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
+import com.ss.rlib.network.packet.impl.AbstractReusableWritablePacket;
 import com.ss.rlib.util.linkedlist.LinkedList;
 import com.ss.rlib.util.linkedlist.LinkedListFactory;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,7 +62,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * The list of waited packets.
      */
     @NotNull
-    protected final LinkedList<SendablePacket> waitPackets;
+    protected final LinkedList<WritablePacket> waitPackets;
 
     /**
      * The channel.
@@ -157,21 +156,21 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * The write handler.
      */
     @NotNull
-    private final CompletionHandler<Integer, SendablePacket> writeHandler = new CompletionHandler<Integer, SendablePacket>() {
+    private final CompletionHandler<Integer, WritablePacket> writeHandler = new CompletionHandler<Integer, WritablePacket>() {
 
         @Override
-        public void completed(@NotNull final Integer result, @NotNull final SendablePacket packet) {
+        public void completed(@NotNull final Integer result, @NotNull final WritablePacket packet) {
             handleWroteData(result, packet);
         }
 
         @Override
-        public void failed(@NotNull final Throwable exc, @NotNull final SendablePacket packet) {
+        public void failed(@NotNull final Throwable exc, @NotNull final WritablePacket packet) {
             handleFailedWrite(exc, packet);
         }
     };
 
     public AbstractAsyncConnection(@NotNull final AsyncNetwork network, @NotNull final AsynchronousSocketChannel channel,
-                                   @NotNull final Class<? extends SendablePacket> sendableType) {
+                                   @NotNull final Class<? extends WritablePacket> sendableType) {
         this.lock = new StampedLock();
         this.channel = channel;
         this.waitPackets = LinkedListFactory.newLinkedList(sendableType);
@@ -193,8 +192,8 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * Clear waited packets.
      */
     protected void clearWaitPackets() {
-        waitPackets.forEach(AbstractReusableSendablePacket.class::isInstance,
-                packet -> ((AbstractReusableSendablePacket) packet).forceComplete());
+        waitPackets.forEach(AbstractReusableWritablePacket.class::isInstance,
+                packet -> ((AbstractReusableWritablePacket) packet).forceComplete());
         waitPackets.clear();
     }
 
@@ -229,11 +228,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
         final AsynchronousSocketChannel channel = getChannel();
         if (channel.isOpen()) {
-            try {
-                channel.close();
-            } catch (final AsynchronousCloseException e) {
-                // ignore
-            }
+            channel.close();
         }
 
         clearWaitPackets();
@@ -365,7 +360,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      *
      * @return the list of waited packets.
      */
-    protected @NotNull LinkedList<SendablePacket> getWaitPackets() {
+    protected @NotNull LinkedList<WritablePacket> getWaitPackets() {
         return waitPackets;
     }
 
@@ -383,7 +378,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      *
      * @return the write handler.
      */
-    protected @NotNull CompletionHandler<Integer, SendablePacket> getWriteHandler() {
+    protected @NotNull CompletionHandler<Integer, WritablePacket> getWriteHandler() {
         return writeHandler;
     }
 
@@ -569,7 +564,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * @param buffer the write buffer.
      * @return the write buffer.
      */
-    protected @NotNull ByteBuffer writePacketToBuffer(@NotNull final SendablePacket packet, final @NotNull ByteBuffer buffer) {
+    protected @NotNull ByteBuffer writePacketToBuffer(@NotNull final WritablePacket packet, final @NotNull ByteBuffer buffer) {
 
         buffer.clear();
         packet.prepareWritePosition(buffer);
@@ -631,14 +626,14 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      *
      * @param packet the sent packet.
      */
-    protected void completed(@NotNull final SendablePacket packet) {
-        if (packet instanceof ReusableSendablePacket) {
-            ((ReusableSendablePacket) packet).complete();
+    protected void completed(@NotNull final WritablePacket packet) {
+        if (packet instanceof ReusableWritablePacket) {
+            ((ReusableWritablePacket) packet).complete();
         }
     }
 
     @Override
-    public final void sendPacket(@NotNull final SendablePacket packet) {
+    public final void sendPacket(@NotNull final WritablePacket packet) {
         if (isClosed()) return;
         final long stamp = lock.writeLock();
         try {
@@ -662,7 +657,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             return;
         }
 
-        SendablePacket waitPacket;
+        WritablePacket waitPacket;
 
         final long stamp = lock.writeLock();
         try {
@@ -729,7 +724,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * @param result the count of wrote bytes.
      * @param packet the sent packet.
      */
-    protected void handleWroteData(@NotNull final Integer result, @NotNull final SendablePacket packet) {
+    protected void handleWroteData(@NotNull final Integer result, @NotNull final WritablePacket packet) {
         updateLastActivity();
 
         if (result == -1) {
@@ -754,7 +749,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * @param exception the exception.
      * @param packet    the packet.
      */
-    protected void handleFailedWrite(@NotNull final Throwable exception, @NotNull final SendablePacket packet) {
+    protected void handleFailedWrite(@NotNull final Throwable exception, @NotNull final WritablePacket packet) {
         if (config.isVisibleWriteException()) {
             LOGGER.warning(this, new Exception("incorrect write packet " + packet, exception));
         }

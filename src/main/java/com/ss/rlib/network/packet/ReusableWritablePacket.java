@@ -5,11 +5,11 @@ import com.ss.rlib.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The interface to implement a reusable sendable packet.
+ * The interface to implement a reusable writable packet.
  *
  * @author JavaSaBr
  */
-public interface ReusableSendablePacket extends SendablePacket, Reusable {
+public interface ReusableWritablePacket extends WritablePacket, Reusable {
 
     /**
      * Handle completion of packet sending.
@@ -50,5 +50,5 @@ public interface ReusableSendablePacket extends SendablePacket, Reusable {
      *
      * @param pool the pool to store used packet.
      */
-    void setPool(@NotNull Pool<ReusableSendablePacket> pool);
+    void setPool(@NotNull Pool<ReusableWritablePacket> pool);
 }

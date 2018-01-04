@@ -1,7 +1,7 @@
 package com.ss.rlib.network.server.client.impl;
 
 import com.ss.rlib.network.impl.AbstractAsyncConnection;
-import com.ss.rlib.network.packet.SendablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
 import com.ss.rlib.network.server.client.ClientConnection;
@@ -19,12 +19,12 @@ public class DefaultClientConnection extends AbstractAsyncConnection implements 
 
     public DefaultClientConnection(@NotNull final ServerNetwork network,
                                    @NotNull final AsynchronousSocketChannel channel) {
-        super(network, channel, SendablePacket.class);
+        super(network, channel, WritablePacket.class);
     }
 
     public DefaultClientConnection(@NotNull final ServerNetwork network,
                                    @NotNull final AsynchronousSocketChannel channel,
-                                   @NotNull final Class<? extends SendablePacket> sendableType) {
+                                   @NotNull final Class<? extends WritablePacket> sendableType) {
         super(network, channel, sendableType);
     }
 

@@ -1,7 +1,7 @@
 package com.ss.rlib.network;
 
 import com.ss.rlib.network.packet.ReadablePacket;
-import com.ss.rlib.network.packet.SendablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -52,5 +52,5 @@ public interface ConnectionOwner {
      *
      * @param packet the packet.
      */
-    void sendPacket(@NotNull SendablePacket packet);
+    void sendPacket(@NotNull WritablePacket packet);
 }

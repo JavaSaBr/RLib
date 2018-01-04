@@ -12,7 +12,7 @@ import com.ss.rlib.network.client.ConnectHandler;
 import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
-import com.ss.rlib.network.packet.impl.AbstractSendablePacket;
+import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
 import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
@@ -166,7 +166,7 @@ public class NetworkPerformanceTests {
          * It's a packet which a server sends to a client.
          */
         @PacketDescription(id = 2)
-        public static class MessageResponse extends AbstractSendablePacket {
+        public static class MessageResponse extends AbstractWritablePacket {
 
             @NotNull
             private final String message;
@@ -190,7 +190,7 @@ public class NetworkPerformanceTests {
          * It's a packet which a client sends to a server.
          */
         @PacketDescription(id = 1)
-        public static class MessageRequest extends AbstractSendablePacket {
+        public static class MessageRequest extends AbstractWritablePacket {
 
             @NotNull
             private final String message;
@@ -273,7 +273,7 @@ public class NetworkPerformanceTests {
         final int totalClientPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT;
         final int totalServerPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_COUNT;
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 100; i++) {
             ThreadUtils.sleep(500);
 
             final long receiverClientPackets = RECEIVED_CLIENT_PACKETS.get();

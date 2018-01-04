@@ -11,7 +11,7 @@ import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
-import com.ss.rlib.network.packet.impl.AbstractReusableSendablePacket;
+import com.ss.rlib.network.packet.impl.AbstractReusableWritablePacket;
 import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
@@ -102,7 +102,7 @@ public class NetworkReusablePerformanceTests {
          * It's a packet which a server sends to a client.
          */
         @PacketDescription(id = 2)
-        public static class MessageResponse extends AbstractReusableSendablePacket {
+        public static class MessageResponse extends AbstractReusableWritablePacket {
 
             private static final MessageResponse EXAMPLE = new MessageResponse();
 
@@ -140,7 +140,7 @@ public class NetworkReusablePerformanceTests {
          * It's a packet which a client sends to a server.
          */
         @PacketDescription(id = 1)
-        public static class MessageRequest extends AbstractReusableSendablePacket {
+        public static class MessageRequest extends AbstractReusableWritablePacket {
 
             private static final MessageRequest EXAMPLE = new MessageRequest();
 

@@ -4,7 +4,7 @@ import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.client.server.ServerConnection;
 import com.ss.rlib.network.impl.AbstractAsyncConnection;
-import com.ss.rlib.network.packet.SendablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,12 +20,12 @@ public class DefaultServerConnection extends AbstractAsyncConnection implements 
 
     public DefaultServerConnection(@NotNull final ClientNetwork network,
                                    @NotNull final AsynchronousSocketChannel channel) {
-        super(network, channel, SendablePacket.class);
+        super(network, channel, WritablePacket.class);
     }
 
     public DefaultServerConnection(@NotNull final ClientNetwork network,
                                    @NotNull final AsynchronousSocketChannel channel,
-                                   @NotNull final Class<? extends SendablePacket> sendableType) {
+                                   @NotNull final Class<? extends WritablePacket> sendableType) {
         super(network, channel, sendableType);
     }
 

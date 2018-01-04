@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 
 /**
- * Interface to implement a sendable packet.
+ * Interface to implement a writable packet.
  *
  * @author JavaSaBr
  */
-public interface SendablePacket extends Packet {
+public interface WritablePacket extends Packet {
 
     /**
      * Write this packet to the buffer.

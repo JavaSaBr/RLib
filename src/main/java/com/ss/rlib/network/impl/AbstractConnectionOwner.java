@@ -7,7 +7,7 @@ import com.ss.rlib.network.ConnectionOwner;
 import com.ss.rlib.network.NetworkCrypt;
 import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.packet.ReadablePacket;
-import com.ss.rlib.network.packet.SendablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -104,7 +104,7 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
     }
 
     @Override
-    public void sendPacket(@NotNull final SendablePacket packet) {
+    public void sendPacket(@NotNull final WritablePacket packet) {
         connection.sendPacket(packet);
     }
 

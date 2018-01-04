@@ -1,6 +1,6 @@
 package com.ss.rlib.network;
 
-import com.ss.rlib.network.packet.SendablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +56,7 @@ public interface AsyncConnection {
      *
      * @param packet the sendable packet.
      */
-    void sendPacket(@NotNull SendablePacket packet);
+    void sendPacket(@NotNull WritablePacket packet);
 
     /**
      * Activate the process of receiving packets.
