@@ -1,7 +1,6 @@
 package com.ss.rlib.network;
 
-import com.ss.rlib.concurrent.lock.Lockable;
-import com.ss.rlib.network.packet.SendablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,15 +9,21 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-public interface AsyncConnection extends Lockable {
+public interface AsyncConnection {
 
     /**
      * Get a connection owner.
      *
      * @return the connection owner.
      */
-    @Nullable
-    ConnectionOwner getOwner();
+    @Nullable ConnectionOwner getOwner();
+
+    /**
+     * Get the connection network.
+     *
+     * @return the connection network.
+     */
+    @NotNull AsyncNetwork getNetwork();
 
     /**
      * Set the new connection owner.
@@ -40,28 +45,21 @@ public interface AsyncConnection extends Lockable {
     long getLastActivity();
 
     /**
-     * Set time of last activity.
-     *
-     * @param lastActivity the time of last activity.
-     */
-    void setLastActivity(long lastActivity);
-
-    /**
-     * Is closed boolean.
+     * Check if the connection is closed.
      *
      * @return true if this connection is closed.
      */
     boolean isClosed();
 
     /**
-     * Add a packet to queue to send.
+     * Send the packet to connection owner.
      *
      * @param packet the sendable packet.
      */
-    void sendPacket(@NotNull SendablePacket packet);
+    void sendPacket(@NotNull WritablePacket packet);
 
     /**
-     * Activate a reading packets process.
+     * Activate the process of receiving packets.
      */
     void startRead();
 }

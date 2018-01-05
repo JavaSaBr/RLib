@@ -1,39 +1,16 @@
 package com.ss.rlib.network.packet;
 
+import com.ss.rlib.network.annotation.PacketDescription;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
 /**
- * Interface for implementing sendable packets.
+ * Interface to implement a writable packet.
  *
  * @author JavaSaBr
  */
-public interface SendablePacket extends Packet {
-
-    /**
-     * Notify about started preparing data to write this packet.
-     */
-    default void notifyStartedPreparing() {
-    }
-
-    /**
-     * Notify about finished preparing data to write this packet.
-     */
-    default void notifyFinishedPreparing() {
-    }
-
-    /**
-     * Notify about started writing data of this packet.
-     */
-    default void notifyStartedWriting() {
-    }
-
-    /**
-     * Notify about finished writing data of this packet.
-     */
-    default void notifyFinishedWriting() {
-    }
+public interface WritablePacket extends Packet {
 
     /**
      * Write this packet to the buffer.
@@ -57,8 +34,18 @@ public interface SendablePacket extends Packet {
      *
      * @param buffer the buffer.
      */
-    default void writePacketTypeId(@NotNull final ByteBuffer buffer) {
-        writeShort(buffer, getPacketType().getId());
+    default void writePacketId(@NotNull final ByteBuffer buffer) {
+        writeShort(buffer, getPacketId());
+    }
+
+    /**
+     * Get the packet id of this packet.
+     *
+     * @return the packet id.
+     */
+    default int getPacketId() {
+        final PacketDescription description = getClass().getAnnotation(PacketDescription.class);
+        return description.id();
     }
 
     /**
@@ -165,12 +152,8 @@ public interface SendablePacket extends Packet {
     }
 
     /**
-     * Get a packet type of this packet.
-     *
-     * @return the packet type.
+     * Notify this packet that it was added to queue to send.
      */
-    @NotNull
-    default SendablePacketType<? extends SendablePacket> getPacketType() {
-        throw new UnsupportedOperationException();
+    default void notifyAddedToSend() {
     }
 }

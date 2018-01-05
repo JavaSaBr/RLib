@@ -1,48 +1,25 @@
 package com.ss.rlib.network.packet;
 
-import com.ss.rlib.util.ClassUtils;
+import com.ss.rlib.network.ConnectionOwner;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
 /**
- * The interface for implementing readable network packets.
+ * The interface to implement a readable network packet.
  *
  * @author JavaSaBr
  */
 public interface ReadablePacket extends Packet {
 
     /**
-     * Notify about started preparing data to read this packet.
-     */
-    default void notifyStartedPreparing() {
-    }
-
-    /**
-     * Notify about finished preparing data to read this packet.
-     */
-    default void notifyFinishedPreparing() {
-    }
-
-    /**
-     * Notify about started reading data of this packet.
-     */
-    default void notifyStartedReading() {
-    }
-
-    /**
-     * Notify about finished reading data of this packet.
-     */
-    default void notifyFinishedReading() {
-    }
-
-    /**
      * Read this packet.
      *
+     * @param owner  the owner.
      * @param buffer the buffer to read data.
      * @return true if reading was success.
      */
-    boolean read(@NotNull final ByteBuffer buffer);
+    boolean read(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer);
 
     /**
      * Read 1 byte from this packet.
@@ -123,8 +100,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer.
      * @return the read string.
      */
-    @NotNull
-    default String readString(@NotNull final ByteBuffer buffer) {
+    default @NotNull String readString(@NotNull final ByteBuffer buffer) {
 
         final int length = readInt(buffer);
         final char[] array = new char[length];
@@ -134,25 +110,5 @@ public interface ReadablePacket extends Packet {
         }
 
         return new String(array);
-    }
-
-    /**
-     * Get a packet type of this packet.
-     *
-     * @return the packet type.
-     */
-    @NotNull
-    default ReadablePacketType<? extends ReadablePacket> getPacketType() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Create a new instance of this packet.
-     *
-     * @return the new instance.
-     */
-    @NotNull
-    default ReadablePacket newInstance() {
-        return ClassUtils.newInstance(getClass());
     }
 }

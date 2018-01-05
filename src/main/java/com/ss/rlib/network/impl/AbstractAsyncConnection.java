@@ -1,19 +1,14 @@
 package com.ss.rlib.network.impl;
 
-import static com.ss.rlib.network.packet.ReadablePacketType.getPacketType;
-import static java.util.Objects.requireNonNull;
-import com.ss.rlib.concurrent.lock.LockFactory;
+import static com.ss.rlib.util.ObjectUtils.notNull;
+import static java.lang.Math.min;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
-import com.ss.rlib.network.AsyncConnection;
-import com.ss.rlib.network.AsynchronousNetwork;
-import com.ss.rlib.network.ConnectionOwner;
-import com.ss.rlib.network.NetworkConfig;
+import com.ss.rlib.network.*;
 import com.ss.rlib.network.packet.ReadablePacket;
-import com.ss.rlib.network.packet.ReadablePacketType;
-import com.ss.rlib.network.packet.SendablePacket;
-import com.ss.rlib.network.packet.impl.AbstractReusableSendablePacket;
-import com.ss.rlib.util.ClassUtils;
+import com.ss.rlib.network.packet.ReusableWritablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
+import com.ss.rlib.network.packet.impl.AbstractReusableWritablePacket;
 import com.ss.rlib.util.linkedlist.LinkedList;
 import com.ss.rlib.util.linkedlist.LinkedListFactory;
 import org.jetbrains.annotations.NotNull;
@@ -24,11 +19,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.StampedLock;
 
 /**
- * The base implementation of the Async Connection.
+ * The base implementation of {@link AsyncConnection}.
  *
  * @author JavaSaBr
  */
@@ -37,32 +31,30 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     /**
      * The constant LOGGER.
      */
-    protected static final Logger LOGGER = LoggerManager.getLogger(AsyncConnection.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(AsyncNetwork.class);
 
     /**
-     * The constant SIZE_BYTES_SIZE.
+     * The constant PACKET_SIZE_BYTES_COUNT.
      */
-    protected static final int SIZE_BYTES_SIZE = 2;
+    protected static final int PACKET_SIZE_BYTES_COUNT = 2;
+
     /**
-     * The constant READ_PACKET_LIMIT.
+     * The constant MAX_PACKETS_BY_READ.
      */
-    protected static final int READ_PACKET_LIMIT = 1000;
-    /**
-     * The constant WAIT_SEGMENT_LIMIT.
-     */
-    protected static final int WAIT_SEGMENT_LIMIT = 10;
+    protected static final int MAX_PACKETS_BY_READ = Integer.parseInt(System.getProperty(
+            AbstractAsyncConnection.class.getName() + ".maxPacketsByRead", "100"));
 
     /**
      * The network.
      */
     @NotNull
-    protected final AsynchronousNetwork network;
+    protected final AsyncNetwork network;
 
     /**
      * The list of waited packets.
      */
     @NotNull
-    protected final LinkedList<SendablePacket> waitPackets;
+    protected final LinkedList<WritablePacket> waitPackets;
 
     /**
      * The channel.
@@ -77,6 +69,12 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     protected final ByteBuffer readBuffer;
 
     /**
+     * The swap buffer.
+     */
+    @NotNull
+    protected final ByteBuffer swapBuffer;
+
+    /**
      * The write buffer.
      */
     @NotNull
@@ -87,12 +85,6 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      */
     @NotNull
     protected final ByteBuffer waitBuffer;
-
-    /**
-     * The count of received segments of a large packet.
-     */
-    @NotNull
-    protected final AtomicInteger waitCount;
 
     /**
      * The state of writing.
@@ -116,7 +108,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * The locker.
      */
     @NotNull
-    protected final Lock lock;
+    protected final StampedLock lock;
 
     /**
      * The connection's owner.
@@ -137,30 +129,12 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
         @Override
         public void completed(@NotNull final Integer result, @NotNull final AbstractAsyncConnection connection) {
-            setLastActivity(System.currentTimeMillis());
-
-            if (result == -1) {
-                finish();
-                return;
-            }
-
-            final ByteBuffer buffer = getReadBuffer();
-            buffer.flip();
-            try {
-                if (isReady(buffer)) readPacket(buffer);
-            } catch (final Exception e) {
-                LOGGER.error(this, e);
-            } finally {
-                buffer.clear();
-            }
-
-            startRead();
+            handleReadData(result);
         }
 
         @Override
         public void failed(@NotNull final Throwable exc, @NotNull final AbstractAsyncConnection attachment) {
-            if (config.isVisibleReadException()) LOGGER.warning(this, exc);
-            if (!isClosed()) finish();
+            handleFailedRead(exc);
         }
     };
 
@@ -168,49 +142,22 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * The write handler.
      */
     @NotNull
-    private final CompletionHandler<Integer, SendablePacket> writeHandler = new CompletionHandler<Integer, SendablePacket>() {
+    private final CompletionHandler<Integer, WritablePacket> writeHandler = new CompletionHandler<Integer, WritablePacket>() {
 
         @Override
-        public void completed(@NotNull final Integer result, @NotNull final SendablePacket packet) {
-            setLastActivity(System.currentTimeMillis());
-
-            if (result == -1) {
-                finish();
-                return;
-            }
-
-            final ByteBuffer buffer = getWriteBuffer();
-
-            if (buffer.remaining() > 0) {
-                channel.write(buffer, packet, this);
-                return;
-            }
-
-            if (isWriting.compareAndSet(true, false)) writeNextPacket();
+        public void completed(@NotNull final Integer result, @NotNull final WritablePacket packet) {
+            handleWroteData(result, packet);
         }
 
         @Override
-        public void failed(@NotNull final Throwable exc, @NotNull final SendablePacket packet) {
-
-            if (config.isVisibleWriteException()) {
-                LOGGER.warning(this, new Exception("incorrect write packet " + packet, exc));
-            }
-
-            if (isClosed()) return;
-            if (isWriting.compareAndSet(true, false)) writeNextPacket();
+        public void failed(@NotNull final Throwable exc, @NotNull final WritablePacket packet) {
+            handleFailedWrite(exc, packet);
         }
     };
 
-    /**
-     * Instantiates a new Abstract async connection.
-     *
-     * @param network      the network
-     * @param channel      the channel
-     * @param sendableType the sendable type
-     */
-    public AbstractAsyncConnection(@NotNull final AsynchronousNetwork network, @NotNull final AsynchronousSocketChannel channel,
-                                   @NotNull final Class<? extends SendablePacket> sendableType) {
-        this.lock = LockFactory.newReentrantLock();
+    public AbstractAsyncConnection(@NotNull final AsyncNetwork network, @NotNull final AsynchronousSocketChannel channel,
+                                   @NotNull final Class<? extends WritablePacket> sendableType) {
+        this.lock = new StampedLock();
         this.channel = channel;
         this.waitPackets = LinkedListFactory.newLinkedList(sendableType);
         this.network = network;
@@ -220,18 +167,18 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
         this.config = network.getConfig();
         this.isWriting = new AtomicBoolean(false);
         this.closed = new AtomicBoolean(false);
-        this.waitBuffer = network.takeReadBuffer();
-        this.waitCount = new AtomicInteger();
+        this.waitBuffer = network.takeWaitBuffer();
+        this.waitBuffer.flip();
+        this.swapBuffer = network.takeWaitBuffer();
+        this.swapBuffer.flip();
     }
 
     /**
      * Clear waited packets.
      */
     protected void clearWaitPackets() {
-
-        waitPackets.forEach(packet -> packet instanceof AbstractReusableSendablePacket,
-                packet -> ((AbstractReusableSendablePacket) packet).forceComplete());
-
+        waitPackets.forEach(AbstractReusableWritablePacket.class::isInstance,
+                packet -> ((AbstractReusableWritablePacket) packet).forceComplete());
         waitPackets.clear();
     }
 
@@ -241,34 +188,41 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     }
 
     @Override
-    @Nullable
-    public ConnectionOwner getOwner() {
+    public @Nullable ConnectionOwner getOwner() {
         return owner;
     }
 
     @Override
     public void close() {
-        lock();
+        if (!closed.compareAndSet(false, true)) {
+            return;
+        }
         try {
-
-            if (isClosed()) return;
-            setClosed(true);
-
-            final AsynchronousSocketChannel channel = getChannel();
-            if (channel.isOpen()) channel.close();
-
-            clearWaitPackets();
-
-            final AsynchronousNetwork network = getNetwork();
-            network.putReadBuffer(getReadBuffer());
-            network.putWriteBuffer(getWriteBuffer());
-            network.putReadBuffer(getWaitBuffer());
-
+            doClose();
         } catch (final IOException e) {
             LOGGER.warning(this, e);
-        } finally {
-            unlock();
         }
+    }
+
+    /**
+     * Does the process of closing this connection.
+     *
+     * @throws IOException if found some problem during closing a channel.
+     */
+    protected void doClose() throws IOException {
+
+        final AsynchronousSocketChannel channel = getChannel();
+        if (channel.isOpen()) {
+            channel.close();
+        }
+
+        clearWaitPackets();
+
+        final AsyncNetwork network = getNetwork();
+        network.putReadBuffer(getReadBuffer());
+        network.putWriteBuffer(getWriteBuffer());
+        network.putWaitBuffer(getWaitBuffer());
+        network.putWaitBuffer(getSwapBuffer());
     }
 
     /**
@@ -276,39 +230,46 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      */
     protected void finish() {
         final ConnectionOwner owner = getOwner();
-        if (owner != null) owner.close();
+        if (owner != null) {
+            owner.destroy();
+        }
     }
 
     /**
-     * Gets wait buffer.
+     * Get the wait buffer.
      *
      * @return the wait buffer to receive a large packet.
      */
-    @NotNull
-    protected ByteBuffer getWaitBuffer() {
+    protected @NotNull ByteBuffer getWaitBuffer() {
         return waitBuffer;
     }
 
     /**
-     * Gets remote address.
+     * Get the swap buffer.
+     *
+     * @return the swap buffer.
+     */
+    protected @NotNull ByteBuffer getSwapBuffer() {
+        return swapBuffer;
+    }
+
+    /**
+     * Get the remote address.
      *
      * @return the remote address.
      */
-    @NotNull
-    public String getRemoteAddress() {
-
+    public @NotNull String getRemoteAddress() {
         final AsynchronousSocketChannel channel = getChannel();
         try {
             return String.valueOf(channel.getRemoteAddress());
         } catch (final IOException e) {
             LOGGER.warning(this, e);
         }
-
         return "unknown";
     }
 
     /**
-     * Get data size of the packet.
+     * Get the data size of the packet.
      *
      * @param buffer the packet data buffer.
      * @return the packet size.
@@ -318,230 +279,398 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     }
 
     /**
-     * Gets wait count.
-     *
-     * @return the count of received segments of a large packet.
-     */
-    @NotNull
-    protected AtomicInteger getWaitCount() {
-        return waitCount;
-    }
-
-    /**
-     * Gets channel.
+     * Get the channel.
      *
      * @return the channel.
      */
-    @NotNull
-    protected AsynchronousSocketChannel getChannel() {
+    protected @NotNull AsynchronousSocketChannel getChannel() {
         return channel;
     }
 
     @Override
-    public final long getLastActivity() {
+    public long getLastActivity() {
         return lastActivity;
     }
 
-    @Override
-    public final void setLastActivity(final long lastActivity) {
+    /**
+     * Set the time of last activity.
+     *
+     * @param lastActivity the time of last activity.
+     */
+    protected void setLastActivity(final long lastActivity) {
         this.lastActivity = lastActivity;
     }
 
     /**
-     * Gets lock.
-     *
-     * @return the locker.
+     * Update the time of last activity.
      */
-    @NotNull
-    public Lock getLock() {
-        return lock;
+    protected void updateLastActivity() {
+        setLastActivity(System.currentTimeMillis());
     }
 
-    /**
-     * Gets network.
-     *
-     * @return the network.
-     */
-    @NotNull
-    protected AsynchronousNetwork getNetwork() {
+    @Override
+    public @NotNull AsyncNetwork getNetwork() {
         return network;
     }
 
     /**
-     * Gets read buffer.
+     * Get the read buffer.
      *
      * @return the read buffer.
      */
-    @NotNull
-    protected final ByteBuffer getReadBuffer() {
+    protected @NotNull ByteBuffer getReadBuffer() {
         return readBuffer;
     }
 
     /**
-     * Gets read handler.
+     * Get the read handler.
      *
      * @return the read handler.
      */
-    @NotNull
-    protected CompletionHandler<Integer, AbstractAsyncConnection> getReadHandler() {
+    protected @NotNull CompletionHandler<Integer, AbstractAsyncConnection> getReadHandler() {
         return readHandler;
     }
 
     /**
-     * Gets wait packets.
+     * Get the list of wait packets.
      *
      * @return the list of waited packets.
      */
-    @NotNull
-    protected LinkedList<SendablePacket> getWaitPackets() {
+    protected @NotNull LinkedList<WritablePacket> getWaitPackets() {
         return waitPackets;
     }
 
     /**
-     * Gets write buffer.
+     * Get the write buffer.
      *
      * @return the write buffer.
      */
-    @NotNull
-    protected final ByteBuffer getWriteBuffer() {
+    protected @NotNull ByteBuffer getWriteBuffer() {
         return writeBuffer;
     }
 
     /**
-     * Gets write handler.
+     * Get the write handler.
      *
      * @return the write handler.
      */
-    @NotNull
-    protected CompletionHandler<Integer, SendablePacket> getWriteHandler() {
+    protected @NotNull CompletionHandler<Integer, WritablePacket> getWriteHandler() {
         return writeHandler;
     }
 
     @Override
-    public final boolean isClosed() {
+    public boolean isClosed() {
         return closed.get();
     }
 
     /**
-     * Sets closed.
+     * Set true if this connection is closed.
      *
-     * @param closed закрыт ли конект.
+     * @param closed true if this connection is closed.
      */
-    protected final void setClosed(final boolean closed) {
+    protected void setClosed(final boolean closed) {
         this.closed.getAndSet(closed);
     }
 
     /**
-     * Check a buffer on ready to read.
+     * Check the buffer if this is ready to read.
      *
-     * @param buffer the read buffer.
-     * @return true if the buffer is ready.
+     * @param buffer the buffer.
+     * @return true if the buffer is ready to read .
      */
-    protected boolean isReady(@NotNull final ByteBuffer buffer) {
+    protected boolean isReadyToRead(@NotNull final ByteBuffer buffer) {
         return true;
     }
 
-    @Override
-    public void lock() {
-        lock.lock();
+    /**
+     * Get the byte count of packet size bytes.
+     *
+     * @return the byte count of packet size bytes.
+     */
+    protected int getPacketSizeByteCount() {
+        return PACKET_SIZE_BYTES_COUNT;
     }
 
-    @Override
-    public void unlock() {
-        lock.unlock();
+    /**
+     * Get the how many packets can be read by the one method call readPacket().
+     *
+     * @return the how many packets can be read by the one method call readPacket().
+     */
+    protected int getMaxPacketsByRead() {
+        return MAX_PACKETS_BY_READ;
     }
 
     /**
      * Read the buffer with received data.
      *
      * @param buffer the buffer with received data
+     * @return count of read packets.
      */
-    protected void readPacket(@NotNull final ByteBuffer buffer) {
+    protected int readPacket(@NotNull final ByteBuffer buffer) {
 
-        final ConnectionOwner owner = requireNonNull(getOwner());
+        final ConnectionOwner owner = notNull(getOwner());
+        final NetworkCrypt crypt = owner.getCrypt();
         final ByteBuffer waitBuffer = getWaitBuffer();
-        final AtomicInteger waitCount = getWaitCount();
 
-        int currentCount = waitCount.get();
+        int resultCount = 0;
 
-        if (currentCount > WAIT_SEGMENT_LIMIT) {
-            waitBuffer.clear();
-            LOGGER.error(this, "crowded limit segments.");
-        }
+        final int waitedBytes = waitBuffer.remaining();
 
         // если есть кусок пакета ожидающего
-        if (waitBuffer.position() > 0) {
-
-            // вливаем весь новый буффер
-            waitBuffer.put(buffer.array(), buffer.position(), buffer.limit() - buffer.position());
-            waitBuffer.flip();
-
-            // очищаем пришедший буффер и вливаем в него новый итоговый буффер
-            buffer.clear();
-            buffer.put(waitBuffer.array(), 0, waitBuffer.limit());
-            buffer.flip();
-
-            // очищаем ожидающий буффер
-            waitBuffer.clear();
+        if (waitedBytes > 0) {
+            takeFromWaitBuffer(buffer, waitBuffer);
         }
 
-        for (int i = 0, limit = 0, size = 0; buffer.remaining() >= SIZE_BYTES_SIZE && i < READ_PACKET_LIMIT; i++) {
+        final int sizeByteCount = getPacketSizeByteCount();
+        final int maxPacketsByRead = getMaxPacketsByRead();
 
+        for (int i = 0, limit = 0, size; buffer.remaining() >= sizeByteCount && i < maxPacketsByRead; i++) {
             size = getPacketSize(buffer);
-
             limit += size;
 
-            // если пакет не вместился в этот буффер, складываем его в ожидающий
-            // и выходим из цикла
+            // если пакет не вместился в этот буффер
             if (limit > buffer.limit()) {
 
-                final int offset = buffer.position() - SIZE_BYTES_SIZE;
-                final int length = buffer.limit() - offset;
+                final int missedBytes = limit - buffer.limit();
 
-                waitBuffer.put(buffer.array(), offset, length);
-                waitCount.incrementAndGet();
-                return;
+                // проверка остались ли данные в ожидаемом буффере для до прочтения и если да,
+                // то достаточно ли там байт что бы дочитать пакет
+                if (waitedBytes > 0 && waitBuffer.position() > 0 && waitBuffer.remaining() >= missedBytes) {
+                    takeMissedFromWaitBuffer(buffer, waitBuffer);
+                    limit = size;
+                } else {
+                    saveDataToWaitBuffer(buffer, waitBuffer, sizeByteCount);
+                    break;
+                }
             }
 
-            owner.decrypt(buffer, buffer.position(), size - SIZE_BYTES_SIZE);
+            decrypt(buffer, crypt, buffer.position(), size - sizeByteCount);
 
             final ReadablePacket packet = createPacketFor(buffer);
 
-            if (currentCount > 0) {
-                waitCount.getAndSet(0);
-                currentCount = 0;
-            }
-
             if (packet != null) {
                 owner.readPacket(packet, buffer);
+                resultCount++;
             }
-
-            buffer.position(limit);
         }
+
+        if (buffer.hasRemaining()) {
+            if (buffer.remaining() < sizeByteCount) {
+                saveDataToWaitBuffer(buffer, waitBuffer, 0);
+            } else {
+                LOGGER.warning(this, "Have not read data from the read buffer...");
+            }
+        }
+
+        // если ожидаеющий буффер фрагментировал
+        if (waitBuffer.position() > 0) {
+            compactWaitBuffer(waitBuffer);
+        }
+
+        return resultCount;
     }
 
     /**
-     * Write a packet to a write buffer.
+     * Save not read data to the wait buffer.
+     *
+     * @param buffer        the read buffer.
+     * @param waitBuffer    the wait buffer.
+     * @param sizeByteCount the byte count of packet size.
+     */
+    protected void saveDataToWaitBuffer(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer waitBuffer,
+                                        final int sizeByteCount) {
+
+        final int offset = buffer.position() - sizeByteCount;
+        final int length = buffer.limit() - offset;
+
+        // если ожидаеющий буффер фрагментировал
+        if (waitBuffer.position() > 0) {
+
+            final ByteBuffer swapBuffer = getSwapBuffer();
+            swapBuffer.clear();
+            swapBuffer.put(buffer.array(), offset, length);
+            swapBuffer.put(waitBuffer.array(), waitBuffer.position(), waitBuffer.remaining());
+            swapBuffer.flip();
+            waitBuffer.clear();
+            waitBuffer.put(swapBuffer.array(), 0, swapBuffer.remaining());
+            waitBuffer.flip();
+
+            /*if (waitBuffer.limit() >= 4) {
+                final int size = waitBuffer.getShort() & 0xFFFF;
+                final int id = waitBuffer.getShort() & 0xFFFF;
+                waitBuffer.position(0);
+            }*/
+
+        } else {
+
+            waitBuffer.clear();
+            waitBuffer.put(buffer.array(), offset, length);
+            waitBuffer.flip();
+
+            /* if (waitBuffer.limit() >= 4) {
+                final int size = waitBuffer.getShort() & 0xFFFF;
+                final int id = waitBuffer.getShort() & 0xFFFF;
+                waitBuffer.position(0);
+            } */
+        }
+
+        buffer.clear().flip();
+    }
+
+    /**
+     * Take missed bytes from the wait buffer.
+     *
+     * @param buffer     the read buffer.
+     * @param waitBuffer the wait buffer.
+     */
+    protected void takeMissedFromWaitBuffer(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer waitBuffer) {
+
+        // делаем отступ назад на кол-во байт которых осталось непрочитанных в буффере
+        final int newPosition = waitBuffer.position() - buffer.remaining();
+        final int prevLimit = waitBuffer.limit();
+
+        waitBuffer.clear();
+        waitBuffer.position(newPosition);
+
+        // добавляем спереди непрочитанный кусок
+        waitBuffer.put(buffer.array(), buffer.position(), buffer.remaining());
+        waitBuffer.position(newPosition);
+        waitBuffer.limit(prevLimit);
+
+        buffer.clear();
+        buffer.put(waitBuffer.array(), newPosition, min(waitBuffer.remaining(), buffer.remaining()));
+        buffer.flip();
+
+        // сдвигаем позицию на кол-во сколько скинули данных в буффер
+        waitBuffer.position(waitBuffer.position() + buffer.limit());
+
+        // очищаем ожидающий буффер если мы его весь прочитали
+        if (!waitBuffer.hasRemaining()) {
+            waitBuffer.clear();
+            waitBuffer.flip();
+        }
+
+        /* if (waitBuffer.limit() >= 4) {
+            final int size = waitBuffer.getShort() & 0xFFFF;
+            final int id = waitBuffer.getShort() & 0xFFFF;
+            waitBuffer.position(0);
+        } */
+    }
+
+    /**
+     * Compact the wait buffer.
+     *
+     * @param waitBuffer the wait buffer.
+     */
+    protected void compactWaitBuffer(@NotNull final ByteBuffer waitBuffer) {
+
+        final ByteBuffer swapBuffer = getSwapBuffer();
+        swapBuffer.clear();
+        swapBuffer.put(waitBuffer.array(), waitBuffer.position(), waitBuffer.remaining());
+        swapBuffer.flip();
+        waitBuffer.clear();
+        waitBuffer.put(swapBuffer.array(), 0, swapBuffer.remaining());
+        waitBuffer.flip();
+
+        /* if (waitBuffer.limit() >= 4) {
+            final int size = waitBuffer.getShort() & 0xFFFF;
+            final int id = waitBuffer.getShort() & 0xFFFF;
+            waitBuffer.position(0);
+        } */
+    }
+
+    /**
+     * Take waited data from the wait buffer.
+     *
+     * @param buffer     the read buffer.
+     * @param waitBuffer the wait buffer.
+     */
+    protected void takeFromWaitBuffer(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer waitBuffer) {
+
+        final int prevLimit = waitBuffer.limit();
+        final int prevPosition = waitBuffer.position();
+        final int length = buffer.limit() - buffer.position();
+
+        // add all current data to the wait buffer
+        waitBuffer.clear();
+        waitBuffer.position(prevLimit);
+        waitBuffer.put(buffer.array(), buffer.position(), length);
+        waitBuffer.flip();
+        waitBuffer.position(prevPosition);
+
+        // clear the read buffer and put result data from wait buffer
+        buffer.clear();
+        buffer.put(waitBuffer.array(), prevPosition, min(waitBuffer.remaining(), buffer.remaining()));
+        buffer.flip();
+
+        // update the position of wait buffer to understand of existing wait data
+        waitBuffer.position(waitBuffer.position() + buffer.limit());
+
+        // clear wait buffer if it doesn't have wait data
+        if (!waitBuffer.hasRemaining()) {
+            waitBuffer.clear();
+            waitBuffer.flip();
+        }
+
+        /* if (buffer.limit() >= 4) {
+            final int size = buffer.getShort() & 0xFFFF;
+            final int id = buffer.getShort() & 0xFFFF;
+            buffer.position(0);
+        } */
+    }
+
+    /**
+     * Write the packet to the write buffer.
      *
      * @param packet the packet.
      * @param buffer the write buffer.
      * @return the write buffer.
      */
-    @NotNull
-    protected ByteBuffer writePacketToBuffer(@NotNull final SendablePacket packet, final @NotNull ByteBuffer buffer) {
-        buffer.clear();
+    protected @NotNull ByteBuffer writePacketToBuffer(@NotNull final WritablePacket packet, final @NotNull ByteBuffer buffer) {
 
+        buffer.clear();
         packet.prepareWritePosition(buffer);
         packet.write(buffer);
-
         buffer.flip();
-
         packet.writePacketSize(buffer, buffer.limit());
 
-        final ConnectionOwner owner = requireNonNull(getOwner());
-        owner.encrypt(buffer, SIZE_BYTES_SIZE, buffer.limit() - SIZE_BYTES_SIZE);
+        final ConnectionOwner owner = notNull(getOwner());
+        final NetworkCrypt crypt = owner.getCrypt();
+
+        final int sizeByteCount = getPacketSizeByteCount();
+        final int length = buffer.limit() - sizeByteCount;
+
+        encrypt(buffer, crypt, sizeByteCount, length);
 
         return buffer;
+    }
+
+    /**
+     * Decrypt data using the crypt of the connection owner.
+     *
+     * @param buffer the data buffer.
+     * @param crypt  the crypt.
+     * @param offset the offset.
+     * @param length the length.
+     */
+    protected void decrypt(@NotNull final ByteBuffer buffer, @NotNull final NetworkCrypt crypt, final int offset,
+                           final int length) {
+        if (crypt.isNull()) return;
+        crypt.decrypt(buffer.array(), offset, length);
+    }
+
+    /**
+     * Encrypt data using the crypt of the connection owner.
+     *
+     * @param buffer the data buffer.
+     * @param crypt  the crypt.
+     * @param offset the offset.
+     * @param length the length.
+     */
+    protected void encrypt(@NotNull final ByteBuffer buffer, @NotNull final NetworkCrypt crypt, final int offset,
+                           final int length) {
+        if (crypt.isNull()) return;
+        crypt.encrypt(buffer.array(), offset, length);
     }
 
     /**
@@ -550,14 +679,11 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      * @param buffer the buffer
      * @return the readable packet
      */
-    @Nullable
-    protected ReadablePacket createPacketFor(@NotNull final ByteBuffer buffer) {
-        if (buffer.remaining() < SIZE_BYTES_SIZE) return null;
-
-        final int packetTypeId = buffer.getShort() & 0xFFFF;
-        final ReadablePacketType<ReadablePacket> packetType = getPacketType(packetTypeId);
-
-        return ClassUtils.unsafeCast(packetType.newInstance());
+    protected @Nullable ReadablePacket createPacketFor(@NotNull final ByteBuffer buffer) {
+        if (buffer.remaining() < 2) return null;
+        final int packetId = buffer.getShort() & 0xFFFF;
+        return getNetwork().getPacketRegistry()
+                .findById(packetId);
     }
 
     /**
@@ -565,63 +691,144 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
      *
      * @param packet the sent packet.
      */
-    protected void completed(@NotNull final SendablePacket packet) {
-        if (packet instanceof AbstractReusableSendablePacket) {
-            ((AbstractReusableSendablePacket) packet).complete();
+    protected void completed(@NotNull final WritablePacket packet) {
+        if (packet instanceof ReusableWritablePacket) {
+            ((ReusableWritablePacket) packet).complete();
         }
     }
 
     @Override
-    public final void sendPacket(@NotNull final SendablePacket packet) {
+    public final void sendPacket(@NotNull final WritablePacket packet) {
         if (isClosed()) return;
-
-        lock();
+        final long stamp = lock.writeLock();
         try {
-            if (isClosed()) return;
             waitPackets.add(packet);
         } finally {
-            unlock();
+            lock.unlockWrite(stamp);
         }
-
         writeNextPacket();
     }
 
     @Override
     public final void startRead() {
-        channel.read(readBuffer, this, readHandler);
+        channel.read(readBuffer, this, getReadHandler());
     }
 
     /**
      * Write a next packet.
      */
     protected final void writeNextPacket() {
-        lock();
+        if (isClosed() || !isWriting.compareAndSet(false, true)) {
+            return;
+        }
+
+        WritablePacket waitPacket;
+
+        final long stamp = lock.writeLock();
         try {
-
-            if (isClosed() || !isWriting.compareAndSet(false, true)) {
-                return;
-            }
-
-            final SendablePacket waitPacket = waitPackets.poll();
-
-            if (waitPacket == null) {
-                isWriting.set(false);
-                return;
-            }
-
-            final AsynchronousSocketChannel channel = getChannel();
-            channel.write(writePacketToBuffer(waitPacket, getWriteBuffer()), waitPacket, getWriteHandler());
-
-            completed(waitPacket);
-
+            waitPacket = waitPackets.poll();
         } finally {
-            unlock();
+            lock.unlockWrite(stamp);
+        }
+
+        if (waitPacket == null) {
+            isWriting.set(false);
+            return;
+        }
+
+        final AsynchronousSocketChannel channel = getChannel();
+        channel.write(writePacketToBuffer(waitPacket, getWriteBuffer()), waitPacket, getWriteHandler());
+
+        completed(waitPacket);
+    }
+
+    /**
+     * Handle read data.
+     *
+     * @param result the count of read bytes.
+     */
+    protected void handleReadData(@NotNull final Integer result) {
+        updateLastActivity();
+
+        if (result == -1) {
+            finish();
+            return;
+        }
+
+        final ByteBuffer buffer = getReadBuffer();
+        buffer.flip();
+        try {
+            if (isReadyToRead(buffer)) readPacket(buffer);
+        } catch (final Exception e) {
+            getWaitBuffer().clear().flip();
+            LOGGER.error(this, e);
+        } finally {
+            buffer.clear();
+        }
+
+        startRead();
+    }
+
+    /**
+     * Handle the exception during reading data.
+     *
+     * @param exception the exception.
+     */
+    protected void handleFailedRead(@NotNull final Throwable exception) {
+        if (config.isVisibleReadException()) {
+            LOGGER.warning(this, exception);
+        }
+        if (!isClosed()) {
+            finish();
+        }
+    }
+
+    /**
+
+     * Handle wrote data.
+     *
+     * @param result the count of wrote bytes.
+     * @param packet the sent packet.
+     */
+    protected void handleWroteData(@NotNull final Integer result, @NotNull final WritablePacket packet) {
+        updateLastActivity();
+
+        if (result == -1) {
+            finish();
+            return;
+        }
+
+        final ByteBuffer buffer = getWriteBuffer();
+        if (buffer.remaining() > 0) {
+            channel.write(buffer, packet, getWriteHandler());
+            return;
+        }
+
+        if (isWriting.compareAndSet(true, false)) {
+            writeNextPacket();
+        }
+    }
+
+    /**
+     * Handle the exception during writing the packet.
+     *
+     * @param exception the exception.
+     * @param packet    the packet.
+     */
+    protected void handleFailedWrite(@NotNull final Throwable exception, @NotNull final WritablePacket packet) {
+        if (config.isVisibleWriteException()) {
+            LOGGER.warning(this, new Exception("incorrect write packet " + packet, exception));
+        }
+
+        if (isClosed()) return;
+        if (isWriting.compareAndSet(true, false)) {
+            writeNextPacket();
         }
     }
 
     @Override
     public String toString() {
-        return "AbstractAsyncConnection{" + "network=" + network + ", waitPackets=" + waitPackets + ", channel=" +
+        return getClass().getSimpleName() + "{" + "network=" + network + ", waitPackets=" + waitPackets + ", channel=" +
                 channel + ", isWriting=" + isWriting + ", closed=" + closed + ", lastActivity=" + lastActivity + '}';
     }
 }

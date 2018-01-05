@@ -9,6 +9,29 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface NetworkCrypt {
 
+    @NotNull NetworkCrypt NULL = new NetworkCrypt() {
+
+        @Override
+        public void decrypt(@NotNull final byte[] data, final int offset, final int length) {
+        }
+
+        @Override
+        public void encrypt(@NotNull final byte[] data, final int offset, final int length) {
+        }
+
+        @Override
+        public boolean isNull() {
+            return true;
+        }
+    };
+
+    /**
+     * @return true if this crypt doesn't crypt data.
+     */
+    default boolean isNull() {
+        return false;
+    }
+
     /**
      * Decrypt a byte array.
      *

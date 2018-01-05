@@ -2,9 +2,11 @@ package com.ss.rlib.network.server.impl;
 
 import com.ss.rlib.concurrent.GroupThreadFactory;
 import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.impl.AbstractAsynchronousNetwork;
+import com.ss.rlib.network.impl.AbstractAsyncNetwork;
+import com.ss.rlib.network.packet.ReadablePacketRegistry;
 import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
+import com.ss.rlib.network.server.client.Client;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,13 +16,14 @@ import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.function.Consumer;
 
 /**
- * The base implementation of a server network.
+ * The base implementation of {@link ServerNetwork}.
  *
  * @author JavaSaBr
  */
-public final class DefaultServerNetwork extends AbstractAsynchronousNetwork implements ServerNetwork {
+public final class DefaultServerNetwork extends AbstractAsyncNetwork implements ServerNetwork {
 
     /**
      * The asynchronous channel group.
@@ -41,15 +44,15 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
     private final AcceptHandler acceptHandler;
 
     /**
-     * Instantiates a new Default server network.
-     *
-     * @param config        the config
-     * @param acceptHandler the accept handler
-     * @throws IOException the io exception
+     * The destroyed handler.
      */
-    public DefaultServerNetwork(@NotNull final NetworkConfig config, @NotNull final AcceptHandler acceptHandler)
-            throws IOException {
-        super(config);
+    @Nullable
+    private Consumer<@NotNull Client> destroyedHandler;
+
+    public DefaultServerNetwork(@NotNull final NetworkConfig config,
+                                @NotNull final ReadablePacketRegistry packetRegistry,
+                                @NotNull final AcceptHandler acceptHandler) throws IOException {
+        super(config, packetRegistry);
 
         this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(),
                 new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
@@ -66,7 +69,24 @@ public final class DefaultServerNetwork extends AbstractAsynchronousNetwork impl
     @Override
     public void bind(@NotNull final SocketAddress address) throws IOException {
         channel.bind(address);
-        channel.accept(channel, acceptHandler);
+        channel.accept(this, acceptHandler);
+    }
+
+    @Override
+    public void shutdown() {
+        group.shutdown();
+    }
+
+    @Override
+    public void setDestroyedHandler(@Nullable final Consumer<@NotNull Client> destroyedHandler) {
+        this.destroyedHandler = destroyedHandler;
+    }
+
+    @Override
+    public void onDestroyed(@NotNull final Client client) {
+        if (destroyedHandler != null) {
+            destroyedHandler.accept(client);
+        }
     }
 
     @Override

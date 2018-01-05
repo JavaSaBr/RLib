@@ -11,19 +11,19 @@ public enum LoggerLevel {
     /**
      * Info logger level.
      */
-    INFO("INFO", false),
+    INFO("INFO", false, false),
     /**
      * Debug logger level.
      */
-    DEBUG("DEBUG", false),
+    DEBUG("DEBUG", false, false),
     /**
      * Warning logger level.
      */
-    WARNING("WARNING", true),
+    WARNING("WARNING", true, true),
     /**
      * Error logger level.
      */
-    ERROR("ERROR", true);
+    ERROR("ERROR", true, true);
 
     /**
      * The constant LENGTH.
@@ -46,28 +46,27 @@ public enum LoggerLevel {
      */
     private boolean forceFlush;
 
-    LoggerLevel(final String title, final boolean forceFlush) {
+    LoggerLevel(@NotNull final String title, final boolean forceFlush, final boolean enabled) {
         this.title = title;
         this.forceFlush = forceFlush;
+        this.enabled = enabled;
     }
 
     /**
-     * Gets title.
+     * Get the level title.
      *
      * @return the level title.
      */
-    @NotNull
-    public String getTitle() {
+    public @NotNull String getTitle() {
         return title;
     }
 
     /**
-     * Sets title.
+     * Set the level title.
      *
      * @param title the level title.
      */
-    @NotNull
-    public void setTitle(final String title) {
+    public void setTitle(@NotNull final String title) {
         this.title = title;
     }
 

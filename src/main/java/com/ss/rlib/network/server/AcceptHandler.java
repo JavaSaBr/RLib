@@ -1,51 +1,104 @@
 package com.ss.rlib.network.server;
 
+import com.ss.rlib.network.server.client.Client;
+import com.ss.rlib.network.server.client.ClientConnection;
+import com.ss.rlib.network.server.client.impl.DefaultClient;
+import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
 import org.jetbrains.annotations.NotNull;
-import com.ss.rlib.logging.Logger;
-import com.ss.rlib.logging.LoggerManager;
+import org.jetbrains.annotations.Nullable;
 
-import java.nio.channels.AsynchronousServerSocketChannel;
+import java.io.IOException;
+import java.net.StandardSocketOptions;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
- * The base implementation of an accept handler.
+ * The interface to implement a handler of accepted connections.
  *
  * @author JavaSaBr
  */
-public abstract class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
+public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChannel, ServerNetwork> {
 
     /**
-     * The constant LOGGER.
+     * Create a simple accept handler.
+     *
+     * @param connectionFactory the connection factory.
+     * @param clientFactory     the client factory.
+     * @param clientConsumer    the client consumer.
+     * @return the accept handler.
      */
-    @NotNull
-    protected static final Logger LOGGER = LoggerManager.getLogger(AcceptHandler.class);
+    static @NotNull AcceptHandler newSimple(@NotNull final BiFunction<@NotNull ServerNetwork, @NotNull AsynchronousSocketChannel, @NotNull ClientConnection> connectionFactory,
+                                            @NotNull final Function<@NotNull ClientConnection, @NotNull Client> clientFactory,
+                                            @Nullable final Consumer<@NotNull Client> clientConsumer) {
+        return (channel, network) -> {
 
-    @Override
-    public void completed(@NotNull final AsynchronousSocketChannel result,
-                          @NotNull final AsynchronousServerSocketChannel serverChannel) {
-        serverChannel.accept(serverChannel, this);
-        onAccept(result);
+            try {
+                channel.setOption(StandardSocketOptions.SO_SNDBUF, 12000);
+                channel.setOption(StandardSocketOptions.SO_RCVBUF, 24000);
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            final ClientConnection connection = connectionFactory.apply(network, channel);
+            final Client client = clientFactory.apply(connection);
+            connection.setOwner(client);
+            client.notifyConnected();
+            connection.startRead();
+
+            if (clientConsumer != null) {
+                clientConsumer.accept(client);
+            }
+        };
+    }
+
+    /**
+     * Create a default accept handler.
+     *
+     * @return the accept handler.
+     */
+    static @NotNull AcceptHandler newDefault() {
+        return newSimple(DefaultClientConnection::new, DefaultClient::new, null);
+    }
+
+    /**
+     * Create a default accept handler.
+     *
+     * @param consumer the client consumer.
+     * @return the accept handler.
+     */
+    static @NotNull AcceptHandler newDefault(@NotNull final Consumer<@NotNull Client> consumer) {
+        return newSimple(DefaultClientConnection::new, DefaultClient::new, consumer);
     }
 
     @Override
-    public void failed(@NotNull final Throwable exc,
-                       @NotNull final AsynchronousServerSocketChannel serverChannel) {
-        serverChannel.accept(serverChannel, this);
+    default void completed(@NotNull final AsynchronousSocketChannel result,
+                           @NotNull final ServerNetwork network) {
+        network.accept(network, this);
+        onAccept(result, network);
+    }
+
+    @Override
+    default void failed(@NotNull final Throwable exc, @NotNull final ServerNetwork network) {
+        network.accept(network, this);
         onFailed(exc);
     }
 
     /**
-     * Handle a new client connection.
+     * Handle the new client connection.
      *
-     * @param channel the channel.
+     * @param channel the client channel.
+     * @param network the server network.
      */
-    protected abstract void onAccept(@NotNull AsynchronousSocketChannel channel);
+    void onAccept(@NotNull AsynchronousSocketChannel channel, @NotNull final ServerNetwork network);
 
     /**
-     * Handle an exception.
+     * Handle the exception.
      *
-     * @param e the exception.
+     * @param exception the exception.
      */
-    protected abstract void onFailed(@NotNull Throwable e);
+    default void onFailed(@NotNull Throwable exception) {
+    }
 }

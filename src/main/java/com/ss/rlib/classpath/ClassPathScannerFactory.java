@@ -47,6 +47,16 @@ public final class ClassPathScannerFactory {
     /**
      * Create a new manifest class path scanner.
      *
+     * @param rootClass the root class.
+     * @return the new class path scanner.
+     */
+    public static @NotNull ClassPathScanner newManifestScanner(@NotNull final Class<?> rootClass) {
+        return new ManifestClassPathScannerImpl(ClassPathScannerFactory.class.getClassLoader(), rootClass, "Class-Path");
+    }
+
+    /**
+     * Create a new manifest class path scanner.
+     *
      * @param rootClass    the root class.
      * @param classPathKey the class path key.
      * @return the new class path scanner.

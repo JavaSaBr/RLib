@@ -2,18 +2,19 @@ package com.ss.rlib.network.impl;
 
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
+import com.ss.rlib.network.AsyncConnection;
 import com.ss.rlib.network.ConnectionOwner;
 import com.ss.rlib.network.NetworkCrypt;
 import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.packet.ReadablePacket;
-import com.ss.rlib.network.packet.SendablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
-import com.ss.rlib.network.AsyncConnection;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.locks.StampedLock;
 
 /**
- * The base implementation of a connection owner.
+ * The base implementation of {@link ConnectionOwner}.
  *
  * @author JavaSaBr
  */
@@ -38,99 +39,79 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
     protected final NetworkCrypt crypt;
 
     /**
-     * The flag of closing connection.
+     * The lock.
      */
-    protected volatile boolean closed;
+    @NotNull
+    protected final StampedLock lock;
 
     /**
-     * Instantiates a new Abstract connection owner.
-     *
-     * @param connection the connection
-     * @param crypt      the crypt
+     * The flag of destroying this owner.
      */
+    protected volatile boolean destroyed;
+
     protected AbstractConnectionOwner(@NotNull final AsyncConnection connection, @NotNull final NetworkCrypt crypt) {
         this.connection = connection;
         this.crypt = crypt;
+        this.lock = new StampedLock();
     }
 
     @Override
-    public void close() {
-        getConnection().close();
-        setClosed(true);
-    }
-
-    @Override
-    public void decrypt(@NotNull final ByteBuffer data, final int offset, final int length) {
-        crypt.decrypt(data.array(), offset, length);
-    }
-
-    @Override
-    public void encrypt(@NotNull final ByteBuffer data, final int offset, final int length) {
-        crypt.encrypt(data.array(), offset, length);
+    public void destroy() {
+        if (isDestroyed()) return;
+        final long stamp = lock.writeLock();
+        try {
+            if (isDestroyed()) return;
+            doDestroy();
+            setDestroyed(true);
+        } finally {
+            lock.unlockWrite(stamp);
+        }
     }
 
     /**
-     * Execute a packet.
-     *
-     * @param packet the packet.
+     * The process of destroying.
      */
-    protected abstract void execute(@NotNull ReadablePacket packet);
+    protected void doDestroy() {
+        getConnection().close();
+    }
 
-    @NotNull
     @Override
-    public AsyncConnection getConnection() {
+    public @NotNull NetworkCrypt getCrypt() {
+        return crypt;
+    }
+
+    @Override
+    public @NotNull AsyncConnection getConnection() {
         return connection;
     }
 
-    /**
-     * Is closed boolean.
-     *
-     * @return true of this connection is closed.
-     */
-    public boolean isClosed() {
-        return closed;
+    public boolean isDestroyed() {
+        return destroyed;
     }
 
-    /**
-     * Sets closed.
-     *
-     * @param closed true if this client is closed.
-     */
-    protected void setClosed(final boolean closed) {
-        this.closed = closed;
+    protected void setDestroyed(final boolean destroyed) {
+        this.destroyed = destroyed;
     }
 
     @Override
-    public boolean isConnected() {
-        return !isClosed() && !connection.isClosed();
+    public boolean isReady() {
+        return !isDestroyed() && !connection.isClosed();
     }
 
     @Override
     public void readPacket(@NotNull final ReadablePacket packet, @NotNull final ByteBuffer buffer) {
-        packet.setOwner(this);
-
-        if (packet.read(buffer)) {
-            execute(packet);
-        }
+        packet.read(this, buffer);
     }
 
     @Override
-    public void sendPacket(@NotNull final SendablePacket packet) {
-        if (isClosed()) return;
-
-        final AsyncConnection connection = getConnection();
-
-        if (connection.isClosed()) {
-            LOGGER.warning(this, new Exception("not found connection"));
-            return;
-        }
-
+    public void sendPacket(@NotNull final WritablePacket packet) {
+        packet.notifyAddedToSend();
         connection.sendPacket(packet);
     }
 
     @Override
     public String toString() {
-        return "AbstractConnectionOwner{" + "connection=" + connection + ", crypt=" + crypt + ", closed=" + closed +
-                '}';
+        return getClass().getSimpleName() + "{" + "connection=" + connection + ", crypt=" + crypt + ", destroyed=" +
+                destroyed + '}';
     }
 }

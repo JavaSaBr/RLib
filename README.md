@@ -14,7 +14,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.JavaSaBr:RLib:6.6.1'
+    compile 'com.github.JavaSaBr:RLib:6.7.1'
 }
 ```
     
@@ -32,11 +32,11 @@ dependencies {
     <dependency>
         <groupId>com.github.JavaSaBr</groupId>
         <artifactId>RLib</artifactId>
-        <version>6.6.0</version>
+        <version>6.7.1</version>
     </dependency>
 ```
 
-##Most interesting parts:
+## Most interesting parts:
 ### Classpath Scanner API
 
 ```java
@@ -177,4 +177,81 @@ dependencies {
     
     // show debug message
     logger.debug("Showed");
+```
+
+### Network API
+
+```java
+
+    public static class ServerPackets {
+
+        @PacketDescription(id = 1)
+        public static class MessageRequest extends AbstractReadablePacket {
+
+            @Override
+            protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
+                final String message = readString(buffer);
+                System.out.println("Server: received \"" + message + "\"");
+                owner.sendPacket(new MessageResponse("Response of " + message));
+            }
+        }
+        
+        @PacketDescription(id = 2)
+        public static class MessageResponse extends AbstractWritablePacket {
+
+            @NotNull
+            private final String message;
+
+            public MessageResponse(@NotNull final String message) {
+                this.message = message;
+            }
+
+            @Override
+            protected void writeImpl(@NotNull final ByteBuffer buffer) {
+                super.writeImpl(buffer);
+                writeString(buffer, message);
+            }
+        }
+    }
+
+    public static class ClientPackets {
+
+        @PacketDescription(id = 1)
+        public static class MessageRequest extends AbstractWritablePacket {
+
+            @NotNull
+            private final String message;
+
+            public MessageRequest(@NotNull final String message) {
+                this.message = message;
+            }
+
+            @Override
+            protected void writeImpl(@NotNull final ByteBuffer buffer) {
+                super.writeImpl(buffer);
+                writeString(buffer, message);
+            }
+        }
+
+        @PacketDescription(id = 2)
+        public static class MessageResponse extends AbstractReadablePacket {
+
+            @Override
+            protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
+                final String message = readString(buffer);
+                System.out.println("client: received \"" + message + "\"");
+            }
+        }
+    }
+    
+    final InetSocketAddress address = new InetSocketAddress(2222);
+
+    serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(ReadablePacketRegistry.of(ServerPackets.MessageRequest.class));
+    serverNetwork.bind(address);
+    
+    clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(ReadablePacketRegistry.of(ClientPackets.MessageResponse.class));
+    clientNetwork.connect(address);
+    
+    final Server server = clientNetwork.getCurrentServer();
+    server.sendPacket(new ClientPackets.MessageRequest("Test client message"));
 ```
