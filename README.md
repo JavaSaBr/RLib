@@ -183,7 +183,7 @@ dependencies {
 
 ```java
 
-        public static class ServerPackets {
+    public static class ServerPackets {
 
         @PacketDescription(id = 1)
         public static class MessageRequest extends AbstractReadablePacket {
