@@ -17,6 +17,7 @@ import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
 import com.ss.rlib.util.ArrayUtils;
+import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.rlib.util.array.ConcurrentArray;
@@ -31,6 +32,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -83,7 +85,7 @@ public class NetworkReusablePerformanceTests {
             protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
                 final String message = readString(buffer);
                 RECEIVED_CLIENT_PACKETS.incrementAndGet();
-                /*EXECUTOR_SERVICE.execute(() -> {
+                EXECUTOR_SERVICE.execute(() -> {
 
                     final MessageResponse response = MessageResponse.newInstance(message);
                     response.increaseSends();
@@ -94,7 +96,7 @@ public class NetworkReusablePerformanceTests {
                     });
 
                     response.complete();
-                });*/
+                });
             }
         }
 
@@ -103,6 +105,8 @@ public class NetworkReusablePerformanceTests {
          */
         @PacketDescription(id = 2)
         public static class MessageResponse extends AbstractReusableWritablePacket {
+
+            public static final AtomicLong INSTANCES = new AtomicLong(0);
 
             private static final MessageResponse EXAMPLE = new MessageResponse();
 
@@ -118,6 +122,7 @@ public class NetworkReusablePerformanceTests {
             private volatile String message;
 
             public MessageResponse() {
+                INSTANCES.incrementAndGet();
                 message = "";
             }
 
@@ -142,8 +147,6 @@ public class NetworkReusablePerformanceTests {
         @PacketDescription(id = 1)
         public static class MessageRequest extends AbstractReusableWritablePacket {
 
-            public static final AtomicLong INSTANCES = new AtomicLong(0);
-
             private static final MessageRequest EXAMPLE = new MessageRequest();
 
             public static @NotNull MessageRequest newInstance(@NotNull final String message) {
@@ -158,7 +161,6 @@ public class NetworkReusablePerformanceTests {
             private String message;
 
             public MessageRequest() {
-                INSTANCES.incrementAndGet();
                 message = "";
             }
 
@@ -247,10 +249,11 @@ public class NetworkReusablePerformanceTests {
             final Thread thread = new Thread(() -> {
 
                 final Server server = notNull(clientNetwork.getCurrentServer());
+                final ThreadLocalRandom random = ThreadLocalRandom.current();
 
                 for (int i = 0; i < CLIENT_PACKETS_PER_CLIENT; i++) {
-                    //server.sendPacket(ClientPackets.MessageRequest.newInstance("Message_" + i));
-                    server.sendPacket(new ClientPackets.MessageNotReusableRequest("Message"));
+                    //server.sendPacket(ClientPackets.MessageRequest.newInstance(StringUtils.generate(random.nextInt(10, 70))));
+                    server.sendPacket(new ClientPackets.MessageNotReusableRequest(StringUtils.generate(random.nextInt(10, 70))));
                 }
 
             }, "SendPacketThread_" + order++);
@@ -260,7 +263,7 @@ public class NetworkReusablePerformanceTests {
         final int totalClientPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT;
         final int totalServerPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_COUNT;
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 100; i++) {
             ThreadUtils.sleep(500);
 
             final long receiverClientPackets = RECEIVED_CLIENT_PACKETS.get();
@@ -270,13 +273,15 @@ public class NetworkReusablePerformanceTests {
 
             final long receivedServerPackets = RECEIVED_SERVER_PACKETS.get();
             if (receivedServerPackets < totalServerPackets) {
-               // continue;
+                continue;
             }
 
             break;
         }
 
-        final long instances = ClientPackets.MessageRequest.INSTANCES.get();
+        final long instances = ServerPackets.MessageResponse.INSTANCES.get();
+
+        System.out.println("Instances: " + instances + ", server packets: " + RECEIVED_SERVER_PACKETS);
 
         Assertions.assertEquals(totalClientPackets, RECEIVED_CLIENT_PACKETS.get(),
                 "Expected packets from clients: " + totalClientPackets + ", received: " + RECEIVED_CLIENT_PACKETS);

@@ -101,8 +101,8 @@ public class NetworkPerformanceTests {
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(4);
 
-    private static final int CLIENT_COUNT = 100;
-    private static final int CLIENT_PACKETS_PER_CLIENT = 1000;
+    private static final int CLIENT_COUNT = 120;
+    private static final int CLIENT_PACKETS_PER_CLIENT = 1400;
 
     @NotNull
     private static final AtomicLong RECEIVED_SERVER_PACKETS = new AtomicLong(0);
@@ -250,7 +250,7 @@ public class NetworkPerformanceTests {
         final int totalClientPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT;
         final int totalServerPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_COUNT;
 
-        for (int i = 0; i < 300; i++) {
+        for (int i = 0; i < 100; i++) {
             ThreadUtils.sleep(500);
 
             final long receiverClientPackets = RECEIVED_CLIENT_PACKETS.get();
