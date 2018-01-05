@@ -10,7 +10,6 @@ import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.IOUtils;
-import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
@@ -202,13 +201,11 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         String className;
         try {
 
-            className = name.replace(CLASS_EXTENSION, StringUtils.EMPTY);
+            final StringBuilder result = new StringBuilder(name.length() - CLASS_EXTENSION.length());
 
-            final StringBuilder result = new StringBuilder(className.length());
-
-            for (int i = 0, length = className.length(); i < length; i++) {
-                char ch = className.charAt(i);
-                if (ch == '/') ch = '.';
+            for (int i = 0, length = name.length() - CLASS_EXTENSION.length(); i < length; i++) {
+                char ch = name.charAt(i);
+                if (ch == '/' || ch == '\\') ch = '.';
                 result.append(ch);
             }
 
