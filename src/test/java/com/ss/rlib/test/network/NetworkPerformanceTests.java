@@ -20,6 +20,7 @@ import com.ss.rlib.network.server.client.ClientConnection;
 import com.ss.rlib.network.server.client.impl.DefaultClient;
 import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
 import com.ss.rlib.util.ArrayUtils;
+import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.rlib.util.array.ConcurrentArray;
@@ -35,6 +36,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -235,9 +237,10 @@ public class NetworkPerformanceTests {
             final Thread thread = new Thread(() -> {
 
                 final Server server = notNull(clientNetwork.getCurrentServer());
+                final ThreadLocalRandom random = ThreadLocalRandom.current();
 
                 for (int i = 0; i < CLIENT_PACKETS_PER_CLIENT; i++) {
-                    server.sendPacket(new ClientPackets.MessageRequest("Message_" + i));
+                    server.sendPacket(new ClientPackets.MessageRequest(StringUtils.generate(random.nextInt(10, 70))));
                 }
 
             }, "SendPacketThread_" + order++);
@@ -247,7 +250,7 @@ public class NetworkPerformanceTests {
         final int totalClientPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT;
         final int totalServerPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_COUNT;
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 300; i++) {
             ThreadUtils.sleep(500);
 
             final long receiverClientPackets = RECEIVED_CLIENT_PACKETS.get();
@@ -257,7 +260,7 @@ public class NetworkPerformanceTests {
 
             final long receivedServerPackets = RECEIVED_SERVER_PACKETS.get();
             if (receivedServerPackets < totalServerPackets) {
-                continue;
+               continue;
             }
 
             break;
