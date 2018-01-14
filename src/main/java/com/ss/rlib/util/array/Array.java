@@ -499,15 +499,19 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     /**
      * Search an element using the condition.
      *
-     * @param <T>       the type parameter
+     * @param <T>       the argument's type.
      * @param argument  the argument.
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default <T> @Nullable E search(@Nullable final T argument, @NotNull final BiPredicate<@NotNull E, T> predicate) {
+    default <T> @Nullable E search(@Nullable final T argument,
+                                   @NotNull final BiPredicate<@NotNull E, @Nullable T> predicate) {
         for (final E element : array()) {
-            if (element == null) break;
-            if (predicate.test(element, argument)) return element;
+            if (element == null) {
+                break;
+            } else if (predicate.test(element, argument)) {
+                return element;
+            }
         }
         return null;
     }

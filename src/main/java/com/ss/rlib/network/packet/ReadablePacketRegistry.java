@@ -19,6 +19,15 @@ import java.util.Optional;
 public class ReadablePacketRegistry {
 
     /**
+     * Creates a new empty readable packet registry.
+     *
+     * @return the new packet registry.
+     */
+    public static @NotNull ReadablePacketRegistry empty() {
+        return new ReadablePacketRegistry();
+    }
+
+    /**
      * Creates a new default readable packet registry.
      *
      * @return the new packet registry.
@@ -58,7 +67,7 @@ public class ReadablePacketRegistry {
         final Array<Class<ReadablePacket>> classes = scanner.findImplements(ReadablePacket.class);
         final Array<Class<? extends ReadablePacket>> result = classes.stream().filter(readablePacketClass ->
                 readablePacketClass.getAnnotation(PacketDescription.class) != null)
-                .collect(ArrayCollectors.simple(ClassUtils.unsafeCast(Class.class)));
+                .collect(ArrayCollectors.toArray(ClassUtils.unsafeCast(Class.class)));
 
         final ReadablePacketRegistry registry = new ReadablePacketRegistry();
         registry.register(result);

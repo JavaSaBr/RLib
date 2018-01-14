@@ -1227,37 +1227,49 @@ public final class ArrayUtils {
     /**
      * Find an element in the array using the condition.
      *
-     * @param <T>       the type parameter
+     * @param <T>       the array's element type.
      * @param array     the array.
      * @param condition the condition.
      * @return the element or null.
      */
-    public static <T> @Nullable T find(@Nullable final T[] array, @NotNull final Predicate<T> condition) {
-        if (array == null || array.length < 1) return null;
+    public static <T> @Nullable T find(@Nullable final T[] array, @NotNull final Predicate<@Nullable T> condition) {
+
+        if (array == null || array.length < 1) {
+            return null;
+        }
 
         for (final T element : array) {
-            if (condition.test(element)) return element;
+            if (condition.test(element)) {
+                return element;
+            }
         }
 
         return null;
     }
 
     /**
-     * Find an element in thr array using the condition.
+     * Find an element in the array using the condition.
      *
-     * @param <T>       the type parameter
-     * @param <F>       the type parameter
+     * @param <T>       the array's element type.
+     * @param <F>       the argument's type.
      * @param array     the array.
      * @param argument  the argument.
      * @param condition the condition.
      * @return the element or null.
      */
     public static <T, F> @Nullable T find(@Nullable final T[] array, @Nullable final F argument,
-                                          @NotNull final BiPredicate<T, F> condition) {
-        if (array == null || array.length < 1) return null;
-        for (final T element : array) {
-            if (condition.test(element, argument)) return element;
+                                          @NotNull final BiPredicate<@Nullable T, @Nullable F> condition) {
+
+        if (array == null || array.length < 1) {
+            return null;
         }
+
+        for (final T element : array) {
+            if (condition.test(element, argument)) {
+                return element;
+            }
+        }
+
         return null;
     }
 

@@ -31,10 +31,18 @@ public class ArrayCollectors {
             unmodifiableSet(EnumSet.of(Collector.Characteristics.IDENTITY_FINISH, Collector.Characteristics.CONCURRENT));
 
 
-    private static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(@NotNull final Class<T> type,
-                                                                                 @NotNull final Function<Class<T>, A> arrayFactory) {
+    /**
+     * Get a collector to collect elements into an array.
+     *
+     * @param type the type of elements.
+     * @param arrayFactory the array factory.
+     * @return the collector.
+     */
+    public static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(@NotNull final Class<T> type,
+                                                                                @NotNull final Function<Class<T>, A> arrayFactory) {
         return new Collector<T, A, A>() {
 
+            @NotNull
             private final Supplier<A> supplier = () -> arrayFactory.apply(type);
 
             @Override
@@ -67,10 +75,18 @@ public class ArrayCollectors {
         };
     }
 
-    private static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(
-            @NotNull final Class<T> type, @NotNull final Function<Class<T>, A> arrayFactory) {
+    /**
+     * Get a collector to collect elements in a thread safe array.
+     *
+     * @param type         the type of elements.
+     * @param arrayFactory the array factory.
+     * @return the collector.
+     */
+    public static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(@NotNull final Class<T> type,
+                                                                                                    @NotNull final Function<Class<T>, A> arrayFactory) {
         return new Collector<T, A, A>() {
 
+            @NotNull
             private final Supplier<A> supplier = () -> arrayFactory.apply(type);
 
             @Override
@@ -109,7 +125,7 @@ public class ArrayCollectors {
      * @param type the type of elements.
      * @return the collector.
      */
-    public static <T> @NotNull Collector<T, Array<T>, Array<T>> simple(@NotNull final Class<T> type) {
+    public static <T> @NotNull Collector<T, Array<T>, Array<T>> toArray(@NotNull final Class<T> type) {
         return collector(type, FinalFastArray::new);
     }
 
@@ -119,7 +135,7 @@ public class ArrayCollectors {
      * @param type the type of elements.
      * @return the collector.
      */
-    public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> concurrent(@NotNull final Class<T> type) {
+    public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(@NotNull final Class<T> type) {
         return concurrentCollector(type, FinalConcurrentStampedLockArray::new);
     }
 }

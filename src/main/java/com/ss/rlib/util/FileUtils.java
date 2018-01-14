@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -165,6 +166,51 @@ public class FileUtils {
      */
     public static boolean containsExtensions(@Nullable final String[] extensions, @NotNull final String path) {
         return ArrayUtils.find(extensions, path, (extension, str) -> str.endsWith(extension)) != null;
+    }
+
+    /**
+     * Check the extensions of the file.
+     *
+     * @param extensions the checked extensions.
+     * @param path       the file.
+     * @return true if the file has a checked extension.
+     */
+    public static boolean containsExtensions(@Nullable final Array<String> extensions, @NotNull final Path path) {
+        return containsExtensions(extensions, path.toString());
+    }
+
+    /**
+     * Check the extensions of the path.
+     *
+     * @param extensions the checked extensions.
+     * @param path       the path.
+     * @return true if the path has a checked extension.
+     */
+    public static boolean containsExtensions(@Nullable final Array<String> extensions, @NotNull final String path) {
+        return extensions != null && extensions.search(path, (extension, str) -> str.endsWith(extension)) != null;
+    }
+
+    /**
+     * Check the extensions of the file.
+     *
+     * @param extensions the checked extensions.
+     * @param path       the file.
+     * @return true if the file has a checked extension.
+     */
+    public static boolean containsExtensions(@Nullable final Collection<String> extensions, @NotNull final Path path) {
+        return containsExtensions(extensions, path.toString());
+    }
+
+    /**
+     * Check the extensions of the path.
+     *
+     * @param extensions the checked extensions.
+     * @param path       the path.
+     * @return true if the path has a checked extension.
+     */
+    public static boolean containsExtensions(@Nullable final Collection<String> extensions,
+                                             @NotNull final String path) {
+        return extensions != null && extensions.stream().anyMatch(path::endsWith);
     }
 
     /**

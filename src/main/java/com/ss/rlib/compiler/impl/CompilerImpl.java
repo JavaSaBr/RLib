@@ -81,7 +81,7 @@ public class CompilerImpl implements Compiler {
 
         final Array<JavaFileObject> javaSource = Arrays.stream(files)
                 .map(JavaFileSource::new)
-                .collect(ArrayCollectors.simple(JavaFileObject.class));
+                .collect(ArrayCollectors.toArray(JavaFileObject.class));
 
         return compile(null, javaSource);
     }
@@ -92,7 +92,7 @@ public class CompilerImpl implements Compiler {
 
         final Array<JavaFileObject> javaSource = Arrays.stream(paths)
                 .map(JavaFileSource::new)
-                .collect(ArrayCollectors.simple(JavaFileObject.class));
+                .collect(ArrayCollectors.toArray(JavaFileObject.class));
 
         return compile(null, javaSource);
     }
@@ -102,7 +102,7 @@ public class CompilerImpl implements Compiler {
 
         final Array<JavaFileObject> javaSource = Arrays.stream(uris)
                 .map(JavaFileSource::new)
-                .collect(ArrayCollectors.simple(JavaFileObject.class));
+                .collect(ArrayCollectors.toArray(JavaFileObject.class));
 
         return compile(null, javaSource);
     }

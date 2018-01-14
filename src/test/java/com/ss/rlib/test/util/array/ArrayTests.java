@@ -94,14 +94,14 @@ public class ArrayTests {
 
         final Array<Integer> result = IntStream.range(0, 1000)
                 .mapToObj(value -> value)
-                .collect(ArrayCollectors.simple(Integer.class));
+                .collect(ArrayCollectors.toArray(Integer.class));
 
         Assertions.assertEquals(1000, result.size());
 
         final ConcurrentArray<Integer> concurrentArray = IntStream.range(0, 1000)
                 .parallel()
                 .mapToObj(value -> value)
-                .collect(ArrayCollectors.concurrent(Integer.class));
+                .collect(ArrayCollectors.toConcurrentArray(Integer.class));
 
         Assertions.assertEquals(1000, concurrentArray.size());
     }
