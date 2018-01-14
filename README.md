@@ -7,14 +7,12 @@ Please see the file called LICENSE.
 
 ```groovy
 
-allprojects {
-    repositories {
+repositories {
         maven { url 'https://jitpack.io' }
     }
-}
 
 dependencies {
-    compile 'com.github.JavaSaBr:RLib:6.7.1'
+    compile 'com.github.JavaSaBr:RLib:6.7.3'
 }
 ```
     
@@ -32,7 +30,7 @@ dependencies {
     <dependency>
         <groupId>com.github.JavaSaBr</groupId>
         <artifactId>RLib</artifactId>
-        <version>6.7.1</version>
+        <version>6.7.3</version>
     </dependency>
 ```
 
