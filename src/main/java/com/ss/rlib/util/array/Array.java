@@ -489,10 +489,15 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the found element or null.
      */
     default @Nullable E search(@NotNull final Predicate<@NotNull E> predicate) {
+
         for (final E element : array()) {
-            if (element == null) break;
-            if (predicate.test(element)) return element;
+            if (element == null) {
+                break;
+            } else if (predicate.test(element)) {
+                return element;
+            }
         }
+
         return null;
     }
 
@@ -506,6 +511,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      */
     default <T> @Nullable E search(@Nullable final T argument,
                                    @NotNull final BiPredicate<@NotNull E, @Nullable T> predicate) {
+
         for (final E element : array()) {
             if (element == null) {
                 break;
@@ -513,6 +519,31 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
                 return element;
             }
         }
+
+        return null;
+    }
+
+    /**
+     * Search an element using the condition.
+     *
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param predicate the condition.
+     * @return the found element or null.
+     */
+    default <F, S> @Nullable E search(@Nullable final F first, @Nullable final S second,
+                                      @NotNull final TriplePredicate<@NotNull E, @Nullable F, @Nullable S> predicate) {
+
+        for (final E element : array()) {
+            if (element == null) {
+                break;
+            } else if (predicate.test(element, first, second)) {
+                return element;
+            }
+        }
+
         return null;
     }
 
@@ -524,10 +555,15 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the found element or null.
      */
     default  @Nullable E search(final int argument, @NotNull final ObjectIntPredicate<@NotNull E> predicate) {
+
         for (final E element : array()) {
-            if (element == null) break;
-            if (predicate.test(element, argument)) return element;
+            if (element == null) {
+                break;
+            } else if (predicate.test(element, argument)) {
+                return element;
+            }
         }
+
         return null;
     }
 
