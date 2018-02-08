@@ -2,8 +2,6 @@ package com.ss.rlib.util.array;
 
 import static java.util.Collections.unmodifiableSet;
 import com.ss.rlib.util.ArrayUtils;
-import com.ss.rlib.util.array.impl.FinalConcurrentStampedLockArray;
-import com.ss.rlib.util.array.impl.FinalFastArray;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -38,8 +36,8 @@ public class ArrayCollectors {
      * @param arrayFactory the array factory.
      * @return the collector.
      */
-    public static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(@NotNull final Class<T> type,
-                                                                                @NotNull final Function<Class<T>, A> arrayFactory) {
+    public static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(@NotNull final Class<? extends T> type,
+                                                                                @NotNull final Function<Class<? extends T>, A> arrayFactory) {
         return new Collector<T, A, A>() {
 
             @NotNull
@@ -82,8 +80,8 @@ public class ArrayCollectors {
      * @param arrayFactory the array factory.
      * @return the collector.
      */
-    public static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(@NotNull final Class<T> type,
-                                                                                                    @NotNull final Function<Class<T>, A> arrayFactory) {
+    public static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(@NotNull final Class<? extends T> type,
+                                                                                                    @NotNull final Function<Class<? extends T>, A> arrayFactory) {
         return new Collector<T, A, A>() {
 
             @NotNull
@@ -125,8 +123,8 @@ public class ArrayCollectors {
      * @param type the type of elements.
      * @return the collector.
      */
-    public static <T> @NotNull Collector<T, Array<T>, Array<T>> toArray(@NotNull final Class<T> type) {
-        return collector(type, FinalFastArray::new);
+    public static <T> @NotNull Collector<T, Array<T>, Array<T>> toArray(@NotNull final Class<? extends T> type) {
+        return collector(type, ArrayFactory::newArray);
     }
 
     /**
@@ -135,7 +133,7 @@ public class ArrayCollectors {
      * @param type the type of elements.
      * @return the collector.
      */
-    public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(@NotNull final Class<T> type) {
-        return concurrentCollector(type, FinalConcurrentStampedLockArray::new);
+    public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(@NotNull final Class<? extends T> type) {
+        return concurrentCollector(type, ArrayFactory::newConcurrentStampedLockArray);
     }
 }

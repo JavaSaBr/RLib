@@ -488,7 +488,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default @Nullable E search(@NotNull final Predicate<@NotNull E> predicate) {
+    default @Nullable E search(@NotNull final Predicate<E> predicate) {
+
+        if (isEmpty()) {
+            return null;
+        }
 
         for (final E element : array()) {
             if (element == null) {
@@ -509,8 +513,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default <T> @Nullable E search(@Nullable final T argument,
-                                   @NotNull final BiPredicate<@NotNull E, @Nullable T> predicate) {
+    default <T> @Nullable E search(@Nullable final T argument, @NotNull final BiPredicate<E, T> predicate) {
+
+        if (isEmpty()) {
+            return null;
+        }
 
         for (final E element : array()) {
             if (element == null) {
@@ -534,7 +541,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the found element or null.
      */
     default <F, S> @Nullable E search(@Nullable final F first, @Nullable final S second,
-                                      @NotNull final TriplePredicate<@NotNull E, @Nullable F, @Nullable S> predicate) {
+                                      @NotNull final TriplePredicate<E, F, S> predicate) {
+
+        if (isEmpty()) {
+            return null;
+        }
 
         for (final E element : array()) {
             if (element == null) {
@@ -554,7 +565,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default  @Nullable E search(final int argument, @NotNull final ObjectIntPredicate<@NotNull E> predicate) {
+    default @Nullable E search(final int argument, @NotNull final ObjectIntPredicate<E> predicate) {
+
+        if (isEmpty()) {
+            return null;
+        }
 
         for (final E element : array()) {
             if (element == null) {
@@ -574,11 +589,20 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default @Nullable E searchL(final long argument, @NotNull final ObjectLongPredicate<@NotNull E> predicate) {
-        for (final E element : array()) {
-            if (element == null) break;
-            if (predicate.test(element, argument)) return element;
+    default @Nullable E searchL(final long argument, @NotNull final ObjectLongPredicate<E> predicate) {
+
+        if (isEmpty()) {
+            return null;
         }
+
+        for (final E element : array()) {
+            if (element == null) {
+                break;
+            } else if (predicate.test(element, argument)) {
+                return element;
+            }
+        }
+
         return null;
     }
 
