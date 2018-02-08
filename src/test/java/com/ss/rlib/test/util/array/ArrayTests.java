@@ -104,5 +104,11 @@ public class ArrayTests {
                 .collect(ArrayCollectors.toConcurrentArray(Integer.class));
 
         Assertions.assertEquals(1000, concurrentArray.size());
+
+        final Array<Number> numbers = IntStream.range(0, 1000)
+                .mapToObj(value -> value)
+                .collect(ArrayCollectors.toArray(Integer.class));
+
+        Assertions.assertEquals(1000, numbers.size());
     }
 }
