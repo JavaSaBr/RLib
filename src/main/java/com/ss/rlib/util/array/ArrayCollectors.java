@@ -36,8 +36,8 @@ public class ArrayCollectors {
      * @param arrayFactory the array factory.
      * @return the collector.
      */
-    public static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(@NotNull final Class<? extends T> type,
-                                                                                @NotNull final Function<Class<? extends T>, A> arrayFactory) {
+    public static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(@NotNull final Class<?> type,
+                                                                                @NotNull final Function<Class<?>, A> arrayFactory) {
         return new Collector<T, A, A>() {
 
             @NotNull
@@ -80,8 +80,8 @@ public class ArrayCollectors {
      * @param arrayFactory the array factory.
      * @return the collector.
      */
-    public static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(@NotNull final Class<? extends T> type,
-                                                                                                    @NotNull final Function<Class<? extends T>, A> arrayFactory) {
+    public static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(@NotNull final Class<?> type,
+                                                                                                    @NotNull final Function<Class<?>, A> arrayFactory) {
         return new Collector<T, A, A>() {
 
             @NotNull
@@ -123,7 +123,7 @@ public class ArrayCollectors {
      * @param type the type of elements.
      * @return the collector.
      */
-    public static <T> @NotNull Collector<T, Array<T>, Array<T>> toArray(@NotNull final Class<? extends T> type) {
+    public static <T> @NotNull Collector<T, Array<T>, Array<T>> toArray(@NotNull final Class<?> type) {
         return collector(type, ArrayFactory::newArray);
     }
 
@@ -133,7 +133,7 @@ public class ArrayCollectors {
      * @param type the type of elements.
      * @return the collector.
      */
-    public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(@NotNull final Class<? extends T> type) {
+    public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(@NotNull final Class<?> type) {
         return concurrentCollector(type, ArrayFactory::newConcurrentStampedLockArray);
     }
 }

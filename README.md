@@ -12,7 +12,7 @@ repositories {
     }
 
 dependencies {
-    compile 'com.github.JavaSaBr:RLib:6.7.5'
+    compile 'com.github.JavaSaBr:RLib:6.7.6'
 }
 ```
     
@@ -30,7 +30,7 @@ dependencies {
     <dependency>
         <groupId>com.github.JavaSaBr</groupId>
         <artifactId>RLib</artifactId>
-        <version>6.7.5</version>
+        <version>6.7.6</version>
     </dependency>
 ```
 

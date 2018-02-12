@@ -6,6 +6,7 @@ import com.ss.rlib.util.array.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.IntStream;
 
@@ -110,5 +111,11 @@ public class ArrayTests {
                 .collect(ArrayCollectors.toArray(Integer.class));
 
         Assertions.assertEquals(1000, numbers.size());
+
+        final Array<Collection<?>> collections = IntStream.range(0, 1000)
+                .mapToObj(value -> new ArrayList<>(1))
+                .collect(ArrayCollectors.toArray(Collection.class));
+
+        Assertions.assertEquals(1000, collections.size());
     }
 }
