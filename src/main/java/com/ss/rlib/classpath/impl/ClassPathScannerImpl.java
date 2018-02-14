@@ -192,11 +192,17 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     /**
      * Load a class by its name to container.
      *
+     * @param rootPath  the root folder.
+     * @param file      the class file.
      * @param name      the name.
      * @param container the container.
      */
-    private void loadClass(@NotNull final String name, @NotNull final Array<Class<?>> container) {
-        if (!name.endsWith(CLASS_EXTENSION)) return;
+    private void loadClass(@Nullable final Path rootPath, @Nullable final Path file, @NotNull final String name,
+                           @NotNull final Array<Class<?>> container) {
+
+        if (!name.endsWith(CLASS_EXTENSION)) {
+            return;
+        }
 
         String className;
         try {
@@ -204,8 +210,12 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             final StringBuilder result = new StringBuilder(name.length() - CLASS_EXTENSION.length());
 
             for (int i = 0, length = name.length() - CLASS_EXTENSION.length(); i < length; i++) {
+
                 char ch = name.charAt(i);
-                if (ch == '/' || ch == '\\') ch = '.';
+                if (ch == '/' || ch == '\\') {
+                    ch = '.';
+                }
+
                 result.append(ch);
             }
 
@@ -220,8 +230,14 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         try {
             container.add(getLoader().loadClass(className));
         } catch (final NoClassDefFoundError error) {
-            LOGGER.warning(this, "Can't load class: " + className);
+
+            LOGGER.warning(this, "Can't load class: " + className + "\n" +
+                    "Original name:" + name +"\n" +
+                    "Root folder: " + rootPath + "\n" +
+                    "Class file: " + file);
+
             LOGGER.warning(this, error);
+
         } catch (final Throwable e) {
             LOGGER.warning(this, e);
         }
@@ -251,19 +267,14 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 if (filename.endsWith(JAR_EXTENSION)) {
                     scanJar(classes, resources, file);
                 } else if (filename.endsWith(CLASS_EXTENSION)) {
-                    try {
 
-                        String path = file.subpath(rootPath.getNameCount(), file.getNameCount()).toString();
+                    String path = file.subpath(rootPath.getNameCount(), file.getNameCount()).toString();
 
-                        if (path.startsWith(File.separator)) {
-                            path = path.substring(1, path.length());
-                        }
-
-                        loadClass(path, classes);
-
-                    } catch (final Exception e) {
-                        LOGGER.warning(this, "Incorrect replaced " + file + " from root " + rootPath);
+                    if (path.startsWith(File.separator)) {
+                        path = path.substring(1, path.length());
                     }
+
+                    loadClass(rootPath, file, path, classes);
 
                 } else if (!filename.endsWith(Compiler.SOURCE_EXTENSION)) {
 
@@ -320,7 +331,10 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                                     @NotNull final JarInputStream jin) throws IOException {
 
         for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
-            if (entry.isDirectory()) continue;
+
+            if (entry.isDirectory()) {
+                continue;
+            }
 
             final String name = entry.getName();
 
@@ -330,7 +344,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 rin.initFor(rout.getData(), 0, rout.size());
                 scanJar(classes, resources, rin);
             } else if (name.endsWith(CLASS_EXTENSION)) {
-                loadClass(name, classes);
+                loadClass(null, null, name, classes);
             } else if (!name.endsWith(Compiler.SOURCE_EXTENSION)) {
                 resources.add(name);
             }
