@@ -1,16 +1,6 @@
 package com.ss.rlib.util.dictionary;
 
 import static com.ss.rlib.util.ClassUtils.unsafeCast;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Iterator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.function.Supplier;
-
 import com.ss.rlib.function.IntBiObjectConsumer;
 import com.ss.rlib.function.IntObjectConsumer;
 import com.ss.rlib.util.ArrayUtils;
@@ -19,6 +9,15 @@ import com.ss.rlib.util.array.IntegerArray;
 import com.ss.rlib.util.array.UnsafeArray;
 import com.ss.rlib.util.pools.PoolFactory;
 import com.ss.rlib.util.pools.ReusablePool;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 /**
  * The base implementation of {@link IntegerDictionary}.
@@ -141,11 +140,13 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     }
 
     @Override
-    public final boolean containsValue(@NotNull final V value) {
+    public final boolean containsValue(@Nullable final V value) {
 
         for (final IntegerEntry<V> element : content()) {
             for (IntegerEntry<V> entry = element; entry != null; entry = entry.getNext()) {
-                if (value.equals(entry.getValue())) return true;
+                if (Objects.equals(value, entry.getValue())) {
+                    return true;
+                }
             }
         }
 
@@ -286,12 +287,12 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     }
 
     @Override
-    public void moveTo(@NotNull final Dictionary<? super IntKey, ? super V> dictionary) {
+    public void copyTo(@NotNull final Dictionary<? super IntKey, ? super V> dictionary) {
         if (isEmpty() || dictionary.getType() != getType()) return;
 
         final IntegerDictionary<V> integerDictionary = unsafeCast(dictionary);
 
-        super.moveTo(dictionary);
+        super.copyTo(dictionary);
 
         for (IntegerEntry<V> entry : content()) {
             while (entry != null) {

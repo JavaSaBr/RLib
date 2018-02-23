@@ -4,14 +4,15 @@ import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.rlib.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
 /**
  * The interface for implementing a key-value dictionary.
  *
- * @param <K> the type parameter
- * @param <V> the type parameter
+ * @param <K> the key's type.
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public interface Dictionary<K, V> extends Iterable<V>, Reusable {
@@ -42,7 +43,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
      * @param value value whose presence in this dictionary is to be tested.
      * @return <tt>true</tt> if this dictionary maps one or more keys to the specified value.
      */
-    default boolean containsValue(@NotNull final V value) {
+    default boolean containsValue(@Nullable final V value) {
         throw new UnsupportedOperationException();
     }
 
@@ -52,12 +53,11 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
     }
 
     /**
-     * Gets type.
+     * Get this dictionary's type.
      *
-     * @return the type of the dictionary.
+     * @return the dictionary's type.
      */
-    @NotNull
-    default DictionaryType getType() {
+    default @NotNull DictionaryType getType() {
         throw new UnsupportedOperationException();
     }
 
@@ -75,7 +75,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
      *
      * @param dictionary the dictionary for moving data.
      */
-    default void moveTo(@NotNull final Dictionary<? super K, ? super V> dictionary) {
+    default void copyTo(@NotNull final Dictionary<? super K, ? super V> dictionary) {
         if (getType() != dictionary.getType()) {
             throw new IllegalArgumentException("incorrect table type.");
         }
@@ -87,7 +87,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
      * @param dictionary the dictionary with new data.
      */
     default void put(@NotNull final Dictionary<K, V> dictionary) {
-        dictionary.moveTo(this);
+        dictionary.copyTo(this);
     }
 
     /**
@@ -106,8 +106,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
      * @param container the container for storing the values.
      * @return the container with all values from this dictionary.
      */
-    @NotNull
-    default Array<V> values(@NotNull final Array<V> container) {
+    default @NotNull Array<V> values(@NotNull final Array<V> container) {
         throw new UnsupportedOperationException();
     }
 
@@ -117,8 +116,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
      * @param type the type of values in this dictionary.
      * @return the array with all values from this dictionary.
      */
-    @NotNull
-    default Array<V> values(@NotNull final Class<V> type) {
+    default @NotNull Array<V> values(@NotNull final Class<V> type) {
         return values(ArrayFactory.newArray(type, size()));
     }
 }

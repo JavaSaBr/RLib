@@ -7,8 +7,8 @@ import com.ss.rlib.concurrent.lock.AsyncReadSyncWriteLock;
  * The implementation of the {@link ConcurrentObjectDictionary} using {@link
  * LockFactory#newAtomicARSWLock()}*.
  *
- * @param <K> the type parameter
- * @param <V> the type parameter
+ * @param <K> the key's type.
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public class ConcurrentAtomicARSWLockObjectDictionary<K, V> extends AbstractConcurrentObjectDictionary<K, V> {
@@ -18,39 +18,20 @@ public class ConcurrentAtomicARSWLockObjectDictionary<K, V> extends AbstractConc
      */
     private final AsyncReadSyncWriteLock lock;
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock object dictionary.
-     */
     public ConcurrentAtomicARSWLockObjectDictionary() {
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock object dictionary.
-     *
-     * @param loadFactor the load factor
-     */
     public ConcurrentAtomicARSWLockObjectDictionary(final float loadFactor) {
         super(loadFactor);
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock object dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
     public ConcurrentAtomicARSWLockObjectDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock object dictionary.
-     *
-     * @param initCapacity the init capacity
-     */
     public ConcurrentAtomicARSWLockObjectDictionary(final int initCapacity) {
         super(initCapacity);
         this.lock = LockFactory.newAtomicARSWLock();
