@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The fast implementation of {@link ObjectDictionary} without threadsafe supporting.
  *
- * @param <K> the type parameter
- * @param <V> the type parameter
+ * @param <K> the key's type.
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
@@ -26,37 +26,18 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
      */
     private int size;
 
-    /**
-     * Instantiates a new Fast object dictionary.
-     */
     protected FastObjectDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Fast object dictionary.
-     *
-     * @param loadFactor the load factor
-     */
     protected FastObjectDictionary(final float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Fast object dictionary.
-     *
-     * @param initCapacity the init capacity
-     */
     protected FastObjectDictionary(final int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
-    /**
-     * Instantiates a new Fast object dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
     protected FastObjectDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
     }
@@ -71,9 +52,8 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
         this.content = content;
     }
 
-    @NotNull
     @Override
-    public ObjectEntry<K, V>[] content() {
+    public @NotNull ObjectEntry<K, V>[] content() {
         return content;
     }
 

@@ -1,13 +1,11 @@
 package com.ss.rlib.util.dictionary;
 
-import static com.ss.rlib.util.ClassUtils.unsafeCast;
-
 import com.ss.rlib.function.FourObjectConsumer;
 import com.ss.rlib.function.TripleConsumer;
 import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.ClassUtils;
+import com.ss.rlib.util.ObjectUtils;
 import com.ss.rlib.util.array.Array;
-import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.rlib.util.array.UnsafeArray;
 import com.ss.rlib.util.pools.PoolFactory;
 import com.ss.rlib.util.pools.ReusablePool;
@@ -15,16 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.Objects;
+import java.util.function.*;
 
 /**
  * The base implementation of the {@link ObjectDictionary}.
  *
- * @param <K> the type parameter
- * @param <V> the type parameter
+ * @param <K> the key's type.
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<K, V> implements UnsafeObjectDictionary<K, V> {
@@ -165,12 +161,16 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public final boolean containsValue(@NotNull final V value) {
+    public final boolean containsValue(@Nullable final V value) {
+
         for (final ObjectEntry<K, V> element : content()) {
             for (ObjectEntry<K, V> entry = element; entry != null; entry = entry.getNext()) {
-                if (value.equals(entry.getValue())) return true;
+                if (Objects.equals(value, entry.getValue())) {
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
@@ -184,69 +184,98 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         }
     }
 
-    @Nullable
+
     @Override
-    public final V get(@NotNull final K key) {
+    public final @Nullable V get(@NotNull final K key) {
         final ObjectEntry<K, V> entry = getEntry(key);
         return entry == null ? null : entry.getValue();
     }
 
-    @Nullable
     @Override
-    public V get(@NotNull final K key, @NotNull final Supplier<V> factory) {
+    public @NotNull V get(@NotNull final K key, @NotNull final Supplier<V> factory) {
 
         ObjectEntry<K, V> entry = getEntry(key);
 
         if (entry == null) {
-            put(key, factory.get());
+            put(key, ObjectUtils.notNull(factory.get()));
             entry = getEntry(key);
         }
 
-        return entry == null ? null : entry.getValue();
+        if (entry == null) {
+            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+        }
+
+        return entry.getValue();
     }
 
-    @Nullable
+
     @Override
-    public V get(@NotNull final K key, @NotNull final Function<K, V> factory) {
+    public @NotNull V get(@NotNull final K key, @NotNull final Function<K, V> factory) {
 
         ObjectEntry<K, V> entry = getEntry(key);
 
         if (entry == null) {
-            put(key, factory.apply(key));
+            put(key, ObjectUtils.notNull(factory.apply(key)));
             entry = getEntry(key);
         }
 
-        return entry == null ? null : entry.getValue();
+        if (entry == null) {
+            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+        }
+
+        return entry.getValue();
     }
 
-    @Nullable
     @Override
-    public <T> V get(@NotNull final K key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
+    public <T> @NotNull V get(@NotNull final K key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
 
         ObjectEntry<K, V> entry = getEntry(key);
 
         if (entry == null) {
-            put(key, factory.apply(argument));
+            put(key, ObjectUtils.notNull(factory.apply(argument)));
             entry = getEntry(key);
         }
 
-        return entry == null ? null : entry.getValue();
+        if (entry == null) {
+            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+        }
+
+        return entry.getValue();
+    }
+
+    @Override
+    public <T> @NotNull V get(@NotNull final K key, @Nullable final T argument,
+                              @NotNull final BiFunction<K, T, V> factory) {
+
+        ObjectEntry<K, V> entry = getEntry(key);
+
+        if (entry == null) {
+            put(key, ObjectUtils.notNull(factory.apply(key, argument)));
+            entry = getEntry(key);
+        }
+
+        if (entry == null) {
+            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+        }
+
+        return entry.getValue();
     }
 
     /**
-     * Get the entry with value for the key.
+     * Get an entry for the key.
      *
      * @param key the key.
      * @return the entry or null.
      */
-    @Nullable
-    private ObjectEntry<K, V> getEntry(final K key) {
+    private @Nullable ObjectEntry<K, V> getEntry(final K key) {
 
         final ObjectEntry<K, V>[] content = content();
         final int hash = hash(key.hashCode());
 
         for (ObjectEntry<K, V> entry = content[indexFor(hash, content.length)]; entry != null; entry = entry.getNext()) {
-            if (entry.getHash() == hash && key.equals(entry.getKey())) return entry;
+            if (entry.getHash() == hash && key.equals(entry.getKey())) {
+                return entry;
+            }
         }
 
         return null;
@@ -257,14 +286,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
      *
      * @return the pool with entries.
      */
-    @NotNull
-    protected ReusablePool<ObjectEntry<K, V>> getEntryPool() {
+    protected @NotNull ReusablePool<ObjectEntry<K, V>> getEntryPool() {
         return entryPool;
     }
 
-    @NotNull
     @Override
-    public DictionaryType getType() {
+    public @NotNull DictionaryType getType() {
         return DictionaryType.OBJECT;
     }
 
@@ -273,9 +300,9 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         return new ObjectDictionaryIterator<>(this);
     }
 
-    @NotNull
     @Override
-    public final Array<K> keyArray(@NotNull final Array<K> container) {
+    public final @NotNull Array<K> keyArray(@NotNull final Array<K> container) {
+
         final UnsafeArray<K> unsafeArray = container.asUnsafe();
         unsafeArray.prepareForSize(container.size() + size());
 
@@ -289,30 +316,26 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         return container;
     }
 
-    @NotNull
     @Override
-    public Array<K> keyArray(@NotNull final Class<K> type) {
-        return keyArray(ArrayFactory.newArray(type));
-    }
+    public void copyTo(@NotNull final Dictionary<? super K, ? super V> dictionary) {
+        super.copyTo(dictionary);
 
-    @Override
-    public void moveTo(@NotNull final Dictionary<? super K, ? super V> dictionary) {
-        if (isEmpty() || dictionary.getType() != getType()) return;
+        if (isEmpty() || dictionary.getType() != getType()) {
+            return;
+        }
 
-        final ObjectDictionary<K, V> objectDictionary = ClassUtils.unsafeCast(dictionary);
-
-        super.moveTo(objectDictionary);
+        final ObjectDictionary<K, V> target = ClassUtils.unsafeCast(dictionary);
 
         for (ObjectEntry<K, V> entry : content()) {
             while (entry != null) {
-                objectDictionary.put(entry.getKey(), entry.getValue());
+                target.put(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
             }
         }
     }
 
     @Override
-    public final V put(@NotNull final K key, @Nullable final V value) {
+    public final @Nullable V put(@NotNull final K key, @Nullable final V value) {
 
         final ObjectEntry<K, V>[] content = content();
 
@@ -329,15 +352,16 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         return null;
     }
 
-    @Nullable
     @Override
-    public final V remove(final K key) {
+    public final @Nullable V remove(final K key) {
 
         final ObjectEntry<K, V> old = removeEntryForKey(key);
         final V value = old == null ? null : old.getValue();
 
         final ReusablePool<ObjectEntry<K, V>> pool = getEntryPool();
-        if (old != null) pool.put(old);
+        if (old != null) {
+            pool.put(old);
+        }
 
         return value;
     }

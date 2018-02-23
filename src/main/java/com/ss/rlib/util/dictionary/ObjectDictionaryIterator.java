@@ -1,56 +1,53 @@
 package com.ss.rlib.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * Реализация итератора для словаря с обхектным ключем.
+ * The iterator to iterate {@link ObjectDictionary}.
  *
- * @param <K> the type parameter
- * @param <V> the type parameter
+ * @param <K> the key's type.
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
 
     /**
-     * Итерируемый словарь.
+     * The dictionary.
      */
     private final UnsafeObjectDictionary<K, V> dictionary;
 
     /**
-     * Следующая ячейка.
+     * The next entry.
      */
     private ObjectEntry<K, V> next;
 
     /**
-     * Текущая ячейка.
+     * The current entry.
      */
     private ObjectEntry<K, V> current;
 
     /**
-     * Текущий индекс в массиве.
+     * The current index.
      */
     private int index;
 
-    /**
-     * Instantiates a new Object dictionary iterator.
-     *
-     * @param dictionary the dictionary
-     */
-    public ObjectDictionaryIterator(UnsafeObjectDictionary<K, V> dictionary) {
+    public ObjectDictionaryIterator(@NotNull final UnsafeObjectDictionary<K, V> dictionary) {
         this.dictionary = dictionary;
-
-        final ObjectEntry<K, V>[] content = dictionary.content();
-
         if (dictionary.size() > 0) {
-            while (index < content.length && (next = content[index++]) == null) ;
+            final ObjectEntry<K, V>[] content = dictionary.content();
+            while (index < content.length && (next = content[index++]) == null);
         }
     }
 
     /**
-     * @return итерируемый словарь.
+     * Get the dictionary.
+     *
+     * @return the dictionary.
      */
-    private UnsafeObjectDictionary<K, V> getDictionary() {
+    private @NotNull UnsafeObjectDictionary<K, V> getDictionary() {
         return dictionary;
     }
 
@@ -65,9 +62,11 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
     }
 
     /**
-     * @return следующая занятая ячейка.
+     * Get the next entry.
+     *
+     * @return the next entry.
      */
-    private ObjectEntry<K, V> nextEntry() {
+    private @NotNull ObjectEntry<K, V> nextEntry() {
 
         final UnsafeObjectDictionary<K, V> dictionary = getDictionary();
 

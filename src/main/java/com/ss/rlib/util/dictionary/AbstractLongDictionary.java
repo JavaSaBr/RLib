@@ -1,7 +1,5 @@
 package com.ss.rlib.util.dictionary;
 
-import static com.ss.rlib.util.ClassUtils.unsafeCast;
-
 import com.ss.rlib.function.LongBiObjectConsumer;
 import com.ss.rlib.function.LongObjectConsumer;
 import com.ss.rlib.util.ArrayUtils;
@@ -15,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongFunction;
@@ -166,11 +165,13 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    public final boolean containsValue(@NotNull final V value) {
+    public final boolean containsValue(@Nullable final V value) {
 
         for (final LongEntry<V> element : content()) {
             for (LongEntry<V> entry = element; entry != null; entry = entry.getNext()) {
-                if (value.equals(entry.getValue())) return true;
+                if (Objects.equals(value, entry.getValue())) {
+                    return true;
+                }
             }
         }
 
@@ -293,12 +294,12 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    public void moveTo(@NotNull final Dictionary<? super LongKey, ? super V> dictionary) {
+    public void copyTo(@NotNull final Dictionary<? super LongKey, ? super V> dictionary) {
         if (isEmpty() || dictionary.getType() != getType()) return;
 
         final LongDictionary<V> longDictionary = ClassUtils.unsafeCast(dictionary);
 
-        super.moveTo(dictionary);
+        super.copyTo(dictionary);
 
         for (LongEntry<V> entry : content()) {
             while (entry != null) {

@@ -3,8 +3,8 @@ package com.ss.rlib.util.dictionary;
 /**
  * The base implementation of the {@link Dictionary}.
  *
- * @param <K> the type parameter
- * @param <V> the type parameter
+ * @param <K> the key's type.
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public abstract class AbstractDictionary<K, V> implements Dictionary<K, V> {

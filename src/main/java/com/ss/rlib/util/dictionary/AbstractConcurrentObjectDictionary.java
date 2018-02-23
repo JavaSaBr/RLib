@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The base implementation of the {@link ConcurrentObjectDictionary}.
  *
- * @param <K> the type parameter
- * @param <V> the type parameter
+ * @param <K> the key's type.
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> implements ConcurrentObjectDictionary<K, V> {
@@ -26,37 +26,18 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
      */
     private volatile int size;
 
-    /**
-     * Instantiates a new Abstract concurrent object dictionary.
-     */
     protected AbstractConcurrentObjectDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent object dictionary.
-     *
-     * @param loadFactor the load factor
-     */
     protected AbstractConcurrentObjectDictionary(final float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent object dictionary.
-     *
-     * @param initCapacity the init capacity
-     */
     protected AbstractConcurrentObjectDictionary(final int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent object dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
     protected AbstractConcurrentObjectDictionary(final float loadFactor, final int initCapacity) {
         super(loadFactor, initCapacity);
     }
@@ -66,9 +47,8 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
         this.content = content;
     }
 
-    @NotNull
     @Override
-    public ObjectEntry<K, V>[] content() {
+    public @NotNull ObjectEntry<K, V>[] content() {
         return content;
     }
 
