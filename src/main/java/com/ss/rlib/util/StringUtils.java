@@ -36,6 +36,16 @@ public class StringUtils {
     private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = ThreadLocal.withInitial(StringUtils::getHashMD5);
 
     /**
+     * Return an empty string if the received string is null.
+     *
+     * @param string the string.
+     * @return an empty string if the received string is null.
+     */
+    public static @NotNull String toNotNull(@Nullable final String string) {
+        return string == null ? EMPTY : string;
+    }
+
+    /**
      * Check a string email/
      *
      * @param email the string email.

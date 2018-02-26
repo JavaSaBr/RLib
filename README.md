@@ -30,7 +30,7 @@ dependencies {
     <dependency>
         <groupId>com.github.JavaSaBr</groupId>
         <artifactId>RLib</artifactId>
-        <version>6.8.0</version>
+        <version>6.8.1</version>
     </dependency>
 ```
 
