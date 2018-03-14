@@ -93,8 +93,8 @@ public interface ClassPathScanner {
      * @param annotationClass the annotation class
      * @return the list of found annotated classes
      */
-    default <T> @NotNull Array<Class<T>> findAnnotated(@NotNull final Class<? extends Annotation> annotationClass) {
-        final Array<Class<T>> result = ArrayFactory.newArray(Class.class);
+    default @NotNull Array<Class<?>> findAnnotated(@NotNull final Class<? extends Annotation> annotationClass) {
+        final Array<Class<?>> result = ArrayFactory.newArray(Class.class);
         findAnnotated(result, annotationClass);
         return result;
     }
@@ -110,7 +110,7 @@ public interface ClassPathScanner {
      * @param container       the container
      * @param annotationClass the annotation class
      */
-    <T> void findAnnotated(@NotNull Array<Class<T>> container, @NotNull Class<? extends Annotation> annotationClass);
+    void findAnnotated(@NotNull Array<Class<?>> container, @NotNull Class<? extends Annotation> annotationClass);
 
     /**
      * Get all found classes.

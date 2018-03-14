@@ -126,13 +126,13 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     @Override
-    public <T> void findAnnotated(@NotNull Array<Class<T>> container, @NotNull Class<? extends Annotation> annotationClass) {
+    public void findAnnotated(@NotNull Array<Class<?>> container, @NotNull Class<? extends Annotation> annotationClass) {
         for (final Class<?> cs : getClasses()) {
             if (cs.isInterface() || isAbstract(cs.getModifiers()) || cs.isAnnotation() || !cs.isAnnotationPresent(annotationClass)) {
                 continue;
             }
             
-            container.add(unsafeCast(cs));
+            container.add(cs);
         }
     }
 
