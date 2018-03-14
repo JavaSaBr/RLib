@@ -1,11 +1,13 @@
 package com.ss.rlib.classpath;
 
-import com.ss.rlib.util.array.Array;
-import com.ss.rlib.util.array.ArrayFactory;
+import java.lang.annotation.Annotation;
+import java.util.function.Function;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
+import com.ss.rlib.util.array.Array;
+import com.ss.rlib.util.array.ArrayFactory;
 
 /**
  * THe interface to implement a classpath scanner.
@@ -79,6 +81,36 @@ public interface ClassPathScanner {
      * @param parentClass the parent class.
      */
     <T> void findInherited(@NotNull Array<Class<T>> container, @NotNull Class<T> parentClass);
+
+    /**
+     * Find all classes annotated via specified annotation.<br>
+     * Exclude class types:<ul>
+     * <li>Interfaces</li>
+     * <li>Abstract classes</li>
+     * <li>Annotations</li>
+     * </ul>
+     * 
+     * @param annotationClass the annotation class
+     * @return the list of found annotated classes
+     */
+    default @NotNull Array<Class<?>> findAnnotated(@NotNull final Class<? extends Annotation> annotationClass) {
+        final Array<Class<?>> result = ArrayFactory.newArray(Class.class);
+        findAnnotated(result, annotationClass);
+        return result;
+    }
+    
+    /**
+     * Find all classes annotated via specified annotation.<br>
+     * Exclude class types:<ul>
+     * <li>Interfaces</li>
+     * <li>Abstract classes</li>
+     * <li>Annotations</li>
+     * </ul>
+     * 
+     * @param container       the container
+     * @param annotationClass the annotation class
+     */
+    void findAnnotated(@NotNull Array<Class<?>> container, @NotNull Class<? extends Annotation> annotationClass);
 
     /**
      * Get all found classes.
