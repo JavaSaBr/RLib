@@ -2,6 +2,24 @@ package com.ss.rlib.classpath.impl;
 
 import static com.ss.rlib.util.ClassUtils.unsafeCast;
 import static java.lang.reflect.Modifier.isAbstract;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.function.Function;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.zip.ZipException;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.ss.rlib.classpath.ClassPathScanner;
 import com.ss.rlib.compiler.Compiler;
 import com.ss.rlib.io.impl.ReuseBytesInputStream;
@@ -12,21 +30,6 @@ import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.IOUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Modifier;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.function.Function;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.zip.ZipException;
 
 /**
  * The base implementation of the {@link ClassPathScanner}.
@@ -119,6 +122,19 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             }
 
             container.add(unsafeCast(cs));
+        }
+    }
+
+    @Override
+    public void findAnnotated(@NotNull Array<Class<?>> container, @NotNull Class<? extends Annotation> annotationClass) {
+        for (final Class<?> cs : getClasses()) {
+
+            if (cs.isInterface() || isAbstract(cs.getModifiers()) ||
+                cs.isAnnotation() || !cs.isAnnotationPresent(annotationClass)) {
+                continue;
+            }
+            
+            container.add(cs);
         }
     }
 

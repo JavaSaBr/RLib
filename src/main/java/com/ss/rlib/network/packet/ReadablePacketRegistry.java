@@ -1,15 +1,16 @@
 package com.ss.rlib.network.packet;
 
+import java.util.Arrays;
+import java.util.Optional;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.ss.rlib.classpath.ClassPathScanner;
 import com.ss.rlib.classpath.ClassPathScannerFactory;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.util.ClassUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayCollectors;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * The registry of readable packets.
@@ -143,7 +144,7 @@ public class ReadablePacketRegistry {
 
         idToPacket = Arrays.copyOf(idToPacket, maxId + 1);
 
-        for (int i = 0; i < classes.length; i++) {
+        for (int i = 0; i < length; i++) {
 
             final Class<? extends ReadablePacket> type = classes[i];
             final PacketDescription description = type.getAnnotation(PacketDescription.class);

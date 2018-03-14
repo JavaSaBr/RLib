@@ -6,32 +6,36 @@ Please see the file called LICENSE.
 #### Gradle
 
 ```groovy
-
 repositories {
-        maven { url 'https://jitpack.io' }
+    maven {
+        url  "https://dl.bintray.com/javasabr/maven" 
     }
+}
 
 dependencies {
-    compile 'com.github.JavaSaBr:RLib:6.8.0'
+    compile 'com.spaceshift:rlib:6.8.2'
 }
 ```
     
 #### Maven
 
 ```xml
+<repositories>
+    <repository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>bintray-javasabr-maven</id>
+        <name>bintray</name>
+        <url>https://dl.bintray.com/javasabr/maven</url>
+    </repository>
+</repositories>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
-    <dependency>
-        <groupId>com.github.JavaSaBr</groupId>
-        <artifactId>RLib</artifactId>
-        <version>6.8.0</version>
-    </dependency>
+<dependency>
+    <groupId>com.github.JavaSaBr</groupId>
+    <artifactId>RLib</artifactId>
+    <version>6.8.2</version>
+</dependency>
 ```
 
 ## Most interesting parts:

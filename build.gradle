@@ -1,9 +1,11 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
 
@@ -11,9 +13,11 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 
 group = 'com.spaceshift'
-version = '6.8.0'
+version = '6.8.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -27,6 +31,7 @@ compileTestJava {
 ext.junitPlatformVersion = "1.0.0"
 ext.junitJupiterVersion = "5.0.0"
 ext.log4jVersion = '2.6.2'
+ext.bintrayVersion = version
 
 junitPlatform {
     filters {
@@ -41,7 +46,38 @@ junitPlatform {
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'https://jitpack.io' }
+}
+
+publishing {
+    publications {
+        RlibArtifact(MavenPublication) {
+            from components.java
+            groupId group
+            artifactId 'rlib'
+            version bintrayVersion
+        }
+    }
+}
+
+bintray {
+    user = System.getProperty('bintrayUser')
+    key = System.getProperty('bintrayKey')
+    publications = ['RlibArtifact']
+    pkg {
+        repo = 'maven'
+        name = 'com.spaceshift.rlib'
+        licenses = ['Apache-2.0']
+        websiteUrl = 'https://github.com/JavaSaBr/Rlib'
+        vcsUrl = 'https://github.com/JavaSaBr/RLib.git'
+        issueTrackerUrl = 'https://github.com/JavaSaBr/RLib/issues'
+        githubRepo = 'JavaSaBr/RLib'
+        githubReleaseNotesFile = 'README.md'
+        version {
+            name = bintrayVersion
+            desc = bintrayVersion
+            released  = new Date()
+        }
+    }
 }
 
 dependencies {
@@ -80,23 +116,4 @@ task wrapper(type: Wrapper) {
 artifacts {
     archives sourcesJar
     archives javadocJar
-}
-
-defaultTasks 'clean', 'install'
-
-// To specify a license in the pom:
-install {
-    repositories.mavenInstaller {
-        pom.version = version
-        pom.artifactId = 'rlib'
-        pom.project {
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-        }
-    }
 }
