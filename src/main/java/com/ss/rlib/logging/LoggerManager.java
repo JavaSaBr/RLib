@@ -61,8 +61,8 @@ public class LoggerManager {
                 implementedClass = LoggerImpl.class;
             }
         } else {
-            Iterator<Logger> impls = ServiceLoader.load(Logger.class).iterator();
-            if(impls.hasNext()) {
+            final Iterator<Logger> impls = ServiceLoader.load(Logger.class).iterator();
+            if (impls.hasNext()) {
                 implementedClass = impls.next().getClass();
             }
         }

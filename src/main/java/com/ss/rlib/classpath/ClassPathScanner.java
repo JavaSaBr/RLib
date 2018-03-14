@@ -89,16 +89,16 @@ public interface ClassPathScanner {
      * <li>Abstract classes</li>
      * <li>Annotations</li>
      * </ul>
-     * 
-     * @param annotationClass the annotation class
-     * @return the list of found annotated classes
+     *
+     * @param annotationClass the annotation class.
+     * @return the list of found annotated classes.
      */
     default @NotNull Array<Class<?>> findAnnotated(@NotNull final Class<? extends Annotation> annotationClass) {
         final Array<Class<?>> result = ArrayFactory.newArray(Class.class);
         findAnnotated(result, annotationClass);
         return result;
     }
-    
+
     /**
      * Find all classes annotated via specified annotation.<br>
      * Exclude class types:<ul>
@@ -106,9 +106,9 @@ public interface ClassPathScanner {
      * <li>Abstract classes</li>
      * <li>Annotations</li>
      * </ul>
-     * 
-     * @param container       the container
-     * @param annotationClass the annotation class
+     *
+     * @param container       the container.
+     * @param annotationClass the annotation class.
      */
     void findAnnotated(@NotNull Array<Class<?>> container, @NotNull Class<? extends Annotation> annotationClass);
 
