@@ -1,6 +1,21 @@
 package com.ss.rlib.logging;
 
 import static com.ss.rlib.util.ObjectUtils.notNull;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.ss.rlib.function.TripleFunction;
 import com.ss.rlib.logging.impl.LoggerImpl;
 import com.ss.rlib.util.ArrayUtils;
@@ -8,17 +23,6 @@ import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.Array;
 import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.rlib.util.array.ConcurrentArray;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * The class for managing loggers.
@@ -55,6 +59,11 @@ public class LoggerManager {
             } catch (final ClassNotFoundException e) {
                 e.printStackTrace();
                 implementedClass = LoggerImpl.class;
+            }
+        } else {
+            final Iterator<Logger> impls = ServiceLoader.load(Logger.class).iterator();
+            if (impls.hasNext()) {
+                implementedClass = impls.next().getClass();
             }
         }
 
