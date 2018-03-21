@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib:6.8.2'
+    compile 'com.spaceshift:rlib:6.8.3-Final'
 }
 ```
     
@@ -34,7 +34,7 @@ dependencies {
 <dependency>
     <groupId>com.github.JavaSaBr</groupId>
     <artifactId>RLib</artifactId>
-    <version>6.8.2</version>
+    <version>6.8.3-Final</version>
 </dependency>
 ```
 
