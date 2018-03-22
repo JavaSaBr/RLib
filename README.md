@@ -32,8 +32,8 @@ dependencies {
 </repositories>
 
 <dependency>
-    <groupId>com.github.JavaSaBr</groupId>
-    <artifactId>RLib</artifactId>
+    <groupId>com.spaceshift</groupId>
+    <artifactId>rlib</artifactId>
     <version>6.8.3-Final</version>
 </dependency>
 ```
