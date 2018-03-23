@@ -17,7 +17,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
 group = 'com.spaceshift'
-version = '6.8.2'
+version = '6.8.3'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -31,7 +31,7 @@ compileTestJava {
 ext.junitPlatformVersion = "1.0.0"
 ext.junitJupiterVersion = "5.0.0"
 ext.log4jVersion = '2.6.2'
-ext.bintrayVersion = version
+ext.bintrayVersion = version + "-Final"
 
 junitPlatform {
     filters {
@@ -55,6 +55,8 @@ publishing {
             groupId group
             artifactId 'rlib'
             version bintrayVersion
+            artifact sourcesJar
+            artifact javadocJar
         }
     }
 }
@@ -110,10 +112,5 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5.1'
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+    gradleVersion = '4.6'
 }

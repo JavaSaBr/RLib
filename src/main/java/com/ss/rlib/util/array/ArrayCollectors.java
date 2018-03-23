@@ -36,8 +36,9 @@ public class ArrayCollectors {
      * @param arrayFactory the array factory.
      * @return the collector.
      */
-    public static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(@NotNull final Class<?> type,
-                                                                                @NotNull final Function<Class<?>, A> arrayFactory) {
+    public static <T, A extends Array<T>>
+    @NotNull Collector<T, A, A> collector(@NotNull final Class<?> type,
+                                          @NotNull final Function<Class<?>, A> arrayFactory) {
         return new Collector<T, A, A>() {
 
             @NotNull
@@ -80,8 +81,9 @@ public class ArrayCollectors {
      * @param arrayFactory the array factory.
      * @return the collector.
      */
-    public static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(@NotNull final Class<?> type,
-                                                                                                    @NotNull final Function<Class<?>, A> arrayFactory) {
+    public static <T, A extends ConcurrentArray<T>>
+    @NotNull Collector<T, A, A> concurrentCollector(@NotNull final Class<?> type,
+                                                    @NotNull final Function<Class<?>, A> arrayFactory) {
         return new Collector<T, A, A>() {
 
             @NotNull

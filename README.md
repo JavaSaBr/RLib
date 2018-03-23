@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib:6.8.2'
+    compile 'com.spaceshift:rlib:6.8.3-Final'
 }
 ```
     
@@ -32,9 +32,9 @@ dependencies {
 </repositories>
 
 <dependency>
-    <groupId>com.github.JavaSaBr</groupId>
-    <artifactId>RLib</artifactId>
-    <version>6.8.2</version>
+    <groupId>com.spaceshift</groupId>
+    <artifactId>rlib</artifactId>
+    <version>6.8.3-Final</version>
 </dependency>
 ```
 
@@ -117,7 +117,7 @@ dependencies {
     // Stream Collector
     final Array<Integer> result = IntStream.range(0, 1000)
                     .mapToObj(value -> value)
-                    .collect(ArrayCollectors.simple(Integer.class));
+                    .collect(ArrayCollectors.toArray(Integer.class));
 ```
 
 ### Concurrent Array API
@@ -151,7 +151,7 @@ dependencies {
     final ConcurrentArray<Integer> result = IntStream.range(0, 1000)
                     .parallel()
                     .mapToObj(value -> value)
-                    .collect(ArrayCollectors.concurrent(Integer.class));
+                    .collect(ArrayCollectors.toConcurrentArray(Integer.class));
 ```
 
 ### Logger API
