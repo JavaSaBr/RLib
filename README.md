@@ -117,7 +117,7 @@ dependencies {
     // Stream Collector
     final Array<Integer> result = IntStream.range(0, 1000)
                     .mapToObj(value -> value)
-                    .collect(ArrayCollectors.simple(Integer.class));
+                    .collect(ArrayCollectors.toArray(Integer.class));
 ```
 
 ### Concurrent Array API
@@ -151,7 +151,7 @@ dependencies {
     final ConcurrentArray<Integer> result = IntStream.range(0, 1000)
                     .parallel()
                     .mapToObj(value -> value)
-                    .collect(ArrayCollectors.concurrent(Integer.class));
+                    .collect(ArrayCollectors.toConcurrentArray(Integer.class));
 ```
 
 ### Logger API
