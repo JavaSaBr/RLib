@@ -1,9 +1,11 @@
 package com.ss.rlib.geom;
 
 import static java.lang.Float.floatToIntBits;
-import com.ss.rlib.util.ExtMath;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.ss.rlib.util.ExtMath;
 
 /**
  * The implementation of vector with 3 float values.
@@ -546,6 +548,53 @@ public final class Vector3f {
     @NotNull
     public Vector3f subtractLocal(@NotNull final Vector3f vector) {
         return subtractLocal(vector.x, vector.y, vector.z);
+    }
+    
+    /**
+     * Return vector length (magnitude).
+     * 
+     * @return length
+     */
+    public float length() {
+        return ExtMath.sqrt(x * x + y * y + z * z);
+    }
+    
+    /**
+     * Divide local vector 3 f.
+     *
+     * @param subX the sub x
+     * @param subY the sub y
+     * @param subZ the sub z
+     * @return the vector 3 f
+     */
+    @NotNull
+    public Vector3f divideLocal(final float x, final float y, final float z) {
+        this.x /= x;
+        this.y /= y;
+        this.z /= z;
+        return this;
+    }
+    
+    /**
+     * Divide local vector 3 f.
+     *
+     * @param vector the vector
+     * @return the vector 3 f
+     */
+    @NotNull
+    public Vector3f divideLocal(@NotNull final Vector3f vector) {
+        return divideLocal(vector.x, vector.y, vector.z);
+    }
+    
+    /**
+     * Divide local vector 3 f.
+     *
+     * @param scalar the scalar
+     * @return the vector 3 f
+     */
+    @NotNull
+    public Vector3f divideLocal(final float scalar) {
+        return divideLocal(scalar, scalar, scalar);
     }
 
     @Override
