@@ -562,9 +562,9 @@ public final class Vector3f {
     /**
      * Divide local vector 3 f.
      *
-     * @param subX the sub x
-     * @param subY the sub y
-     * @param subZ the sub z
+     * @param x the divider x
+     * @param y the divider y
+     * @param z the divider z
      * @return the vector 3 f
      */
     @NotNull
@@ -578,7 +578,7 @@ public final class Vector3f {
     /**
      * Divide local vector 3 f.
      *
-     * @param vector the vector
+     * @param vector the divider vector
      * @return the vector 3 f
      */
     @NotNull
@@ -589,7 +589,7 @@ public final class Vector3f {
     /**
      * Divide local vector 3 f.
      *
-     * @param scalar the scalar
+     * @param scalar the divider scalar
      * @return the vector 3 f
      */
     @NotNull
