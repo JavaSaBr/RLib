@@ -1,6 +1,8 @@
 package com.ss.rlib.geom;
 
 import static java.lang.Float.floatToIntBits;
+import static java.lang.Float.isInfinite;
+import static java.lang.Float.isNaN;
 import com.ss.rlib.util.ExtMath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,41 +17,50 @@ public final class Vector3f {
     /**
      * The constant ZERO.
      */
+    @NotNull
     public final static Vector3f ZERO = new Vector3f(0, 0, 0);
 
     /**
      * The constant NAN.
      */
+    @NotNull
     public final static Vector3f NAN = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
 
     /**
      * The constant UNIT_X.
      */
+    @NotNull
     public final static Vector3f UNIT_X = new Vector3f(1, 0, 0);
+
     /**
      * The constant UNIT_Y.
      */
+    @NotNull
     public final static Vector3f UNIT_Y = new Vector3f(0, 1, 0);
 
     /**
      * The constant UNIT_Z.
      */
+    @NotNull
     public final static Vector3f UNIT_Z = new Vector3f(0, 0, 1);
 
     /**
      * The constant UNIT_XYZ.
      */
+    @NotNull
     public final static Vector3f UNIT_XYZ = new Vector3f(1, 1, 1);
 
     /**
      * The constant POSITIVE_INFINITY.
      */
+    @NotNull
     public final static Vector3f POSITIVE_INFINITY = new Vector3f(Float.POSITIVE_INFINITY,
             Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
 
     /**
      * The constant NEGATIVE_INFINITY.
      */
+    @NotNull
     public final static Vector3f NEGATIVE_INFINITY = new Vector3f(Float.NEGATIVE_INFINITY,
             Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
@@ -64,7 +75,7 @@ public final class Vector3f {
     }
 
     /**
-     * Check the vector.
+     * Return true if the vector is valid.
      *
      * @param vector the vector.
      * @return true if the vector is valid.
@@ -73,9 +84,9 @@ public final class Vector3f {
 
         if (vector == null) {
             return false;
-        } else if (Float.isNaN(vector.getX()) || Float.isNaN(vector.getY()) || Float.isNaN(vector.getZ())) {
+        } else if (isNaN(vector.getX()) || isNaN(vector.getY()) || isNaN(vector.getZ())) {
             return false;
-        } else if (Float.isInfinite(vector.getX()) || Float.isInfinite(vector.getY()) || Float.isInfinite(vector.getZ())) {
+        } else if (isInfinite(vector.getX()) || isInfinite(vector.getY()) || isInfinite(vector.getZ())) {
             return false;
         }
 
@@ -106,15 +117,17 @@ public final class Vector3f {
     }
 
     /**
-     * The X.
+     * The X component.
      */
     protected float x;
+
     /**
-     * The Y.
+     * The Y component.
      */
     protected float y;
+
     /**
-     * The Z.
+     * The Z component.
      */
     protected float z;
 
@@ -162,8 +175,12 @@ public final class Vector3f {
      * @param result the result vector.
      * @return the result vector.
      */
-    public @NotNull Vector3f cross(final float otherX, final float otherY, final float otherZ,
-                                   @NotNull final Vector3f result) {
+    public @NotNull Vector3f cross(
+            final float otherX,
+            final float otherY,
+            final float otherZ,
+            @NotNull final Vector3f result
+    ) {
 
         final float resX = y * otherZ - z * otherY;
         final float resY = z * otherX - x * otherZ;
@@ -185,27 +202,25 @@ public final class Vector3f {
     }
 
     /**
-     * Cross vector 3 f.
+     * Calculate a cross vector between the current vector and the vector.
      *
-     * @param vector the vector
-     * @param result the result
-     * @return the vector 3 f
+     * @param vector the vector.
+     * @param result the result vector to store result.
+     * @return the result vector.
      */
-    @NotNull
-    public Vector3f cross(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
+    public @NotNull Vector3f cross(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
         return cross(vector.x, vector.y, vector.z, result);
     }
 
     /**
-     * Cross local vector 3 f.
+     * Calculate a cross vector between the current vector and the target coordinates.
      *
-     * @param otherX the other x
-     * @param otherY the other y
-     * @param otherZ the other z
-     * @return the vector 3 f
+     * @param otherX the other x.
+     * @param otherY the other y.
+     * @param otherZ the other z.
+     * @return this changed vector.
      */
-    @NotNull
-    public Vector3f crossLocal(final float otherX, final float otherY, final float otherZ) {
+    public @NotNull Vector3f crossLocal(final float otherX, final float otherY, final float otherZ) {
 
         final float tempx = y * otherZ - z * otherY;
         final float tempy = z * otherX - x * otherZ;
@@ -218,33 +233,32 @@ public final class Vector3f {
     }
 
     /**
-     * Cross local vector 3 f.
+     * Calculate a cross vector between the current vector and the target coordinates.
      *
-     * @param vector the vector
-     * @return the vector 3 f
+     * @param vector the vector.
+     * @return this changed vector.
      */
-    @NotNull
-    public Vector3f crossLocal(@NotNull final Vector3f vector) {
+    public @NotNull Vector3f crossLocal(@NotNull final Vector3f vector) {
         return crossLocal(vector.x, vector.y, vector.z);
     }
 
     /**
-     * Distance float.
+     * Calculate distance to the vector.
      *
-     * @param vector the vector
-     * @return the float
+     * @param vector the vector.
+     * @return the distance.
      */
     public float distance(@NotNull final Vector3f vector) {
         return ExtMath.sqrt(distanceSquared(vector));
     }
 
     /**
-     * Distance squared float.
+     * Calculate squared distance to the coords.
      *
-     * @param targetX the target x
-     * @param targetY the target y
-     * @param targetZ the target z
-     * @return the float
+     * @param targetX the target x.
+     * @param targetY the target y.
+     * @param targetZ the target z.
+     * @return the squared distance.
      */
     public float distanceSquared(final float targetX, final float targetY, final float targetZ) {
 
@@ -256,10 +270,10 @@ public final class Vector3f {
     }
 
     /**
-     * Distance squared float.
+     * Calculate squared distance to the vector.
      *
-     * @param vector the vector
-     * @return the float
+     * @param vector the vector.
+     * @return the squared distance.
      */
     public float distanceSquared(@NotNull final Vector3f vector) {
         return distanceSquared(vector.x, vector.y, vector.z);
@@ -300,64 +314,61 @@ public final class Vector3f {
     }
 
     /**
-     * Gets x.
+     * Get the X component.
      *
-     * @return the x
+     * @return the X component.
      */
     public float getX() {
         return x;
     }
 
     /**
-     * Sets x.
+     * Set the X component.
      *
-     * @param x the x
-     * @return the x
+     * @param x the X component.
+     * @return this vector.
      */
-    @NotNull
-    public Vector3f setX(final float x) {
+    public @NotNull Vector3f setX(final float x) {
         this.x = x;
         return this;
     }
 
     /**
-     * Gets y.
+     * Get the Y component.
      *
-     * @return the y
+     * @return the Y component.
      */
     public float getY() {
         return y;
     }
 
     /**
-     * Sets y.
+     * Set the Y component,
      *
-     * @param y the y
-     * @return the y
+     * @param y the Y component.
+     * @return this vector.
      */
-    @NotNull
-    public Vector3f setY(final float y) {
+    public @NotNull Vector3f setY(final float y) {
         this.y = y;
         return this;
     }
 
     /**
-     * Gets z.
+     * Get the Z component.
      *
-     * @return the z
+     * @return the Z component.
      */
     public float getZ() {
         return z;
     }
 
     /**
-     * Sets z.
+     * Set the Z component,
      *
-     * @param z the z
-     * @return the z
+     * @param z the Z component.
+     * @return this vector.
      */
-    @NotNull
-    public Vector3f setZ(final float z) {
+    public @NotNull Vector3f setZ(final float z) {
         this.z = z;
         return this;
     }
@@ -373,9 +384,9 @@ public final class Vector3f {
     }
 
     /**
-     * Is zero boolean.
+     * Return true if all components are zero.
      *
-     * @return the boolean
+     * @return true if all components are zero.
      */
     public boolean isZero() {
         return x == 0 && y == 0 && z == 0;
@@ -399,8 +410,7 @@ public final class Vector3f {
      * @param z the z
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f multLocal(final float x, final float y, final float z) {
+    public @NotNull Vector3f multLocal(final float x, final float y, final float z) {
         this.x *= x;
         this.y *= y;
         this.z *= z;
@@ -413,8 +423,7 @@ public final class Vector3f {
      * @param vector the vector
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f multLocal(@NotNull final Vector3f vector) {
+    public @NotNull Vector3f multLocal(@NotNull final Vector3f vector) {
         return multLocal(vector.getX(), vector.getY(), vector.getZ());
     }
 
@@ -423,8 +432,7 @@ public final class Vector3f {
      *
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f negate() {
+    public @NotNull Vector3f negate() {
         return newInstance(-getX(), -getY(), -getZ());
     }
 
@@ -433,8 +441,7 @@ public final class Vector3f {
      *
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f negateLocal() {
+    public @NotNull Vector3f negateLocal() {
         x = -x;
         y = -y;
         z = -z;
@@ -446,8 +453,7 @@ public final class Vector3f {
      *
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f normalize() {
+    public @NotNull Vector3f normalize() {
 
         float length = x * x + y * y + z * z;
 
@@ -464,8 +470,7 @@ public final class Vector3f {
      *
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f normalizeLocal() {
+    public @NotNull Vector3f normalizeLocal() {
 
         float length = x * x + y * y + z * z;
 
@@ -485,8 +490,7 @@ public final class Vector3f {
      * @param vector the vector
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f set(@NotNull final Vector3f vector) {
+    public @NotNull Vector3f set(@NotNull final Vector3f vector) {
         return set(vector.getX(), vector.getY(), vector.getZ());
     }
 
@@ -498,8 +502,7 @@ public final class Vector3f {
      * @param z the z
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f set(final float x, final float y, final float z) {
+    public @NotNull Vector3f set(final float x, final float y, final float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -513,8 +516,7 @@ public final class Vector3f {
      * @param result the result
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f subtract(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
+    public @NotNull Vector3f subtract(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
         result.x = x - vector.x;
         result.y = y - vector.y;
         result.z = z - vector.z;
@@ -529,8 +531,7 @@ public final class Vector3f {
      * @param subZ the sub z
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f subtractLocal(final float subX, final float subY, final float subZ) {
+    public @NotNull Vector3f subtractLocal(final float subX, final float subY, final float subZ) {
         x -= subX;
         y -= subY;
         z -= subZ;
@@ -543,9 +544,52 @@ public final class Vector3f {
      * @param vector the vector
      * @return the vector 3 f
      */
-    @NotNull
-    public Vector3f subtractLocal(@NotNull final Vector3f vector) {
+    public @NotNull Vector3f subtractLocal(@NotNull final Vector3f vector) {
         return subtractLocal(vector.x, vector.y, vector.z);
+    }
+    
+    /**
+     * Return vector length (magnitude).
+     * 
+     * @return length
+     */
+    public float length() {
+        return ExtMath.sqrt(x * x + y * y + z * z);
+    }
+    
+    /**
+     * Divide local vector 3 f.
+     *
+     * @param x the divider x
+     * @param y the divider y
+     * @param z the divider z
+     * @return the vector 3 f
+     */
+    public @NotNull Vector3f divideLocal(final float x, final float y, final float z) {
+        this.x /= x;
+        this.y /= y;
+        this.z /= z;
+        return this;
+    }
+    
+    /**
+     * Divide local vector 3 f.
+     *
+     * @param vector the divider vector
+     * @return the vector 3 f
+     */
+    public @NotNull Vector3f divideLocal(@NotNull final Vector3f vector) {
+        return divideLocal(vector.x, vector.y, vector.z);
+    }
+    
+    /**
+     * Divide local vector 3 f.
+     *
+     * @param scalar the divider scalar
+     * @return the vector 3 f
+     */
+    public @NotNull Vector3f divideLocal(final float scalar) {
+        return divideLocal(scalar, scalar, scalar);
     }
 
     @Override
