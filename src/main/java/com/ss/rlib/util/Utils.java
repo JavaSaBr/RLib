@@ -306,58 +306,14 @@ public final class Utils {
     }
 
     /**
-     * Execute a function with auto-converting checked exception to runtime.
-     *
-     * @param function the function.
-     */
-    public static void run(@NotNull final SafeRunnable function) {
-        try {
-            function.run();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Execuate a function with handling an exception.
-     *
-     * @param function     the function.
-     * @param errorHandler the handler.
-     */
-    public static void run(@NotNull final SafeRunnable function, @NotNull final Consumer<Exception> errorHandler) {
-        try {
-            function.run();
-        } catch (final Exception e) {
-            errorHandler.accept(e);
-        }
-    }
-
-    /**
      * Execute the function with auto-converting checked exception to runtime.
      *
-     * @param <R>      the type parameter
      * @param function the function.
-     * @return the result.
      */
-    public static <R> @NotNull R get(@NotNull final SafeFactory<@NotNull R> function) {
+    public static void run(@NotNull SafeRunnable function) {
         try {
-            return function.get();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Execute the function with auto-converting checked exception to runtime.
-     *
-     * @param <R>      the type parameter
-     * @param function the function.
-     * @return the result.
-     */
-    public static <R> @Nullable R getNullable(@NotNull final SafeFactory<R> function) {
-        try {
-            return function.get();
-        } catch (final Exception e) {
+            function.run();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -365,17 +321,63 @@ public final class Utils {
     /**
      * Execute the function with handling an exception.
      *
-     * @param <R>          the type parameter
+     * @param function     the function.
+     * @param errorHandler the handler.
+     */
+    public static void run(@NotNull SafeRunnable function, @NotNull Consumer<Exception> errorHandler) {
+        try {
+            function.run();
+        } catch (Exception e) {
+            errorHandler.accept(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting checked exception to runtime.
+     *
+     * @param <R>      the type parameter
+     * @param function the function.
+     * @return the result.
+     */
+    public static <R> @NotNull R get(@NotNull SafeFactory<R> function) {
+        try {
+            return function.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting checked exception to runtime.
+     *
+     * @param <R>      the type parameter
+     * @param function the function.
+     * @return the result.
+     */
+    public static <R> @Nullable R getNullable(@NotNull SafeFactory<R> function) {
+        try {
+            return function.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with handling an exception.
+     *
+     * @param <R>          the result's type.
      * @param function     the function.
      * @param errorHandler the handler.
      * @return the result or null.
      */
+    public static <R> @Nullable R get(
+            @NotNull SafeFactory<R> function,
+            @NotNull Consumer<Exception> errorHandler
+    ) {
 
-    public static <R> @Nullable R get(@NotNull final SafeFactory<@Nullable R> function,
-                                      @NotNull final Consumer<@NotNull Exception> errorHandler) {
         try {
             return function.get();
-        } catch (final Exception e) {
+        } catch (Exception e) {
             errorHandler.accept(e);
         }
 
@@ -385,14 +387,14 @@ public final class Utils {
     /**
      * Execute the function with auto-converting checked exception to runtime.
      *
-     * @param <F>      the type parameter
+     * @param <F>      the argument's type.
      * @param first    the first argument.
      * @param function the function.
      */
-    public static <F> void run(@Nullable final F first, @NotNull final SafeConsumer<F> function) {
+    public static <F> void run(@Nullable F first, @NotNull SafeConsumer<F> function) {
         try {
             function.accept(first);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -404,11 +406,13 @@ public final class Utils {
      * @param function the function.
      * @return the result.
      */
-    public static <F, R> @NotNull R get(@NotNull final F first,
-                                        @NotNull final SafeFunction<@NotNull F, @NotNull R> function) {
+    public static <F, R> @NotNull R get(
+            @NotNull F first,
+            @NotNull SafeFunction<F, R> function
+    ) {
         try {
             return function.apply(first);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -417,15 +421,18 @@ public final class Utils {
      * Execute the function with auto-converting checked exception to runtime.
      *
      * @param first    the first argument.
-     * @param second    the second argument.
+     * @param second   the second argument.
      * @param function the function.
      * @return the result.
      */
-    public static <F, S, R> @NotNull R get(@NotNull final F first, @NotNull final S second,
-                                           @NotNull final SafeBiFunction<@NotNull F, @NotNull S, @NotNull R> function) {
+    public static <F, S, R> @NotNull R get(
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull SafeBiFunction<F, S, R> function
+    ) {
         try {
             return function.apply(first, second);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -439,49 +446,56 @@ public final class Utils {
      * @param function the function.
      * @return the result or null.
      */
-    public static <F, R> @Nullable R getNullable(@Nullable final F first,
-                                                 @NotNull final SafeFunction<@Nullable F, @Nullable R> function) {
+    public static <F, R> @Nullable R getNullable(
+            @Nullable F first,
+            @NotNull SafeFunction<F, R> function
+    ) {
         try {
             return function.apply(first);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Execute a function with auto-converting checked exception to runtime.
+     * Execute the function with auto-converting checked exception to runtime.
      *
-     * @param <F>          the type parameter
+     * @param <F>          the argument's type.
      * @param first        the first argument.
      * @param function     the function.
      * @param errorHandler the handler.
      */
-    public static <F> void run(@Nullable final F first, @NotNull final SafeConsumer<@Nullable F> function,
-                               @NotNull final Consumer<@NotNull Exception> errorHandler) {
+    public static <F> void run(
+            @Nullable F first,
+            @NotNull SafeConsumer<F> function,
+            @NotNull Consumer<Exception> errorHandler
+    ) {
         try {
             function.accept(first);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             errorHandler.accept(e);
         }
     }
 
     /**
-     * Execute a function with auto-converting checked exception to runtime.
+     * Execute the function with auto-converting checked exception to runtime.
      *
-     * @param <F>          the type parameter
-     * @param <R>          the type parameter
+     * @param <F>          the argument's type.
+     * @param <R>          the result's type.
      * @param first        the first argument.
      * @param function     the function.
      * @param errorHandler the handler.
      * @return the result or null.
      */
+    public static <F, R> @Nullable R get(
+            @Nullable F first,
+            @NotNull SafeFunction<F, R> function,
+            @NotNull Consumer<Exception> errorHandler
+    ) {
 
-    public static <F, R> @Nullable R get(@Nullable final F first,
-                                         @NotNull final SafeFunction<@Nullable F, @Nullable R> function,
-                                         @NotNull final Consumer<@NotNull Exception> errorHandler) {
         try {
             return function.apply(first);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             errorHandler.accept(e);
         }
 
@@ -489,18 +503,18 @@ public final class Utils {
     }
 
     /**
-     * Безопасное выполнение задачи.
+     * Execute the function with auto-converting checked exception to runtime.
      *
-     * @param <F>      the type parameter
-     * @param <S>      the type parameter
-     * @param first    первый аргумент.
-     * @param second   второй аргумент.
-     * @param consumer выполняемая задача.
+     * @param <F>      the first argument's type.
+     * @param <S>      the second argument's type.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function,
      */
-    public static <F, S> void run(@Nullable final F first, @Nullable final S second, final SafeBiConsumer<F, S> consumer) {
+    public static <F, S> void run(@Nullable F first, @Nullable S second, @NotNull SafeBiConsumer<F, S> consumer) {
         try {
             consumer.accept(first, second);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -508,18 +522,22 @@ public final class Utils {
     /**
      * Execute a function with auto-converting checked exception to runtime.
      *
-     * @param <F>          the type parameter
-     * @param <S>          the type parameter
+     * @param <F>          the first argument's type.
+     * @param <S>          the second argument's type.
      * @param first        the first argument.
      * @param second       the second argument.
      * @param function     the function.
      * @param errorHandler the handler.
      */
-    public static <F, S> void run(@Nullable final F first, @Nullable final S second, @NotNull final SafeBiConsumer<F, S> function,
-                                  @NotNull final Consumer<Exception> errorHandler) {
+    public static <F, S> void run(
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull SafeBiConsumer<F, S> function,
+            @NotNull Consumer<Exception> errorHandler
+    ) {
         try {
             function.accept(first, second);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             errorHandler.accept(e);
         }
     }

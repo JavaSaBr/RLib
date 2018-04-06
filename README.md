@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib:6.8.5-Final'
+    compile 'com.spaceshift:rlib:6.8.6-Final'
 }
 ```
     
@@ -34,7 +34,7 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib</artifactId>
-    <version>6.8.5-Final</version>
+    <version>6.8.6-Final</version>
 </dependency>
 ```
 
@@ -43,63 +43,63 @@ dependencies {
 
 ```java
 
-    final ClassPathScanner scanner = ClassPathScannerFactory.newDefaultScanner();
+    var scanner = ClassPathScannerFactory.newDefaultScanner();
     scanner.setUseSystemClasspath(true);
     scanner.scan();
 
-    final Array<Class<Collection>> implementations = scanner.findImplements(Collection.class);
-    final Array<Class<AbstractArray>> inherited = scanner.findInherited(AbstractArray.class);
+    var implementations = scanner.findImplements(Collection.class);
+    var inherited = scanner.findInherited(AbstractArray.class);
 ```
 
 ### Compiler API
 
 ```java
 
-    final URL javaSource = getClass().getResource("/java/source/TestCompileJavaSource.java");
+    var javaSource = getClass().getResource("/java/source/TestCompileJavaSource.java");
     
-    final Compiler compiler = CompilerFactory.newDefaultCompiler();
-    final Class<?>[] compiled = compiler.compile(javaSource.toURI());
+    var compiler = CompilerFactory.newDefaultCompiler();
+    var compiled = compiler.compile(javaSource.toURI());
     
-    final Object instance = ClassUtils.newInstance(compiled[0]);
-    final Method method = instance.getClass().getMethod("makeString");
-    final Object result = method.invoke(instance);        
+    var instance = ClassUtils.newInstance(compiled[0]);
+    var method = instance.getClass().getMethod("makeString");
+    var result = method.invoke(instance);        
 ```
 
 ### VarTable API
 
 ```java
 
-    final VarTable vars = VarTable.newInstance();
+    var vars = VarTable.newInstance();
     vars.set("string", "Hello");
     vars.set("intArray", toIntegerArray(1, 2, 3, 5));
     vars.set("floatStringArray", "1.5,4.2,5.5");
     vars.set("stringEnum", "FLOAT");
     vars.set("enum", ReferenceType.BYTE);
 
-    final String string = vars.getString("string");
-    final int[] array = vars.getIntegerArray("intArray", "");
-    final float[] floatStringArray = vars.getFloatArray("floatStringArray", ",");
-    final ReferenceType stringEnum = vars.getEnum("stringEnum", ReferenceType.class);
-    final ReferenceType anEnum = vars.getEnum("enum", ReferenceType.class);
-    final ReferenceType unsafeGet = vars.get("enum");
+    var string = vars.getString("string");
+    var array = vars.getIntegerArray("intArray", "");
+    var floatStringArray = vars.getFloatArray("floatStringArray", ",");
+    var stringEnum = vars.getEnum("stringEnum", ReferenceType.class);
+    var anEnum = vars.getEnum("enum", ReferenceType.class);
+    var unsafeGet = vars.get("enum");
 ```
 
 ### Array API
 
 ```java
 
-    final Array<Integer> array = ArrayFactory.asArray(2, 5, 1, 7, 6, 8, 4);
+    var array = ArrayFactory.asArray(2, 5, 1, 7, 6, 8, 4);
     array.sort(Integer::compareTo);
 
     // performance operations
-    final UnsafeArray<Integer> unsafe = array.asUnsafe();
+    var unsafe = array.asUnsafe();
     // prepare the wrapped array to have the size
     unsafe.prepareForSize(10);
     unsafe.unsafeAdd(3);
     unsafe.unsafeAdd(9);
 
-    final Integer first = array.first();
-    final Integer last = array.last();
+    var first = array.first();
+    var last = array.last();
 
     // remove the element with saving ordering
     array.slowRemove(1);
@@ -115,7 +115,7 @@ dependencies {
     array.forEach(5, 7, (el, firstArg, secondArg) -> System.out.println(el + firstArg + secondArg));
     
     // Stream Collector
-    final Array<Integer> result = IntStream.range(0, 1000)
+    Array<Integer> result = IntStream.range(0, 1000)
                     .mapToObj(value -> value)
                     .collect(ArrayCollectors.toArray(Integer.class));
 ```
@@ -124,8 +124,8 @@ dependencies {
 
 ```java
 
-    final ConcurrentArray<Integer> array = ArrayFactory.newConcurrentAtomicARSWLockArray(Integer.class);
-    final long writeStamp = array.writeLock();
+    ConcurrentArray<Integer> array = ArrayFactory.newConcurrentAtomicARSWLockArray(Integer.class);
+    var writeStamp = array.writeLock();
     try {
         array.addAll(ArrayFactory.toArray(9, 8, 7, 6, 5, 4, 3));
         array.sort(Integer::compareTo);
@@ -133,22 +133,22 @@ dependencies {
         array.writeUnlock(writeStamp);
     }
 
-    final long readStamp = array.readLock();
+    var readStamp = array.readLock();
     try {
-        final Integer first = array.first();
-        final Integer last = array.last();
+        var first = array.first();
+        var last = array.last();
     } finally {
         array.readUnlock(readStamp);
     }
 
-    final Integer last = ArrayUtils.getInReadLock(array, Array::last);
-    final Integer result = ArrayUtils.getInReadLock(array, last,
+    Integer last = ArrayUtils.getInReadLock(array, Array::last);
+    Integer result = ArrayUtils.getInReadLock(array, last,
             (arr, target) -> arr.search(target, Integer::equals));
 
     ArrayUtils.runInWriteLock(array, result + 1, Collection::add);
     
     // Stream Collector
-    final ConcurrentArray<Integer> result = IntStream.range(0, 1000)
+    ConcurrentArray<Integer> result = IntStream.range(0, 1000)
                     .parallel()
                     .mapToObj(value -> value)
                     .collect(ArrayCollectors.toConcurrentArray(Integer.class));
@@ -159,7 +159,7 @@ dependencies {
 ```java
 
     // getting logger by class/name
-    final Logger logger = LoggerManager.getLogger(getClass());
+    var logger = LoggerManager.getLogger(getClass());
 
     // global enable/disable debug level
     LoggerLevel.DEBUG.setEnabled(true);
@@ -246,7 +246,7 @@ dependencies {
         }
     }
     
-    final InetSocketAddress address = new InetSocketAddress(2222);
+    var address = new InetSocketAddress(2222);
 
     serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(ReadablePacketRegistry.of(ServerPackets.MessageRequest.class));
     serverNetwork.bind(address);
@@ -254,6 +254,6 @@ dependencies {
     clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(ReadablePacketRegistry.of(ClientPackets.MessageResponse.class));
     clientNetwork.connect(address);
     
-    final Server server = clientNetwork.getCurrentServer();
+    var server = clientNetwork.getCurrentServer();
     server.sendPacket(new ClientPackets.MessageRequest("Test client message"));
 ```

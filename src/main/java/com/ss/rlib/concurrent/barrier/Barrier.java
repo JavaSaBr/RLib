@@ -1,5 +1,6 @@
 package com.ss.rlib.concurrent.barrier;
 
+import com.ss.rlib.function.TripleConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,7 +8,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
- * The interface to implement a simple barrier to transfer visibility of changes between different threads.
+ * The interface to implement a memory barrier to transfer visibility of changes between different threads.
  *
  * @author JavaSaBr
  */
@@ -23,11 +24,11 @@ public interface Barrier {
     }
 
     default <F> void run(@Nullable F first, @NotNull Consumer<F> consumer) {
-       // loadChanges();
+        loadChanges();
         try {
             consumer.accept(first);
         } finally {
-       //     commitChanges();
+            commitChanges();
         }
     }
 
@@ -35,6 +36,20 @@ public interface Barrier {
         loadChanges();
         try {
             consumer.accept(first, second);
+        } finally {
+            commitChanges();
+        }
+    }
+
+    default <F, S, T> void run(
+            @Nullable F first,
+            @Nullable S second,
+            @Nullable T third,
+            @NotNull TripleConsumer<F, S, T> consumer
+    ) {
+        loadChanges();
+        try {
+            consumer.accept(first, second, third);
         } finally {
             commitChanges();
         }
