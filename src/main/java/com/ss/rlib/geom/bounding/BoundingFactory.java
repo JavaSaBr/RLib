@@ -48,7 +48,7 @@ public final class BoundingFactory {
      * @return the bounding
      */
     public static Bounding newBoundingSphere(@NotNull final Vector3f center, @NotNull final Vector3f offset,
-                                             final int radius) {
+                                             final float radius) {
         return new BoundingSphere(center, offset, radius);
     }
 
