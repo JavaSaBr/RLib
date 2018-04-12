@@ -64,35 +64,16 @@ public final class Vector3f {
     public final static Vector3f NEGATIVE_INFINITY = new Vector3f(Float.NEGATIVE_INFINITY,
             Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
-
     /**
-     * Create a new instance of the vector.
+     * Creates a new instance of the vector.
      *
      * @return the new instance.
+     * @see #Vector3f().
      */
+    @Deprecated
     public @NotNull static Vector3f newInstance() {
         return new Vector3f();
     }
-
-    /**
-     * Return true if the vector is valid.
-     *
-     * @param vector the vector.
-     * @return true if the vector is valid.
-     */
-    public static boolean isValidVector(@Nullable final Vector3f vector) {
-
-        if (vector == null) {
-            return false;
-        } else if (isNaN(vector.getX()) || isNaN(vector.getY()) || isNaN(vector.getZ())) {
-            return false;
-        } else if (isInfinite(vector.getX()) || isInfinite(vector.getY()) || isInfinite(vector.getZ())) {
-            return false;
-        }
-
-        return true;
-    }
-
 
     /**
      * Create a new instance of the vector.
@@ -101,7 +82,9 @@ public final class Vector3f {
      * @param y the y value.
      * @param z the z value.
      * @return the new instance.
+     * @see #Vector3f(float, float, float)
      */
+    @Deprecated
     public static @NotNull Vector3f newInstance(final float x, final float y, final float z) {
         return new Vector3f(x, y, z);
     }
@@ -111,9 +94,28 @@ public final class Vector3f {
      *
      * @param values the array with values.
      * @return the new instance.
+     * @see #Vector3f(float[])
      */
+    @Deprecated
     public static @NotNull Vector3f newInstance(@NotNull final float[] values) {
         return new Vector3f(values[0], values[1], values[2]);
+    }
+
+    /**
+     * Return true if the vector is valid.
+     *
+     * @param vector the vector.
+     * @return true if the vector is valid.
+     */
+    public static boolean isValidVector(@Nullable Vector3f vector) {
+
+        if (vector == null) {
+            return false;
+        } else if (isNaN(vector.getX()) || isNaN(vector.getY()) || isNaN(vector.getZ())) {
+            return false;
+        } else {
+            return !isInfinite(vector.getX()) && !isInfinite(vector.getY()) && !isInfinite(vector.getZ());
+        }
     }
 
     /**
@@ -131,14 +133,28 @@ public final class Vector3f {
      */
     protected float z;
 
-    private Vector3f() {
+    public Vector3f() {
         super();
     }
 
-    private Vector3f(final float x, final float y, final float z) {
+    public Vector3f(float val) {
+        this.x = val;
+        this.y = val;
+        this.z = val;
+    }
+
+    public Vector3f(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public Vector3f(@NotNull float[] coords) {
+        this(coords[0], coords[1], coords[2]);
+    }
+
+    public Vector3f(@NotNull Vector3f another) {
+        this(another.getX(), another.getY(), another.getZ());
     }
 
     /**

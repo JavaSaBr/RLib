@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * The class with utility methods.
@@ -26,52 +27,66 @@ public final class ObjectUtils {
     /**
      * @see Objects#requireNonNull(Object, String)
      */
-    @NotNull
-    public static <T> T notNull(@Nullable final T obj, @NotNull final String message) {
-        if (obj == null) {
-            throw new IllegalArgumentException(message);
-        }
-        return obj;
+    public static <T> @NotNull T notNull(@Nullable T obj, @NotNull String message) {
+        return Objects.requireNonNull(obj, message);
     }
 
     /**
      * @see Objects#requireNonNull(Object)
      */
-    @NotNull
-    public static <T> T notNull(@Nullable final T obj) {
-        if (obj == null) {
-            throw new IllegalArgumentException("Argument is null.");
-        }
-        return obj;
+    public static <T> @NotNull T notNull(@Nullable T obj) {
+        return Objects.requireNonNull(obj);
     }
 
     /**
-     * Get a hash for a boolean value.
+     * Returns the another object if the first object is null.
+     *
+     * @param obj     the object.
+     * @param another the another object.
+     * @return the another object if the first object is null.
+     */
+    public static <T> @NotNull T anotherIfNull(@Nullable T obj, @NotNull T another) {
+        return obj == null ? another : obj;
+    }
+
+    /**
+     * Returns a new object if the first object is null.
+     *
+     * @param obj     the object.
+     * @param factory the factory.
+     * @return a new object if the first object is null.
+     */
+    public static <T> @NotNull T newIfNull(@Nullable T obj, @NotNull Supplier<T> factory) {
+        return obj == null ? factory.get() : obj;
+    }
+
+    /**
+     * Gets hash of the boolean value.
      *
      * @param value the boolean value.
      * @return the hash.
      */
-    public static int hash(final boolean value) {
+    public static int hash(boolean value) {
         return value ? 1231 : 1237;
     }
 
     /**
-     * Get a hash for a long value.
+     * Gets hash of the long value.
      *
      * @param value the long value.
      * @return the hash.
      */
-    public static int hash(final long value) {
+    public static int hash(long value) {
         return (int) (value ^ value >>> 32);
     }
 
     /**
-     * Get a hash for an object.
+     * Gets hash of the object.
      *
      * @param object the object.
      * @return the hash.
      */
-    public static int hash(@Nullable final Object object) {
+    public static int hash(@Nullable Object object) {
         return object == null ? 0 : object.hashCode();
     }
 
@@ -84,7 +99,7 @@ public final class ObjectUtils {
      * @param target   the target object.
      * @param cache    the flag of using cache.
      */
-    public static <O, N extends O> void reload(@NotNull final O original, @NotNull final N target, final boolean cache) {
+    public static <O, N extends O> void reload(@NotNull O original, @NotNull N target, boolean cache) {
 
         final Class<?> type = original.getClass();
 
@@ -126,11 +141,13 @@ public final class ObjectUtils {
     }
 
     /**
-     * Call the method {@link Reusable#release()} if the object instanceof {@link Reusable}.
+     * Call the method {@link Reusable#release()} if the object is instanceof {@link Reusable}.
      *
      * @param object the object.
      */
-    public static void release(@Nullable final Object object) {
-        if (object instanceof Reusable) ((Reusable) object).release();
+    public static void release(@Nullable Object object) {
+        if (object instanceof Reusable) {
+            ((Reusable) object).release();
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.ss.rlib.geom;
 
 import com.ss.rlib.util.pools.Reusable;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of a ray.
@@ -13,21 +13,26 @@ public class Ray3f implements Reusable {
     /**
      * The start point of this ray.
      */
-    @Nullable
-    protected Vector3f start;
+    @NotNull
+    private final Vector3f start;
 
     /**
      * The direction of this ray.
      */
-    @Nullable
-    protected Vector3f direction;
+    @NotNull
+    private final Vector3f direction;
+
+    public Ray3f() {
+        this.start = new Vector3f();
+        this.direction = new Vector3f();
+    }
 
     /**
      * Get the direction.
      *
      * @return the direction.
      */
-    public final @Nullable Vector3f getDirection() {
+    public final @NotNull Vector3f getDirection() {
         return direction;
     }
 
@@ -36,8 +41,8 @@ public class Ray3f implements Reusable {
      *
      * @param direction the direction.
      */
-    public final void setDirection(@Nullable final Vector3f direction) {
-        this.direction = direction;
+    public final void setDirection(@NotNull Vector3f direction) {
+        this.direction.set(direction);
     }
 
     /**
@@ -45,7 +50,7 @@ public class Ray3f implements Reusable {
      *
      * @return the start point.
      */
-    public final @Nullable Vector3f getStart() {
+    public final @NotNull Vector3f getStart() {
         return start;
     }
 
@@ -54,8 +59,8 @@ public class Ray3f implements Reusable {
      *
      * @param start the start point.
      */
-    public final void setStart(@Nullable final Vector3f start) {
-        this.start = start;
+    public final void setStart(@NotNull Vector3f start) {
+        this.start.set(start);
     }
 
     @Override
