@@ -41,7 +41,18 @@ public class StringUtils {
      * @param string the string.
      * @return an empty string if the received string is null.
      */
-    public static @NotNull String toNotNull(@Nullable final String string) {
+    @Deprecated
+    public static @NotNull String toNotNull(@Nullable String string) {
+        return emptyIfNull(string);
+    }
+
+    /**
+     * Return an empty string if the received string is null.
+     *
+     * @param string the string.
+     * @return an empty string if the received string is null.
+     */
+    public static @NotNull String emptyIfNull(@Nullable String string) {
         return string == null ? EMPTY : string;
     }
 
@@ -51,8 +62,8 @@ public class StringUtils {
      * @param email the string email.
      * @return true if the email is correct.
      */
-    public static boolean checkEmail(@NotNull final String email) {
-        final Matcher matcher = EMAIL_PATTERN.matcher(email);
+    public static boolean checkEmail(@NotNull String email) {
+        Matcher matcher = EMAIL_PATTERN.matcher(email);
         return matcher.matches();
     }
 
@@ -63,7 +74,7 @@ public class StringUtils {
      * @param second the second string.
      * @return 1 if the first string is null or is greater then second, 0 if the first string is the same or -1.
      */
-    public static int compare(@Nullable final String first, @Nullable final String second) {
+    public static int compare(@Nullable String first, @Nullable String second) {
         if (first == null) return 1;
         else if (second == null) return -1;
         return first.compareTo(second);
@@ -76,7 +87,7 @@ public class StringUtils {
      * @param second the second string.
      * @return 1 if the first string is null or is greater then second, 0 if the first string is the same or -1.
      */
-    public static int compareIgnoreCase(@Nullable final String first, @Nullable final String second) {
+    public static int compareIgnoreCase(@Nullable String first, @Nullable String second) {
         if (first == null) return 1;
         else if (second == null) return -1;
         return first.compareToIgnoreCase(second);
@@ -89,7 +100,7 @@ public class StringUtils {
      * @param second the second string.
      * @return true if these strings are equal.
      */
-    public static boolean equals(@Nullable final String first, @Nullable final String second) {
+    public static boolean equals(@Nullable String first, @Nullable String second) {
         return !(first == null || second == null) && first.equals(second);
     }
 
@@ -100,7 +111,7 @@ public class StringUtils {
      * @param second the second string.
      * @return true if these strings are equal.
      */
-    public static boolean equalsIgnoreCase(@Nullable final String first, @Nullable final String second) {
+    public static boolean equalsIgnoreCase(@Nullable String first, @Nullable String second) {
         return !(first == null || second == null) && first.equalsIgnoreCase(second);
     }
 
@@ -110,7 +121,7 @@ public class StringUtils {
      * @param throwable the exception.
      * @return the stack trace.
      */
-    public static @NotNull String toString(@NotNull final Throwable throwable) {
+    public static @NotNull String toString(@NotNull Throwable throwable) {
         return toString(throwable, 6);
     }
 
@@ -121,7 +132,7 @@ public class StringUtils {
      * @param deepLevel the max level of deep.
      * @return the stack trace.
      */
-    public static @NotNull String toString(@NotNull final Throwable throwable, final int deepLevel) {
+    public static @NotNull String toString(@NotNull Throwable throwable, int deepLevel) {
 
         StringWriter writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
@@ -152,7 +163,7 @@ public class StringUtils {
      * @param length the length.
      * @return the new string.
      */
-    public static @NotNull String generate(final int length) {
+    public static @NotNull String generate(int length) {
 
         final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
         final char[] array = new char[length];
@@ -176,32 +187,32 @@ public class StringUtils {
     }
 
     /**
-     * Check the string.
+     * Returns true if the string empty or null.
      *
      * @param string the string.
      * @return true if the string is null or empty.
      */
-    public static boolean isEmpty(@Nullable final String string) {
+    public static boolean isEmpty(@Nullable String string) {
         return string == null || string.isEmpty();
     }
 
     /**
-     * Check the string.
+     * Returns true if the string isn't empty.
      *
      * @param string the string.
      * @return true if the string isn't empty.
      */
-    public static boolean isNotEmpty(@Nullable final String string) {
+    public static boolean isNotEmpty(@Nullable String string) {
         return !isEmpty(string);
     }
 
     /**
-     * Get length of the string.
+     * Gets the length of the string.
      *
      * @param string the string.
      * @return length or 0 if a string is null or empty.
      */
-    public static int length(@Nullable final String string) {
+    public static int length(@Nullable String string) {
         return string == null ? 0 : string.length();
     }
 
@@ -211,7 +222,7 @@ public class StringUtils {
      * @param string a string.
      * @return the encoded string.
      */
-    public static @NotNull String toMD5(@NotNull final String string) {
+    public static @NotNull String toMD5(@NotNull String string) {
         final MessageDigest hashMD5 = LOCAL_HASH_MD.get();
         hashMD5.update(string.getBytes(), 0, string.length());
         return new BigInteger(1, hashMD5.digest()).toString(16);
