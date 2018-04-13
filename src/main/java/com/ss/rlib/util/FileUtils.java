@@ -16,9 +16,11 @@ import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -567,5 +569,12 @@ public class FileUtils {
         }
 
         return path.substring(0, index);
+    }
+
+    /**
+     * @see Files#createDirectories(Path, FileAttribute[])
+     */
+    public static void createDirectories(@NotNull Path directory, @NotNull FileAttribute<?>... attrs) {
+        Utils.run(directory, attrs, Files::createDirectories);
     }
 }
