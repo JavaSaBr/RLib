@@ -17,7 +17,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
 group = 'com.spaceshift'
-version = '6.9.1'
+version = '7.0.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -31,7 +31,7 @@ compileTestJava {
 ext.junitPlatformVersion = "1.0.0"
 ext.junitJupiterVersion = "5.0.0"
 ext.log4jVersion = '2.6.2'
-ext.bintrayVersion = version + ".Final"
+ext.bintrayVersion = version
 
 junitPlatform {
     filters {
@@ -53,7 +53,7 @@ publishing {
         RlibArtifact(MavenPublication) {
             from components.java
             groupId group
-            artifactId 'rlib'
+            artifactId 'rlib.common'
             version bintrayVersion
             artifact sourcesJar
             artifact javadocJar
@@ -67,7 +67,7 @@ bintray {
     publications = ['RlibArtifact']
     pkg {
         repo = 'maven'
-        name = 'com.spaceshift.rlib'
+        name = 'com.spaceshift.rlib.common'
         licenses = ['Apache-2.0']
         websiteUrl = 'https://github.com/JavaSaBr/Rlib'
         vcsUrl = 'https://github.com/JavaSaBr/RLib.git'
