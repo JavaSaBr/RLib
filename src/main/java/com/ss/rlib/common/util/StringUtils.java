@@ -57,6 +57,16 @@ public class StringUtils {
     }
 
     /**
+     * Return the another string if the received string is empty.
+     *
+     * @param string the string.
+     * @return the another string if the received string is empty.
+     */
+    public static @NotNull String ifEmpty(@Nullable String string, @NotNull String another) {
+        return isEmpty(string) ? another : string;
+    }
+
+    /**
      * Check a string email/
      *
      * @param email the string email.

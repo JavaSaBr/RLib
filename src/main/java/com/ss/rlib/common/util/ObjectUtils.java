@@ -7,13 +7,6 @@ import com.ss.rlib.common.util.dictionary.DictionaryFactory;
 import com.ss.rlib.common.util.dictionary.DictionaryUtils;
 import com.ss.rlib.common.util.dictionary.ObjectDictionary;
 import com.ss.rlib.common.util.pools.Reusable;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.dictionary.ConcurrentObjectDictionary;
-import com.ss.rlib.common.util.dictionary.DictionaryFactory;
-import com.ss.rlib.common.util.dictionary.DictionaryUtils;
-import com.ss.rlib.common.util.dictionary.ObjectDictionary;
-import com.ss.rlib.common.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +45,7 @@ public final class ObjectUtils {
      * @param another the another object.
      * @return the another object if the first object is null.
      */
-    public static <T> @NotNull T anotherIfNull(@Nullable T obj, @NotNull T another) {
+    public static <T> @NotNull T ifNull(@Nullable T obj, @NotNull T another) {
         return obj == null ? another : obj;
     }
 
@@ -63,7 +56,7 @@ public final class ObjectUtils {
      * @param factory the factory.
      * @return a new object if the first object is null.
      */
-    public static <T> @NotNull T newIfNull(@Nullable T obj, @NotNull Supplier<T> factory) {
+    public static <T> @NotNull T ifNull(@Nullable T obj, @NotNull Supplier<T> factory) {
         return obj == null ? factory.get() : obj;
     }
 
