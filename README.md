@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib:6.9.0.Final'
+    compile 'com.spaceshift:rlib.common:7.0.0'
 }
 ```
     
@@ -33,8 +33,8 @@ dependencies {
 
 <dependency>
     <groupId>com.spaceshift</groupId>
-    <artifactId>rlib</artifactId>
-    <version>6.9.0.Final</version>
+    <artifactId>rlib.common</artifactId>
+    <version>7.0.0</version>
 </dependency>
 ```
 
@@ -124,7 +124,7 @@ dependencies {
 
 ```java
 
-    ConcurrentArray<Integer> array = ArrayFactory.newConcurrentAtomicARSWLockArray(Integer.class);
+    var array = ArrayFactory.<Integer>newConcurrentAtomicARSWLockArray(Integer.class);
     var writeStamp = array.writeLock();
     try {
         array.addAll(ArrayFactory.toArray(9, 8, 7, 6, 5, 4, 3));
@@ -141,8 +141,8 @@ dependencies {
         array.readUnlock(readStamp);
     }
 
-    Integer last = ArrayUtils.getInReadLock(array, Array::last);
-    Integer result = ArrayUtils.getInReadLock(array, last,
+    var last = ArrayUtils.getInReadLock(array, Array::last);
+    var result = ArrayUtils.getInReadLock(array, last,
             (arr, target) -> arr.search(target, Integer::equals));
 
     ArrayUtils.runInWriteLock(array, result + 1, Collection::add);
@@ -191,7 +191,7 @@ dependencies {
         public static class MessageRequest extends AbstractReadablePacket {
 
             @Override
-            protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
+            protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
                 final String message = readString(buffer);
                 System.out.println("Server: received \"" + message + "\"");
                 owner.sendPacket(new MessageResponse("Response of " + message));
@@ -204,12 +204,12 @@ dependencies {
             @NotNull
             private final String message;
 
-            public MessageResponse(@NotNull final String message) {
+            public MessageResponse(@NotNull String message) {
                 this.message = message;
             }
 
             @Override
-            protected void writeImpl(@NotNull final ByteBuffer buffer) {
+            protected void writeImpl(@NotNull ByteBuffer buffer) {
                 super.writeImpl(buffer);
                 writeString(buffer, message);
             }
@@ -224,12 +224,12 @@ dependencies {
             @NotNull
             private final String message;
 
-            public MessageRequest(@NotNull final String message) {
+            public MessageRequest(@NotNull String message) {
                 this.message = message;
             }
 
             @Override
-            protected void writeImpl(@NotNull final ByteBuffer buffer) {
+            protected void writeImpl(@NotNull ByteBuffer buffer) {
                 super.writeImpl(buffer);
                 writeString(buffer, message);
             }
@@ -239,7 +239,7 @@ dependencies {
         public static class MessageResponse extends AbstractReadablePacket {
 
             @Override
-            protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
+            protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
                 final String message = readString(buffer);
                 System.out.println("client: received \"" + message + "\"");
             }
@@ -248,10 +248,14 @@ dependencies {
     
     var address = new InetSocketAddress(2222);
 
-    serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(ReadablePacketRegistry.of(ServerPackets.MessageRequest.class));
+    serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(
+            ReadablePacketRegistry.of(ServerPackets.MessageRequest.class));
+    
     serverNetwork.bind(address);
     
-    clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(ReadablePacketRegistry.of(ClientPackets.MessageResponse.class));
+    clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(
+            ReadablePacketRegistry.of(ClientPackets.MessageResponse.class));
+    
     clientNetwork.connect(address);
     
     var server = clientNetwork.getCurrentServer();
