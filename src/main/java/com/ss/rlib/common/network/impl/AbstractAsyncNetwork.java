@@ -22,10 +22,6 @@ import java.util.function.Function;
  */
 public abstract class AbstractAsyncNetwork implements AsyncNetwork {
 
-    /**
-     * The constant LOGGER.
-     */
-    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(AsyncNetwork.class);
 
     /**
@@ -58,7 +54,7 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
     @NotNull
     protected final NetworkConfig config;
 
-    protected AbstractAsyncNetwork(@NotNull final NetworkConfig config, @NotNull final ReadablePacketRegistry registry) {
+    protected AbstractAsyncNetwork(@NotNull NetworkConfig config, @NotNull ReadablePacketRegistry registry) {
         this.config = config;
         this.registry = registry;
         this.readBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
@@ -78,7 +74,7 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
 
     @Override
     public @NotNull ByteBuffer takeReadBuffer() {
-        final ByteBuffer buffer = readBufferPool.take(config, readBufferFactory());
+        ByteBuffer buffer = readBufferPool.take(config, readBufferFactory());
         buffer.clear();
         return buffer;
     }
@@ -95,7 +91,7 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
 
     @Override
     public @NotNull ByteBuffer takeWaitBuffer() {
-        final ByteBuffer buffer = writeBufferPool.take(config, waitBufferFactory());
+        ByteBuffer buffer = writeBufferPool.take(config, waitBufferFactory());
         buffer.clear();
         return buffer;
     }
@@ -112,7 +108,7 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
 
     @Override
     public @NotNull ByteBuffer takeWriteBuffer() {
-        final ByteBuffer buffer = writeBufferPool.take(config, writeBufferFactory());
+        ByteBuffer buffer = writeBufferPool.take(config, writeBufferFactory());
         buffer.clear();
         return buffer;
     }
@@ -128,17 +124,17 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
     }
 
     @Override
-    public void putReadBuffer(@NotNull final ByteBuffer buffer) {
+    public void putReadBuffer(@NotNull ByteBuffer buffer) {
         readBufferPool.put(buffer);
     }
 
     @Override
-    public void putWaitBuffer(@NotNull final ByteBuffer buffer) {
+    public void putWaitBuffer(@NotNull ByteBuffer buffer) {
         waitBufferPool.put(buffer);
     }
 
     @Override
-    public void putWriteBuffer(@NotNull final ByteBuffer buffer) {
+    public void putWriteBuffer(@NotNull ByteBuffer buffer) {
         writeBufferPool.put(buffer);
     }
 

@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DefaultClient extends AbstractConnectionOwner implements Client {
 
-    public DefaultClient(@NotNull final ClientConnection connection) {
+    public DefaultClient(@NotNull ClientConnection connection) {
         super(connection, NetworkCrypt.NULL);
     }
 
-    public DefaultClient(@NotNull final ClientConnection connection, @NotNull final NetworkCrypt crypt) {
+    public DefaultClient(@NotNull ClientConnection connection, @NotNull NetworkCrypt crypt) {
         super(connection, crypt);
     }
 
@@ -34,8 +34,12 @@ public class DefaultClient extends AbstractConnectionOwner implements Client {
 
     @Override
     protected void doDestroy() {
-        final ServerNetwork serverNetwork = getConnection().getNetwork();
+
+        ServerNetwork serverNetwork = getConnection()
+                .getNetwork();
+
         super.doDestroy();
+
         serverNetwork.onDestroyed(this);
     }
 }

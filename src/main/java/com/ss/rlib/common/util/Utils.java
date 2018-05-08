@@ -1,11 +1,6 @@
 package com.ss.rlib.common.util;
 
 import static java.lang.ThreadLocal.withInitial;
-import com.ss.rlib.common.function.SafeBiFunction;
-import com.ss.rlib.common.function.SafeFactory;
-import com.ss.rlib.common.function.SafeFunction;
-import com.ss.rlib.common.function.SafeRunnable;
-import com.ss.rlib.common.logging.LoggerManager;
 import com.ss.rlib.common.function.*;
 import com.ss.rlib.common.logging.LoggerManager;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -409,6 +405,8 @@ public final class Utils {
      *
      * @param first    the first argument.
      * @param function the function.
+     * @param <F> the first argument's type.
+     * @param <R> the result's type.
      * @return the result.
      */
     public static <F, R> @NotNull R get(
@@ -423,11 +421,56 @@ public final class Utils {
     }
 
     /**
+     * Execute the function with skipping any exception.
+     *
+     * @param first    the first argument.
+     * @param function the function.
+     * @param <F> the first argument's type.
+     * @param <R> the result's type.
+     * @return the result or null.
+     */
+    public static <F, R> @Nullable R safeGet(
+            @NotNull F first,
+            @NotNull SafeFunction<F, R> function
+    ) {
+        try {
+            return function.apply(first);
+        } catch (Exception e) {
+            // can be ignored
+            return null;
+        }
+    }
+
+    /**
+     * Execute the function with skipping any exception.
+     *
+     * @param first    the first argument.
+     * @param function the function.
+     * @param <F> the first argument's type.
+     * @param <R> the result's type.
+     * @return the optional result.
+     */
+    public static <F, R> @NotNull Optional<R> safeGetOpt(
+            @NotNull F first,
+            @NotNull SafeFunction<F, R> function
+    ) {
+        try {
+            return Optional.of(function.apply(first));
+        } catch (Exception e) {
+            // can be ignored
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Execute the function with auto-converting checked exception to runtime.
      *
      * @param first    the first argument.
      * @param second   the second argument.
      * @param function the function.
+     * @param <F> the first argument's type.
+     * @param <S> the second argument's type.
+     * @param <R> the result's type.
      * @return the result.
      */
     public static <F, S, R> @NotNull R get(
@@ -439,6 +482,54 @@ public final class Utils {
             return function.apply(first, second);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with skipping any exception.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     * @param <F> the first argument's type.
+     * @param <S> the second argument's type.
+     * @param <R> the result's type.
+     * @return the result or null.
+     */
+    public static <F, S, R> @Nullable R safeGet(
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull SafeBiFunction<F, S, R> function
+    ) {
+        try {
+            return function.apply(first, second);
+        } catch (Exception e) {
+            // can be ignored
+            return null;
+        }
+    }
+
+    /**
+     * Execute the function with skipping any exception.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     * @param <F> the first argument's type.
+     * @param <S> the second argument's type.
+     * @param <R> the result's type.
+     * @return the optional result.
+     */
+    public static <F, S, R> @NotNull Optional<R> safeGetOpt(
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull SafeBiFunction<F, S, R> function
+    ) {
+        try {
+            return Optional.of(function.apply(first, second));
+        } catch (Exception e) {
+            // can be ignored
+            return Optional.empty();
         }
     }
 

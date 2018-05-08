@@ -30,20 +30,22 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
      * @param clientConsumer    the client consumer.
      * @return the accept handler.
      */
-    static @NotNull AcceptHandler newSimple(@NotNull final BiFunction<@NotNull ServerNetwork, @NotNull AsynchronousSocketChannel, @NotNull ClientConnection> connectionFactory,
-                                            @NotNull final Function<@NotNull ClientConnection, @NotNull Client> clientFactory,
-                                            @Nullable final Consumer<@NotNull Client> clientConsumer) {
+    static @NotNull AcceptHandler newSimple(
+            @NotNull BiFunction<ServerNetwork, AsynchronousSocketChannel, ClientConnection> connectionFactory,
+            @NotNull Function<ClientConnection, Client> clientFactory,
+            @Nullable Consumer<Client> clientConsumer
+    ) {
         return (channel, network) -> {
 
             try {
                 channel.setOption(StandardSocketOptions.SO_SNDBUF, 12000);
                 channel.setOption(StandardSocketOptions.SO_RCVBUF, 24000);
-            } catch (final IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
-            final ClientConnection connection = connectionFactory.apply(network, channel);
-            final Client client = clientFactory.apply(connection);
+            ClientConnection connection = connectionFactory.apply(network, channel);
+            Client client = clientFactory.apply(connection);
             connection.setOwner(client);
             client.notifyConnected();
             connection.startRead();
@@ -69,19 +71,18 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
      * @param consumer the client consumer.
      * @return the accept handler.
      */
-    static @NotNull AcceptHandler newDefault(@NotNull final Consumer<@NotNull Client> consumer) {
+    static @NotNull AcceptHandler newDefault(@NotNull Consumer<Client> consumer) {
         return newSimple(DefaultClientConnection::new, DefaultClient::new, consumer);
     }
 
     @Override
-    default void completed(@NotNull final AsynchronousSocketChannel result,
-                           @NotNull final ServerNetwork network) {
+    default void completed(@NotNull AsynchronousSocketChannel result, @NotNull ServerNetwork network) {
         network.accept(network, this);
         onAccept(result, network);
     }
 
     @Override
-    default void failed(@NotNull final Throwable exc, @NotNull final ServerNetwork network) {
+    default void failed(@NotNull Throwable exc, @NotNull ServerNetwork network) {
         network.accept(network, this);
         onFailed(exc);
     }
@@ -92,7 +93,7 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
      * @param channel the client channel.
      * @param network the server network.
      */
-    void onAccept(@NotNull AsynchronousSocketChannel channel, @NotNull final ServerNetwork network);
+    void onAccept(@NotNull AsynchronousSocketChannel channel, @NotNull ServerNetwork network);
 
     /**
      * Handle the exception.

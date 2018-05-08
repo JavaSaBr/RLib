@@ -12,11 +12,11 @@ public interface NetworkCrypt {
     @NotNull NetworkCrypt NULL = new NetworkCrypt() {
 
         @Override
-        public void decrypt(@NotNull final byte[] data, final int offset, final int length) {
+        public void decrypt(@NotNull byte[] data, int offset, int length) {
         }
 
         @Override
-        public void encrypt(@NotNull final byte[] data, final int offset, final int length) {
+        public void encrypt(@NotNull byte[] data, int offset, int length) {
         }
 
         @Override
@@ -26,6 +26,8 @@ public interface NetworkCrypt {
     };
 
     /**
+     * Return true if this crypt doesn't crypt data.
+     *
      * @return true if this crypt doesn't crypt data.
      */
     default boolean isNull() {

@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DefaultServer extends AbstractConnectionOwner implements Server {
 
-    public DefaultServer(@NotNull final ServerConnection connection) {
+    public DefaultServer(@NotNull ServerConnection connection) {
         super(connection, NetworkCrypt.NULL);
     }
 
-    public DefaultServer(@NotNull final ServerConnection connection, @NotNull final NetworkCrypt crypt) {
+    public DefaultServer(@NotNull ServerConnection connection, @NotNull NetworkCrypt crypt) {
         super(connection, crypt);
     }
 

@@ -17,14 +17,15 @@ import java.nio.channels.AsynchronousSocketChannel;
  */
 public class DefaultClientConnection extends AbstractAsyncConnection implements ClientConnection {
 
-    public DefaultClientConnection(@NotNull final ServerNetwork network,
-                                   @NotNull final AsynchronousSocketChannel channel) {
+    public DefaultClientConnection(@NotNull ServerNetwork network, @NotNull AsynchronousSocketChannel channel) {
         super(network, channel, WritablePacket.class);
     }
 
-    public DefaultClientConnection(@NotNull final ServerNetwork network,
-                                   @NotNull final AsynchronousSocketChannel channel,
-                                   @NotNull final Class<? extends WritablePacket> sendableType) {
+    public DefaultClientConnection(
+            @NotNull ServerNetwork network,
+            @NotNull AsynchronousSocketChannel channel,
+            @NotNull Class<? extends WritablePacket> sendableType
+    ) {
         super(network, channel, sendableType);
     }
 

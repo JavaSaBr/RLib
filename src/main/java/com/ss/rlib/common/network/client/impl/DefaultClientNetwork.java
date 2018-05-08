@@ -48,9 +48,12 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
     @Nullable
     protected volatile Server currentServer;
 
-    public DefaultClientNetwork(@NotNull final NetworkConfig config,
-                                @NotNull final ReadablePacketRegistry packetRegistry,
-                                @NotNull final ConnectHandler connectHandler) throws IOException {
+    public DefaultClientNetwork(
+            @NotNull NetworkConfig config,
+            @NotNull ReadablePacketRegistry packetRegistry,
+            @NotNull ConnectHandler connectHandler
+    ) throws IOException {
+
         super(config, packetRegistry);
 
         this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(),
@@ -67,32 +70,35 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
             if (channel != null) channel.close();
             channel = AsynchronousSocketChannel.open(group);
             return channel;
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public synchronized void asyncConnect(@NotNull final InetSocketAddress serverAddress) {
+    public synchronized void asyncConnect(@NotNull InetSocketAddress serverAddress) {
         prepareChannel().connect(serverAddress, this, connectHandler);
     }
 
     @Override
-    public synchronized Server connect(@NotNull final InetSocketAddress serverAddress) {
-        final Future<Void> future = prepareChannel().connect(serverAddress);
+    public synchronized Server connect(@NotNull InetSocketAddress serverAddress) {
+
+        Future<Void> future = prepareChannel().connect(serverAddress);
         try {
             future.get();
         } catch (final InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+
         connectHandler.completed(null, this);
+
         return getCurrentServer();
     }
 
     @Override
     public synchronized void shutdown() {
 
-        final Server currentServer = getCurrentServer();
+        Server currentServer = getCurrentServer();
         if (currentServer != null) {
             currentServer.destroy();
         }
@@ -111,7 +117,7 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
     }
 
     @Override
-    public void setCurrentServer(@Nullable final Server currentServer) {
+    public void setCurrentServer(@Nullable Server currentServer) {
         this.currentServer = currentServer;
     }
 }

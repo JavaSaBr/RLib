@@ -1,7 +1,5 @@
 package com.ss.rlib.common.network.server.impl;
 
-import com.ss.rlib.common.network.server.AcceptHandler;
-import com.ss.rlib.common.network.server.client.Client;
 import com.ss.rlib.common.concurrent.GroupThreadFactory;
 import com.ss.rlib.common.network.NetworkConfig;
 import com.ss.rlib.common.network.impl.AbstractAsyncNetwork;
@@ -51,9 +49,12 @@ public final class DefaultServerNetwork extends AbstractAsyncNetwork implements 
     @Nullable
     private Consumer<@NotNull Client> destroyedHandler;
 
-    public DefaultServerNetwork(@NotNull final NetworkConfig config,
-                                @NotNull final ReadablePacketRegistry packetRegistry,
-                                @NotNull final AcceptHandler acceptHandler) throws IOException {
+    public DefaultServerNetwork(
+            @NotNull NetworkConfig config,
+            @NotNull ReadablePacketRegistry packetRegistry,
+            @NotNull AcceptHandler acceptHandler
+    ) throws IOException {
+
         super(config, packetRegistry);
 
         this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(),
@@ -64,12 +65,15 @@ public final class DefaultServerNetwork extends AbstractAsyncNetwork implements 
     }
 
     @Override
-    public <A> void accept(@Nullable final A attachment, @NotNull final CompletionHandler<AsynchronousSocketChannel, ? super A> handler) {
+    public <A> void accept(
+            @Nullable A attachment,
+            @NotNull CompletionHandler<AsynchronousSocketChannel, ? super A> handler
+    ) {
         channel.accept(attachment, handler);
     }
 
     @Override
-    public void bind(@NotNull final SocketAddress address) throws IOException {
+    public void bind(@NotNull SocketAddress address) throws IOException {
         channel.bind(address);
         channel.accept(this, acceptHandler);
     }
@@ -80,12 +84,12 @@ public final class DefaultServerNetwork extends AbstractAsyncNetwork implements 
     }
 
     @Override
-    public void setDestroyedHandler(@Nullable final Consumer<@NotNull Client> destroyedHandler) {
+    public void setDestroyedHandler(@Nullable Consumer<@NotNull Client> destroyedHandler) {
         this.destroyedHandler = destroyedHandler;
     }
 
     @Override
-    public void onDestroyed(@NotNull final Client client) {
+    public void onDestroyed(@NotNull Client client) {
         if (destroyedHandler != null) {
             destroyedHandler.accept(client);
         }

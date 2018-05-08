@@ -27,12 +27,14 @@ public interface ConnectHandler extends CompletionHandler<Void, ClientNetwork> {
      * @param serverFactory     the server factory.
      * @return the connection handler.
      */
-    static @NotNull ConnectHandler newSimple(@NotNull final BiFunction<@NotNull ClientNetwork, @NotNull AsynchronousSocketChannel, @NotNull ServerConnection> connectionFactory,
-                                             @NotNull final Function<@NotNull ServerConnection, @NotNull Server> serverFactory) {
+    static @NotNull ConnectHandler newSimple(
+            @NotNull BiFunction<ClientNetwork, AsynchronousSocketChannel, ServerConnection> connectionFactory,
+            @NotNull Function<ServerConnection, Server> serverFactory
+    ) {
         return (network) -> {
-            final AsynchronousSocketChannel channel = notNull(network.getChannel());
-            final ServerConnection connection = connectionFactory.apply(network, channel);
-            final Server server = serverFactory.apply(connection);
+            AsynchronousSocketChannel channel = notNull(network.getChannel());
+            ServerConnection connection = connectionFactory.apply(network, channel);
+            Server server = serverFactory.apply(connection);
             connection.setOwner(server);
             connection.startRead();
             network.setCurrentServer(server);
@@ -49,12 +51,12 @@ public interface ConnectHandler extends CompletionHandler<Void, ClientNetwork> {
     }
 
     @Override
-    default void completed(@Nullable final Void result, @NotNull final ClientNetwork network) {
+    default void completed(@Nullable Void result, @NotNull ClientNetwork network) {
         onConnect(network);
     }
 
     @Override
-    default void failed(@NotNull final Throwable exc, @NotNull final ClientNetwork network) {
+    default void failed(@NotNull Throwable exc, @NotNull ClientNetwork network) {
         onFailed(exc);
     }
 
@@ -63,13 +65,13 @@ public interface ConnectHandler extends CompletionHandler<Void, ClientNetwork> {
      *
      * @param network the network.
      */
-    void onConnect(@NotNull final ClientNetwork network);
+    void onConnect(@NotNull ClientNetwork network);
 
     /**
      * Handle an exception.
      *
      * @param exc the exception.
      */
-    default void onFailed(@NotNull final Throwable exc) {
+    default void onFailed(@NotNull Throwable exc) {
     }
 }

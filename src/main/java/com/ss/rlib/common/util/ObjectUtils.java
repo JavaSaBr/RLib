@@ -43,6 +43,7 @@ public final class ObjectUtils {
      *
      * @param obj     the object.
      * @param another the another object.
+     * @param <T> the object's type.
      * @return the another object if the first object is null.
      */
     public static <T> @NotNull T ifNull(@Nullable T obj, @NotNull T another) {
@@ -54,6 +55,7 @@ public final class ObjectUtils {
      *
      * @param obj     the object.
      * @param factory the factory.
+     * @param <T> the object's type.
      * @return a new object if the first object is null.
      */
     public static <T> @NotNull T ifNull(@Nullable T obj, @NotNull Supplier<T> factory) {

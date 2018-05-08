@@ -1,6 +1,5 @@
 package com.ss.rlib.common.network.server;
 
-import com.ss.rlib.common.network.server.client.Client;
 import com.ss.rlib.common.network.AsyncNetwork;
 import com.ss.rlib.common.network.server.client.Client;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +32,10 @@ public interface ServerNetwork extends AsyncNetwork {
      * @param attachment the additional argument.
      * @param handler    the handler.
      */
-    <A> void accept(@Nullable A attachment, @NotNull CompletionHandler<@NotNull AsynchronousSocketChannel, @Nullable ? super A> handler);
+    <A> void accept(
+            @Nullable A attachment,
+            @NotNull CompletionHandler<@NotNull AsynchronousSocketChannel, @Nullable ? super A> handler
+    );
 
     /**
      * Start a server using the socket address.

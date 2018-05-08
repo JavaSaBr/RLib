@@ -1,9 +1,6 @@
 package com.ss.rlib.common.network.client.server.impl;
 
 import com.ss.rlib.common.network.client.ClientNetwork;
-import com.ss.rlib.common.network.impl.AbstractAsyncConnection;
-import com.ss.rlib.common.network.packet.WritablePacket;
-import com.ss.rlib.common.network.client.ClientNetwork;
 import com.ss.rlib.common.network.client.server.Server;
 import com.ss.rlib.common.network.client.server.ServerConnection;
 import com.ss.rlib.common.network.impl.AbstractAsyncConnection;
@@ -21,14 +18,15 @@ import java.nio.channels.AsynchronousSocketChannel;
  */
 public class DefaultServerConnection extends AbstractAsyncConnection implements ServerConnection {
 
-    public DefaultServerConnection(@NotNull final ClientNetwork network,
-                                   @NotNull final AsynchronousSocketChannel channel) {
+    public DefaultServerConnection(@NotNull ClientNetwork network, @NotNull AsynchronousSocketChannel channel) {
         super(network, channel, WritablePacket.class);
     }
 
-    public DefaultServerConnection(@NotNull final ClientNetwork network,
-                                   @NotNull final AsynchronousSocketChannel channel,
-                                   @NotNull final Class<? extends WritablePacket> sendableType) {
+    public DefaultServerConnection(
+            @NotNull ClientNetwork network,
+            @NotNull AsynchronousSocketChannel channel,
+            @NotNull Class<? extends WritablePacket> sendableType
+    ) {
         super(network, channel, sendableType);
     }
 
@@ -40,7 +38,7 @@ public class DefaultServerConnection extends AbstractAsyncConnection implements 
     @Override
     protected void doClose() throws IOException {
         super.doClose();
-        final ClientNetwork clientNetwork = (ClientNetwork) getNetwork();
+        ClientNetwork clientNetwork = (ClientNetwork) getNetwork();
         if (clientNetwork.getCurrentServer() == getOwner()) {
             clientNetwork.setCurrentServer(null);
         }
