@@ -1,13 +1,13 @@
 package com.ss.rlib.common.concurrent.lock.impl;
 
-import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
-import com.ss.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
-import org.jetbrains.annotations.NotNull;
-import sun.misc.Contended;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
+import com.ss.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
 
 /**
  * The implementation of the {@link AsyncReadSyncWriteLock} using the several {@link AtomicInteger} without supporting
@@ -27,21 +27,18 @@ public class AtomicReadWriteLock implements AsyncReadSyncWriteLock, Lock {
      * The status of write lock.
      */
     @NotNull
-    @Contended("writeStatus")
     protected final AtomicInteger writeStatus;
 
     /**
      * The count of writers.
      */
     @NotNull
-    @Contended("writeCount")
     protected final AtomicInteger writeCount;
 
     /**
      * The count of readers.
      */
     @NotNull
-    @Contended("readCount")
     protected final AtomicInteger readCount;
 
     /**
