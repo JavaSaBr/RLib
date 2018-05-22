@@ -1,11 +1,12 @@
 package com.ss.rlib.common.geom;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.ss.rlib.common.geom.util.AngleUtils;
 import com.ss.rlib.common.util.ExtMath;
 import com.ss.rlib.common.util.random.Random;
 import com.ss.rlib.common.util.random.RandomFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of rotation in 3D world based on Quaternion.
@@ -805,6 +806,38 @@ public class Quaternion4f {
 
         result.set(1 - (yy + zz), xy - zw, xz + yw, xy + zw, 1 - (xx + zz), yz - xw, xz - yw, yz + xw, 1 - (xx + yy));
         return result;
+    }
+    
+    /**
+     * Rotate the vector
+     * @param vector 
+     * @return vector
+     */
+    public final Vector3f rotate(Vector3f vector) {
+        final float px = vector.x;
+        final float py = vector.y;
+        final float pz = vector.z;
+        
+        final float norm = norm();
+        final float s = norm == 1f ? 2f : norm > 0f ? 2f / norm : 0;
+        
+        final float x = this.x * s;
+        final float y = this.y * s;
+        final float z = this.z * s;
+        final float xx = this.x * x;
+        final float xy = this.x * y;
+        final float xz = this.x * z;
+        final float xw = this.w * x;
+        final float yy = this.y * y;
+        final float yz = this.y * z;
+        final float yw = this.w * y;
+        final float zz = this.z * z;
+        final float zw = this.w * z;
+        
+        vector.x = (1f - (yy + zz)) * px + (xy - zw) * py + (xz + yw) * pz;
+        vector.y = (xy + zw) * px + (1f - (xx + zz)) * py + (yz - xw) * pz;
+        vector.z = (xz - yw) * px + (yz - xw) * py + (1f - (xx + yy)) * pz;
+        return vector;
     }
 
     @Override
