@@ -3,10 +3,11 @@ package com.ss.rlib.common.geom;
 import static java.lang.Float.floatToIntBits;
 import static java.lang.Float.isInfinite;
 import static java.lang.Float.isNaN;
-import com.ss.rlib.common.util.ExtMath;
-import com.ss.rlib.common.util.ExtMath;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.ss.rlib.common.util.ExtMath;
 
 /**
  * The implementation of vector with 3 float values.
@@ -607,6 +608,39 @@ public final class Vector3f {
      */
     public @NotNull Vector3f divideLocal(final float scalar) {
         return divideLocal(scalar, scalar, scalar);
+    }
+    
+    /**
+     * Move this vector to new point by specified direction.
+     * @param direction move direction
+     * @param distance move distance
+     * @return this vector with new position
+     */
+    public @NotNull Vector3f moveToDirection(@NotNull Vector3f direction, float distance) {
+        return addLocal(direction.getX() * distance, direction.getY() * distance, direction.getZ() * distance);
+    }
+    
+    /**
+     * Move this vector to destination vector.
+     * If distance argument is greater or equal to real distance between this vector and
+     *  destination vector then coordinates will be set to equal destination.
+     * @param destination destination vector
+     * @param distance move distance
+     * @return this vector with new position
+     */
+    public @NotNull Vector3f moveToPoint(@NotNull Vector3f destination, float distance) {
+        final Vector3f direction = new Vector3f(destination)
+                .subtractLocal(this);
+        
+        final double length = Math.sqrt(x * x + y * y + z * z);
+        if(length <= distance || length < ExtMath.EPSILON) {
+            set(destination);
+            return this;
+        }
+        
+        //normalize vector by exists length: avoid new vector length calculation via normalizeLocal
+        direction.divideLocal((float) length); 
+        return moveToDirection(direction, distance);
     }
 
     @Override

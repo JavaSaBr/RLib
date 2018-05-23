@@ -16,6 +16,8 @@ public final class ExtMath {
      * The value PI/2 as a float. (90 degrees)
      */
     public static final float HALF_PI = 0.5f * PI;
+    
+    public static final double EPSILON = 1.40129846432482E-45;
 
     /**
      * Returns the arc cosine of a value.<br> Special cases: <ul><li>If value is smaller than -1, then the result is PI.
