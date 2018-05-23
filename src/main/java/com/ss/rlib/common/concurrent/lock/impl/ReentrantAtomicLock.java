@@ -1,14 +1,13 @@
 package com.ss.rlib.common.concurrent.lock.impl;
 
-import com.ss.rlib.common.concurrent.atomic.AtomicReference;
-import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
-import com.ss.rlib.common.concurrent.atomic.AtomicReference;
-import org.jetbrains.annotations.NotNull;
-import sun.misc.Contended;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
+import com.ss.rlib.common.concurrent.atomic.AtomicReference;
 
 /**
  * The implementation of the {@link Lock} based on using {@link AtomicInteger} with supporting
@@ -22,14 +21,12 @@ public class ReentrantAtomicLock implements Lock {
      * The status of lock.
      */
     @NotNull
-    @Contended("lock")
     private final AtomicReference<Thread> status;
 
     /**
      * The level of locking.
      */
     @NotNull
-    @Contended("level")
     private final AtomicInteger level;
 
     /**
