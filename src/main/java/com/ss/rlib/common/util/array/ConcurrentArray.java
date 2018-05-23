@@ -22,7 +22,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      *
      * @param stamp the stamp of read lock.
      */
-    default void readUnlock(final long stamp) {
+    default void readUnlock(long stamp) {
         throw new UnsupportedOperationException();
     }
 
@@ -41,7 +41,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param stamp the stamp.
      * @return true is this stamp is valid.
      */
-    default boolean validate(final long stamp) {
+    default boolean validate(long stamp) {
         throw new UnsupportedOperationException();
     }
 
@@ -59,7 +59,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      *
      * @param stamp the stamp of write lock.
      */
-    default void writeUnlock(final long stamp) {
+    default void writeUnlock(long stamp) {
         throw new UnsupportedOperationException();
     }
 }

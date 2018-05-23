@@ -21,7 +21,6 @@ import java.util.Map;
  */
 public abstract class AbstractReusableWritablePacket extends AbstractWritablePacket implements ReusableWritablePacket {
 
-    @NotNull
     protected static final ThreadLocal<Map<Class<? extends ReusableWritablePacket>, Pool<ReusableWritablePacket>>>
             LOCAL_POOLS = ThreadLocal.withInitial(HashMap::new);
 
@@ -52,11 +51,13 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     }
 
     @Override
-    public void write(@NotNull final ByteBuffer buffer) {
+    public void write(@NotNull ByteBuffer buffer) {
+
         if (counter.get() < 1) {
             LOGGER.warning(this, "write finished packet " + this + " on thread " + Thread.currentThread().getName());
             return;
         }
+
         notifyStartedWriting();
         try {
             super.write(buffer);
@@ -126,8 +127,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
      * @return thread local pool.
      */
     protected @NotNull Pool<ReusableWritablePacket> getThreadLocalPool() {
-        final Map<Class<? extends ReusableWritablePacket>, Pool<ReusableWritablePacket>> poolMap = LOCAL_POOLS.get();
-        return poolMap.computeIfAbsent(getClass(), PoolFactory::newConcurrentStampedLockReusablePool);
+        return LOCAL_POOLS.get().computeIfAbsent(getClass(), PoolFactory::newConcurrentStampedLockReusablePool);
     }
 
     @Override
@@ -136,12 +136,23 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     }
 
     /**
+     * Get the pool to store used packet.
+     *
      * @return the pool to store used packet.
      */
     protected @NotNull Pool<ReusableWritablePacket> getPool() {
-        if (pool != null) return pool;
-        pool = getThreadLocalPool();
-        return pool;
+
+        Pool<ReusableWritablePacket> local = this.pool;
+
+        if (local != null) {
+            return local;
+        }
+
+        this.pool = getThreadLocalPool();
+
+        local = this.pool;
+
+        return notNull(local);
     }
 
     /**
@@ -159,19 +170,20 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     /**
      * Get a new instance of this packet.
      *
+     * @param <T> the result packet's type.
      * @return the new instance.
      */
     public <T extends ReusableWritablePacket> @NotNull T newInstance() {
 
-        final Pool<ReusableWritablePacket> pool = getPool();
-        final ReusableWritablePacket result = pool.take(getClass(), ClassUtils::newInstance);
+        Pool<ReusableWritablePacket> pool = getPool();
+        ReusableWritablePacket result = pool.take(getClass(), ClassUtils::newInstance);
         result.setPool(pool);
 
         return notNull(ClassUtils.unsafeCast(result));
     }
 
     @Override
-    public final void setPool(@NotNull final Pool<ReusableWritablePacket> pool) {
+    public final void setPool(@NotNull Pool<ReusableWritablePacket> pool) {
         this.pool = pool;
     }
 
@@ -181,7 +193,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     }
 
     @Override
-    public void decreaseSends(final int count) {
+    public void decreaseSends(int count) {
         counter.subAndGet(count);
     }
 
@@ -191,7 +203,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     }
 
     @Override
-    public void increaseSends(final int count) {
+    public void increaseSends(int count) {
         counter.addAndGet(count);
     }
 

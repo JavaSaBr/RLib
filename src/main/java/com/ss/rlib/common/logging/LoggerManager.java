@@ -1,6 +1,14 @@
 package com.ss.rlib.common.logging;
 
 import static com.ss.rlib.common.util.ObjectUtils.notNull;
+import com.ss.rlib.common.function.TripleFunction;
+import com.ss.rlib.common.logging.impl.LoggerImpl;
+import com.ss.rlib.common.util.ArrayUtils;
+import com.ss.rlib.common.util.StringUtils;
+import com.ss.rlib.common.util.array.Array;
+import com.ss.rlib.common.util.array.ArrayFactory;
+import com.ss.rlib.common.util.array.ConcurrentArray;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -13,18 +21,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import com.ss.rlib.common.function.TripleFunction;
-import com.ss.rlib.common.logging.impl.LoggerImpl;
-import org.jetbrains.annotations.NotNull;
-
-import com.ss.rlib.common.function.TripleFunction;
-import com.ss.rlib.common.logging.impl.LoggerImpl;
-import com.ss.rlib.common.util.ArrayUtils;
-import com.ss.rlib.common.util.StringUtils;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.array.ConcurrentArray;
 
 /**
  * The class for managing loggers.
@@ -211,12 +207,17 @@ public class LoggerManager {
      * @param name           the name of owner.
      * @param arg            the arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <T>            the argument's type.
      */
-    public static <T> void write(@NotNull final LoggerLevel level, @NotNull final String name, @NotNull final T arg,
-                                 @NotNull final Function<@NotNull T, String> messageFactory) {
+    public static <T> void write(
+            @NotNull LoggerLevel level,
+            @NotNull String name,
+            @NotNull T arg,
+            @NotNull Function<T, String> messageFactory
+    ) {
 
-        final String timeStump = TIME_FORMATTER.format(LocalTime.now());
-        final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(arg);
+        String timeStump = TIME_FORMATTER.format(LocalTime.now());
+        String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(arg);
 
         write(level, result);
     }
@@ -229,13 +230,20 @@ public class LoggerManager {
      * @param first          the first arg for the message factory.
      * @param second         the second arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
      */
-    public static <F, S> void write(@NotNull final LoggerLevel level, @NotNull final String name,
-                                    @NotNull final F first, @NotNull final S second,
-                                    @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+    public static <F, S> void write(
+            @NotNull LoggerLevel level,
+            @NotNull String name,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull BiFunction<F, S, String> messageFactory
+    ) {
 
-        final String timeStump = TIME_FORMATTER.format(LocalTime.now());
-        final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(first, second);
+        String timeStump = TIME_FORMATTER.format(LocalTime.now());
+        String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " +
+                messageFactory.apply(first, second);
 
         write(level, result);
     }
@@ -249,13 +257,22 @@ public class LoggerManager {
      * @param second         the second arg for the message factory.
      * @param third          the third arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     * @param <T>            the third argument's type.
      */
-    public static <F, S, T> void write(@NotNull final LoggerLevel level, @NotNull final String name,
-                                       @NotNull final F first, @NotNull final S second, @NotNull final T third,
-                                       @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+    public static <F, S, T> void write(
+            @NotNull LoggerLevel level,
+            @NotNull String name,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    ) {
 
-        final String timeStump = TIME_FORMATTER.format(LocalTime.now());
-        final String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(first, second, third);
+        String timeStump = TIME_FORMATTER.format(LocalTime.now());
+        String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " +
+                messageFactory.apply(first, second, third);
 
         write(level, result);
     }

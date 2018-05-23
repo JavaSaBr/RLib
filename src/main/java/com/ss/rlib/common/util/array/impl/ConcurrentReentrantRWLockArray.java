@@ -22,31 +22,21 @@ public class ConcurrentReentrantRWLockArray<E> extends AbstractConcurrentArray<E
     /**
      * The read lock.
      */
+    @NotNull
     private final Lock readLock;
 
     /**
      * The write lock.
      */
+    @NotNull
     private final Lock writeLock;
 
-    /**
-     * Instantiates a new Concurrent reentrant rw lock array.
-     *
-     * @param type the type
-     */
-    public ConcurrentReentrantRWLockArray(@NotNull final Class<E> type) {
+    public ConcurrentReentrantRWLockArray(@NotNull Class<E> type) {
         this(type, 10);
     }
 
-    /**
-     * Instantiates a new Concurrent reentrant rw lock array.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public ConcurrentReentrantRWLockArray(@NotNull final Class<E> type, final int size) {
+    public ConcurrentReentrantRWLockArray(@NotNull Class<E> type, int size) {
         super(type, size);
-
         final ReadWriteLock readWriteLock = LockFactory.newReentrantRWLock();
         this.readLock = readWriteLock.readLock();
         this.writeLock = readWriteLock.writeLock();
@@ -55,22 +45,22 @@ public class ConcurrentReentrantRWLockArray<E> extends AbstractConcurrentArray<E
     @Override
     public final long readLock() {
         readLock.lock();
-        return 0;
+        return 1;
     }
 
     @Override
-    public final void readUnlock(final long stamp) {
+    public final void readUnlock(long stamp) {
         readLock.unlock();
     }
 
     @Override
     public final long writeLock() {
         writeLock.lock();
-        return 0;
+        return 1;
     }
 
     @Override
-    public final void writeUnlock(final long stamp) {
+    public final void writeUnlock(long stamp) {
         writeLock.unlock();
     }
 }

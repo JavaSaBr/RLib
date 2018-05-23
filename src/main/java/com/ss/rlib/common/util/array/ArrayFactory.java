@@ -1,18 +1,9 @@
 package com.ss.rlib.common.util.array;
 
 import static com.ss.rlib.common.util.ClassUtils.unsafeCast;
-
+import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.impl.*;
-import com.ss.rlib.common.util.array.impl.ConcurrentReentrantRWLockArraySet;
-import com.ss.rlib.common.util.array.impl.ConcurrentReentrantRWLockArray;
-import com.ss.rlib.common.util.array.impl.FastIntegerArray;
-import com.ss.rlib.common.util.array.impl.FastLongArray;
-import com.ss.rlib.common.util.array.impl.FinalConcurrentAtomicARSWLockArray;
-import com.ss.rlib.common.util.array.impl.FinalConcurrentStampedLockArray;
-import com.ss.rlib.common.util.array.impl.FinalFastArray;
-import com.ss.rlib.common.util.array.impl.FinalFastArraySet;
-import com.ss.rlib.common.util.array.impl.FinalSortedArray;
-import com.ss.rlib.common.util.array.impl.FinalSynchronizedArray;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The factory for creating arrays.
@@ -20,6 +11,8 @@ import com.ss.rlib.common.util.array.impl.FinalSynchronizedArray;
  * @author JavaSaBr
  */
 public class ArrayFactory {
+
+    public static final Array<?> EMPTY_ARRAY = newReadOnlyArray(ArrayUtils.EMPTY_OBJECT_ARRAY);
 
     /**
      * Creates the new array.
@@ -29,9 +22,9 @@ public class ArrayFactory {
      * @return the new array.
      */
     @SafeVarargs
-    public static <E> Array<E> asArray(final E... args) {
-        final Class<?> type = args.getClass().getComponentType();
-        final FinalFastArray<E> array = new FinalFastArray<>(unsafeCast(type), args.length);
+    public static <E> Array<E> asArray(@NotNull E... args) {
+        Class<?> type = args.getClass().getComponentType();
+        Array<E> array = new FastArray<>(unsafeCast(type), args.length);
         array.addAll(args);
         return array;
     }
@@ -43,7 +36,7 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> Array<E> newArray(final Class<?> type) {
+    public static <E> Array<E> newArray(@NotNull Class<?> type) {
         return newUnsafeArray(type);
     }
 
@@ -54,8 +47,9 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new unsafe array.
      */
-    public static <E> UnsafeArray<E> newUnsafeArray(final Class<?> type) {
-        return new FinalFastArray<>(unsafeCast(type));
+    public static <E> UnsafeArray<E> newUnsafeArray(@NotNull Class<?> type) {
+        Class<E> casted = unsafeCast(type);
+        return new FastArray<>(casted);
     }
 
     /**
@@ -66,8 +60,18 @@ public class ArrayFactory {
      * @param capacity the init size of the array.
      * @return the new array.
      */
-    public static <E> Array<E> newArray(final Class<?> type, final int capacity) {
+    public static <E> Array<E> newArray(@NotNull Class<?> type, int capacity) {
         return newUnsafeArray(type, capacity);
+    }
+
+    /**
+     * Creates a new read only array.
+     *
+     * @param <E> the element's type.
+     * @return the new read only array.
+     */
+    public static <E> Array<E> newReadOnlyArray(@NotNull E[] elements) {
+        return new ReadOnlyFastArray<>(elements);
     }
 
     /**
@@ -78,8 +82,8 @@ public class ArrayFactory {
      * @param capacity the init size of the array.
      * @return the new unsafe array.
      */
-    public static <E> UnsafeArray<E> newUnsafeArray(final Class<?> type, final int capacity) {
-        return new FinalFastArray<>(unsafeCast(type), capacity);
+    public static <E> UnsafeArray<E> newUnsafeArray(@NotNull Class<?> type, int capacity) {
+        return new FastArray<>(unsafeCast(type), capacity);
     }
 
     /**
@@ -89,8 +93,8 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> Array<E> newArraySet(final Class<?> type) {
-        return new FinalFastArraySet<>(unsafeCast(type));
+    public static <E> Array<E> newArraySet(@NotNull Class<?> type) {
+        return new FastArraySet<>(unsafeCast(type));
     }
 
     /**
@@ -100,7 +104,7 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArray(final Class<?> type) {
+    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArray(@NotNull Class<?> type) {
         return new ConcurrentReentrantRWLockArray<>(unsafeCast(type));
     }
 
@@ -111,7 +115,7 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArraySet(final Class<?> type) {
+    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArraySet(@NotNull Class<?> type) {
         return new ConcurrentReentrantRWLockArraySet<>(unsafeCast(type));
     }
 
@@ -122,8 +126,8 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> ConcurrentArray<E> newConcurrentAtomicARSWLockArray(final Class<?> type) {
-        return new FinalConcurrentAtomicARSWLockArray<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentAtomicARSWLockArray(@NotNull Class<?> type) {
+        return new ConcurrentAtomicARSWLockArray<>(unsafeCast(type));
     }
 
     /**
@@ -133,8 +137,8 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> ConcurrentArray<E> newConcurrentStampedLockArray(final Class<?> type) {
-        return new FinalConcurrentStampedLockArray<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentStampedLockArray(@NotNull Class<?> type) {
+        return new ConcurrentStampedLockArray<>(unsafeCast(type));
     }
 
     /**
@@ -144,8 +148,8 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E extends Comparable<E>> Array<E> newSortedArray(final Class<?> type) {
-        return new FinalSortedArray<>(unsafeCast(type));
+    public static <E extends Comparable<E>> Array<E> newSortedArray(@NotNull Class<?> type) {
+        return new SortedArray<>(unsafeCast(type));
     }
 
     /**
@@ -155,8 +159,8 @@ public class ArrayFactory {
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> Array<E> newSynchronizedArray(final Class<?> type) {
-        return new FinalSynchronizedArray<>(unsafeCast(type));
+    public static <E> Array<E> newSynchronizedArray(@NotNull Class<?> type) {
+        return new SynchronizedArray<>(unsafeCast(type));
     }
 
     /**
@@ -183,7 +187,7 @@ public class ArrayFactory {
      * @param elements the elements of the new array.
      * @return the new array.
      */
-    public static float[] toFloatArray(final float... elements) {
+    public static float[] toFloatArray(float... elements) {
         return elements;
     }
 
@@ -193,7 +197,7 @@ public class ArrayFactory {
      * @param elements the elements of the new array.
      * @return the new array.
      */
-    public static int[] toIntegerArray(final int... elements) {
+    public static int[] toIntegerArray(int... elements) {
         return elements;
     }
 
@@ -206,7 +210,7 @@ public class ArrayFactory {
      * @return the new array.
      */
     @SafeVarargs
-    public static <T, K extends T> T[] toArray(final K... elements) {
+    public static <T, K extends T> T[] toArray(K... elements) {
         return elements;
     }
 }

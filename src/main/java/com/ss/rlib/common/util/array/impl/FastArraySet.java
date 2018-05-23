@@ -13,43 +13,36 @@ public class FastArraySet<E> extends FastArray<E> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Instantiates a new Fast array set.
-     *
-     * @param type the type
-     */
-    public FastArraySet(final Class<E> type) {
+    public FastArraySet(Class<E> type) {
         super(type);
     }
 
-    /**
-     * Instantiates a new Fast array set.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public FastArraySet(final Class<E> type, final int size) {
+    public FastArraySet(Class<E> type, int size) {
         super(type, size);
     }
 
     @Override
-    public boolean add(@NotNull final E element) {
+    public boolean add(@NotNull E element) {
         return !contains(element) && super.add(element);
     }
 
     @Override
-    protected void processAdd(@NotNull final Array<? extends E> elements, final int selfSize, final int targetSize) {
-        for (final E element : elements.array()) {
+    protected void processAdd(@NotNull Array<? extends E> elements, int selfSize, int targetSize) {
+        for (E element : elements.array()) {
             if (element == null) break;
-            if (!contains(element)) unsafeAdd(element);
+            if (!contains(element)) {
+                unsafeAdd(element);
+            }
         }
     }
 
     @Override
-    protected void processAdd(@NotNull final E[] elements, final int selfSize, final int targetSize) {
-        for (final E element : elements) {
+    protected void processAdd(@NotNull E[] elements, int selfSize, int targetSize) {
+        for (E element : elements) {
             if (element == null) break;
-            if (!contains(element)) unsafeAdd(element);
+            if (!contains(element)) {
+                unsafeAdd(element);
+            }
         }
     }
 }

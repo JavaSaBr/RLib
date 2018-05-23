@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The interface with unsafe methods for the Array.
  *
- * @param <E> the type parameter
+ * @param <E> the element's type.
  * @author JavaSaBr
  */
 public interface UnsafeArray<E> extends Array<E> {
@@ -14,9 +14,9 @@ public interface UnsafeArray<E> extends Array<E> {
     /**
      * Prepare this array for the target size.
      *
-     * @param size the size
+     * @param size the size.
      */
-    default void prepareForSize(final int size) {
+    default void prepareForSize(int size) {
         throw new UnsupportedOperationException();
     }
 
@@ -26,7 +26,7 @@ public interface UnsafeArray<E> extends Array<E> {
      * @param object the new element.
      * @return true if this array was changed.
      */
-    default boolean unsafeAdd(@NotNull final E object) {
+    default boolean unsafeAdd(@NotNull E object) {
         throw new UnsupportedOperationException();
     }
 
@@ -36,8 +36,7 @@ public interface UnsafeArray<E> extends Array<E> {
      * @param index the index.
      * @return the element or null.
      */
-    @Nullable
-    default E unsafeGet(final int index) {
+    default @Nullable E unsafeGet(int index) {
         throw new UnsupportedOperationException();
     }
 
@@ -47,7 +46,7 @@ public interface UnsafeArray<E> extends Array<E> {
      * @param index   the index.
      * @param element the element.
      */
-    default void unsafeSet(final int index, @NotNull final E element) {
+    default void unsafeSet(int index, @NotNull E element) {
         throw new UnsupportedOperationException();
     }
 
@@ -56,5 +55,5 @@ public interface UnsafeArray<E> extends Array<E> {
      *
      * @return the array
      */
-    Array<E> trimToSize();
+    @NotNull Array<E> trimToSize();
 }

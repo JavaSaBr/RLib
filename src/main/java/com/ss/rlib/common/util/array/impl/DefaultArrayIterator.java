@@ -2,14 +2,15 @@ package com.ss.rlib.common.util.array.impl;
 
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayIterator;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of the unsafeArray iterator.
  *
- * @param <E> the type parameter
+ * @param <E> the element's type.
  * @author JavaSaBr
  */
-public class ArrayIteratorImpl<E> implements ArrayIterator<E> {
+public class DefaultArrayIterator<E> implements ArrayIterator<E> {
 
     /**
      * The array for iteration.
@@ -26,12 +27,7 @@ public class ArrayIteratorImpl<E> implements ArrayIterator<E> {
      */
     private int ordinal;
 
-    /**
-     * Instantiates a new Array iterator.
-     *
-     * @param array the array
-     */
-    public ArrayIteratorImpl(final Array<E> array) {
+    public DefaultArrayIterator(@NotNull Array<E> array) {
         this.array = array;
         this.unsafeArray = array.array();
     }

@@ -15,27 +15,16 @@ public class ConcurrentAtomicARSWLockArraySet<E> extends ConcurrentReentrantRWLo
 
     private static final long serialVersionUID = -3394386864246350866L;
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock array set.
-     *
-     * @param type the type
-     */
-    public ConcurrentAtomicARSWLockArraySet(final Class<E> type) {
+    public ConcurrentAtomicARSWLockArraySet(Class<E> type) {
         super(type);
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock array set.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public ConcurrentAtomicARSWLockArraySet(final Class<E> type, final int size) {
+    public ConcurrentAtomicARSWLockArraySet(Class<E> type, int size) {
         super(type, size);
     }
 
     @Override
-    public boolean add(@NotNull final E element) {
+    public boolean add(@NotNull E element) {
         return !contains(element) && super.add(element);
     }
 }

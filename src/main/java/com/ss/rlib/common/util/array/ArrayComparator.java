@@ -14,7 +14,7 @@ import java.util.Comparator;
 public interface ArrayComparator<T> extends Comparator<T> {
 
     @Override
-    default int compare(@Nullable final T first, @Nullable final T second) {
+    default int compare(@Nullable T first, @Nullable T second) {
 
         if (first == null) {
             return 1;

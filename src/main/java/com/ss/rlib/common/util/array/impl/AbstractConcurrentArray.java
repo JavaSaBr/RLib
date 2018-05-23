@@ -159,7 +159,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
 
     @Override
     public final @NotNull ArrayIterator<E> iterator() {
-        return new FinalArrayIterator<>(this);
+        return new DefaultArrayIterator<>(this);
     }
 
     @Override

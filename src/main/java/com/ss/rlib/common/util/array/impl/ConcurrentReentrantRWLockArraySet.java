@@ -1,10 +1,9 @@
 package com.ss.rlib.common.util.array.impl;
 
+import com.ss.rlib.common.util.array.ConcurrentArray;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import com.ss.rlib.common.util.array.ConcurrentArray;
 
 /**
  * The concurrent implementation of the array without duplications using {@link ReentrantReadWriteLock} for {@link
@@ -17,22 +16,11 @@ public class ConcurrentReentrantRWLockArraySet<E> extends ConcurrentReentrantRWL
 
     private static final long serialVersionUID = -3394386864246350866L;
 
-    /**
-     * Instantiates a new Concurrent reentrant rw lock array set.
-     *
-     * @param type the type
-     */
-    public ConcurrentReentrantRWLockArraySet(final Class<E> type) {
+    public ConcurrentReentrantRWLockArraySet(Class<E> type) {
         super(type);
     }
 
-    /**
-     * Instantiates a new Concurrent reentrant rw lock array set.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public ConcurrentReentrantRWLockArraySet(final Class<E> type, final int size) {
+    public ConcurrentReentrantRWLockArraySet(Class<E> type, int size) {
         super(type, size);
     }
 

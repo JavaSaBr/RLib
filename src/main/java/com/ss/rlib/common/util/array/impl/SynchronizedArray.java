@@ -1,18 +1,16 @@
 package com.ss.rlib.common.util.array.impl;
 
-import static java.lang.Math.max;
 import static com.ss.rlib.common.util.ArrayUtils.copyOf;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.NoSuchElementException;
-
+import static java.lang.Math.max;
 import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayIterator;
 import com.ss.rlib.common.util.array.UnsafeArray;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.NoSuchElementException;
 
 /**
  * The implementation of the array with synchronization all methods.
@@ -151,7 +149,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
     @NotNull
     @Override
     public synchronized final ArrayIterator<E> iterator() {
-        return new FinalArrayIterator<>(this);
+        return new DefaultArrayIterator<>(this);
     }
 
     @Override
