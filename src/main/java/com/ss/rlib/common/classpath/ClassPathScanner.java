@@ -45,6 +45,7 @@ public interface ClassPathScanner {
      * Find all implementations of the interface class.
      *
      * @param interfaceClass the interface class.
+     * @param <T>            the first argument's type.
      * @return the list of found implementations.
      */
     default <T> @NotNull Array<Class<T>> findImplements(@NotNull final Class<T> interfaceClass) {

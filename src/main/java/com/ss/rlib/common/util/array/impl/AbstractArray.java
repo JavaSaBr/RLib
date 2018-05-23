@@ -25,22 +25,11 @@ public abstract class AbstractArray<E> implements Array<E> {
      */
     protected static final int DEFAULT_SIZE = 10;
 
-    /**
-     * Instantiates a new Abstract array.
-     *
-     * @param type the type
-     */
-    public AbstractArray(final Class<E> type) {
+    public AbstractArray(@NotNull Class<E> type) {
         this(type, DEFAULT_SIZE);
     }
 
-    /**
-     * Instantiates a new Abstract array.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public AbstractArray(final Class<E> type, final int size) {
+    public AbstractArray(@NotNull Class<E> type, int size) {
         super();
 
         if (size < 0) {
@@ -48,6 +37,12 @@ public abstract class AbstractArray<E> implements Array<E> {
         }
 
         setArray(ArrayUtils.create(type, size));
+    }
+
+    public AbstractArray(@NotNull E[] array) {
+        super();
+        setArray(array);
+        setSize(array.length);
     }
 
     @Override
@@ -80,24 +75,35 @@ public abstract class AbstractArray<E> implements Array<E> {
      *
      * @param size the new size of the array.
      */
-    protected abstract void setSize(final int size);
+    protected abstract void setSize(int size);
 
     @Override
-    public boolean fastRemove(@NotNull final Object object) {
-        final int index = indexOf(object);
-        if (index >= 0) fastRemove(index);
+    public boolean fastRemove(@NotNull Object object) {
+
+        int index = indexOf(object);
+
+        if (index >= 0) {
+            fastRemove(index);
+        }
+
         return index >= 0;
     }
 
     @Override
-    public final boolean slowRemove(@NotNull final Object object) {
-        final int index = indexOf(object);
-        if (index >= 0) slowRemove(index);
+    public final boolean slowRemove(@NotNull Object object) {
+
+        int index = indexOf(object);
+
+        if (index >= 0) {
+            slowRemove(index);
+        }
+
         return index >= 0;
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " size = " + size() + " :\n " + ArrayUtils.toString(this);
+        return getClass().getSimpleName() + " size = " + size() +
+                " :\n " + ArrayUtils.toString(this);
     }
 }

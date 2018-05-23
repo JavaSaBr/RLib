@@ -26,6 +26,7 @@ public interface ClientNetwork extends AsyncNetwork {
      * Connect to a server by the address.
      *
      * @param serverAddress the sever address.
+     * @return the connected server.
      */
     Server connect(@NotNull InetSocketAddress serverAddress);
 

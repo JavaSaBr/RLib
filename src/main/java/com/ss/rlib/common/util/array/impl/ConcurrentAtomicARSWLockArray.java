@@ -20,48 +20,37 @@ public class ConcurrentAtomicARSWLockArray<E> extends AbstractConcurrentArray<E>
     /**
      * The locker.
      */
+    @NotNull
     private final AsyncReadSyncWriteLock lock;
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock array.
-     *
-     * @param type the type
-     */
-    public ConcurrentAtomicARSWLockArray(@NotNull final Class<E> type) {
+    public ConcurrentAtomicARSWLockArray(@NotNull Class<E> type) {
         this(type, 10);
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock array.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public ConcurrentAtomicARSWLockArray(@NotNull final Class<E> type, final int size) {
+    public ConcurrentAtomicARSWLockArray(@NotNull Class<E> type, int size) {
         super(type, size);
-
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
     @Override
     public final long readLock() {
         lock.asyncLock();
-        return 0;
+        return 1;
     }
 
     @Override
-    public void readUnlock(final long stamp) {
+    public void readUnlock(long stamp) {
         lock.asyncUnlock();
     }
 
     @Override
     public final long writeLock() {
         lock.syncLock();
-        return 0;
+        return 1;
     }
 
     @Override
-    public void writeUnlock(final long stamp) {
+    public void writeUnlock(long stamp) {
         lock.syncUnlock();
     }
 }

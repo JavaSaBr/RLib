@@ -19,11 +19,11 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
     }
 
     @Override
-    public boolean read(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
+    public boolean read(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
         try {
             readImpl(owner, buffer);
             return true;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             handleException(buffer, e);
             return false;
         }
@@ -32,9 +32,10 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
     /**
      * The process of reading the data for this packet.
      *
+     * @param owner  the packet's owner.
      * @param buffer the buffer for reading.
      */
-    protected abstract void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer);
+    protected abstract void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer);
 
     /**
      * Handle the exception.
@@ -42,14 +43,18 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
      * @param buffer    the data buffer.
      * @param exception the exception.
      */
-    protected void handleException(@NotNull final ByteBuffer buffer, @NotNull final Exception exception) {
+    protected void handleException(@NotNull ByteBuffer buffer, @NotNull Exception exception) {
+
         LOGGER.warning(this, exception);
+
         if (buffer.isDirect()) {
-            final byte[] array = new byte[buffer.limit()];
+            byte[] array = new byte[buffer.limit()];
             buffer.get(array, 0, buffer.limit());
-            LOGGER.warning(this, "buffer " + buffer + "\n" + Utils.hexdump(array, array.length));
+            LOGGER.warning(this, "buffer " +
+                    buffer + "\n" + Utils.hexdump(array, array.length));
         } else {
-            LOGGER.warning(this, "buffer " + buffer + "\n" + Utils.hexdump(buffer.array(), buffer.limit()));
+            LOGGER.warning(this, "buffer " +
+                    buffer + "\n" + Utils.hexdump(buffer.array(), buffer.limit()));
         }
     }
 }

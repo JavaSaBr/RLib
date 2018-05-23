@@ -20,26 +20,15 @@ public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
     /**
      * The locker.
      */
+    @NotNull
     private final StampedLock lock;
 
-    /**
-     * Instantiates a new Concurrent stamped lock array.
-     *
-     * @param type the type
-     */
     public ConcurrentStampedLockArray(@NotNull final Class<E> type) {
         this(type, 10);
     }
 
-    /**
-     * Instantiates a new Concurrent stamped lock array.
-     *
-     * @param type the type
-     * @param size the size
-     */
     public ConcurrentStampedLockArray(@NotNull final Class<E> type, final int size) {
         super(type, size);
-
         this.lock = LockFactory.newStampedLock();
     }
 
@@ -59,7 +48,7 @@ public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
     }
 
     @Override
-    public void readUnlock(final long stamp) {
+    public void readUnlock(long stamp) {
         lock.unlockRead(stamp);
     }
 
@@ -69,7 +58,7 @@ public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
     }
 
     @Override
-    public void writeUnlock(final long stamp) {
+    public void writeUnlock(long stamp) {
         lock.unlockWrite(stamp);
     }
 }

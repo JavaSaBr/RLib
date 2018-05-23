@@ -17,7 +17,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
 group = 'com.spaceshift'
-version = '7.0.0'
+version = '7.1.1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -116,5 +116,5 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.6'
+    gradleVersion = '4.7'
 }

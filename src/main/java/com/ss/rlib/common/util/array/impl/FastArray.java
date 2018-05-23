@@ -31,27 +31,20 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
      */
     protected int size;
 
-    /**
-     * Instantiates a new Fast array.
-     *
-     * @param type the type
-     */
-    public FastArray(@NotNull final Class<E> type) {
+    public FastArray(@NotNull Class<E> type) {
         super(type);
     }
 
-    /**
-     * Instantiates a new Fast array.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public FastArray(@NotNull final Class<E> type, final int size) {
+    public FastArray(@NotNull Class<E> type, final int size) {
         super(type, size);
     }
 
+    public FastArray(@NotNull E[] array) {
+        super(array);
+    }
+
     @Override
-    public boolean add(@NotNull final E object) {
+    public boolean add(@NotNull E object) {
 
         if (size == array.length) {
             array = copyOf(array, max(array.length >> 1, 1));
@@ -61,13 +54,16 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    public final boolean addAll(@NotNull final Array<? extends E> elements) {
-        if (elements.isEmpty()) return false;
+    public boolean addAll(@NotNull Array<? extends E> elements) {
 
-        final int current = array.length;
-        final int selfSize = size();
-        final int targetSize = elements.size();
-        final int diff = selfSize + targetSize - current;
+        if (elements.isEmpty()) {
+            return false;
+        }
+
+        int current = array.length;
+        int selfSize = size();
+        int targetSize = elements.size();
+        int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
             array = copyOf(array, max(current >> 1, diff));
@@ -78,30 +74,39 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    public boolean addAll(@NotNull final Collection<? extends E> collection) {
-        if (collection.isEmpty()) return false;
+    public boolean addAll(@NotNull Collection<? extends E> collection) {
 
-        final int current = array.length;
-        final int selfSize = size();
-        final int targetSize = collection.size();
-        final int diff = selfSize + targetSize - current;
+        if (collection.isEmpty()) {
+            return false;
+        }
+
+        int current = array.length;
+        int selfSize = size();
+        int targetSize = collection.size();
+        int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
             array = copyOf(array, max(current >> 1, diff));
         }
 
-        for (final E element : collection) unsafeAdd(element);
+        for (E element : collection) {
+            unsafeAdd(element);
+        }
+
         return true;
     }
 
     @Override
-    public final boolean addAll(@NotNull final E[] elements) {
-        if (elements.length < 1) return false;
+    public boolean addAll(@NotNull E[] elements) {
 
-        final int current = array.length;
-        final int selfSize = size();
-        final int targetSize = elements.length;
-        final int diff = selfSize + targetSize - current;
+        if (elements.length < 1) {
+            return false;
+        }
+
+        int current = array.length;
+        int selfSize = size();
+        int targetSize = elements.length;
+        int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
             array = copyOf(array, max(current >> 1, diff));
@@ -111,27 +116,25 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         return true;
     }
 
-    @NotNull
     @Override
-    public final E[] array() {
+    public final @NotNull E[] array() {
         return array;
     }
 
     @Override
-    public void prepareForSize(final int size) {
+    public void prepareForSize(int size) {
 
-        final int current = array.length;
-        final int selfSize = size();
-        final int diff = selfSize + size - current;
+        int current = array.length;
+        int selfSize = size();
+        int diff = selfSize + size - current;
 
         if (diff > 0) {
             array = copyOf(array, max(current >> 1, diff));
         }
     }
 
-    @NotNull
     @Override
-    public final E fastRemove(final int index) {
+    public @NotNull E fastRemove(int index) {
 
         if (index < 0 || index >= size) {
             throw new NoSuchElementException();
@@ -139,7 +142,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
 
         size -= 1;
 
-        final E old = array[index];
+        E old = array[index];
 
         array[index] = array[size];
         array[size] = null;
@@ -147,9 +150,8 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         return old;
     }
 
-    @NotNull
     @Override
-    public final E get(final int index) {
+    public final @NotNull E get(int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
@@ -158,20 +160,19 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         return array[index];
     }
 
-    @NotNull
     @Override
-    public final ArrayIterator<E> iterator() {
-        return new FinalArrayIterator<>(this);
+    public final @NotNull ArrayIterator<E> iterator() {
+        return new DefaultArrayIterator<>(this);
     }
 
     /**
-     * Process add.
+     * The process of adding the array.
      *
-     * @param elements   the elements
-     * @param selfSize   the self size
-     * @param targetSize the target size
+     * @param elements   the elements.
+     * @param selfSize   the self size.
+     * @param targetSize the target size.
      */
-    protected void processAdd(@NotNull final Array<? extends E> elements, final int selfSize, final int targetSize) {
+    protected void processAdd(@NotNull Array<? extends E> elements, int selfSize, int targetSize) {
         // если надо срау большой массив добавить, то лучше черзе нативный метод
         if (targetSize > SIZE_BIG_ARRAY) {
             System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
@@ -179,7 +180,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         } else {
             // если добавляемый массив небольшой, можно и обычным способом
             // внести
-            for (final E element : elements.array()) {
+            for (E element : elements.array()) {
                 if (element == null) break;
                 unsafeAdd(element);
             }
@@ -187,13 +188,13 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     /**
-     * Process add.
+     * The process of adding the array.
      *
-     * @param elements   the elements
-     * @param selfSize   the self size
-     * @param targetSize the target size
+     * @param elements   the elements.
+     * @param selfSize   the self size.
+     * @param targetSize the target size.
      */
-    protected void processAdd(@NotNull final E[] elements, final int selfSize, final int targetSize) {
+    protected void processAdd(@NotNull E[] elements, int selfSize, int targetSize) {
         // если надо срау большой массив добавить, то лучше черзе нативный метод
         if (targetSize > SIZE_BIG_ARRAY) {
             System.arraycopy(elements, 0, array, selfSize, targetSize);
@@ -209,7 +210,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    public final void set(final int index, @NotNull final E element) {
+    public void set(int index, @NotNull E element) {
 
         if (index < 0 || index >= size) {
             throw new ArrayIndexOutOfBoundsException();
@@ -222,12 +223,12 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    protected final void setArray(@NotNull final E[] array) {
+    protected final void setArray(@NotNull E[] array) {
         this.array = array;
     }
 
     @Override
-    protected final void setSize(final int size) {
+    protected final void setSize(int size) {
         this.size = size;
     }
 
@@ -236,16 +237,15 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         return size;
     }
 
-    @NotNull
     @Override
-    public final E slowRemove(final int index) {
+    public final @NotNull E slowRemove(int index) {
 
         if (index < 0 || index >= size) {
             throw new NoSuchElementException();
         }
 
-        final int numMoved = size - index - 1;
-        final E old = array[index];
+        int numMoved = size - index - 1;
+        E old = array[index];
 
         if (numMoved > 0) {
             System.arraycopy(array, index + 1, array, index, numMoved);
@@ -258,14 +258,14 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    public final FastArray<E> trimToSize() {
+    public FastArray<E> trimToSize() {
         if (size == array.length) return this;
         array = ArrayUtils.copyOfRange(array, 0, size);
         return this;
     }
 
     @Override
-    public boolean unsafeAdd(@NotNull final E object) {
+    public boolean unsafeAdd(@NotNull E object) {
         array[size++] = object;
         return true;
     }
@@ -282,16 +282,14 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         return array[index];
     }
 
-    @NotNull
     @Override
-    public UnsafeArray<E> asUnsafe() {
+    public @NotNull UnsafeArray<E> asUnsafe() {
         return this;
     }
 
-    @NotNull
     @Override
-    public FastArray<E> clone() throws CloneNotSupportedException {
-        final FastArray<E> clone = (FastArray<E>) super.clone();
+    public @NotNull FastArray<E> clone() throws CloneNotSupportedException {
+        FastArray<E> clone = (FastArray<E>) super.clone();
         clone.array = ArrayUtils.copyOf(array, size());
         return clone;
     }

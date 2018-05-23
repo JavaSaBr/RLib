@@ -5,11 +5,6 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ConcurrentArray;
 import com.ss.rlib.common.util.array.IntegerArray;
 import com.ss.rlib.common.util.array.LongArray;
-import com.ss.rlib.common.function.*;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ConcurrentArray;
-import com.ss.rlib.common.util.array.IntegerArray;
-import com.ss.rlib.common.util.array.LongArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -239,17 +234,19 @@ public final class ArrayUtils {
     /**
      * Copy and extend the array.
      *
-     * @param <T>   the type parameter
-     * @param old   the source array.
-     * @param added the added size.
+     * @param <T>      the array component's type.
+     * @param original the source array.
+     * @param added    the added size.
      * @return the new array.
      */
-    public static <T> @NotNull T[] copyOf(@NotNull final T[] old, final int added) {
+    public static <T> @NotNull T[] copyOf(@NotNull T[] original, int added) {
 
-        final Class<? extends Object[]> newType = old.getClass();
-        final T[] copy = ClassUtils.unsafeCast(create(newType.getComponentType(), old.length + added));
+        Class<? extends Object[]> newType = original.getClass();
+        Object[] newArray = create(newType.getComponentType(), original.length + added);
 
-        System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
+        T[] copy = ClassUtils.unsafeCast(newArray);
+
+        System.arraycopy(original, 0, copy, 0, Math.min(original.length, copy.length));
 
         return copy;
     }

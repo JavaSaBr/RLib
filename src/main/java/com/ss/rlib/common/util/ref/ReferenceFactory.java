@@ -11,12 +11,13 @@ import org.jetbrains.annotations.NotNull;
 public final class ReferenceFactory {
 
     /**
-     * Create new reference of the type.
+     * Create a new reference of the type.
      *
      * @param type the type of reference.
+     * @param <T>  the reference's type.
      * @return the new reference.
      */
-    public static <T extends Reference> @NotNull T newRef(@NotNull final ReferenceType type) {
+    public static <T extends Reference> @NotNull T newRef(@NotNull ReferenceType type) {
         return unsafeCast(type.create());
     }
 
@@ -24,9 +25,10 @@ public final class ReferenceFactory {
      * Take or create a reference from the global pool.
      *
      * @param type the type of reference.
+     * @param <T>  the reference's type.
      * @return the reference.
      */
-    public static <T extends Reference> @NotNull T takeFromPool(@NotNull final ReferenceType type) {
+    public static <T extends Reference> @NotNull T takeFromPool(@NotNull ReferenceType type) {
         return unsafeCast(type.take());
     }
 
@@ -34,9 +36,10 @@ public final class ReferenceFactory {
      * Take or create a reference from the thread pool.
      *
      * @param type the type of reference.
+     * @param <T>  the reference's type.
      * @return the reference.
      */
-    public static <T extends Reference> @NotNull T takeFromTLPool(@NotNull final ReferenceType type) {
+    public static <T extends Reference> @NotNull T takeFromTLPool(@NotNull ReferenceType type) {
         return unsafeCast(type.takeThreadLocal());
     }
 

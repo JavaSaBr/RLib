@@ -29,9 +29,9 @@ public interface Logger {
      * @param owner          the owner of the message.
      * @param arg            the arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <T>            the argument's type.
      */
-    default <T> void debug(@NotNull Object owner, @NotNull final T arg,
-                           @NotNull final Function<@NotNull T, String> messageFactory) {
+    default <T> void debug(@NotNull Object owner, @NotNull T arg, @NotNull Function<T, String> messageFactory) {
         print(LoggerLevel.DEBUG, owner, arg, messageFactory);
     }
 
@@ -42,9 +42,15 @@ public interface Logger {
      * @param first          the first arg for the message factory.
      * @param second         the second arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
      */
-    default <F, S> void debug(@NotNull Object owner, @NotNull final F first, @NotNull final S second,
-                              @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+    default <F, S> void debug(
+            @NotNull Object owner,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull BiFunction<F, S, String> messageFactory
+    ) {
         print(LoggerLevel.DEBUG, owner, first, second, messageFactory);
     }
 
@@ -57,10 +63,17 @@ public interface Logger {
      * @param second         the second arg for the message factory.
      * @param third          the third arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     * @param <T>            the third argument's type.
      */
-    default <F, S, T> void debug(@NotNull Object owner, @NotNull final F first, @NotNull final S second,
-                                 @NotNull final T third,
-                                 @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+    default <F, S, T> void debug(
+            @NotNull Object owner,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    ) {
         print(LoggerLevel.DEBUG, owner, first, second, third, messageFactory);
     }
 
@@ -78,8 +91,9 @@ public interface Logger {
      *
      * @param arg            the arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <T>            the argument's type.
      */
-    default <T> void debug(@NotNull final T arg, @NotNull final Function<@NotNull T, String> messageFactory) {
+    default <T> void debug(@NotNull T arg, @NotNull Function<T, String> messageFactory) {
         print(LoggerLevel.DEBUG, arg, messageFactory);
     }
 
@@ -89,12 +103,12 @@ public interface Logger {
      * @param first          the first arg for the message factory.
      * @param second         the second arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
      */
-    default <F, S> void debug(@NotNull final F first, @NotNull final S second,
-                              @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+    default <F, S> void debug(@NotNull F first, @NotNull S second, @NotNull BiFunction<F, S, String> messageFactory) {
         print(LoggerLevel.DEBUG, first, second, messageFactory);
     }
-
 
     /**
      * Print the debug message.
@@ -103,9 +117,16 @@ public interface Logger {
      * @param second         the second arg for the message factory.
      * @param third          the third arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     * @param <T>            the third argument's type.
      */
-    default <F, S, T> void debug(@NotNull final F first, @NotNull final S second, @NotNull final T third,
-                                 @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+    default <F, S, T> void debug(
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    ) {
         print(LoggerLevel.DEBUG, first, second, third, messageFactory);
     }
 
@@ -177,9 +198,10 @@ public interface Logger {
      * @param owner          the owner of the message.
      * @param arg            the arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <T>            the argument's type.
      */
-    default <T> void info(@NotNull Object owner, @NotNull final T arg,
-                          @NotNull final Function<@NotNull T, String> messageFactory) {
+    default <T> void info(@NotNull Object owner, @NotNull T arg, @NotNull Function<T, String> messageFactory
+    ) {
         print(LoggerLevel.INFO, owner, arg, messageFactory);
     }
 
@@ -190,12 +212,17 @@ public interface Logger {
      * @param first          the first arg for the message factory.
      * @param second         the second arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
      */
-    default <F, S> void info(@NotNull Object owner, @NotNull final F first, @NotNull final S second,
-                             @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+    default <F, S> void info(
+            @NotNull Object owner,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull BiFunction<F, S, String> messageFactory
+    ) {
         print(LoggerLevel.INFO, owner, first, second, messageFactory);
     }
-
 
     /**
      * Print the information message.
@@ -205,10 +232,17 @@ public interface Logger {
      * @param second         the second arg for the message factory.
      * @param third          the third arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     * @param <T>            the third argument's type.
      */
-    default <F, S, T> void info(@NotNull Object owner, @NotNull final F first, @NotNull final S second,
-                                @NotNull final T third,
-                                @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+    default <F, S, T> void info(
+            @NotNull Object owner,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    ) {
         print(LoggerLevel.INFO, owner, first, second, third, messageFactory);
     }
 
@@ -226,8 +260,9 @@ public interface Logger {
      *
      * @param arg            the arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <T>            the argument's type.
      */
-    default <T> void info(@NotNull final T arg, @NotNull final Function<@NotNull T, String> messageFactory) {
+    default <T> void info(@NotNull T arg, @NotNull Function<T, String> messageFactory) {
         print(LoggerLevel.INFO, arg, messageFactory);
     }
 
@@ -237,9 +272,10 @@ public interface Logger {
      * @param first          the first arg for the message factory.
      * @param second         the second arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
      */
-    default <F, S> void info(@NotNull final F first, @NotNull final S second,
-                             @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
+    default <F, S> void info(@NotNull F first, @NotNull S second, @NotNull BiFunction<F, S, String> messageFactory) {
         print(LoggerLevel.INFO, first, second, messageFactory);
     }
 
@@ -251,18 +287,26 @@ public interface Logger {
      * @param second         the second arg for the message factory.
      * @param third          the third arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     * @param <T>            the third argument's type.
      */
-    default <F, S, T> void info(@NotNull final F first, @NotNull final S second, @NotNull final T third,
-                                @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
+    default <F, S, T> void info(
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    ) {
         print(LoggerLevel.INFO, first, second, third, messageFactory);
     }
 
     /**
      * Check of enabling the logger level.
      *
+     * @param level the logger level.
      * @return true if the level is enabled.
      */
-    default boolean isEnabled(@NotNull final LoggerLevel level) {
+    default boolean isEnabled(@NotNull LoggerLevel level) {
         return level.isEnabled();
     }
 
@@ -273,7 +317,7 @@ public interface Logger {
      * @param enabled true if need to be enabled.
      * @return true if the status was changed.
      */
-    default boolean setEnabled(@NotNull final LoggerLevel level, final boolean enabled) {
+    default boolean setEnabled(@NotNull LoggerLevel level, boolean enabled) {
         return false;
     }
 
@@ -283,7 +327,7 @@ public interface Logger {
      * @param level the logger level.
      * @return true if the status was changed.
      */
-    default boolean applyDefault(@NotNull final LoggerLevel level) {
+    default boolean applyDefault(@NotNull LoggerLevel level) {
         return false;
     }
 
@@ -366,9 +410,14 @@ public interface Logger {
      * @param owner          the owner of the message.
      * @param arg            the arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <T>            the argument's type.
      */
-    <T> void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull final T arg,
-                   @NotNull final Function<@NotNull T, String> messageFactory);
+    <T> void print(
+            @NotNull LoggerLevel level,
+            @NotNull Object owner,
+            @NotNull T arg,
+            @NotNull Function<T, String> messageFactory
+    );
 
     /**
      * Print the message.
@@ -378,11 +427,16 @@ public interface Logger {
      * @param first          the first arg for the message factory.
      * @param second         the second arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
      */
-    <F, S> void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull final F first,
-                      @NotNull final S second,
-                      @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory);
-
+    <F, S> void print(
+            @NotNull LoggerLevel level,
+            @NotNull Object owner,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull BiFunction<F, S, String> messageFactory
+    );
 
     /**
      * Print the message.
@@ -393,10 +447,18 @@ public interface Logger {
      * @param second         the second arg for the message factory.
      * @param third          the third arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     * @param <T>            the third argument's type.
      */
-    <F, S, T> void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull final F first,
-                         @NotNull final S second, @NotNull final T third,
-                         @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory);
+    <F, S, T> void print(
+            @NotNull LoggerLevel level,
+            @NotNull Object owner,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    );
 
     /**
      * Print the message.
@@ -404,9 +466,9 @@ public interface Logger {
      * @param level          the level of the message.
      * @param arg            the arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <T>            the argument's type.
      */
-    <T> void print(@NotNull LoggerLevel level, @NotNull final T arg,
-                   @NotNull final Function<@NotNull T, String> messageFactory);
+    <T> void print(@NotNull LoggerLevel level, @NotNull T arg, @NotNull Function<T, String> messageFactory);
 
     /**
      * Print the message.
@@ -415,9 +477,15 @@ public interface Logger {
      * @param first          the first arg for the message factory.
      * @param second         the second arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
      */
-    <F, S> void print(@NotNull LoggerLevel level, @NotNull final F first, @NotNull final S second,
-                      @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory);
+    <F, S> void print(
+            @NotNull LoggerLevel level,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull BiFunction<F, S, String> messageFactory
+    );
 
 
     /**
@@ -428,8 +496,15 @@ public interface Logger {
      * @param second         the second arg for the message factory.
      * @param third          the third arg for the message factory.
      * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     * @param <T>            the third argument's type.
      */
-    <F, S, T> void print(@NotNull LoggerLevel level, @NotNull final F first, @NotNull final S second,
-                         @NotNull final T third,
-                         @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory);
+    <F, S, T> void print(
+            @NotNull LoggerLevel level,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    );
 }
