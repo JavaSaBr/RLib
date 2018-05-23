@@ -1,12 +1,11 @@
 package com.ss.rlib.common.geom;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.ss.rlib.common.geom.util.AngleUtils;
 import com.ss.rlib.common.util.ExtMath;
 import com.ss.rlib.common.util.random.Random;
 import com.ss.rlib.common.util.random.RandomFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of rotation in 3D world based on Quaternion.
@@ -804,39 +803,47 @@ public class Quaternion4f {
         final float zz = z * zs;
         final float zw = w * zs;
 
-        result.set(1 - (yy + zz), xy - zw, xz + yw, xy + zw, 1 - (xx + zz), yz - xw, xz - yw, yz + xw, 1 - (xx + yy));
+        result.set(
+                1 - (yy + zz), xy - zw, xz + yw,
+                xy + zw, 1 - (xx + zz), yz - xw,
+                xz - yw, yz + xw, 1 - (xx + yy)
+        );
+
         return result;
     }
-    
+
     /**
-     * Rotate the vector
-     * @param vector 
-     * @return vector
+     * Rotate the vector by this quaternion.
+     *
+     * @param vector the vector to rotate.
+     * @return the same vector which was rotated.
      */
-    public final Vector3f rotate(Vector3f vector) {
-        final float px = vector.x;
-        final float py = vector.y;
-        final float pz = vector.z;
+    public @NotNull Vector3f rotate(@NotNull Vector3f vector) {
+
+        float px = vector.x;
+        float py = vector.y;
+        float pz = vector.z;
         
-        final float norm = norm();
-        final float s = norm == 1f ? 2f : norm > 0f ? 2f / norm : 0;
+        float norm = norm();
+        float s = norm == 1f ? 2f : norm > 0f ? 2f / norm : 0;
         
-        final float x = this.x * s;
-        final float y = this.y * s;
-        final float z = this.z * s;
-        final float xx = this.x * x;
-        final float xy = this.x * y;
-        final float xz = this.x * z;
-        final float xw = this.w * x;
-        final float yy = this.y * y;
-        final float yz = this.y * z;
-        final float yw = this.w * y;
-        final float zz = this.z * z;
-        final float zw = this.w * z;
+        float x = getX() * s;
+        float y = getY() * s;
+        float z = getZ() * s;
+        float xx = getX() * x;
+        float xy = getX() * y;
+        float xz = getX() * z;
+        float xw = getW() * x;
+        float yy = getY() * y;
+        float yz = getY() * z;
+        float yw = getW() * y;
+        float zz = getZ() * z;
+        float zw = getW() * z;
         
-        vector.x = (1f - (yy + zz)) * px + (xy - zw) * py + (xz + yw) * pz;
-        vector.y = (xy + zw) * px + (1f - (xx + zz)) * py + (yz - xw) * pz;
-        vector.z = (xz - yw) * px + (yz - xw) * py + (1f - (xx + yy)) * pz;
+        vector.setX((1f - (yy + zz)) * px + (xy - zw) * py + (xz + yw) * pz);
+        vector.setY((xy + zw) * px + (1f - (xx + zz)) * py + (yz - xw) * pz);
+        vector.setZ((xz - yw) * px + (yz - xw) * py + (1f - (xx + yy)) * pz);
+
         return vector;
     }
 

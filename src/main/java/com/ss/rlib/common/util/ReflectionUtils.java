@@ -2,12 +2,12 @@ package com.ss.rlib.common.util;
 
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * The class with utility reflection methods.
@@ -25,22 +25,31 @@ public final class ReflectionUtils {
      * @param declared   the flag of getting private fields.
      * @param exceptions exception fields.
      */
-    public static void addAllFields(@NotNull final Array<Field> container, @NotNull final Class<?> cs,
-                                    @NotNull final Class<?> last, final boolean declared,
-                                    @Nullable final String... exceptions) {
+    public static void addAllFields(
+            @NotNull Array<Field> container,
+            @NotNull Class<?> cs,
+            @NotNull Class<?> last,
+            boolean declared,
+            @Nullable String... exceptions
+    ) {
 
         Class<?> next = cs;
 
         while (next != null && next != last) {
 
-            final Field[] fields = declared ? next.getDeclaredFields() : next.getFields();
+            Field[] fields = declared ? next.getDeclaredFields() : next.getFields();
+
             next = next.getSuperclass();
-            if (fields.length < 1) continue;
+
+            if (fields.length < 1) {
+                continue;
+            }
 
             if (exceptions == null || exceptions.length < 1) {
                 container.addAll(fields);
             } else {
-                ArrayUtils.forEach(fields, toCheck -> !ArrayUtils.contains(exceptions, toCheck.getName()), container::add);
+                ArrayUtils.forEach(fields, toCheck ->
+                        !ArrayUtils.contains(exceptions, toCheck.getName()), container::add);
             }
         }
     }
@@ -54,67 +63,70 @@ public final class ReflectionUtils {
      * @param exceptions exception fields.
      * @return the all fields
      */
-    public static @NotNull Array<Field> getAllFields(@NotNull final Class<?> cs, @NotNull final Class<?> last,
-                                                     final boolean declared, @Nullable final String... exceptions) {
-        final Array<Field> container = ArrayFactory.newArray(Field.class);
+    public static @NotNull Array<Field> getAllFields(
+            @NotNull Class<?> cs,
+            @NotNull Class<?> last,
+            boolean declared,
+            @Nullable String... exceptions
+    ) {
+        Array<Field> container = ArrayFactory.newArray(Field.class);
         addAllFields(container, cs, last, declared, exceptions);
         return container;
     }
 
     /**
-     * Get a field.
+     * Get a field by the name.
      *
      * @param object    the object.
      * @param fieldName the field name.
      * @return the field.
      */
-
-    public static @NotNull Field getField(@NotNull final Object object, @NotNull final String fieldName) {
+    public static @NotNull Field getField(@NotNull Object object, @NotNull String fieldName) {
         try {
             return object.getClass().getDeclaredField(fieldName);
-        } catch (final NoSuchFieldException | SecurityException | IllegalArgumentException e) {
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Get a field using full access.
+     * Get a field by the name with full access.
      *
      * @param object    the object.
      * @param fieldName the field name.
      * @return the field.
      */
-    public static @NotNull Field getUnsafeField(@NotNull final Object object, @NotNull final String fieldName) {
+    public static @NotNull Field getUnsafeField(@NotNull Object object, @NotNull String fieldName) {
         try {
-            final Field field = getField(object, fieldName);
+            Field field = getField(object, fieldName);
             field.setAccessible(true);
             return field;
-        } catch (final SecurityException | IllegalArgumentException e) {
+        } catch (SecurityException | IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Get a field value.
+     * Get a field value by the field name.
      *
-     * @param <T>       the type parameter
+     * @param <T>       the result value's type.
      * @param object    the object.
      * @param fieldName the field name.
      * @return the value.
      */
-    public static <T> @Nullable T getFiledValue(@NotNull final Object object, @NotNull final String fieldName) {
+    public static <T> @Nullable T getFiledValue(@NotNull Object object, @NotNull String fieldName) {
         try {
-            final Field field = getField(object, fieldName);
+            Field field = getField(object, fieldName);
             return ClassUtils.unsafeCast(field.get(object));
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Get a field value using full access.
+     * Get a field value by the field name with full access.
      *
-     * @param <T>       the type parameter
+     * @param <T>       the result value's type.
      * @param object    the object.
      * @param fieldName the field name.
      * @return the value.
@@ -131,15 +143,15 @@ public final class ReflectionUtils {
     /**
      * Get a field value.
      *
-     * @param <T>    the type parameter
+     * @param <T>       the result value's type.
      * @param object the object.
      * @param field  the field.
      * @return the value.
      */
-    public static <T> @Nullable T getFieldValue(@NotNull final Object object, @NotNull final Field field) {
+    public static <T> @Nullable T getFieldValue(@NotNull Object object, @NotNull Field field) {
         try {
             return ClassUtils.unsafeCast(field.get(object));
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -151,12 +163,11 @@ public final class ReflectionUtils {
      * @param fieldName the field name.
      * @param value     the value.
      */
-    public static void setFieldValue(@NotNull final Object object, @NotNull final String fieldName,
-                                     @NotNull final Object value) {
+    public static void setFieldValue(@NotNull Object object, @NotNull String fieldName, @NotNull Object value) {
         try {
-            final Field field = getField(object, fieldName);
+            Field field = getField(object, fieldName);
             field.set(object, value);
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -168,12 +179,11 @@ public final class ReflectionUtils {
      * @param fieldName the field name.
      * @param value     the value.
      */
-    public static void setUnsafeFieldValue(@NotNull final Object object, @NotNull final String fieldName,
-                                           @NotNull final Object value) {
+    public static void setUnsafeFieldValue(@NotNull Object object, @NotNull String fieldName, @NotNull Object value) {
         try {
-            final Field field = getUnsafeField(object, fieldName);
+            Field field = getUnsafeField(object, fieldName);
             field.set(object, value);
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -186,11 +196,10 @@ public final class ReflectionUtils {
      * @param field  the field.
      * @param value  the value.
      */
-    public static void setFieldValue(@NotNull final Object object, @NotNull final Field field,
-                                     @NotNull final Object value) {
+    public static void setFieldValue(@NotNull Object object, @NotNull Field field, @NotNull Object value) {
         try {
             field.set(object, value);
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -202,10 +211,10 @@ public final class ReflectionUtils {
      * @param fieldName the field name.
      * @return the static field.
      */
-    public static @NotNull Field getStaticField(@NotNull final Class<?> type, @NotNull final String fieldName) {
+    public static @NotNull Field getStaticField(@NotNull Class<?> type, @NotNull String fieldName) {
         try {
             return type.getDeclaredField(fieldName);
-        } catch (final NoSuchFieldException | SecurityException | IllegalArgumentException e) {
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
     }
@@ -217,12 +226,12 @@ public final class ReflectionUtils {
      * @param fieldName the field name.
      * @return the static field.
      */
-    public static @NotNull Field getUnsafeStaticField(@NotNull final Class<?> type, @NotNull final String fieldName) {
+    public static @NotNull Field getUnsafeStaticField(@NotNull Class<?> type, @NotNull String fieldName) {
         try {
-            final Field field = getStaticField(type, fieldName);
+            Field field = getStaticField(type, fieldName);
             field.setAccessible(true);
             return field;
-        } catch (final SecurityException | IllegalArgumentException e) {
+        } catch (SecurityException | IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
     }
@@ -235,9 +244,9 @@ public final class ReflectionUtils {
      * @param fieldName the field name.
      * @return the value.
      */
-    public static <T> @Nullable T getStaticFieldValue(@NotNull final Class<?> type, @NotNull final String fieldName) {
+    public static <T> @Nullable T getStaticFieldValue(@NotNull Class<?> type, @NotNull String fieldName) {
         try {
-            final Field field = getStaticField(type, fieldName);
+            Field field = getStaticField(type, fieldName);
             return ClassUtils.unsafeCast(field.get(null));
         } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -252,10 +261,9 @@ public final class ReflectionUtils {
      * @param fieldName the field name.
      * @return the value.
      */
-    public static <T> @Nullable T getUnsafeStaticFieldValue(@NotNull final Class<?> type,
-                                                            @NotNull final String fieldName) {
+    public static <T> @Nullable T getUnsafeStaticFieldValue(@NotNull Class<?> type, @NotNull String fieldName) {
         try {
-            final Field field = getUnsafeStaticField(type, fieldName);
+            Field field = getUnsafeStaticField(type, fieldName);
             return ClassUtils.unsafeCast(field.get(null));
         } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -269,10 +277,10 @@ public final class ReflectionUtils {
      * @param field the field.
      * @return the value.
      */
-    public static <T> @Nullable T getStaticFieldValue(@NotNull final Field field) {
+    public static <T> @Nullable T getStaticFieldValue(@NotNull Field field) {
         try {
             return ClassUtils.unsafeCast(field.get(null));
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -284,10 +292,9 @@ public final class ReflectionUtils {
      * @param fieldName the field name.
      * @param value     the new value.
      */
-    public static void setStaticFieldValue(@NotNull final Class<?> type, @NotNull final String fieldName,
-                                           @NotNull final Object value) {
+    public static void setStaticFieldValue(@NotNull Class<?> type, @NotNull String fieldName, @NotNull Object value) {
         try {
-            final Field field = getStaticField(type, fieldName);
+            Field field = getStaticField(type, fieldName);
             field.set(null, value);
         } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -301,10 +308,9 @@ public final class ReflectionUtils {
      * @param fieldName thr field name.
      * @param value     the new value.
      */
-    public static void setUnsafeStaticFieldValue(@NotNull final Class<?> type, @NotNull final String fieldName,
-                                                 @NotNull final Object value) {
+    public static void setUnsafeStaticFieldValue(@NotNull Class<?> type, @NotNull String fieldName, @NotNull Object value) {
         try {
-            final Field field = getUnsafeStaticField(type, fieldName);
+            Field field = getUnsafeStaticField(type, fieldName);
             field.set(null, value);
         } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -317,10 +323,56 @@ public final class ReflectionUtils {
      * @param field the field.
      * @param value the new value.
      */
-    public static void setStaticFieldValue(@NotNull final Field field, @NotNull final Object value) {
+    public static void setStaticFieldValue(@NotNull Field field, @NotNull Object value) {
         try {
             field.set(null, value);
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Get a method of the type by the method name and arg types.
+     *
+     * @param type       the type.
+     * @param methodName the method name.
+     * @param argTypes   the arg types.
+     * @return the found method.
+     */
+    public static @NotNull Method getMethod(@NotNull Class<?> type, @NotNull String methodName, Class<?>... argTypes) {
+        try {
+            return type.getDeclaredMethod(methodName, argTypes);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Call a void method of the object by the name.
+     *
+     * @param object     the object.
+     * @param methodName the method name.
+     */
+    public static void callVoidMethod(@NotNull Object object, @NotNull String methodName) {
+        try {
+            getMethod(object.getClass(), methodName).invoke(object);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Call a void method of the object by the name using full access.
+     *
+     * @param object     the object.
+     * @param methodName the method name.
+     */
+    public static void callUnsafeVoidMethod(@NotNull Object object, @NotNull String methodName) {
+        try {
+            Method method = getMethod(object.getClass(), methodName);
+            method.setAccessible(true);
+            method.invoke(object);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
