@@ -632,7 +632,11 @@ public final class Vector3f {
         final Vector3f direction = new Vector3f(destination)
                 .subtractLocal(this);
         
-        final double length = Math.sqrt(x * x + y * y + z * z);
+        final double length = Math.sqrt(
+                direction.getX() * direction.getX() + 
+                direction.getY() * direction.getY() + 
+                direction.getZ() * direction.getZ()
+        );
         if(length <= distance || length < ExtMath.EPSILON) {
             set(destination);
             return this;
