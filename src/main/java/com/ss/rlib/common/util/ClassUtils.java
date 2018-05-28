@@ -3,8 +3,6 @@ package com.ss.rlib.common.util;
 import static java.lang.Class.forName;
 import com.ss.rlib.common.logging.Logger;
 import com.ss.rlib.common.logging.LoggerManager;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,10 +27,10 @@ public final class ClassUtils {
      * @param name the name of a class.
      * @return the class or null.
      */
-    public static <T> @Nullable Class<T> getClass(@NotNull final String name) {
+    public static <T> @Nullable Class<T> getClass(@NotNull String name) {
         try {
             return unsafeCast(forName(name));
-        } catch (final ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             LOGGER.warning(e);
             return null;
         }
@@ -46,10 +44,10 @@ public final class ClassUtils {
      * @param classes the types of arguments.
      * @return the constructor or null.
      */
-    public static <T> @Nullable Constructor<T> getConstructor(@NotNull final Class<?> cs, @Nullable final Class<?>... classes) {
+    public static <T> @Nullable Constructor<T> getConstructor(@NotNull Class<?> cs, @Nullable Class<?>... classes) {
         try {
             return unsafeCast(cs.getConstructor(classes));
-        } catch (final NoSuchMethodException | SecurityException e) {
+        } catch (NoSuchMethodException | SecurityException e) {
             LOGGER.warning(e);
             return null;
         }
@@ -63,11 +61,11 @@ public final class ClassUtils {
      * @param classes   the types of arguments.
      * @return the constructor or null.
      */
-    public static <T> @Nullable Constructor<T> getConstructor(@NotNull final String className, @Nullable final Class<?>... classes) {
+    public static <T> @Nullable Constructor<T> getConstructor(@NotNull String className, @Nullable Class<?>... classes) {
         try {
-            final Class<?> cs = forName(className);
+            Class<?> cs = forName(className);
             return unsafeCast(cs.getConstructor(classes));
-        } catch (final NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOGGER.warning(e);
             return null;
         }
@@ -80,10 +78,9 @@ public final class ClassUtils {
      * @param classes the types of arguments.
      * @return true if this class has constructor wth the arguments.
      */
-    public static boolean hasConstructor(@NotNull final Class<?> cs, @Nullable final Class<?>... classes) {
+    public static boolean hasConstructor(@NotNull Class<?> cs, @Nullable Class<?>... classes) {
 
-        final Constructor<?>[] constructors = cs.getConstructors();
-        for (final Constructor<?> constructor : constructors) {
+        for (Constructor<?> constructor : cs.getConstructors()) {
             if (Arrays.equals(constructor.getParameterTypes(), classes)) {
                 return true;
             }
@@ -98,10 +95,10 @@ public final class ClassUtils {
      * @param cs      the class.
      * @return true if this class has empty constructor.
      */
-    public static boolean hasConstructor(@NotNull final Class<?> cs) {
+    public static boolean hasConstructor(@NotNull Class<?> cs) {
 
-        final Constructor<?>[] constructors = cs.getConstructors();
-        for (final Constructor<?> constructor : constructors) {
+        Constructor<?>[] constructors = cs.getConstructors();
+        for (Constructor<?> constructor : constructors) {
             if (constructor.getParameterCount() == 0) {
                 return true;
             }
@@ -117,11 +114,11 @@ public final class ClassUtils {
      * @param cs  the class.
      * @return the new instance.
      */
-    public static <T> @NotNull T newInstance(@NotNull final Class<?> cs) {
+    public static <T> @NotNull T newInstance(@NotNull Class<?> cs) {
         try {
             //noinspection ConstantConditions
             return unsafeCast(cs.newInstance());
-        } catch (final InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -134,13 +131,13 @@ public final class ClassUtils {
      * @param objects     the arguments.
      * @return the new instance.
      */
-    public static <T> @NotNull T newInstance(@NotNull final Constructor<?> constructor, @Nullable final Object... objects) {
+    public static <T> @NotNull T newInstance(@NotNull Constructor<?> constructor, @Nullable Object... objects) {
         try {
             //noinspection ConstantConditions
             return unsafeCast(constructor.newInstance(objects));
-        } catch (final InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             throw new RuntimeException(e.getTargetException());
-        } catch (final InstantiationException | IllegalAccessException | IllegalArgumentException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
     }
@@ -152,23 +149,34 @@ public final class ClassUtils {
      * @param className the class name.
      * @return the new instance.
      */
-    public static <T> @NotNull T newInstance(@NotNull final String className) {
+    public static <T> @NotNull T newInstance(@NotNull String className) {
         try {
             //noinspection ConstantConditions
             return unsafeCast(forName(className).newInstance());
-        } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Unsafe cast of the object.
+     * Unsafe cast of the object to the expected type.
      *
-     * @param <T>    the type parameter
+     * @param <T>    the expected type.
      * @param object the object.
      * @return the casted object.
      */
-    public static <T> @Nullable T unsafeCast(@Nullable final Object object) {
+    public static <T> @Nullable T unsafeCast(@Nullable Object object) {
+        return (T) object;
+    }
+
+    /**
+     * Unsafe cast of the object to the expected type.
+     *
+     * @param <T>    the expected type.
+     * @param object the object.
+     * @return the casted object.
+     */
+    public static <T> @NotNull T unsafeNNCast(@NotNull Object object) {
         return (T) object;
     }
 
@@ -180,7 +188,7 @@ public final class ClassUtils {
      * @param object the object.
      * @return the casted object.
      */
-    public static <T> @Nullable T unsafeCast(@NotNull final Class<T> type, @Nullable final Object object) {
+    public static <T> @Nullable T unsafeCast(@NotNull Class<T> type, @Nullable Object object) {
         return type.cast(object);
     }
 
@@ -192,7 +200,7 @@ public final class ClassUtils {
      * @param object the object.
      * @return the casted object or null.
      */
-    public static <T> @Nullable T cast(@NotNull final Class<T> type, @Nullable final Object object) {
+    public static <T> @Nullable T cast(@NotNull Class<T> type, @Nullable Object object) {
         return type.isInstance(object) ? type.cast(object) : null;
     }
 

@@ -16,18 +16,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * Interface to implement dynamic arrays. Main advantages compared to ArrayList is the ability to iterate in the
- * fastest way possible and without prejudice to GC:
- * <pre>
- * for(? element : array.array()) {
- *
- * 	if(element == null)	{
- * 		break;
- *    }
- *
- * 	// handle element
- * }
- * </pre>
+ * Interface to implement dynamic arrays.
  * <p> To create to use {@link ArrayFactory}.
  *
  * @param <E> the element's type.
@@ -35,12 +24,42 @@ import java.util.stream.Stream;
  */
 public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneable, RandomAccess {
 
+    /**
+     * Create an empty read only array.
+     *
+     * @param <T> the result element's type.
+     * @return the empty array.
+     */
     static <T> @NotNull Array<T> empty() {
         return unsafeCast(ArrayFactory.EMPTY_ARRAY);
     }
 
+    /**
+     * Wrap the array to a read only array.
+     *
+     * @param elements the elements to wrap.
+     * @param <T> the element's type.
+     * @return the new read only array.
+     */
     static <T> @NotNull Array<T> of(@NotNull T[] elements) {
         return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(elements, 0));
+    }
+
+    static <T> @NotNull Array<T> of(@NotNull T element) {
+
+        T[] newArray = ArrayUtils.create(element.getClass(), 1);
+        newArray[0] = element;
+
+        return ArrayFactory.newReadOnlyArray(newArray);
+    }
+
+    @SafeVarargs
+    static <T> @NotNull Array<T> of(@NotNull T element, @NotNull T... elements) {
+
+        T[] newArray = ArrayUtils.copyOf(elements, 1, 1);
+        newArray[0] = element;
+
+        return ArrayFactory.newReadOnlyArray(newArray);
     }
 
     /**

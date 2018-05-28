@@ -252,6 +252,25 @@ public final class ArrayUtils {
     }
 
     /**
+     * Copy and extend the array.
+     *
+     * @param <T>      the array component's type.
+     * @param original the source array.
+     * @param offset   the start position to copy in new array.
+     * @param added    the added size.
+     * @return the new array.
+     */
+    public static <T> @NotNull T[] copyOf(@NotNull T[] original, int offset, int added) {
+
+        Class<? extends Object[]> newType = original.getClass();
+        T[] newArray = create(newType.getComponentType(), original.length + added);
+
+        System.arraycopy(original, 0, newArray, offset, Math.min(original.length, newArray.length));
+
+        return newArray;
+    }
+
+    /**
      * Copy data form the source array to the destination array.
      *
      * @param source the source array.
@@ -340,7 +359,7 @@ public final class ArrayUtils {
      * @param size the size.
      * @return the new array.
      */
-    public static <T> @NotNull T[] create(@NotNull final Class<?> type, final int size) {
+    public static <T> @NotNull T[] create(@NotNull Class<?> type, int size) {
         return ClassUtils.unsafeCast(java.lang.reflect.Array.newInstance(type, size));
     }
 
