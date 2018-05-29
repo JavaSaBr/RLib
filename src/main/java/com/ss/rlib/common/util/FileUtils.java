@@ -4,10 +4,6 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayComparator;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.UnsafeArray;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayComparator;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,16 +11,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.FileTime;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -489,20 +485,6 @@ public class FileUtils {
     }
 
     /**
-     * Convert the file to {@link URL}.
-     *
-     * @param path the path for converting.
-     * @return the URL of the path.
-     */
-    public static @NotNull URL toUrl(@NotNull final Path path)  {
-        try {
-            return path.toUri().toURL();
-        } catch (final MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Unzip the zip file to the destination folder.
      *
      * @param destination the destination folder.
@@ -526,7 +508,7 @@ public class FileUtils {
                 }
             }
 
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -538,13 +520,13 @@ public class FileUtils {
      * @param separator the separator.
      * @return the name.
      */
-    public static @NotNull String getName(@NotNull final String path, final char separator) {
+    public static @NotNull String getName(@NotNull String path, char separator) {
 
         if (path.length() < 2) {
             return path;
         }
 
-        final int index = path.lastIndexOf(separator);
+        int index = path.lastIndexOf(separator);
 
         if (index == -1) {
             return path;
@@ -554,19 +536,19 @@ public class FileUtils {
     }
 
     /**
-     * Get a parent of the file by the path and the separator.
+     * Get a parent path of the path using the separator.
      *
      * @param path      the path.
      * @param separator the separator.
-     * @return the parent.
+     * @return the parent path.
      */
-    public static @NotNull String getParent(@NotNull final String path, final char separator) {
+    public static @NotNull String getParent(@NotNull String path, char separator) {
 
         if (path.length() < 2) {
             return path;
         }
 
-        final int index = path.lastIndexOf(separator);
+        int index = path.lastIndexOf(separator);
 
         if (index == -1) {
             return path;
@@ -580,5 +562,32 @@ public class FileUtils {
      */
     public static void createDirectories(@NotNull Path directory, @NotNull FileAttribute<?>... attrs) {
         Utils.run(directory, attrs, Files::createDirectories);
+    }
+
+    /**
+     * @see Files#getLastModifiedTime(Path, LinkOption...)
+     */
+    public static FileTime getLastModifiedTime(@NotNull Path file, @NotNull LinkOption... options) {
+        return Utils.safeGet(file, options, Files::getLastModifiedTime);
+    }
+
+    /**
+     * Get a {@link URI} of the file.
+     *
+     * @param file the file.
+     * @return the {@link URI}.
+     */
+    public static @NotNull URI getUri(@NotNull Path file) {
+        return Utils.get(file, Path::toUri);
+    }
+
+    /**
+     * Get a {@link URL} of the file.
+     *
+     * @param file the file.
+     * @return the {@link URL}.
+     */
+    public static @NotNull URL getUrl(@NotNull Path file) {
+        return Utils.get(getUri(file), URI::toURL);
     }
 }
