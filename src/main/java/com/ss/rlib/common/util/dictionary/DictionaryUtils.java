@@ -234,16 +234,23 @@ public class DictionaryUtils {
     /**
      * Execute the function for a dictionary in the block {@link ConcurrentObjectDictionary#writeLock()}.
      *
-     * @param <K>        the type parameter
-     * @param <V>        the type parameter
+     * @param <K>        the key's type.
+     * @param <V>        the value's type.
      * @param dictionary the dictionary.
      * @param key        the key value.
      * @param consumer   the function.
      */
-    public static <K, V> void runInWriteLock(@NotNull final ConcurrentObjectDictionary<K, V> dictionary,
-                                             @NotNull final K key,
-                                             @NotNull final BiConsumer<ConcurrentObjectDictionary<K, V>, K> consumer) {
-        final long stamp = dictionary.writeLock();
+    public static <K, V> void runInWriteLock(
+            @Nullable ConcurrentObjectDictionary<K, V> dictionary,
+            @NotNull K key,
+            @NotNull BiConsumer<ConcurrentObjectDictionary<K, V>, K> consumer
+    ) {
+
+        if (dictionary == null) {
+            return;
+        }
+
+        long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary, key);
         } finally {
