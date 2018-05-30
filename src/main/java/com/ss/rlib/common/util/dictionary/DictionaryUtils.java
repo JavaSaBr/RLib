@@ -1,7 +1,6 @@
 package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.function.*;
-import com.ss.rlib.common.function.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -207,6 +206,26 @@ public class DictionaryUtils {
         final long stamp = dictionary.writeLock();
         try {
             consumer.accept(dictionary, key, object);
+        } finally {
+            dictionary.writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Execute the function for a dictionary in the block {@link ConcurrentObjectDictionary#writeLock()}.
+     *
+     * @param <K>        the key's type.
+     * @param <V>        the value's type.
+     * @param dictionary the dictionary.
+     * @param runnable   the function.
+     */
+    public static <K, V> void runInWriteLock(
+            @NotNull ConcurrentObjectDictionary<K, V> dictionary,
+            @NotNull Runnable runnable
+    ) {
+        long stamp = dictionary.writeLock();
+        try {
+            runnable.run();
         } finally {
             dictionary.writeUnlock(stamp);
         }

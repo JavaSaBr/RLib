@@ -137,7 +137,9 @@ public class ArrayCollectors {
      * @param type the type of elements.
      * @return the collector.
      */
-    public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(@NotNull Class<?> type) {
+    public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(
+            @NotNull Class<?> type
+    ) {
         return concurrentCollector(type, ArrayFactory::newConcurrentStampedLockArray);
     }
 }

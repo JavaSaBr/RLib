@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * THe interface to implement a classpath scanner.
@@ -15,9 +15,6 @@ import java.util.function.Function;
  */
 public interface ClassPathScanner {
 
-    /**
-     * The constant JAR_EXTENSION.
-     */
     String JAR_EXTENSION = ".jar";
 
     /**
@@ -39,7 +36,7 @@ public interface ClassPathScanner {
      *
      * @param useSystemClasspath true if need to use system classpath.
      */
-    void setUseSystemClasspath(final boolean useSystemClasspath);
+    void setUseSystemClasspath(boolean useSystemClasspath);
 
     /**
      * Find all implementations of the interface class.
@@ -48,8 +45,8 @@ public interface ClassPathScanner {
      * @param <T>            the first argument's type.
      * @return the list of found implementations.
      */
-    default <T> @NotNull Array<Class<T>> findImplements(@NotNull final Class<T> interfaceClass) {
-        final Array<Class<T>> result = ArrayFactory.newArray(Class.class);
+    default <T> @NotNull Array<Class<T>> findImplements(@NotNull Class<T> interfaceClass) {
+        Array<Class<T>> result = ArrayFactory.newArray(Class.class);
         findImplements(result, interfaceClass);
         return result;
     }
@@ -68,8 +65,8 @@ public interface ClassPathScanner {
      * @param parentClass the parent class.
      * @return the list of found inherited classes.
      */
-    default <T> @NotNull Array<Class<T>> findInherited(@NotNull final Class<T> parentClass) {
-        final Array<Class<T>> result = ArrayFactory.newArray(Class.class);
+    default <T> @NotNull Array<Class<T>> findInherited(@NotNull Class<T> parentClass) {
+        Array<Class<T>> result = ArrayFactory.newArray(Class.class);
         findInherited(result, parentClass);
         return result;
     }
@@ -93,8 +90,8 @@ public interface ClassPathScanner {
      * @param annotationClass the annotation class.
      * @return the list of found annotated classes.
      */
-    default @NotNull Array<Class<?>> findAnnotated(@NotNull final Class<? extends Annotation> annotationClass) {
-        final Array<Class<?>> result = ArrayFactory.newArray(Class.class);
+    default @NotNull Array<Class<?>> findAnnotated(@NotNull Class<? extends Annotation> annotationClass) {
+        Array<Class<?>> result = ArrayFactory.newArray(Class.class);
         findAnnotated(result, annotationClass);
         return result;
     }
@@ -117,14 +114,28 @@ public interface ClassPathScanner {
      *
      * @param container the container.
      */
-    void getAll(@NotNull Array<Class<?>> container);
+    void getFoundClasses(@NotNull Array<Class<?>> container);
 
     /**
      * Get all found resources.
      *
      * @param container the container.
      */
-    void getAllResources(@NotNull Array<String> container);
+    void getFoundResources(@NotNull Array<String> container);
+
+    /**
+     * Get all found classes.
+     *
+     * @return the array of all found classes.
+     */
+    @NotNull Array<Class<?>> getFoundClasses();
+
+    /**
+     * Get all found resources.
+     *
+     * @return the array of all found resources.
+     */
+    @NotNull Array<String> getFoundResources();
 
     /**
      * Start scanning classpath.
@@ -138,17 +149,17 @@ public interface ClassPathScanner {
      *
      * @param filter the filter.
      */
-    void scan(@Nullable Function<String, Boolean> filter);
+    void scan(@Nullable Predicate<String> filter);
 
     /**
-     * Adds an additional path to scan.
+     * Add the additional path to scan.
      *
      * @param path the additional path.
      */
     void addAdditionalPath(@NotNull String path);
 
     /**
-     * Adds additional paths to scan.
+     * Add the additional paths to scan.
      *
      * @param paths the additional paths.
      */

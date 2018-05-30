@@ -558,6 +558,8 @@ public class FileUtils {
     }
 
     /**
+     * @param directory the directory.
+     * @param attrs     the directory attributes.
      * @see Files#createDirectories(Path, FileAttribute[])
      */
     public static void createDirectories(@NotNull Path directory, @NotNull FileAttribute<?>... attrs) {
@@ -565,6 +567,8 @@ public class FileUtils {
     }
 
     /**
+     * @param file    the file.
+     * @param options the link options.
      * @see Files#getLastModifiedTime(Path, LinkOption...)
      */
     public static FileTime getLastModifiedTime(@NotNull Path file, @NotNull LinkOption... options) {
