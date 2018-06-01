@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static com.ss.rlib.common.util.ObjectUtils.notNull;
+
 /**
  * The utility class.
  *
@@ -33,18 +35,14 @@ import java.util.zip.ZipInputStream;
  */
 public class FileUtils {
 
-    /**
-     * The constant FILE_PATH_LENGTH_COMPARATOR.
-     */
-    @NotNull
     public static final ArrayComparator<Path> FILE_PATH_LENGTH_COMPARATOR = (first, second) -> {
 
-        final int firstLength = first.getNameCount();
-        final int secondLength = second.getNameCount();
+        int firstLength = first.getNameCount();
+        int secondLength = second.getNameCount();
 
         if (firstLength == secondLength) {
-            final int firstLevel = Files.isDirectory(first) ? 2 : 1;
-            final int secondLevel = Files.isDirectory(first) ? 2 : 1;
+            int firstLevel = Files.isDirectory(first) ? 2 : 1;
+            int secondLevel = Files.isDirectory(first) ? 2 : 1;
             return firstLevel - secondLevel;
         }
 
@@ -68,10 +66,8 @@ public class FileUtils {
                     "$                                # Anchor to end of string.            ",
             Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
 
-    @NotNull
     private static final Pattern NORMALIZE_FILE_NAME_PATTERN = Pattern.compile("[\\\\/:*?\"<>|]");
 
-    @NotNull
     private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<Path>() {
 
         @Override
@@ -87,7 +83,6 @@ public class FileUtils {
         }
     };
 
-    @NotNull
     private static final Path[] EMPTY_PATHS = new Path[0];
 
     /**
@@ -571,8 +566,8 @@ public class FileUtils {
      * @param options the link options.
      * @see Files#getLastModifiedTime(Path, LinkOption...)
      */
-    public static FileTime getLastModifiedTime(@NotNull Path file, @NotNull LinkOption... options) {
-        return Utils.safeGet(file, options, Files::getLastModifiedTime);
+    public static @NotNull FileTime getLastModifiedTime(@NotNull Path file, @NotNull LinkOption... options) {
+        return notNull(Utils.safeGet(file, options, Files::getLastModifiedTime));
     }
 
     /**
@@ -593,5 +588,30 @@ public class FileUtils {
      */
     public static @NotNull URL getUrl(@NotNull Path file) {
         return Utils.get(getUri(file), URI::toURL);
+    }
+
+    /**
+     * Create a new default watch service.
+     *
+     * @return the new default watch service.
+     * @see FileSystems#getDefault()
+     */
+    public static @NotNull WatchService newDefaultWatchService() {
+        try {
+            return FileSystems.getDefault().newWatchService();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @see Files#walkFileTree(Path, FileVisitor)
+     */
+    public static @NotNull Path walkFileTree(@NotNull Path start, @NotNull FileVisitor<? super Path> visitor) {
+        try {
+            return Files.walkFileTree(start, visitor);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -657,13 +657,17 @@ public final class ArrayUtils {
     /**
      * Execute the function in write lock of the array.
      *
-     * @param <T>      the type parameter
+     * @param <T>      the element's type.
      * @param array    the array.
      * @param function the function.
      */
-    public static <T> void runInWriteLock(@NotNull final ConcurrentArray<T> array,
-                                          @NotNull final Consumer<@NotNull Array<T>> function) {
-        final long stamp = array.writeLock();
+    public static <T> void runInWriteLock(@Nullable ConcurrentArray<T> array, @NotNull Consumer<Array<T>> function) {
+
+        if (array == null) {
+            return;
+        }
+
+        long stamp = array.writeLock();
         try {
             function.accept(array);
         } finally {
@@ -763,15 +767,18 @@ public final class ArrayUtils {
     /**
      * Execute the function in write lock of the array.
      *
-     * @param <T>      the type parameter
-     * @param <V>      the type parameter
+     * @param <T>      the element's type.
+     * @param <V>      the argument's type.
      * @param array    the array.
      * @param argument the argument.
      * @param function the function.
      */
-    public static <T, V> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
-                                             @NotNull final BiConsumer<@NotNull Array<T>, V> function) {
-        final long stamp = array.writeLock();
+    public static <T, V> void runInWriteLock(
+            @NotNull ConcurrentArray<T> array,
+            @Nullable V argument,
+            @NotNull BiConsumer<@NotNull Array<T>, V> function
+    ) {
+        long stamp = array.writeLock();
         try {
             function.accept(array, argument);
         } finally {
