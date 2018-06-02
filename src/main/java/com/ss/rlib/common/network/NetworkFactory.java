@@ -1,5 +1,11 @@
 package com.ss.rlib.common.network;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.ss.rlib.common.network.client.ClientNetwork;
 import com.ss.rlib.common.network.client.ConnectHandler;
 import com.ss.rlib.common.network.client.impl.DefaultClientNetwork;
@@ -8,10 +14,6 @@ import com.ss.rlib.common.network.server.AcceptHandler;
 import com.ss.rlib.common.network.server.ServerNetwork;
 import com.ss.rlib.common.network.server.client.Client;
 import com.ss.rlib.common.network.server.impl.DefaultServerNetwork;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.function.Consumer;
 
 /**
  * The network factory.
@@ -46,7 +48,7 @@ public final class NetworkFactory {
         try {
             return new DefaultClientNetwork(config, registry, connectHandler);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -105,7 +107,7 @@ public final class NetworkFactory {
         try {
             return new DefaultServerNetwork(config, registry, acceptHandler);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

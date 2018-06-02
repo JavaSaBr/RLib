@@ -1,15 +1,17 @@
 package com.ss.rlib.common.logging.impl;
 
-import com.ss.rlib.common.logging.LoggerListener;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.ss.rlib.common.logging.LoggerListener;
 
 /**
  * The implementation of a logger listener to save log to files in a directory.
@@ -46,7 +48,7 @@ public class FolderFileListener implements LoggerListener {
             try {
                 Files.createDirectories(folder);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
         }
 
