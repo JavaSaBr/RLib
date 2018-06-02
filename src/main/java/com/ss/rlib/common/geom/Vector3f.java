@@ -16,53 +16,17 @@ import com.ss.rlib.common.util.ExtMath;
  */
 public final class Vector3f {
 
-    /**
-     * The constant ZERO.
-     */
-    @NotNull
     public final static Vector3f ZERO = new Vector3f(0, 0, 0);
-
-    /**
-     * The constant NAN.
-     */
-    @NotNull
     public final static Vector3f NAN = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
 
-    /**
-     * The constant UNIT_X.
-     */
-    @NotNull
     public final static Vector3f UNIT_X = new Vector3f(1, 0, 0);
-
-    /**
-     * The constant UNIT_Y.
-     */
-    @NotNull
     public final static Vector3f UNIT_Y = new Vector3f(0, 1, 0);
-
-    /**
-     * The constant UNIT_Z.
-     */
-    @NotNull
     public final static Vector3f UNIT_Z = new Vector3f(0, 0, 1);
-
-    /**
-     * The constant UNIT_XYZ.
-     */
-    @NotNull
     public final static Vector3f UNIT_XYZ = new Vector3f(1, 1, 1);
 
-    /**
-     * The constant POSITIVE_INFINITY.
-     */
-    @NotNull
     public final static Vector3f POSITIVE_INFINITY = new Vector3f(Float.POSITIVE_INFINITY,
             Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
 
-    /**
-     * The constant NEGATIVE_INFINITY.
-     */
-    @NotNull
     public final static Vector3f NEGATIVE_INFINITY = new Vector3f(Float.NEGATIVE_INFINITY,
             Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
@@ -70,7 +34,7 @@ public final class Vector3f {
      * Creates a new instance of the vector.
      *
      * @return the new instance.
-     * @see #Vector3f().
+     * @see #Vector3f()
      */
     @Deprecated
     public @NotNull static Vector3f newInstance() {
@@ -87,7 +51,7 @@ public final class Vector3f {
      * @see #Vector3f(float, float, float)
      */
     @Deprecated
-    public static @NotNull Vector3f newInstance(final float x, final float y, final float z) {
+    public static @NotNull Vector3f newInstance(float x, float y, float z) {
         return new Vector3f(x, y, z);
     }
 
@@ -99,7 +63,7 @@ public final class Vector3f {
      * @see #Vector3f(float[])
      */
     @Deprecated
-    public static @NotNull Vector3f newInstance(@NotNull final float[] values) {
+    public static @NotNull Vector3f newInstance(@NotNull float[] values) {
         return new Vector3f(values[0], values[1], values[2]);
     }
 
@@ -151,8 +115,8 @@ public final class Vector3f {
         this.z = z;
     }
 
-    public Vector3f(@NotNull float[] coords) {
-        this(coords[0], coords[1], coords[2]);
+    public Vector3f(@NotNull float[] components) {
+        this(components[0], components[1], components[2]);
     }
 
     public Vector3f(@NotNull Vector3f another) {
@@ -180,7 +144,7 @@ public final class Vector3f {
      * @param vector the vector.
      * @return the current vector.
      */
-    public @NotNull Vector3f addLocal(@NotNull final Vector3f vector) {
+    public @NotNull Vector3f addLocal(@NotNull Vector3f vector) {
         return addLocal(vector.x, vector.y, vector.z);
     }
 

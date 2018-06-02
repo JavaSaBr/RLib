@@ -27,7 +27,7 @@ public final class ExtMath {
      * @return The angle, in radians.
      * @see java.lang.Math#acos(double) java.lang.Math#acos(double)
      */
-    public static float acos(final float value) {
+    public static float acos(float value) {
 
         if (-1.0F < value) {
             if (value < 1.0f) {
@@ -47,7 +47,7 @@ public final class ExtMath {
      * @return the angle in radians.
      * @see java.lang.Math#asin(double) java.lang.Math#asin(double)
      */
-    public static float asin(final float value) {
+    public static float asin(float value) {
 
         if (-1.0F < value) {
             if (value < 1.0F) {
@@ -68,7 +68,7 @@ public final class ExtMath {
      * @return Math.atan2(y, x) float
      * @see java.lang.Math#atan2(double, double) java.lang.Math#atan2(double, double)
      */
-    public static float atan2(final float y, final float x) {
+    public static float atan2(float y, float x) {
         return (float) Math.atan2(y, x);
     }
 
@@ -79,7 +79,7 @@ public final class ExtMath {
      * @return the cosine of the angle.
      * @see Math#cos(double) Math#cos(double)
      */
-    public static float cos(final float value) {
+    public static float cos(float value) {
         return (float) Math.cos(value);
     }
 
@@ -90,7 +90,7 @@ public final class ExtMath {
      * @return 1 /sqrt(value)
      * @see java.lang.Math#sqrt(double) java.lang.Math#sqrt(double)
      */
-    public static float invSqrt(final float value) {
+    public static float invSqrt(float value) {
         return (float) (1.0f / Math.sqrt(value));
     }
 
@@ -101,7 +101,7 @@ public final class ExtMath {
      * @return the sine of the angle.
      * @see Math#sin(double) Math#sin(double)
      */
-    public static float sin(final float value) {
+    public static float sin(float value) {
         return (float) Math.sin(value);
     }
 
@@ -112,8 +112,122 @@ public final class ExtMath {
      * @return The square root of the given value.
      * @see java.lang.Math#sqrt(double) java.lang.Math#sqrt(double)
      */
-    public static float sqrt(final float value) {
+    public static float sqrt(float value) {
         return (float) Math.sqrt(value);
+    }
+
+    /**
+     * Return true of the value is zero.
+     *
+     * @param value the value.
+     * @return true if the values are equals.
+     */
+    public static boolean isZero(float value) {
+        return Float.compare(value, 0F) == 0;
+    }
+
+    /**
+     * Return true of the value is zero.
+     *
+     * @param value the value.
+     * @return true if the values are equals.
+     */
+    public static boolean isZero(double value) {
+        return Double.compare(value, 0D) == 0;
+    }
+
+    /**
+     * Compare the two float values.
+     *
+     * @param first   the first.
+     * @param second  the second.
+     * @return true if the values are equals.
+     */
+    public static boolean equals(float first, float second) {
+        return Float.compare(first, second) == 0;
+    }
+
+    /**
+     * Compare the two float values.
+     *
+     * @param first   the first.
+     * @param second  the second.
+     * @return true if the values are equals.
+     */
+    public static boolean equals(double first, double second) {
+        return Double.compare(first, second) == 0;
+    }
+
+    /**
+     * Compare the two float values by the epsilon.
+     *
+     * @param first   the first.
+     * @param second  the second.
+     * @param epsilon the epsilon.
+     * @return true if the values are equals.
+     */
+    public static boolean equals(float first, float second, float epsilon) {
+        return first == second || Math.abs(first - second) < epsilon;
+    }
+
+    /**
+     * Compare the two float values by the epsilon.
+     *
+     * @param first   the first.
+     * @param second  the second.
+     * @param epsilon the epsilon.
+     * @return true if the values are equals.
+     */
+    public static boolean equals(double first, double second, double epsilon) {
+        return first == second || Math.abs(first - second) < epsilon;
+    }
+
+    /**
+     * Compare the two float values by the epsilon.
+     *
+     * @param first   the first.
+     * @param second  the second.
+     * @param epsilon the epsilon.
+     * @return true if the first value is less than the second value.
+     */
+    public static boolean lessThan(float first, float second, float epsilon) {
+        return second - first > epsilon;
+    }
+
+    /**
+     * Compare the two float values by the epsilon.
+     *
+     * @param first   the first.
+     * @param second  the second.
+     * @param epsilon the epsilon.
+     * @return true if the first value is less than the second value.
+     */
+    public static boolean lessThan(double first, double second, double epsilon) {
+        return second - first > epsilon;
+    }
+
+    /**
+     * Compare the two float values by the epsilon.
+     *
+     * @param first   the first.
+     * @param second  the second.
+     * @param epsilon the epsilon.
+     * @return true if the first value is greater than the second value.
+     */
+    public static boolean greaterThan(float first, float second, float epsilon) {
+        return first - second > epsilon;
+    }
+
+    /**
+     * Compare the two float values by the epsilon.
+     *
+     * @param first   the first.
+     * @param second  the second.
+     * @param epsilon the epsilon.
+     * @return true if the first value is greater than the second value.
+     */
+    public static boolean greaterThan(double first, double second, double epsilon) {
+        return first - second > epsilon;
     }
 
     private ExtMath() {

@@ -19,58 +19,16 @@ import java.util.function.*;
  */
 public final class ArrayUtils {
 
-    /**
-     * The constant EMPTY_OBJECT_ARRAY.
-     */
-    @NotNull
     public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-
-    /**
-     * The constant EMPTY_STRING_ARRAY.
-     */
-    @NotNull
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
+    public static final Enum<?>[] EMPTY_ENUM_ARRAY = new Enum[0];
+    public static final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
 
-    /**
-     * The constant EMPTY_ENUM_ARRAY.
-     */
-    @NotNull
-    public static final Enum[] EMPTY_ENUM_ARRAY = new Enum[0];
-
-    /**
-     * The constant EMPTY_INT_ARRAY.
-     */
-    @NotNull
     public static final int[] EMPTY_INT_ARRAY = new int[0];
-
-    /**
-     * The constant EMPTY_FLOAT_ARRAY.
-     */
-    @NotNull
     public static final float[] EMPTY_FLOAT_ARRAY = new float[0];
-
-    /**
-     * The constant EMPTY_BYTE_ARRAY.
-     */
-    @NotNull
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
-
-    /**
-     * The constant EMPTY_SHORT_ARRAY.
-     */
-    @NotNull
     public static final short[] EMPTY_SHORT_ARRAY = new short[0];
-
-    /**
-     * The constant EMPTY_LONG_ARRAY.
-     */
-    @NotNull
     public static final long[] EMPTY_LONG_ARRAY = new long[0];
-
-    /**
-     * The constant EMPTY_CHAR_ARRAY.
-     */
-    @NotNull
     public static final char[] EMPTY_CHAR_ARRAY = new char[0];
 
     /**
@@ -82,8 +40,7 @@ public final class ArrayUtils {
      * @param type    the type of array.
      * @return the result array with added element.
      */
-    public static <T> @NotNull T[] addToArray(@Nullable T[] array, @NotNull final T element,
-                                              @NotNull final Class<T> type) {
+    public static <T> @NotNull T[] addToArray(@Nullable T[] array, @NotNull T element, @NotNull Class<T> type) {
 
         if (array == null) {
             array = create(type, 1);
@@ -91,7 +48,7 @@ public final class ArrayUtils {
             return array;
         }
 
-        final int length = array.length;
+        int length = array.length;
 
         array = copyOf(array, 1);
         array[length] = element;
@@ -104,9 +61,49 @@ public final class ArrayUtils {
      *
      * @param array the array.
      */
-    public static void clear(@NotNull final Object[] array) {
+    public static void clear(@NotNull Object[] array) {
         for (int i = 0, length = array.length; i < length; i++) {
             array[i] = null;
+        }
+    }
+
+    /**
+     * Fill the array using the factory.
+     *
+     * @param array   the array.
+     * @param factory the element's factory.
+     * @param <T>     the element's type.
+     */
+    public static <T> void fill(@NotNull T[] array, @NotNull Supplier<T> factory) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = factory.get();
+        }
+    }
+
+    /**
+     * Fill the array using the factory which receives array's index.
+     *
+     * @param array   the array.
+     * @param factory the element's factory.
+     * @param <T>     the element's type.
+     */
+    public static <T> void fill(@NotNull T[] array, @NotNull IntFunction<T> factory) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = factory.apply(i);
+        }
+    }
+
+    /**
+     * Fill the array using the factory.
+     *
+     * @param array    the array.
+     * @param argument the additional argument.
+     * @param factory  the element's factory.
+     * @param <T>      the element's type.
+     */
+    public static <T, F> void fill(@NotNull T[] array, @Nullable F argument, @NotNull Function<F, T> factory) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = factory.apply(argument);
         }
     }
 
@@ -252,6 +249,25 @@ public final class ArrayUtils {
     }
 
     /**
+     * Copy and extend the array.
+     *
+     * @param <T>      the array component's type.
+     * @param original the source array.
+     * @param offset   the start position to copy in new array.
+     * @param added    the added size.
+     * @return the new array.
+     */
+    public static <T> @NotNull T[] copyOf(@NotNull T[] original, int offset, int added) {
+
+        Class<? extends Object[]> newType = original.getClass();
+        T[] newArray = create(newType.getComponentType(), original.length + added);
+
+        System.arraycopy(original, 0, newArray, offset, Math.min(original.length, newArray.length));
+
+        return newArray;
+    }
+
+    /**
      * Copy data form the source array to the destination array.
      *
      * @param source the source array.
@@ -340,7 +356,7 @@ public final class ArrayUtils {
      * @param size the size.
      * @return the new array.
      */
-    public static <T> @NotNull T[] create(@NotNull final Class<?> type, final int size) {
+    public static <T> @NotNull T[] create(@NotNull Class<?> type, int size) {
         return ClassUtils.unsafeCast(java.lang.reflect.Array.newInstance(type, size));
     }
 
@@ -641,13 +657,17 @@ public final class ArrayUtils {
     /**
      * Execute the function in write lock of the array.
      *
-     * @param <T>      the type parameter
+     * @param <T>      the element's type.
      * @param array    the array.
      * @param function the function.
      */
-    public static <T> void runInWriteLock(@NotNull final ConcurrentArray<T> array,
-                                          @NotNull final Consumer<@NotNull Array<T>> function) {
-        final long stamp = array.writeLock();
+    public static <T> void runInWriteLock(@Nullable ConcurrentArray<T> array, @NotNull Consumer<Array<T>> function) {
+
+        if (array == null) {
+            return;
+        }
+
+        long stamp = array.writeLock();
         try {
             function.accept(array);
         } finally {
@@ -747,15 +767,18 @@ public final class ArrayUtils {
     /**
      * Execute the function in write lock of the array.
      *
-     * @param <T>      the type parameter
-     * @param <V>      the type parameter
+     * @param <T>      the element's type.
+     * @param <V>      the argument's type.
      * @param array    the array.
      * @param argument the argument.
      * @param function the function.
      */
-    public static <T, V> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
-                                             @NotNull final BiConsumer<@NotNull Array<T>, V> function) {
-        final long stamp = array.writeLock();
+    public static <T, V> void runInWriteLock(
+            @NotNull ConcurrentArray<T> array,
+            @Nullable V argument,
+            @NotNull BiConsumer<@NotNull Array<T>, V> function
+    ) {
+        long stamp = array.writeLock();
         try {
             function.accept(array, argument);
         } finally {

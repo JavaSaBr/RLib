@@ -3,9 +3,7 @@ package com.ss.rlib.common.geom.util;
 import com.ss.rlib.common.geom.Vector3f;
 import com.ss.rlib.common.logging.Logger;
 import com.ss.rlib.common.logging.LoggerManager;
-import com.ss.rlib.common.geom.Vector3f;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.common.util.ExtMath;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -238,5 +236,28 @@ public final class CoordsUtils {
         loc.set(newX, newY, z);
 
         return loc;
+    }
+
+    /**
+     * Calculates the magnitude of the vector.
+     *
+     * @param x the X component.
+     * @param y the Y component.
+     * @return the length or magnitude of the vector.
+     */
+    public static float length(float x, float y) {
+        return ExtMath.sqrt(lengthSquared(x, y));
+    }
+
+    /**
+     * Calculates the squared value of the
+     * magnitude of the vector.
+     *
+     * @param x the X component.
+     * @param y the Y component.
+     * @return the magnitude squared of the vector.
+     */
+    public static float lengthSquared(float x, float y) {
+        return x * x + y * y;
     }
 }

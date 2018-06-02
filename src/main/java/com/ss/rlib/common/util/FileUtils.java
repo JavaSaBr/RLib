@@ -4,10 +4,6 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayComparator;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.UnsafeArray;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayComparator;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,20 +11,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.CharBuffer;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.FileTime;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static com.ss.rlib.common.util.ObjectUtils.notNull;
 
 /**
  * The utility class.
@@ -37,18 +35,14 @@ import java.util.zip.ZipInputStream;
  */
 public class FileUtils {
 
-    /**
-     * The constant FILE_PATH_LENGTH_COMPARATOR.
-     */
-    @NotNull
     public static final ArrayComparator<Path> FILE_PATH_LENGTH_COMPARATOR = (first, second) -> {
 
-        final int firstLength = first.getNameCount();
-        final int secondLength = second.getNameCount();
+        int firstLength = first.getNameCount();
+        int secondLength = second.getNameCount();
 
         if (firstLength == secondLength) {
-            final int firstLevel = Files.isDirectory(first) ? 2 : 1;
-            final int secondLevel = Files.isDirectory(first) ? 2 : 1;
+            int firstLevel = Files.isDirectory(first) ? 2 : 1;
+            int secondLevel = Files.isDirectory(first) ? 2 : 1;
             return firstLevel - secondLevel;
         }
 
@@ -72,10 +66,8 @@ public class FileUtils {
                     "$                                # Anchor to end of string.            ",
             Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE | Pattern.COMMENTS);
 
-    @NotNull
     private static final Pattern NORMALIZE_FILE_NAME_PATTERN = Pattern.compile("[\\\\/:*?\"<>|]");
 
-    @NotNull
     private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<Path>() {
 
         @Override
@@ -91,7 +83,6 @@ public class FileUtils {
         }
     };
 
-    @NotNull
     private static final Path[] EMPTY_PATHS = new Path[0];
 
     /**
@@ -489,20 +480,6 @@ public class FileUtils {
     }
 
     /**
-     * Convert the file to {@link URL}.
-     *
-     * @param path the path for converting.
-     * @return the URL of the path.
-     */
-    public static @NotNull URL toUrl(@NotNull final Path path)  {
-        try {
-            return path.toUri().toURL();
-        } catch (final MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Unzip the zip file to the destination folder.
      *
      * @param destination the destination folder.
@@ -526,7 +503,7 @@ public class FileUtils {
                 }
             }
 
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -538,13 +515,13 @@ public class FileUtils {
      * @param separator the separator.
      * @return the name.
      */
-    public static @NotNull String getName(@NotNull final String path, final char separator) {
+    public static @NotNull String getName(@NotNull String path, char separator) {
 
         if (path.length() < 2) {
             return path;
         }
 
-        final int index = path.lastIndexOf(separator);
+        int index = path.lastIndexOf(separator);
 
         if (index == -1) {
             return path;
@@ -554,19 +531,19 @@ public class FileUtils {
     }
 
     /**
-     * Get a parent of the file by the path and the separator.
+     * Get a parent path of the path using the separator.
      *
      * @param path      the path.
      * @param separator the separator.
-     * @return the parent.
+     * @return the parent path.
      */
-    public static @NotNull String getParent(@NotNull final String path, final char separator) {
+    public static @NotNull String getParent(@NotNull String path, char separator) {
 
         if (path.length() < 2) {
             return path;
         }
 
-        final int index = path.lastIndexOf(separator);
+        int index = path.lastIndexOf(separator);
 
         if (index == -1) {
             return path;
@@ -576,9 +553,65 @@ public class FileUtils {
     }
 
     /**
+     * @param directory the directory.
+     * @param attrs     the directory attributes.
      * @see Files#createDirectories(Path, FileAttribute[])
      */
     public static void createDirectories(@NotNull Path directory, @NotNull FileAttribute<?>... attrs) {
         Utils.run(directory, attrs, Files::createDirectories);
+    }
+
+    /**
+     * @param file    the file.
+     * @param options the link options.
+     * @see Files#getLastModifiedTime(Path, LinkOption...)
+     */
+    public static @NotNull FileTime getLastModifiedTime(@NotNull Path file, @NotNull LinkOption... options) {
+        return notNull(Utils.safeGet(file, options, Files::getLastModifiedTime));
+    }
+
+    /**
+     * Get a {@link URI} of the file.
+     *
+     * @param file the file.
+     * @return the {@link URI}.
+     */
+    public static @NotNull URI getUri(@NotNull Path file) {
+        return Utils.get(file, Path::toUri);
+    }
+
+    /**
+     * Get a {@link URL} of the file.
+     *
+     * @param file the file.
+     * @return the {@link URL}.
+     */
+    public static @NotNull URL getUrl(@NotNull Path file) {
+        return Utils.get(getUri(file), URI::toURL);
+    }
+
+    /**
+     * Create a new default watch service.
+     *
+     * @return the new default watch service.
+     * @see FileSystems#getDefault()
+     */
+    public static @NotNull WatchService newDefaultWatchService() {
+        try {
+            return FileSystems.getDefault().newWatchService();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @see Files#walkFileTree(Path, FileVisitor)
+     */
+    public static @NotNull Path walkFileTree(@NotNull Path start, @NotNull FileVisitor<? super Path> visitor) {
+        try {
+            return Files.walkFileTree(start, visitor);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
