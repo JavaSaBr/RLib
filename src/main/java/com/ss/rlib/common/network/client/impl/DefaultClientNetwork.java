@@ -1,5 +1,16 @@
 package com.ss.rlib.common.network.client.impl;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.ss.rlib.common.concurrent.GroupThreadFactory;
 import com.ss.rlib.common.network.NetworkConfig;
 import com.ss.rlib.common.network.client.ClientNetwork;
@@ -7,15 +18,6 @@ import com.ss.rlib.common.network.client.ConnectHandler;
 import com.ss.rlib.common.network.client.server.Server;
 import com.ss.rlib.common.network.impl.AbstractAsyncNetwork;
 import com.ss.rlib.common.network.packet.ReadablePacketRegistry;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * The base implementation of a async client network.
@@ -71,7 +73,7 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
             channel = AsynchronousSocketChannel.open(group);
             return channel;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

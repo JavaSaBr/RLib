@@ -1,11 +1,29 @@
 package com.ss.rlib.common.plugin.impl;
 
 import static com.ss.rlib.common.util.ObjectUtils.notNull;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.lang.reflect.Constructor;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.ss.rlib.common.classpath.ClassPathScanner;
 import com.ss.rlib.common.classpath.ClassPathScannerFactory;
 import com.ss.rlib.common.logging.Logger;
 import com.ss.rlib.common.logging.LoggerManager;
-import com.ss.rlib.common.plugin.*;
+import com.ss.rlib.common.plugin.ConfigurablePluginSystem;
+import com.ss.rlib.common.plugin.Plugin;
+import com.ss.rlib.common.plugin.PluginContainer;
+import com.ss.rlib.common.plugin.PluginSystem;
+import com.ss.rlib.common.plugin.Version;
 import com.ss.rlib.common.plugin.annotation.PluginDescription;
 import com.ss.rlib.common.plugin.exception.InitializePluginException;
 import com.ss.rlib.common.plugin.exception.PluginException;
@@ -17,17 +35,6 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.dictionary.DictionaryFactory;
 import com.ss.rlib.common.util.dictionary.ObjectDictionary;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * The base implementation of the {@link PluginSystem}.
@@ -219,7 +226,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             }
 
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

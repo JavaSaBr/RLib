@@ -1,19 +1,21 @@
 package com.ss.rlib.common.network.server;
 
-import com.ss.rlib.common.network.server.client.Client;
-import com.ss.rlib.common.network.server.client.ClientConnection;
-import com.ss.rlib.common.network.server.client.impl.DefaultClient;
-import com.ss.rlib.common.network.server.client.impl.DefaultClientConnection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.StandardSocketOptions;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.ss.rlib.common.network.server.client.Client;
+import com.ss.rlib.common.network.server.client.ClientConnection;
+import com.ss.rlib.common.network.server.client.impl.DefaultClient;
+import com.ss.rlib.common.network.server.client.impl.DefaultClientConnection;
 
 /**
  * The interface to implement a handler of accepted connections.
@@ -41,7 +43,7 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
                 channel.setOption(StandardSocketOptions.SO_SNDBUF, 12000);
                 channel.setOption(StandardSocketOptions.SO_RCVBUF, 24000);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
 
             ClientConnection connection = connectionFactory.apply(network, channel);
