@@ -2,14 +2,15 @@ package com.ss.rlib.common.data;
 
 import static java.nio.file.Files.newInputStream;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The file implementation of the parser of xml documents.
@@ -29,8 +30,8 @@ public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> 
         this.filePath = file.getAbsolutePath();
         try {
             setStream(new FileInputStream(file));
-        } catch (final FileNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -39,7 +40,7 @@ public abstract class AbstractFileDocument<C> extends AbstractStreamDocument<C> 
         try {
             setStream(newInputStream(path, StandardOpenOption.READ));
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
