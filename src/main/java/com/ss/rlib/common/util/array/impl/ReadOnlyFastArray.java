@@ -1,6 +1,7 @@
 package com.ss.rlib.common.util.array.impl;
 
 import com.ss.rlib.common.util.array.Array;
+import com.ss.rlib.common.util.array.ReadOnlyArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +15,7 @@ import java.util.function.Predicate;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
-public final class ReadOnlyFastArray<E> extends FastArray<E> {
+public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnlyArray<E> {
 
     public ReadOnlyFastArray(@NotNull E[] array) {
         super(array);

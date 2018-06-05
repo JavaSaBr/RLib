@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util.dictionary;
 
+import com.ss.rlib.common.function.TripleConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,14 +60,38 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
     }
 
     /**
+     * Execute the function for this dictionary in the block {@link ConcurrentObjectDictionary#writeLock()}.
+     *
+     * @param key      the key value.
+     * @param argument the additional argument,
+     * @param consumer the function.
+     * @param <F>      the argument's type.
+     * @return this dictionary.
+     */
+    default <F> @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
+            @NotNull K key,
+            @Nullable F argument,
+            @NotNull TripleConsumer<ConcurrentObjectDictionary<K, V>, K, F> consumer
+    ) {
+
+        long stamp = writeLock();
+        try {
+            consumer.accept(this, key, argument);
+        } finally {
+            writeUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
      * Get the value using a function from a dictionary in the block {@link
-     * ConcurrentObjectDictionary#readLock()}*.
+     * ConcurrentObjectDictionary#readLock()}.
      *
      * @param key      the key value.
      * @param function the function.
      * @return the result of the function.
      */
-
     default @Nullable V getInReadLock(
             @NotNull K key,
             @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, K, V> function
@@ -76,6 +101,26 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
             return function.apply(this, key);
         } finally {
             readUnlock(stamp);
+        }
+    }
+
+    /**
+     * Get the value using a function from a dictionary in the block {@link
+     * ConcurrentObjectDictionary#writeLock()}.
+     *
+     * @param key      the key value.
+     * @param function the function.
+     * @return the result of the function.
+     */
+    default @Nullable V getInWriteLock(
+            @NotNull K key,
+            @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, K, V> function
+    ) {
+        long stamp = writeLock();
+        try {
+            return function.apply(this, key);
+        } finally {
+            writeUnlock(stamp);
         }
     }
 }

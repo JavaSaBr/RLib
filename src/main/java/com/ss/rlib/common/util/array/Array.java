@@ -30,7 +30,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <T> the result element's type.
      * @return the empty array.
      */
-    static <T> @NotNull Array<T> empty() {
+    static <T> @NotNull ReadOnlyArray<T> empty() {
         return unsafeCast(ArrayFactory.EMPTY_ARRAY);
     }
 
@@ -41,11 +41,18 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <T> the element's type.
      * @return the new read only array.
      */
-    static <T> @NotNull Array<T> of(@NotNull T[] elements) {
+    static <T> @NotNull ReadOnlyArray<T> of(@NotNull T[] elements) {
         return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(elements, 0));
     }
 
-    static <T> @NotNull Array<T> of(@NotNull T element) {
+    /**
+     * Creates a single element read only array.
+     *
+     * @param element the element.
+     * @param <T>     the element's type.
+     * @return the read only array.
+     */
+    static <T> @NotNull ReadOnlyArray<T> of(@NotNull T element) {
 
         T[] newArray = ArrayUtils.create(element.getClass(), 1);
         newArray[0] = element;
@@ -54,12 +61,34 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     @SafeVarargs
-    static <T> @NotNull Array<T> of(@NotNull T element, @NotNull T... elements) {
+    static <T> @NotNull ReadOnlyArray<T> of(@NotNull T element, @NotNull T... elements) {
 
         T[] newArray = ArrayUtils.copyOf(elements, 1, 1);
         newArray[0] = element;
 
         return ArrayFactory.newReadOnlyArray(newArray);
+    }
+
+    /**
+     * Create a supplier which creates new arrays.
+     *
+     * @param type the element's type.
+     * @param <T>  the element's type.
+     * @return the supplier.
+     */
+    static <T> @NotNull Supplier<Array<T>> supplier(@NotNull Class<?> type) {
+        return () -> ArrayFactory.newConcurrentStampedLockArray(type);
+    }
+
+    /**
+     * Create a function which creates new arrays.
+     *
+     * @param type the element's type.
+     * @param <T>  the element's type.
+     * @return the supplier.
+     */
+    static <T> @NotNull Function<Class<?>, Array<T>> function(@NotNull Class<?> type) {
+        return ArrayFactory::newConcurrentStampedLockArray;
     }
 
     /**

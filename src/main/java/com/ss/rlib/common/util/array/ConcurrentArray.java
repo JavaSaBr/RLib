@@ -5,14 +5,49 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
- * The interface with methods for supporting threadsafe for the Array.
+ * The interface with methods to manage threadsafe for the Arrays.
  *
  * @param <E> the type parameter
  * @author JavaSaBr
  */
 public interface ConcurrentArray<E> extends Array<E> {
+
+    /**
+     * Creates a new concurrent array for the element's type.
+     *
+     * @param type the element's type.
+     * @param <T>  the element's type.
+     * @return the new concurrent array.
+     */
+    static <T> @NotNull ConcurrentArray<T> of(@NotNull Class<?> type) {
+        return ArrayFactory.newConcurrentStampedLockArray(type);
+    }
+
+    /**
+     * Create a supplier which creates new arrays.
+     *
+     * @param type the element's type.
+     * @param <T>  the element's type.
+     * @return the supplier.
+     */
+    static <T> @NotNull Supplier<ConcurrentArray<T>> supplier(@NotNull Class<?> type) {
+        return () -> ArrayFactory.newConcurrentStampedLockArray(type);
+    }
+
+    /**
+     * Create a function which creates new arrays.
+     *
+     * @param type the element's type.
+     * @param <T>  the element's type.
+     * @return the supplier.
+     */
+    static <T> @NotNull Function<Class<?>, ConcurrentArray<T>> function(@NotNull Class<?> type) {
+        return ArrayFactory::newConcurrentStampedLockArray;
+    }
 
     /**
      * Lock this array for reading.
@@ -84,6 +119,21 @@ public interface ConcurrentArray<E> extends Array<E> {
         }
 
         return this;
+    }
+
+    /**
+     * Execute the function in read lock of this array.
+     *
+     * @param function the function.
+     * @return some result.
+     */
+    default @Nullable E getInReadLock(@NotNull Function<ConcurrentArray<E>, E> function) {
+        long stamp = readLock();
+        try {
+            return function.apply(this);
+        } finally {
+            readUnlock(stamp);
+        }
     }
 
     /**

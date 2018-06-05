@@ -70,7 +70,7 @@ public class ArrayFactory {
      * @param <E> the element's type.
      * @return the new read only array.
      */
-    public static <E> Array<E> newReadOnlyArray(@NotNull E[] elements) {
+    public static <E> ReadOnlyArray<E> newReadOnlyArray(@NotNull E[] elements) {
         return new ReadOnlyFastArray<>(elements);
     }
 
