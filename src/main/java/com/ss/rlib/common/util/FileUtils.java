@@ -1,16 +1,12 @@
 package com.ss.rlib.common.util;
 
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayComparator;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.array.UnsafeArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import static com.ss.rlib.common.util.ObjectUtils.notNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.CharBuffer;
@@ -26,7 +22,13 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.ss.rlib.common.util.ObjectUtils.notNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.ss.rlib.common.util.array.Array;
+import com.ss.rlib.common.util.array.ArrayComparator;
+import com.ss.rlib.common.util.array.ArrayFactory;
+import com.ss.rlib.common.util.array.UnsafeArray;
 
 /**
  * The utility class.
@@ -139,7 +141,7 @@ public class FileUtils {
             }
 
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -219,7 +221,7 @@ public class FileUtils {
         try {
             deleteImpl(path);
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -404,7 +406,7 @@ public class FileUtils {
         try {
             return read(Files.newInputStream(Paths.get(path)));
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -432,7 +434,7 @@ public class FileUtils {
             }
 
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
 
         return content.toString();
@@ -448,7 +450,7 @@ public class FileUtils {
         try {
             return read(Files.newInputStream(file));
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -504,7 +506,7 @@ public class FileUtils {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -600,7 +602,7 @@ public class FileUtils {
         try {
             return FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -611,7 +613,7 @@ public class FileUtils {
         try {
             return Files.walkFileTree(start, visitor);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 }
