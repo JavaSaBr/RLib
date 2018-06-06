@@ -35,6 +35,17 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Create a new array for the element's type.
+     *
+     * @param type the element's type.
+     * @param <T>  the element's type.
+     * @return the new array.
+     */
+    static <T> @NotNull Array<T> of(@NotNull Class<?> type) {
+        return ArrayFactory.newArray(type);
+    }
+
+    /**
      * Wrap the array to a read only array.
      *
      * @param elements the elements to wrap.

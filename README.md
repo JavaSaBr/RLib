@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:7.1.6'
+    compile 'com.spaceshift:rlib.common:7.1.7'
 }
 ```
     
@@ -34,7 +34,7 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>7.1.6</version>
+    <version>7.1.7</version>
 </dependency>
 ```
 
@@ -124,7 +124,7 @@ dependencies {
 
 ```java
 
-    var array = ArrayFactory.<Integer>newConcurrentAtomicARSWLockArray(Integer.class);
+    var array = ConcurrentArray.<Integer>of(Integer.class);
     var writeStamp = array.writeLock();
     try {
         array.addAll(ArrayFactory.toArray(9, 8, 7, 6, 5, 4, 3));
@@ -141,11 +141,10 @@ dependencies {
         array.readUnlock(readStamp);
     }
 
-    var last = ArrayUtils.getInReadLock(array, Array::last);
-    var result = ArrayUtils.getInReadLock(array, last,
-            (arr, target) -> arr.search(target, Integer::equals));
+    var last = array.getInReadLock(Array::last);
+    var result = array.getInReadLock(last, (arr, target) -> arr.search(target, Integer::equals));
 
-    ArrayUtils.runInWriteLock(array, result + 1, Collection::add);
+    array.runInWriteLock(result + 1, Collection::add);
     
     // Stream Collector
     ConcurrentArray<Integer> result = IntStream.range(0, 1000)

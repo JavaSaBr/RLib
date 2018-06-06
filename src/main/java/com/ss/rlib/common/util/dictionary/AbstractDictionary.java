@@ -25,10 +25,10 @@ public abstract class AbstractDictionary<K, V> implements Dictionary<K, V> {
     protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     /**
-     * Gets the hash for the hashcode of the key.
+     * Calculate a hash of the hashcode.
      *
      * @param hashcode the hashcode.
-     * @return the hash for the {@link Dictionary}.
+     * @return the hash.
      */
     protected static int hash(int hashcode) {
         hashcode ^= hashcode >>> 20 ^ hashcode >>> 12;
@@ -36,25 +36,25 @@ public abstract class AbstractDictionary<K, V> implements Dictionary<K, V> {
     }
 
     /**
-     * Gets the hash for the long key of the key.
+     * Calculate a hash of the long key.
      *
      * @param key the long key.
-     * @return the hash for the {@link Dictionary}.
+     * @return the hash.
      */
-    protected static int hash(final long key) {
+    protected static int hash(long key) {
         int hash = (int) (key ^ key >>> 32);
         hash ^= hash >>> 20 ^ hash >>> 12;
         return hash ^ hash >>> 7 ^ hash >>> 4;
     }
 
     /**
-     * Gets the index of table in the {@link Dictionary}.
+     * Get an index of table in the {@link Dictionary}.
      *
-     * @param hash   the hash of the key.
-     * @param length the length of the table in the {@link Dictionary}.
-     * @return the index of this hash in the table.
+     * @param hash   the hash of a key.
+     * @param length the length of a table in the {@link Dictionary}.
+     * @return the index in the table.
      */
-    protected static int indexFor(final int hash, final int length) {
+    protected static int indexFor(int hash, int length) {
         return hash & length - 1;
     }
 

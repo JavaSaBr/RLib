@@ -2,8 +2,6 @@ package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.function.IntBiObjectConsumer;
 import com.ss.rlib.common.function.IntObjectConsumer;
-import com.ss.rlib.common.function.IntBiObjectConsumer;
-import com.ss.rlib.common.function.IntObjectConsumer;
 import com.ss.rlib.common.util.array.IntegerArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +16,17 @@ import java.util.function.Supplier;
  * @param <V> the type parameter
  */
 public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
+
+    /**
+     * Create a new integer dictionary for the value's type.
+     *
+     * @param valueType the value's type.
+     * @param <V>       the value's type.
+     * @return the new object dictionary.
+     */
+    static <V> @NotNull IntegerDictionary<V> of(@NotNull Class<?> valueType) {
+        return DictionaryFactory.newIntegerDictionary();
+    }
 
     /**
      * Contains key boolean.
