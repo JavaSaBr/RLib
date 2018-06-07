@@ -23,7 +23,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <T>  the element's type.
      * @return the new concurrent array.
      */
-    static <T> @NotNull ConcurrentArray<T> of(@NotNull Class<?> type) {
+    static <T> @NotNull ConcurrentArray<T> ofType(@NotNull Class<?> type) {
         return ArrayFactory.newConcurrentStampedLockArray(type);
     }
 
@@ -114,6 +114,47 @@ public interface ConcurrentArray<E> extends Array<E> {
         long stamp = readLock();
         try {
             function.accept(this);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Apply the function to each element in the {@link #readLock()} block.
+     *
+     * @param consumer the consumer.
+     * @return this array.
+     */
+    default @NotNull ConcurrentArray<E> forEachInReadLock(@NotNull Consumer<? super E> consumer) {
+
+        long stamp = readLock();
+        try {
+            forEach(consumer);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Apply the function to each element.
+     *
+     * @param <T>      the argument's type.
+     * @param argument the argument.
+     * @param function the function.
+     * @return this array.
+     */
+    default <T> @NotNull ConcurrentArray<E> forEachInReadLock(
+            @Nullable T argument,
+            @NotNull BiConsumer<E, T> function
+    ) {
+
+        long stamp = readLock();
+        try {
+            forEach(argument, function);
         } finally {
             readUnlock(stamp);
         }

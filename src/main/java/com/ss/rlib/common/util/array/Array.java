@@ -41,7 +41,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <T>  the element's type.
      * @return the new array.
      */
-    static <T> @NotNull Array<T> of(@NotNull Class<?> type) {
+    static <T> @NotNull Array<T> ofType(@NotNull Class<?> type) {
         return ArrayFactory.newArray(type);
     }
 

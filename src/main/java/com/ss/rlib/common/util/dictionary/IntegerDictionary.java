@@ -24,7 +24,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      * @param <V>       the value's type.
      * @return the new object dictionary.
      */
-    static <V> @NotNull IntegerDictionary<V> of(@NotNull Class<?> valueType) {
+    static <V> @NotNull IntegerDictionary<V> ofType(@NotNull Class<?> valueType) {
         return DictionaryFactory.newIntegerDictionary();
     }
 

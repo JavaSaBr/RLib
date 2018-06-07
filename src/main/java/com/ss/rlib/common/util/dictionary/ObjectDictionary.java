@@ -29,7 +29,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param <T>          the key's and value's type.
      * @return the new object dictionary.
      */
-    static <T> @NotNull ObjectDictionary<T, T> of(@NotNull Class<?> keyValueType) {
+    static <T> @NotNull ObjectDictionary<T, T> ofType(@NotNull Class<?> keyValueType) {
         return DictionaryFactory.newObjectDictionary();
     }
 
@@ -42,7 +42,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param <V>       the value's type.
      * @return the new object dictionary.
      */
-    static <K, V> @NotNull ObjectDictionary<K, V> of(@NotNull Class<?> keyType, @NotNull Class<?> valueType) {
+    static <K, V> @NotNull ObjectDictionary<K, V> ofType(@NotNull Class<?> keyType, @NotNull Class<?> valueType) {
         return DictionaryFactory.newObjectDictionary();
     }
 

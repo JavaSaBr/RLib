@@ -24,7 +24,7 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @param <T>          the key's and value's type.
      * @return the new concurrent object dictionary.
      */
-    static <T> @NotNull ObjectDictionary<T, T> of(@NotNull Class<?> keyValueType) {
+    static <T> @NotNull ObjectDictionary<T, T> ofType(@NotNull Class<?> keyValueType) {
         return DictionaryFactory.newConcurrentAtomicObjectDictionary();
     }
 
@@ -37,7 +37,7 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @param <V>       the value's type.
      * @return the new concurrent object dictionary.
      */
-    static <K, V> @NotNull ConcurrentObjectDictionary<K, V> of(@NotNull Class<?> keyType, @NotNull Class<?> valueType) {
+    static <K, V> @NotNull ConcurrentObjectDictionary<K, V> ofType(@NotNull Class<?> keyType, @NotNull Class<?> valueType) {
         return DictionaryFactory.newConcurrentAtomicObjectDictionary();
     }
 

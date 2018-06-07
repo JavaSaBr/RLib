@@ -19,10 +19,8 @@ public final class InitializeManager {
 
     private static final Logger LOGGER = LoggerManager.getLogger(InitializeManager.class);
 
-    @NotNull
     private static final String METHOD_NAME = "getInstance";
 
-    @NotNull
     private static final Deque<Class<?>> QUEUE = new ArrayDeque<>();
 
     /**
@@ -30,13 +28,13 @@ public final class InitializeManager {
      */
     public synchronized static void initialize() {
 
-        for (final Iterator<Class<?>> iterator = QUEUE.iterator(); iterator.hasNext(); ) {
+        for (Iterator<Class<?>> iterator = QUEUE.iterator(); iterator.hasNext(); ) {
 
-            final Class<?> next = iterator.next();
+            Class<?> next = iterator.next();
             try {
 
-                final Method method = next.getMethod(METHOD_NAME);
-                final Object instance = method.invoke(null);
+                Method method = next.getMethod(METHOD_NAME);
+                Object instance = method.invoke(null);
 
                 if (instance == null) {
                     LOGGER.warning("no initialize class " + next);
@@ -44,9 +42,9 @@ public final class InitializeManager {
 
                 iterator.remove();
 
-            } catch (final InvocationTargetException e) {
+            } catch (InvocationTargetException e) {
                 LOGGER.warning(e.getTargetException());
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException e) {
+            } catch (Throwable e) {
                 LOGGER.warning(e);
             }
         }
@@ -57,11 +55,11 @@ public final class InitializeManager {
      *
      * @param cs the class.
      */
-    public static synchronized void register(@NotNull final Class<?> cs) {
+    public static synchronized void register(@NotNull Class<?> cs) {
 
         try {
             cs.getMethod(METHOD_NAME);
-        } catch (final NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 
@@ -73,7 +71,7 @@ public final class InitializeManager {
      *
      * @param cs the class.
      */
-    public static synchronized void valid(@NotNull final Class<?> cs) {
+    public static synchronized void valid(@NotNull Class<?> cs) {
         if (QUEUE.getFirst() != cs) {
             throw new IllegalStateException("The class has invalid initialization position.");
         }

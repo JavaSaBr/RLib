@@ -1,10 +1,9 @@
 package com.ss.rlib.common.logging.impl;
 
-import com.ss.rlib.common.function.TripleFunction;
+import static com.ss.rlib.common.logging.LoggerManager.write;
 import com.ss.rlib.common.function.TripleFunction;
 import com.ss.rlib.common.logging.Logger;
 import com.ss.rlib.common.logging.LoggerLevel;
-import com.ss.rlib.common.logging.LoggerManager;
 import com.ss.rlib.common.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +17,6 @@ import java.util.function.Function;
  */
 public final class LoggerImpl implements Logger {
 
-    @NotNull
     private static final LoggerLevel[] VALUES = LoggerLevel.values();
 
     /**
@@ -43,107 +41,132 @@ public final class LoggerImpl implements Logger {
     }
 
     @Override
-    public void setName(@NotNull final String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
     @Override
-    public void info(@NotNull final Object owner, @NotNull final String message) {
-        if (!isEnabled(LoggerLevel.INFO)) return;
-        LoggerManager.write(LoggerLevel.INFO, owner.getClass().getSimpleName(), message);
+    public void info(@NotNull Object owner, @NotNull String message) {
+        if (isEnabled(LoggerLevel.INFO)) {
+            write(LoggerLevel.INFO, owner.getClass().getSimpleName(), message);
+        }
     }
 
     @Override
-    public void info(@NotNull final String message) {
-        if (!isEnabled(LoggerLevel.INFO)) return;
-        LoggerManager.write(LoggerLevel.INFO, getName(), message);
+    public void info(@NotNull String message) {
+        if (isEnabled(LoggerLevel.INFO)) {
+            write(LoggerLevel.INFO, getName(), message);
+        }
     }
 
     @Override
-    public boolean isEnabled(@NotNull final LoggerLevel level) {
-        final Boolean value = override[level.ordinal()];
+    public boolean isEnabled(@NotNull LoggerLevel level) {
+        Boolean value = override[level.ordinal()];
         return value != null && value || level.isEnabled();
     }
 
     @Override
-    public boolean setEnabled(@NotNull final LoggerLevel level, final boolean enabled) {
+    public boolean setEnabled(@NotNull LoggerLevel level, boolean enabled) {
         override[level.ordinal()] = enabled;
         return true;
     }
 
     @Override
-    public boolean applyDefault(@NotNull final LoggerLevel level) {
+    public boolean applyDefault(@NotNull LoggerLevel level) {
         override[level.ordinal()] = null;
         return true;
     }
 
     @Override
-    public void print(@NotNull final LoggerLevel level, @NotNull final String message) {
-        if (!isEnabled(level)) return;
-        LoggerManager.write(level, getName(), message);
+    public void print(@NotNull LoggerLevel level, @NotNull String message) {
+        if (isEnabled(level)) {
+            write(level, getName(), message);
+        }
     }
 
     @Override
-    public void print(@NotNull final LoggerLevel level, @NotNull final Object owner, @NotNull final String message) {
-        if (!isEnabled(level)) return;
-        LoggerManager.write(level, owner.getClass().getSimpleName(), message);
+    public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull String message) {
+        if (isEnabled(level)) {
+            write(level, owner.getClass().getSimpleName(), message);
+        }
     }
 
     @Override
-    public void print(@NotNull final LoggerLevel level, @NotNull final Object owner,
-                      @NotNull final Throwable exception) {
-        if (!isEnabled(level)) return;
-        LoggerManager.write(level, owner.getClass().getSimpleName(), StringUtils.toString(exception));
+    public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull Throwable exception) {
+        if (isEnabled(level)) {
+            write(level, owner.getClass().getSimpleName(), StringUtils.toString(exception));
+        }
     }
 
     @Override
-    public void print(@NotNull final LoggerLevel level, @NotNull final Throwable exception) {
-        if (!isEnabled(level)) return;
-        LoggerManager.write(level, getName(), StringUtils.toString(exception));
+    public void print(@NotNull LoggerLevel level, @NotNull Throwable exception) {
+        if (isEnabled(level)) {
+            write(level, getName(), StringUtils.toString(exception));
+        }
     }
 
     @Override
-    public <T> void print(@NotNull final LoggerLevel level, @NotNull final Object owner, @NotNull final T arg,
-                          @NotNull final Function<@NotNull T, String> messageFactory) {
-        if (!isEnabled(level)) return;
-        LoggerManager.write(level, owner.getClass().getSimpleName(), arg, messageFactory);
+    public <T> void print(
+            @NotNull LoggerLevel level,
+            @NotNull Object owner,
+            @NotNull T arg,
+            @NotNull Function<T, String> messageFactory
+    ) {
+        if (isEnabled(level)) {
+            write(level, owner.getClass().getSimpleName(), arg, messageFactory);
+        }
     }
 
     @Override
-    public <F, S> void print(@NotNull final LoggerLevel level, @NotNull final Object owner, @NotNull final F first,
-                             @NotNull final S second,
-                             @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
-        if (!isEnabled(level)) return;
-        LoggerManager.write(level, owner.getClass().getSimpleName(), first, second, messageFactory);
-
+    public <F, S> void print(
+            @NotNull LoggerLevel level,
+            @NotNull Object owner,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull BiFunction<F, S, String> messageFactory
+    ) {
+        if (isEnabled(level)) {
+            write(level, owner.getClass().getSimpleName(), first, second, messageFactory);
+        }
     }
 
     @Override
-    public <F, S, T> void print(@NotNull final LoggerLevel level, @NotNull final Object owner, @NotNull final F first,
-                                @NotNull final S second, @NotNull final T third,
-                                @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
-        if (!isEnabled(level)) return;
-        LoggerManager.write(level, owner.getClass().getSimpleName(), first, second, third, messageFactory);
-
+    public <F, S, T> void print(
+            @NotNull LoggerLevel level,
+            @NotNull Object owner,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull final T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    ) {
+        if (isEnabled(level)) {
+            write(level, owner.getClass().getSimpleName(), first, second, third, messageFactory);
+        }
     }
 
     @Override
-    public <T> void print(@NotNull final LoggerLevel level, @NotNull final T arg,
-                          @NotNull final Function<@NotNull T, String> messageFactory) {
-        LoggerManager.write(level, getName(), arg, messageFactory);
-
+    public <T> void print(@NotNull LoggerLevel level, @NotNull T arg, @NotNull Function<T, String> messageFactory) {
+        write(level, getName(), arg, messageFactory);
     }
 
     @Override
-    public <F, S> void print(@NotNull final LoggerLevel level, @NotNull final F first, @NotNull final S second,
-                             @NotNull final BiFunction<@NotNull F, @NotNull S, String> messageFactory) {
-        LoggerManager.write(level, getName(), first, second, messageFactory);
+    public <F, S> void print(
+            @NotNull LoggerLevel level,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull BiFunction<F, S, String> messageFactory
+    ) {
+        write(level, getName(), first, second, messageFactory);
     }
 
     @Override
-    public <F, S, T> void print(@NotNull final LoggerLevel level, @NotNull final F first, @NotNull final S second,
-                                @NotNull final T third,
-                                @NotNull final TripleFunction<@NotNull F, @NotNull S, @NotNull T, String> messageFactory) {
-        LoggerManager.write(level, getName(), first, second, third, messageFactory);
+    public <F, S, T> void print(
+            @NotNull LoggerLevel level,
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull T third,
+            @NotNull TripleFunction<F, S, T, String> messageFactory
+    ) {
+        write(level, getName(), first, second, third, messageFactory);
     }
 }
