@@ -354,6 +354,31 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Apply the function to each converted element.
+     *
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
+     * @param argument  the argument.
+     * @param converter the converter from T to C.
+     * @param function  the function.
+     */
+    default <T, C> void forEach(
+            @Nullable T argument,
+            @NotNull Function<E, C> converter,
+            @NotNull BiConsumer<C, T> function
+    ) {
+
+        for (E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            function.accept(converter.apply(element), argument);
+        }
+    }
+
+    /**
      * Apply the function to each filtered element.
      *
      * @param <T>       the type of an argument.

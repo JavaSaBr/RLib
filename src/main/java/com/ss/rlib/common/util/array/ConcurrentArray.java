@@ -3,10 +3,7 @@ package com.ss.rlib.common.util.array;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  * The interface with methods to manage threadsafe for the Arrays.
@@ -108,6 +105,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * Execute the function in read lock of this array.
      *
      * @param function the function.
+     * @return this array.
      */
     default @NotNull ConcurrentArray<E> runInReadLock(@NotNull Consumer<ConcurrentArray<E>> function) {
 
@@ -140,7 +138,7 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Apply the function to each element.
+     * Apply the function to each element in the {@link #readLock()} block.
      *
      * @param <T>      the argument's type.
      * @param argument the argument.
@@ -155,6 +153,32 @@ public interface ConcurrentArray<E> extends Array<E> {
         long stamp = readLock();
         try {
             forEach(argument, function);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Apply the function to each converted element in the {@link #readLock()} block.
+     *
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
+     * @param argument  the argument.
+     * @param converter the converter from T to C.
+     * @param function  the function.
+     * @return this array.
+     */
+    default <T, C> ConcurrentArray<E> forEachInReadLock(
+            @Nullable T argument,
+            @NotNull Function<E, C> converter,
+            @NotNull BiConsumer<C, T> function
+    ) {
+
+        long stamp = readLock();
+        try {
+            forEach(argument, converter, function);
         } finally {
             readUnlock(stamp);
         }
@@ -183,6 +207,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <F>      the argument's type.
      * @param argument the argument.
      * @param function the function.
+     * @return this array.
      */
     default <F> ConcurrentArray<E> runInReadLock(
         @Nullable F argument,
@@ -223,6 +248,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <F>      the argument's type.
      * @param argument the argument.
      * @param function the function.
+     * @return this array.
      */
     default <F> ConcurrentArray<E> runInWriteLock(
             @Nullable F argument,
@@ -237,5 +263,37 @@ public interface ConcurrentArray<E> extends Array<E> {
         }
 
         return this;
+    }
+
+    /**
+     * Search an element using the condition in the {@link #readLock()} block.
+     *
+     * @param <T>       the argument's type.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return the found element or null.
+     */
+    default <T> @Nullable E searchInReadLock(@Nullable T argument, @NotNull BiPredicate<E, T> predicate) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        long stamp = readLock();
+        try {
+
+            for (E element : array()) {
+                if (element == null) {
+                    break;
+                } else if (predicate.test(element, argument)) {
+                    return element;
+                }
+            }
+
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return null;
     }
 }
