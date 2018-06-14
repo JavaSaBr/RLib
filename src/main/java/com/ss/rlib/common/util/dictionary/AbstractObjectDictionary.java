@@ -1,6 +1,5 @@
 package com.ss.rlib.common.util.dictionary;
 
-import com.ss.rlib.common.function.TripleConsumer;
 import com.ss.rlib.common.function.FourObjectConsumer;
 import com.ss.rlib.common.function.TripleConsumer;
 import com.ss.rlib.common.util.ArrayUtils;
@@ -193,7 +192,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public @NotNull V get(@NotNull final K key, @NotNull final Supplier<V> factory) {
+    public @NotNull V get(@NotNull K key, @NotNull Supplier<V> factory) {
 
         ObjectEntry<K, V> entry = getEntry(key);
 

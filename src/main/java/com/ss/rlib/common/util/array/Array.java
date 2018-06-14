@@ -839,7 +839,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param comparator the comparator.
      * @return the array
      */
-    default @NotNull Array<E> sort(@NotNull ArrayComparator<@NotNull E> comparator) {
+    default @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
         ArrayUtils.sort(array(), 0, size(), comparator);
         return this;
     }

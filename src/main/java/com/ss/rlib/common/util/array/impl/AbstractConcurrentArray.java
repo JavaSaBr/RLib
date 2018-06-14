@@ -33,29 +33,17 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
      */
     private volatile E[] array;
 
-    /**
-     * Instantiates a new Abstract concurrent array.
-     *
-     * @param type the type
-     */
-    public AbstractConcurrentArray(@NotNull final Class<E> type) {
+    public AbstractConcurrentArray(@NotNull Class<E> type) {
         this(type, 10);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent array.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public AbstractConcurrentArray(@NotNull final Class<E> type, final int size) {
+    public AbstractConcurrentArray(@NotNull Class<E> type, int size) {
         super(type, size);
-
         this.size = new AtomicInteger();
     }
 
     @Override
-    public boolean add(@NotNull final E element) {
+    public boolean add(@NotNull E element) {
 
         if (size() == array.length) {
             array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
@@ -66,13 +54,16 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     @Override
-    public final boolean addAll(@NotNull final Array<? extends E> elements) {
-        if (elements.isEmpty()) return false;
+    public final boolean addAll(@NotNull Array<? extends E> elements) {
 
-        final int current = array.length;
-        final int selfSize = size();
-        final int targetSize = elements.size();
-        final int diff = selfSize + targetSize - current;
+        if (elements.isEmpty()) {
+            return false;
+        }
+
+        int current = array.length;
+        int selfSize = size();
+        int targetSize = elements.size();
+        int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
             array = copyOf(array, max(current >> 1, diff));

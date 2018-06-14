@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:7.1.7'
+    compile 'com.spaceshift:rlib.common:7.1.8'
 }
 ```
     
@@ -22,7 +22,7 @@ dependencies {
 ```xml
 <repositories>
     <repository>
-        <snapshots>
+        <snapshots>;
             <enabled>false</enabled>
         </snapshots>
         <id>bintray-javasabr-maven</id>
@@ -34,7 +34,7 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>7.1.7</version>
+    <version>7.1.8</version>
 </dependency>
 ```
 
