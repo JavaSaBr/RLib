@@ -25,18 +25,10 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     /**
      * The unsafe array.
      */
-    protected AtomicReference<E[]> array;
+    protected volatile AtomicReference<E[]> array;
 
-    public CopyOnModifyArray(@NotNull Class<E> type) {
-        super(type);
-    }
-
-    public CopyOnModifyArray(@NotNull Class<E> type, final int size) {
+    public CopyOnModifyArray(@NotNull Class<E> type, int size) {
         super(type, size);
-    }
-
-    public CopyOnModifyArray(@NotNull E[] array) {
-        super(array);
     }
 
     @Override
@@ -147,6 +139,11 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
 
     @Override
     protected final void setArray(@NotNull E[] array) {
+
+        if (this.array == null) {
+            this.array = new AtomicReference<>();
+        }
+
         this.array.set(array);
     }
 

@@ -49,7 +49,7 @@ public class ArrayFactory {
      */
     public static <E> Array<E> newCopyOnModifyArray(@NotNull Class<?> type) {
         Class<E> casted = unsafeCast(type);
-        return new CopyOnModifyArray<>(casted);
+        return new CopyOnModifyArray<>(casted, 0);
     }
 
     /**
