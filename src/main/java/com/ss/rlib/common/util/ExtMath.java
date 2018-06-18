@@ -324,6 +324,11 @@ public final class ExtMath {
         if(time > 1.0f) {
             return max;
         }
+        
+        if(time < 0.0f) {
+            return min;
+        }
+        
         return lerpUnnormal(min, max, time);
     }
     
