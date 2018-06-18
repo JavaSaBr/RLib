@@ -1,11 +1,19 @@
 package com.ss.rlib.common.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * The utility class.
  *
  * @author JavaSaBr
  */
 public final class ExtMath {
+
+    public static final Float ZERO_FLOAT = 0F;
+    public static final Double ZERO_DOUBLE = 0D;
+    public static final Integer ZERO_INTEGER = 0;
+    public static final Long ZERO_LONG = 0L;
 
     /**
      * The value PI as a float. (180 degrees).
@@ -229,6 +237,58 @@ public final class ExtMath {
     public static boolean greaterThan(double first, double second, double epsilon) {
         return first - second > epsilon;
     }
+
+    /**
+     * Cut the second part of the float value by the mod. For example: cut(1.123456F, 3) returns 1.123F.
+     *
+     * @param value the value.
+     * @param mod   the mod.
+     * @return the cut value.
+     */
+    public static float cut(float value, float mod) {
+        return (int) (value * mod) / mod;
+    }
+
+    /**
+     * Returns zero if the value is null.
+     *
+     * @param value the value.
+     * @return zero if the value is null.
+     */
+    public static @NotNull Float zeroIfNull(@Nullable Float value) {
+        return value == null ? ZERO_FLOAT : value;
+    }
+
+    /**
+     * Returns zero if the value is null.
+     *
+     * @param value the value.
+     * @return zero if the value is null.
+     */
+    public static @NotNull Double zeroIfNull(@Nullable Double value) {
+        return value == null ? ZERO_DOUBLE : value;
+    }
+
+    /**
+     * Returns zero if the value is null.
+     *
+     * @param value the value.
+     * @return zero if the value is null.
+     */
+    public static @NotNull Integer zeroIfNull(@Nullable Integer value) {
+        return value == null ? ZERO_INTEGER : value;
+    }
+
+    /**
+     * Returns zero if the value is null.
+     *
+     * @param value the value.
+     * @return zero if the value is null.
+     */
+    public static @NotNull Long zeroIfNull(@Nullable Long value) {
+        return value == null ? ZERO_LONG : value;
+    }
+
 
     private ExtMath() {
         throw new RuntimeException();

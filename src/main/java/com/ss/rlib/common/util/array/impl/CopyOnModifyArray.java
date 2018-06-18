@@ -1,15 +1,19 @@
 package com.ss.rlib.common.util.array.impl;
 
 import com.ss.rlib.common.concurrent.atomic.AtomicReference;
+import com.ss.rlib.common.function.TriplePredicate;
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayComparator;
 import com.ss.rlib.common.util.array.ArrayIterator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * The implementation of the array which create a new back-end array for each modification.
@@ -174,6 +178,46 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
         }
 
         return this;
+    }
+
+    @Override
+    public @Nullable E search(@NotNull Predicate<E> predicate) {
+
+        for (E element : array()) {
+            if (predicate.test(element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public <T> @Nullable E search(@Nullable T argument, @NotNull BiPredicate<E, T> predicate) {
+
+        for (E element : array()) {
+            if (predicate.test(element, argument)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public <F, S> @Nullable E search(
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull TriplePredicate<E, F, S> predicate
+    ) {
+
+        for (E element : array()) {
+            if (predicate.test(element, first, second)) {
+                return element;
+            }
+        }
+
+        return null;
     }
 
     @Override

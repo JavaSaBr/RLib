@@ -147,4 +147,18 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
             writeUnlock(stamp);
         }
     }
+
+    /**
+     * Performs the given action for each key-value pair of this dictionary.
+     *
+     * @param consumer the consumer.
+     */
+    default void forEachInReadLock(@NotNull BiConsumer<? super K, ? super V> consumer) {
+        long stamp = readLock();
+        try {
+            forEach(consumer);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
 }
