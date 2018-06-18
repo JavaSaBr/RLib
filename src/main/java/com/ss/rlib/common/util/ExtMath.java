@@ -288,6 +288,56 @@ public final class ExtMath {
     public static @NotNull Long zeroIfNull(@Nullable Long value) {
         return value == null ? ZERO_LONG : value;
     }
+    
+    /**
+     * Clamps value between min and max.
+     * 
+     * @param value value
+     * @param min minimal value
+     * @param max maximal value
+     * @return clamped value
+     */
+    public static float clamp(float value, float min, float max) {
+        return value > max ? max : value < min ? min : value;
+    }
+    
+    /**
+     * Clamps value between 0 and 1.
+     * 
+     * @param value
+     * @return clamped value
+     */
+    public static float clamp(float value) {
+        return clamp(value, 0f, 1f);
+    }
+    
+    /**
+     * Linear interpolation. 
+     * If time is greater than 1.0 return maximal value.
+     * 
+     * @param min minimal value
+     * @param max maximal value
+     * @param time time
+     * @return interpolated value
+     */
+    public static float lerp(float min, float max, float time) {
+        if(time > 1.0f) {
+            return max;
+        }
+        return lerpUnnormal(min, max, time);
+    }
+    
+    /**
+     * Linear interpolation.
+     * 
+     * @param min minimal value
+     * @param max maximal value
+     * @param time time
+     * @return interpolated value
+     */
+    public static float lerpUnnormal(float min, float max, float time) {
+        return (1.f - time) * min + time * max;
+    }
 
 
     private ExtMath() {
