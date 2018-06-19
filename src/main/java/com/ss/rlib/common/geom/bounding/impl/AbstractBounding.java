@@ -1,17 +1,14 @@
 package com.ss.rlib.common.geom.bounding.impl;
 
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.common.geom.Quaternion4f;
 import com.ss.rlib.common.geom.Ray3f;
 import com.ss.rlib.common.geom.Vector3f;
-import org.jetbrains.annotations.NotNull;
-
-import com.ss.rlib.common.geom.Quaternion4f;
 import com.ss.rlib.common.geom.Vector3fBuffer;
 import com.ss.rlib.common.geom.bounding.Bounding;
 import com.ss.rlib.common.geom.bounding.BoundingType;
 import com.ss.rlib.common.logging.Logger;
 import com.ss.rlib.common.logging.LoggerManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The base implementation of a bounding.
@@ -20,9 +17,6 @@ import com.ss.rlib.common.logging.LoggerManager;
  */
 public abstract class AbstractBounding implements Bounding {
 
-    /**
-     * The constant LOGGER.
-     */
     protected static final Logger LOGGER = LoggerManager.getLogger(Bounding.class);
 
     /**
@@ -41,13 +35,13 @@ public abstract class AbstractBounding implements Bounding {
     }
 
     @Override
-    public boolean contains(float x, float y, float z, @NotNull Vector3fBuffer buffer) {
+    public boolean contains(float x, float y, float z) {
         return false;
     }
 
     @Override
-    public boolean contains(@NotNull Vector3f point, @NotNull Vector3fBuffer buffer) {
-        return contains(point.getX(), point.getY(), point.getZ(), buffer);
+    public boolean contains(@NotNull Vector3f point) {
+        return contains(point.getX(), point.getY(), point.getZ());
     }
 
     @Override
@@ -81,6 +75,21 @@ public abstract class AbstractBounding implements Bounding {
     }
 
     @Override
+    public float getResultCenterX() {
+        return getCenter().getX();
+    }
+
+    @Override
+    public float getResultCenterY() {
+        return getCenter().getY();
+    }
+
+    @Override
+    public float getResultCenterZ() {
+        return getCenter().getZ();
+    }
+
+    @Override
     public boolean intersects(@NotNull Bounding bounding, @NotNull Vector3fBuffer buffer) {
         return false;
     }
@@ -97,5 +106,17 @@ public abstract class AbstractBounding implements Bounding {
 
     @Override
     public void update(@NotNull Quaternion4f rotation, @NotNull Vector3fBuffer buffer) {
+    }
+
+    // deprecated
+
+    @Override
+    public boolean contains(float x, float y, float z, @NotNull Vector3fBuffer buffer) {
+        return contains(x, y, z);
+    }
+
+    @Override
+    public boolean contains(@NotNull Vector3f point, @NotNull Vector3fBuffer buffer) {
+        return contains(point.getX(), point.getY(), point.getZ());
     }
 }

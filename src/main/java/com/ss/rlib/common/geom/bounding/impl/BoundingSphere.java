@@ -2,6 +2,7 @@ package com.ss.rlib.common.geom.bounding.impl;
 
 import static java.lang.Math.abs;
 
+import com.ss.rlib.common.geom.util.GeometryUtils;
 import org.jetbrains.annotations.NotNull;
 
 import com.ss.rlib.common.geom.Vector3f;
@@ -26,14 +27,7 @@ public class BoundingSphere extends AbstractBounding {
      */
     protected float squareRadius;
 
-    /**
-     * Instantiates a new Bounding sphere.
-     *
-     * @param center the center
-     * @param offset the offset
-     * @param radius the radius
-     */
-    public BoundingSphere(@NotNull final Vector3f center, @NotNull final Vector3f offset, final float radius) {
+    public BoundingSphere(@NotNull Vector3f center, @NotNull Vector3f offset, float radius) {
         super(center, offset);
 
         this.radius = radius;
@@ -41,14 +35,32 @@ public class BoundingSphere extends AbstractBounding {
     }
 
     @Override
-    public boolean contains(final float x, final float y, final float z, @NotNull final Vector3fBuffer buffer) {
-        final Vector3f center = getResultCenter(buffer);
-        return center.distanceSquared(x, y, z) < squareRadius;
+    public boolean contains(float x, float y, float z) {
+
+        float startX = getResultCenterX();
+        float centerY = getResultCenterY();
+        float centerZ = getResultCenterZ();
+
+        return GeometryUtils.getSquareDistance(startX, centerY, centerZ, x, y, z) < squareRadius;
     }
 
-    @NotNull
     @Override
-    public BoundingType getBoundingType() {
+    public float getResultCenterZ() {
+        return center.getZ() + offset.getZ();
+    }
+
+    @Override
+    public float getResultCenterY() {
+        return center.getY() + offset.getY();
+    }
+
+    @Override
+    public float getResultCenterX() {
+        return center.getX() + offset.getX();
+    }
+
+    @Override
+    public @NotNull BoundingType getBoundingType() {
         return BoundingType.SPHERE;
     }
 
@@ -61,11 +73,10 @@ public class BoundingSphere extends AbstractBounding {
         return radius;
     }
 
-    @NotNull
     @Override
-    public Vector3f getResultCenter(@NotNull final Vector3fBuffer buffer) {
+    public @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer) {
 
-        final Vector3f vector = buffer.nextVector();
+        Vector3f vector = buffer.nextVector();
         vector.set(center);
 
         if (offset == Vector3f.ZERO) {
