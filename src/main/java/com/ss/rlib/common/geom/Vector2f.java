@@ -1,8 +1,13 @@
 package com.ss.rlib.common.geom;
 
 import static java.lang.Float.floatToIntBits;
+import static java.lang.Float.isInfinite;
+import static java.lang.Float.isNaN;
 
 import com.ss.rlib.common.util.ExtMath;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Implementation of float vector in 2D space (two coordinates)
@@ -10,43 +15,86 @@ import com.ss.rlib.common.util.ExtMath;
  * @author zcxv
  */
 public class Vector2f {
-    
+
+    public final static Vector2f ZERO = new Vector2f(0, 0);
+    public final static Vector2f NAN = new Vector2f(Float.NaN, Float.NaN);
+
+    public final static Vector2f UNIT_X = new Vector2f(1, 0);
+    public final static Vector2f UNIT_Y = new Vector2f(0, 1);
+
+    public final static Vector2f UNIT_XYZ = new Vector2f(1, 1);
+
+    public final static Vector2f POSITIVE_INFINITY = new Vector2f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+    public final static Vector2f NEGATIVE_INFINITY = new Vector2f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+
+    /**
+     * Return true if the vector is valid.
+     *
+     * @param vector the vector.
+     * @return true if the vector is valid.
+     */
+    public static boolean isValidVector(@Nullable Vector2f vector) {
+
+        if (vector == null) {
+            return false;
+        } else if (isNaN(vector.getX()) || isNaN(vector.getY())) {
+            return false;
+        } else {
+            return !isInfinite(vector.getX()) && !isInfinite(vector.getY());
+        }
+    }
+
+    /**
+     * The X component.
+     */
     private float x;
+
+    /**
+     * The Y component.
+     */
     private float y;
     
     public Vector2f() {
     }
     
-    public Vector2f(float v) {
-        this.x = v;
-        this.y = v;
+    public Vector2f(float value) {
+        this.x = value;
+        this.y = value;
     }
     
     public Vector2f(float x, float y) {
         this.x = x;
         this.y = y;
     }
-    
+
+    public Vector2f(@NotNull float[] components) {
+        this(components[0], components[1]);
+    }
+
+    public Vector2f(@NotNull Vector2f another) {
+        this(another.getX(), another.getY());
+    }
+
     /**
      * Add coordinates to this vector.
      * 
-     * @param addX x axis value
-     * @param addY y axis value
+     * @param addX x axis value.
+     * @param addY y axis value.
      * @return this vector
      */
-    public Vector2f addLocal(float addX, float addY) {
+    public @NotNull Vector2f addLocal(float addX, float addY) {
         x += addX;
         y += addY;
         return this;
     }
-    
+
     /**
-     * Add other vector to this vector.
-     * 
-     * @param vector other vector
-     * @return this vector
+     * Add the vector to this vector.
+     *
+     * @param vector the vector.
+     * @return this vector.
      */
-    public Vector2f addLocal(Vector2f vector) {
+    public @NotNull Vector2f addLocal(@NotNull Vector2f vector) {
         return addLocal(vector.x, vector.y);
     }
     
@@ -56,7 +104,7 @@ public class Vector2f {
      * @param vector the vector.
      * @return the distance.
      */
-    public float distance(Vector2f vector) {
+    public float distance(@NotNull Vector2f vector) {
         return ExtMath.sqrt(distanceSquared(vector));
     }
     
@@ -69,8 +117,8 @@ public class Vector2f {
      */
     public float distanceSquared(float targetX, float targetY) {
 
-        final float dx = x - targetX;
-        final float dy = y - targetY;
+        float dx = x - targetX;
+        float dy = y - targetY;
 
         return dx * dx + dy * dy;
     }
@@ -81,22 +129,22 @@ public class Vector2f {
      * @param vector the vector.
      * @return the squared distance.
      */
-    public float distanceSquared(Vector2f vector) {
+    public float distanceSquared(@NotNull Vector2f vector) {
         return distanceSquared(vector.x, vector.y);
     }
 
     /**
-     * Dot float.
+     * Calculate dot to the vector.
      *
-     * @param vector the vector
-     * @return dot product
+     * @param vector the vector.
+     * @return the dot product.
      */
-    public float dot(Vector2f vector) {
+    public float dot(@NotNull Vector2f vector) {
         return x * vector.x + y * vector.y;
     }
     
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable Object obj) {
 
         if (this == obj) {
             return true;
@@ -106,7 +154,7 @@ public class Vector2f {
             return false;
         }
 
-        final Vector2f other = (Vector2f) obj;
+        Vector2f other = (Vector2f) obj;
 
         if (floatToIntBits(x) != floatToIntBits(other.x)) {
             return false;
@@ -132,7 +180,7 @@ public class Vector2f {
      * @param x the X component.
      * @return this vector.
      */
-    public Vector2f setX(float x) {
+    public @NotNull Vector2f setX(float x) {
         this.x = x;
         return this;
     }
@@ -152,14 +200,14 @@ public class Vector2f {
      * @param y the Y component.
      * @return this vector.
      */
-    public Vector2f setY(float y) {
+    public @NotNull Vector2f setY(float y) {
         this.y = y;
         return this;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
         result = prime * result + Float.floatToIntBits(x);
         result = prime * result + Float.floatToIntBits(y);
@@ -172,68 +220,68 @@ public class Vector2f {
      * @return true if all components are zero.
      */
     public boolean isZero() {
-        return x == 0 && y == 0;
+        return ExtMath.isZero(x) && ExtMath.isZero(y);
     }
 
     /**
-     * Multiply local vector.
+     * Multiply this vector by the scalar.
      *
-     * @param scalar the scalar
-     * @return this vector
+     * @param scalar the scalar.
+     * @return this vector.
      */
-    public Vector2f multLocal(float scalar) {
+    public @NotNull Vector2f multLocal(float scalar) {
         return multLocal(scalar, scalar);
     }
 
     /**
-     * Multiply local vector.
+     * Multiply this vector by the X and Y scalars.
      *
-     * @param x the x
-     * @param y the y
-     * @return this vector
+     * @param x the x scalar.
+     * @param y the y scalar.
+     * @return this vector.
      */
-    public Vector2f multLocal(float x, float y) {
+    public @NotNull Vector2f multLocal(float x, float y) {
         this.x *= x;
         this.y *= y;
         return this;
     }
 
     /**
-     * Multiply local vector.
+     * Multiply this vector by the vector.
      *
-     * @param vector the vector
-     * @return this vector
+     * @param vector the vector.
+     * @return this vector.
      */
-    public Vector2f multLocal(final Vector2f vector) {
+    public @NotNull Vector2f multLocal(@NotNull Vector2f vector) {
         return multLocal(vector.getX(), vector.getY());
     }
 
     /**
-     * Negate vector.
+     * Create a new vector as negative of this vector.
      *
-     * @return result vector
+     * @return the new negative vector.
      */
-    public Vector2f negate() {
+    public @NotNull Vector2f negate() {
         return new Vector2f(-getX(), -getY());
     }
     
     /**
-     * Negate local vector.
+     * Invert this vector to get a negative vector.
      *
-     * @return this vector
+     * @return this vector.
      */
-    public Vector2f negateLocal() {
+    public @NotNull Vector2f negateLocal() {
         x = -x;
         y = -y;
         return this;
     }
 
     /**
-     * Normalize vector.
+     * Create a normalized vector from this vector.
      *
-     * @return result vector
+     * @return the new normalized vector.
      */
-    public Vector2f normalize() {
+    public @NotNull Vector2f normalize() {
 
         float length = x * x + y * y;
 
@@ -246,11 +294,11 @@ public class Vector2f {
     }
 
     /**
-     * Normalize local vector.
+     * Normalize this vector.
      *
-     * @return this vector
+     * @return ths vector.
      */
-    public Vector2f normalizeLocal() {
+    public @NotNull Vector2f normalizeLocal() {
 
         float length = x * x + y * y;
 
@@ -264,36 +312,36 @@ public class Vector2f {
     }
 
     /**
-     * Set vector.
+     * Set components from the vector to this vector.
      *
-     * @param vector the vector
-     * @return this vector
+     * @param vector the vector.
+     * @return this vector.
      */
-    public Vector2f set(Vector2f vector) {
-        return set(vector.getX(), vector.getY());
+    public @NotNull Vector2f set(@NotNull Vector2f vector) {
+        return set(vector.x, vector.y);
     }
 
     /**
-     * Set vector.
+     * Set the components to this vector.
      *
-     * @param x x coordinate
-     * @param y y coordinate
-     * @return this vector
+     * @param x x component.
+     * @param y y component.
+     * @return this vector.
      */
-    public Vector2f set(float x, float y) {
+    public @NotNull Vector2f set(float x, float y) {
         this.x = x;
         this.y = y;
         return this;
     }
 
     /**
-     * Subtract vector.
+     * Subtract this vector by the vector and store it to the result vector.
      *
-     * @param vector the vector
-     * @param result the result
-     * @return result vector
+     * @param vector the vector.
+     * @param result the result.
+     * @return the result vector.
      */
-    public Vector2f subtract(Vector2f vector, Vector2f result) {
+    public @NotNull Vector2f subtract(@NotNull Vector2f vector, @NotNull Vector2f result) {
         result.x = x - vector.x;
         result.y = y - vector.y;
         return result;
@@ -304,7 +352,6 @@ public class Vector2f {
      *
      * @param subX the sub x
      * @param subY the sub y
-     * @param subZ the sub z
      * @return this vector
      */
     public Vector2f subtractLocal(float subX, float subY) {

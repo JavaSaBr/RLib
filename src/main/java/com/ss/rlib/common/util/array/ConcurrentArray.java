@@ -25,7 +25,7 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Create a supplier which creates new arrays.
+     * Create a supplier to create new arrays.
      *
      * @param type the element's type.
      * @param <T>  the element's type.
@@ -36,7 +36,17 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Create a function which creates new arrays.
+     * Create a function to create new arrays.
+     *
+     * @param <T>  the element's type.
+     * @return the supplier.
+     */
+    static <T> @NotNull Function<Class<?>, ConcurrentArray<T>> function() {
+        return ArrayFactory::newConcurrentStampedLockArray;
+    }
+
+    /**
+     * Create a function to create new arrays.
      *
      * @param type the element's type.
      * @param <T>  the element's type.

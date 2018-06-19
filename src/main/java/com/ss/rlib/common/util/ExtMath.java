@@ -28,7 +28,7 @@ public final class ExtMath {
     public static final double EPSILON = 1.40129846432482E-45;
 
     /**
-     * Returns the arc cosine of a value.<br> Special cases: <ul><li>If value is smaller than -1, then the result is PI.
+     * Return the arc cosine of a value.<br> Special cases: <ul><li>If value is smaller than -1, then the result is PI.
      * <li>If the argument is greater than 1, then the result is 0.</ul>
      *
      * @param value The value to arc cosine.
@@ -48,7 +48,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns the arc sine of a value.<br> Special cases: <ul> <li>If value is smaller than -1, then the result is
+     * Return the arc sine of a value.<br> Special cases: <ul> <li>If value is smaller than -1, then the result is
      * -HALF_PI. <li>If the argument is greater than 1, then the result is HALF_PI. </ul>
      *
      * @param value The value to arc sine.
@@ -81,7 +81,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns cosine of an angle. Direct call to java.lang.Math
+     * Return cosine of an angle. Direct call to java.lang.Math
      *
      * @param value The angle to cosine.
      * @return the cosine of the angle.
@@ -92,7 +92,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns 1/sqrt(value)
+     * Return 1/sqrt(value)
      *
      * @param value The value to process.
      * @return 1 /sqrt(value)
@@ -103,7 +103,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns the sine of an angle. Direct call to java.lang.Math
+     * Return the sine of an angle. Direct call to java.lang.Math
      *
      * @param value The angle to sine.
      * @return the sine of the angle.
@@ -250,7 +250,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns zero if the value is null.
+     * Return zero if the value is null.
      *
      * @param value the value.
      * @return zero if the value is null.
@@ -260,7 +260,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns zero if the value is null.
+     * Return zero if the value is null.
      *
      * @param value the value.
      * @return zero if the value is null.
@@ -270,7 +270,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns zero if the value is null.
+     * Return zero if the value is null.
      *
      * @param value the value.
      * @return zero if the value is null.
@@ -290,60 +290,59 @@ public final class ExtMath {
     }
     
     /**
-     * Clamps value between min and max.
-     * 
-     * @param value value
-     * @param min minimal value
-     * @param max maximal value
-     * @return clamped value
+     * Clamp the value between the min and the max.
+     *
+     * @param value the source value.
+     * @param min the minimal value.
+     * @param max the maximal value.
+     * @return the clamped value.
      */
     public static float clamp(float value, float min, float max) {
         return value > max ? max : value < min ? min : value;
     }
     
     /**
-     * Clamps value between 0 and 1.
+     * Clamp the value between 0 and 1.
      * 
-     * @param value
-     * @return clamped value
+     * @param value the source value.
+     * @return the clamped value.
      */
     public static float clamp(float value) {
         return clamp(value, 0f, 1f);
     }
-    
+
     /**
-     * Linear interpolation. 
-     * If time is greater than 1.0 return maximal value.
-     * 
-     * @param min minimal value
-     * @param max maximal value
-     * @param time time
-     * @return interpolated value
+     * Linear time-based interpolation.
+     *
+     * @param min  the minimal value.
+     * @param max  the maximal value.
+     * @param time the time.
+     * @return the interpolated value or maximal value if the time is greater than 1.0.
      */
     public static float lerp(float min, float max, float time) {
-        if(time > 1.0f) {
+
+        if (time > 1.0f) {
             return max;
         }
-        
-        if(time < 0.0f) {
+
+        if (time < 0.0f) {
             return min;
         }
-        
+
         return lerpUnnormal(min, max, time);
     }
-    
+
     /**
-     * Linear interpolation.
-     * 
-     * @param min minimal value
-     * @param max maximal value
-     * @param time time
-     * @return interpolated value
+     * Linear time-based interpolation.
+     *
+     * @param min  the minimal value.
+     * @param max  the maximal value.
+     * @param time the time.
+     * @return the interpolated value.
      */
     public static float lerpUnnormal(float min, float max, float time) {
         return (1.f - time) * min + time * max;
     }
-
 
     private ExtMath() {
         throw new RuntimeException();

@@ -103,7 +103,6 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
         E[] current = array.get();
         E[] newArray = ArrayUtils.combine(current, elements);
 
-
         if (!array.compareAndSet(current, newArray)) {
             return addAll(elements);
         }

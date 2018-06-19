@@ -27,43 +27,6 @@ public final class Vector3f {
             Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
     /**
-     * Creates a new instance of the vector.
-     *
-     * @return the new instance.
-     * @see #Vector3f()
-     */
-    @Deprecated
-    public @NotNull static Vector3f newInstance() {
-        return new Vector3f();
-    }
-
-    /**
-     * Create a new instance of the vector.
-     *
-     * @param x the x value.
-     * @param y the y value.
-     * @param z the z value.
-     * @return the new instance.
-     * @see #Vector3f(float, float, float)
-     */
-    @Deprecated
-    public static @NotNull Vector3f newInstance(float x, float y, float z) {
-        return new Vector3f(x, y, z);
-    }
-
-    /**
-     * Create a new instance of the vector.
-     *
-     * @param values the array with values.
-     * @return the new instance.
-     * @see #Vector3f(float[])
-     */
-    @Deprecated
-    public static @NotNull Vector3f newInstance(@NotNull float[] values) {
-        return new Vector3f(values[0], values[1], values[2]);
-    }
-
-    /**
      * Return true if the vector is valid.
      *
      * @param vector the vector.
@@ -99,10 +62,10 @@ public final class Vector3f {
         super();
     }
 
-    public Vector3f(float val) {
-        this.x = val;
-        this.y = val;
-        this.z = val;
+    public Vector3f(float value) {
+        this.x = value;
+        this.y = value;
+        this.z = value;
     }
 
     public Vector3f(float x, float y, float z) {
@@ -122,10 +85,10 @@ public final class Vector3f {
     /**
      * Add the values to the current vector.
      *
-     * @param addX the add x.
-     * @param addY the add y.
-     * @param addZ the add z.
-     * @return the current vector.
+     * @param addX x axis value.
+     * @param addY y axis value.
+     * @param addZ z axis value.
+     * @return this vector.
      */
     public @NotNull Vector3f addLocal(final float addX, final float addY, final float addZ) {
         x += addX;
@@ -135,10 +98,10 @@ public final class Vector3f {
     }
 
     /**
-     * Add the vector to the current vector.
+     * Add the vector to this vector.
      *
      * @param vector the vector.
-     * @return the current vector.
+     * @return this vector.
      */
     public @NotNull Vector3f addLocal(@NotNull Vector3f vector) {
         return addLocal(vector.x, vector.y, vector.z);
@@ -176,7 +139,7 @@ public final class Vector3f {
      * @return the result vector.
      */
     public @NotNull Vector3f cross(@NotNull final Vector3f vector) {
-        return cross(vector, newInstance());
+        return cross(vector, new Vector3f());
     }
 
     /**
@@ -226,23 +189,23 @@ public final class Vector3f {
      * @param vector the vector.
      * @return the distance.
      */
-    public float distance(@NotNull final Vector3f vector) {
+    public float distance(@NotNull Vector3f vector) {
         return ExtMath.sqrt(distanceSquared(vector));
     }
 
     /**
-     * Calculate squared distance to the coords.
+     * Calculate squared distance to the coordinates.
      *
      * @param targetX the target x.
      * @param targetY the target y.
      * @param targetZ the target z.
      * @return the squared distance.
      */
-    public float distanceSquared(final float targetX, final float targetY, final float targetZ) {
+    public float distanceSquared(float targetX, float targetY, float targetZ) {
 
-        final float dx = x - targetX;
-        final float dy = y - targetY;
-        final float dz = z - targetZ;
+        float dx = x - targetX;
+        float dy = y - targetY;
+        float dz = z - targetZ;
 
         return dx * dx + dy * dy + dz * dz;
     }
@@ -253,22 +216,22 @@ public final class Vector3f {
      * @param vector the vector.
      * @return the squared distance.
      */
-    public float distanceSquared(@NotNull final Vector3f vector) {
+    public float distanceSquared(@NotNull Vector3f vector) {
         return distanceSquared(vector.x, vector.y, vector.z);
     }
 
     /**
-     * Dot float.
+     * Calculate dot to the vector.
      *
-     * @param vector the vector
-     * @return the float
+     * @param vector the vector.
+     * @return the dot product.
      */
-    public float dot(@NotNull final Vector3f vector) {
+    public float dot(@NotNull Vector3f vector) {
         return x * vector.x + y * vector.y + z * vector.z;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable Object obj) {
 
         if (this == obj) {
             return true;
@@ -278,7 +241,7 @@ public final class Vector3f {
             return false;
         }
 
-        final Vector3f other = (Vector3f) obj;
+        Vector3f other = (Vector3f) obj;
 
         if (floatToIntBits(x) != floatToIntBits(other.x)) {
             return false;
@@ -367,28 +330,28 @@ public final class Vector3f {
      * @return true if all components are zero.
      */
     public boolean isZero() {
-        return x == 0 && y == 0 && z == 0;
+        return ExtMath.isZero(x) && ExtMath.isZero(y) && ExtMath.isZero(z);
     }
 
     /**
-     * Mult local vector 3 f.
+     * Multiply this vector by the scalar.
      *
-     * @param scalar the scalar
-     * @return the vector 3 f
+     * @param scalar the scalar.
+     * @return this vector.
      */
-    public Vector3f multLocal(final float scalar) {
+    public Vector3f multLocal(float scalar) {
         return multLocal(scalar, scalar, scalar);
     }
 
     /**
-     * Mult local vector 3 f.
+     * Multiply this vector by the X, Y and Z scalars.
      *
-     * @param x the x
-     * @param y the y
-     * @param z the z
-     * @return the vector 3 f
+     * @param x the x scalar.
+     * @param y the y scalar.
+     * @param z the z scalar.
+     * @return this vector.
      */
-    public @NotNull Vector3f multLocal(final float x, final float y, final float z) {
+    public @NotNull Vector3f multLocal(float x, float y, float z) {
         this.x *= x;
         this.y *= y;
         this.z *= z;
@@ -396,28 +359,28 @@ public final class Vector3f {
     }
 
     /**
-     * Mult local vector 3 f.
+     * Multiply this vector by the vector.
      *
-     * @param vector the vector
-     * @return the vector 3 f
+     * @param vector the vector.
+     * @return this vector.
      */
-    public @NotNull Vector3f multLocal(@NotNull final Vector3f vector) {
+    public @NotNull Vector3f multLocal(@NotNull Vector3f vector) {
         return multLocal(vector.getX(), vector.getY(), vector.getZ());
     }
 
     /**
-     * Negate vector 3 f.
+     * Create a new vector as negative of this vector.
      *
-     * @return the vector 3 f
+     * @return the new negative vector.
      */
     public @NotNull Vector3f negate() {
-        return newInstance(-getX(), -getY(), -getZ());
+        return new Vector3f(-getX(), -getY(), -getZ());
     }
 
     /**
-     * Negate local vector 3 f.
+     * Invert this vector to get a negative vector.
      *
-     * @return the vector 3 f
+     * @return this vector.
      */
     public @NotNull Vector3f negateLocal() {
         x = -x;
@@ -427,9 +390,9 @@ public final class Vector3f {
     }
 
     /**
-     * Normalize vector 3 f.
+     * Create a normalized vector from this vector.
      *
-     * @return the vector 3 f
+     * @return the new normalized vector.
      */
     public @NotNull Vector3f normalize() {
 
@@ -444,9 +407,9 @@ public final class Vector3f {
     }
 
     /**
-     * Normalize local vector 3 f.
+     * Normalize this vector.
      *
-     * @return the vector 3 f
+     * @return ths vector.
      */
     public @NotNull Vector3f normalizeLocal() {
 
@@ -463,24 +426,24 @@ public final class Vector3f {
     }
 
     /**
-     * Set vector 3 f.
+     * Set components from the vector to this vector.
      *
-     * @param vector the vector
-     * @return the vector 3 f
+     * @param vector the vector.
+     * @return this vector.
      */
-    public @NotNull Vector3f set(@NotNull final Vector3f vector) {
-        return set(vector.getX(), vector.getY(), vector.getZ());
+    public @NotNull Vector3f set(@NotNull Vector3f vector) {
+        return set(vector.x, vector.y, vector.z);
     }
 
     /**
-     * Set vector 3 f.
+     * Set the components to this vector.
      *
-     * @param x the x
-     * @param y the y
-     * @param z the z
-     * @return the vector 3 f
+     * @param x x component.
+     * @param y y component.
+     * @param z z component.
+     * @return this vector.
      */
-    public @NotNull Vector3f set(final float x, final float y, final float z) {
+    public @NotNull Vector3f set(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -488,13 +451,13 @@ public final class Vector3f {
     }
 
     /**
-     * Subtract vector 3 f.
+     * Subtract this vector by the vector and store it to the result vector.
      *
-     * @param vector the vector
-     * @param result the result
-     * @return the vector 3 f
+     * @param vector the vector.
+     * @param result the result.
+     * @return the result vector.
      */
-    public @NotNull Vector3f subtract(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
+    public @NotNull Vector3f subtract(@NotNull Vector3f vector, @NotNull Vector3f result) {
         result.x = x - vector.x;
         result.y = y - vector.y;
         result.z = z - vector.z;
