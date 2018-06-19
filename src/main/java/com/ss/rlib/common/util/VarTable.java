@@ -2,8 +2,6 @@ package com.ss.rlib.common.util;
 
 import static com.ss.rlib.common.util.ObjectUtils.notNull;
 import static java.lang.Float.parseFloat;
-import com.ss.rlib.common.util.dictionary.DictionaryFactory;
-import com.ss.rlib.common.util.dictionary.ObjectDictionary;
 import com.ss.rlib.common.geom.Quaternion4f;
 import com.ss.rlib.common.geom.Vector3f;
 import com.ss.rlib.common.util.dictionary.DictionaryFactory;
@@ -1215,12 +1213,11 @@ public class VarTable {
     }
 
     /**
-     * Gets values.
+     * Get the values table.
      *
-     * @return the table with values.
+     * @return the values table.
      */
-    @NotNull
-    public ObjectDictionary<String, Object> getValues() {
+    public @NotNull ObjectDictionary<String, Object> getValues() {
         return values;
     }
 
@@ -1230,9 +1227,9 @@ public class VarTable {
      * @param key the key.
      * @return the vector.
      */
-    public @NotNull Vector3f getVector(@NotNull final String key) {
+    public @NotNull Vector3f getVector(@NotNull String key) {
 
-        final Object object = values.get(key);
+        Object object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
@@ -1245,14 +1242,9 @@ public class VarTable {
         throw new IllegalArgumentException("not found " + key);
     }
 
-    private @NotNull Vector3f parseVector(@NotNull final String object) {
-
-        final String[] values = object.split(",");
-
-        final Vector3f vector = Vector3f.newInstance();
-        vector.set(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]));
-
-        return vector;
+    private @NotNull Vector3f parseVector(@NotNull String object) {
+        String[] values = object.split(",");
+        return new Vector3f(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]));
     }
 
     /**

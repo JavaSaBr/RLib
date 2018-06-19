@@ -266,21 +266,27 @@ public class Quaternion4f {
      * @param store the result container.
      * @return the calculated vector.
      */
-    public Vector3f getVector(@NotNull final DirectionType type, @Nullable Vector3f store) {
-        if (store == null) store = Vector3f.newInstance();
+    public @NotNull Vector3f getVector(@NotNull DirectionType type, @Nullable Vector3f store) {
+
+        if (store == null) {
+            store = new Vector3f();
+        }
 
         float norm = norm();
-        if (norm != 1.0f) norm = ExtMath.invSqrt(norm);
 
-        final float xx = x * x * norm;
-        final float xy = x * y * norm;
-        final float xz = x * z * norm;
-        final float xw = x * w * norm;
-        final float yy = y * y * norm;
-        final float yz = y * z * norm;
-        final float yw = y * w * norm;
-        final float zz = z * z * norm;
-        final float zw = z * w * norm;
+        if (norm != 1.0f) {
+            norm = ExtMath.invSqrt(norm);
+        }
+
+        float xx = x * x * norm;
+        float xy = x * y * norm;
+        float xz = x * z * norm;
+        float xw = x * w * norm;
+        float yy = y * y * norm;
+        float yz = y * z * norm;
+        float yw = y * w * norm;
+        float zz = z * z * norm;
+        float zw = z * w * norm;
 
         switch (type) {
             case LEFT: {

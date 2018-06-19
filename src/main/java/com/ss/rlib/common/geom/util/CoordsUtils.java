@@ -45,7 +45,7 @@ public final class CoordsUtils {
 
         for (int i = 0; i < count; i++) {
 
-            final Vector3f vector = Vector3f.newInstance();
+            final Vector3f vector = new Vector3f();
 
             final float radians = AngleUtils.degreeToRadians(min + angle * i);
 
@@ -154,7 +154,7 @@ public final class CoordsUtils {
 
         for (int i = 1; i <= count; i++) {
 
-            final Vector3f loc = Vector3f.newInstance();
+            final Vector3f loc = new Vector3f();
 
             final float radians = AngleUtils.degreeToRadians(i * angle);
 

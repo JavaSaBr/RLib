@@ -60,22 +60,28 @@ public final class GeometryUtils {
     }
 
     /**
-     * Рассчет квадрата расстояния между 2мя точками.
+     * Get squared distance distance between two points.
      *
-     * @param startX  координата первой точки.
-     * @param startY  координата первой точки.
-     * @param startZ  координата первой точки.
-     * @param targetX координата второй точки.
-     * @param targetY координата второй точки.
-     * @param targetZ координата второй точки.
-     * @return квадрат расстояния между точками.
+     * @param startX  the start X coordinate.
+     * @param startY  the start Y coordinate.
+     * @param startZ  the start Z coordinate.
+     * @param targetX the end X coordinate.
+     * @param targetY the end Y coordinate.
+     * @param targetZ the end Z coordinate.
+     * @return the squared distance.
      */
-    public static float getSquareDistance(final float startX, final float startY, final float startZ,
-                                          final float targetX, final float targetY, final float targetZ) {
+    public static float getSquareDistance(
+            float startX,
+            float startY,
+            float startZ,
+            float targetX,
+            float targetY,
+            float targetZ
+    ) {
 
-        final float dx = targetX - startX;
-        final float dy = targetY - startY;
-        final float dz = targetZ - startZ;
+        float dx = targetX - startX;
+        float dy = targetY - startY;
+        float dz = targetZ - startZ;
 
         return dx * dx + dy * dy + dz * dz;
     }

@@ -1,11 +1,10 @@
 package com.ss.rlib.common.geom.bounding;
 
+import com.ss.rlib.common.geom.Quaternion4f;
 import com.ss.rlib.common.geom.Ray3f;
 import com.ss.rlib.common.geom.Vector3f;
 import com.ss.rlib.common.geom.Vector3fBuffer;
 import org.jetbrains.annotations.NotNull;
-
-import com.ss.rlib.common.geom.Quaternion4f;
 
 /**
  * The interface to implement a bounding of objects.
@@ -23,6 +22,7 @@ public interface Bounding {
      * @param buffer the vector buffer.
      * @return true if this bounding contains the point.
      */
+    @Deprecated
     boolean contains(float x, float y, float z, @NotNull Vector3fBuffer buffer);
 
     /**
@@ -32,7 +32,27 @@ public interface Bounding {
      * @param buffer the vector buffer.
      * @return true if this bounding contains the point.
      */
+    @Deprecated
     boolean contains(@NotNull Vector3f point, @NotNull Vector3fBuffer buffer);
+
+
+    /**
+     * Return true if this bounding contains the point.
+     *
+     * @param x the X coordinate.
+     * @param y the Y coordinate.
+     * @param z the X coordinate.
+     * @return true if this bounding contains the point.
+     */
+    boolean contains(float x, float y, float z);
+
+    /**
+     * Return true if this bounding contains the point.
+     *
+     * @param point the point.
+     * @return true if this bounding contains the point.
+     */
+    boolean contains(@NotNull Vector3f point);
 
     /**
      * Get a distance from a center of a bounding to a point.
@@ -70,17 +90,36 @@ public interface Bounding {
      *
      * @return the offset.
      */
-    @NotNull
-    Vector3f getOffset();
+    @NotNull Vector3f getOffset();
 
     /**
-     * Get a result center of a bounding.
+     * Get a result center of this bounding.
      *
      * @param buffer the vector buffer.
      * @return the result center.
      */
-    @NotNull
-    Vector3f getResultCenter(@NotNull Vector3fBuffer buffer);
+    @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer);
+
+    /**
+     * Get a result X coordinate of the center of this bounding.
+     *
+     * @return the result X coordinate.
+     */
+    float getResultCenterX();
+
+    /**
+     * Get a result Y coordinate of the center of this bounding.
+     *
+     * @return the result Y coordinate.
+     */
+    float getResultCenterY();
+
+    /**
+     * Get a result Z coordinate of the center of this bounding.
+     *
+     * @return the result X coordinate.
+     */
+    float getResultCenterZ();
 
     /**
      * Check this bounding that it intersects with an other bounding.
