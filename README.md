@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:7.2.0'
+    compile 'com.spaceshift:rlib.common:7.2.1'
 }
 ```
     
@@ -34,7 +34,7 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>7.2.0</version>
+    <version>7.2.1</version>
 </dependency>
 ```
 
