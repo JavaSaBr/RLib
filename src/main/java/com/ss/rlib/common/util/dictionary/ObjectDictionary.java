@@ -23,6 +23,30 @@ import java.util.function.Supplier;
 public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
 
     /**
+     * Create a new object dictionary for the key's type and value's type.
+     *
+     * @param keyValueType the key's and value's type.
+     * @param <T>          the key's and value's type.
+     * @return the new object dictionary.
+     */
+    static <T> @NotNull ObjectDictionary<T, T> ofType(@NotNull Class<?> keyValueType) {
+        return DictionaryFactory.newObjectDictionary();
+    }
+
+    /**
+     * Create a new object dictionary for the key's type and value's type.
+     *
+     * @param keyType   the key's type.
+     * @param valueType the value's type.
+     * @param <K>       the key's type.
+     * @param <V>       the value's type.
+     * @return the new object dictionary.
+     */
+    static <K, V> @NotNull ObjectDictionary<K, V> ofType(@NotNull Class<?> keyType, @NotNull Class<?> valueType) {
+        return DictionaryFactory.newObjectDictionary();
+    }
+
+    /**
      * Performs the given action for each key-value pair of this dictionary.
      *
      * @param consumer the consumer.

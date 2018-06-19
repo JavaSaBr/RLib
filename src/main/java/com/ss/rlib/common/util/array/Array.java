@@ -35,6 +35,17 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Create a new array for the element's type.
+     *
+     * @param type the element's type.
+     * @param <T>  the element's type.
+     * @return the new array.
+     */
+    static <T> @NotNull Array<T> ofType(@NotNull Class<?> type) {
+        return ArrayFactory.newArray(type);
+    }
+
+    /**
      * Wrap the array to a read only array.
      *
      * @param elements the elements to wrap.
@@ -339,6 +350,31 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             }
 
             function.accept(element, argument);
+        }
+    }
+
+    /**
+     * Apply the function to each converted element.
+     *
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
+     * @param argument  the argument.
+     * @param converter the converter from T to C.
+     * @param function  the function.
+     */
+    default <T, C> void forEach(
+            @Nullable T argument,
+            @NotNull Function<E, C> converter,
+            @NotNull BiConsumer<C, T> function
+    ) {
+
+        for (E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            function.accept(converter.apply(element), argument);
         }
     }
 
@@ -803,7 +839,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param comparator the comparator.
      * @return the array
      */
-    default @NotNull Array<E> sort(@NotNull ArrayComparator<@NotNull E> comparator) {
+    default @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
         ArrayUtils.sort(array(), 0, size(), comparator);
         return this;
     }

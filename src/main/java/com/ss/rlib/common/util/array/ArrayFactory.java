@@ -41,6 +41,18 @@ public class ArrayFactory {
     }
 
     /**
+     * Creates the new copy on modify array.
+     *
+     * @param <E>  the element's type.
+     * @param type the element's type.
+     * @return the new array.
+     */
+    public static <E> Array<E> newCopyOnModifyArray(@NotNull Class<?> type) {
+        Class<E> casted = unsafeCast(type);
+        return new CopyOnModifyArray<>(casted, 0);
+    }
+
+    /**
      * Creates the new unsafe array.
      *
      * @param <E>  the type parameter

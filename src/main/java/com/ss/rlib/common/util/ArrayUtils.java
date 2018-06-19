@@ -135,15 +135,31 @@ public final class ArrayUtils {
     /**
      * Combine the two arrays.
      *
-     * @param <T>   the type parameter
-     * @param <E>   the type parameter
+     * @param <T>   the base array's component type.
+     * @param <E>   the added array's component type.
      * @param base  the source array.
      * @param added the add array.
-     * @param type  the type
      * @return the combined array.
      */
-    public static <T, E extends T> @NotNull T[] combine(@Nullable final T[] base, @Nullable final E[] added,
-                                                        @NotNull final Class<T> type) {
+    public static <T, E extends T> @NotNull T[] combine(@Nullable T[] base, @Nullable E[] added) {
+        return combine(base, added, ClassUtils.unsafeCast(base.getClass().getComponentType()));
+    }
+
+    /**
+     * Combine the two arrays.
+     *
+     * @param <T>   the base array's component type.
+     * @param <E>   the added array's component type.
+     * @param base  the source array.
+     * @param added the add array.
+     * @param type  the base array's component type.
+     * @return the combined array.
+     */
+    public static <T, E extends T> @NotNull T[] combine(
+            @Nullable T[] base,
+            @Nullable E[] added,
+            @NotNull Class<T> type
+    ) {
 
         if (base == null) {
             return added == null ? create(type, 0) : added;
@@ -151,12 +167,17 @@ public final class ArrayUtils {
             return base;
         }
 
-        final T[] result = create(type, base.length + added.length);
+        T[] result = create(type, base.length + added.length);
 
         int index = 0;
 
-        for (T object : base) result[index++] = object;
-        for (E object : added) result[index++] = object;
+        for (T object : base) {
+            result[index++] = object;
+        }
+
+        for (E object : added) {
+            result[index++] = object;
+        }
 
         return result;
     }

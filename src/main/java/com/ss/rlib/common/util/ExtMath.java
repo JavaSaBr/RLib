@@ -1,11 +1,19 @@
 package com.ss.rlib.common.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * The utility class.
  *
  * @author JavaSaBr
  */
 public final class ExtMath {
+
+    public static final Float ZERO_FLOAT = 0F;
+    public static final Double ZERO_DOUBLE = 0D;
+    public static final Integer ZERO_INTEGER = 0;
+    public static final Long ZERO_LONG = 0L;
 
     /**
      * The value PI as a float. (180 degrees).
@@ -20,7 +28,7 @@ public final class ExtMath {
     public static final double EPSILON = 1.40129846432482E-45;
 
     /**
-     * Returns the arc cosine of a value.<br> Special cases: <ul><li>If value is smaller than -1, then the result is PI.
+     * Return the arc cosine of a value.<br> Special cases: <ul><li>If value is smaller than -1, then the result is PI.
      * <li>If the argument is greater than 1, then the result is 0.</ul>
      *
      * @param value The value to arc cosine.
@@ -40,7 +48,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns the arc sine of a value.<br> Special cases: <ul> <li>If value is smaller than -1, then the result is
+     * Return the arc sine of a value.<br> Special cases: <ul> <li>If value is smaller than -1, then the result is
      * -HALF_PI. <li>If the argument is greater than 1, then the result is HALF_PI. </ul>
      *
      * @param value The value to arc sine.
@@ -73,7 +81,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns cosine of an angle. Direct call to java.lang.Math
+     * Return cosine of an angle. Direct call to java.lang.Math
      *
      * @param value The angle to cosine.
      * @return the cosine of the angle.
@@ -84,7 +92,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns 1/sqrt(value)
+     * Return 1/sqrt(value)
      *
      * @param value The value to process.
      * @return 1 /sqrt(value)
@@ -95,7 +103,7 @@ public final class ExtMath {
     }
 
     /**
-     * Returns the sine of an angle. Direct call to java.lang.Math
+     * Return the sine of an angle. Direct call to java.lang.Math
      *
      * @param value The angle to sine.
      * @return the sine of the angle.
@@ -228,6 +236,112 @@ public final class ExtMath {
      */
     public static boolean greaterThan(double first, double second, double epsilon) {
         return first - second > epsilon;
+    }
+
+    /**
+     * Cut the second part of the float value by the mod. For example: cut(1.123456F, 3) returns 1.123F.
+     *
+     * @param value the value.
+     * @param mod   the mod.
+     * @return the cut value.
+     */
+    public static float cut(float value, float mod) {
+        return (int) (value * mod) / mod;
+    }
+
+    /**
+     * Return zero if the value is null.
+     *
+     * @param value the value.
+     * @return zero if the value is null.
+     */
+    public static @NotNull Float zeroIfNull(@Nullable Float value) {
+        return value == null ? ZERO_FLOAT : value;
+    }
+
+    /**
+     * Return zero if the value is null.
+     *
+     * @param value the value.
+     * @return zero if the value is null.
+     */
+    public static @NotNull Double zeroIfNull(@Nullable Double value) {
+        return value == null ? ZERO_DOUBLE : value;
+    }
+
+    /**
+     * Return zero if the value is null.
+     *
+     * @param value the value.
+     * @return zero if the value is null.
+     */
+    public static @NotNull Integer zeroIfNull(@Nullable Integer value) {
+        return value == null ? ZERO_INTEGER : value;
+    }
+
+    /**
+     * Returns zero if the value is null.
+     *
+     * @param value the value.
+     * @return zero if the value is null.
+     */
+    public static @NotNull Long zeroIfNull(@Nullable Long value) {
+        return value == null ? ZERO_LONG : value;
+    }
+    
+    /**
+     * Clamp the value between the min and the max.
+     *
+     * @param value the source value.
+     * @param min the minimal value.
+     * @param max the maximal value.
+     * @return the clamped value.
+     */
+    public static float clamp(float value, float min, float max) {
+        return value > max ? max : value < min ? min : value;
+    }
+    
+    /**
+     * Clamp the value between 0 and 1.
+     * 
+     * @param value the source value.
+     * @return the clamped value.
+     */
+    public static float clamp(float value) {
+        return clamp(value, 0f, 1f);
+    }
+
+    /**
+     * Linear time-based interpolation.
+     *
+     * @param min  the minimal value.
+     * @param max  the maximal value.
+     * @param time the time.
+     * @return the interpolated value or maximal value if the time is greater than 1.0.
+     */
+    public static float lerp(float min, float max, float time) {
+
+        if (time > 1.0f) {
+            return max;
+        }
+
+        if (time < 0.0f) {
+            return min;
+        }
+
+        return lerpUnnormal(min, max, time);
+    }
+
+    /**
+     * Linear time-based interpolation.
+     *
+     * @param min  the minimal value.
+     * @param max  the maximal value.
+     * @param time the time.
+     * @return the interpolated value.
+     */
+    public static float lerpUnnormal(float min, float max, float time) {
+        return (1.f - time) * min + time * max;
     }
 
     private ExtMath() {

@@ -1,6 +1,7 @@
 package com.ss.rlib.common.util.array.impl;
 
 import com.ss.rlib.common.util.array.Array;
+import com.ss.rlib.common.util.array.ArrayComparator;
 import com.ss.rlib.common.util.array.ReadOnlyArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +47,6 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
         throw new IllegalStateException("This array is read only.");
     }
 
-
     @Override
     public @NotNull E fastRemove(int index) {
         throw new IllegalStateException("This array is read only.");
@@ -74,6 +74,11 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
 
     @Override
     public void clear() {
+        throw new IllegalStateException("This array is read only.");
+    }
+
+    @Override
+    public @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
         throw new IllegalStateException("This array is read only.");
     }
 

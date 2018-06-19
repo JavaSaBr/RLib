@@ -1,7 +1,6 @@
 package com.ss.rlib.common.util;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The utility class.
@@ -9,73 +8,6 @@ import org.jetbrains.annotations.Nullable;
  * @author JavaSaBr
  */
 public final class NumberUtils {
-
-    public static final Float ZERO_FLOAT = 0F;
-    public static final Double ZERO_DOUBLE = 0D;
-    public static final Integer ZERO_INTEGER = 0;
-    public static final Long ZERO_LONG = 0L;
-
-    /**
-     * Returns zero if the value is null.
-     *
-     * @param value the value.
-     * @return zero if the value is null.
-     */
-    public static @NotNull Float zeroIfNull(@Nullable Float value) {
-        return value == null ? ZERO_FLOAT : value;
-    }
-
-    /**
-     * Returns zero if the value is null.
-     *
-     * @param value the value.
-     * @return zero if the value is null.
-     */
-    public static @NotNull Double zeroIfNull(@Nullable Double value) {
-        return value == null ? ZERO_DOUBLE : value;
-    }
-
-    /**
-     * Returns zero if the value is null.
-     *
-     * @param value the value.
-     * @return zero if the value is null.
-     */
-    public static @NotNull Integer zeroIfNull(@Nullable Integer value) {
-        return value == null ? ZERO_INTEGER : value;
-    }
-
-    /**
-     * Returns zero if the value is null.
-     *
-     * @param value the value.
-     * @return zero if the value is null.
-     */
-    public static @NotNull Long zeroIfNull(@Nullable Long value) {
-        return value == null ? ZERO_LONG : value;
-    }
-
-    /**
-     * Returns true if the both values are equal.
-     *
-     * @param first  the first value.
-     * @param second the second value.
-     * @return true if the both values are equal.
-     */
-    public static boolean equals(float first, float second) {
-        return Float.compare(first, second) == 0;
-    }
-
-    /**
-     * Returns true if the both values are equal.
-     *
-     * @param first  the first value.
-     * @param second the second value.
-     * @return true if the both values are equal.
-     */
-    public static boolean equals(double first, double second) {
-        return Double.compare(first, second) == 0;
-    }
 
     /**
      * Bytes to int int.

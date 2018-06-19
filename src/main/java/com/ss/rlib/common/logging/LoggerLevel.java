@@ -25,9 +25,7 @@ public enum LoggerLevel {
      */
     ERROR("ERROR", true, true);
 
-    /**
-     * The constant LENGTH.
-     */
+
     public static final int LENGTH = values().length;
 
     /**
@@ -46,7 +44,7 @@ public enum LoggerLevel {
      */
     private boolean forceFlush;
 
-    LoggerLevel(@NotNull final String title, final boolean forceFlush, final boolean enabled) {
+    LoggerLevel(@NotNull String title, boolean forceFlush, boolean enabled) {
         this.title = title;
         this.forceFlush = forceFlush;
         this.enabled = enabled;
@@ -66,12 +64,12 @@ public enum LoggerLevel {
      *
      * @param title the level title.
      */
-    public void setTitle(@NotNull final String title) {
+    public void setTitle(@NotNull String title) {
         this.title = title;
     }
 
     /**
-     * Is force flush boolean.
+     * Return true if need force flush.
      *
      * @return true if need force flush.
      */
@@ -80,7 +78,7 @@ public enum LoggerLevel {
     }
 
     /**
-     * Is enabled boolean.
+     * Return true if this level is enabled.
      *
      * @return true if this level is enabled.
      */
@@ -89,11 +87,11 @@ public enum LoggerLevel {
     }
 
     /**
-     * Sets enabled.
+     * Set true if this level should be enabled.
      *
-     * @param enabled the flag of activity.
+     * @param enabled true if this level should be enabled.
      */
-    public void setEnabled(final boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 

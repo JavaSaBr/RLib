@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.IntStream;
 
@@ -116,5 +117,26 @@ public class ArrayTests {
                 .collect(ArrayCollectors.toArray(Collection.class));
 
         Assertions.assertEquals(1000, collections.size());
+    }
+
+    @Test
+    public void testCopyOnModifyArray() {
+
+        Array<Integer> array = ArrayFactory.newCopyOnModifyArray(Integer.class);
+        array.addAll(ArrayFactory.toArray(9, 8, 7, 6, 5, 4, 3));
+        array.add(7);
+        array.addAll(Arrays.asList(5, 6, 7));
+        array.addAll(Array.of(6, 7, 8));
+        array.sort(Integer::compareTo);
+
+        Assertions.assertArrayEquals(array.toArray(Integer.class),
+                ArrayFactory.toArray(3, 4, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 9));
+
+        Integer first = array.first();
+        Integer last = array.last();
+
+        Assertions.assertEquals(14, array.size());
+        Assertions.assertEquals(3, (int) first);
+        Assertions.assertEquals(9, (int) last);
     }
 }
