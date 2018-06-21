@@ -21,6 +21,7 @@ import com.ss.rlib.common.network.server.client.impl.DefaultClientConnection;
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.ObjectUtils;
 import com.ss.rlib.common.util.StringUtils;
+import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.ConcurrentArray;
@@ -46,8 +47,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class NetworkPerformanceTests {
 
-    @NotNull
-    private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(3434);
+    private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(Utils.getFreePort(3344));
 
     private static class TestClient extends DefaultClient {
 
