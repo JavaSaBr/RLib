@@ -41,10 +41,20 @@ public class ExtensionPoint<T> {
      * @return this point.
      */
     public ExtensionPoint<T> register(@NotNull T extension) {
+
+        boolean canBeSorted = extension instanceof Comparable &&
+                extensions.stream().allMatch(ext -> ext instanceof Comparable);
+
         this.extensions.add(extension);
 
         List<T> currentList = readOnlyList.get();
-        List<T> newList = unmodifiableList(Arrays.asList(extensions.array()));
+        List<T> list = Arrays.asList(extensions.array());
+
+        if (canBeSorted) {
+            list.sort((first, second) -> ((Comparable<T>) first).compareTo(second));
+        }
+
+        List<T> newList = unmodifiableList(list);
 
         while (!readOnlyList.compareAndSet(currentList, newList)) {
             currentList = readOnlyList.get();

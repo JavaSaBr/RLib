@@ -16,7 +16,7 @@ public class ExtensionPointManager {
     /**
      * Register a new extension point.
      *
-     * @param id   the extension id.
+     * @param id the extension id.
      * @return the new extension point.
      * @throws IllegalArgumentException if an extension with the id is already exists.
      */
