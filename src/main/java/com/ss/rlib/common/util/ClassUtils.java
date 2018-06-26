@@ -17,7 +17,6 @@ import java.util.Arrays;
  */
 public final class ClassUtils {
 
-    @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
 
     /**
