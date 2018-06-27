@@ -4,6 +4,7 @@ import com.ss.rlib.common.util.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -41,13 +42,43 @@ public class ExtensionPoint<T> {
             this.array = array;
         }
 
+        /**
+         * Append the extension to the current state as new state.
+         *
+         * @param extension the extension.
+         * @return the new state.
+         */
         public @NotNull State<T> append(@NotNull T extension) {
 
             List<T> result = new ArrayList<>(extensions);
             result.add(extension);
 
             boolean canBeSorted = result.stream()
-                    .allMatch(ext -> ext instanceof Comparable);
+                    .allMatch(Comparable.class::isInstance);
+
+            if (canBeSorted) {
+                result.sort((first, second) -> ((Comparable<T>) first).compareTo(second));
+            }
+
+            List<T> extensions = Collections.unmodifiableList(result);
+            Object[] array = result.toArray();
+
+            return new State<>(extensions, array);
+        }
+
+        /**
+         * Append the additional extensions to the current state as new state.
+         *
+         * @param additionalExtensions the additional extension.
+         * @return the new state.
+         */
+        public @NotNull State<T> append(@NotNull T[] additionalExtensions) {
+
+            List<T> result = new ArrayList<>(extensions);
+            result.addAll(Arrays.asList(additionalExtensions));
+
+            boolean canBeSorted = result.stream()
+                    .allMatch(Comparable.class::isInstance);
 
             if (canBeSorted) {
                 result.sort((first, second) -> ((Comparable<T>) first).compareTo(second));
@@ -84,6 +115,25 @@ public class ExtensionPoint<T> {
         while (!state.compareAndSet(currentState, newState)) {
             currentState = state.get();
             newState = currentState.append(extension);
+        }
+
+        return this;
+    }
+
+    /**
+     * Register the new extensions.
+     *
+     * @param extensions the new extensions.
+     * @return this point.
+     */
+    public ExtensionPoint<T> register(@NotNull T... extensions) {
+
+        State<T> currentState = state.get();
+        State<T> newState = currentState.append(extensions);
+
+        while (!state.compareAndSet(currentState, newState)) {
+            currentState = state.get();
+            newState = currentState.append(extensions);
         }
 
         return this;

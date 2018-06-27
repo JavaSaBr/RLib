@@ -88,8 +88,20 @@ public class ExtensionPointManager {
      * @param extension the new extension.
      * @return this manager.
      */
-    public @NotNull ExtensionPointManager addExtension(@NotNull String id, @NotNull Object extension) {
+    public <T> @NotNull ExtensionPointManager addExtension(@NotNull String id, @NotNull T extension) {
         getExtensionPoint(id).register(extension);
+        return this;
+    }
+
+    /**
+     * Add the new extensions to the extension point.
+     *
+     * @param id         the extension point's id.
+     * @param extensions the new extensions.
+     * @return this manager.
+     */
+    public <T> @NotNull ExtensionPointManager addExtension(@NotNull String id, @NotNull T... extensions) {
+        getExtensionPoint(id).register(extensions);
         return this;
     }
 
