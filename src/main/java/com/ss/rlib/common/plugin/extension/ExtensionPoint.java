@@ -1,22 +1,25 @@
 package com.ss.rlib.common.plugin.extension;
 
+import com.ss.rlib.common.function.TriplePredicate;
 import com.ss.rlib.common.util.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * The class to present an extension point.
  *
  * @author JavaSaBr
  */
-public class ExtensionPoint<T> {
+public class ExtensionPoint<T> implements Iterable<T> {
 
     private static class State<T> {
 
@@ -154,15 +157,14 @@ public class ExtensionPoint<T> {
      * @param consumer the consumer.
      * @return this point.
      */
-    public @NotNull ExtensionPoint<T> forEach(@NotNull Consumer<T> consumer) {
+    @Override
+    public void forEach(@NotNull Consumer<? super T> consumer) {
 
         Object[] array = state.get().array;
 
         for (Object obj : array) {
             consumer.accept((T) obj);
         }
-
-        return this;
     }
 
     /**
@@ -173,14 +175,216 @@ public class ExtensionPoint<T> {
      * @param <F>      the argument's type.
      * @return this point.
      */
-    public <F> @NotNull ExtensionPoint<T> forEach(@NotNull F first, @NotNull BiConsumer<T, F> consumer) {
+    public <F> void forEach(@NotNull F first, @NotNull BiConsumer<? super T, F> consumer) {
 
         Object[] array = state.get().array;
 
         for (Object obj : array) {
             consumer.accept((T) obj, first);
         }
+    }
 
-        return this;
+    /**
+     * Find an extension using the condition.
+     *
+     * @param predicate the condition.
+     * @return the found extension or null.
+     */
+    public @Nullable T findAny(@NotNull Predicate<? super T> predicate) {
+
+        for (Object element : state.get().array) {
+            if (predicate.test((T) element)) {
+                return (T) element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find an extension using the condition.
+     *
+     * @param <F>       the argument's type.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return the found extension or null.
+     */
+    public <F> @Nullable T findAny(@Nullable F argument, @NotNull BiPredicate<? super T, F> predicate) {
+
+        for (Object element : state.get().array) {
+            if (predicate.test((T) element, argument)) {
+                return (T) element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return true if there is at least an extension for the condition.
+     *
+     * @param <F>       the argument's type.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return true if there is at least an extension for the condition.
+     */
+    public <F> boolean anyMatch(@Nullable F argument, @NotNull BiPredicate<? super T, F> predicate) {
+        return findAny(argument, predicate) != null;
+    }
+
+    /**
+     * Find an extension using the inverted condition.
+     *
+     * @param <F>       the argument's type.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return the found extension or null.
+     */
+    public <F> @Nullable T findAnyNot(@Nullable F argument, @NotNull BiPredicate<? super T, F> predicate) {
+
+        for (Object element : state.get().array) {
+            if (!predicate.test((T) element, argument)) {
+                return (T) element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return true if there is at least an extension for the inverted condition.
+     *
+     * @param <F>       the argument's type.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return true if there is at least an extension for the inverted condition.
+     */
+    public <F> boolean anyMatchNot(@Nullable F argument, @NotNull BiPredicate<? super T, F> predicate) {
+        return findAnyNot(argument, predicate) != null;
+    }
+
+    /**
+     * Find an extension using the condition.
+     *
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param predicate the condition.
+     * @return the found extension or null.
+     */
+    public <F, S> @Nullable T findAny(
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull TriplePredicate<? super T, F, S> predicate
+    ) {
+
+        for (Object element : state.get().array) {
+            if (predicate.test((T) element, first, second)) {
+                return (T) element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return true if there is at least an extension for the condition.
+     *
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param predicate the condition.
+     * @return true if there is at least an extension for the condition.
+     */
+    public <F, S> boolean anyMatch(
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull TriplePredicate<? super T, F, S> predicate
+    ) {
+        return findAny(first, second, predicate) != null;
+    }
+
+
+    /**
+     * Find an extension using the inverted condition.
+     *
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param predicate the condition.
+     * @return the found extension or null.
+     */
+    public <F, S> @Nullable T findAnyNot(
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull TriplePredicate<? super T, F, S> predicate
+    ) {
+
+        for (Object element : state.get().array) {
+            if (!predicate.test((T) element, first, second)) {
+                return (T) element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return true if there is at least an extension for the inverted condition.
+     *
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param predicate the condition.
+     * @return the found extension or null.
+     */
+    public <F, S> boolean anyMatchNot(
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull TriplePredicate<? super T, F, S> predicate
+    ) {
+        return findAnyNot(first, second, predicate) != null;
+    }
+
+    /**
+     * Search an extension using the condition.
+     *
+     * @param <F>       the argument's type.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return the found extension or null.
+     */
+    public <F> @Nullable T anyMatchR(@Nullable F argument, @NotNull BiPredicate<F, ? super T> predicate) {
+
+        for (Object element : state.get().array) {
+            if (predicate.test(argument, (T) element)) {
+                return (T) element;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public @NotNull Iterator<T> iterator() {
+        return state.get().extensions.iterator();
+    }
+
+    /**
+     * Get a stream of extensions.
+     *
+     * @return the stream of extensions.
+     */
+    public @NotNull Stream<T> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
+
+    @Override
+    public @NotNull Spliterator<T> spliterator() {
+        return Spliterators.spliterator(state.get().array, 0);
     }
 }

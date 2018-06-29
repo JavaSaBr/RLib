@@ -169,7 +169,7 @@ public class FileUtils {
      * @return true if the path has a checked extension.
      */
     public static boolean containsExtensions(@Nullable String[] extensions, @NotNull String path) {
-        return ArrayUtils.find(extensions, path, (extension, str) -> str.endsWith(extension)) != null;
+        return ArrayUtils.anyMatchR(extensions, path, String::endsWith);
     }
 
     /**
@@ -191,7 +191,7 @@ public class FileUtils {
      * @return true if the path has a checked extension.
      */
     public static boolean containsExtensions(@Nullable Array<String> extensions, @NotNull String path) {
-        return extensions != null && extensions.search(path, (extension, str) -> str.endsWith(extension)) != null;
+        return extensions != null && extensions.anyMatchR(path, String::endsWith);
     }
 
     /**

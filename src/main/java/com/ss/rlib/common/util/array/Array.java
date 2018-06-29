@@ -678,12 +678,12 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Search an element using the condition.
+     * Find an element using the condition.
      *
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default @Nullable E search(@NotNull Predicate<E> predicate) {
+    default @Nullable E findAny(@NotNull Predicate<E> predicate) {
 
         if (isEmpty()) {
             return null;
@@ -708,7 +708,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default <T> @Nullable E search(@Nullable T argument, @NotNull BiPredicate<E, T> predicate) {
+    default <T> @Nullable E findAny(@Nullable T argument, @NotNull BiPredicate<? super E, T> predicate) {
 
         if (isEmpty()) {
             return null;
@@ -726,6 +726,55 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Return true if there is at least an element for the condition.
+     *
+     * @param <T>       the argument's type.
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return true if there is at least an element for the condition.
+     */
+    default <T> boolean anyMatch(@Nullable T argument, @NotNull BiPredicate<? super E, T> predicate) {
+        return findAny(argument, predicate) != null;
+    }
+
+    /**
+     * Find an element for the condition.
+     *
+     * @param <T>       the argument's type.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @return the found element or null.
+     */
+    default <T> @Nullable E findAnyR(@Nullable T argument, @NotNull BiPredicate<T, ? super E> condition) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        for (E element : array()) {
+            if (element == null) {
+                break;
+            } else if (condition.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return true if there is at least an element for the condition.
+     *
+     * @param <T>       the argument's type.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @return true if there is at least an element for the condition.
+     */
+    default <T> boolean anyMatchR(@Nullable T argument, @NotNull BiPredicate<T, ? super E> condition) {
+        return findAnyR(argument, condition) != null;
+    }
+
+    /**
      * Search an element using the condition.
      *
      * @param <F>       the first argument's type.
@@ -735,7 +784,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default <F, S> @Nullable E search(
+    default <F, S> @Nullable E findAny(
             @Nullable F first,
             @Nullable S second,
             @NotNull TriplePredicate<E, F, S> predicate
@@ -763,7 +812,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default @Nullable E search(int argument, @NotNull ObjectIntPredicate<E> predicate) {
+    default @Nullable E findAny(int argument, @NotNull ObjectIntPredicate<E> predicate) {
 
         if (isEmpty()) {
             return null;
@@ -787,7 +836,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default @Nullable E searchL(long argument, @NotNull ObjectLongPredicate<E> predicate) {
+    default @Nullable E findAnyL(long argument, @NotNull ObjectLongPredicate<E> predicate) {
 
         if (isEmpty()) {
             return null;
