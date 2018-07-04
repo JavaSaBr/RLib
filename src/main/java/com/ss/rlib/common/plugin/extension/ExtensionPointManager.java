@@ -1,5 +1,7 @@
 package com.ss.rlib.common.plugin.extension;
 
+import com.ss.rlib.common.logging.Logger;
+import com.ss.rlib.common.logging.LoggerManager;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.dictionary.ConcurrentObjectDictionary;
 import com.ss.rlib.common.util.dictionary.DictionaryFactory;
@@ -12,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
  * @author JavaSaBr
  */
 public class ExtensionPointManager {
+
+    private static final Logger LOGGER = LoggerManager.getLogger(ExtensionPointManager.class);
 
     /**
      * Register a new extension point.
@@ -48,8 +52,8 @@ public class ExtensionPointManager {
             ExtensionPoint<?> exists = extensionPoints.get(id);
 
             if (exists != null) {
-                throw new IllegalArgumentException("The extension point with the id " +
-                        id + " is already registered.");
+                LOGGER.warning("The extension point with the id " + id + " is already registered.");
+                return ClassUtils.unsafeCast(exists);
             }
 
             ExtensionPoint<T> extensionPoint = new ExtensionPoint<>();
