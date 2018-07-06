@@ -1294,6 +1294,18 @@ public final class ArrayUtils {
     }
 
     /**
+     * Return true if there is at least an element for the condition.
+     *
+     * @param <T>       the array's element type.
+     * @param array     the array.
+     * @param condition the condition.
+     * @return true if there is at least an element for the condition.
+     */
+    public static <T> boolean anyMatch(@Nullable T[] array, @NotNull Predicate<? super T> condition) {
+        return findAny(array, condition) != null;
+    }
+
+    /**
      * Find an element in the array using the condition.
      *
      * @param <T>       the array's element type.
