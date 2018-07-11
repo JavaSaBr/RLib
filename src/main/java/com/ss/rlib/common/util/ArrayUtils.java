@@ -1660,21 +1660,95 @@ public final class ArrayUtils {
      * @param condition the condition.
      * @return the element or null.
      */
-    public static <T, F, S> @Nullable T findAny(@Nullable final T[] array, @Nullable final F first,
-                                                @Nullable final S second,
-                                                @NotNull final TriplePredicate<T, F, S> condition) {
+    public static <T, F, S> @Nullable T findAny(
+            @Nullable T[] array,
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull TriplePredicate<T, F, S> condition
+    ) {
 
         if (array == null || array.length < 1) {
             return null;
         }
 
-        for (final T element : array) {
+        for (T element : array) {
             if (condition.test(element, first, second)) {
                 return element;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Return true if the array is null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is null or empty.
+     */
+    public static boolean isEmpty(@Nullable byte[] array) {
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is null or empty.
+     */
+    public static boolean isEmpty(@Nullable short[] array) {
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is null or empty.
+     */
+    public static boolean isEmpty(@Nullable char[] array) {
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is null or empty.
+     */
+    public static boolean isEmpty(@Nullable int[] array) {
+        return array == null || array.length == 0;
+    }
+
+
+    /**
+     * Return true if the array is null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is null or empty.
+     */
+    public static boolean isEmpty(@Nullable long[] array) {
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is null or empty.
+     */
+    public static boolean isEmpty(@Nullable float[] array) {
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is null or empty.
+     */
+    public static boolean isEmpty(@Nullable double[] array) {
+        return array == null || array.length == 0;
     }
 
     private ArrayUtils() {
