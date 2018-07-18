@@ -19,21 +19,16 @@ import java.util.regex.Pattern;
  */
 public class StringUtils {
 
-    /**
-     * The empty string.
-     */
-    @NotNull
     public static final String EMPTY = "";
 
-    /**
-     * The pattern for validating email.
-     */
-    @NotNull
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+" +
-            "(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+" +
+                "(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
+            Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
+    );
 
-    @NotNull
-    private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = ThreadLocal.withInitial(StringUtils::getHashMD5);
+    private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD =
+            ThreadLocal.withInitial(StringUtils::getHashMD5);
 
     /**
      * Return an empty string if the received string is null.
