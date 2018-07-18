@@ -13,7 +13,8 @@ public final class Matrix3f implements Reusable {
     public static final Matrix3f ZERO = new Matrix3f(
             0, 0, 0,
             0, 0, 0,
-            0, 0, 0);
+            0, 0, 0
+    );
 
     public static final Matrix3f IDENTITY = new Matrix3f();
 
@@ -73,18 +74,17 @@ public final class Matrix3f implements Reusable {
     }
 
     /**
-     * Multiply a vector by this matrix.
+     * Multiply the vector by this matrix.
      *
      * @param vector the source vector.
      * @param result the result vector.
      * @return the result.
      */
-    @NotNull
-    public Vector3f mult(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
+    public @NotNull Vector3f mult(@NotNull Vector3f vector, @NotNull Vector3f result) {
 
-        final float x = vector.x;
-        final float y = vector.y;
-        final float z = vector.z;
+        float x = vector.x;
+        float y = vector.y;
+        float z = vector.z;
 
         result.x = val_0_0 * x + val_0_1 * y + val_0_2 * z;
         result.y = val_1_0 * x + val_1_1 * y + val_1_2 * z;
@@ -94,7 +94,7 @@ public final class Matrix3f implements Reusable {
     }
 
     /**
-     * Set.
+     * Set the matrix values.
      *
      * @param val_0_0 the val 0 0
      * @param val_0_1 the val 0 1
@@ -106,9 +106,11 @@ public final class Matrix3f implements Reusable {
      * @param val_2_1 the val 2 1
      * @param val_2_2 the val 2 2
      */
-    public void set(final float val_0_0, final float val_0_1, final float val_0_2,
-                    final float val_1_0, final float val_1_1, final float val_1_2,
-                    final float val_2_0, final float val_2_1, final float val_2_2) {
+    public void set(
+            float val_0_0, float val_0_1, float val_0_2,
+            float val_1_0, float val_1_1, float val_1_2,
+            float val_2_0, float val_2_1, float val_2_2
+    ) {
         this.val_0_0 = val_0_0;
         this.val_0_1 = val_0_1;
         this.val_0_2 = val_0_2;
@@ -121,13 +123,12 @@ public final class Matrix3f implements Reusable {
     }
 
     /**
-     * Set values from a rotation.
+     * Set values from the rotation.
      *
      * @param rotation the rotation.
      * @return this updated matrix.
      */
-    @NotNull
-    public Matrix3f set(@NotNull final Quaternion4f rotation) {
+    public @NotNull Matrix3f set(@NotNull Quaternion4f rotation) {
         return rotation.toRotationMatrix(this);
     }
 

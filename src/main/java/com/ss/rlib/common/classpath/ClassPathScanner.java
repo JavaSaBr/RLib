@@ -56,6 +56,7 @@ public interface ClassPathScanner {
      *
      * @param container      the container.
      * @param interfaceClass the interface class.
+     * @param <T> the interface's type.
      */
     <T> void findImplements(@NotNull Array<Class<T>> container, @NotNull Class<T> interfaceClass);
 
@@ -63,6 +64,7 @@ public interface ClassPathScanner {
      * Find all inheriting classes of the parent class.
      *
      * @param parentClass the parent class.
+     * @param <T> the classes type.
      * @return the list of found inherited classes.
      */
     default <T> @NotNull Array<Class<T>> findInherited(@NotNull Class<T> parentClass) {
@@ -76,6 +78,7 @@ public interface ClassPathScanner {
      *
      * @param container   the container.
      * @param parentClass the parent class.
+     * @param <T> the parent classes type.
      */
     <T> void findInherited(@NotNull Array<Class<T>> container, @NotNull Class<T> parentClass);
 

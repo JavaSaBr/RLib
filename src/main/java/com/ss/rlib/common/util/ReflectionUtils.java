@@ -49,7 +49,8 @@ public final class ReflectionUtils {
                 container.addAll(fields);
             } else {
                 ArrayUtils.forEach(fields, toCheck ->
-                        !ArrayUtils.contains(exceptions, toCheck.getName()), container::add);
+                        !ArrayUtils.contains(exceptions, toCheck.getName()),
+                        container::add);
             }
         }
     }
@@ -75,16 +76,44 @@ public final class ReflectionUtils {
     }
 
     /**
-     * Get a field by the name.
+     * Get a field by the name from the type.
+     *
+     * @param type      the type.
+     * @param fieldName the field name.
+     * @return the field.
+     */
+    public static @NotNull Field getField(@NotNull Class<?> type, @NotNull String fieldName) {
+        try {
+            return type.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Get a field by the name from the type of the object.
      *
      * @param object    the object.
      * @param fieldName the field name.
      * @return the field.
      */
     public static @NotNull Field getField(@NotNull Object object, @NotNull String fieldName) {
+        return getField(object.getClass(), fieldName);
+    }
+
+    /**
+     * Get a field by the name with full access from the type.
+     *
+     * @param type      the type.
+     * @param fieldName the field name.
+     * @return the field.
+     */
+    public static @NotNull Field getUnsafeField(@NotNull Class<?> type, @NotNull String fieldName) {
         try {
-            return object.getClass().getDeclaredField(fieldName);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException e) {
+            Field field = getField(type, fieldName);
+            field.setAccessible(true);
+            return field;
+        } catch (SecurityException | IllegalArgumentException e) {
             throw new RuntimeException(e);
         }
     }
@@ -97,13 +126,7 @@ public final class ReflectionUtils {
      * @return the field.
      */
     public static @NotNull Field getUnsafeField(@NotNull Object object, @NotNull String fieldName) {
-        try {
-            Field field = getField(object, fieldName);
-            field.setAccessible(true);
-            return field;
-        } catch (SecurityException | IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        }
+        return getUnsafeField(object.getClass(), fieldName);
     }
 
     /**
@@ -187,7 +210,6 @@ public final class ReflectionUtils {
             throw new RuntimeException(e);
         }
     }
-
 
     /**
      * Set a field value.
@@ -296,7 +318,7 @@ public final class ReflectionUtils {
         try {
             Field field = getStaticField(type, fieldName);
             field.set(null, value);
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -312,7 +334,7 @@ public final class ReflectionUtils {
         try {
             Field field = getUnsafeStaticField(type, fieldName);
             field.set(null, value);
-        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

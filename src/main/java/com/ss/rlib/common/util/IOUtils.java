@@ -1,13 +1,9 @@
 package com.ss.rlib.common.util;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.*;
 
 /**
  * The class with utility methods.
@@ -21,11 +17,15 @@ public final class IOUtils {
      *
      * @param closeable the closeable object.
      */
-    public static void close(@Nullable final Closeable closeable) {
-        if (closeable == null) return;
+    public static void close(@Nullable Closeable closeable) {
+
+        if (closeable == null) {
+            return;
+        }
+
         try {
             closeable.close();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
@@ -39,8 +39,12 @@ public final class IOUtils {
      * @param needClose true if need to close streams.
      * @throws IOException the io exception
      */
-    public static void copy(@NotNull final InputStream in, @NotNull final OutputStream out, @NotNull final byte[] buffer,
-                            final boolean needClose) throws IOException {
+    public static void copy(
+            @NotNull InputStream in,
+            @NotNull OutputStream out,
+            @NotNull byte[] buffer,
+            boolean needClose
+    ) throws IOException {
 
         for (int i = in.read(buffer); i != -1; i = in.read(buffer)) {
             out.write(buffer, 0, i);

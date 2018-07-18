@@ -180,7 +180,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public @Nullable E search(@NotNull Predicate<E> predicate) {
+    public @Nullable E findAny(@NotNull Predicate<E> predicate) {
 
         for (E element : array()) {
             if (predicate.test(element)) {
@@ -192,7 +192,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public <T> @Nullable E search(@Nullable T argument, @NotNull BiPredicate<E, T> predicate) {
+    public <T> @Nullable E findAny(@Nullable T argument, @NotNull BiPredicate<? super E, T> predicate) {
 
         for (E element : array()) {
             if (predicate.test(element, argument)) {
@@ -204,7 +204,19 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public <F, S> @Nullable E search(
+    public <T> @Nullable E findAnyR(@Nullable T argument, @NotNull BiPredicate<T, ? super E> condition) {
+
+        for (E element : array()) {
+            if (condition.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public <F, S> @Nullable E findAny(
             @Nullable F first,
             @Nullable S second,
             @NotNull TriplePredicate<E, F, S> predicate

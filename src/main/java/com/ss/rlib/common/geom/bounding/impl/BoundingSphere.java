@@ -65,9 +65,9 @@ public class BoundingSphere extends AbstractBounding {
     }
 
     /**
-     * Gets radius.
+     * Get the sphere's radius.
      *
-     * @return the sphere radius.
+     * @return the sphere's radius.
      */
     public float getRadius() {
         return radius;
@@ -76,10 +76,10 @@ public class BoundingSphere extends AbstractBounding {
     @Override
     public @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer) {
 
-        Vector3f vector = buffer.nextVector();
-        vector.set(center);
+        Vector3f vector = buffer.nextVector()
+                .set(center);
 
-        if (offset == Vector3f.ZERO) {
+        if (offset.isZero()) {
             return vector;
         }
 
@@ -87,28 +87,28 @@ public class BoundingSphere extends AbstractBounding {
     }
 
     @Override
-    public boolean intersects(@NotNull final Bounding bounding, @NotNull final Vector3fBuffer buffer) {
+    public boolean intersects(@NotNull Bounding bounding, @NotNull Vector3fBuffer buffer) {
         switch (bounding.getBoundingType()) {
             case EMPTY: {
                 return false;
             }
             case SPHERE: {
 
-                final BoundingSphere sphere = (BoundingSphere) bounding;
+                BoundingSphere sphere = (BoundingSphere) bounding;
 
-                final Vector3f diff = getResultCenter(buffer);
-                diff.subtractLocal(sphere.getResultCenter(buffer));
+                Vector3f diff = getResultCenter(buffer)
+                        .subtractLocal(sphere.getResultCenter(buffer));
 
-                final float rsum = getRadius() + sphere.getRadius();
+                float rsum = getRadius() + sphere.getRadius();
 
                 return diff.dot(diff) <= rsum * rsum;
             }
             case AXIS_ALIGNED_BOX: {
 
-                final AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
+                AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
 
-                final Vector3f center = getResultCenter(buffer);
-                final Vector3f target = box.getResultCenter(buffer);
+                Vector3f center = getResultCenter(buffer);
+                Vector3f target = box.getResultCenter(buffer);
 
                 return abs(target.getX() - center.getX()) < getRadius() + box.getSizeX() &&
                         abs(target.getY() - center.getY()) < getRadius() + box.getSizeY() &&
@@ -120,15 +120,20 @@ public class BoundingSphere extends AbstractBounding {
     }
 
     @Override
-    public boolean intersects(@NotNull final Vector3f start, @NotNull final Vector3f direction, @NotNull final Vector3fBuffer buffer) {
+    public boolean intersects(@NotNull Vector3f start, @NotNull Vector3f direction, @NotNull Vector3fBuffer buffer) {
 
-        final Vector3f diff = buffer.nextVector();
-        diff.set(start).subtractLocal(getResultCenter(buffer));
+        Vector3f diff = buffer.nextVector()
+                .set(start)
+                .subtractLocal(getResultCenter(buffer));
 
-        final float a = start.dot(diff) - squareRadius;
-        if (a <= 0.0) return true;
+        float a = start.dot(diff) - squareRadius;
 
-        final float b = direction.dot(diff);
+        if (a <= 0.0) {
+            return true;
+        }
+
+        float b = direction.dot(diff);
+
         return b < 0.0 && b * b >= a;
 
     }

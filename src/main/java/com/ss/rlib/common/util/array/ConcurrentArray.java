@@ -283,7 +283,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param predicate the condition.
      * @return the found element or null.
      */
-    default <T> @Nullable E searchInReadLock(@Nullable T argument, @NotNull BiPredicate<E, T> predicate) {
+    default <T> @Nullable E anyMatchInReadLock(@Nullable T argument, @NotNull BiPredicate<E, T> predicate) {
 
         if (isEmpty()) {
             return null;

@@ -27,11 +27,9 @@ import java.util.function.Consumer;
  */
 public final class Utils {
 
-    @NotNull
     private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() ->
             new SimpleDateFormat("HH:mm:ss:SSS"));
 
-    @NotNull
     private static final ThreadLocal<Date> LOCAL_DATE = withInitial(Date::new);
 
     /**
@@ -41,16 +39,16 @@ public final class Utils {
      * @param port the port.
      * @return true if the port is free.
      */
-    public static boolean checkFreePort(@NotNull final String host, final int port) {
+    public static boolean checkFreePort(@NotNull String host, int port) {
 
         try {
 
-            final ServerSocket serverSocket = host.equalsIgnoreCase("*") ?
+            ServerSocket serverSocket = host.equalsIgnoreCase("*") ?
                     new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
 
             serverSocket.close();
 
-        } catch (final IOException e) {
+        } catch (IOException e) {
             return false;
         }
 
