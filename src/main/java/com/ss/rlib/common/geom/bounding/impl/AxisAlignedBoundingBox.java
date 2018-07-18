@@ -1,13 +1,17 @@
 package com.ss.rlib.common.geom.bounding.impl;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.ss.rlib.common.geom.Matrix3f;
 import com.ss.rlib.common.geom.Quaternion4f;
 import com.ss.rlib.common.geom.Vector3f;
 import com.ss.rlib.common.geom.Vector3fBuffer;
 import com.ss.rlib.common.geom.bounding.Bounding;
 import com.ss.rlib.common.geom.bounding.BoundingType;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation AxisAlignedBoundingBox.
@@ -143,6 +147,24 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
     protected final float getSizeZ() {
         return sizeZ;
     }
+    
+    /**
+     * Get a copy of AABB size.
+     * 
+     * @return AABB size
+     */
+    public Vector3f getSize() {
+        return new Vector3f(size);
+    }
+    
+    /**
+     * Get AABB size.
+     * 
+     * @return AABB size
+     */
+    public Vector3f getSize(@NotNull Vector3fBuffer buffer) {
+        return buffer.nextVector().set(size);
+    }
 
     @Override
     public boolean intersects(@NotNull Bounding bounding, @NotNull Vector3fBuffer buffer) {
@@ -246,9 +268,8 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         matrix.absoluteLocal();
 
         final Vector3f vector = buffer.nextVector();
-        vector.set(size);
-
-        matrix.mult(vector, vector);
+        
+        matrix.mult(size, vector);
 
         sizeX = abs(vector.getX());
         sizeY = abs(vector.getY());
@@ -258,9 +279,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
             return;
         }
 
-        vector.set(offset);
-
-        matrix.mult(vector, vector);
+        matrix.mult(offset, vector);
 
         offsetX = vector.getX();
         offsetY = vector.getY();
