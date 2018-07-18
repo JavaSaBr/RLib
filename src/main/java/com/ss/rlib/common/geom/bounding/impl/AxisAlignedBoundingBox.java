@@ -144,18 +144,19 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
     }
     
     /**
-     * Get a copy of AABB size.
+     * Get a copy of the AABB's size vector.
      * 
-     * @return AABB size
+     * @return AABB's size.
      */
     public @NotNull Vector3f getSize() {
         return new Vector3f(size);
     }
 
     /**
-     * Get AABB size.
-     * 
-     * @return AABB size
+     * Get AABB's size.
+     *
+     * @param buffer the vector buffer.
+     * @return AABB's size.
      */
     public Vector3f getSize(@NotNull Vector3fBuffer buffer) {
         return buffer.nextVector()

@@ -1,6 +1,9 @@
 # License #
 Please see the file called LICENSE.
 
+ [ ![Download](https://api.bintray.com/packages/javasabr/maven/com.spaceshift.rlib.common/images/download.svg) ](https://bintray.com/javasabr/maven/com.spaceshift.rlib.common/_latestVersion)
+
+
 ## How to use
 
 #### Gradle
