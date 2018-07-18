@@ -330,7 +330,10 @@ public final class Vector3f {
      * @return true if all components are zero.
      */
     public boolean isZero() {
-        return ExtMath.isZero(x) && ExtMath.isZero(y) && ExtMath.isZero(z);
+        return this == ZERO ||
+                ExtMath.isZero(x) &&
+                ExtMath.isZero(y) &&
+                ExtMath.isZero(z);
     }
 
     /**

@@ -67,16 +67,14 @@ public interface Bounding {
      *
      * @return the type.
      */
-    @NotNull
-    BoundingType getBoundingType();
+    @NotNull BoundingType getBoundingType();
 
     /**
      * Get a center of a bounding.
      *
      * @return the center.
      */
-    @NotNull
-    Vector3f getCenter();
+    @NotNull Vector3f getCenter();
 
     /**
      * Change a center of a bounding.

@@ -259,14 +259,38 @@ public class Quaternion4f {
         return this;
     }
 
+
     /**
      * Calculate a vector by a direction type.
      *
      * @param type  the direction type.
      * @param store the result container.
      * @return the calculated vector.
+     * @see #getDirection(DirectionType, Vector3f)
      */
+    @Deprecated
     public @NotNull Vector3f getVector(@NotNull DirectionType type, @Nullable Vector3f store) {
+        return getDirection(type, store);
+    }
+
+    /**
+     * Calculate a vector for the direction type.
+     *
+     * @param type the direction type.
+     * @return the calculated vector.
+     */
+    public @NotNull Vector3f getDirection(@NotNull DirectionType type) {
+        return getDirection(type, null);
+    }
+
+    /**
+     * Calculate a vector for the direction type.
+     *
+     * @param type  the direction type.
+     * @param store the vector to store result.
+     * @return the calculated vector.
+     */
+    public @NotNull Vector3f getDirection(@NotNull DirectionType type, @Nullable Vector3f store) {
 
         if (store == null) {
             store = new Vector3f();
