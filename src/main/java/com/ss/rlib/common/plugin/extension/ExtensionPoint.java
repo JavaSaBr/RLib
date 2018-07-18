@@ -155,7 +155,6 @@ public class ExtensionPoint<T> implements Iterable<T> {
      * Handle each extension.
      *
      * @param consumer the consumer.
-     * @return this point.
      */
     @Override
     public void forEach(@NotNull Consumer<? super T> consumer) {
@@ -173,7 +172,6 @@ public class ExtensionPoint<T> implements Iterable<T> {
      * @param first    the first argument.
      * @param consumer the consumer.
      * @param <F>      the argument's type.
-     * @return this point.
      */
     public <F> void forEach(@NotNull F first, @NotNull BiConsumer<? super T, F> consumer) {
 
