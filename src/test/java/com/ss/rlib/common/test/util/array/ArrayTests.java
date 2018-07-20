@@ -44,8 +44,8 @@ public class ArrayTests {
         array.slowRemove(1);
         array.fastRemove(1);
 
-        Integer searched = array.search(integer -> integer == 2);
-        searched = array.search(2, (el, arg) -> el == arg);
+        Integer searched = array.findAny(integer -> integer == 2);
+        searched = array.findAny(2, (el, arg) -> el == arg);
 
         array.forEach(5, (el, arg) -> System.out.println(el + arg));
         array.forEach(5, 7, (el, firstArg, secondArg) -> System.out.println(el + firstArg + secondArg));
@@ -83,7 +83,7 @@ public class ArrayTests {
 
         final Integer last = ArrayUtils.getInReadLock(array, Array::last);
         final Integer result = ArrayUtils.getInReadLock(array, last,
-                (arr, target) -> arr.search(target, Integer::equals));
+                (arr, target) -> arr.findAny(target, Integer::equals));
 
         ArrayUtils.runInWriteLock(array, result + 1, Collection::add);
 

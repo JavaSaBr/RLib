@@ -4,15 +4,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'idea'
-apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
@@ -30,19 +28,9 @@ compileTestJava {
 }
 
 ext.junitPlatformVersion = "1.0.0"
-ext.junitJupiterVersion = "5.0.0"
+ext.junitJupiterVersion = "5.2.0"
 ext.log4jVersion = '2.6.2'
 ext.bintrayVersion = version
-
-junitPlatform {
-    filters {
-        engines {
-        }
-        tags {
-        }
-    }
-    logManager 'org.apache.logging.log4j.jul.LogManager'
-}
 
 repositories {
     mavenCentral()
@@ -89,18 +77,23 @@ dependencies {
     compileOnly group: 'org.jetbrains', name: 'annotations', version: '15.0'
 
     testCompile group: 'org.jetbrains', name: 'annotations', version: '15.0'
-    testCompile "org.junit.platform:junit-platform-commons:$junitPlatformVersion"
-    testRuntime "org.junit.platform:junit-platform-engine:$junitPlatformVersion"
 
     testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
-
-    testRuntime "org.apache.logging.log4j:log4j-core:$log4jVersion"
-    testRuntime "org.apache.logging.log4j:log4j-jul:$log4jVersion"
-
-    // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
-    testCompile "org.junit.platform:junit-platform-launcher:$junitPlatformVersion"
 }
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
+    reports {
+        html.enabled = true
+    }
+}
+
 
 javadoc {
     failOnError = false
