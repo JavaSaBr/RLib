@@ -15,7 +15,7 @@ public class ArrayFactory {
     public static final Array<?> EMPTY_ARRAY = newReadOnlyArray(ArrayUtils.EMPTY_OBJECT_ARRAY);
 
     /**
-     * Creates the new array.
+     * Create the new array.
      *
      * @param <E>  the type parameter
      * @param args the elements for the new array.
@@ -30,54 +30,52 @@ public class ArrayFactory {
     }
 
     /**
-     * Creates the new array.
+     * Create the new array.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> Array<E> newArray(@NotNull Class<?> type) {
+    public static <E> Array<E> newArray(@NotNull Class<? super E> type) {
         return newUnsafeArray(type);
     }
 
     /**
-     * Creates the new copy on modify array.
+     * Create the new copy on modify array.
      *
      * @param <E>  the element's type.
      * @param type the element's type.
      * @return the new array.
      */
-    public static <E> Array<E> newCopyOnModifyArray(@NotNull Class<?> type) {
-        Class<E> casted = unsafeCast(type);
-        return new CopyOnModifyArray<>(casted, 0);
+    public static <E> Array<E> newCopyOnModifyArray(@NotNull Class<? super E> type) {
+        return new CopyOnModifyArray<>(type, 0);
     }
 
     /**
-     * Creates the new unsafe array.
+     * Create the new unsafe array.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new unsafe array.
      */
-    public static <E> UnsafeArray<E> newUnsafeArray(@NotNull Class<?> type) {
-        Class<E> casted = unsafeCast(type);
-        return new FastArray<>(casted);
+    public static <E> UnsafeArray<E> newUnsafeArray(@NotNull Class<? super E> type) {
+        return new FastArray<>(type);
     }
 
     /**
-     * Creates the new array.
+     * Create the new array.
      *
      * @param <E>      the type parameter
      * @param type     the type of the array.
      * @param capacity the init size of the array.
      * @return the new array.
      */
-    public static <E> Array<E> newArray(@NotNull Class<?> type, int capacity) {
+    public static <E> Array<E> newArray(@NotNull Class<? super E> type, int capacity) {
         return newUnsafeArray(type, capacity);
     }
 
     /**
-     * Creates a new read only array.
+     * Create a new read only array.
      *
      * @param <E> the element's type.
      * @return the new read only array.
@@ -94,89 +92,89 @@ public class ArrayFactory {
      * @param capacity the init size of the array.
      * @return the new unsafe array.
      */
-    public static <E> UnsafeArray<E> newUnsafeArray(@NotNull Class<?> type, int capacity) {
-        return new FastArray<>(unsafeCast(type), capacity);
+    public static <E> UnsafeArray<E> newUnsafeArray(@NotNull Class<? super E> type, int capacity) {
+        return new FastArray<>(type, capacity);
     }
 
     /**
-     * Creates the new array set.
+     * Create the new array set.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> Array<E> newArraySet(@NotNull Class<?> type) {
-        return new FastArraySet<>(unsafeCast(type));
+    public static <E> Array<E> newArraySet(@NotNull Class<? super E> type) {
+        return new FastArraySet<>(type);
     }
 
     /**
-     * Creates the new concurrent array.
+     * Create the new concurrent array.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArray(@NotNull Class<?> type) {
-        return new ConcurrentReentrantRWLockArray<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArray(@NotNull Class<? super E> type) {
+        return new ConcurrentReentrantRWLockArray<>(type);
     }
 
     /**
-     * Creates the new concurrent array set.
+     * Create the new concurrent array set.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArraySet(@NotNull Class<?> type) {
-        return new ConcurrentReentrantRWLockArraySet<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentReentrantRWLockArraySet(@NotNull Class<? super E> type) {
+        return new ConcurrentReentrantRWLockArraySet<>(type);
     }
 
     /**
-     * Creates the new concurrent array.
+     * Create the new concurrent array.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> ConcurrentArray<E> newConcurrentAtomicARSWLockArray(@NotNull Class<?> type) {
-        return new ConcurrentAtomicARSWLockArray<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentAtomicARSWLockArray(@NotNull Class<? super E> type) {
+        return new ConcurrentAtomicARSWLockArray<>(type);
     }
 
     /**
-     * Creates the new concurrent array.
+     * Create the new concurrent array.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> ConcurrentArray<E> newConcurrentStampedLockArray(@NotNull Class<?> type) {
-        return new ConcurrentStampedLockArray<>(unsafeCast(type));
+    public static <E> ConcurrentArray<E> newConcurrentStampedLockArray(@NotNull Class<? super E> type) {
+        return new ConcurrentStampedLockArray<>(type);
     }
 
     /**
-     * Creates the new sorted array.
+     * Create the new sorted array.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E extends Comparable<E>> Array<E> newSortedArray(@NotNull Class<?> type) {
+    public static <E extends Comparable<E>> Array<E> newSortedArray(@NotNull Class<? super E> type) {
         return new SortedArray<>(unsafeCast(type));
     }
 
     /**
-     * Creates the new synchronized array.
+     * Create the new synchronized array.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
      * @return the new array.
      */
-    public static <E> Array<E> newSynchronizedArray(@NotNull Class<?> type) {
-        return new SynchronizedArray<>(unsafeCast(type));
+    public static <E> Array<E> newSynchronizedArray(@NotNull Class<? super E> type) {
+        return new SynchronizedArray<>(type);
     }
 
     /**
-     * Creates the new integer array.
+     * Create the new integer array.
      *
      * @return the new array.
      */
@@ -185,7 +183,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Creates the new long array.
+     * Create the new long array.
      *
      * @return the new array.
      */
@@ -194,7 +192,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Creates the new float array.
+     * Create the new float array.
      *
      * @param elements the elements of the new array.
      * @return the new array.
@@ -204,7 +202,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Creates the new int array.
+     * Create the new int array.
      *
      * @param elements the elements of the new array.
      * @return the new array.
@@ -214,7 +212,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Creates the new object array.
+     * Create the new object array.
      *
      * @param <T>      the type parameter
      * @param <K>      the type parameter

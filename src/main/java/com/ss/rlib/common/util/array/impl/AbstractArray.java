@@ -25,11 +25,11 @@ public abstract class AbstractArray<E> implements Array<E> {
      */
     protected static final int DEFAULT_SIZE = 10;
 
-    public AbstractArray(@NotNull Class<E> type) {
+    public AbstractArray(@NotNull Class<? super E> type) {
         this(type, DEFAULT_SIZE);
     }
 
-    public AbstractArray(@NotNull Class<E> type, int size) {
+    public AbstractArray(@NotNull Class<? super E> type, int size) {
         super();
 
         if (size < 0) {

@@ -29,7 +29,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param <T>          the key's and value's type.
      * @return the new object dictionary.
      */
-    static <T> @NotNull ObjectDictionary<T, T> ofType(@NotNull Class<?> keyValueType) {
+    static <T> @NotNull ObjectDictionary<T, T> ofType(@NotNull Class<? super T> keyValueType) {
         return DictionaryFactory.newObjectDictionary();
     }
 
@@ -42,21 +42,37 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param <V>       the value's type.
      * @return the new object dictionary.
      */
-    static <K, V> @NotNull ObjectDictionary<K, V> ofType(@NotNull Class<?> keyType, @NotNull Class<?> valueType) {
+    static <K, V> @NotNull ObjectDictionary<K, V> ofType(
+            @NotNull Class<? super K> keyType,
+            @NotNull Class<? super V> valueType
+    ) {
         return DictionaryFactory.newObjectDictionary();
     }
 
     /**
-     * Performs the given action for each key-value pair of this dictionary.
+     * Create a new object dictionary for the values.
      *
-     * @param consumer the consumer.
+     * @param <K>       the key's type.
+     * @param <V>       the value's type.
+     * @return the new object dictionary.
      */
-    default void forEach(@NotNull final BiConsumer<? super K, ? super V> consumer) {
-        throw new UnsupportedOperationException();
+    static <K, V> @NotNull ObjectDictionary<K, V> of(@NotNull Object... values) {
+
+        if (values.length < 2 || values.length % 2 != 0) {
+            throw new IllegalArgumentException("Incorect argument's count.");
+        }
+
+        ObjectDictionary<K, V> dictionary = DictionaryFactory.newObjectDictionary();
+
+        for (int i = 0, length = values.length - 2; i <= length; i += 2) {
+            dictionary.put((K) values[i], (V) values[i + 1]);
+        }
+
+        return dictionary;
     }
 
     /**
-     * Returns <tt>true</tt> if this dictionary contains a mapping for the specified key.  More
+     * Return <tt>true</tt> if this dictionary contains a mapping for the specified key.  More
      * formally, returns <tt>true</tt> if and only if this dictionary contains a mapping for a key
      * <tt>k</tt> such that <tt>(key==null ? k==null : key.equals(k))</tt>.  (There can be at most
      * one such mapping.)
@@ -64,58 +80,102 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param key key whose presence in this dictionary is to be tested.
      * @return <tt>true</tt> if this dictionary contains a mapping for the specified key.
      */
-    default boolean containsKey(@NotNull final K key) {
+    default boolean containsKey(@NotNull K key) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns the value to which the specified key is mapped, or {@code null} if this dictionary
+     * Return the value to which the specified key is mapped, or {@code null} if this dictionary
      * contains no mapping for the key.
      *
      * @param key the key whose associated value is to be returned.
      * @return the value to which the specified key is mapped, or {@code null} if this dictionary contains no mapping for the key.
      */
-    default @Nullable V get(@NotNull final K key) {
+    default @Nullable V get(@NotNull K key) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns the optional value to which the specified key is mapped, or {@code null} if this dictionary
+     * Return the optional value to which the specified key is mapped, or {@code null} if this dictionary
      * contains no mapping for the key.
      *
      * @param key the key whose associated value is to be returned.
      * @return the optional value to which the specified key is mapped.
      */
-    default @NotNull Optional<V> getOptional(@NotNull final K key) {
+    default @NotNull Optional<V> getOptional(@NotNull K key) {
         return Optional.ofNullable(get(key));
     }
 
     /**
-     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param key     the key.
+     * @param factory the factory.
+     * @return the stored value by the key or the new value.
+     * @see #getOrCompute(Object, Supplier)
+     */
+    @Deprecated
+    default @NotNull V get(@NotNull K key, @NotNull Supplier<V> factory) {
+        return getOrCompute(key, factory);
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
      * puts this value to this dictionary and return this value.
      *
      * @param key     the key.
      * @param factory the factory.
      * @return the stored value by the key or the new value.
      */
-    default @NotNull V get(@NotNull final K key, @NotNull final Supplier<V> factory) {
+    default @NotNull V getOrCompute(@NotNull K key, @NotNull Supplier<@NotNull V> factory) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param key     the key.
+     * @param factory the factory.
+     * @return the stored value by the key or the new value.
+     * @see #getOrCompute(Object, Function)
+     */
+    @Deprecated
+    default @NotNull V get(@NotNull K key, @NotNull Function<K, V> factory) {
+        return getOrCompute(key, factory);
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
      * puts this value to this dictionary and return this value.
      *
      * @param key     the key.
      * @param factory the factory.
      * @return the stored value by the key or the new value.
      */
-    default @NotNull V get(@NotNull final K key, @NotNull final Function<K, V> factory) {
+    default @NotNull V getOrCompute(@NotNull K key, @NotNull Function<@NotNull K, @NotNull V> factory) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param <T>      the argument's type.
+     * @param key      the key.
+     * @param argument the additional argument.
+     * @param factory  the factory.
+     * @return the stored value by the key or the new value.
+     * @see #getOrCompute(Object, Object, Function)
+     */
+    @Deprecated
+    default <T> @NotNull V get(@NotNull K key, @Nullable T argument, @NotNull Function<T, V> factory) {
+        return getOrCompute(key, argument, factory);
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
      * puts this value to this dictionary and return this value.
      *
      * @param <T>      the argument's type.
@@ -124,13 +184,31 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param factory  the factory.
      * @return the stored value by the key or the new value.
      */
-    default <T> @NotNull V get(@NotNull final K key, @Nullable final T argument,
-                               @NotNull final Function<T, V> factory) {
+    default <T> @NotNull V getOrCompute(
+            @NotNull K key,
+            @NotNull T argument,
+            @NotNull Function<@NotNull T, @NotNull V> factory
+    ) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Gets the value for the key. If the value doesn't exists, the factory will create new value,
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param <T>      the argument's type.
+     * @param key      the key.
+     * @param argument the additional argument.
+     * @param factory  the factory.
+     * @return the stored value by the key or the new value.
+     * @see #getOrCompute(Object, Object, BiFunction)
+     */
+    default <T> @NotNull V get(@NotNull K key, @Nullable T argument, @NotNull BiFunction<K, T, V> factory) {
+        return getOrCompute(key, argument, factory);
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
      * puts this value to this dictionary and return this value.
      *
      * @param <T>      the argument's type.
@@ -139,28 +217,32 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param factory  the factory.
      * @return the stored value by the key or the new value.
      */
-    default <T> @NotNull V get(@NotNull final K key, @Nullable final T argument,
-                               @NotNull final BiFunction<K, T, V> factory) {
+    default <T> @NotNull V getOrCompute(
+            @NotNull K key,
+            @NotNull T argument,
+            @NotNull BiFunction<@NotNull K, @NotNull T, @NotNull V> factory
+    ) {
+
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Gets all keys of this dictionary.
+     * Put to the array all keys of this dictionary.
      *
-     * @param container the container for storing keys.
+     * @param container the container.
      * @return the array with all keys.
      */
-    default @NotNull Array<K> keyArray(@NotNull final Array<K> container) {
+    default @NotNull Array<K> keyArray(@NotNull Array<K> container) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Key array array.
+     * Create an array with all keys of this dictionary.
      *
-     * @param type the type
-     * @return the array of all keys of this dictionary.
+     * @param type the key's type.
+     * @return the array with all keys of this dictionary.
      */
-    default @NotNull Array<K> keyArray(@NotNull final Class<K> type) {
+    default @NotNull Array<K> keyArray(@NotNull Class<K> type) {
         return keyArray(ArrayFactory.newArray(type, size()));
     }
 
@@ -175,7 +257,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param value value to be associated with the specified key
      * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for <tt>key</tt>. (A <tt>null</tt> return can also indicate that the map previously associated <tt>null</tt> with <tt>key</tt>, if the implementation supports <tt>null</tt> values.)
      */
-    default @Nullable V put(@NotNull final K key, @Nullable final V value) {
+    default @Nullable V put(@NotNull K key, @Nullable V value) {
         throw new UnsupportedOperationException();
     }
 
@@ -190,7 +272,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param value value to be associated with the specified key
      * @return the previous optional value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
-    default @NotNull Optional<V> putOptional(@NotNull final K key, @Nullable final V value) {
+    default @NotNull Optional<V> putOptional(@NotNull K key, @Nullable V value) {
         return Optional.ofNullable(put(key, value));
     }
 
@@ -209,7 +291,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param key key whose mapping is to be removed from the dictionary
      * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for <tt>key</tt>.
      */
-    default @Nullable V remove(final K key) {
+    default @Nullable V remove(K key) {
         throw new UnsupportedOperationException();
     }
 
@@ -228,8 +310,17 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param key key whose mapping is to be removed from the dictionary
      * @return the previous optional value associated with <tt>key</tt>.
      */
-    default @Nullable Optional<V> removeOptional(final K key) {
+    default @NotNull Optional<V> removeOptional(K key) {
         return Optional.ofNullable(remove(key));
+    }
+
+    /**
+     * Performs the given action for each key-value pair of this dictionary.
+     *
+     * @param consumer the consumer.
+     */
+    default void forEach(@NotNull BiConsumer<@NotNull ? super K, @NotNull ? super V> consumer) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -239,7 +330,10 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param argument the argument.
      * @param consumer the consumer.
      */
-    default <T> void forEach(@Nullable final T argument, @NotNull final TripleConsumer<T, K, V> consumer) {
+    default <T> void forEach(
+            @NotNull T argument,
+            @NotNull TripleConsumer<@NotNull ? super T, @NotNull ? super K, @NotNull ? super V> consumer
+    ) {
         throw new UnsupportedOperationException();
     }
 
@@ -252,7 +346,11 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param second   the second argument.
      * @param consumer the consumer.
      */
-    default <F, S> void forEach(@Nullable final F first, @Nullable final S second, @NotNull final FourObjectConsumer<F, S, K, V> consumer) {
+    default <F, S> void forEach(
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull FourObjectConsumer<@NotNull ? super F, @NotNull ? super S, @NotNull ? super K, @NotNull ? super V> consumer
+    ) {
         throw new UnsupportedOperationException();
     }
 }

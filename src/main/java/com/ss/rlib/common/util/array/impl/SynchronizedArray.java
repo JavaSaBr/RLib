@@ -37,7 +37,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
      *
      * @param type the type
      */
-    public SynchronizedArray(@NotNull final Class<E> type) {
+    public SynchronizedArray(@NotNull final Class<? super E> type) {
         this(type, 10);
     }
 
@@ -47,7 +47,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
      * @param type the type
      * @param size the size
      */
-    public SynchronizedArray(@NotNull final Class<E> type, final int size) {
+    public SynchronizedArray(@NotNull final Class<? super E> type, final int size) {
         super(type, size);
 
         this.size = new AtomicInteger();

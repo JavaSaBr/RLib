@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:7.3.1'
+    compile 'com.spaceshift:rlib.common:7.3.2'
 }
 ```
     
@@ -32,12 +32,12 @@ dependencies {
         <name>bintray</name>
         <url>https://dl.bintray.com/javasabr/maven</url>
     </repository>
-</repositories>
+</repositories>s
 
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>7.3.1</version>
+    <version>7.3.2</version>
 </dependency>
 ```
 

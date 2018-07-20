@@ -34,9 +34,6 @@ import java.util.function.Consumer;
  */
 public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> implements PeriodicTaskExecutor<T, L>, Runnable, Lockable {
 
-    /**
-     * The constant LOGGER.
-     */
     protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadPeriodicTaskExecutor.class);
 
     /**
@@ -73,7 +70,8 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
      * The finishing function.
      */
     @NotNull
-    private final Consumer<T> finishFunction = task -> task.onFinish(getLocalObjects());
+    private final Consumer<T> finishFunction =
+            task -> task.onFinish(getLocalObjects());
 
     /**
      * The waiting flag.
@@ -92,19 +90,14 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
      */
     private final int interval;
 
-    /**
-     * Instantiates a new Single thread periodic task executor.
-     *
-     * @param threadClass  the thread class
-     * @param priority     the priority
-     * @param interval     the interval
-     * @param name         the name
-     * @param taskClass    the task class
-     * @param localObjects the local objects
-     */
-    public SingleThreadPeriodicTaskExecutor(@NotNull final Class<? extends Thread> threadClass, final int priority,
-                                            final int interval, @NotNull final String name,
-                                            final Class<?> taskClass, @Nullable final L localObjects) {
+    public SingleThreadPeriodicTaskExecutor(
+            @NotNull Class<? extends Thread> threadClass,
+            int priority,
+            int interval,
+            @NotNull String name,
+            @NotNull Class<? super T> taskClass,
+            @Nullable L localObjects
+    ) {
         this.waitTasks = ArrayFactory.newArray(taskClass);
         this.executeTasks = ArrayFactory.newArray(taskClass);
         this.finishedTasks = ArrayFactory.newArray(taskClass);
@@ -112,7 +105,8 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
         this.lock = LockFactory.newAtomicLock();
         this.interval = interval;
 
-        final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
+        Constructor<Thread> constructor =
+                ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
 
         this.thread = ClassUtils.newInstance(constructor, this, name);
         this.thread.setPriority(priority);
@@ -122,7 +116,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     }
 
     @Override
-    public void addTask(@NotNull final T task) {
+    public void addTask(@NotNull T task) {
         lock();
         try {
 
@@ -148,8 +142,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
      * @param thread       the thread
      * @return the l
      */
-    @NotNull
-    protected L check(@Nullable final L localObjects, @NotNull final Thread thread) {
+    protected @NotNull L check(@Nullable L localObjects, @NotNull Thread thread) {
         return requireNonNull(localObjects);
     }
 

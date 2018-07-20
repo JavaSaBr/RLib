@@ -31,13 +31,13 @@ public class ConcurrentReentrantRWLockArray<E> extends AbstractConcurrentArray<E
     @NotNull
     private final Lock writeLock;
 
-    public ConcurrentReentrantRWLockArray(@NotNull Class<E> type) {
+    public ConcurrentReentrantRWLockArray(@NotNull Class<? super E> type) {
         this(type, 10);
     }
 
-    public ConcurrentReentrantRWLockArray(@NotNull Class<E> type, int size) {
+    public ConcurrentReentrantRWLockArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
-        final ReadWriteLock readWriteLock = LockFactory.newReentrantRWLock();
+        ReadWriteLock readWriteLock = LockFactory.newReentrantRWLock();
         this.readLock = readWriteLock.readLock();
         this.writeLock = readWriteLock.writeLock();
     }

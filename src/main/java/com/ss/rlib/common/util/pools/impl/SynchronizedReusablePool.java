@@ -15,57 +15,29 @@ import com.ss.rlib.common.util.pools.ReusablePool;
  * @param <E> the type parameter
  * @author JavaSaBr
  */
-public class SynchronizedReusablePool<E extends Reusable> implements ReusablePool<E> {
+public class SynchronizedReusablePool<E extends Reusable> extends FastReusablePool<E> {
 
-    /**
-     * The storage of objects.
-     */
-    private final Array<E> pool;
-
-    /**
-     * Instantiates a new Synchronized reusable pool.
-     *
-     * @param type the type
-     */
-    public SynchronizedReusablePool(final Class<?> type) {
-        this.pool = ArrayFactory.newArray(type);
+    public SynchronizedReusablePool(@NotNull Class<? super E> type) {
+        super(type);
     }
 
     @Override
-    public boolean isEmpty() {
-        return pool.isEmpty();
+    public synchronized boolean isEmpty() {
+        return super.isEmpty();
     }
 
     @Override
-    public void put(@NotNull final E object) {
-        object.free();
-        ArrayUtils.addInSynchronizeTo(pool, object);
+    public synchronized void put(@NotNull E object) {
+        super.put(object);
     }
 
     @Override
-    public void remove(@NotNull final E object) {
-        ArrayUtils.fastRemoveInSynchronizeTo(pool, object);
-    }
-
-    @Nullable
-    @Override
-    public E take() {
-
-        E object;
-
-        synchronized (pool) {
-            object = pool.pop();
-        }
-
-        if (object == null) return null;
-
-        object.reuse();
-
-        return object;
+    public synchronized void remove(@NotNull E object) {
+        super.remove(object);
     }
 
     @Override
-    public String toString() {
-        return pool.toString();
+    public synchronized @Nullable E take() {
+        return super.take();
     }
 }

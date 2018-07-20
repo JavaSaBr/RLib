@@ -41,7 +41,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <T>  the element's type.
      * @return the new array.
      */
-    static <T> @NotNull Array<T> ofType(@NotNull Class<?> type) {
+    static <T> @NotNull Array<T> ofType(@NotNull Class<? super T> type) {
         return ArrayFactory.newArray(type);
     }
 
@@ -87,7 +87,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <T>  the element's type.
      * @return the supplier.
      */
-    static <T> @NotNull Supplier<Array<T>> supplier(@NotNull Class<?> type) {
+    static <T> @NotNull Supplier<Array<T>> supplier(@NotNull Class<? super T> type) {
         return () -> ArrayFactory.newConcurrentStampedLockArray(type);
     }
 
@@ -98,7 +98,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <T>  the element's type.
      * @return the supplier.
      */
-    static <T> @NotNull Function<Class<?>, Array<T>> function(@NotNull Class<?> type) {
+    static <T> @NotNull Function<Class<? super T>, Array<T>> function(@NotNull Class<? super T> type) {
         return ArrayFactory::newConcurrentStampedLockArray;
     }
 

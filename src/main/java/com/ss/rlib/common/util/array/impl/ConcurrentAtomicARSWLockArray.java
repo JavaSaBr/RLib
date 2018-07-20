@@ -23,11 +23,11 @@ public class ConcurrentAtomicARSWLockArray<E> extends AbstractConcurrentArray<E>
     @NotNull
     private final AsyncReadSyncWriteLock lock;
 
-    public ConcurrentAtomicARSWLockArray(@NotNull Class<E> type) {
+    public ConcurrentAtomicARSWLockArray(@NotNull Class<? super E> type) {
         this(type, 10);
     }
 
-    public ConcurrentAtomicARSWLockArray(@NotNull Class<E> type, int size) {
+    public ConcurrentAtomicARSWLockArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
         this.lock = LockFactory.newAtomicARSWLock();
     }

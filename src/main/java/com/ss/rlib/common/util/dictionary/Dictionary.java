@@ -20,9 +20,9 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
     /**
      * Replace the all values using the function.
      *
-     * @param function the function
+     * @param function the function.
      */
-    default void apply(@NotNull final Function<? super V, V> function) {
+    default void apply(@NotNull Function<? super V, V> function) {
         throw new UnsupportedOperationException();
     }
 

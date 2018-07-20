@@ -30,25 +30,25 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected FastObjectDictionary(final float loadFactor) {
+    protected FastObjectDictionary(float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected FastObjectDictionary(final int initCapacity) {
+    protected FastObjectDictionary(int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
-    protected FastObjectDictionary(final float loadFactor, final int initCapacity) {
+    protected FastObjectDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
     }
 
     @Override
-    public void setSize(final int size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
     @Override
-    public void setContent(@NotNull final ObjectEntry<K, V>[] content) {
+    public void setContent(@NotNull ObjectEntry<K, V>[] content) {
         this.content = content;
     }
 
@@ -58,7 +58,7 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
     }
 
     @Override
-    public void setThreshold(final int threshold) {
+    public void setThreshold(int threshold) {
         this.threshold = threshold;
     }
 

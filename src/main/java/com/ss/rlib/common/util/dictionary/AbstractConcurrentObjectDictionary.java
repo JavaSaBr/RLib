@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
-public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> implements ConcurrentObjectDictionary<K, V> {
+public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractObjectDictionary<K, V>
+        implements ConcurrentObjectDictionary<K, V> {
 
     /**
      * Тhe array of entries.
@@ -43,7 +44,7 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
     }
 
     @Override
-    public void setContent(@NotNull final ObjectEntry<K, V>[] content) {
+    public void setContent(@NotNull ObjectEntry<K, V>[] content) {
         this.content = content;
     }
 
@@ -58,12 +59,12 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
     }
 
     @Override
-    protected void setSize(final int size) {
+    protected void setSize(int size) {
         this.size = size;
     }
 
     @Override
-    public void setThreshold(final int threshold) {
+    public void setThreshold(int threshold) {
         this.threshold = threshold;
     }
 

@@ -14,52 +14,26 @@ import com.ss.rlib.common.util.pools.ReusablePool;
  * @param <E> the type parameter
  * @author JavaSaBr
  */
-public class FastReusablePool<E extends Reusable> implements ReusablePool<E> {
+public class FastReusablePool<E extends Reusable> extends FastPool<E> implements ReusablePool<E> {
 
-    /**
-     * The storage of objects.
-     */
-    private final Array<E> pool;
-
-    /**
-     * Instantiates a new Fast reusable pool.
-     *
-     * @param type the type
-     */
-    public FastReusablePool(final Class<?> type) {
-        this.pool = ArrayFactory.newArray(type);
+    public FastReusablePool(@NotNull Class<? super E> type) {
+        super(type);
     }
 
-    @Override
-    public boolean isEmpty() {
-        return pool.isEmpty();
-    }
-
-    @Override
-    public void put(@NotNull final E object) {
+    public void put(@NotNull E object) {
         object.free();
-        pool.add(object);
+        super.put(object);
     }
 
     @Override
-    public void remove(@NotNull final E object) {
-        pool.fastRemove(object);
-    }
+    public @Nullable E take() {
 
-    @Nullable
-    @Override
-    public E take() {
+        E object = super.take();
 
-        final E object = pool.pop();
-        if (object == null) return null;
-
-        object.reuse();
+        if (object != null) {
+            object.reuse();
+        }
 
         return object;
-    }
-
-    @Override
-    public String toString() {
-        return pool.toString();
     }
 }

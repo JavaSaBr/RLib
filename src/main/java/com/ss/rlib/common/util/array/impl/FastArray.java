@@ -31,11 +31,11 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
      */
     protected int size;
 
-    public FastArray(@NotNull Class<E> type) {
+    public FastArray(@NotNull Class<? super E> type) {
         super(type);
     }
 
-    public FastArray(@NotNull Class<E> type, final int size) {
+    public FastArray(@NotNull Class<? super E> type, final int size) {
         super(type, size);
     }
 

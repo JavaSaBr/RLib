@@ -18,15 +18,11 @@ public class FastPool<E> implements Pool<E> {
     /**
      * The storage of objects.
      */
+    @NotNull
     private final Array<E> pool;
 
-    /**
-     * Instantiates a new Fast pool.
-     *
-     * @param type the type
-     */
-    public FastPool(final Class<?> type) {
-        this.pool = ArrayFactory.newArray(type);
+    public FastPool(@NotNull Class<? super E> type) {
+        this.pool = Array.ofType(type);
     }
 
     @Override
@@ -35,20 +31,24 @@ public class FastPool<E> implements Pool<E> {
     }
 
     @Override
-    public void put(@NotNull final E object) {
+    public void put(@NotNull E object) {
         pool.add(object);
     }
 
     @Override
-    public void remove(@NotNull final E object) {
+    public void remove(@NotNull E object) {
         pool.fastRemove(object);
     }
 
-    @Nullable
     @Override
-    public E take() {
-        final E object = pool.pop();
-        if (object == null) return null;
+    public @Nullable E take() {
+
+        E object = pool.pop();
+
+        if (object == null) {
+            return null;
+        }
+
         return object;
     }
 

@@ -25,5 +25,5 @@ public interface UnsafeObjectDictionary<K, V> extends ObjectDictionary<K, V> {
      * @param key the key of the entry.
      * @return removed entry.
      */
-    @Nullable ObjectEntry<K, V> removeEntryForKey(@NotNull final K key);
+    @Nullable ObjectEntry<K, V> removeEntryForKey(@NotNull K key);
 }

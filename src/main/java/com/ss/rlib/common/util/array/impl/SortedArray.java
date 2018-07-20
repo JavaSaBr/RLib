@@ -15,11 +15,11 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 
     private static final long serialVersionUID = 1L;
 
-    public SortedArray(@NotNull Class<E> type) {
+    public SortedArray(@NotNull Class<? super E> type) {
         super(type);
     }
 
-    public SortedArray(@NotNull Class<E> type, int size) {
+    public SortedArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
     }
 
