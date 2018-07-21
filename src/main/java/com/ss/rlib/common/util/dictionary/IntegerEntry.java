@@ -1,6 +1,6 @@
 package com.ss.rlib.common.util.dictionary;
 
-import com.ss.rlib.common.util.pools.Reusable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -8,19 +8,21 @@ import java.util.Objects;
 /**
  * The entry of {@link IntegerDictionary}.
  *
- * @param <V> the type parameter
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
-public class IntegerEntry<V> implements Reusable {
+public class IntegerEntry<V> implements Entry<IntegerEntry<V>, V> {
 
     /**
      * The next entry.
      */
+    @Nullable
     private IntegerEntry<V> next;
 
     /**
      * The value of this entry.
      */
+    @NotNull
     private V value;
 
     /**
@@ -34,18 +36,23 @@ public class IntegerEntry<V> implements Reusable {
     private int hash;
 
     @Override
-    public boolean equals(final Object object) {
-        if (object == null || object.getClass() != IntegerEntry.class) return false;
+    public boolean equals(@Nullable Object object) {
 
-        final IntegerEntry<?> entry = (IntegerEntry<?>) object;
+        if (object == null || object.getClass() != IntegerEntry.class) {
+            return false;
+        }
 
-        final int firstKey = getKey();
-        final int secondKey = entry.getKey();
+        IntegerEntry<?> entry = (IntegerEntry<?>) object;
 
-        if (firstKey != secondKey) return false;
+        int firstKey = getKey();
+        int secondKey = entry.getKey();
 
-        final Object firstValue = getValue();
-        final Object secondValue = entry.getValue();
+        if (firstKey != secondKey) {
+            return false;
+        }
+
+        Object firstValue = getValue();
+        Object secondValue = entry.getValue();
 
         return Objects.equals(firstValue, secondValue);
     }
@@ -56,82 +63,58 @@ public class IntegerEntry<V> implements Reusable {
         next = null;
     }
 
-    /**
-     * Gets hash.
-     *
-     * @return the hash of the key.
-     */
+    @Override
     public int getHash() {
         return hash;
     }
 
     /**
-     * Gets key.
+     * Get the key.
      *
-     * @return the key of this entry.
+     * @return the key.
      */
     public int getKey() {
         return key;
     }
 
-    /**
-     * Gets next.
-     *
-     * @return the next entry.
-     */
-    @Nullable
-    public IntegerEntry<V> getNext() {
+    @Override
+    public @Nullable IntegerEntry<V> getNext() {
         return next;
     }
 
-    /**
-     * Sets next.
-     *
-     * @param next the next entry.
-     */
-    public void setNext(@Nullable final IntegerEntry<V> next) {
+    @Override
+    public void setNext(@Nullable IntegerEntry<V> next) {
         this.next = next;
     }
 
-    /**
-     * Gets value.
-     *
-     * @return the value of this entry.
-     */
-    @Nullable
-    public V getValue() {
+    @Override
+    public @NotNull V getValue() {
         return value;
     }
 
     @Override
     public final int hashCode() {
-        return (key ^ (value == null ? 0 : value.hashCode()));
+        return key ^ value.hashCode();
     }
 
     /**
-     * Set.
+     * Set all fields of this entry.
      *
-     * @param hash  the hash
-     * @param key   the key
-     * @param value the value
-     * @param next  the next
+     * @param hash  the hash.
+     * @param key   the key.
+     * @param value the value.
+     * @param next  the next.
      */
-    public void set(final int hash, final int key, final V value, final IntegerEntry<V> next) {
+    public void set(int hash, int key, @NotNull V value, @Nullable IntegerEntry<V> next) {
         this.value = value;
         this.next = next;
         this.key = key;
         this.hash = hash;
     }
 
-    /**
-     * Sets value.
-     *
-     * @param value the new value of this entry.
-     * @return the old value of null.
-     */
-    @Nullable
-    public V setValue(@Nullable final V value) {
-        final V old = getValue();
+    @Override
+    public @NotNull V setValue(@NotNull V value) {
+        V old = getValue();
         this.value = value;
         return old;
     }

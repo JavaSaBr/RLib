@@ -1,22 +1,13 @@
 package com.ss.rlib.common.util.dictionary;
 
-import static com.ss.rlib.common.util.ClassUtils.unsafeCast;
 import com.ss.rlib.common.function.IntBiObjectConsumer;
 import com.ss.rlib.common.function.IntObjectConsumer;
-import com.ss.rlib.common.function.IntBiObjectConsumer;
-import com.ss.rlib.common.function.IntObjectConsumer;
-import com.ss.rlib.common.util.ArrayUtils;
-import com.ss.rlib.common.util.array.Array;
+import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.IntegerArray;
-import com.ss.rlib.common.util.array.UnsafeArray;
-import com.ss.rlib.common.util.pools.PoolFactory;
-import com.ss.rlib.common.util.pools.ReusablePool;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
-import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -27,147 +18,66 @@ import java.util.function.Supplier;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
-public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<IntKey, V> implements UnsafeIntegerDictionary<V> {
+public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<IntKey, V, IntegerEntry<V>>
+        implements UnsafeIntegerDictionary<V> {
 
-    /**
-     * The poll with entries.
-     */
-    private final ReusablePool<IntegerEntry<V>> entryPool;
+    protected AbstractIntegerDictionary() {
+        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
+    }
 
-    /**
-     * The load factor.
-     */
-    private final float loadFactor;
+    protected AbstractIntegerDictionary(float loadFactor, int initCapacity) {
+        super(loadFactor, initCapacity);
+    }
 
-    /**
-     * Instantiates a new Abstract integer dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
-    protected AbstractIntegerDictionary(final float loadFactor, final int initCapacity) {
-        this.loadFactor = loadFactor;
-        this.entryPool = PoolFactory.newReusablePool(IntegerEntry.class);
-        setThreshold((int) (initCapacity * loadFactor));
-        setContent(unsafeCast(new IntegerEntry[DEFAULT_INITIAL_CAPACITY]));
-        setSize(0);
+    @Override
+    protected @NotNull Class<? super IntegerEntry<V>> getEntryType() {
+        return IntegerEntry.class;
     }
 
     /**
-     * Set new array of entries of this {@link Dictionary}.
-     *
-     * @param newContent the new array of entries.
-     */
-    protected abstract void setContent(@NotNull final IntegerEntry<V>[] newContent);
-
-    /**
-     * Set the next size value at which to resize (capacity * load factor).
-     *
-     * @param newThreshold the next size.
-     */
-    protected abstract void setThreshold(final int newThreshold);
-
-    /**
-     * Gets threshold.
-     *
-     * @return the current next size.
-     */
-    protected abstract int getThreshold();
-
-    /**
-     * Set the new size of this {@link Dictionary}.
-     *
-     * @param size the new size.
-     */
-    protected abstract void setSize(final int size);
-
-    /**
-     * Add new entry to this dictionary.
+     * Add a new entry to this dictionary.
      *
      * @param hash  the hash of the key.
      * @param key   the key.
      * @param value the value of the key.
      * @param index the index of bucket.
      */
-    protected final void addEntry(final int hash, final int key, final V value, final int index) {
+    protected final void addEntry(int hash, int key, @NotNull V value, int index) {
 
-        final ReusablePool<IntegerEntry<V>> entryPool = getEntryPool();
+        IntegerEntry<V>[] entries = entries();
+        IntegerEntry<V> entry = entries[index];
 
-        final IntegerEntry<V>[] table = content();
-        final IntegerEntry<V> entry = table[index];
-
-        final IntegerEntry<V> newEntry = entryPool.take(IntegerEntry::new);
+        IntegerEntry<V> newEntry = entryPool.take(IntegerEntry::new);
         newEntry.set(hash, key, value, entry);
 
-        table[index] = newEntry;
+        entries[index] = newEntry;
 
         if (incrementSizeAndGet() >= getThreshold()) {
-            resize(2 * table.length);
+            resize(2 * entries.length);
         }
     }
 
     @Override
-    public void apply(@NotNull final Function<? super V, V> function) {
-        for (IntegerEntry<V> entry : content()) {
-            while (entry != null) {
-                entry.setValue(function.apply(entry.getValue()));
-                entry = entry.getNext();
-            }
-        }
-    }
-
-    @Override
-    public void clear() {
-
-        final ReusablePool<IntegerEntry<V>> entryPool = getEntryPool();
-        final IntegerEntry<V>[] content = content();
-
-        IntegerEntry<V> next;
-
-        for (IntegerEntry<V> entry : content) {
-            while (entry != null) {
-                next = entry.getNext();
-                entryPool.put(entry);
-                entry = next;
-            }
-        }
-
-        ArrayUtils.clear(content);
-        setSize(0);
-    }
-
-    @Override
-    public final boolean containsKey(final int key) {
+    public final boolean containsKey(int key) {
         return getEntry(key) != null;
     }
 
     @Override
-    public final boolean containsValue(@Nullable final V value) {
-
-        for (final IntegerEntry<V> element : content()) {
-            for (IntegerEntry<V> entry = element; entry != null; entry = entry.getNext()) {
-                if (Objects.equals(value, entry.getValue())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public void forEach(final Consumer<? super V> consumer) {
-        for (IntegerEntry<V> entry : content()) {
+    public void forEach(@NotNull IntObjectConsumer<@NotNull ? super V> consumer) {
+        for (IntegerEntry<V> entry : entries()) {
             while (entry != null) {
-                consumer.accept(entry.getValue());
+                consumer.accept(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
             }
         }
     }
 
     @Override
-    public <T> void forEach(@Nullable final T argument, @NotNull final IntBiObjectConsumer<V, T> consumer) {
-        for (IntegerEntry<V> entry : content()) {
+    public <T> void forEach(
+            @NotNull T argument,
+            @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer
+    ) {
+        for (IntegerEntry<V> entry : entries()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue(), argument);
                 entry = entry.getNext();
@@ -176,25 +86,13 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     }
 
     @Override
-    public void forEach(@NotNull final IntObjectConsumer<V> consumer) {
-        for (IntegerEntry<V> entry : content()) {
-            while (entry != null) {
-                consumer.accept(entry.getKey(), entry.getValue());
-                entry = entry.getNext();
-            }
-        }
-    }
-
-    @Nullable
-    @Override
-    public final V get(final int key) {
-        final IntegerEntry<V> entry = getEntry(key);
+    public final @Nullable V get(int key) {
+        IntegerEntry<V> entry = getEntry(key);
         return entry == null ? null : entry.getValue();
     }
 
-    @Nullable
     @Override
-    public V get(final int key, @NotNull final Supplier<V> factory) {
+    public @NotNull V getOrCompute(int key, @NotNull Supplier<@NotNull V> factory) {
 
         IntegerEntry<V> entry = getEntry(key);
 
@@ -203,12 +101,15 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
             entry = getEntry(key);
         }
 
-        return entry == null ? null : entry.getValue();
+        if (entry == null) {
+            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+        }
+
+        return entry.getValue();
     }
 
-    @Nullable
     @Override
-    public V get(final int key, @NotNull final IntFunction<V> factory) {
+    public @NotNull V getOrCompute(int key, @NotNull IntFunction<@NotNull V> factory) {
 
         IntegerEntry<V> entry = getEntry(key);
 
@@ -217,12 +118,19 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
             entry = getEntry(key);
         }
 
-        return entry == null ? null : entry.getValue();
+        if (entry == null) {
+            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+        }
+
+        return entry.getValue();
     }
 
-    @Nullable
     @Override
-    public <T> V get(final int key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
+    public <T> @Nullable V getOrCompute(
+            int key,
+            @NotNull T argument,
+            @NotNull Function<@NotNull T, @NotNull V> factory
+    ) {
 
         IntegerEntry<V> entry = getEntry(key);
 
@@ -231,7 +139,11 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
             entry = getEntry(key);
         }
 
-        return entry == null ? null : entry.getValue();
+        if (entry == null) {
+            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+        }
+
+        return entry.getValue();
     }
 
     /**
@@ -240,45 +152,30 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      * @param key the key.
      * @return the entry or null.
      */
-    @Nullable
-    private IntegerEntry<V> getEntry(final int key) {
 
-        final IntegerEntry<V>[] table = content();
-        final int hash = hash(key);
+    private @Nullable IntegerEntry<V> getEntry(int key) {
 
-        for (IntegerEntry<V> entry = table[indexFor(hash, table.length)]; entry != null; entry = entry.getNext()) {
-            if (entry.getHash() == hash && key == entry.getKey()) return entry;
+        IntegerEntry<V>[] entries = entries();
+        int index = indexFor(hash(key), entries.length);
+
+        for (IntegerEntry<V> entry = entries[index]; entry != null; entry = entry.getNext()) {
+            if (key == entry.getKey()) {
+                return entry;
+            }
         }
 
         return null;
     }
 
-    /**
-     * Gets entry pool.
-     *
-     * @return the pool with entries.
-     */
-    @NotNull
-    protected ReusablePool<IntegerEntry<V>> getEntryPool() {
-        return entryPool;
-    }
-
-    @NotNull
     @Override
-    public DictionaryType getType() {
-        return DictionaryType.INTEGER;
-    }
-
-    @Override
-    public final Iterator<V> iterator() {
+    public final @NotNull Iterator<V> iterator() {
         return new IntegerDictionaryIterator<>(this);
     }
 
-    @NotNull
     @Override
-    public IntegerArray keyIntegerArray(@NotNull final IntegerArray container) {
+    public @NotNull IntegerArray keyArray(@NotNull IntegerArray container) {
 
-        for (IntegerEntry<V> entry : content()) {
+        for (IntegerEntry<V> entry : entries()) {
             while (entry != null) {
                 container.add(entry.getKey());
                 entry = entry.getNext();
@@ -289,46 +186,52 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     }
 
     @Override
-    public void copyTo(@NotNull final Dictionary<? super IntKey, ? super V> dictionary) {
-        if (isEmpty() || dictionary.getType() != getType()) return;
+    public void copyTo(@NotNull Dictionary<? super IntKey, ? super V> dictionary) {
 
-        final IntegerDictionary<V> integerDictionary = unsafeCast(dictionary);
+        if (isEmpty() || !(dictionary instanceof IntegerDictionary)) {
+            return;
+        }
 
-        super.copyTo(dictionary);
+        IntegerDictionary<V> target = ClassUtils.unsafeNNCast(dictionary);
 
-        for (IntegerEntry<V> entry : content()) {
+        for (IntegerEntry<V> entry : entries()) {
             while (entry != null) {
-                integerDictionary.put(entry.getKey(), entry.getValue());
+                target.put(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
             }
         }
     }
 
     @Override
-    public final V put(final int key, @Nullable final V value) {
+    public final @Nullable V put(int key, @NotNull V value) {
 
-        final IntegerEntry<V>[] content = content();
+        IntegerEntry<V>[] entries = entries();
 
-        final int hash = hash(key);
-        final int i = indexFor(hash, content.length);
+        int hash = hash(key);
+        int i = indexFor(hash, entries.length);
 
-        for (IntegerEntry<V> entry = content[i]; entry != null; entry = entry.getNext()) {
-            if (entry.getHash() == hash && key == entry.getKey()) return entry.setValue(value);
+        for (IntegerEntry<V> entry = entries[i]; entry != null; entry = entry.getNext()) {
+            if (entry.getHash() == hash && key == entry.getKey()) {
+                return entry.setValue(value);
+            }
         }
 
         addEntry(hash, key, value, i);
+
         return null;
     }
 
-    @Nullable
+
     @Override
-    public final V remove(final int key) {
+    public final @Nullable V remove(int key) {
 
-        final IntegerEntry<V> old = removeEntryForKey(key);
-        final V value = old == null ? null : old.getValue();
+        IntegerEntry<V> old = removeEntryForKey(key);
 
-        final ReusablePool<IntegerEntry<V>> entryPool = getEntryPool();
-        if (old != null) entryPool.put(old);
+        V value = old == null ? null : old.getValue();
+
+        if (old != null) {
+            entryPool.put(old);
+        }
 
         return value;
     }
@@ -339,27 +242,25 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      * @param key the key of the entry.
      * @return removed entry or null.
      */
-    @Nullable
     @Override
-    public final IntegerEntry<V> removeEntryForKey(final int key) {
+    public final @Nullable IntegerEntry<V> removeEntryForKey(int key) {
 
-        final IntegerEntry<V>[] content = content();
+        IntegerEntry<V>[] entries = entries();
 
-        final int hash = hash(key);
-        final int i = indexFor(hash, content.length);
+        int i = indexFor(hash(key), entries.length);
 
-        IntegerEntry<V> prev = content[i];
+        IntegerEntry<V> prev = entries[i];
         IntegerEntry<V> entry = prev;
 
         while (entry != null) {
 
-            final IntegerEntry<V> next = entry.getNext();
+            IntegerEntry<V> next = entry.getNext();
 
-            if (entry.getHash() == hash && key == entry.getKey()) {
+            if (key == entry.getKey()) {
                 decrementSizeAndGet();
 
                 if (prev == entry) {
-                    content[i] = next;
+                    entries[i] = next;
                 } else {
                     prev.setNext(next);
                 }
@@ -374,40 +275,26 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
         return null;
     }
 
-    /**
-     * Resize the array of buckets of this dictionary.
-     *
-     * @param newLength the new size.
-     */
-    private void resize(final int newLength) {
-
-        final IntegerEntry<V>[] oldContent = content();
-
-        final int oldLength = oldContent.length;
-
-        if (oldLength >= DEFAULT_MAXIMUM_CAPACITY) {
-            setThreshold(Integer.MAX_VALUE);
-            return;
-        }
-
-        final IntegerEntry<V>[] newContent = unsafeCast(new IntegerEntry[newLength]);
-        transfer(newContent);
-        setContent(newContent);
-        setThreshold((int) (newLength * loadFactor));
-    }
-
     @Override
     public final String toString() {
 
-        final int size = size();
+        int size = size();
 
-        final StringBuilder builder = new StringBuilder(getClass().getSimpleName());
-        builder.append(" size = ").append(size).append(" : ");
+        StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+        builder.append(" size = ")
+                .append(size)
+                .append(" : ");
 
-        for (IntegerEntry<V> entry : content()) {
+        for (IntegerEntry<V> entry : entries()) {
             while (entry != null) {
-                builder.append("[").append(entry.getKey()).append(" - ").append(entry.getValue()).append("]");
-                builder.append("\n");
+
+                builder.append("[")
+                        .append(entry.getKey())
+                        .append(" - ")
+                        .append(entry.getValue())
+                        .append("]")
+                        .append("\n");
+
                 entry = entry.getNext();
             }
         }
@@ -417,47 +304,5 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
         }
 
         return builder.toString();
-    }
-
-    /**
-     * Transfer current entries to new buckets.
-     *
-     * @param newTable the new array of buckets.
-     */
-    private void transfer(final IntegerEntry<V>[] newTable) {
-
-        final int newCapacity = newTable.length;
-
-        for (IntegerEntry<V> entry : content()) {
-            if (entry == null) continue;
-            do {
-
-                final IntegerEntry<V> next = entry.getNext();
-
-                final int i = indexFor(entry.getHash(), newCapacity);
-
-                entry.setNext(newTable[i]);
-                newTable[i] = entry;
-                entry = next;
-
-            } while (entry != null);
-        }
-    }
-
-    @NotNull
-    @Override
-    public Array<V> values(@NotNull final Array<V> container) {
-        final UnsafeArray<V> unsafeArray = container.asUnsafe();
-        unsafeArray.prepareForSize(container.size() + size());
-
-        for (IntegerEntry<V> entry : content()) {
-            while (entry != null) {
-                final V value = entry.getValue();
-                if (value != null) unsafeArray.unsafeAdd(value);
-                entry = entry.getNext();
-            }
-        }
-
-        return container;
     }
 }

@@ -22,6 +22,7 @@ public class DictionaryUtils {
      * @param dictionary словарь.
      * @param consumer   функция для выполнения действий над словарем.
      */
+    @Deprecated
     public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary,
                                           final Consumer<ConcurrentIntegerDictionary<V>> consumer) {
         final long stamp = dictionary.writeLock();
@@ -40,6 +41,7 @@ public class DictionaryUtils {
      * @param key        аргумент ключ для передачи в функцию.
      * @param consumer   функция для выполнения действий над словарем.
      */
+    @Deprecated
     public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key,
                                           final ObjectIntConsumer<ConcurrentIntegerDictionary<V>> consumer) {
         final long stamp = dictionary.writeLock();
@@ -58,6 +60,7 @@ public class DictionaryUtils {
      * @param key        the key value.
      * @param consumer   the consumer.
      */
+    @Deprecated
     public static <V> void runInWriteLock(@NotNull final ConcurrentLongDictionary<V> dictionary, final long key,
                                           @NotNull final ObjectLongConsumer<ConcurrentLongDictionary<V>> consumer) {
         final long stamp = dictionary.writeLock();
@@ -76,6 +79,7 @@ public class DictionaryUtils {
      * @param key        аргумент ключ для передачи в функцию.
      * @param consumer   функция для выполнения действий над словарем.
      */
+    @Deprecated
     public static <V> void runInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key,
                                          final ObjectIntConsumer<ConcurrentIntegerDictionary<V>> consumer) {
         final long stamp = dictionary.readLock();
@@ -96,6 +100,7 @@ public class DictionaryUtils {
      * @param function   функция для выполнения действий над словарем.
      * @return результат выполнения функции.
      */
+    @Deprecated
     public static <V, R> R getInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key,
                                           final ObjectIntFunction<ConcurrentIntegerDictionary<V>, R> function) {
         final long stamp = dictionary.writeLock();
@@ -120,6 +125,7 @@ public class DictionaryUtils {
      * @return the result of the function.
      */
     @Nullable
+    @Deprecated
     public static <K, V, R> R getInReadLock(@NotNull final ConcurrentObjectDictionary<K, V> dictionary,
                                             @NotNull final K key,
                                             @NotNull final BiFunction<ConcurrentObjectDictionary<K, V>, K, R> function) {
@@ -141,6 +147,7 @@ public class DictionaryUtils {
      * @param function   функция для выполнения действий над словарем.
      * @return результат выполнения функции.
      */
+    @Deprecated
     public static <V, R> R getInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key,
                                          final ObjectIntFunction<ConcurrentIntegerDictionary<V>, R> function) {
         final long stamp = dictionary.readLock();
@@ -161,6 +168,7 @@ public class DictionaryUtils {
      * @param function   the function.
      * @return the function's result.
      */
+    @Deprecated
     public static <V, R> R getInReadLock(final ConcurrentLongDictionary<V> dictionary, final long key,
                                          final ObjectLongFunction<ConcurrentLongDictionary<V>, R> function) {
         final long stamp = dictionary.readLock();
@@ -180,6 +188,7 @@ public class DictionaryUtils {
      * @param object     аргумент объект для передачи в функцию.
      * @param consumer   функция для выполнения действий над словарем.
      */
+    @Deprecated
     public static <V> void runInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key,
                                           final V object,
                                           final ObjectIntObjectConsumer<ConcurrentIntegerDictionary<V>, V> consumer) {
@@ -200,6 +209,7 @@ public class DictionaryUtils {
      * @param object     the value.
      * @param consumer   the function.
      */
+    @Deprecated
     public static <V> void runInWriteLock(@NotNull final ConcurrentLongDictionary<V> dictionary, final long key,
                                           @Nullable final V object,
                                           @NotNull final ObjectLongObjectConsumer<ConcurrentLongDictionary<V>, V> consumer) {
@@ -219,6 +229,7 @@ public class DictionaryUtils {
      * @param dictionary the dictionary.
      * @param runnable   the function.
      */
+    @Deprecated
     public static <K, V> void runInWriteLock(
             @NotNull ConcurrentObjectDictionary<K, V> dictionary,
             @NotNull Runnable runnable
@@ -240,6 +251,7 @@ public class DictionaryUtils {
      * @param key        the key value.
      * @param consumer   the function.
      */
+    @Deprecated
     public static <K, V> void runInWriteLock(
             @Nullable ConcurrentObjectDictionary<K, V> dictionary,
             @NotNull K key,
@@ -268,6 +280,7 @@ public class DictionaryUtils {
      * @param object     the value.
      * @param consumer   the function.
      */
+    @Deprecated
     public static <K, V> void runInWriteLock(@NotNull final ConcurrentObjectDictionary<K, V> dictionary,
                                              @NotNull final K key, @Nullable final V object,
                                              @NotNull final TripleConsumer<ConcurrentObjectDictionary<K, V>, K, V> consumer) {
@@ -288,6 +301,7 @@ public class DictionaryUtils {
      * @param object     аргумент объект для передачи в функцию.
      * @param consumer   функция для выполнения действий над словарем.
      */
+    @Deprecated
     public static <V> void runInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final V object,
                                          final ObjectIntObjectConsumer<ConcurrentIntegerDictionary<V>, V> consumer) {
         final long stamp = dictionary.readLock();
@@ -309,6 +323,7 @@ public class DictionaryUtils {
      * @param function   функция для выполнения действий над словарем.
      * @return результат выполнения функции.
      */
+    @Deprecated
     public static <V, R> R getInWriteLock(final ConcurrentIntegerDictionary<V> dictionary, final int key,
                                           final V object,
                                           final ObjectIntObjectFunction<ConcurrentIntegerDictionary<V>, V, R> function) {
@@ -331,6 +346,7 @@ public class DictionaryUtils {
      * @param function   функция для выполнения действий над словарем.
      * @return результат выполнения функции.
      */
+    @Deprecated
     public static <V, R> R getInReadLock(final ConcurrentIntegerDictionary<V> dictionary, final int key, final V object,
                                          final ObjectIntObjectFunction<ConcurrentIntegerDictionary<V>, V, R> function) {
         final long stamp = dictionary.readLock();

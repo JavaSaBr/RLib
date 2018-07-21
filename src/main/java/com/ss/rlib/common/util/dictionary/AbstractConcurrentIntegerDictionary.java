@@ -8,12 +8,14 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
-public abstract class AbstractConcurrentIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements ConcurrentIntegerDictionary<V> {
+public abstract class AbstractConcurrentIntegerDictionary<V> extends AbstractIntegerDictionary<V>
+        implements ConcurrentIntegerDictionary<V> {
 
     /**
      * Тhe array of entries.
      */
-    private volatile IntegerEntry<V>[] content;
+    @NotNull
+    private volatile IntegerEntry<V>[] entries;
 
     /**
      * The next size value at which to resize (capacity * load factor).
@@ -25,50 +27,30 @@ public abstract class AbstractConcurrentIntegerDictionary<V> extends AbstractInt
      */
     private volatile int size;
 
-    /**
-     * Instantiates a new Abstract concurrent integer dictionary.
-     */
     protected AbstractConcurrentIntegerDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent integer dictionary.
-     *
-     * @param loadFactor the load factor
-     */
-    protected AbstractConcurrentIntegerDictionary(final float loadFactor) {
+    protected AbstractConcurrentIntegerDictionary(float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent integer dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
-    protected AbstractConcurrentIntegerDictionary(final float loadFactor, final int initCapacity) {
+    protected AbstractConcurrentIntegerDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent integer dictionary.
-     *
-     * @param initCapacity the init capacity
-     */
-    protected AbstractConcurrentIntegerDictionary(final int initCapacity) {
+    protected AbstractConcurrentIntegerDictionary(int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
     @Override
-    public void setContent(@NotNull final IntegerEntry<V>[] content) {
-        this.content = content;
+    public void setEntries(@NotNull IntegerEntry<V>[] entries) {
+        this.entries = entries;
     }
 
-    @NotNull
     @Override
-    public IntegerEntry<V>[] content() {
-        return content;
+    public @NotNull IntegerEntry<V>[] entries() {
+        return entries;
     }
 
     @Override
@@ -77,12 +59,12 @@ public abstract class AbstractConcurrentIntegerDictionary<V> extends AbstractInt
     }
 
     @Override
-    protected void setSize(final int size) {
+    protected void setSize(int size) {
         this.size = size;
     }
 
     @Override
-    public void setThreshold(final int threshold) {
+    public void setThreshold(int threshold) {
         this.threshold = threshold;
     }
 

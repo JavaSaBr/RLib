@@ -127,7 +127,8 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
      * @return thread local pool.
      */
     protected @NotNull Pool<ReusableWritablePacket> getThreadLocalPool() {
-        return LOCAL_POOLS.get().computeIfAbsent((Class<ReusableWritablePacket>) getClass(),
+        Class<ReusableWritablePacket> packetClass = ClassUtils.unsafeNNCast(getClass());
+        return LOCAL_POOLS.get().computeIfAbsent(packetClass,
                 PoolFactory::newConcurrentStampedLockReusablePool);
     }
 

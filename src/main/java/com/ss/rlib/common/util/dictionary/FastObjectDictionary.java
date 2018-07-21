@@ -14,7 +14,8 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
     /**
      * The array of entries.
      */
-    private ObjectEntry<K, V>[] content;
+    @NotNull
+    private ObjectEntry<K, V>[] entries;
 
     /**
      * The next size value at which to resize (capacity * load factor).
@@ -48,13 +49,13 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
     }
 
     @Override
-    public void setContent(@NotNull ObjectEntry<K, V>[] content) {
-        this.content = content;
+    public void setEntries(@NotNull ObjectEntry<K, V>[] entries) {
+        this.entries = entries;
     }
 
     @Override
-    public @NotNull ObjectEntry<K, V>[] content() {
-        return content;
+    public @NotNull ObjectEntry<K, V>[] entries() {
+        return entries;
     }
 
     @Override

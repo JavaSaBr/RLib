@@ -2,6 +2,7 @@ package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.concurrent.lock.LockFactory;
 import com.ss.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of the {@link ConcurrentObjectDictionary} using {@link
@@ -16,23 +17,24 @@ public class ConcurrentAtomicARSWLockObjectDictionary<K, V> extends AbstractConc
     /**
      * The lock.
      */
+    @NotNull
     private final AsyncReadSyncWriteLock lock;
 
     public ConcurrentAtomicARSWLockObjectDictionary() {
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    public ConcurrentAtomicARSWLockObjectDictionary(final float loadFactor) {
+    public ConcurrentAtomicARSWLockObjectDictionary(float loadFactor) {
         super(loadFactor);
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    public ConcurrentAtomicARSWLockObjectDictionary(final float loadFactor, final int initCapacity) {
+    public ConcurrentAtomicARSWLockObjectDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    public ConcurrentAtomicARSWLockObjectDictionary(final int initCapacity) {
+    public ConcurrentAtomicARSWLockObjectDictionary(int initCapacity) {
         super(initCapacity);
         this.lock = LockFactory.newAtomicARSWLock();
     }
@@ -44,12 +46,12 @@ public class ConcurrentAtomicARSWLockObjectDictionary<K, V> extends AbstractConc
     }
 
     @Override
-    public void readUnlock(final long stamp) {
+    public void readUnlock(long stamp) {
         lock.asyncUnlock();
     }
 
     @Override
-    public void writeUnlock(final long stamp) {
+    public void writeUnlock(long stamp) {
         lock.syncUnlock();
     }
 

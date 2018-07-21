@@ -1,6 +1,5 @@
 package com.ss.rlib.common.util.dictionary;
 
-import com.ss.rlib.common.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,21 +12,24 @@ import java.util.Objects;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
-public class ObjectEntry<K, V> implements Reusable {
+public class ObjectEntry<K, V> implements Entry<ObjectEntry<K, V>, V> {
 
     /**
      * The next entry.
      */
+    @Nullable
     private ObjectEntry<K, V> next;
 
     /**
      * The key of this entry.
      */
+    @NotNull
     private K key;
 
     /**
      * The value of this entry.
      */
+    @NotNull
     private V value;
 
     /**
@@ -36,23 +38,23 @@ public class ObjectEntry<K, V> implements Reusable {
     private int hash;
 
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(@Nullable Object object) {
 
         if (object == null || object.getClass() != ObjectEntry.class) {
             return false;
         }
 
-        final ObjectEntry<?, ?> entry = (ObjectEntry<?, ?>) object;
+        ObjectEntry<?, ?> entry = (ObjectEntry<?, ?>) object;
 
-        final Object firstKey = getKey();
-        final Object secondKey = entry.getKey();
+        Object firstKey = getKey();
+        Object secondKey = entry.getKey();
 
         if (!Objects.equals(firstKey, secondKey)) {
             return false;
         }
 
-        final Object firstValue = getValue();
-        final Object secondValue = entry.getValue();
+        Object firstValue = getValue();
+        Object secondValue = entry.getValue();
 
         return Objects.equals(firstValue, secondValue);
     }
@@ -65,11 +67,7 @@ public class ObjectEntry<K, V> implements Reusable {
         hash = 0;
     }
 
-    /**
-     * Get the hash.
-     *
-     * @return the hash.
-     */
+    @Override
     public int getHash() {
         return hash;
     }
@@ -83,36 +81,24 @@ public class ObjectEntry<K, V> implements Reusable {
         return key;
     }
 
-    /**
-     * Get the next entry.
-     *
-     * @return the next entry.
-     */
+    @Override
     public @Nullable ObjectEntry<K, V> getNext() {
         return next;
     }
 
-    /**
-     * Set the next entry.
-     *
-     * @param next the next entry.
-     */
-    public void setNext(@Nullable final ObjectEntry<K, V> next) {
+    @Override
+    public void setNext(@Nullable ObjectEntry<K, V> next) {
         this.next = next;
     }
 
-    /**
-     * Get the value.
-     *
-     * @return the value.
-     */
-    public V getValue() {
+    @Override
+    public @NotNull V getValue() {
         return value;
     }
 
     @Override
     public final int hashCode() {
-        return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+        return key.hashCode() ^ value.hashCode();
     }
 
     @Override
@@ -121,28 +107,23 @@ public class ObjectEntry<K, V> implements Reusable {
     }
 
     /**
-     * Set data of this entry.
+     * Set all fields of this entry.
      *
      * @param hash  the hash.
      * @param key   the key.
      * @param value the value.
      * @param next  the next entry.
      */
-    public void set(final int hash, @NotNull final K key, @Nullable final V value, @Nullable final ObjectEntry<K, V> next) {
+    public void set(int hash, @NotNull K key, @NotNull V value, @Nullable ObjectEntry<K, V> next) {
         this.value = value;
         this.next = next;
         this.key = key;
         this.hash = hash;
     }
 
-    /**
-     * Set the value.
-     *
-     * @param value the new value of this entry.
-     * @return the old value of null.
-     */
-    public @Nullable V setValue(@Nullable final V value) {
-        final V old = getValue();
+    @Override
+    public @NotNull V setValue(@NotNull V value) {
+        V old = getValue();
         this.value = value;
         return old;
     }

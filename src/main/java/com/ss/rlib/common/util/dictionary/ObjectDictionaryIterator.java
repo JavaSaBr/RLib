@@ -1,6 +1,7 @@
 package com.ss.rlib.common.util.dictionary;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -17,16 +18,19 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
     /**
      * The dictionary.
      */
+    @NotNull
     private final UnsafeObjectDictionary<K, V> dictionary;
 
     /**
      * The next entry.
      */
+    @Nullable
     private ObjectEntry<K, V> next;
 
     /**
      * The current entry.
      */
+    @Nullable
     private ObjectEntry<K, V> current;
 
     /**
@@ -34,21 +38,13 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
      */
     private int index;
 
-    public ObjectDictionaryIterator(@NotNull final UnsafeObjectDictionary<K, V> dictionary) {
+    public ObjectDictionaryIterator(@NotNull UnsafeObjectDictionary<K, V> dictionary) {
         this.dictionary = dictionary;
-        if (dictionary.size() > 0) {
-            final ObjectEntry<K, V>[] content = dictionary.content();
-            while (index < content.length && (next = content[index++]) == null);
-        }
-    }
 
-    /**
-     * Get the dictionary.
-     *
-     * @return the dictionary.
-     */
-    private @NotNull UnsafeObjectDictionary<K, V> getDictionary() {
-        return dictionary;
+        if (dictionary.size() > 0) {
+            ObjectEntry<K, V>[] entries = dictionary.entries();
+            while (index < entries.length && (next = entries[index++]) == null);
+        }
     }
 
     @Override
@@ -68,20 +64,19 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
      */
     private @NotNull ObjectEntry<K, V> nextEntry() {
 
-        final UnsafeObjectDictionary<K, V> dictionary = getDictionary();
-
-        final ObjectEntry<K, V>[] content = dictionary.content();
-        final ObjectEntry<K, V> entry = next;
+        ObjectEntry<K, V>[] entries = dictionary.entries();
+        ObjectEntry<K, V> entry = next;
 
         if (entry == null) {
             throw new NoSuchElementException();
         }
 
         if ((next = entry.getNext()) == null) {
-            while (index < content.length && (next = content[index++]) == null) ;
+            while (index < entries.length && (next = entries[index++]) == null);
         }
 
         current = entry;
+
         return entry;
     }
 
@@ -92,10 +87,10 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
             throw new IllegalStateException();
         }
 
-        final K key = current.getKey();
+        K key = current.getKey();
+
         current = null;
 
-        final UnsafeObjectDictionary<K, V> dictionary = getDictionary();
         dictionary.removeEntryForKey(key);
     }
 }

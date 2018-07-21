@@ -2,6 +2,7 @@ package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.concurrent.lock.LockFactory;
 import com.ss.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of the {@link ConcurrentLongDictionary} using {@link
@@ -15,32 +16,19 @@ public class ConcurrentAtomicARSWLockLongDictionary<V> extends AbstractConcurren
     /**
      * The lock.
      */
+    @NotNull
     private final AsyncReadSyncWriteLock lock;
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock long dictionary.
-     */
     public ConcurrentAtomicARSWLockLongDictionary() {
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock long dictionary.
-     *
-     * @param loadFactor the load factor
-     */
-    public ConcurrentAtomicARSWLockLongDictionary(final float loadFactor) {
+    public ConcurrentAtomicARSWLockLongDictionary(float loadFactor) {
         super(loadFactor);
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock long dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
-    public ConcurrentAtomicARSWLockLongDictionary(final float loadFactor, final int initCapacity) {
+    public ConcurrentAtomicARSWLockLongDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
         this.lock = LockFactory.newAtomicARSWLock();
     }

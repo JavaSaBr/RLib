@@ -13,11 +13,11 @@ import org.jetbrains.annotations.Nullable;
 public interface UnsafeObjectDictionary<K, V> extends ObjectDictionary<K, V> {
 
     /**
-     * Content object entry [ ].
+     * Get an array of all entries in this dictionary.
      *
      * @return the array of entries.
      */
-    @NotNull ObjectEntry<K, V>[] content();
+    @NotNull ObjectEntry<K, V>[] entries();
 
     /**
      * Remove an entry for the key.

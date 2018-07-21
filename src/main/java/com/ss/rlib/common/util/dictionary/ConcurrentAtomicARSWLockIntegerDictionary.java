@@ -2,6 +2,7 @@ package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.concurrent.lock.LockFactory;
 import com.ss.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of the {@link ConcurrentIntegerDictionary} using {@link
@@ -15,42 +16,24 @@ public class ConcurrentAtomicARSWLockIntegerDictionary<V> extends AbstractConcur
     /**
      * The lock.
      */
+    @NotNull
     private final AsyncReadSyncWriteLock lock;
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock integer dictionary.
-     */
     public ConcurrentAtomicARSWLockIntegerDictionary() {
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock integer dictionary.
-     *
-     * @param loadFactor the load factor
-     */
-    public ConcurrentAtomicARSWLockIntegerDictionary(final float loadFactor) {
+    public ConcurrentAtomicARSWLockIntegerDictionary(float loadFactor) {
         super(loadFactor);
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock integer dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
-    public ConcurrentAtomicARSWLockIntegerDictionary(final float loadFactor, final int initCapacity) {
+    public ConcurrentAtomicARSWLockIntegerDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
-    /**
-     * Instantiates a new Concurrent atomic arsw lock integer dictionary.
-     *
-     * @param initCapacity the init capacity
-     */
-    public ConcurrentAtomicARSWLockIntegerDictionary(final int initCapacity) {
+    public ConcurrentAtomicARSWLockIntegerDictionary(int initCapacity) {
         super(initCapacity);
         this.lock = LockFactory.newAtomicARSWLock();
     }
@@ -62,12 +45,12 @@ public class ConcurrentAtomicARSWLockIntegerDictionary<V> extends AbstractConcur
     }
 
     @Override
-    public void readUnlock(final long stamp) {
+    public void readUnlock(long stamp) {
         lock.asyncUnlock();
     }
 
     @Override
-    public void writeUnlock(final long stamp) {
+    public void writeUnlock(long stamp) {
         lock.syncUnlock();
     }
 

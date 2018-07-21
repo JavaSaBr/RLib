@@ -178,8 +178,18 @@ public class ArrayFactory {
      *
      * @return the new array.
      */
-    public static IntegerArray newIntegerArray() {
+    public static @NotNull IntegerArray newIntegerArray() {
         return new FastIntegerArray();
+    }
+
+    /**
+     * Create the new integer array.
+     *
+     * @param capacity the init size of the array.
+     * @return the new array.
+     */
+    public static @NotNull IntegerArray newIntegerArray(int capacity) {
+        return new FastIntegerArray(capacity);
     }
 
     /**
@@ -187,8 +197,18 @@ public class ArrayFactory {
      *
      * @return the new array.
      */
-    public static LongArray newLongArray() {
+    public static @NotNull LongArray newLongArray() {
         return new FastLongArray();
+    }
+
+    /**
+     * Create the new long array.
+     *
+     * @param capacity the init size of the array.
+     * @return the new array.
+     */
+    public static @NotNull LongArray newLongArray(int capacity) {
+        return new FastLongArray(capacity);
     }
 
     /**
