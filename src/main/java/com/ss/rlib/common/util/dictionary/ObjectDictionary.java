@@ -52,8 +52,9 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     /**
      * Create a new object dictionary for the values.
      *
-     * @param <K>       the key's type.
-     * @param <V>       the value's type.
+     * @param values the key-value values.
+     * @param <K>    the key's type.
+     * @param <V>    the value's type.
      * @return the new object dictionary.
      */
     static <K, V> @NotNull ObjectDictionary<K, V> of(@NotNull Object... values) {

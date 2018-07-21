@@ -33,7 +33,8 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
     /**
      * Create a new long dictionary for the values.
      *
-     * @param <V> the value's type.
+     * @param values the key-value values.
+     * @param <V>    the value's type.
      * @return the new long dictionary.
      */
     static <V> @NotNull LongDictionary<V> of(@NotNull Object... values) {

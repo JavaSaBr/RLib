@@ -53,7 +53,7 @@ public class ExtensionPointManager {
 
             if (exists != null) {
                 LOGGER.warning("The extension point with the id " + id + " is already registered.");
-                return ClassUtils.unsafeCast(exists);
+                return ClassUtils.unsafeNNCast(exists);
             }
 
             ExtensionPoint<T> extensionPoint = new ExtensionPoint<>();
@@ -130,8 +130,9 @@ public class ExtensionPointManager {
     public <T> @NotNull ExtensionPoint<T> getExtensionPoint(@NotNull String id) {
 
         ExtensionPoint<?> extensionPoint = extensionPoints.getInReadLock(id, ObjectDictionary::get);
+
         if (extensionPoint != null) {
-            return ClassUtils.unsafeCast(extensionPoint);
+            return ClassUtils.unsafeNNCast(extensionPoint);
         }
 
         try {

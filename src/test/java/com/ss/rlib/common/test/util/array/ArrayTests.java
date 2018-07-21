@@ -111,7 +111,7 @@ public class ArrayTests {
 
         Array<Number> numbers = IntStream.range(0, 1000)
                 .mapToObj(value -> value)
-                .collect(ArrayCollectors.toArray(Integer.class));
+                .collect(ArrayCollectors.toArray(Number.class));
 
         Assertions.assertEquals(1000, numbers.size());
 

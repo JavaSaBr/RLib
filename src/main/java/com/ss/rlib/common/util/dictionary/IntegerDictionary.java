@@ -33,7 +33,8 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
     /**
      * Create a new integer dictionary for the values.
      *
-     * @param <V> the value's type.
+     * @param values the key-value values.
+     * @param <V>    the value's type.
      * @return the new integer dictionary.
      */
     static <V> @NotNull IntegerDictionary<V> of(@NotNull Object... values) {
