@@ -354,6 +354,25 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Apply the function to each element.
+     *
+     * @param argument the argument.
+     * @param function the function.
+     * @param <T>      the argument's type.
+     */
+    default <T> void forEachR(@NotNull T argument, @NotNull BiConsumer<@NotNull T, @NotNull E> function) {
+
+        for (E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            function.accept(argument, element);
+        }
+    }
+
+    /**
      * Apply the function to each converted element.
      *
      * @param <T>       the argument's type.
@@ -407,11 +426,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     /**
      * Apply the function to each element.
      *
-     * @param <F>      the type parameter
-     * @param <S>      the type parameter
      * @param first    the first argument.
      * @param second   the second argument.
      * @param function the function.
+     * @param <F>      the firs argument's type.
+     * @param <S>      the second argument's type.
      */
     default <F, S> void forEach(@Nullable F first, @Nullable S second, @NotNull TripleConsumer<E, F, S> function) {
 
@@ -422,6 +441,31 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             }
 
             function.accept(element, first, second);
+        }
+    }
+
+    /**
+     * Apply the function to each element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     * @param <F>      the firs argument's type.
+     * @param <S>      the second argument's type.
+     */
+    default <F, S> void forEachRm(
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull TripleConsumer<@NotNull F, @NotNull E, @NotNull S> function
+    ) {
+
+        for (E element : array()) {
+
+            if (element == null) {
+                break;
+            }
+
+            function.accept(first, element, second);
         }
     }
 
