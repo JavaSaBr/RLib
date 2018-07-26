@@ -19,21 +19,21 @@ public class Version implements Comparable<Version> {
     @NotNull
     private final int[] segments;
 
-    public Version(@NotNull final String version) {
+    public Version(@NotNull String version) {
         this.segments = parseSegments(version);
     }
 
     @NotNull
-    private int[] parseSegments(@NotNull final String stringVersion) {
+    private int[] parseSegments(@NotNull String stringVersion) {
         return Stream.of(stringVersion.split("\\."))
                 .mapToInt(Integer::parseInt)
                 .toArray();
     }
 
     @Override
-    public int compareTo(@NotNull final Version other) {
+    public int compareTo(@NotNull Version other) {
 
-        final int[] otherSegments = other.segments;
+        int[] otherSegments = other.segments;
 
         for (int i = 0, min = min(segments.length, otherSegments.length); i < min; i++) {
             if (segments[i] < otherSegments[i]) {

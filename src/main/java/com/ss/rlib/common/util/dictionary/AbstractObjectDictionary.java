@@ -216,7 +216,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public final @Nullable V put(@NotNull K key, @Nullable V value) {
+    public @Nullable V put(@NotNull K key, @Nullable V value) {
 
         ObjectEntry<K, V>[] entries = entries();
 
@@ -234,7 +234,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public final @Nullable V remove(@NotNull K key) {
+    public @Nullable V remove(@NotNull K key) {
 
         ObjectEntry<K, V> old = removeEntryForKey(key);
 

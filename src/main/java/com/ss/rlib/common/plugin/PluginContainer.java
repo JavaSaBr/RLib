@@ -67,8 +67,13 @@ public class PluginContainer {
      */
     private final boolean embedded;
 
-    public PluginContainer(@NotNull final Class<Plugin> pluginClass, @NotNull final URLClassLoader classLoader,
-                           @NotNull final ClassPathScanner scanner, @NotNull final Path path, final boolean embedded) {
+    public PluginContainer(
+            @NotNull Class<Plugin> pluginClass,
+            @NotNull URLClassLoader classLoader,
+            @NotNull ClassPathScanner scanner,
+            @NotNull Path path,
+            boolean embedded
+    ) {
         final PluginDescription description = pluginClass.getAnnotation(PluginDescription.class);
         this.pluginClass = pluginClass;
         this.classLoader = classLoader;

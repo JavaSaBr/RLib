@@ -9,11 +9,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PluginException extends RuntimeException {
 
-    public PluginException(@NotNull final String message) {
+    public PluginException(@NotNull String message) {
         super(message);
     }
 
-    public PluginException(@NotNull final String message, @NotNull final Throwable cause) {
+    public PluginException(@NotNull String message, @NotNull Throwable cause) {
         super(message, cause);
     }
 }

@@ -1,18 +1,19 @@
 package com.ss.rlib.common.util.array;
 
 import static com.ss.rlib.common.util.ClassUtils.unsafeCast;
+import static com.ss.rlib.common.util.ClassUtils.unsafeNNCast;
+
 import com.ss.rlib.common.function.*;
 import com.ss.rlib.common.util.ArrayUtils;
+import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.RandomAccess;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -76,6 +77,30 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
 
         T[] newArray = ArrayUtils.copyOf(elements, 1, 1);
         newArray[0] = element;
+
+        return ArrayFactory.newReadOnlyArray(newArray);
+    }
+
+    @SafeVarargs
+    static <T> @NotNull ReadOnlyArray<T> optionals(@NotNull Class<? super T> type, @NotNull Optional<T>... elements) {
+        return ArrayFactory.newReadOnlyArray(Arrays.stream(elements)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toArray(value -> ArrayUtils.create(type, value)));
+    }
+
+    static <T, A extends Array<T>> @NotNull A append(@NotNull A first, @NotNull A second) {
+        first.addAll(second);
+        return first;
+    }
+
+    static <T> @NotNull ReadOnlyArray<T> combine(@NotNull Array<T> first, @NotNull Array<T> second) {
+
+        var componentType = ClassUtils.<Class<T>>unsafeNNCast(first.array()
+                .getClass()
+                .getComponentType());
+
+        var newArray = ArrayUtils.combine(first.toArray(componentType), second.toArray(componentType));
 
         return ArrayFactory.newReadOnlyArray(newArray);
     }
