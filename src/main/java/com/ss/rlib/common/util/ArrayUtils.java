@@ -471,19 +471,42 @@ public final class ArrayUtils {
      * @param array the array.
      * @return the string presentation.
      */
-    public static @NotNull String toString(@NotNull final Array<?> array) {
-        if (array.isEmpty()) return "[]";
+    public static @NotNull String toString(@NotNull Array<?> array) {
+        return toString(array, Object::toString);
+    }
 
-        final String className = array.array().getClass().getSimpleName();
-        final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
+    /**
+     * Convert the array to a string presentation.
+     *
+     * @param array    the array.
+     * @param toString the to string function.
+     * @return the string presentation.
+     */
+    public static <T> @NotNull String toString(@NotNull Array<T> array, @NotNull Function<T, String> toString) {
+
+        if (array.isEmpty()) {
+            return "[]";
+        }
+
+        String className = array.array()
+                .getClass()
+                .getSimpleName();
+
+        StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
         for (int i = 0, length = array.size() - 1; i <= length; i++) {
-            builder.append(String.valueOf(array.get(i)));
-            if (i == length) break;
+
+            builder.append(toString.apply(array.get(i)));
+
+            if (i == length) {
+                break;
+            }
+
             builder.append(", ");
         }
 
         builder.append("]");
+
         return builder.toString();
     }
 

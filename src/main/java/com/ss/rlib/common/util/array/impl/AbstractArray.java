@@ -5,6 +5,8 @@ import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.Array;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Function;
+
 /**
  * The base implementation of the {@link Array}.
  *
@@ -105,5 +107,11 @@ public abstract class AbstractArray<E> implements Array<E> {
     public String toString() {
         return getClass().getSimpleName() + " size = " + size() +
                 " :\n " + ArrayUtils.toString(this);
+    }
+
+    @Override
+    public @NotNull String toString(@NotNull Function<E, @NotNull String> toString) {
+        return getClass().getSimpleName() + " size = " + size() +
+                " :\n " + ArrayUtils.toString(this, toString);
     }
 }

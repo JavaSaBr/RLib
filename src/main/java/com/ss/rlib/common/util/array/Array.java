@@ -996,4 +996,6 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         E[] array = array();
         return Arrays.copyOf(array, size(), array.getClass());
     }
+
+    @NotNull String toString(@NotNull Function<E, @NotNull String> toString);
 }
