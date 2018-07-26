@@ -100,7 +100,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
     }
 
     @Override
-    public final void clear() {
+    public void clear() {
 
         E[] entries = entries();
         E next;

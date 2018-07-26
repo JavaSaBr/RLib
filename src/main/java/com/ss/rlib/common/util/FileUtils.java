@@ -19,10 +19,13 @@ import java.nio.file.attribute.FileTime;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Objects;
+import java.util.Spliterators;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -738,6 +741,26 @@ public class FileUtils {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    /**
+     * Get children's stream of the directory.
+     *
+     * @param directory the directory.
+     * @return children's stream of the directory.
+     */
+    public static @NotNull Stream<Path> stream(@NotNull Path directory) {
+        validateDirectory(directory);
+
+        var files = Array.ofType(Path.class);
+
+        try (var stream = Files.newDirectoryStream(directory)) {
+            stream.forEach(files::add);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return files.stream();
     }
 
     /**

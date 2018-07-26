@@ -14,12 +14,14 @@ public class PreloadPluginException extends PluginException {
     @NotNull
     private final Path path;
 
-    public PreloadPluginException(@NotNull final String message, @NotNull final Path path) {
+    public PreloadPluginException(@NotNull String message, @NotNull Path path) {
         super(message);
         this.path = path;
     }
 
     /**
+     * Get the path of the plugin.
+     *
      * @return the path of the plugin.
      */
     public @NotNull Path getPath() {

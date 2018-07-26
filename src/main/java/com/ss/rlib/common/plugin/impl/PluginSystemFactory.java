@@ -10,7 +10,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PluginSystemFactory {
 
-    public static  @NotNull ConfigurablePluginSystem newBasePluginSystem(@NotNull final ClassLoader classLoader) {
+    public static  @NotNull ConfigurablePluginSystem newBasePluginSystem() {
+        return new BasePluginSystem();
+    }
+
+    public static  @NotNull ConfigurablePluginSystem newBasePluginSystem(@NotNull ClassLoader classLoader) {
         return new BasePluginSystem(classLoader);
     }
 }

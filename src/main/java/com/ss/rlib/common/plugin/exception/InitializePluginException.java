@@ -14,18 +14,23 @@ public class InitializePluginException extends PluginException {
     @NotNull
     private final Path path;
 
-    public InitializePluginException(@NotNull final String message, @NotNull final Path path) {
+    public InitializePluginException(@NotNull String message, @NotNull Path path) {
         super(message);
         this.path = path;
     }
 
-    public InitializePluginException(@NotNull final String message, @NotNull final Path path,
-                                     @NotNull final Exception e) {
+    public InitializePluginException(
+            @NotNull String message,
+            @NotNull Path path,
+            @NotNull Throwable e
+    ) {
         super(message, e);
         this.path = path;
     }
 
     /**
+     * Get the path of the plugin.
+     *
      * @return the path of the plugin.
      */
     public @NotNull Path getPath() {

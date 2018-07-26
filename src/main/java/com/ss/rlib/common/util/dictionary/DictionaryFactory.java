@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class DictionaryFactory {
 
+    public static final ObjectDictionary<?, ?> EMPTY_OD = new ReadOnlyFastObjectDictionary<>();
+
     /**
      * New concurrent atomic integer dictionary concurrent integer dictionary.
      *
@@ -121,9 +123,9 @@ public final class DictionaryFactory {
     /**
      * New long dictionary long dictionary.
      *
-     * @param <V>          the type parameter
      * @param loadFactor   the load factor
      * @param initCapacity the init capacity
+     * @param <V>          the value's type.
      * @return the new {@link FastLongDictionary}.
      */
     public static <V> @NotNull LongDictionary<V> newLongDictionary(float loadFactor, int initCapacity) {
@@ -133,8 +135,8 @@ public final class DictionaryFactory {
     /**
      * New object dictionary object dictionary.
      *
-     * @param <K> the type parameter
-     * @param <V> the type parameter
+     * @param <K> the key's  type.
+     * @param <V> the value's type.
      * @return the new {@link FastObjectDictionary}.
      */
     public static <K, V> @NotNull ObjectDictionary<K, V> newObjectDictionary() {
@@ -144,14 +146,26 @@ public final class DictionaryFactory {
     /**
      * New object dictionary object dictionary.
      *
-     * @param <K>          the type parameter
-     * @param <V>          the type parameter
      * @param loadFactor   the load factor
      * @param initCapacity the init capacity
+     * @param <K>    the key's  type.
+     * @param <V>    the value's type.
      * @return the new {@link FastObjectDictionary}.
      */
     public static <K, V> @NotNull ObjectDictionary<K, V> newObjectDictionary(float loadFactor, int initCapacity) {
         return new FastObjectDictionary<>(loadFactor, initCapacity);
+    }
+
+    /**
+     * New read-only object dictionary object dictionary.
+     *
+     * @param values the values.
+     * @param <K>    the key's  type.
+     * @param <V>    the value's type.
+     * @return the new {@link ReadOnlyFastObjectDictionary}.
+     */
+    public static <K, V> @NotNull ObjectDictionary<K, V> newReadOnlyObjectDictionary(Object... values) {
+        return new ReadOnlyFastObjectDictionary<>(values);
     }
 
     private DictionaryFactory() {

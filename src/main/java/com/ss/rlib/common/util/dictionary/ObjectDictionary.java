@@ -2,6 +2,7 @@ package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.function.FourObjectConsumer;
 import com.ss.rlib.common.function.TripleConsumer;
+import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
@@ -58,18 +59,26 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @return the new object dictionary.
      */
     static <K, V> @NotNull ObjectDictionary<K, V> of(@NotNull Object... values) {
+        return new ReadOnlyFastObjectDictionary<>(values);
+    }
 
-        if (values.length < 2 || values.length % 2 != 0) {
-            throw new IllegalArgumentException("Incorrect argument's count.");
-        }
+    /**
+     * Get an empty object dictionary.
+     *
+     * @param <K> the key's type.
+     * @param <V> the value's type.
+     * @return the empty dictionary.
+     */
+    static <K, V> @NotNull ObjectDictionary<K, V> empty() {
+        return ClassUtils.unsafeNNCast(DictionaryFactory.EMPTY_OD);
+    }
 
-        ObjectDictionary<K, V> dictionary = DictionaryFactory.newObjectDictionary();
-
-        for (int i = 0, length = values.length - 2; i <= length; i += 2) {
-            dictionary.put((K) values[i], (V) values[i + 1]);
-        }
-
-        return dictionary;
+    static <K, V, M extends ObjectDictionary<K, V>> @NotNull M append(
+            @NotNull M first,
+            @NotNull M second
+    ) {
+        second.copyTo(first);
+        return first;
     }
 
     /**
