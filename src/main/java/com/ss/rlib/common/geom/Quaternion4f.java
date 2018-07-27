@@ -14,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Quaternion4f {
 
+    public static final Quaternion4f IDENTITY = new Quaternion4f(0, 0, 0, 1);
+
     private static final ThreadLocal<Random> RANDOM_LOCAL = ThreadLocal.withInitial(RandomFactory::newFastRandom);
     private static final ThreadLocal<Quaternion4f> ROTATION_LOCAL = ThreadLocal.withInitial(Quaternion4f::newInstance);
 
@@ -75,11 +77,19 @@ public class Quaternion4f {
     private float z;
     private float w;
 
-    private Quaternion4f() {
+    public Quaternion4f() {
         w = 1;
     }
 
-    private Quaternion4f(final float x, final float y, final float z, final float w) {
+    public Quaternion4f(float[] vals) {
+        this(vals[0], vals[1], vals[2], vals[3]);
+    }
+
+    public Quaternion4f(float angleX, float angleY, float angleZ) {
+        fromAngles(angleX, angleY, angleZ);
+    }
+
+    public Quaternion4f(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
         this.z = z;

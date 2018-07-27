@@ -1,11 +1,7 @@
 package com.ss.rlib.common.geom;
 
-import static java.lang.Float.floatToIntBits;
-import static java.lang.Float.isInfinite;
-import static java.lang.Float.isNaN;
-
+import static java.lang.Float.*;
 import com.ss.rlib.common.util.ExtMath;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -410,6 +406,24 @@ public class Vector2f {
      */
     public Vector2f divideLocal(float scalar) {
         return divideLocal(scalar, scalar);
+    }
+
+    /**
+     * Linear time-based interpolation stored to this vector.
+     *
+     * @param min the minimal vector
+     * @param max the maximal vector
+     * @param t the time
+     * @return this vector.
+     */
+    public @NotNull Vector2f lerp(@NotNull Vector2f min, @NotNull Vector2f max, float t) {
+
+        t = ExtMath.clamp(t);
+
+        this.x = min.x + (max.x - min.x) * t;
+        this.y = min.y + (max.y - min.y) * t;
+
+        return this;
     }
 
     @Override

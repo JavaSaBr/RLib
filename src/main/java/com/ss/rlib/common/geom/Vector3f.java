@@ -583,6 +583,25 @@ public final class Vector3f {
         return moveToDirection(direction, distance);
     }
 
+    /**
+     * Linear time-based interpolation stored to this vector.
+     *
+     * @param min the minimal vector.
+     * @param max the maximal vector.
+     * @param t the time.
+     * @return this vector.
+     */
+    public Vector3f lerp(@NotNull Vector3f min, @NotNull Vector3f max, float t) {
+
+        t = ExtMath.clamp(t);
+
+        this.x = min.x + (max.x - min.x) * t;
+        this.y = min.y + (max.y - min.y) * t;
+        this.z = min.z + (max.z - min.z) * t;
+
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Vector3f{" +
