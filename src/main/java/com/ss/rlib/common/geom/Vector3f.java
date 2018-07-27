@@ -1,9 +1,13 @@
 package com.ss.rlib.common.geom;
 
-import static java.lang.Float.*;
-import com.ss.rlib.common.util.ExtMath;
+import static java.lang.Float.floatToIntBits;
+import static java.lang.Float.isInfinite;
+import static java.lang.Float.isNaN;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.ss.rlib.common.util.ExtMath;
 
 /**
  * The implementation of vector with 3 float values.
@@ -581,6 +585,23 @@ public final class Vector3f {
         direction.divideLocal((float) length);
 
         return moveToDirection(direction, distance);
+    }
+    
+    /**
+     * Linear time-based interpolation stored to this vector.
+     * 
+     * @param a the minimal vector
+     * @param b the maximal vector
+     * @param t the time
+     * @return this vector
+     */
+    public Vector3f lerp(Vector3f a, Vector3f b, float t) {
+        t = ExtMath.clamp(t);
+        float x = a.getX() + (b.getX() - a.getX()) * t;
+        float y = a.getY() + (b.getY() - a.getY()) * t;
+        float z = a.getZ() + (b.getZ() - a.getZ()) * t;
+        set(x, y, z);
+        return this;
     }
 
     @Override
