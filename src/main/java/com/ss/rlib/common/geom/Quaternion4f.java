@@ -1,12 +1,11 @@
 package com.ss.rlib.common.geom;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.ss.rlib.common.geom.util.AngleUtils;
 import com.ss.rlib.common.util.ExtMath;
 import com.ss.rlib.common.util.random.Random;
 import com.ss.rlib.common.util.random.RandomFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of rotation in 3D world based on Quaternion.
@@ -17,11 +16,14 @@ public class Quaternion4f {
 
     public static final Quaternion4f IDENTITY = new Quaternion4f(0, 0, 0, 1);
     
-    private static final ThreadLocal<Random> RANDOM_LOCAL = ThreadLocal.withInitial(RandomFactory::newFastRandom);
-    private static final ThreadLocal<Quaternion4f> ROTATION_LOCAL = ThreadLocal.withInitial(Quaternion4f::newInstance);
+    private static final ThreadLocal<Random> RANDOM_LOCAL =
+            ThreadLocal.withInitial(RandomFactory::newFastRandom);
+
+    private static final ThreadLocal<Quaternion4f> ROTATION_LOCAL =
+            ThreadLocal.withInitial(Quaternion4f::newInstance);
 
     /**
-     * Get quaternion 4 f.
+     * Get the thread local instance.
      *
      * @return the thread local instance.
      */
@@ -29,60 +31,59 @@ public class Quaternion4f {
         return ROTATION_LOCAL.get();
     }
 
-    /**
-     * New instance quaternion 4 f.
-     *
-     * @return the quaternion 4 f
-     */
+    @Deprecated
     public static Quaternion4f newInstance() {
         return new Quaternion4f();
     }
 
-    /**
-     * New instance quaternion 4 f.
-     *
-     * @param angleX the angle x
-     * @param angleY the angle y
-     * @param angleZ the angle z
-     * @return the quaternion 4 f
-     */
-    public static Quaternion4f newInstance(final float angleX, final float angleY, final float angleZ) {
+    @Deprecated
+    public static Quaternion4f newInstance(float angleX, float angleY, float angleZ) {
         return newInstance().fromAngles(angleX, angleY, angleZ);
     }
 
-    /**
-     * New instance quaternion 4 f.
-     *
-     * @param x the x
-     * @param y the y
-     * @param z the z
-     * @param w the w
-     * @return the quaternion 4 f
-     */
-    public static Quaternion4f newInstance(final float x, final float y, final float z, final float w) {
+    @Deprecated
+    public static Quaternion4f newInstance(float x, float y, float z, float w) {
         return new Quaternion4f(x, y, z, w);
     }
 
-    /**
-     * New instance quaternion 4 f.
-     *
-     * @param vals the vals
-     * @return the quaternion 4 f
-     */
-    public static Quaternion4f newInstance(final float[] vals) {
+    @Deprecated
+    public static Quaternion4f newInstance(float[] vals) {
         return new Quaternion4f(vals[0], vals[1], vals[2], vals[3]);
     }
 
+    /**
+     * The X component.
+     */
     private float x;
+
+    /**
+     * The Y component.
+     */
     private float y;
+
+    /**
+     * The Z component.
+     */
     private float z;
+
+    /**
+     * The W component.
+     */
     private float w;
 
-    protected Quaternion4f() {
+    public Quaternion4f() {
         w = 1;
     }
 
-    protected Quaternion4f(final float x, final float y, final float z, final float w) {
+    public Quaternion4f(float[] vals) {
+        this(vals[0], vals[1], vals[2], vals[3]);
+    }
+
+    public Quaternion4f(float angleX, float angleY, float angleZ) {
+        fromAngles(angleX, angleY, angleZ);
+    }
+
+    public Quaternion4f(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -148,36 +149,35 @@ public class Quaternion4f {
      * @param zAngle угол по оси Z.
      * @return the quaternion 4 f
      */
-    @NotNull
-    public final Quaternion4f fromAngles(final float angleX, final float yAngle, final float zAngle) {
+
+    public final @NotNull Quaternion4f fromAngles(float angleX, float yAngle, float zAngle) {
 
         float angle = zAngle * 0.5f;
 
-        final float sinZ = ExtMath.sin(angle);
-        final float cosZ = ExtMath.cos(angle);
+        float sinZ = ExtMath.sin(angle);
+        float cosZ = ExtMath.cos(angle);
 
         angle = yAngle * 0.5f;
 
-        final float sinY = ExtMath.sin(angle);
-        final float cosY = ExtMath.cos(angle);
+        float sinY = ExtMath.sin(angle);
+        float cosY = ExtMath.cos(angle);
 
         angle = angleX * 0.5f;
 
-        final float sinX = ExtMath.sin(angle);
-        final float cosX = ExtMath.cos(angle);
+        float sinX = ExtMath.sin(angle);
+        float cosX = ExtMath.cos(angle);
 
-        final float cosYXcosZ = cosY * cosZ;
-        final float sinYXsinZ = sinY * sinZ;
-        final float cosYXsinZ = cosY * sinZ;
-        final float sinYXcosZ = sinY * cosZ;
+        float cosYXcosZ = cosY * cosZ;
+        float sinYXsinZ = sinY * sinZ;
+        float cosYXsinZ = cosY * sinZ;
+        float sinYXcosZ = sinY * cosZ;
 
         w = cosYXcosZ * cosX - sinYXsinZ * sinX;
         x = cosYXcosZ * sinX + sinYXsinZ * cosX;
         y = sinYXcosZ * cosX + cosYXsinZ * sinX;
         z = cosYXsinZ * cosX - sinYXcosZ * sinX;
 
-        normalizeLocal();
-        return this;
+        return normalizeLocal();
     }
 
     /**
@@ -520,10 +520,9 @@ public class Quaternion4f {
      *
      * @return the quaternion 4 f
      */
-    @NotNull
-    public final Quaternion4f normalizeLocal() {
+    public final @NotNull Quaternion4f normalizeLocal() {
 
-        final float norm = ExtMath.invSqrt(norm());
+        float norm = ExtMath.invSqrt(norm());
 
         x *= norm;
         y *= norm;

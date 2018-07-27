@@ -24,8 +24,11 @@ public class Vector2f {
 
     public final static Vector2f UNIT_XYZ = new Vector2f(1, 1);
 
-    public final static Vector2f POSITIVE_INFINITY = new Vector2f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-    public final static Vector2f NEGATIVE_INFINITY = new Vector2f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    public final static Vector2f POSITIVE_INFINITY =
+            new Vector2f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+
+    public final static Vector2f NEGATIVE_INFINITY =
+            new Vector2f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
     /**
      * Return true if the vector is valid.
@@ -415,16 +418,18 @@ public class Vector2f {
     /**
      * Linear time-based interpolation stored to this vector.
      * 
-     * @param a the minimal vector
-     * @param b the maximal vector
+     * @param min the minimal vector
+     * @param max the maximal vector
      * @param t the time
-     * @return this vector
+     * @return this vector.
      */
-    public Vector2f lerp(Vector2f a, Vector2f b, float t) {
+    public @NotNull Vector2f lerp(@NotNull Vector2f min, @NotNull Vector2f max, float t) {
+
         t = ExtMath.clamp(t);
-        float x = a.getX() + (b.getX() - a.getX()) * t;
-        float y = a.getY() + (b.getY() - a.getY()) * t;
-        set(x, y);
+
+        this.x = min.x + (max.x - min.x) * t;
+        this.y = min.y + (max.y - min.y) * t;
+
         return this;
     }
 

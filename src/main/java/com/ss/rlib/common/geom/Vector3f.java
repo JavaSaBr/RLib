@@ -94,7 +94,7 @@ public final class Vector3f {
      * @param addZ z axis value.
      * @return this vector.
      */
-    public @NotNull Vector3f addLocal(final float addX, final float addY, final float addZ) {
+    public @NotNull Vector3f addLocal(float addX, float addY, float addZ) {
         x += addX;
         y += addY;
         z += addZ;
@@ -121,10 +121,10 @@ public final class Vector3f {
      * @return the result vector.
      */
     public @NotNull Vector3f cross(
-            final float otherX,
-            final float otherY,
-            final float otherZ,
-            @NotNull final Vector3f result
+            float otherX,
+            float otherY,
+            float otherZ,
+            @NotNull Vector3f result
     ) {
 
         final float resX = y * otherZ - z * otherY;
@@ -142,7 +142,7 @@ public final class Vector3f {
      * @param vector the vector.
      * @return the result vector.
      */
-    public @NotNull Vector3f cross(@NotNull final Vector3f vector) {
+    public @NotNull Vector3f cross(@NotNull Vector3f vector) {
         return cross(vector, new Vector3f());
     }
 
@@ -590,17 +590,19 @@ public final class Vector3f {
     /**
      * Linear time-based interpolation stored to this vector.
      * 
-     * @param a the minimal vector
-     * @param b the maximal vector
-     * @param t the time
-     * @return this vector
+     * @param min the minimal vector.
+     * @param max the maximal vector.
+     * @param t the time.
+     * @return this vector.
      */
-    public Vector3f lerp(Vector3f a, Vector3f b, float t) {
+    public Vector3f lerp(@NotNull Vector3f min, @NotNull Vector3f max, float t) {
+
         t = ExtMath.clamp(t);
-        float x = a.getX() + (b.getX() - a.getX()) * t;
-        float y = a.getY() + (b.getY() - a.getY()) * t;
-        float z = a.getZ() + (b.getZ() - a.getZ()) * t;
-        set(x, y, z);
+
+        this.x = min.x + (max.x - min.x) * t;
+        this.y = min.y + (max.y - min.y) * t;
+        this.z = min.z + (max.z - min.z) * t;
+
         return this;
     }
 
