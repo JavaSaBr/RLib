@@ -1,11 +1,12 @@
 package com.ss.rlib.common.geom;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.ss.rlib.common.geom.util.AngleUtils;
 import com.ss.rlib.common.util.ExtMath;
 import com.ss.rlib.common.util.random.Random;
 import com.ss.rlib.common.util.random.RandomFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of rotation in 3D world based on Quaternion.
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Quaternion4f {
 
+    public static final Quaternion4f IDENTITY = new Quaternion4f(0, 0, 0, 1);
+    
     private static final ThreadLocal<Random> RANDOM_LOCAL = ThreadLocal.withInitial(RandomFactory::newFastRandom);
     private static final ThreadLocal<Quaternion4f> ROTATION_LOCAL = ThreadLocal.withInitial(Quaternion4f::newInstance);
 
@@ -75,11 +78,11 @@ public class Quaternion4f {
     private float z;
     private float w;
 
-    private Quaternion4f() {
+    protected Quaternion4f() {
         w = 1;
     }
 
-    private Quaternion4f(final float x, final float y, final float z, final float w) {
+    protected Quaternion4f(final float x, final float y, final float z, final float w) {
         this.x = x;
         this.y = y;
         this.z = z;
