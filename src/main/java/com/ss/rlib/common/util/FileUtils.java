@@ -19,13 +19,11 @@ import java.nio.file.attribute.FileTime;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Objects;
-import java.util.Spliterators;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -687,6 +685,21 @@ public class FileUtils {
     public static @NotNull Path walkFileTree(@NotNull Path start, @NotNull FileVisitor<? super Path> visitor) {
         try {
             return Files.walkFileTree(start, visitor);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * @see Files#createTempFile(String, String, FileAttribute[])
+     */
+    public static @NotNull Path createTempFile(
+            @NotNull String prefix,
+            @NotNull String suffix,
+            @Nullable FileAttribute<?>... attrs
+    ) {
+        try {
+            return Files.createTempFile(prefix, suffix, attrs);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
