@@ -1,11 +1,12 @@
 package com.ss.rlib.common.geom;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.ss.rlib.common.geom.util.AngleUtils;
 import com.ss.rlib.common.util.ExtMath;
 import com.ss.rlib.common.util.random.Random;
 import com.ss.rlib.common.util.random.RandomFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of rotation in 3D world based on Quaternion.
@@ -316,13 +317,13 @@ public class Quaternion4f {
         float zw = z * w * norm;
 
         switch (type) {
-            case LEFT: {
+            case RIGHT: {
                 store.setX(1 - 2 * (yy + zz));
                 store.setY(2 * (xy + zw));
                 store.setZ(2 * (xz - yw));
                 break;
             }
-            case RIGHT: {
+            case LEFT: {
                 store.setX(1 - 2 * (yy + zz));
                 store.setY(2 * (xy + zw));
                 store.setZ(2 * (xz - yw));
@@ -352,7 +353,7 @@ public class Quaternion4f {
                 store.setX(2 * (xz + yw));
                 store.setY(2 * (yz - xw));
                 store.setZ(1 - 2 * (xx + yy));
-                store.negate();
+                store.negateLocal();
                 break;
             }
         }
