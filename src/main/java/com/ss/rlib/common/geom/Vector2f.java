@@ -383,6 +383,15 @@ public class Vector2f {
     }
     
     /**
+     * Return vector sqr length (magnitude).
+     * 
+     * @return length
+     */
+    public float sqrLength() {
+        return x * x + y * y;
+    }
+    
+    /**
      * Divide local vector.
      *
      * @param x the divider x
