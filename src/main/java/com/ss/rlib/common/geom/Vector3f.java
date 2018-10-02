@@ -506,6 +506,15 @@ public final class Vector3f {
     }
     
     /**
+     * Return vector sqr length (magnitude).
+     * 
+     * @return length
+     */
+    public float sqrLength() {
+        return x * x + y * y + z * z;
+    }
+    
+    /**
      * Divide local vector 3 f.
      *
      * @param x the divider x
