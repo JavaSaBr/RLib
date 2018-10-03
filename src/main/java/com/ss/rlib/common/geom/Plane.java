@@ -289,51 +289,7 @@ public class Plane {
     }
 
     /** 
-     * Return point side relative plane.<br>
-     * <b>Front side:</b><br>
-     * <pre>
-     *         ___
-     *        |   | 
-     *  *     |   | Plane
-     * Point  |___|
-     * </pre><br>
-     * <b>Behind side:</b>
-     * <pre>
-     *  Plane
-     *   ___
-     *  |   | 
-     *  |   |   *
-     *  |___| Point
-     * </pre><br>
-     * <b>Inside side:</b>
-     * <pre>
-     *    _______ 
-     *   |       |
-     *   | *     |
-     *   | Point |
-     *   |_______|
-     *     Plane
-     * </pre>
-     * 
-     * @param point point
-     * @param epsilon epsilon
-     * @return side 
-     */
-    public @NotNull PlaneSide side(@NotNull Vector3f point, float epsilon) {
-        final float dot = dot(point);
-        if (dot > epsilon) {
-            return PlaneSide.Front;
-        }
-
-        if (dot < -epsilon) {
-            return PlaneSide.Behind;
-        }
-
-        return PlaneSide.OnPlane;
-    }
-
-    /** 
-     * Ray plane intersection. Return point where ray intersect plane.<br>
+     * Ray-plane intersection. Return point where ray intersect plane.<br>
      * <i>This method doesnt check plane-vector collinearity!</i>
      * 
      * @param a start point
@@ -349,7 +305,7 @@ public class Plane {
     }
 
     /** 
-     * Ray plane intersection. Return point where ray intersect plane.<br>
+     * Ray-plane intersection. Return point where ray intersect plane.<br>
      * <i>This method doesnt check plane-vector collinearity!</i> 
      * 
      * @param a start point 
@@ -365,7 +321,7 @@ public class Plane {
     }
 
     /** 
-     * Ray plane intersection. Return point where ray intersect plane.<br>
+     * Ray-plane intersection. Return point where ray intersect plane.<br>
      * <i>This method doesnt check plane-vector collinearity!</i> 
      * 
      * @param ray ray
@@ -375,5 +331,45 @@ public class Plane {
         final float denominator = ray.getDirection().dot(normal);
         final float distance = (d - ray.getStart().dot(normal)) / denominator;
         return new Vector3f(ray.getStart()).addLocal(new Vector3f(ray.getDirection()).multLocal(distance));
+    }
+    
+    /**
+     * Line-plane (segment-plane) intersection. Return point where line intersect plane.<br>
+     * If line and plane is parallel or lines doesnt intersect plane return {@link Vector3f#POSITIVE_INFINITY} const.
+     * 
+     * @param a line start point
+     * @param b line end point
+     * @return intersection point or {@link Vector3f#POSITIVE_INFINITY}
+     */
+    public @NotNull Vector3f lineIntersection(@NotNull Vector3f a, @NotNull Vector3f b) {
+        final Vector3f ab = new Vector3f(b).subtractLocal(a);
+        final float t = (d - normal.dot(a)) / normal.dot(ab);
+        
+        if(t < 0 || t > 1.f) {
+            return Vector3f.POSITIVE_INFINITY;
+        }
+        
+        return new Vector3f(a).addLocal(ab.multLocal(t));
+    }
+    
+    /**
+     * Plane-plane intersection. Return point where planes intersects.<br>
+     * If planes is parallel return {@link Vector3f#POSITIVE_INFINITY} const.
+     * 
+     * @param plane plane
+     * @param epsilon epsilon
+     * @return intersection point or {@link Vector3f#POSITIVE_INFINITY}
+     */
+    public @NotNull Vector3f planeIntersection(@NotNull Plane plane, float epsilon) {
+        final Vector3f direction = normal.cross(plane.normal);
+        final float denominator = direction.dot(direction);
+        if(denominator < epsilon) { //planes is parallel
+            return Vector3f.POSITIVE_INFINITY;
+        }
+        
+        return new Vector3f(plane.normal).multLocal(d)
+                .subtractLocal(
+                        new Vector3f(normal).multLocal(plane.d)
+                ).crossLocal(direction).divideLocal(denominator);
     }
 }
