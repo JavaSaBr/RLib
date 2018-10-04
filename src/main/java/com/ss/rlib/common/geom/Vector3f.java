@@ -14,7 +14,7 @@ import com.ss.rlib.common.util.ExtMath;
  *
  * @author JavaSaBr
  */
-public final class Vector3f {
+public final class Vector3f implements Cloneable {
 
     public final static Vector3f ZERO = new Vector3f(0, 0, 0);
     public final static Vector3f NAN = new Vector3f(Float.NaN, Float.NaN, Float.NaN);
@@ -45,6 +45,17 @@ public final class Vector3f {
         } else {
             return !isInfinite(vector.getX()) && !isInfinite(vector.getY()) && !isInfinite(vector.getZ());
         }
+    }
+
+    /**
+     * Get a subtraction result between the two vectors.
+     *
+     * @param first  the first vector.
+     * @param second the second vector.
+     * @return the subtraction result.
+     */
+    public static @NotNull Vector3f substract(@NotNull Vector3f first, @NotNull Vector3f second) {
+        return first.clone().subtractLocal(second);
     }
 
     /**
@@ -153,7 +164,7 @@ public final class Vector3f {
      * @param result the result vector to store result.
      * @return the result vector.
      */
-    public @NotNull Vector3f cross(@NotNull final Vector3f vector, @NotNull final Vector3f result) {
+    public @NotNull Vector3f cross(@NotNull Vector3f vector, @NotNull Vector3f result) {
         return cross(vector.x, vector.y, vector.z, result);
     }
 
@@ -624,6 +635,15 @@ public final class Vector3f {
      */
     public boolean equals(@NotNull Vector3f vector, float epsilon) {
         return Math.abs(x - vector.getX()) < epsilon && Math.abs(y - vector.getY()) < epsilon && Math.abs(z - vector.getZ()) < epsilon;
+    }
+
+    @Override
+    protected @NotNull Vector3f clone() {
+        try {
+            return (Vector3f) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

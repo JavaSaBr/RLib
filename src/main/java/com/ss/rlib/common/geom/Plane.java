@@ -4,68 +4,66 @@ import org.jetbrains.annotations.NotNull;
 
 import com.ss.rlib.common.util.ExtMath;
 
+import static com.ss.rlib.common.geom.Vector3f.substract;
+
 /**
  * Geometry 3D plane.<br>
  * Follow to the formula: <pre>Ax + By + Cz + D = 0</pre>
- * 
+ *
  * @author zcxv
  * @date 25.09.2018
  */
 public class Plane {
-    /** Plane normal */
+
+    /**
+     * The plane normal
+     */
+    @NotNull
     private final Vector3f normal;
 
-    /** D component, inverted by sign. */
+    /**
+     * The D component, inverted by sign.
+     */
     private float d;
 
-    /** 
-     * Construct plane by 3 points.
-     * 
-     * @param a first point
-     * @param b second point
-     * @param c third point 
-     */
-    public Plane(@NotNull Vector3f a, @NotNull Vector3f b, @NotNull Vector3f c) {
-        final Vector3f ba = new Vector3f(b).subtractLocal(a);
-        final Vector3f ca = new Vector3f(c).subtractLocal(a);
+    public Plane(@NotNull Vector3f first, @NotNull Vector3f second, @NotNull Vector3f third) {
+
+        var ba = substract(second, first);
+        var ca = substract(third, first);
+
         normal = ba.cross(ca).normalizeLocal();
-        this.d = a.dot(normal);
+
+        this.d = first.dot(normal);
     }
 
-    /** 
-     * Construct plane by exists normal and plane point.
-     * 
-     * @param planePoint plane point
-     * @param normal plane normal 
-     */
     public Plane(@NotNull Vector3f planePoint, @NotNull Vector3f normal) {
-        this.normal = new Vector3f(normal);
+        this.normal = normal.clone();
         this.d = planePoint.dot(normal);
     }
 
-    /** 
+    /**
      * Return a plane normal.
-     * 
-     * @return normal 
+     *
+     * @return normal.
      */
     public @NotNull Vector3f getNormal() {
         return normal;
     }
 
-    /** 
+    /**
      * Return a D component inverted by sign.
-     * 
-     * @return d component 
+     *
+     * @return the D component.
      */
     public float getD() {
         return d;
     }
 
-    /** 
+    /**
      * Multiply plane by scalar.
-     * 
-     * @param scalar scalar
-     * @return this plane
+     *
+     * @param scalar scalar.
+     * @return this plane.
      */
     public @NotNull Plane multLocal(float scalar) {
         normal.multLocal(scalar);
@@ -73,11 +71,11 @@ public class Plane {
         return this;
     }
 
-    /** 
+    /**
      * Divide plane by scalar.
-     * 
-     * @param scalar scalar
-     * @return this plane 
+     *
+     * @param scalar scalar.
+     * @return this plane .
      */
     public @NotNull Plane divideLocal(float scalar) {
         normal.divideLocal(scalar);
@@ -85,14 +83,14 @@ public class Plane {
         return this;
     }
 
-    /** 
+    /**
      * Add values to plane.
-     * 
-     * @param x x axis value
-     * @param y y axis value
-     * @param z z axis value
-     * @param d d component
-     * @return this plane 
+     *
+     * @param x the X axis value.
+     * @param y the Y axis value.
+     * @param z the Z axis value.
+     * @param d the D component.
+     * @return this plane .
      */
     public @NotNull Plane addLocal(float x, float y, float z, float d) {
         normal.addLocal(x, y, z);
@@ -100,14 +98,14 @@ public class Plane {
         return this;
     }
 
-    /** 
+    /**
      * Subtract values to plane.
-     * 
-     * @param x x axis value
-     * @param y y axis value
-     * @param z z axis value
-     * @param d d component
-     * @return this plane
+     *
+     * @param x the X axis value.
+     * @param y the Y axis value.
+     * @param z the Z axis value.
+     * @param d the D component.
+     * @return this plane.
      */
     public @NotNull Plane subtractLocal(float x, float y, float z, float d) {
         normal.subtractLocal(x, y, z);
@@ -115,11 +113,11 @@ public class Plane {
         return this;
     }
 
-    /** 
+    /**
      * Multiply plane by other plane.
-     * 
-     * @param plane other plane
-     * @return this plane 
+     *
+     * @param plane the other plane.
+     * @return this plane .
      */
     public @NotNull Plane multLocal(@NotNull Plane plane) {
         normal.multLocal(plane.normal);
@@ -127,11 +125,11 @@ public class Plane {
         return this;
     }
 
-    /** 
+    /**
      * Divide plane by other plane.
-     * 
-     * @param plane other plane
-     * @return this plane 
+     *
+     * @param plane the other plane.
+     * @return this plane .
      */
     public @NotNull Plane divideLocal(@NotNull Plane plane) {
         normal.divideLocal(plane.normal);
@@ -139,11 +137,11 @@ public class Plane {
         return this;
     }
 
-    /** 
+    /**
      * Add plane by other plane.
-     * 
-     * @param plane other plane
-     * @return this plane 
+     *
+     * @param plane the other plane.
+     * @return this plane
      */
     public @NotNull Plane addLocal(@NotNull Plane plane) {
         normal.addLocal(plane.normal);
@@ -151,11 +149,11 @@ public class Plane {
         return this;
     }
 
-    /** 
+    /**
      * Subtract plane by other plane.
-     * 
-     * @param plane other plane
-     * @return this plane 
+     *
+     * @param plane the other plane
+     * @return this plane
      */
     public @NotNull Plane subtractLocal(@NotNull Plane plane) {
         normal.subtractLocal(plane.normal);
@@ -163,213 +161,363 @@ public class Plane {
         return this;
     }
 
-    /** 
+    /**
      * Multiply plane by vector.<br>
      * Its operation is equals to multiply plane normal vector with vector.
-     * 
-     * @param vector vector
-     * @return this plane 
+     *
+     * @param vector the vector.
+     * @return this plane.
      */
     public @NotNull Plane multLocal(@NotNull Vector3f vector) {
         normal.multLocal(vector);
         return this;
     }
 
-    /** 
+    /**
      * Divide plane by vector.<br>
      * Its operation is equals to divide plane normal vector with vector.
-     * 
-     * @param vector vector
-     * @return this plane 
+     *
+     * @param vector the vector.
+     * @return this plane .
      */
     public @NotNull Plane divideLocal(@NotNull Vector3f vector) {
         normal.divideLocal(vector);
         return this;
     }
 
-    /** 
+    /**
      * Add plane by vector.<br>
      * Its operation is equals to: plane normal plus vector.
-     * 
-     * @param vector vector
-     * @return this plane 
+     *
+     * @param vector the vector.
+     * @return this plane.
      */
     public @NotNull Plane addLocal(@NotNull Vector3f vector) {
         normal.addLocal(vector);
         return this;
     }
 
-    /** 
+    /**
      * Subtract plane by vector.<br>
      * Its operation is equals to: plane normal minus vector.
-     * 
-     * @param vector vector
-     * @return this plane 
+     *
+     * @param vector the vector.
+     * @return this plane.
      */
     public @NotNull Plane subtractLocal(@NotNull Vector3f vector) {
         normal.subtractLocal(vector);
         return this;
     }
 
-    /** 
+    /**
      * Dot product plane with vector.
-     * 
+     *
      * @param point vector
-     * @return dot product 
+     * @return dot product
      */
     public float dot(@NotNull Vector3f point) {
         return normal.dot(point) - d;
     }
 
-    /** 
+    /**
      * Dot product plane with plane.
-     * 
+     *
      * @param plane plane
-     * @return dot product 
+     * @return dot product
      */
     public float dot(@NotNull Plane plane) {
         return normal.dot(plane.normal) - d * plane.d;
     }
 
-    /** 
-     * Distance between point and plane.
-     * 
-     * @param point point
-     * @param plane point plane point
-     * @return distance 
+    /**
+     * Distance between the point and the plane.
+     *
+     * @param point      the point.
+     * @param planePoint the plane point.
+     * @return the distance.
      */
     public float distance(@NotNull Vector3f point, @NotNull Vector3f planePoint) {
-        return new Vector3f(point).subtractLocal(planePoint).dot(normal);
+        return distance(point, planePoint, Vector3fBuffer.NO_REUSE);
     }
 
-    /** 
+    /**
+     * Distance between the point and the plane.
+     *
+     * @param point      the point.
+     * @param planePoint the plane point.
+     * @param buffer     the vector's buffer.
+     * @return the distance.
+     */
+    public float distance(@NotNull Vector3f point, @NotNull Vector3f planePoint, @NotNull Vector3fBuffer buffer) {
+        return buffer.next(point)
+            .subtractLocal(planePoint)
+            .dot(normal);
+    }
+
+    /**
      * Distance between point and plane.
-     * 
+     *
      * @param point point
-     * @return distance 
+     * @return distance
      */
     public float distance(@NotNull Vector3f point) {
         return -d + point.dot(normal);
     }
 
-    /** 
+    /**
      * Angle between planes.
-     * 
+     *
      * @param plane plane
      * @return angle in radians
      */
     public float angle(@NotNull Plane plane) {
-        return ExtMath.cos(normal.dot(plane.normal) / ExtMath.sqrt(normal.sqrLength() * plane.normal.sqrLength()));
+        return ExtMath.cos(normal.dot(plane.normal) /
+                ExtMath.sqrt(normal.sqrLength() * plane.normal.sqrLength()));
     }
 
-    /** 
-     * Check planes to parallel.
-     * 
-     * @param plane plane
-     * @param epsilon epsilon
-     * @return true if planes parallels 
+    /**
+     * Return true if the planes are parallel.
+     *
+     * @param plane   the plane.
+     * @param epsilon the epsilon.
+     * @return true if the planes are parallel.
      */
     public boolean isParallel(@NotNull Plane plane, float epsilon) {
-        //check plane normals to collinearity
-        final float fA = plane.normal.getX() / normal.getX();
-        final float fB = plane.normal.getY() / normal.getY();
-        final float fC = plane.normal.getZ() / normal.getZ();
+
+        // check plane normals to collinearity
+        var fA = plane.normal.getX() / normal.getX();
+        var fB = plane.normal.getY() / normal.getY();
+        var fC = plane.normal.getZ() / normal.getZ();
+
         return Math.abs(fA - fB) < epsilon && Math.abs(fA - fC) < epsilon;
     }
 
-    /** 
-     * Check planes to perpendicular.
-     * 
-     * @param plane plane
-     * @param epsilon epsilon
-     * @return true if planes perpendicular 
+    /**
+     * Return true if the planes are perpendicular.
+     *
+     * @param plane   the plane.
+     * @param epsilon the epsilon.
+     * @return true if the planes are perpendicular.
      */
     public boolean isPerpendicular(@NotNull Plane plane, float epsilon) {
         return Math.abs(normal.dot(plane.normal)) < epsilon;
     }
 
-    /** 
+    /**
      * Ray-plane intersection. Return point where ray intersect plane.<br>
      * <i>This method doesnt check plane-vector collinearity!</i>
-     * 
-     * @param a start point
-     * @param b end point
-     * @return intersection point 
+     *
+     * @param startPoint the start point.
+     * @param endPoint   the end point.
+     * @return the intersection point.
      */
-    public @NotNull Vector3f rayIntersection(@NotNull Vector3f a, @NotNull Vector3f b) {
-        final Vector3f direction = new Vector3f(b).subtractLocal(a);
-        final float denominator = direction.dot(normal);
-        final float distance = (d - a.dot(normal)) / denominator;
-        direction.multLocal(distance);
-        return new Vector3f(a).addLocal(direction);
+    public @NotNull Vector3f rayIntersection(@NotNull Vector3f startPoint, @NotNull Vector3f endPoint) {
+        return rayIntersection(startPoint, endPoint, Vector3fBuffer.NO_REUSE);
     }
 
-    /** 
+    /**
      * Ray-plane intersection. Return point where ray intersect plane.<br>
-     * <i>This method doesnt check plane-vector collinearity!</i> 
-     * 
-     * @param a start point 
-     * @param b end point 
-     * @return intersection point 
+     * <i>This method doesn't check plane-vector collinearity!</i>
+     *
+     * @param startPoint the start point.
+     * @param endPoint   the end point.
+     * @param buffer     the vector's buffer.
+     * @return the intersection point.
      */
-    public @NotNull Vector3f rayIntersection(@NotNull Vector3f a, @NotNull Vector3f b, @NotNull Vector3f planePoint) {
-        final Vector3f direction = new Vector3f(b).subtractLocal(a);
-        final float denominator = direction.dot(normal);
-        final float distance = new Vector3f(planePoint).subtractLocal(a).dot(normal) / denominator;
+    public @NotNull Vector3f rayIntersection(
+            @NotNull Vector3f startPoint,
+            @NotNull Vector3f endPoint,
+            @NotNull Vector3fBuffer buffer
+    ) {
+
+        var direction = buffer.next(endPoint);
+        direction.subtractLocal(startPoint);
+
+        var denominator = direction.dot(normal);
+        var distance = (d - startPoint.dot(normal)) / denominator;
+
         direction.multLocal(distance);
-        return new Vector3f(a).addLocal(direction);
+
+        var result = new Vector3f(startPoint);
+        result.addLocal(direction);
+
+        return result;
     }
 
-    /** 
+    /**
      * Ray-plane intersection. Return point where ray intersect plane.<br>
-     * <i>This method doesnt check plane-vector collinearity!</i> 
-     * 
-     * @param ray ray
-     * @return intersection point 
+     * <i>This method doesnt check plane-vector collinearity!</i>
+     *
+     * @param startPoint the start point.
+     * @param endPoint the end point.
+     * @return the intersection point.
+     */
+    public @NotNull Vector3f rayIntersection(
+            @NotNull Vector3f startPoint,
+            @NotNull Vector3f endPoint,
+            @NotNull Vector3f planePoint
+    ) {
+        return rayIntersection(startPoint, endPoint, planePoint, Vector3fBuffer.NO_REUSE);
+    }
+
+    /**
+     * Ray-plane intersection. Return point where ray intersect plane.<br>
+     * <i>This method doesnt check plane-vector collinearity!</i>
+     *
+     * @param startPoint the start point.
+     * @param endPoint   the end point.
+     * @param buffer     the vector's buffer.
+     * @return the intersection point.
+     */
+    public @NotNull Vector3f rayIntersection(
+            @NotNull Vector3f startPoint,
+            @NotNull Vector3f endPoint,
+            @NotNull Vector3f planePoint,
+            @NotNull Vector3fBuffer buffer
+    ) {
+
+        var direction = buffer.next(endPoint);
+        direction.subtractLocal(startPoint);
+
+        var denominator = direction.dot(normal);
+        var distance = buffer.next(planePoint)
+            .subtractLocal(startPoint)
+            .dot(normal) / denominator;
+
+        direction.multLocal(distance);
+
+        var result = new Vector3f(startPoint);
+        result.addLocal(direction);
+
+        return result;
+    }
+
+    /**
+     * Ray-plane intersection. Return point where ray intersect plane.<br>
+     * <i>This method doesnt check plane-vector collinearity!</i>
+     *
+     * @param ray the ray.
+     * @return the intersection point.
      */
     public @NotNull Vector3f rayIntersection(@NotNull Ray3f ray) {
-        final float denominator = ray.getDirection().dot(normal);
-        final float distance = (d - ray.getStart().dot(normal)) / denominator;
-        return new Vector3f(ray.getStart()).addLocal(new Vector3f(ray.getDirection()).multLocal(distance));
+        return rayIntersection(ray, Vector3fBuffer.NO_REUSE);
     }
-    
+
+    /**
+     * Ray-plane intersection. Return point where ray intersect plane.<br>
+     * <i>This method doesnt check plane-vector collinearity!</i>
+     *
+     * @param ray    the ray.
+     * @param buffer the vector's buffer.
+     * @return the intersection point.
+     */
+    public @NotNull Vector3f rayIntersection(@NotNull Ray3f ray, @NotNull Vector3fBuffer buffer) {
+
+        var direction = ray.getDirection();
+        var start = ray.getStart();
+
+        var denominator = direction.dot(normal);
+        var distance = (d - start.dot(normal)) / denominator;
+
+        var add = buffer.next(direction);
+        add.multLocal(distance);
+
+        var result = new Vector3f(start);
+        result.addLocal(add);
+
+        return result;
+    }
+
     /**
      * Line-plane (segment-plane) intersection. Return point where line intersect plane.<br>
      * If line and plane is parallel or lines doesnt intersect plane return {@link Vector3f#POSITIVE_INFINITY} const.
-     * 
-     * @param a line start point
-     * @param b line end point
+     *
+     * @param startPoint the line start point.
+     * @param secondPoint the line end point.
      * @return intersection point or {@link Vector3f#POSITIVE_INFINITY}
      */
-    public @NotNull Vector3f lineIntersection(@NotNull Vector3f a, @NotNull Vector3f b) {
-        final Vector3f ab = new Vector3f(b).subtractLocal(a);
-        final float t = (d - normal.dot(a)) / normal.dot(ab);
-        
-        if(t < 0 || t > 1.f) {
+    public @NotNull Vector3f lineIntersection(@NotNull Vector3f startPoint, @NotNull Vector3f secondPoint) {
+        return lineIntersection(startPoint, secondPoint, Vector3fBuffer.NO_REUSE);
+    }
+
+    /**
+     * Line-plane (segment-plane) intersection. Return point where line intersect plane.<br>
+     * If line and plane is parallel or lines doesnt intersect plane return {@link Vector3f#POSITIVE_INFINITY} const.
+     *
+     * @param startPoint  the line start point.
+     * @param secondPoint the line end point.
+     * @param buffer      the vector's buffer.
+     * @return intersection point or {@link Vector3f#POSITIVE_INFINITY}
+     */
+    public @NotNull Vector3f lineIntersection(
+            @NotNull Vector3f startPoint,
+            @NotNull Vector3f secondPoint,
+            @NotNull Vector3fBuffer buffer
+    ) {
+
+        var ab = buffer.next(secondPoint);
+        ab.subtractLocal(startPoint);
+
+        var t = (d - normal.dot(startPoint)) / normal.dot(ab);
+
+        if (t < 0 || t > 1.f) {
             return Vector3f.POSITIVE_INFINITY;
         }
-        
-        return new Vector3f(a).addLocal(ab.multLocal(t));
+
+        var result = new Vector3f(startPoint);
+        result.addLocal(ab.multLocal(t));
+
+        return result;
     }
-    
+
     /**
      * Plane-plane intersection. Return point where planes intersects.<br>
      * If planes is parallel return {@link Vector3f#POSITIVE_INFINITY} const.
-     * 
-     * @param plane plane
-     * @param epsilon epsilon
-     * @return intersection point or {@link Vector3f#POSITIVE_INFINITY}
+     *
+     * @param plane   the plane.
+     * @param epsilon the epsilon.
+     * @return the intersection point or copy of {@link Vector3f#POSITIVE_INFINITY}.
      */
     public @NotNull Vector3f planeIntersection(@NotNull Plane plane, float epsilon) {
+
         final Vector3f direction = normal.cross(plane.normal);
         final float denominator = direction.dot(direction);
-        if(denominator < epsilon) { //planes is parallel
+
+        if (denominator < epsilon) { //planes is parallel
             return Vector3f.POSITIVE_INFINITY;
         }
-        
+
         return new Vector3f(plane.normal).multLocal(d)
-                .subtractLocal(
-                        new Vector3f(normal).multLocal(plane.d)
-                ).crossLocal(direction).divideLocal(denominator);
+            .subtractLocal(
+                new Vector3f(normal).multLocal(plane.d)
+            ).crossLocal(direction).divideLocal(denominator);
+    }
+
+    /**
+     * Plane-plane intersection. Return point where planes intersects.<br>
+     * If planes is parallel return {@link Vector3f#POSITIVE_INFINITY} const.
+     *
+     * @param plane   the plane.
+     * @param epsilon the epsilon.
+     * @param buffer  the vector's buffer.
+     * @return the intersection point or copy of {@link Vector3f#POSITIVE_INFINITY}.
+     */
+    public @NotNull Vector3f planeIntersection(@NotNull Plane plane, float epsilon, @NotNull Vector3fBuffer buffer) {
+
+        var direction = normal.cross(plane.normal, buffer.nextVector());
+        var denominator = direction.dot(direction);
+
+        if (denominator < epsilon) {
+            // these planes are parallel
+            return buffer.next(Vector3f.POSITIVE_INFINITY);
+        }
+
+        var result = buffer.next(plane.normal);
+        result.multLocal(d);
+        result.subtractLocal(buffer.next(normal).multLocal(plane.d));
+        result.crossLocal(direction);
+        result.divideLocal(denominator);
+
+        return result;
     }
 }
