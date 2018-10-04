@@ -383,6 +383,15 @@ public class Vector2f {
     }
     
     /**
+     * Return vector sqr length (magnitude).
+     * 
+     * @return length
+     */
+    public float sqrLength() {
+        return x * x + y * y;
+    }
+    
+    /**
      * Divide local vector.
      *
      * @param x the divider x
@@ -431,6 +440,17 @@ public class Vector2f {
         this.y = min.y + (max.y - min.y) * t;
 
         return this;
+    }
+    
+    /** 
+     * Check vectors to equals with epsilon.
+     * 
+     * @param vector vector
+     * @param epsilon epsilon
+     * @return true if vectors equals 
+     */
+    public boolean equals(@NotNull Vector3f vector, float epsilon) {
+        return Math.abs(x - vector.getX()) < epsilon && Math.abs(y - vector.getY()) < epsilon;
     }
 
     @Override

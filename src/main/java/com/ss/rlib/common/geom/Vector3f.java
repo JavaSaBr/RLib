@@ -506,6 +506,15 @@ public final class Vector3f {
     }
     
     /**
+     * Return vector sqr length (magnitude).
+     * 
+     * @return length
+     */
+    public float sqrLength() {
+        return x * x + y * y + z * z;
+    }
+    
+    /**
      * Divide local vector 3 f.
      *
      * @param x the divider x
@@ -604,6 +613,17 @@ public final class Vector3f {
         this.z = min.z + (max.z - min.z) * t;
 
         return this;
+    }
+    
+    /** 
+     * Check vectors to equals with epsilon.
+     * 
+     * @param vector vector
+     * @param epsilon epsilon
+     * @return true if vectors equals 
+     */
+    public boolean equals(@NotNull Vector3f vector, float epsilon) {
+        return Math.abs(x - vector.getX()) < epsilon && Math.abs(y - vector.getY()) < epsilon && Math.abs(z - vector.getZ()) < epsilon;
     }
 
     @Override
