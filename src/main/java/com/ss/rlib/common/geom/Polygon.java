@@ -347,6 +347,7 @@ public class Polygon {
         return plane.getNormal().dot(ab) > EPSILON_CWW;
     }
     
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Polygon{vertices=" + Arrays.toString(vertices) + 

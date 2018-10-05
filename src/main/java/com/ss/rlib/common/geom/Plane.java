@@ -510,6 +510,17 @@ public class Plane {
         return result;
     }
     
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        int prime = 31;
+        int result = 1;
+        result = prime * result + normal.hashCode();
+        result = prime * result + Float.floatToIntBits(d);
+        return result;
+    }
+    
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Plane{normal=" + normal + ", d=" + d + "}";
