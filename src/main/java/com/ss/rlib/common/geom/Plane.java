@@ -305,7 +305,7 @@ public class Plane {
 
     /**
      * Ray-plane intersection. Return point where ray intersect plane.<br>
-     * <i>This method doesnt check plane-vector collinearity!</i>
+     * <i>This method doesn't check plane-vector collinearity!</i>
      *
      * @param startPoint the start point.
      * @param endPoint   the end point.
@@ -346,7 +346,7 @@ public class Plane {
 
     /**
      * Ray-plane intersection. Return point where ray intersect plane.<br>
-     * <i>This method doesnt check plane-vector collinearity!</i>
+     * <i>This method doesn't check plane-vector collinearity!</i>
      *
      * @param startPoint the start point.
      * @param endPoint the end point.
@@ -362,7 +362,7 @@ public class Plane {
 
     /**
      * Ray-plane intersection. Return point where ray intersect plane.<br>
-     * <i>This method doesnt check plane-vector collinearity!</i>
+     * <i>This method doesn't check plane-vector collinearity!</i>
      *
      * @param startPoint the start point.
      * @param endPoint   the end point.
@@ -394,7 +394,7 @@ public class Plane {
 
     /**
      * Ray-plane intersection. Return point where ray intersect plane.<br>
-     * <i>This method doesnt check plane-vector collinearity!</i>
+     * <i>This method doesn't check plane-vector collinearity!</i>
      *
      * @param ray the ray.
      * @return the intersection point.
@@ -405,7 +405,7 @@ public class Plane {
 
     /**
      * Ray-plane intersection. Return point where ray intersect plane.<br>
-     * <i>This method doesnt check plane-vector collinearity!</i>
+     * <i>This method doesn't check plane-vector collinearity!</i>
      *
      * @param ray    the ray.
      * @param buffer the vector's buffer.
@@ -430,7 +430,7 @@ public class Plane {
 
     /**
      * Line-plane (segment-plane) intersection. Return point where line intersect plane.<br>
-     * If line and plane is parallel or lines doesnt intersect plane return {@link Vector3f#POSITIVE_INFINITY} const.
+     * If line and plane is parallel or lines doesn't intersect plane return {@link Vector3f#POSITIVE_INFINITY} const.
      *
      * @param startPoint the line start point.
      * @param secondPoint the line end point.
@@ -442,7 +442,7 @@ public class Plane {
 
     /**
      * Line-plane (segment-plane) intersection. Return point where line intersect plane.<br>
-     * If line and plane is parallel or lines doesnt intersect plane return {@link Vector3f#POSITIVE_INFINITY} const.
+     * If line and plane is parallel or lines doesn't intersect plane return {@link Vector3f#POSITIVE_INFINITY} const.
      *
      * @param startPoint  the line start point.
      * @param secondPoint the line end point.
@@ -479,18 +479,7 @@ public class Plane {
      * @return the intersection point or copy of {@link Vector3f#POSITIVE_INFINITY}.
      */
     public @NotNull Vector3f planeIntersection(@NotNull Plane plane, float epsilon) {
-
-        final Vector3f direction = normal.cross(plane.normal);
-        final float denominator = direction.dot(direction);
-
-        if (denominator < epsilon) { //planes is parallel
-            return Vector3f.POSITIVE_INFINITY;
-        }
-
-        return new Vector3f(plane.normal).multLocal(d)
-            .subtractLocal(
-                new Vector3f(normal).multLocal(plane.d)
-            ).crossLocal(direction).divideLocal(denominator);
+        return planeIntersection(plane, epsilon, Vector3fBuffer.NO_REUSE);
     }
 
     /**
@@ -519,5 +508,10 @@ public class Plane {
         result.divideLocal(denominator);
 
         return result;
+    }
+    
+    @Override
+    public String toString() {
+        return "Plane{normal=" + normal + ", d=" + d + "}";
     }
 }
