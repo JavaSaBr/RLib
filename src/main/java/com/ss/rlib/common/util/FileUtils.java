@@ -811,10 +811,10 @@ public class FileUtils {
      * @param <T>       the argument's type.
      */
     public static <T> void forEachR(
-        @NotNull Path directory,
-        @NotNull T argument,
-        @NotNull Predicate<@NotNull Path> condition,
-        @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
+            @NotNull Path directory,
+            @NotNull T argument,
+            @NotNull Predicate<@NotNull Path> condition,
+            @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
     ) {
 
         validateDirectory(directory);

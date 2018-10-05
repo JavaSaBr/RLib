@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util;
 
+import com.ss.rlib.common.geom.Vector3f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -342,6 +343,22 @@ public final class ExtMath {
      */
     public static float lerpUnnormal(float min, float max, float time) {
         return (1.f - time) * min + time * max;
+    }
+
+    /**
+     * Return true if these vectors are equals.
+     *
+     * @param first   the first vector.
+     * @param second  the second vector.
+     * @param epsilon the epsilon.
+     * @return true if these vectors are equals.
+     */
+    public boolean isEquals(@Nullable Vector3f first, @Nullable Vector3f second, float epsilon) {
+        if (first == null || second == null) {
+            return false;
+        } else {
+            return first.equals(second, epsilon);
+        }
     }
 
     private ExtMath() {

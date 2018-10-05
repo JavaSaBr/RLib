@@ -1,12 +1,11 @@
 package com.ss.rlib.common.geom;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.ss.rlib.common.geom.util.AngleUtils;
 import com.ss.rlib.common.util.ExtMath;
 import com.ss.rlib.common.util.random.Random;
 import com.ss.rlib.common.util.random.RandomFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of rotation in 3D world based on Quaternion.
@@ -448,24 +447,37 @@ public class Quaternion4f {
     }
 
     /**
-     * Рассчитать разворот, который будет смотреть в указанном напралвении.
+     * Calculate the value of the quaternion, which will look in the specified direction.
      *
-     * @param direction направление, куда нужно смотреть.
-     * @param up        вектор для ориаентации где верх а где низ.
-     * @param buffer    буффер векторов для рассчета.
+     * @param direction the direction.
+     * @param up        the vector of orientation where is top.
      */
-    public void lookAt(@NotNull final Vector3f direction, @NotNull final Vector3f up, @NotNull final Vector3fBuffer buffer) {
+    public void lookAt(@NotNull Vector3f direction, @NotNull Vector3f up) {
+        lookAt(direction, up, Vector3fBuffer.NO_REUSE);
+    }
 
-        final Vector3f first = buffer.nextVector();
-        first.set(direction).normalizeLocal();
+    /**
+     * Calculate the value of the quaternion, which will look in the specified direction.
+     *
+     * @param direction the direction.
+     * @param up        the vector of orientation where is top.
+     * @param buffer    the vector's buffer.
+     */
+    public void lookAt(@NotNull Vector3f direction, @NotNull Vector3f up, @NotNull Vector3fBuffer buffer) {
 
-        final Vector3f second = buffer.nextVector();
-        second.set(up).crossLocal(direction).normalizeLocal();
+        var axisZ = buffer.next(direction)
+                .normalizeLocal();
 
-        final Vector3f third = buffer.nextVector();
-        third.set(direction).crossLocal(second).normalizeLocal();
+        var axisX = buffer.next(up)
+                .crossLocal(direction)
+                .normalizeLocal();
 
-        fromAxes(second, third, first);
+        var axisY = buffer.next(direction)
+                .crossLocal(axisX)
+                .normalizeLocal();
+
+        fromAxes(axisX, axisY, axisZ);
+
         normalizeLocal();
     }
 
@@ -517,13 +529,13 @@ public class Quaternion4f {
     }
 
     /**
-     * Нормализация текущего разворота.
+     * Normalizing of the current quaternion
      *
-     * @return the quaternion 4 f
+     * @return this quaternion.
      */
     public final @NotNull Quaternion4f normalizeLocal() {
 
-        float norm = ExtMath.invSqrt(norm());
+        var norm = ExtMath.invSqrt(norm());
 
         x *= norm;
         y *= norm;

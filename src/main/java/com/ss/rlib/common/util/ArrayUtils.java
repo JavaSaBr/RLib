@@ -81,6 +81,19 @@ public final class ArrayUtils {
     }
 
     /**
+     * Fill the array using the factory.
+     *
+     * @param array   the array.
+     * @param factory the element's factory.
+     * @since 8.1.0
+     */
+    public static void fill(@NotNull char[] array, @NotNull CharSupplier factory) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = factory.getAsChar();
+        }
+    }
+
+    /**
      * Fill the array using the factory which receives array's index.
      *
      * @param array   the array.

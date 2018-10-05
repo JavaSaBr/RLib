@@ -8,16 +8,16 @@ import com.ss.rlib.common.util.dictionary.DictionaryFactory;
 import com.ss.rlib.common.util.dictionary.ObjectDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * THe utility class to contain different properties.
+ * The utility class to contain properties of different types.
  *
  * @author JavaSaBr
  */
 public class VarTable {
 
+    @Deprecated(forRemoval = true)
     public static @NotNull VarTable newInstance() {
         return new VarTable();
     }
@@ -27,9 +27,11 @@ public class VarTable {
      *
      * @param node the xml node.
      * @return the new table with attributes of the node.
+     * @see XmlUtils#toVarsTable(Node)
      */
-    public static @NotNull VarTable newInstance(@Nullable final Node node) {
-        return newInstance().parse(node);
+    @Deprecated(forRemoval = true)
+    public static @NotNull VarTable newInstance(@Nullable Node node) {
+        return XmlUtils.toVarsTable(node);
     }
 
     /**
@@ -40,10 +42,16 @@ public class VarTable {
      * @param nameType  the name type
      * @param nameValue the name value
      * @return the var table
+     * @see XmlUtils#toVarsTable(Node, String, String, String)
      */
-    public static @NotNull VarTable newInstance(@Nullable final Node node, @NotNull final String childName,
-                                                @NotNull final String nameType, @NotNull final String nameValue) {
-        return newInstance().parse(node, childName, nameType, nameValue);
+    @Deprecated(forRemoval = true)
+    public static @NotNull VarTable newInstance(
+            @Nullable Node node,
+            @NotNull String childName,
+            @NotNull String nameType,
+            @NotNull String nameValue
+    ) {
+        return XmlUtils.toVarsTable(node, childName, nameType, nameValue);
     }
 
     /**
@@ -52,7 +60,10 @@ public class VarTable {
     @NotNull
     private final ObjectDictionary<String, Object> values;
 
-    private VarTable() {
+    /**
+     * @since 8.1.0
+     */
+    public VarTable() {
         this.values = DictionaryFactory.newObjectDictionary();
     }
 
@@ -64,15 +75,21 @@ public class VarTable {
     }
 
     /**
-     * Get the value by the key.
+     * Get a value by the key.
      *
-     * @param <T> the type parameter
      * @param key the key.
-     * @return the t
+     * @param <T> the value's type.
+     * @return the value.
+     * @throws IllegalArgumentException if the value is not exist.
      */
-    public <T> @NotNull T get(@NotNull final String key) {
-        final T result = ClassUtils.unsafeCast(values.get(key));
-        if (result != null) return result;
+    public <T> @NotNull T get(@NotNull String key) {
+
+        T result = ClassUtils.unsafeCast(values.get(key));
+
+        if (result != null) {
+            return result;
+        }
+
         throw new IllegalArgumentException("not found " + key);
     }
 
@@ -756,10 +773,27 @@ public class VarTable {
      *
      * @param key the key.
      * @return the integer value.
+     * @throws IllegalArgumentException if the value isn't exist.
+     * @throws IllegalStateException if the value can't be presented as int.
+     * @see #getInt(String)
      */
-    public int getInteger(@NotNull final String key) {
+    @Deprecated(forRemoval = true)
+    public int getInteger(@NotNull String key) {
+        return getInt(key);
+    }
 
-        final Object object = values.get(key);
+    /**
+     * Get an integer value by the key.
+     *
+     * @param key the key.
+     * @return the integer value.
+     * @throws IllegalArgumentException if the value isn't exist.
+     * @throws IllegalStateException if the value can't be presented as int.
+     * @since 8.1.0
+     */
+    public int getInt(@NotNull String key) {
+
+        var object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
@@ -769,7 +803,7 @@ public class VarTable {
             return Integer.parseInt(object.toString());
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalStateException("the value: " + object + " can't be presented as int, key: " + key);
     }
 
     /**
@@ -778,10 +812,25 @@ public class VarTable {
      * @param key the key.
      * @param def the default value.
      * @return the integer value.
+     * @see #getInt(String, int)
      */
-    public int getInteger(@NotNull final String key, final int def) {
+    @Deprecated(forRemoval = true)
+    public int getInteger(@NotNull String key, int def) {
+        return getInt(key, def);
+    }
 
-        final Object object = values.get(key);
+    /**
+     * Get an integer value by the key.
+     *
+     * @param key the key.
+     * @param def the default value.
+     * @return the integer value or the default value if the value isn't exist.
+     * @throws IllegalStateException if the value can't be presented as int.
+     * @since 8.1.0
+     */
+    public int getInt(@NotNull String key, int def) {
+
+        var object = values.get(key);
 
         if (object == null) {
             return def;
@@ -791,35 +840,53 @@ public class VarTable {
             return Integer.parseInt(object.toString());
         }
 
-        return def;
+        throw new IllegalStateException("the value: " + object + " can't be presented as int, key: " + key);
     }
 
     /**
-     * Get an integer value by the key.
+     * Get an int array value by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
-     * @return the integer value.
+     * @return the int array value.
+     * @throws IllegalArgumentException if the value isn't exist.
+     * @throws IllegalStateException if the value can't be presented as int array.
+     * @see #getIntArray(String, String)
      */
-    public @NotNull int[] getIntegerArray(@NotNull final String key, @NotNull final String regex) {
+    @Deprecated(forRemoval = true)
+    public @NotNull int[] getIntegerArray(@NotNull String key, @NotNull String regex) {
+        return getIntArray(key, regex);
+    }
 
-        final Object object = values.get(key);
+    /**
+     * Get an int array value by the key.
+     *
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @return the int array value.
+     * @throws IllegalArgumentException if the value isn't exist.
+     * @throws IllegalStateException if the value can't be presented as int array.
+     * @since 8.1.0
+     */
+    public @NotNull int[] getIntArray(@NotNull String key, @NotNull String regex) {
+
+        var object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
         } else if (object instanceof int[]) {
             return (int[]) object;
         } else if (object instanceof String) {
-            return parseIntegerArray(regex, object);
+            return parseIntArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalStateException("the value: " + object + " can't be presented as int array, key: " + key);
     }
 
-    private @NotNull int[] parseIntegerArray(@NotNull final String regex, @NotNull final Object object) {
+    private @NotNull int[] parseIntArray(@NotNull String regex, @NotNull Object object) {
 
-        final String[] strings = object.toString().split(regex);
-        final int[] result = new int[strings.length];
+        var strings = object.toString().split(regex);
+        var result = new int[strings.length];
 
         for (int i = 0, length = strings.length; i < length; i++) {
             result[i] = Integer.parseInt(strings[i]);
@@ -829,27 +896,43 @@ public class VarTable {
     }
 
     /**
-     * Get an integer value by the key.
+     * Get an int array value by the key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @param def   the default value.
-     * @return the integer value.
+     * @return the int array value or the default value if the value isn't exist.
+     * @throws IllegalStateException if the value can't be presented as int array.
+     * @see #getIntArray(String, String, int...)
      */
-    public @NotNull int[] getIntegerArray(@NotNull final String key, @NotNull final String regex,
-                                          @NotNull final int... def) {
+    @Deprecated(forRemoval = true)
+    public @NotNull int[] getIntegerArray(@NotNull String key, @NotNull String regex, @NotNull int... def) {
+        return getIntArray(key, regex, def);
+    }
 
-        final Object object = values.get(key);
+    /**
+     * Get an int array value by the key.
+     *
+     * @param key   the key.
+     * @param regex the regex to split if a value is string.
+     * @param def   the default value.
+     * @return the int array value or the default value if the value isn't exist.
+     * @throws IllegalStateException if the value can't be presented as int array.
+     * @since 8.1.0
+     */
+    public @NotNull int[] getIntArray(@NotNull String key, @NotNull String regex, @NotNull int... def) {
+
+        var object = values.get(key);
 
         if (object == null) {
             return def;
         } else if (object instanceof int[]) {
             return (int[]) object;
         } else if (object instanceof String) {
-            return parseIntegerArray(regex, object);
+            return parseIntArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalStateException("the value: " + object + " can't be presented as int array, key: " + key);
     }
 
     /**
@@ -1111,11 +1194,12 @@ public class VarTable {
      * Get a string by the key.
      *
      * @param key the key.
-     * @return the string.
+     * @return the string value.
+     * @throws IllegalArgumentException if the value isn't exist.
      */
-    public @NotNull String getString(@NotNull final String key) {
+    public @NotNull String getString(@NotNull String key) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
             throw new IllegalArgumentException("not found " + key);
@@ -1270,82 +1354,25 @@ public class VarTable {
     }
 
     /**
-     * Clear and fill this table by attributes from a xml node.
-     *
-     * @param node the xml node.
-     * @return the var table
-     */
-    public @NotNull VarTable parse(@Nullable final Node node) {
-        values.clear();
-
-        if (node == null) return this;
-
-        final NamedNodeMap attributes = node.getAttributes();
-        if (attributes == null) return this;
-
-        for (int i = 0, length = attributes.getLength(); i < length; i++) {
-            final Node item = attributes.item(i);
-            set(item.getNodeName(), item.getNodeValue());
-        }
-
-        return this;
-    }
-
-    /**
-     * Clear and fill this table using children of a xml node:
-     * <pre>
-     * 	&#60;element&#62;
-     * 		&#60;child name="name" value="value" /&#62;
-     * 		&#60;child name="name" value="value" /&#62;
-     * 		&#60;child name="name" value="value" /&#62;
-     * 		&#60;child name="name" value="value" /&#62;
-     * 	&#60;/element&#62;
-     *
-     * vars.parse(node, "child", "name", "value")
-     * </pre>
-     *
-     * @param node      the xml node.
-     * @param childName the name of a child element.
-     * @param nameName  the name of name attribute.
-     * @param nameValue the name of value attribute.
-     * @return the var table
-     */
-    public @NotNull VarTable parse(@Nullable final Node node, @NotNull final String childName,
-                                   @NotNull final String nameName, @NotNull final String nameValue) {
-        values.clear();
-
-        if (node == null) {
-            return this;
-        }
-
-        for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {
-
-            if (child.getNodeType() != Node.ELEMENT_NODE || !childName.equals(child.getNodeName())) {
-                continue;
-            }
-
-            final NamedNodeMap attributes = child.getAttributes();
-
-            final Node nameNode = attributes.getNamedItem(nameName);
-            final Node valueNode = attributes.getNamedItem(nameValue);
-
-            if (nameNode == null || valueNode == null) {
-                continue;
-            }
-
-            set(nameNode.getNodeValue(), valueNode.getNodeValue());
-        }
-
-        return this;
-    }
-
-    /**
-     * Set a value by the key.
+     * Store the value by the key.
      *
      * @param key   the key.
      * @param value the value.
+     * @see #put(String, Object)
      */
-    public void set(@NotNull final String key, @NotNull final Object value) {
+    @Deprecated(forRemoval = true)
+    public void set(@NotNull String key, @NotNull Object value) {
+        put(key, value);
+    }
+
+    /**
+     * Put the value by the key to this vars table.
+     *
+     * @param key   the key.
+     * @param value the value.
+     * @since 8.1.0
+     */
+    public void put(@NotNull String key, @NotNull Object value) {
         values.put(key, notNull(value));
     }
 
@@ -1354,26 +1381,48 @@ public class VarTable {
      *
      * @param key the key.
      */
-    public void clear(@NotNull final String key) {
+    public void clear(@NotNull String key) {
         values.remove(key);
     }
 
     /**
-     * Copy all values from a other table.
+     * Copy all values from the another vars table.
      *
-     * @param vars the other table.
-     * @return the var table
+     * @param vars the another vars table.
+     * @return this vars table.
+     * @throws IllegalArgumentException is the vars table is the same as this vars table.
+     * @see #put(VarTable)
      */
-    public @NotNull VarTable set(@NotNull final VarTable vars) {
+    @Deprecated(forRemoval = true)
+    public @NotNull VarTable set(@NotNull VarTable vars) {
+        return put(vars);
+    }
+
+    /**
+     * Copy all values from the another vars table.
+     *
+     * @param vars the another vars table.
+     * @return this vars table.
+     * @throws IllegalArgumentException is the vars table is the same as this vars table.
+     * @since 8.1.0
+     */
+    public @NotNull VarTable put(@NotNull VarTable vars) {
+
+        if (vars == this) {
+            throw new IllegalArgumentException("Can't set itself.");
+        }
+
         values.put(vars.getValues());
         return this;
     }
 
     /**
+     * Return true if a value by the key is presented in this vars table.
+     *
      * @param key the key.
-     * @return true if the value is exists.
+     * @return true if a value by the key is presented in this vars table.
      */
-    public boolean has(@NotNull final String key) {
+    public boolean has(@NotNull String key) {
         return values.containsKey(key);
     }
 

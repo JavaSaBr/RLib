@@ -634,7 +634,9 @@ public final class Vector3f implements Cloneable {
      * @return true if vectors equals 
      */
     public boolean equals(@NotNull Vector3f vector, float epsilon) {
-        return Math.abs(x - vector.getX()) < epsilon && Math.abs(y - vector.getY()) < epsilon && Math.abs(z - vector.getZ()) < epsilon;
+        return Math.abs(x - vector.getX()) < epsilon &&
+                Math.abs(y - vector.getY()) < epsilon &&
+                Math.abs(z - vector.getZ()) < epsilon;
     }
 
     @Override

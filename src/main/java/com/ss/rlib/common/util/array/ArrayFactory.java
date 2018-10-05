@@ -174,7 +174,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Create the new integer array.
+     * Create a new integer array.
      *
      * @return the new array.
      */
@@ -183,7 +183,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Create the new integer array.
+     * Create a new integer array.
      *
      * @param capacity the init size of the array.
      * @return the new array.
@@ -193,7 +193,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Create the new long array.
+     * Create the a long array.
      *
      * @return the new array.
      */
@@ -202,7 +202,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Create the new long array.
+     * Create the a long array.
      *
      * @param capacity the init size of the array.
      * @return the new array.
@@ -212,7 +212,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Create the new float array.
+     * Create the a float array.
      *
      * @param elements the elements of the new array.
      * @return the new array.
@@ -222,17 +222,30 @@ public class ArrayFactory {
     }
 
     /**
-     * Create the new int array.
+     * Create a new int array.
      *
      * @param elements the elements of the new array.
      * @return the new array.
+     * @see #toIntArray(int...)
      */
+    @Deprecated(forRemoval = true)
     public static int[] toIntegerArray(int... elements) {
         return elements;
     }
 
     /**
-     * Create the new object array.
+     * Create a new int array.
+     *
+     * @param elements the elements of the new array.
+     * @return the new array.
+     * @since 8.1.0
+     */
+    public static int[] toIntArray(int... elements) {
+        return elements;
+    }
+
+    /**
+     * Create a new object array.
      *
      * @param <T>      the type parameter
      * @param <K>      the type parameter
