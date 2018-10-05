@@ -1,10 +1,8 @@
 package com.ss.rlib.common.geom;
 
-import org.jetbrains.annotations.NotNull;
-
-import com.ss.rlib.common.util.ExtMath;
-
 import static com.ss.rlib.common.geom.Vector3f.substract;
+import com.ss.rlib.common.util.ExtMath;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Geometry 3D plane.<br>
@@ -338,10 +336,8 @@ public class Plane {
 
         direction.multLocal(distance);
 
-        var result = new Vector3f(startPoint);
-        result.addLocal(direction);
-
-        return result;
+        return new Vector3f(startPoint)
+                .addLocal(direction);
     }
 
     /**
@@ -376,20 +372,18 @@ public class Plane {
             @NotNull Vector3fBuffer buffer
     ) {
 
-        var direction = buffer.next(endPoint);
-        direction.subtractLocal(startPoint);
+        var direction = buffer.next(endPoint)
+                .subtractLocal(startPoint);
 
         var denominator = direction.dot(normal);
         var distance = buffer.next(planePoint)
-            .subtractLocal(startPoint)
-            .dot(normal) / denominator;
+                .subtractLocal(startPoint)
+                .dot(normal) / denominator;
 
         direction.multLocal(distance);
 
-        var result = new Vector3f(startPoint);
-        result.addLocal(direction);
-
-        return result;
+        return new Vector3f(startPoint)
+                .addLocal(direction);
     }
 
     /**
@@ -422,10 +416,8 @@ public class Plane {
         var add = buffer.next(direction);
         add.multLocal(distance);
 
-        var result = new Vector3f(start);
-        result.addLocal(add);
-
-        return result;
+        return new Vector3f(start)
+                .addLocal(add);
     }
 
     /**
@@ -464,10 +456,8 @@ public class Plane {
             return Vector3f.POSITIVE_INFINITY;
         }
 
-        var result = new Vector3f(startPoint);
-        result.addLocal(ab.multLocal(t));
-
-        return result;
+        return new Vector3f(startPoint)
+                .addLocal(ab.multLocal(t));
     }
 
     /**
@@ -489,7 +479,7 @@ public class Plane {
      * @param plane   the plane.
      * @param epsilon the epsilon.
      * @param buffer  the vector's buffer.
-     * @return the intersection point or copy of {@link Vector3f#POSITIVE_INFINITY}.
+     * @return the intersection point or {@link Vector3f#POSITIVE_INFINITY}.
      */
     public @NotNull Vector3f planeIntersection(@NotNull Plane plane, float epsilon, @NotNull Vector3fBuffer buffer) {
 
@@ -498,16 +488,14 @@ public class Plane {
 
         if (denominator < epsilon) {
             // these planes are parallel
-            return buffer.next(Vector3f.POSITIVE_INFINITY);
+            return Vector3f.POSITIVE_INFINITY;
         }
 
-        var result = buffer.next(plane.normal);
-        result.multLocal(d);
-        result.subtractLocal(buffer.next(normal).multLocal(plane.d));
-        result.crossLocal(direction);
-        result.divideLocal(denominator);
-
-        return result;
+        return new Vector3f(plane.normal)
+                .multLocal(d)
+                .subtractLocal(buffer.next(normal).multLocal(plane.d))
+                .crossLocal(direction)
+                .divideLocal(denominator);
     }
     
     /** {@inheritDoc} */

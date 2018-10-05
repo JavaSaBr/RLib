@@ -1,9 +1,10 @@
 package com.ss.rlib.common.geom;
 
-import java.util.Arrays;
-
+import static com.ss.rlib.common.util.array.ArrayFactory.toArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 /**
  * Geometry 3D polygon.
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * @date 27.09.2018
  */
 public class Polygon {
+
     private final static float EPSILON_ON_PLANE = 0.1f;
     private final static float EPSILON_CWW = 0.01f;
     
@@ -29,72 +31,80 @@ public class Polygon {
      * Custom flags.
      */
     private int flags;
-    
+
     /**
-     * Construct polygon from vertices.
-     * 
-     * @param vertices vertices
-     * @param vectorBuffer vector's buffer
-     * @exception RuntimeException throw if vertices is less than 3
-     * @see Polygon#Polygon(Vector3f, Vector3f, Vector3f, Vector3fBuffer)
-     */
-    public Polygon(@NotNull Vector3f[] vertices, @NotNull Vector3fBuffer vectorBuffer) throws RuntimeException {
-        if(vertices.length < 3) {
-            throw new RuntimeException("Polygon cannot have less than 3 vertices.");
-        }
-        
-        this.vertices = vertices;
-        
-        var normal = vectorBuffer.nextVector();
-        for(int i = 2; i < vertices.length; i++) {
-            var ab = vectorBuffer.next(vertices[i - 1]).subtractLocal(vertices[0]);
-            var ac = vectorBuffer.next(vertices[i]).subtractLocal(vertices[0]);
-            normal.addLocal(ab.crossLocal(ac));
-        }
-        plane = new Plane(getPlanePoint(), normal.normalizeLocal());
-    }
-    
-    /**
-     * Construct polygon from 3 vertices.
-     * 
-     * @param a first vertex
-     * @param b second vertex
-     * @param c third vertex
-     * @param vectorBuffer vector's buffer
-     * @see Polygon#Polygon(Vector3f[], Vector3fBuffer)
-     */
-    public Polygon(@NotNull Vector3f a, @NotNull Vector3f b, @NotNull Vector3f c, @NotNull Vector3fBuffer vectorBuffer) {
-        this(new Vector3f[] { a, b, c }, vectorBuffer);
-    }
-    
-    /**
-     * Construct polygon from vertices.
-     * 
-     * @param vertices vertices
-     * @exception RuntimeException throw if vertices is less than 3
+     * Construct polygon from the vertices.
+     *
+     * @param vertices the vertices.
+     * @throws IllegalArgumentException throw if vertices is less than 3
      * @see Polygon#Polygon(Vector3f, Vector3f, Vector3f)
      */
-    public Polygon(@NotNull Vector3f[] vertices) throws RuntimeException {
+    public Polygon(@NotNull Vector3f[] vertices) throws IllegalArgumentException {
         this(vertices, Vector3fBuffer.NO_REUSE);
     }
-    
+
     /**
-     * Construct polygon from 3 vertices.
-     * 
-     * @param a first vertex
-     * @param b second vertex
-     * @param c third vertex
+     * Construct polygon from the vertices.
+     *
+     * @param vertices the vertices.
+     * @param buffer   the vector's buffer.
+     * @throws IllegalArgumentException throw if vertices is less than 3
+     * @see Polygon#Polygon(Vector3f, Vector3f, Vector3f, Vector3fBuffer)
+     */
+    public Polygon(@NotNull Vector3f[] vertices, @NotNull Vector3fBuffer buffer) throws IllegalArgumentException {
+
+        if (vertices.length < 3) {
+            throw new IllegalArgumentException("polygon cannot have less than 3 vertices.");
+        }
+
+        this.vertices = vertices;
+
+        var normal = buffer.nextVector();
+
+        for (int i = 2; i < vertices.length; i++) {
+            var ab = buffer.next(vertices[i - 1]).subtractLocal(vertices[0]);
+            var ac = buffer.next(vertices[i]).subtractLocal(vertices[0]);
+            normal.addLocal(ab.crossLocal(ac));
+        }
+
+        this.plane = new Plane(getPlanePoint(), normal.normalizeLocal());
+    }
+
+    /**
+     * Construct polygon from the 3 vertices.
+     *
+     * @param first  the first vertex.
+     * @param second the second vertex.
+     * @param third  the third vertex.
+     * @param buffer the vector's buffer.
+     * @see Polygon#Polygon(Vector3f[], Vector3fBuffer)
+     */
+    public Polygon(
+            @NotNull Vector3f first,
+            @NotNull Vector3f second,
+            @NotNull Vector3f third,
+            @NotNull Vector3fBuffer buffer
+    ) {
+        this(toArray(first, second, third), buffer);
+    }
+
+    /**
+     * Construct polygon from the 3 vertices.
+     *
+     * @param first  the first vertex.
+     * @param second the second vertex.
+     * @param third  the third vertex.
      * @see Polygon#Polygon(Vector3f[])
      */
-    public Polygon(@NotNull Vector3f a, @NotNull Vector3f b, @NotNull Vector3f c) {
-        this(new Vector3f[] { a, b, c }, Vector3fBuffer.NO_REUSE);
+    public Polygon(@NotNull Vector3f first, @NotNull Vector3f second, @NotNull Vector3f third) {
+        this(toArray(first, second, third), Vector3fBuffer.NO_REUSE);
     }
     
     /**
      * Return plane point.<br>
      * It's a first polygon vertex.
      * 
-     * @return plane point
+     * @return the plane point.
      */
     public @NotNull Vector3f getPlanePoint() {
         return vertices[0];
@@ -184,18 +194,21 @@ public class Polygon {
     public @NotNull Vector3f getMidPoint() {
         return getMidPoint(Vector3fBuffer.NO_REUSE);
     }
-    
+
     /**
      * Return mid-point of this polygon.
-     * 
-     * @param vectorBuffer vector's buffer
+     *
+     * @param buffer vector's buffer
      * @return mid-point
      */
-    public @NotNull Vector3f getMidPoint(@NotNull Vector3fBuffer vectorBuffer) {
-        var point = vectorBuffer.nextVector();
-        for(int i = 0; i < vertices.length; i++) {
-            point.addLocal(vertices[i]);
+    public @NotNull Vector3f getMidPoint(@NotNull Vector3fBuffer buffer) {
+
+        var point = buffer.nextVector();
+
+        for (var vertice : vertices) {
+            point.addLocal(vertice);
         }
+
         return point.divideLocal(vertices.length);
     }
     
@@ -207,20 +220,21 @@ public class Polygon {
     public boolean isCoplanar() {
         return isCoplanar(Vector3fBuffer.NO_REUSE);
     }
-    
+
     /**
      * Check polygon vertices to coplanar.
-     * 
-     * @param vectorBuffer vector's buffer
+     *
+     * @param buffer vector's buffer
      * @return true if polygon vertices is coplanar
      */
-    public boolean isCoplanar(@NotNull Vector3fBuffer vectorBuffer) {
-        for(int i = 0; i < vertices.length; i++) {
-            if(!isOnPlane(vertices[i], vectorBuffer)) {
+    public boolean isCoplanar(@NotNull Vector3fBuffer buffer) {
+
+        for (var vertice : vertices) {
+            if (!isOnPlane(vertice, buffer)) {
                 return false;
             }
         }
-        
+
         return true;
     }
     
@@ -233,26 +247,26 @@ public class Polygon {
     public boolean isOnPlane(@NotNull Vector3f point) {
         return isOnPlane(point, Vector3fBuffer.NO_REUSE);
     }
-    
+
     /**
      * Determines if point on polygon plane.
-     * 
-     * @param point point
-     * @param vectorBuffer vector's buffer
+     *
+     * @param point  point
+     * @param buffer vector's buffer
      * @return true if point on plane
      */
-    public boolean isOnPlane(@NotNull Vector3f point, @NotNull Vector3fBuffer vectorBuffer) {
+    public boolean isOnPlane(@NotNull Vector3f point, @NotNull Vector3fBuffer buffer) {
         var distance = plane.distance(point);
         return distance > -EPSILON_ON_PLANE && distance < EPSILON_ON_PLANE;
     }
-    
+
     /**
-     * Determines if line AB intersect polygon.<br> 
+     * Determines if line AB intersect polygon.<br>
      * If point isn't null and line intersect polygon then point coordinates is set to intersection.
-     * 
+     *
      * @param startLine start line point
-     * @param endLine end line point
-     * @param point [out] point with intersection coordinates, can be null
+     * @param endLine   end line point
+     * @param point     [out] point with intersection coordinates, can be null
      * @return true if line AB intersect polygon
      */
     public boolean intersect(@NotNull Vector3f startLine, @NotNull Vector3f endLine, @Nullable Vector3f point) {
@@ -262,7 +276,7 @@ public class Polygon {
     /**
      * Determines if line AB intersect polygon.<br> 
      * If point isn't null and line intersect polygon then point coordinates is set to intersection.
-     * 
+     *
      * @param startLine start line point
      * @param endLine end line point
      * @param point [out] point with intersection coordinates, can be null
@@ -270,81 +284,99 @@ public class Polygon {
      * @return true if line AB intersect polygon
      */
     public boolean intersect(
-            @NotNull Vector3f startLine, 
-            @NotNull Vector3f endLine, 
-            @Nullable Vector3f point, 
+            @NotNull Vector3f startLine,
+            @NotNull Vector3f endLine,
+            @Nullable Vector3f point,
             @NotNull Vector3fBuffer vectorBuffer
     ) {
+
         var aDistance = plane.distance(startLine, vertices[0], vectorBuffer);
         var bDistance = plane.distance(endLine, vertices[0], vectorBuffer);
-        if((aDistance < 0 && bDistance < 0) || (aDistance > 0 && bDistance > 0)) {
+
+        if ((aDistance < 0 && bDistance < 0) || (aDistance > 0 && bDistance > 0)) {
             return false;
         }
-        
+
         var intersection = plane.rayIntersection(startLine, endLine, vertices[0], vectorBuffer);
-        if(intersection.equals(startLine, 0.1f) || intersection.equals(endLine, 0.1f)) {
+
+        if (intersection.equals(startLine, 0.1f) || intersection.equals(endLine, 0.1f)) {
             return false;
         }
-        
-        if(point != null) {
+
+        if (point != null) {
             point.set(intersection);
         }
-        
+
         return contains(intersection, vectorBuffer);
     }
-    
+
     /**
      * Determines if point inside of polygon.
-     * 
+     *
      * @param point point
      * @return true if point inside
      */
     public boolean contains(@NotNull Vector3f point) {
         return contains(point, Vector3fBuffer.NO_REUSE);
     }
-    
+
     /**
      * Determines if point inside of polygon.
-     * 
-     * @param point point
-     * @param vectorBuffer vector's buffer
+     *
+     * @param point  point
+     * @param buffer vector's buffer
      * @return true if point inside
      */
-    public boolean contains(@NotNull Vector3f point, @NotNull Vector3fBuffer vectorBuffer) {
+    public boolean contains(@NotNull Vector3f point, @NotNull Vector3fBuffer buffer) {
+
         int low = 0;
         int high = vertices.length;
-        
+
         do {
+
             int mid = (low + high) / 2;
-            if(isTriangleCCW(vertices[0], vertices[mid], point, vectorBuffer)) {
+
+            if (isTriangleCCW(vertices[0], vertices[mid], point, buffer)) {
                 low = mid;
             } else {
                 high = mid;
             }
-        } while(low + 1 < high);
-        
-        if(low == 0 || high == vertices.length) {
+
+        } while (low + 1 < high);
+
+        if (low == 0 || high == vertices.length) {
             return false;
         }
-        
-        return isTriangleCCW(vertices[low], vertices[high], point, vectorBuffer);
+
+        return isTriangleCCW(vertices[low], vertices[high], point, buffer);
     }
-    
-    /** 
+
+    /**
      * Determines if triangle specified by 3 points is defined counterclockwise.
-     * 
-     * @param a first vertex
-     * @param b second vertex
-     * @param c third vertex
-     * @param vectorBuffer vector's buffer
-     * @return true if defined
+     *
+     * @param first  first vertex.
+     * @param second second vertex.
+     * @param third  third vertex.
+     * @param buffer vector's buffer.
+     * @return true if defined.
      */
-    private boolean isTriangleCCW(@NotNull Vector3f a, @NotNull Vector3f b, @NotNull Vector3f c, @NotNull Vector3fBuffer vectorBuffer) {
-        var ab = vectorBuffer.next(a).subtractLocal(b);
-        var ac = vectorBuffer.next(a).subtractLocal(c);
+    private boolean isTriangleCCW(
+            @NotNull Vector3f first,
+            @NotNull Vector3f second,
+            @NotNull Vector3f third,
+            @NotNull Vector3fBuffer buffer
+    ) {
+
+        var ab = buffer.next(first)
+                .subtractLocal(second);
+
+        var ac = buffer.next(first)
+                .subtractLocal(third);
+
         ab.crossLocal(ac);
-        
-        return plane.getNormal().dot(ab) > EPSILON_CWW;
+
+        return plane.getNormal()
+                .dot(ab) > EPSILON_CWW;
     }
     
     /** {@inheritDoc} */
