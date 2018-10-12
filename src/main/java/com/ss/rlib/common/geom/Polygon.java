@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class Polygon {
 
     private final static float EPSILON_ON_PLANE = 0.1f;
-    private final static float EPSILON_CWW = 0.01f;
+    private final static float EPSILON_CWW = 0.001f;
     private final static float EPSILON_SAME_POINTS = 0.002f;
     
     /** 
