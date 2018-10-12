@@ -108,10 +108,10 @@ public class Polygon {
      */
     public boolean isValid() {
         for(int i = 0; i < vertices.length; i++) {
-            final Vector3f a = vertices[i];
+            var a = vertices[i];
             
             for(int j = i + 1; j < vertices.length; j++) {
-                final Vector3f b = vertices[j];
+                var b = vertices[j];
                 if(a.equals(b, EPSILON_SAME_POINTS)) {
                     return false;
                 }
