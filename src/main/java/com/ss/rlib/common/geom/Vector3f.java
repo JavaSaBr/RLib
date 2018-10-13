@@ -3,6 +3,7 @@ package com.ss.rlib.common.geom;
 import static java.lang.Float.floatToIntBits;
 import static java.lang.Float.isInfinite;
 import static java.lang.Float.isNaN;
+import static java.lang.Float.isFinite;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,11 @@ public final class Vector3f implements Cloneable {
     public final static Vector3f UNIT_Y = new Vector3f(0, 1, 0);
     public final static Vector3f UNIT_Z = new Vector3f(0, 0, 1);
     public final static Vector3f UNIT_XYZ = new Vector3f(1, 1, 1);
+    
+    public final static Vector3f UNIT_X_NEGATIVE = new Vector3f(-1, 0, 0);
+    public final static Vector3f UNIT_Y_NEGATIVE = new Vector3f(0, -1, 0);
+    public final static Vector3f UNIT_Z_NEGATIVE = new Vector3f(0, 0, -1);
+    public final static Vector3f UNIT_XYZ_NEGATIVE = new Vector3f(-1, -1, -1);
 
     public final static Vector3f POSITIVE_INFINITY = new Vector3f(Float.POSITIVE_INFINITY,
             Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
@@ -37,14 +43,11 @@ public final class Vector3f implements Cloneable {
      * @return true if the vector is valid.
      */
     public static boolean isValidVector(@Nullable Vector3f vector) {
-
         if (vector == null) {
             return false;
-        } else if (isNaN(vector.getX()) || isNaN(vector.getY()) || isNaN(vector.getZ())) {
-            return false;
-        } else {
-            return !isInfinite(vector.getX()) && !isInfinite(vector.getY()) && !isInfinite(vector.getZ());
         }
+        
+        return isFinite(vector.getX()) && isFinite(vector.getY()) && isFinite(vector.getZ());
     }
 
     /**

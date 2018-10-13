@@ -1,8 +1,7 @@
 package com.ss.rlib.common.geom;
 
 import static java.lang.Float.floatToIntBits;
-import static java.lang.Float.isInfinite;
-import static java.lang.Float.isNaN;
+import static java.lang.Float.isFinite;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,8 +20,11 @@ public class Vector2f {
 
     public final static Vector2f UNIT_X = new Vector2f(1, 0);
     public final static Vector2f UNIT_Y = new Vector2f(0, 1);
-
     public final static Vector2f UNIT_XYZ = new Vector2f(1, 1);
+    
+    public final static Vector2f UNIT_X_NEGATIVE = new Vector2f(-1, 0);
+    public final static Vector2f UNIT_Y_NEGATIVE = new Vector2f(0, -1);
+    public final static Vector2f UNIT_XYZ_NEGATIVE = new Vector2f(-1, -1);
 
     public final static Vector2f POSITIVE_INFINITY =
             new Vector2f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
@@ -37,14 +39,11 @@ public class Vector2f {
      * @return true if the vector is valid.
      */
     public static boolean isValidVector(@Nullable Vector2f vector) {
-
         if (vector == null) {
             return false;
-        } else if (isNaN(vector.getX()) || isNaN(vector.getY())) {
-            return false;
-        } else {
-            return !isInfinite(vector.getX()) && !isInfinite(vector.getY());
-        }
+        } 
+        
+        return isFinite(vector.getX()) && isFinite(vector.getY());
     }
 
     /**
