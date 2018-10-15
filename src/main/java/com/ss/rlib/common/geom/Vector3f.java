@@ -611,6 +611,21 @@ public final class Vector3f implements Cloneable {
 
         return this;
     }
+    
+    /** 
+     * Return angle in radians between this vector and other vector.
+     * 
+     * @param other other vector
+     * @return angle in radians
+     */
+    public float angle(@NotNull Vector3f other) {
+        float length = ExtMath.sqrt(sqrLength() * other.sqrLength());
+        if(length < ExtMath.EPSILON) {
+            return 0;
+        }
+        
+        return ExtMath.acos(ExtMath.clamp(dot(other) / length, -1f, 1f));
+    }
 
     @Override
     protected @NotNull Vector3f clone() {
