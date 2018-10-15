@@ -15,7 +15,8 @@ import java.util.Arrays;
 public class Polygon {
 
     private final static float EPSILON_ON_PLANE = 0.1f;
-    private final static float EPSILON_CWW = 0.01f;
+    private final static float EPSILON_CWW = 0.001f;
+    private final static float EPSILON_SAME_POINTS = 0.002f;
     
     /** 
      * The polygon vertices. 
@@ -98,6 +99,26 @@ public class Polygon {
      */
     public Polygon(@NotNull Vector3f first, @NotNull Vector3f second, @NotNull Vector3f third) {
         this(toArray(first, second, third), Vector3fBuffer.NO_REUSE);
+    }
+    
+    /**
+     * Determines if that polygon have duplicate vertices.
+     * 
+     * @return true if found duplicate vertex
+     */
+    public boolean isValid() {
+        for(int i = 0; i < vertices.length; i++) {
+            var a = vertices[i];
+            
+            for(int j = i + 1; j < vertices.length; j++) {
+                var b = vertices[j];
+                if(a.equals(b, EPSILON_SAME_POINTS)) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
     
     /**
