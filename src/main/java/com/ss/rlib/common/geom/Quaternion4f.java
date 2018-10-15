@@ -465,18 +465,19 @@ public class Quaternion4f {
      */
     public void lookAt(@NotNull Vector3f direction, @NotNull Vector3f up, @NotNull Vector3fBuffer buffer) {
 
-        var axisZ = buffer.next(direction)
+        var axisZ = buffer.take(direction)
                 .normalizeLocal();
 
-        var axisX = buffer.next(up)
+        var axisX = buffer.take(up)
                 .crossLocal(direction)
                 .normalizeLocal();
 
-        var axisY = buffer.next(direction)
+        var axisY = buffer.take(direction)
                 .crossLocal(axisX)
                 .normalizeLocal();
 
         fromAxes(axisX, axisY, axisZ);
+        buffer.put(axisZ, axisX, axisY);
 
         normalizeLocal();
     }

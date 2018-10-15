@@ -94,7 +94,7 @@ public interface Bounding {
      * Get a result center of this bounding.
      *
      * @param buffer the vector buffer.
-     * @return the result center.
+     * @return the result center from vector buffer.
      */
     @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer);
 

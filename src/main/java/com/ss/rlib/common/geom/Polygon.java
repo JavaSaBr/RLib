@@ -59,13 +59,16 @@ public class Polygon {
 
         this.vertices = vertices;
 
-        var normal = buffer.nextVector();
+        var normal = buffer.take();
 
+        var ab = buffer.take();
+        var ac = buffer.take();
         for (int i = 2; i < vertices.length; i++) {
-            var ab = buffer.next(vertices[i - 1]).subtractLocal(vertices[0]);
-            var ac = buffer.next(vertices[i]).subtractLocal(vertices[0]);
+            ab.set(vertices[i - 1]).subtractLocal(vertices[0]);
+            ac.set(vertices[i]).subtractLocal(vertices[0]);
             normal.addLocal(ab.crossLocal(ac));
         }
+        buffer.put(ab, ac);
 
         this.plane = new Plane(getPlanePoint(), normal.normalizeLocal());
     }
@@ -199,12 +202,11 @@ public class Polygon {
      * Return mid-point of this polygon.
      *
      * @param buffer vector's buffer
-     * @return mid-point
+     * @return mid-point from vector buffer
      */
     public @NotNull Vector3f getMidPoint(@NotNull Vector3fBuffer buffer) {
 
-        var point = buffer.nextVector();
-
+        var point = buffer.take();
         for (var vertice : vertices) {
             point.addLocal(vertice);
         }
@@ -367,16 +369,18 @@ public class Polygon {
             @NotNull Vector3fBuffer buffer
     ) {
 
-        var ab = buffer.next(first)
+        var ab = buffer.take(first)
                 .subtractLocal(second);
 
-        var ac = buffer.next(first)
+        var ac = buffer.take(first)
                 .subtractLocal(third);
 
         ab.crossLocal(ac);
+        var dotProduct = plane.getNormal().dot(ab);
 
-        return plane.getNormal()
-                .dot(ab) > EPSILON_CWW;
+        buffer.put(ab, ac);
+        
+        return dotProduct > EPSILON_CWW;
     }
     
     /** {@inheritDoc} */

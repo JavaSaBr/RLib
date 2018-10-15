@@ -91,9 +91,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
     @Override
     public @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer) {
 
-        Vector3f vector = buffer.nextVector()
-                .set(center);
-
+        var vector = buffer.take(center);
         if (offset.isZero()) {
             return vector;
         }
@@ -156,11 +154,10 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
      * Get AABB's size.
      *
      * @param buffer the vector buffer.
-     * @return AABB's size.
+     * @return AABB's size from vector buffer.
      */
     public Vector3f getSize(@NotNull Vector3fBuffer buffer) {
-        return buffer.nextVector()
-                .set(size);
+        return buffer.take(size);
     }
 
     @Override
@@ -263,13 +260,14 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         matrix.set(rotation);
         matrix.absoluteLocal();
 
-        Vector3f vector = matrix.mult(size, buffer.nextVector());
+        var vector = matrix.mult(size, buffer.take());
 
         sizeX = Math.abs(vector.getX());
         sizeY = Math.abs(vector.getY());
         sizeZ = Math.abs(vector.getZ());
 
         if (offset.isZero()) {
+            buffer.put(vector);
             return;
         }
 
@@ -278,6 +276,8 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         offsetX = vector.getX();
         offsetY = vector.getY();
         offsetZ = vector.getZ();
+        
+        buffer.put(vector);
     }
 
     @Override

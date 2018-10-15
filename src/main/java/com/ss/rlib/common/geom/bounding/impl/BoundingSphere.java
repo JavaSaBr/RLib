@@ -76,8 +76,7 @@ public class BoundingSphere extends AbstractBounding {
     @Override
     public @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer) {
 
-        Vector3f vector = buffer.nextVector()
-                .set(center);
+        var vector = buffer.take(center);
 
         if (offset.isZero()) {
             return vector;
@@ -122,18 +121,19 @@ public class BoundingSphere extends AbstractBounding {
     @Override
     public boolean intersects(@NotNull Vector3f start, @NotNull Vector3f direction, @NotNull Vector3fBuffer buffer) {
 
-        Vector3f diff = buffer.nextVector()
-                .set(start)
+        var diff = buffer.take(start)
                 .subtractLocal(getResultCenter(buffer));
 
         float a = start.dot(diff) - squareRadius;
 
         if (a <= 0.0) {
+            buffer.put(diff);
             return true;
         }
 
         float b = direction.dot(diff);
 
+        buffer.put(diff);
         return b < 0.0 && b * b >= a;
 
     }

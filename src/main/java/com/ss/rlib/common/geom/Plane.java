@@ -247,9 +247,10 @@ public class Plane {
      * @return the distance.
      */
     public float distance(@NotNull Vector3f point, @NotNull Vector3f planePoint, @NotNull Vector3fBuffer buffer) {
-        return buffer.next(point)
-            .subtractLocal(planePoint)
-            .dot(normal);
+        var diff = buffer.take(point).subtractLocal(planePoint);
+        var distance = diff.dot(normal);
+        buffer.put(diff);
+        return distance;
     }
 
     /**
@@ -320,7 +321,7 @@ public class Plane {
      * @param startPoint the start point.
      * @param endPoint   the end point.
      * @param buffer     the vector's buffer.
-     * @return the intersection point.
+     * @return the intersection point from vector buffer.
      */
     public @NotNull Vector3f rayIntersection(
             @NotNull Vector3f startPoint,
@@ -328,16 +329,19 @@ public class Plane {
             @NotNull Vector3fBuffer buffer
     ) {
 
-        var direction = buffer.next(endPoint);
-        direction.subtractLocal(startPoint);
+        var direction = buffer.take(endPoint)
+                .subtractLocal(startPoint);
 
         var denominator = direction.dot(normal);
         var distance = (d - startPoint.dot(normal)) / denominator;
 
         direction.multLocal(distance);
 
-        return new Vector3f(startPoint)
+        var intersection = buffer.take(startPoint)
                 .addLocal(direction);
+        
+        buffer.put(direction);
+        return intersection;
     }
 
     /**
@@ -363,7 +367,7 @@ public class Plane {
      * @param startPoint the start point.
      * @param endPoint   the end point.
      * @param buffer     the vector's buffer.
-     * @return the intersection point.
+     * @return the intersection point from vector buffer.
      */
     public @NotNull Vector3f rayIntersection(
             @NotNull Vector3f startPoint,
@@ -372,18 +376,21 @@ public class Plane {
             @NotNull Vector3fBuffer buffer
     ) {
 
-        var direction = buffer.next(endPoint)
+        var direction = buffer.take(endPoint)
                 .subtractLocal(startPoint);
 
         var denominator = direction.dot(normal);
-        var distance = buffer.next(planePoint)
-                .subtractLocal(startPoint)
-                .dot(normal) / denominator;
+        var diff = buffer.take(planePoint)
+                .subtractLocal(startPoint);
+        var distance = diff.dot(normal) / denominator;
 
         direction.multLocal(distance);
-
-        return new Vector3f(startPoint)
+        var intersection = buffer.take(startPoint)
                 .addLocal(direction);
+        
+        buffer.put(direction, diff);
+        
+        return intersection;
     }
 
     /**
@@ -403,7 +410,7 @@ public class Plane {
      *
      * @param ray    the ray.
      * @param buffer the vector's buffer.
-     * @return the intersection point.
+     * @return the intersection point from vector buffer.
      */
     public @NotNull Vector3f rayIntersection(@NotNull Ray3f ray, @NotNull Vector3fBuffer buffer) {
 
@@ -413,11 +420,15 @@ public class Plane {
         var denominator = direction.dot(normal);
         var distance = (d - start.dot(normal)) / denominator;
 
-        var add = buffer.next(direction);
-        add.multLocal(distance);
-
-        return new Vector3f(start)
+        var add = buffer.take(direction)
+                .multLocal(distance);
+        
+        var intersection = buffer.take(start)
                 .addLocal(add);
+        
+        buffer.put(add);
+        
+        return intersection;
     }
 
     /**
@@ -439,7 +450,7 @@ public class Plane {
      * @param startPoint  the line start point.
      * @param secondPoint the line end point.
      * @param buffer      the vector's buffer.
-     * @return intersection point or {@link Vector3f#POSITIVE_INFINITY}
+     * @return intersection point from vector buffer or {@link Vector3f#POSITIVE_INFINITY}
      */
     public @NotNull Vector3f lineIntersection(
             @NotNull Vector3f startPoint,
@@ -447,17 +458,22 @@ public class Plane {
             @NotNull Vector3fBuffer buffer
     ) {
 
-        var ab = buffer.next(secondPoint);
+        var ab = buffer.take(secondPoint);
         ab.subtractLocal(startPoint);
 
         var t = (d - normal.dot(startPoint)) / normal.dot(ab);
 
         if (t < 0 || t > 1.f) {
+            buffer.put(ab);
             return Vector3f.POSITIVE_INFINITY;
         }
-
-        return new Vector3f(startPoint)
+        
+        var intersection = buffer.take(startPoint)
                 .addLocal(ab.multLocal(t));
+        
+        buffer.put(ab);
+
+        return intersection;
     }
 
     /**
@@ -479,23 +495,29 @@ public class Plane {
      * @param plane   the plane.
      * @param epsilon the epsilon.
      * @param buffer  the vector's buffer.
-     * @return the intersection point or {@link Vector3f#POSITIVE_INFINITY}.
+     * @return the intersection point from vector buffer or {@link Vector3f#POSITIVE_INFINITY}.
      */
     public @NotNull Vector3f planeIntersection(@NotNull Plane plane, float epsilon, @NotNull Vector3fBuffer buffer) {
 
-        var direction = normal.cross(plane.normal, buffer.nextVector());
+        var direction = normal.cross(plane.normal, buffer.take());
         var denominator = direction.dot(direction);
 
         if (denominator < epsilon) {
             // these planes are parallel
             return Vector3f.POSITIVE_INFINITY;
         }
-
-        return new Vector3f(plane.normal)
+        
+        
+        var delta = buffer.take(normal).multLocal(plane.d);
+        var intersection = new Vector3f(plane.normal)
                 .multLocal(d)
-                .subtractLocal(buffer.next(normal).multLocal(plane.d))
+                .subtractLocal(delta)
                 .crossLocal(direction)
                 .divideLocal(denominator);
+        
+        buffer.put(direction, delta);
+        
+        return intersection;
     }
     
     /** {@inheritDoc} */

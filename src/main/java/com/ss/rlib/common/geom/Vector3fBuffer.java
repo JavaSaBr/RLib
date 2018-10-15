@@ -67,6 +67,17 @@ public interface Vector3fBuffer {
      * @param vector vector
      */
     void put(@NotNull Vector3f vector);
+    
+    /**
+     * Put vectors to the pool.
+     * 
+     * @param vectors vectors
+     */
+    default void put(@NotNull Vector3f... vectors) {
+        for(int i = 0; i < vectors.length; i++) {
+            put(vectors[i]);
+        }
+    }
 
     /**
      * Take a next free vector.<br>
