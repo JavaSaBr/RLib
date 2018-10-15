@@ -104,7 +104,7 @@ public class Polygon {
     /**
      * Determines if that polygon have duplicate vertices.
      * 
-     * @return true if found duplicate vertex
+     * @return false if found duplicate vertex
      */
     public boolean isValid() {
         for(int i = 0; i < vertices.length; i++) {
