@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
  * 
  * @author zcxv
  * @date 18.09.2018
- * @project rlib
  */
 public class QuaternionTests {
 

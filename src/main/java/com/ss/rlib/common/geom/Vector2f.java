@@ -2,18 +2,16 @@ package com.ss.rlib.common.geom;
 
 import static java.lang.Float.floatToIntBits;
 import static java.lang.Float.isFinite;
-
+import com.ss.rlib.common.util.ExtMath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.ss.rlib.common.util.ExtMath;
 
 /**
  * Implementation of float vector in 2D space (two coordinates)
  * 
  * @author zcxv
  */
-public class Vector2f {
+public class Vector2f implements Cloneable {
 
     public final static Vector2f ZERO = new Vector2f(0, 0);
     public final static Vector2f NAN = new Vector2f(Float.NaN, Float.NaN);
@@ -33,17 +31,25 @@ public class Vector2f {
             new Vector2f(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
     /**
-     * Return true if the vector is valid.
+     * Return true if the vector is not null and valid.
      *
      * @param vector the vector.
-     * @return true if the vector is valid.
+     * @return true if the vector is not null and valid.
+     * @see #isValid(Vector2f)
      */
+    @Deprecated
     public static boolean isValidVector(@Nullable Vector2f vector) {
-        if (vector == null) {
-            return false;
-        } 
-        
-        return isFinite(vector.getX()) && isFinite(vector.getY());
+        return vector != null && isFinite(vector.getX()) && isFinite(vector.getY());
+    }
+
+    /**
+     * Return true if the vector is not null and valid.
+     *
+     * @param vector the vector.
+     * @return true if the vector is not null and valid.
+     */
+    public static boolean isValid(@Nullable Vector2f vector) {
+        return vector != null && isFinite(vector.getX()) && isFinite(vector.getY());
     }
 
     /**
@@ -119,8 +125,8 @@ public class Vector2f {
      */
     public float distanceSquared(float targetX, float targetY) {
 
-        float dx = x - targetX;
-        float dy = y - targetY;
+        var dx = x - targetX;
+        var dy = y - targetY;
 
         return dx * dx + dy * dy;
     }
@@ -143,28 +149,6 @@ public class Vector2f {
      */
     public float dot(@NotNull Vector2f vector) {
         return x * vector.x + y * vector.y;
-    }
-    
-    @Override
-    public boolean equals(@Nullable Object obj) {
-
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        Vector2f other = (Vector2f) obj;
-
-        if (floatToIntBits(x) != floatToIntBits(other.x)) {
-            return false;
-        } else if (floatToIntBits(y) != floatToIntBits(other.y)) {
-            return false;
-        }
-
-        return true;
     }
     
     /**
@@ -209,8 +193,8 @@ public class Vector2f {
 
     @Override
     public int hashCode() {
-        int prime = 31;
-        int result = 1;
+        var prime = 31;
+        var result = 1;
         result = prime * result + Float.floatToIntBits(x);
         result = prime * result + Float.floatToIntBits(y);
         return result;
@@ -236,7 +220,7 @@ public class Vector2f {
     }
 
     /**
-     * Multiply this vector by the X and Y scalars.
+     * Multiply this vector by the scalar values.
      *
      * @param x the x scalar.
      * @param y the y scalar.
@@ -259,14 +243,14 @@ public class Vector2f {
     }
 
     /**
-     * Create a new vector as negative of this vector.
+     * Create a new vector as negative version of this vector.
      *
      * @return the new negative vector.
      */
     public @NotNull Vector2f negate() {
         return new Vector2f(-getX(), -getY());
     }
-    
+
     /**
      * Invert this vector to get a negative vector.
      *
@@ -298,7 +282,7 @@ public class Vector2f {
     /**
      * Normalize this vector.
      *
-     * @return ths vector.
+     * @return this vector.
      */
     public @NotNull Vector2f normalizeLocal() {
 
@@ -350,11 +334,11 @@ public class Vector2f {
     }
 
     /**
-     * Subtract local vector.
+     * Subtract the components from this vector.
      *
-     * @param subX the sub x
-     * @param subY the sub y
-     * @return this vector
+     * @param subX the sub x.
+     * @param subY the sub y.
+     * @return this changed vector.
      */
     public Vector2f subtractLocal(float subX, float subY) {
         x -= subX;
@@ -363,63 +347,63 @@ public class Vector2f {
     }
 
     /**
-     * Subtract local vector.
+     * Subtract the vector from this vector.
      *
-     * @param vector the vector
-     * @return this vector
+     * @param vector the vector.
+     * @return this changed vector.
      */
     public Vector2f subtractLocal(Vector2f vector) {
         return subtractLocal(vector.x, vector.y);
     }
-    
+
     /**
-     * Return vector length (magnitude).
-     * 
-     * @return length
+     * Return vector's length (magnitude).
+     *
+     * @return the vector's length.
      */
     public float length() {
         return ExtMath.sqrt(x * x + y * y);
     }
-    
+
     /**
-     * Return vector sqr length (magnitude).
-     * 
-     * @return length
+     * Return vector's squared length (magnitude).
+     *
+     * @return the vector's squared length.
      */
     public float sqrLength() {
         return x * x + y * y;
     }
-    
+
     /**
-     * Divide local vector.
+     * Divide this vector by the components.
      *
-     * @param x the divider x
-     * @param y the divider y
-     * @return this vector
+     * @param x the divider x.
+     * @param y the divider y.
+     * @return this changed vector.
      */
-    public Vector2f divideLocal(float x, float y) {
+    public @NotNull Vector2f divideLocal(float x, float y) {
         this.x /= x;
         this.y /= y;
         return this;
     }
-    
+
     /**
-     * Divide local vector.
+     * Divide this vector by the vector.
      *
-     * @param vector the divider vector
-     * @return this vector
+     * @param vector the divider vector.
+     * @return this changed vector.
      */
-    public Vector2f divideLocal(Vector2f vector) {
+    public @NotNull Vector2f divideLocal(Vector2f vector) {
         return divideLocal(vector.x, vector.y);
     }
-    
+
     /**
-     * Divide local vector.
+     * Divide this vector by the scalar.
      *
-     * @param scalar the divider scalar
-     * @return this vector
+     * @param scalar the divider scalar.
+     * @return this changed vector.
      */
-    public Vector2f divideLocal(float scalar) {
+    public @NotNull Vector2f divideLocal(float scalar) {
         return divideLocal(scalar, scalar);
     }
     
@@ -440,7 +424,16 @@ public class Vector2f {
 
         return this;
     }
-    
+
+    @Override
+    protected @NotNull Vector2f clone() {
+        try {
+            return (Vector2f) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /** 
      * Check vectors to equals with epsilon.
      * 
@@ -453,11 +446,42 @@ public class Vector2f {
     }
 
     @Override
+    public boolean equals(@Nullable Object obj) {
+
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        var other = (Vector2f) obj;
+
+        if (floatToIntBits(x) != floatToIntBits(other.x)) {
+            return false;
+        } else if (floatToIntBits(y) != floatToIntBits(other.y)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return true if these vectors are equal with the epsilon.
+     *
+     * @param vector  the vector.
+     * @param epsilon the epsilon.
+     * @return true if these vectors are equal with the epsilon.
+     */
+    public boolean equals(@NotNull Vector2f vector, float epsilon) {
+        return Math.abs(x - vector.getX()) < epsilon &&
+                Math.abs(y - vector.getY()) < epsilon;
+    }
+
+    @Override
     public String toString() {
-        return "Vector2f{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "Vector2f(" + x + ", " + y + ')';
     }
     
 }
