@@ -81,6 +81,19 @@ public final class ArrayUtils {
     }
 
     /**
+     * Fill the array using the factory.
+     *
+     * @param array   the array.
+     * @param factory the element's factory.
+     * @since 8.1.0
+     */
+    public static void fill(@NotNull char[] array, @NotNull CharSupplier factory) {
+        for (int i = 0; i < array.length; i++) {
+            array[i] = factory.getAsChar();
+        }
+    }
+
+    /**
      * Fill the array using the factory which receives array's index.
      *
      * @param array   the array.
@@ -471,19 +484,42 @@ public final class ArrayUtils {
      * @param array the array.
      * @return the string presentation.
      */
-    public static @NotNull String toString(@NotNull final Array<?> array) {
-        if (array.isEmpty()) return "[]";
+    public static @NotNull String toString(@NotNull Array<?> array) {
+        return toString(array, Object::toString);
+    }
 
-        final String className = array.array().getClass().getSimpleName();
-        final StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
+    /**
+     * Convert the array to a string presentation.
+     *
+     * @param array    the array.
+     * @param toString the to string function.
+     * @return the string presentation.
+     */
+    public static <T> @NotNull String toString(@NotNull Array<T> array, @NotNull Function<T, String> toString) {
+
+        if (array.isEmpty()) {
+            return "[]";
+        }
+
+        String className = array.array()
+                .getClass()
+                .getSimpleName();
+
+        StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
 
         for (int i = 0, length = array.size() - 1; i <= length; i++) {
-            builder.append(String.valueOf(array.get(i)));
-            if (i == length) break;
+
+            builder.append(toString.apply(array.get(i)));
+
+            if (i == length) {
+                break;
+            }
+
             builder.append(", ");
         }
 
         builder.append("]");
+
         return builder.toString();
     }
 
@@ -664,6 +700,7 @@ public final class ArrayUtils {
      * @param function the function.
      * @return the result of the function.
      */
+    @Deprecated
     public static <T, R> @Nullable R getInWriteLock(@NotNull final ConcurrentArray<T> array,
                                                     @NotNull final Function<Array<T>, R> function) {
         if (array.isEmpty()) return null;
@@ -682,6 +719,7 @@ public final class ArrayUtils {
      * @param array    the array.
      * @param function the function.
      */
+    @Deprecated
     public static <T> void runInWriteLock(@Nullable ConcurrentArray<T> array, @NotNull Consumer<Array<T>> function) {
 
         if (array == null) {
@@ -703,6 +741,7 @@ public final class ArrayUtils {
      * @param array    the array.
      * @param function the function.
      */
+    @Deprecated
     public static <T> void runInReadLock(@NotNull final ConcurrentArray<T> array,
                                          @NotNull final Consumer<@NotNull Array<T>> function) {
         if (array.isEmpty()) return;
@@ -723,6 +762,7 @@ public final class ArrayUtils {
      * @param function the function.
      * @return the result of the function.
      */
+    @Deprecated
     public static <T, R> @Nullable R getInReadLock(@NotNull final ConcurrentArray<T> array,
                                                    @NotNull final Function<Array<T>, R> function) {
         if (array.isEmpty()) return null;
@@ -742,6 +782,7 @@ public final class ArrayUtils {
      * @param function the function.
      * @return the sum.
      */
+    @Deprecated
     public static <T> int sumInReadLock(@NotNull final ConcurrentArray<T> array,
                                         @NotNull final FunctionInt<T> function) {
         if (array.isEmpty()) return 0;
@@ -773,6 +814,7 @@ public final class ArrayUtils {
      * @param function the function.
      * @return the result of the function.
      */
+    @Deprecated
     public static <T, V, R> @Nullable R getInWriteLock(@NotNull final ConcurrentArray<T> array,
                                                        @Nullable final V argument,
                                                        @NotNull final BiFunction<Array<T>, V, R> function) {
@@ -794,6 +836,7 @@ public final class ArrayUtils {
      * @param argument the argument.
      * @param function the function.
      */
+    @Deprecated
     public static <T, V> void runInWriteLock(
             @NotNull ConcurrentArray<T> array,
             @Nullable V argument,
@@ -818,6 +861,7 @@ public final class ArrayUtils {
      * @param function the function.
      * @return the result of the function.
      */
+    @Deprecated
     public static <T, V, R> @Nullable R getInReadLock(@NotNull final ConcurrentArray<T> array,
                                                       @Nullable final V argument,
                                                       @NotNull final BiFunction<Array<T>, V, R> function) {
@@ -840,6 +884,7 @@ public final class ArrayUtils {
      * @param function the function.
      * @return the result of the function.
      */
+    @Deprecated
     public static <T, R> @Nullable R getInReadLock(@NotNull final ConcurrentArray<T> array, final int argument,
                                                    @NotNull final ObjectIntFunction<Array<T>, R> function) {
         if (array.isEmpty()) return null;
@@ -861,6 +906,7 @@ public final class ArrayUtils {
      * @param function the function.
      * @return the result of the function.
      */
+    @Deprecated
     public static <T, R> @Nullable R getInReadLockL(@NotNull final ConcurrentArray<T> array, final long argument,
                                                     @NotNull final ObjectLongFunction<Array<T>, R> function) {
         if (array.isEmpty()) return null;
@@ -881,6 +927,7 @@ public final class ArrayUtils {
      * @param argument the argument.
      * @param function the function.
      */
+    @Deprecated
     public static <T, V> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
                                             @NotNull final BiConsumer<@NotNull Array<T>, V> function) {
         if (array.isEmpty()) return;
@@ -903,6 +950,7 @@ public final class ArrayUtils {
      * @param second   the second argument.
      * @param function the function.
      */
+    @Deprecated
     public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
                                                 @Nullable S second,
                                                 @NotNull final TripleConsumer<@NotNull Array<T>, F, S> function) {
@@ -926,6 +974,7 @@ public final class ArrayUtils {
      * @param filter   the filter.
      * @param function the function.
      */
+    @Deprecated
     public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
                                                 @Nullable final S second,
                                                 @NotNull final TriplePredicate<@NotNull Array<T>, F, S> filter,
@@ -953,6 +1002,7 @@ public final class ArrayUtils {
      * @param second   the second argument.
      * @param function the function.
      */
+    @Deprecated
     public static <T, F, S> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
                                                @Nullable final S second,
                                                @NotNull final TripleConsumer<@NotNull Array<T>, F, S> function) {

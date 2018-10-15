@@ -16,11 +16,11 @@ public class ConcurrentReentrantRWLockArraySet<E> extends ConcurrentReentrantRWL
 
     private static final long serialVersionUID = -3394386864246350866L;
 
-    public ConcurrentReentrantRWLockArraySet(Class<E> type) {
+    public ConcurrentReentrantRWLockArraySet(Class<? super E> type) {
         super(type);
     }
 
-    public ConcurrentReentrantRWLockArraySet(Class<E> type, int size) {
+    public ConcurrentReentrantRWLockArraySet(Class<? super E> type, int size) {
         super(type, size);
     }
 

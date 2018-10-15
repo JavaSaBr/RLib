@@ -12,12 +12,11 @@ import org.jetbrains.annotations.Nullable;
 public interface UnsafeLongDictionary<V> extends LongDictionary<V> {
 
     /**
-     * Content long entry [ ].
+     * Get an array of all entries in this dictionary.
      *
      * @return the array of entries.
      */
-    @NotNull
-    LongEntry<V>[] content();
+    @NotNull LongEntry<V>[] entries();
 
     /**
      * Remove an entry for the key.
@@ -25,6 +24,5 @@ public interface UnsafeLongDictionary<V> extends LongDictionary<V> {
      * @param key the key of the entry.
      * @return removed entry.
      */
-    @Nullable
-    LongEntry<V> removeEntryForKey(long key);
+    @Nullable LongEntry<V> removeEntryForKey(long key);
 }

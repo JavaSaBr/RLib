@@ -1,7 +1,5 @@
 package com.ss.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
-
 /**
  * The function.
  *
@@ -19,6 +17,5 @@ public interface ObjectLongFunction<T, R> {
      * @param second the second
      * @return the r
      */
-    @Nullable
-    R apply(@Nullable T first, long second);
+    R apply(T first, long second);
 }

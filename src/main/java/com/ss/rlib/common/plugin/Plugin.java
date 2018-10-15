@@ -23,9 +23,9 @@ public interface Plugin {
      * @return the plugin id.
      */
     default @NotNull String getId() {
-        final Class<? extends Plugin> cs = getClass();
-        final PluginDescription description = cs.getAnnotation(PluginDescription.class);
-        return description.id();
+        return getClass()
+                .getAnnotation(PluginDescription.class)
+                .id();
     }
 
     /**
@@ -34,9 +34,9 @@ public interface Plugin {
      * @return the plugin version.
      */
     default @NotNull Version getVersion() {
-        final Class<? extends Plugin> cs = getClass();
-        final PluginDescription description = cs.getAnnotation(PluginDescription.class);
-        return new Version(description.version());
+        return new Version(getClass()
+                .getAnnotation(PluginDescription.class)
+                .version());
     }
 
     /**
@@ -45,9 +45,9 @@ public interface Plugin {
      * @return the name of this plugin.
      */
     default @NotNull String getName() {
-        final Class<? extends Plugin> cs = getClass();
-        final PluginDescription description = cs.getAnnotation(PluginDescription.class);
-        return description.name();
+        return getClass()
+                .getAnnotation(PluginDescription.class)
+                .name();
     }
 
     /**
@@ -56,12 +56,14 @@ public interface Plugin {
      * @return the description of this plugin.
      */
     default @NotNull String getDescription() {
-        final Class<? extends Plugin> cs = getClass();
-        final PluginDescription description = cs.getAnnotation(PluginDescription.class);
-        return description.description();
+        return getClass()
+                .getAnnotation(PluginDescription.class)
+                .description();
     }
 
     /**
+     * Return true if this plugin is embedded.
+     *
      * @return true if this plugin is embedded.
      */
     boolean isEmbedded();

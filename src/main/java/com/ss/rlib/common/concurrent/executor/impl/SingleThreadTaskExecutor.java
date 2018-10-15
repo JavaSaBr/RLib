@@ -34,9 +34,6 @@ import java.util.concurrent.locks.Lock;
  */
 public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, Lockable {
 
-    /**
-     * The constant LOGGER.
-     */
     protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadTaskExecutor.class);
 
     /**
@@ -75,22 +72,19 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
     @NotNull
     private final Lock lock;
 
-    /**
-     * Instantiates a new Single thread task executor.
-     *
-     * @param threadClass the thread class
-     * @param priority    the priority
-     * @param name        the name
-     * @param local       the local
-     */
-    public SingleThreadTaskExecutor(@NotNull final Class<? extends Thread> threadClass, final int priority,
-                                    @NotNull final String name, @Nullable final L local) {
-        this.waitTasks = ArrayFactory.newArray(SimpleTask.class);
-        this.executeTasks = ArrayFactory.newArray(SimpleTask.class);
+    public SingleThreadTaskExecutor(
+        @NotNull Class<? extends Thread> threadClass,
+        int priority,
+        @NotNull String name,
+        @Nullable L local
+    ) {
+        this.waitTasks = ArrayFactory.newArray(CallableTask.class);
+        this.executeTasks = ArrayFactory.newArray(CallableTask.class);
         this.wait = new AtomicBoolean();
         this.lock = LockFactory.newAtomicLock();
 
-        final Constructor<Thread> constructor = ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
+        Constructor<Thread> constructor =
+                ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
 
         this.thread = ClassUtils.newInstance(requireNonNull(constructor), this, name);
         this.thread.setPriority(priority);

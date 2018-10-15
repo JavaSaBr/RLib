@@ -43,12 +43,34 @@ public final class ClassUtils {
      * @param classes the types of arguments.
      * @return the constructor or null.
      */
-    public static <T> @Nullable Constructor<T> getConstructor(@NotNull Class<?> cs, @Nullable Class<?>... classes) {
+    public static <T> @Nullable Constructor<T> getConstructor(
+            @NotNull Class<?> cs,
+            @Nullable Class<?>... classes
+    ) {
         try {
             return unsafeCast(cs.getConstructor(classes));
         } catch (NoSuchMethodException | SecurityException e) {
             LOGGER.warning(e);
             return null;
+        }
+    }
+
+    /**
+     * Get a constructor of the class.
+     *
+     * @param <T>     the type parameter
+     * @param cs      the class.
+     * @param classes the types of arguments.
+     * @return the constructor.
+     */
+    public static <T> @NotNull Constructor<T> requireConstructor(
+            @NotNull Class<?> cs,
+            @Nullable Class<?>... classes
+    ) {
+        try {
+            return unsafeCast(cs.getConstructor(classes));
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new RuntimeException(e);
         }
     }
 

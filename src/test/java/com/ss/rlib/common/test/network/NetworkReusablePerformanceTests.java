@@ -42,10 +42,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class NetworkReusablePerformanceTests {
 
-    @NotNull
     private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(3434);
 
     private static final NetworkConfig SERVER_CONFIG = new NetworkConfig() {
+
         @Override
         public int getGroupSize() {
             return 10;
@@ -67,10 +67,7 @@ public class NetworkReusablePerformanceTests {
     private static final int CLIENT_COUNT = 100;
     private static final int CLIENT_PACKETS_PER_CLIENT = 1000;
 
-    @NotNull
     private static final AtomicLong RECEIVED_SERVER_PACKETS = new AtomicLong(0);
-
-    @NotNull
     private static final AtomicLong RECEIVED_CLIENT_PACKETS = new AtomicLong(0);
 
     public static class ServerPackets {
@@ -82,15 +79,18 @@ public class NetworkReusablePerformanceTests {
         public static class MessageRequest extends AbstractReadablePacket {
 
             @Override
-            protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
-                final String message = readString(buffer);
+            protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
+
+                String message = readString(buffer);
+
                 RECEIVED_CLIENT_PACKETS.incrementAndGet();
+
                 EXECUTOR_SERVICE.execute(() -> {
 
-                    final MessageResponse response = MessageResponse.newInstance(message);
+                    MessageResponse response = MessageResponse.newInstance(message);
                     response.increaseSends();
 
-                    ArrayUtils.runInReadLock(AVAILABLE_CLIENTS, response, (clients, packet) -> {
+                    AVAILABLE_CLIENTS.runInReadLock(response, (clients, packet) -> {
                         packet.increaseSends(clients.size());
                         clients.forEach(packet, ConnectionOwner::sendPacket);
                     });
@@ -110,11 +110,13 @@ public class NetworkReusablePerformanceTests {
 
             private static final MessageResponse EXAMPLE = new MessageResponse();
 
-            public static @NotNull MessageResponse newInstance(@NotNull final String message) {
-                final MessageResponse packet = EXAMPLE.newInstance();
+            public static @NotNull MessageResponse newInstance(@NotNull String message) {
+
+                MessageResponse packet = EXAMPLE.newInstance();
                 packet.notifyFinishedPreparing();
                 packet.message = message;
                 packet.notifyFinishedPreparing();
+
                 return packet;
             }
 
@@ -127,7 +129,7 @@ public class NetworkReusablePerformanceTests {
             }
 
             @Override
-            protected void writeImpl(@NotNull final ByteBuffer buffer) {
+            protected void writeImpl(@NotNull ByteBuffer buffer) {
                 super.writeImpl(buffer);
                 writeString(buffer, message);
             }
@@ -149,11 +151,13 @@ public class NetworkReusablePerformanceTests {
 
             private static final MessageRequest EXAMPLE = new MessageRequest();
 
-            public static @NotNull MessageRequest newInstance(@NotNull final String message) {
-                final MessageRequest packet = EXAMPLE.newInstance();
+            public static @NotNull MessageRequest newInstance(@NotNull String message) {
+
+                MessageRequest packet = EXAMPLE.newInstance();
                 packet.notifyStartedPreparing();
                 packet.message = message;
                 packet.notifyFinishedPreparing();
+
                 return packet;
             }
 
@@ -165,7 +169,7 @@ public class NetworkReusablePerformanceTests {
             }
 
             @Override
-            protected void writeImpl(@NotNull final ByteBuffer buffer) {
+            protected void writeImpl(@NotNull ByteBuffer buffer) {
                 super.writeImpl(buffer);
                 writeString(buffer, message);
             }
@@ -185,12 +189,12 @@ public class NetworkReusablePerformanceTests {
             @NotNull
             private final String message;
 
-            public MessageNotReusableRequest(@NotNull final String message) {
+            public MessageNotReusableRequest(@NotNull String message) {
                 this.message = message;
             }
 
             @Override
-            protected void writeImpl(@NotNull final ByteBuffer buffer) {
+            protected void writeImpl(@NotNull ByteBuffer buffer) {
                 super.writeImpl(buffer);
                 writeString(buffer, message);
             }
@@ -203,32 +207,35 @@ public class NetworkReusablePerformanceTests {
         public static class MessageResponse extends AbstractReadablePacket {
 
             @Override
-            protected void readImpl(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer) {
+            protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
                 readString(buffer);
                 RECEIVED_SERVER_PACKETS.getAndIncrement();
             }
         }
     }
 
-    private static final Array<ClientNetwork> CLIENT_NETWORKS = ArrayFactory.newArray(ClientNetwork.class);
-    private static final ConcurrentArray<Client> AVAILABLE_CLIENTS = ArrayFactory.newConcurrentStampedLockArray(Client.class);
+    private static final Array<ClientNetwork> CLIENT_NETWORKS =
+            ArrayFactory.newArray(ClientNetwork.class);
+
+    private static final ConcurrentArray<Client> AVAILABLE_CLIENTS =
+            ArrayFactory.newConcurrentStampedLockArray(Client.class);
 
     private static ServerNetwork serverNetwork;
 
     @BeforeAll
     public static void createNetworks() throws IOException {
 
-        final ReadablePacketRegistry serverRegistry = ReadablePacketRegistry.of(ServerPackets.MessageRequest.class);
-        final ReadablePacketRegistry clientRegistry = ReadablePacketRegistry.of(ClientPackets.MessageResponse.class);
+        ReadablePacketRegistry serverRegistry = ReadablePacketRegistry.of(ServerPackets.MessageRequest.class);
+        ReadablePacketRegistry clientRegistry = ReadablePacketRegistry.of(ClientPackets.MessageResponse.class);
 
         serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(SERVER_CONFIG, serverRegistry,
-                AcceptHandler.newDefault(client -> ArrayUtils.runInWriteLock(AVAILABLE_CLIENTS, client, Array::add)));
+                AcceptHandler.newDefault(client -> AVAILABLE_CLIENTS.runInWriteLock(client, Array::add)));
         serverNetwork.bind(SERVER_ADDRESS);
-        serverNetwork.setDestroyedHandler(client -> ArrayUtils.runInWriteLock(AVAILABLE_CLIENTS, client, Array::fastRemove));
+        serverNetwork.setDestroyedHandler(client -> AVAILABLE_CLIENTS.runInWriteLock(client, Array::fastRemove));
 
         for (int i = 0; i < CLIENT_COUNT; i++) {
 
-            final ClientNetwork clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(clientRegistry);
+            ClientNetwork clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(clientRegistry);
             clientNetwork.asyncConnect(SERVER_ADDRESS);
 
             CLIENT_NETWORKS.add(clientNetwork);
@@ -244,12 +251,12 @@ public class NetworkReusablePerformanceTests {
 
         int order = 1;
 
-        for (final ClientNetwork clientNetwork : CLIENT_NETWORKS) {
+        for (ClientNetwork clientNetwork : CLIENT_NETWORKS) {
 
             final Thread thread = new Thread(() -> {
 
-                final Server server = ObjectUtils.notNull(clientNetwork.getCurrentServer());
-                final ThreadLocalRandom random = ThreadLocalRandom.current();
+                Server server = ObjectUtils.notNull(clientNetwork.getCurrentServer());
+                ThreadLocalRandom random = ThreadLocalRandom.current();
 
                 for (int i = 0; i < CLIENT_PACKETS_PER_CLIENT; i++) {
                     //server.sendPacket(ClientPackets.MessageRequest.newInstance(StringUtils.generate(random.nextInt(10, 70))));
@@ -260,18 +267,20 @@ public class NetworkReusablePerformanceTests {
             thread.start();
         }
 
-        final int totalClientPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT;
-        final int totalServerPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_COUNT;
+        int totalClientPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT;
+        int totalServerPackets = CLIENT_COUNT * CLIENT_PACKETS_PER_CLIENT * CLIENT_COUNT;
 
         for (int i = 0; i < 100; i++) {
             ThreadUtils.sleep(500);
 
-            final long receiverClientPackets = RECEIVED_CLIENT_PACKETS.get();
+            long receiverClientPackets = RECEIVED_CLIENT_PACKETS.get();
+
             if (receiverClientPackets < totalClientPackets) {
                 continue;
             }
 
-            final long receivedServerPackets = RECEIVED_SERVER_PACKETS.get();
+            long receivedServerPackets = RECEIVED_SERVER_PACKETS.get();
+
             if (receivedServerPackets < totalServerPackets) {
                 continue;
             }
@@ -279,7 +288,7 @@ public class NetworkReusablePerformanceTests {
             break;
         }
 
-        final long instances = ServerPackets.MessageResponse.INSTANCES.get();
+        long instances = ServerPackets.MessageResponse.INSTANCES.get();
 
         System.out.println("Instances: " + instances + ", server packets: " + RECEIVED_SERVER_PACKETS);
 

@@ -29,5 +29,5 @@ public enum DirectionType {
     /**
      * Behind direction type.
      */
-    BEHIND;
+    BEHIND
 }

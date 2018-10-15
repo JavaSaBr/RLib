@@ -1,6 +1,5 @@
 package com.ss.rlib.common.util.pools;
 
-import static java.util.Objects.requireNonNull;
 import com.ss.rlib.common.function.ObjectLongFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,101 +18,103 @@ import java.util.function.Supplier;
 public interface Pool<E> {
 
     /**
-     * Is empty boolean.
+     * Return true if this pool is empty.
      *
      * @return true if this pool is empty.
      */
     boolean isEmpty();
 
     /**
-     * Puts the object to this pool.
+     * Put the object to this pool.
      *
      * @param object the object.
      */
     void put(@NotNull E object);
 
     /**
-     * Removes the object from this pool.
+     * Remove the object from this pool.
      *
      * @param object the object.
      */
     void remove(@NotNull E object);
 
     /**
-     * Takes an object from this pool.
+     * Take an object from this pool.
      *
-     * @return taken object or null is this pool is empty.
+     * @return taken object or null if this pool is empty.
      */
-    @Nullable
-    E take();
+    @Nullable E take();
 
     /**
-     * Takes an object from this pool.
+     * Take an object from this pool or create a new object.
      *
-     * @param factory the factory for creating new object if this pool is empty.
-     * @return taken object.
+     * @param factory the factory to create new object if this pool is empty.
+     * @return taken or created object.
      */
-    @NotNull
-    default E take(@NotNull final Supplier<E> factory) {
-        final E take = take();
+    default @NotNull E take(@NotNull Supplier<@NotNull E> factory) {
+        E take = take();
         return take != null ? take : factory.get();
     }
 
     /**
-     * Takes an object from this pool.
+     * Take an object from this pool or create a new object.
      *
-     * @param <T>      the type parameter
-     * @param argument the argument for the factory function.
-     * @param factory  the factory for creating new object if this pool is empty.
-     * @return taken object.
+     * @param argument the argument.
+     * @param factory  the factory to create new object if this pool is empty.
+     * @param <T>      the argument's type.
+     * @return taken or created object.
      */
-    @NotNull
-    default <T> E take(@Nullable final T argument, @NotNull final Function<T, E> factory) {
-        final E take = take();
+    default <T> @NotNull E take(@NotNull T argument, @NotNull Function<@NotNull T, @NotNull E> factory) {
+        E take = take();
         return take != null ? take : factory.apply(argument);
     }
 
     /**
-     * Takes an object from this pool.
+     * Take an object from this pool or create a new object.
      *
-     * @param argument the argument for the factory function.
-     * @param factory  the factory for creating new object if this pool is empty.
-     * @return taken object.
+     * @param argument the argument.
+     * @param factory  the factory to create new object if this pool is empty.
+     * @return taken or created object.
      */
-    @NotNull
-    default E take(final long argument, @NotNull final LongFunction<E> factory) {
-        final E take = take();
+    default @NotNull E take(long argument, @NotNull LongFunction<@NotNull E> factory) {
+        E take = take();
         return take != null ? take : factory.apply(argument);
     }
 
     /**
-     * Takes an object from this pool.
+     * Take an object from this pool or create a new object.
      *
-     * @param <F>     the type parameter
-     * @param first   the first argument for the factory function.
-     * @param second  the second argument for the factory function.
-     * @param factory the factory for creating new object if this pool is empty.
-     * @return taken object.
+     * @param first   the first argument.
+     * @param second  the second argument.
+     * @param factory the factory to create new object if this pool is empty.
+     * @param <F>     the first argument's type.
+     * @return taken or created object.
      */
-    @NotNull
-    default <F> E take(@Nullable F first, final long second, @NotNull final ObjectLongFunction<F, E> factory) {
-        final E take = take();
-        return take != null ? take : requireNonNull(factory.apply(first, second));
+    default <F> @NotNull E take(
+            @NotNull F first,
+            long second,
+            @NotNull ObjectLongFunction<@NotNull F, @NotNull E> factory
+    ) {
+        E take = take();
+        return take != null ? take : factory.apply(first, second);
     }
 
     /**
-     * Takes an object from this pool.
+     * Take an object from this pool or create a new object.
      *
-     * @param <F>     the type parameter
-     * @param <S>     the type parameter
-     * @param first   the first argument for the factory function.
-     * @param second  the second argument for the factory function.
-     * @param factory the factory for creating new object if this pool is empty.
-     * @return taken object.
+     * @param first   the first argument.
+     * @param second  the second argument.
+     * @param factory the factory to create new object if this pool is empty.
+     * @param <F>     the first argument's type.
+     * @param <S>     the second argument's type.
+     * @return taken or created object.
      */
-    @NotNull
-    default <F, S> E take(@Nullable final F first, @Nullable final S second, @NotNull final BiFunction<F, S, E> factory) {
-        final E take = take();
+    default <F, S> @NotNull E take(
+            @NotNull F first,
+            @NotNull S second,
+            @NotNull BiFunction<@NotNull F, @NotNull S, @NotNull E> factory
+    ) {
+        E take = take();
         return take != null ? take : factory.apply(first, second);
     }
 }

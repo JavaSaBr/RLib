@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public abstract class AbstractReusableWritablePacket extends AbstractWritablePacket implements ReusableWritablePacket {
 
-    protected static final ThreadLocal<Map<Class<? extends ReusableWritablePacket>, Pool<ReusableWritablePacket>>>
+    protected static final ThreadLocal<Map<Class<? super ReusableWritablePacket>, Pool<ReusableWritablePacket>>>
             LOCAL_POOLS = ThreadLocal.withInitial(HashMap::new);
 
     /**
@@ -127,7 +127,9 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
      * @return thread local pool.
      */
     protected @NotNull Pool<ReusableWritablePacket> getThreadLocalPool() {
-        return LOCAL_POOLS.get().computeIfAbsent(getClass(), PoolFactory::newConcurrentStampedLockReusablePool);
+        Class<ReusableWritablePacket> packetClass = ClassUtils.unsafeNNCast(getClass());
+        return LOCAL_POOLS.get().computeIfAbsent(packetClass,
+                PoolFactory::newConcurrentStampedLockReusablePool);
     }
 
     @Override

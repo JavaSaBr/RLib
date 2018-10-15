@@ -1,7 +1,6 @@
 package com.ss.rlib.common.geom;
 
 import com.ss.rlib.common.util.pools.Reusable;
-import com.ss.rlib.common.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,10 +21,23 @@ public class Ray3f implements Reusable {
      */
     @NotNull
     private final Vector3f direction;
-
+    
+    /**
+     * Construct new ray in start point and specified direction.
+     * 
+     * @param origin start point
+     * @param direction direction
+     */
+    public Ray3f(@NotNull Vector3f origin, @NotNull Vector3f direction) {
+        this.start = origin;
+        this.direction = direction;
+    }
+    
+    /**
+     * Construct empty ray in zero point and zero direction.
+     */
     public Ray3f() {
-        this.start = new Vector3f();
-        this.direction = new Vector3f();
+        this(new Vector3f(), new Vector3f());
     }
 
     /**

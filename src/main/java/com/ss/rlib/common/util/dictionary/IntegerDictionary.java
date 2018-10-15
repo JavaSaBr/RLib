@@ -2,6 +2,7 @@ package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.function.IntBiObjectConsumer;
 import com.ss.rlib.common.function.IntObjectConsumer;
+import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.IntegerArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,9 +12,10 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
- * The interface Integer dictionary.
+ * The interface to implement a dictionary which uses int as key.
  *
- * @param <V> the type parameter
+ * @param <V> the value's type.
+ * @author JavaSaBr
  */
 public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
 
@@ -22,132 +24,224 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      *
      * @param valueType the value's type.
      * @param <V>       the value's type.
-     * @return the new object dictionary.
+     * @return the new integer dictionary.
      */
-    static <V> @NotNull IntegerDictionary<V> ofType(@NotNull Class<?> valueType) {
+    static <V> @NotNull IntegerDictionary<V> ofType(@NotNull Class<? super V> valueType) {
         return DictionaryFactory.newIntegerDictionary();
     }
 
     /**
-     * Contains key boolean.
+     * Create a new integer dictionary for the values.
      *
-     * @param key the key
-     * @return the boolean
+     * @param values the key-value values.
+     * @param <V>    the value's type.
+     * @return the new integer dictionary.
      */
-    default boolean containsKey(final int key) {
+    static <V> @NotNull IntegerDictionary<V> of(@NotNull Object... values) {
+
+        if (values.length < 2 || values.length % 2 != 0) {
+            throw new IllegalArgumentException("Incorrect argument's count.");
+        }
+
+        IntegerDictionary<V> dictionary = DictionaryFactory.newIntegerDictionary();
+
+        for (int i = 0, length = values.length - 2; i <= length; i += 2) {
+            dictionary.put((Integer) values[i], (V) values[i + 1]);
+        }
+
+        return dictionary;
+    }
+
+    /**
+     * Return true if this dictionary contains a mapping for the specified key.
+     *
+     * @param key key whose presence in this dictionary is to be tested.
+     * @return true if this dictionary contains a mapping for the specified key.
+     */
+    default boolean containsKey(int key) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Get v.
+     * Return the value to which the specified key is mapped, or {@code null} if this dictionary
+     * contains no mapping for the key.
      *
-     * @param key the key
-     * @return the v
+     * @param key the key whose associated value is to be returned.
+     * @return the value to which the specified key is mapped, or {@code null} if this dictionary contains no mapping for the key.
      */
-    @Nullable
-    default V get(final int key) {
+    default @Nullable V get(final int key) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Get v.
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param key     the key
-     * @param factory the factory
-     * @return the v
+     * @param key     the key.
+     * @param factory the factory.
+     * @return the stored value by the key or the new value.
+     * @see #getOrCompute(int, Supplier)
      */
-    @Nullable
-    default V get(final int key, @NotNull final Supplier<V> factory) {
+    @Deprecated
+    default @Nullable V get(int key, @NotNull Supplier<V> factory) {
+        return getOrCompute(key, factory);
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param key     the key.
+     * @param factory the factory.
+     * @return the stored value by the key or the new value.
+     */
+    default @NotNull V getOrCompute(int key, @NotNull Supplier<@NotNull V> factory) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Get v.
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param key     the key
-     * @param factory the factory
-     * @return the v
+     * @param key     the key.
+     * @param factory the factory.
+     * @return the stored value by the key or the new value.
+     * @see #getOrCompute(int, IntFunction)
      */
-    @Nullable
-    default V get(final int key, @NotNull final IntFunction<V> factory) {
+    @Deprecated
+    default @NotNull V get(int key, @NotNull IntFunction<V> factory) {
+        return getOrCompute(key, factory);
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param key     the key.
+     * @param factory the factory.
+     * @return the stored value by the key or the new value.
+     */
+    default @NotNull V getOrCompute(int key, @NotNull IntFunction<@NotNull V> factory) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Get v.
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
      *
-     * @param <T>      the type parameter
-     * @param key      the key
-     * @param argument the argument
-     * @param factory  the factory
-     * @return the v
+     * @param <T>      the argument's type.
+     * @param key      the key.
+     * @param argument the additional argument.
+     * @param factory  the factory.
+     * @return the stored value by the key or the new value.
+     * @see #getOrCompute(int, Object, Function)
      */
-    @Nullable
-    default <T> V get(final int key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
+
+    default <T> @Nullable V get(int key, @Nullable T argument, @NotNull Function<T, V> factory) {
+        return getOrCompute(key, argument, factory);
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param <T>      the argument's type.
+     * @param key      the key.
+     * @param argument the additional argument.
+     * @param factory  the factory.
+     * @return the stored value by the key or the new value.
+     */
+    default <T> @Nullable V getOrCompute(
+            int key,
+            @NotNull T argument,
+            @NotNull Function<@NotNull T, @NotNull V> factory
+    ) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Key integer array integer array.
+     * Create an array with all keys of this dictionary.
      *
-     * @return the integer array
+     * @return the array with all keys of this dictionary.
+     * @see #keyArray()
      */
-    @NotNull
-    default IntegerArray keyIntegerArray() {
+    @Deprecated
+    default @NotNull IntegerArray keyIntegerArray() {
+        return keyArray();
+    }
+
+    /**
+     * Create an array with all keys of this dictionary.
+     *
+     * @return the array with all keys of this dictionary.
+     */
+    default @NotNull IntegerArray keyArray() {
+        return keyArray(ArrayFactory.newIntegerArray(size()));
+    }
+
+    /**
+     * Put to the array all keys of this dictionary.
+     *
+     * @param container the container.
+     * @return the container with all keys.
+     * @see #keyArray(IntegerArray)
+     */
+    @Deprecated
+    default @NotNull IntegerArray keyIntegerArray(@NotNull IntegerArray container) {
+        return keyArray(container);
+    }
+
+    /**
+     * Put to the array all keys of this dictionary.
+     *
+     * @param container the container.
+     * @return the container with all keys.
+     */
+    default @NotNull IntegerArray keyArray(@NotNull IntegerArray container) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Key integer array integer array.
+     * Put the value by the key.
      *
-     * @param container the container
-     * @return the integer array
+     * @param key   the value's key.
+     * @param value the value.
+     * @return the previous value for the key or null.
      */
-    @NotNull
-    default IntegerArray keyIntegerArray(@NotNull final IntegerArray container) {
+    default @Nullable V put(int key, @NotNull V value) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Put v.
+     * Remove a mapping of the key.
      *
-     * @param key   the key
-     * @param value the value
-     * @return the v
+     * @param key the key.
+     * @return the previous value for the key or null.
      */
-    @Nullable
-    default V put(final int key, @Nullable final V value) {
+    default @Nullable V remove(int key) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Remove v.
+     * Performs the given action for each key-value pair of this dictionary.
      *
-     * @param key the key
-     * @return the v
+     * @param consumer the consumer.
      */
-    @Nullable
-    default V remove(final int key) {
+    default void forEach(@NotNull IntObjectConsumer<@NotNull ? super V> consumer) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * For each.
+     * Performs the given action for each key-value pair of this dictionary.
      *
-     * @param consumer the consumer
+     * @param argument the argument.
+     * @param consumer the consumer.
+     * @param <T>      the argument's type.
      */
-    default void forEach(@NotNull final IntObjectConsumer<V> consumer) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * For each.
-     *
-     * @param <T>      the type parameter
-     * @param argument the argument
-     * @param consumer the consumer
-     */
-    default <T> void forEach(@Nullable final T argument, @NotNull final IntBiObjectConsumer<V, T> consumer) {
+    default <T> void forEach(
+            @NotNull T argument,
+            @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer
+    ) {
         throw new UnsupportedOperationException();
     }
 }

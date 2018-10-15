@@ -23,11 +23,11 @@ public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
     @NotNull
     private final StampedLock lock;
 
-    public ConcurrentStampedLockArray(@NotNull final Class<E> type) {
+    public ConcurrentStampedLockArray(@NotNull Class<? super E> type) {
         this(type, 10);
     }
 
-    public ConcurrentStampedLockArray(@NotNull final Class<E> type, final int size) {
+    public ConcurrentStampedLockArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
         this.lock = LockFactory.newStampedLock();
     }

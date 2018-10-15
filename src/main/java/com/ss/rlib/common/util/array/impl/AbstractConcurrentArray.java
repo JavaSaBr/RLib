@@ -33,11 +33,11 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
      */
     private volatile E[] array;
 
-    public AbstractConcurrentArray(@NotNull Class<E> type) {
+    public AbstractConcurrentArray(@NotNull Class<? super E> type) {
         this(type, 10);
     }
 
-    public AbstractConcurrentArray(@NotNull Class<E> type, int size) {
+    public AbstractConcurrentArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
         this.size = new AtomicInteger();
     }

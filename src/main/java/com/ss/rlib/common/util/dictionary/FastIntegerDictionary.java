@@ -13,7 +13,8 @@ public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> imple
     /**
      * The array of entries.
      */
-    private IntegerEntry<V>[] content;
+    @NotNull
+    private IntegerEntry<V>[] entries;
 
     /**
      * The next size value at which to resize (capacity * load factor).
@@ -25,59 +26,39 @@ public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> imple
      */
     private int size;
 
-    /**
-     * Instantiates a new Fast integer dictionary.
-     */
     protected FastIntegerDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Fast integer dictionary.
-     *
-     * @param loadFactor the load factor
-     */
-    protected FastIntegerDictionary(final float loadFactor) {
+    protected FastIntegerDictionary(float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Fast integer dictionary.
-     *
-     * @param initCapacity the init capacity
-     */
-    protected FastIntegerDictionary(final int initCapacity) {
+    protected FastIntegerDictionary(int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
-    /**
-     * Instantiates a new Fast integer dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
-    protected FastIntegerDictionary(final float loadFactor, final int initCapacity) {
+    protected FastIntegerDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
     }
 
     @Override
-    public void setSize(final int size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
     @Override
-    public void setContent(@NotNull final IntegerEntry<V>[] content) {
-        this.content = content;
-    }
-
-    @NotNull
-    @Override
-    public IntegerEntry<V>[] content() {
-        return content;
+    public void setEntries(@NotNull IntegerEntry<V>[] entries) {
+        this.entries = entries;
     }
 
     @Override
-    public void setThreshold(final int threshold) {
+    public @NotNull IntegerEntry<V>[] entries() {
+        return entries;
+    }
+
+    @Override
+    public void setThreshold(int threshold) {
         this.threshold = threshold;
     }
 

@@ -9,12 +9,14 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
-public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> implements ConcurrentObjectDictionary<K, V> {
+public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractObjectDictionary<K, V>
+        implements ConcurrentObjectDictionary<K, V> {
 
     /**
      * Тhe array of entries.
      */
-    private volatile ObjectEntry<K, V>[] content;
+    @NotNull
+    private volatile ObjectEntry<K, V>[] entries;
 
     /**
      * The next size value at which to resize (capacity * load factor).
@@ -30,26 +32,26 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected AbstractConcurrentObjectDictionary(final float loadFactor) {
+    protected AbstractConcurrentObjectDictionary(float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    protected AbstractConcurrentObjectDictionary(final int initCapacity) {
+    protected AbstractConcurrentObjectDictionary(int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
-    protected AbstractConcurrentObjectDictionary(final float loadFactor, final int initCapacity) {
+    protected AbstractConcurrentObjectDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
     }
 
     @Override
-    public void setContent(@NotNull final ObjectEntry<K, V>[] content) {
-        this.content = content;
+    public void setEntries(@NotNull ObjectEntry<K, V>[] entries) {
+        this.entries = entries;
     }
 
     @Override
-    public @NotNull ObjectEntry<K, V>[] content() {
-        return content;
+    public @NotNull ObjectEntry<K, V>[] entries() {
+        return entries;
     }
 
     @Override
@@ -58,12 +60,12 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
     }
 
     @Override
-    protected void setSize(final int size) {
+    protected void setSize(int size) {
         this.size = size;
     }
 
     @Override
-    public void setThreshold(final int threshold) {
+    public void setThreshold(int threshold) {
         this.threshold = threshold;
     }
 

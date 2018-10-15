@@ -1,55 +1,49 @@
 package com.ss.rlib.common.util.dictionary;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * Реализация итератора для словарей с примитивным ключем int.
+ * The iterator to iterate {@link IntegerDictionary}.
  *
- * @param <V> the type parameter
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public class IntegerDictionaryIterator<V> implements Iterator<V> {
 
     /**
-     * итерируемый словарь
+     * The dictionary.
      */
+    @NotNull
     private final UnsafeIntegerDictionary<V> dictionary;
 
     /**
-     * следующая ячейка
+     * The next entry.
      */
+    @Nullable
     private IntegerEntry<V> next;
+
     /**
-     * текущая ячейка
+     * The current entry.
      */
+    @Nullable
     private IntegerEntry<V> current;
 
     /**
-     * текущий индекс в массиве
+     * The current index.
      */
     private int index;
 
-    /**
-     * Instantiates a new Integer dictionary iterator.
-     *
-     * @param dictionary the dictionary
-     */
-    public IntegerDictionaryIterator(final UnsafeIntegerDictionary<V> dictionary) {
+    public IntegerDictionaryIterator(@NotNull UnsafeIntegerDictionary<V> dictionary) {
         this.dictionary = dictionary;
 
-        final IntegerEntry<V>[] content = dictionary.content();
-
         if (dictionary.size() > 0) {
-            while (index < content.length && (next = content[index++]) == null) ;
+            IntegerEntry<V>[] entries = dictionary.entries();
+            while (index < entries.length && (next = entries[index++]) == null) ;
         }
-    }
-
-    /**
-     * @return итерируемый словарь.
-     */
-    private UnsafeIntegerDictionary<V> getDictionary() {
-        return dictionary;
     }
 
     @Override
@@ -63,14 +57,14 @@ public class IntegerDictionaryIterator<V> implements Iterator<V> {
     }
 
     /**
-     * @return следующая занятая ячейка.
+     * Get the next entry.
+     *
+     * @return the next entry.
      */
     private IntegerEntry<V> nextEntry() {
 
-        final UnsafeIntegerDictionary<V> dictionary = getDictionary();
-
-        final IntegerEntry<V>[] content = dictionary.content();
-        final IntegerEntry<V> entry = next;
+        IntegerEntry<V>[] content = dictionary.entries();
+        IntegerEntry<V> entry = next;
 
         if (entry == null) {
             throw new NoSuchElementException();
@@ -81,6 +75,7 @@ public class IntegerDictionaryIterator<V> implements Iterator<V> {
         }
 
         current = entry;
+
         return entry;
     }
 
@@ -91,11 +86,10 @@ public class IntegerDictionaryIterator<V> implements Iterator<V> {
             throw new IllegalStateException();
         }
 
-        final int key = current.getKey();
+        int key = current.getKey();
 
         current = null;
 
-        final UnsafeIntegerDictionary<V> dictionary = getDictionary();
         dictionary.removeEntryForKey(key);
     }
 }

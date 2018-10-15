@@ -14,13 +14,13 @@ import java.util.function.*;
 public interface ConcurrentArray<E> extends Array<E> {
 
     /**
-     * Creates a new concurrent array for the element's type.
+     * Create a new concurrent array for the element's type.
      *
      * @param type the element's type.
      * @param <T>  the element's type.
      * @return the new concurrent array.
      */
-    static <T> @NotNull ConcurrentArray<T> ofType(@NotNull Class<?> type) {
+    static <T> @NotNull ConcurrentArray<T> ofType(@NotNull Class<? super T> type) {
         return ArrayFactory.newConcurrentStampedLockArray(type);
     }
 
@@ -31,7 +31,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <T>  the element's type.
      * @return the supplier.
      */
-    static <T> @NotNull Supplier<ConcurrentArray<T>> supplier(@NotNull Class<?> type) {
+    static <T> @NotNull Supplier<ConcurrentArray<T>> supplier(@NotNull Class<? super T> type) {
         return () -> ArrayFactory.newConcurrentStampedLockArray(type);
     }
 
@@ -41,7 +41,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <T>  the element's type.
      * @return the supplier.
      */
-    static <T> @NotNull Function<Class<?>, ConcurrentArray<T>> function() {
+    static <T> @NotNull Function<Class<? super T>, ConcurrentArray<T>> function() {
         return ArrayFactory::newConcurrentStampedLockArray;
     }
 
@@ -52,7 +52,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <T>  the element's type.
      * @return the supplier.
      */
-    static <T> @NotNull Function<Class<?>, ConcurrentArray<T>> function(@NotNull Class<?> type) {
+    static <T> @NotNull Function<Class<? super T>, ConcurrentArray<T>> function(@NotNull Class<?> type) {
         return ArrayFactory::newConcurrentStampedLockArray;
     }
 
@@ -212,6 +212,22 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
+     * Execute the function and get a result of the function in write lock of the array.
+     *
+     * @param function the function.
+     * @param <R>      the result's type.
+     * @return the result of the function.
+     */
+    default <R> @Nullable R getInWriteLock(@NotNull Function<@NotNull Array<E>, @Nullable R> function) {
+        long stamp = writeLock();
+        try {
+            return function.apply(this);
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
+
+    /**
      * Execute the function in read lock of this array.
      *
      * @param <F>      the argument's type.
@@ -261,8 +277,8 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @return this array.
      */
     default <F> ConcurrentArray<E> runInWriteLock(
-            @Nullable F argument,
-            @NotNull BiConsumer<ConcurrentArray<E>, F> function
+            @NotNull F argument,
+            @NotNull BiConsumer<@NotNull ConcurrentArray<E>, @NotNull F> function
     ) {
 
         long stamp = writeLock();

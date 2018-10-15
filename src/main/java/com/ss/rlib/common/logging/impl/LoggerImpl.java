@@ -6,6 +6,7 @@ import com.ss.rlib.common.logging.Logger;
 import com.ss.rlib.common.logging.LoggerLevel;
 import com.ss.rlib.common.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -43,20 +44,6 @@ public final class LoggerImpl implements Logger {
     @Override
     public void setName(@NotNull String name) {
         this.name = name;
-    }
-
-    @Override
-    public void info(@NotNull Object owner, @NotNull String message) {
-        if (isEnabled(LoggerLevel.INFO)) {
-            write(LoggerLevel.INFO, owner.getClass().getSimpleName(), message);
-        }
-    }
-
-    @Override
-    public void info(@NotNull String message) {
-        if (isEnabled(LoggerLevel.INFO)) {
-            write(LoggerLevel.INFO, getName(), message);
-        }
     }
 
     @Override
@@ -109,8 +96,8 @@ public final class LoggerImpl implements Logger {
     public <T> void print(
             @NotNull LoggerLevel level,
             @NotNull Object owner,
-            @NotNull T arg,
-            @NotNull Function<T, String> messageFactory
+            @Nullable T arg,
+            @NotNull Function<T, @NotNull String> messageFactory
     ) {
         if (isEnabled(level)) {
             write(level, owner.getClass().getSimpleName(), arg, messageFactory);
@@ -121,9 +108,9 @@ public final class LoggerImpl implements Logger {
     public <F, S> void print(
             @NotNull LoggerLevel level,
             @NotNull Object owner,
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull BiFunction<F, S, String> messageFactory
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull BiFunction<F, S, @NotNull String> messageFactory
     ) {
         if (isEnabled(level)) {
             write(level, owner.getClass().getSimpleName(), first, second, messageFactory);
@@ -134,10 +121,10 @@ public final class LoggerImpl implements Logger {
     public <F, S, T> void print(
             @NotNull LoggerLevel level,
             @NotNull Object owner,
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull final T third,
-            @NotNull TripleFunction<F, S, T, String> messageFactory
+            @Nullable F first,
+            @Nullable S second,
+            @Nullable T third,
+            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
     ) {
         if (isEnabled(level)) {
             write(level, owner.getClass().getSimpleName(), first, second, third, messageFactory);
@@ -145,28 +132,38 @@ public final class LoggerImpl implements Logger {
     }
 
     @Override
-    public <T> void print(@NotNull LoggerLevel level, @NotNull T arg, @NotNull Function<T, String> messageFactory) {
-        write(level, getName(), arg, messageFactory);
+    public <T> void print(
+            @NotNull LoggerLevel level,
+            @Nullable T arg,
+            @NotNull Function<T, @NotNull String> messageFactory
+    ) {
+        if (isEnabled(level)) {
+            write(level, getName(), arg, messageFactory);
+        }
     }
 
     @Override
     public <F, S> void print(
             @NotNull LoggerLevel level,
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull BiFunction<F, S, String> messageFactory
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull BiFunction<F, S, @NotNull String> messageFactory
     ) {
-        write(level, getName(), first, second, messageFactory);
+        if (isEnabled(level)) {
+            write(level, getName(), first, second, messageFactory);
+        }
     }
 
     @Override
     public <F, S, T> void print(
             @NotNull LoggerLevel level,
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull T third,
-            @NotNull TripleFunction<F, S, T, String> messageFactory
+            @Nullable F first,
+            @Nullable S second,
+            @Nullable T third,
+            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
     ) {
-        write(level, getName(), first, second, third, messageFactory);
+        if (isEnabled(level)) {
+            write(level, getName(), first, second, third, messageFactory);
+        }
     }
 }

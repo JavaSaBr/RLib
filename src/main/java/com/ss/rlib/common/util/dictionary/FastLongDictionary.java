@@ -13,7 +13,8 @@ public class FastLongDictionary<V> extends AbstractLongDictionary<V> {
     /**
      * The array of entries.
      */
-    private LongEntry<V>[] content;
+    @NotNull
+    private LongEntry<V>[] entries;
 
     /**
      * The next size value at which to resize (capacity * load factor).
@@ -25,59 +26,39 @@ public class FastLongDictionary<V> extends AbstractLongDictionary<V> {
      */
     private int size;
 
-    /**
-     * Instantiates a new Fast long dictionary.
-     */
     protected FastLongDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Fast long dictionary.
-     *
-     * @param loadFactor the load factor
-     */
-    protected FastLongDictionary(final float loadFactor) {
+    protected FastLongDictionary(float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Fast long dictionary.
-     *
-     * @param initCapacity the init capacity
-     */
-    protected FastLongDictionary(final int initCapacity) {
+    protected FastLongDictionary(int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
-    /**
-     * Instantiates a new Fast long dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
-    protected FastLongDictionary(final float loadFactor, final int initCapacity) {
+    protected FastLongDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
     }
 
     @Override
-    public void setSize(final int size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
     @Override
-    public void setContent(@NotNull final LongEntry<V>[] content) {
-        this.content = content;
-    }
-
-    @NotNull
-    @Override
-    public LongEntry<V>[] content() {
-        return content;
+    public void setEntries(@NotNull LongEntry<V>[] content) {
+        this.entries = content;
     }
 
     @Override
-    public void setThreshold(final int threshold) {
+    public @NotNull LongEntry<V>[] entries() {
+        return entries;
+    }
+
+    @Override
+    public void setThreshold(int threshold) {
         this.threshold = threshold;
     }
 

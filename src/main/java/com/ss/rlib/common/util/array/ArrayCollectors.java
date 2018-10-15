@@ -37,8 +37,8 @@ public class ArrayCollectors {
      * @return the collector.
      */
     public static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(
-            @NotNull Class<?> type,
-            @NotNull Function<Class<?>, A> arrayFactory
+            @NotNull Class<? super T> type,
+            @NotNull Function<Class<? super T>, A> arrayFactory
     ) {
         return new Collector<T, A, A>() {
 
@@ -83,8 +83,8 @@ public class ArrayCollectors {
      * @return the collector.
      */
     public static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(
-            @NotNull Class<?> type,
-            @NotNull Function<Class<?>, A> arrayFactory
+            @NotNull Class<? super T> type,
+            @NotNull Function<Class<? super T>, A> arrayFactory
     ) {
         return new Collector<T, A, A>() {
 
@@ -127,7 +127,7 @@ public class ArrayCollectors {
      * @param type the type of elements.
      * @return the collector.
      */
-    public static <T> @NotNull Collector<T, Array<T>, Array<T>> toArray(@NotNull Class<?> type) {
+    public static <T> @NotNull Collector<T, Array<T>, Array<T>> toArray(@NotNull Class<? super T> type) {
         return collector(type, ArrayFactory::newArray);
     }
 
@@ -138,7 +138,7 @@ public class ArrayCollectors {
      * @return the collector.
      */
     public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(
-            @NotNull Class<?> type
+            @NotNull Class<? super T> type
     ) {
         return concurrentCollector(type, ArrayFactory::newConcurrentStampedLockArray);
     }

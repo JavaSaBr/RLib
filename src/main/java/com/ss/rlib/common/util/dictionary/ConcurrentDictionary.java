@@ -3,8 +3,8 @@ package com.ss.rlib.common.util.dictionary;
 /**
  * The interface with methods for supporting threadsafe for the {@link Dictionary}.
  *
- * @param <K> the type parameter
- * @param <V> the type parameter
+ * @param <K> the key's type.
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public interface ConcurrentDictionary<K, V> extends Dictionary<K, V> {
@@ -23,7 +23,7 @@ public interface ConcurrentDictionary<K, V> extends Dictionary<K, V> {
      *
      * @param stamp the stamp of read lock.
      */
-    default void readUnlock(final long stamp) {
+    default void readUnlock(long stamp) {
         throw new UnsupportedOperationException();
     }
 
@@ -42,7 +42,7 @@ public interface ConcurrentDictionary<K, V> extends Dictionary<K, V> {
      * @param stamp the stamp.
      * @return true is this stamp is valid.
      */
-    default boolean validate(final long stamp) {
+    default boolean validate(long stamp) {
         throw new UnsupportedOperationException();
     }
 
@@ -60,7 +60,7 @@ public interface ConcurrentDictionary<K, V> extends Dictionary<K, V> {
      *
      * @param stamp the stamp of write lock.
      */
-    default void writeUnlock(final long stamp) {
+    default void writeUnlock(long stamp) {
         throw new UnsupportedOperationException();
     }
 }

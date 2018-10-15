@@ -31,7 +31,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
      */
     protected volatile AtomicReference<E[]> array;
 
-    public CopyOnModifyArray(@NotNull Class<E> type, int size) {
+    public CopyOnModifyArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
     }
 

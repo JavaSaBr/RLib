@@ -7,12 +7,12 @@ import com.ss.rlib.common.util.StringUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ConcurrentArray;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -47,14 +47,19 @@ public class LoggerManager {
         String className = System.getProperty(LoggerManager.class.getName() + "_impl");
 
         if (!StringUtils.isEmpty(className)) {
+
             try {
                 implementedClass = (Class<? extends Logger>) Class.forName(className);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
                 implementedClass = LoggerImpl.class;
             }
+
         } else {
-            Iterator<Logger> impls = ServiceLoader.load(Logger.class).iterator();
+
+            var impls = ServiceLoader.load(Logger.class)
+                    .iterator();
+
             if (impls.hasNext()) {
                 implementedClass = impls.next().getClass();
             }
@@ -66,20 +71,20 @@ public class LoggerManager {
     /**
      * The list of listeners.
      */
-    @NotNull
-    private static final ConcurrentArray<LoggerListener> LISTENERS = ConcurrentArray.ofType(LoggerListener.class);
+    private static final ConcurrentArray<LoggerListener> LISTENERS =
+            ConcurrentArray.ofType(LoggerListener.class);
 
     /**
      * The list of writers.
      */
-    @NotNull
-    private static final ConcurrentArray<Writer> WRITERS = ConcurrentArray.ofType(Writer.class);
+    private static final ConcurrentArray<Writer> WRITERS =
+            ConcurrentArray.ofType(Writer.class);
 
     /**
      * The date time formatter.
      */
-    @NotNull
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
+    private static final DateTimeFormatter TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
 
     /**
      * Add the new listener.
@@ -109,15 +114,6 @@ public class LoggerManager {
     }
 
     /**
-     * Get the list of listeners.
-     *
-     * @return the list of listeners.
-     */
-    private static @NotNull ConcurrentArray<LoggerListener> getListeners() {
-        return LISTENERS;
-    }
-
-    /**
      * Get or create a logger for the class.
      *
      * @param cs the class.
@@ -135,15 +131,6 @@ public class LoggerManager {
      */
     public static @NotNull Logger getLogger(@NotNull String name) {
         return notNull(LOGGERS.computeIfAbsent(name, LoggerManager::createLogger));
-    }
-
-    /**
-     * Get the list of writers.
-     *
-     * @return the list of writers.
-     */
-    private static @NotNull ConcurrentArray<Writer> getWriters() {
-        return WRITERS;
     }
 
     /**
@@ -173,8 +160,8 @@ public class LoggerManager {
      */
     public static void write(@NotNull LoggerLevel level, @NotNull String name, @NotNull String message) {
 
-        String timeStump = TIME_FORMATTER.format(LocalTime.now());
-        String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + message;
+        var timeStump = TIME_FORMATTER.format(LocalTime.now());
+        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + message;
 
         write(level, result);
     }
@@ -189,11 +176,11 @@ public class LoggerManager {
     public static void write(
             @NotNull LoggerLevel level,
             @NotNull String name,
-            @NotNull Supplier<String> messageFactory
+            @NotNull Supplier<@NotNull String> messageFactory
     ) {
 
-        String timeStump = TIME_FORMATTER.format(LocalTime.now());
-        String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.get();
+        var timeStump = TIME_FORMATTER.format(LocalTime.now());
+        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.get();
 
         write(level, result);
     }
@@ -210,12 +197,12 @@ public class LoggerManager {
     public static <T> void write(
             @NotNull LoggerLevel level,
             @NotNull String name,
-            @NotNull T arg,
-            @NotNull Function<T, String> messageFactory
+            @Nullable T arg,
+            @NotNull Function<T, @NotNull String> messageFactory
     ) {
 
-        String timeStump = TIME_FORMATTER.format(LocalTime.now());
-        String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(arg);
+        var timeStump = TIME_FORMATTER.format(LocalTime.now());
+        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.apply(arg);
 
         write(level, result);
     }
@@ -234,13 +221,13 @@ public class LoggerManager {
     public static <F, S> void write(
             @NotNull LoggerLevel level,
             @NotNull String name,
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull BiFunction<F, S, String> messageFactory
+            @Nullable F first,
+            @Nullable S second,
+            @NotNull BiFunction<F, S, @NotNull String> messageFactory
     ) {
 
-        String timeStump = TIME_FORMATTER.format(LocalTime.now());
-        String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " +
+        var timeStump = TIME_FORMATTER.format(LocalTime.now());
+        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " +
                 messageFactory.apply(first, second);
 
         write(level, result);
@@ -262,14 +249,14 @@ public class LoggerManager {
     public static <F, S, T> void write(
             @NotNull LoggerLevel level,
             @NotNull String name,
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull T third,
+            @Nullable F first,
+            @Nullable S second,
+            @Nullable T third,
             @NotNull TripleFunction<F, S, T, String> messageFactory
     ) {
 
-        String timeStump = TIME_FORMATTER.format(LocalTime.now());
-        String result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " +
+        var timeStump = TIME_FORMATTER.format(LocalTime.now());
+        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " +
                 messageFactory.apply(first, second, third);
 
         write(level, result);
@@ -283,11 +270,8 @@ public class LoggerManager {
      */
     private static void write(@NotNull LoggerLevel level, @NotNull String resultMessage) {
 
-        ConcurrentArray<LoggerListener> listeners = getListeners();
-        ConcurrentArray<Writer> writers = getWriters();
-
-        listeners.forEachInReadLock(resultMessage, LoggerListener::println);
-        writers.forEachInReadLock(resultMessage, LoggerManager::append);
+        LISTENERS.forEachInReadLock(resultMessage, LoggerListener::println);
+        WRITERS.forEachInReadLock(resultMessage, LoggerManager::append);
 
         System.err.println(resultMessage);
 
@@ -295,8 +279,8 @@ public class LoggerManager {
             return;
         }
 
-        listeners.forEachInReadLock(LoggerListener::flush);
-        writers.forEachInReadLock(LoggerManager::flush);
+        LISTENERS.forEachInReadLock(LoggerListener::flush);
+        WRITERS.forEachInReadLock(LoggerManager::flush);
     }
 
     private static @NotNull Logger createLogger(@NotNull String name) {

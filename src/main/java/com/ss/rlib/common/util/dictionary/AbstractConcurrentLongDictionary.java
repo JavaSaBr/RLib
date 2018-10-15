@@ -8,12 +8,14 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
-public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDictionary<V> implements ConcurrentLongDictionary<V> {
+public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDictionary<V>
+        implements ConcurrentLongDictionary<V> {
 
     /**
      * Тhe array of entries.
      */
-    private volatile LongEntry<V>[] content;
+    @NotNull
+    private volatile LongEntry<V>[] entries;
 
     /**
      * The next size value at which to resize (capacity * load factor).
@@ -25,50 +27,30 @@ public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDi
      */
     private volatile int size;
 
-    /**
-     * Instantiates a new Abstract concurrent long dictionary.
-     */
     protected AbstractConcurrentLongDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent long dictionary.
-     *
-     * @param loadFactor the load factor
-     */
-    protected AbstractConcurrentLongDictionary(final float loadFactor) {
+    protected AbstractConcurrentLongDictionary(float loadFactor) {
         this(loadFactor, DEFAULT_INITIAL_CAPACITY);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent long dictionary.
-     *
-     * @param initCapacity the init capacity
-     */
-    protected AbstractConcurrentLongDictionary(final int initCapacity) {
+    protected AbstractConcurrentLongDictionary(int initCapacity) {
         this(DEFAULT_LOAD_FACTOR, initCapacity);
     }
 
-    /**
-     * Instantiates a new Abstract concurrent long dictionary.
-     *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
-     */
-    protected AbstractConcurrentLongDictionary(final float loadFactor, final int initCapacity) {
+    protected AbstractConcurrentLongDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
     }
 
     @Override
-    public void setContent(@NotNull final LongEntry<V>[] content) {
-        this.content = content;
+    protected void setEntries(@NotNull LongEntry<V>[] entries) {
+        this.entries = entries;
     }
 
-    @NotNull
     @Override
-    public LongEntry<V>[] content() {
-        return content;
+    public @NotNull LongEntry<V>[] entries() {
+        return entries;
     }
 
     @Override
@@ -77,12 +59,12 @@ public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDi
     }
 
     @Override
-    protected void setSize(final int size) {
+    protected void setSize(int size) {
         this.size = size;
     }
 
     @Override
-    public void setThreshold(final int threshold) {
+    public void setThreshold(int threshold) {
         this.threshold = threshold;
     }
 

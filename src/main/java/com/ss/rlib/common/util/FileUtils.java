@@ -19,7 +19,11 @@ import java.nio.file.attribute.FileTime;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -642,6 +646,16 @@ public class FileUtils {
     }
 
     /**
+     * Get a {@link URI} of the {@link URL}.
+     *
+     * @param url the url.
+     * @return the {@link URI}.
+     */
+    public static @NotNull URI getUri(@NotNull URL url) {
+        return Utils.get(url, URL::toURI);
+    }
+
+    /**
      * Get a {@link URL} of the file.
      *
      * @param file the file.
@@ -671,6 +685,148 @@ public class FileUtils {
     public static @NotNull Path walkFileTree(@NotNull Path start, @NotNull FileVisitor<? super Path> visitor) {
         try {
             return Files.walkFileTree(start, visitor);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * @see Files#createTempFile(String, String, FileAttribute[])
+     */
+    public static @NotNull Path createTempFile(
+            @NotNull String prefix,
+            @NotNull String suffix,
+            @Nullable FileAttribute<?>... attrs
+    ) {
+        try {
+            return Files.createTempFile(prefix, suffix, attrs);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Apply each sub-file of the directory to the consumer.
+     *
+     * @param directory the directory.
+     * @param consumer  the consumer.
+     */
+    public static void forEach(@NotNull Path directory, @NotNull Consumer<@NotNull Path> consumer) {
+        validateDirectory(directory);
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+            for (Path path : stream) {
+                consumer.accept(path);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static void validateDirectory(@NotNull Path directory) {
+        if (!Files.isDirectory(directory)) {
+            throw new IllegalArgumentException("The file " + directory + " isn't a directory.");
+        } else if (!Files.exists(directory)) {
+            throw new IllegalArgumentException("The file " + directory + " isn't exists.");
+        }
+    }
+
+    /**
+     * Apply each sub-file of the directory to the consumer.
+     *
+     * @param directory the directory.
+     * @param argument  the argument.
+     * @param consumer  the consumer.
+     * @param <T>       the argument's type.
+     */
+    public static <T> void forEach(
+            @NotNull Path directory,
+            @NotNull T argument,
+            @NotNull BiConsumer<@NotNull Path, @NotNull T> consumer
+    ) {
+
+        validateDirectory(directory);
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+            for (Path path : stream) {
+                consumer.accept(path, argument);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Get children's stream of the directory.
+     *
+     * @param directory the directory.
+     * @return children's stream of the directory.
+     */
+    public static @NotNull Stream<Path> stream(@NotNull Path directory) {
+        validateDirectory(directory);
+
+        var files = Array.ofType(Path.class);
+
+        try (var stream = Files.newDirectoryStream(directory)) {
+            stream.forEach(files::add);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return files.stream();
+    }
+
+    /**
+     * Apply each sub-file of the directory to the consumer.
+     *
+     * @param directory the directory.
+     * @param argument  the argument.
+     * @param consumer  the consumer.
+     * @param <T>       the argument's type.
+     */
+    public static <T> void forEachR(
+            @NotNull Path directory,
+            @NotNull T argument,
+            @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
+    ) {
+
+        validateDirectory(directory);
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+            for (Path path : stream) {
+                consumer.accept(argument, path);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Apply each sub-file of the directory to the consumer.
+     *
+     * @param directory the directory.
+     * @param argument  the argument.
+     * @param condition the condition.
+     * @param consumer  the consumer.
+     * @param <T>       the argument's type.
+     */
+    public static <T> void forEachR(
+            @NotNull Path directory,
+            @NotNull T argument,
+            @NotNull Predicate<@NotNull Path> condition,
+            @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
+    ) {
+
+        validateDirectory(directory);
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+
+            for (Path path : stream) {
+                if (condition.test(path)) {
+                    consumer.accept(argument, path);
+                }
+            }
+
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

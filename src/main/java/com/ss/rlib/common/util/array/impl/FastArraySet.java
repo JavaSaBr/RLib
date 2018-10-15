@@ -13,11 +13,11 @@ public class FastArraySet<E> extends FastArray<E> {
 
     private static final long serialVersionUID = 1L;
 
-    public FastArraySet(Class<E> type) {
+    public FastArraySet(@NotNull Class<? super E> type) {
         super(type);
     }
 
-    public FastArraySet(Class<E> type, int size) {
+    public FastArraySet(@NotNull Class<? super E> type, int size) {
         super(type, size);
     }
 

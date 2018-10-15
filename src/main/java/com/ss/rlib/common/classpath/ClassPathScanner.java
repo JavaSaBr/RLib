@@ -1,11 +1,14 @@
 package com.ss.rlib.common.classpath;
 
+import com.ss.rlib.common.classpath.impl.ClassPathScannerImpl;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.function.Predicate;
 
 /**
@@ -16,6 +19,36 @@ import java.util.function.Predicate;
 public interface ClassPathScanner {
 
     String JAR_EXTENSION = ".jar";
+
+    ClassPathScanner NULL_SCANNER = null;
+
+    ClassPathScanner EMPTY_SCANNER = new ClassPathScannerImpl(ClassPathScanner.class.getClassLoader()) {
+
+        @Override
+        public void addClasses(@NotNull Array<Class<?>> classes) {
+        }
+
+        @Override
+        public void addAdditionalPath(@NotNull String path) {
+        }
+
+        @Override
+        public void addAdditionalPaths(@NotNull String[] paths) {
+        }
+
+        @Override
+        public void addResources(@NotNull Array<String> resources) {
+        }
+
+        @Override
+        public void scan(@Nullable Predicate<String> filter) {
+        }
+    };
+
+    URLClassLoader EMPTY_CLASS_LOADER =
+            new URLClassLoader(new URL[0], ClassPathScanner.class.getClassLoader());
+
+    URLClassLoader NULL_CLASS_LOADER = null;
 
     /**
      * Add some classes to this scanner.

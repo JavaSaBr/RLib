@@ -4,7 +4,7 @@ Please see the file called LICENSE.
  [ ![Download](https://api.bintray.com/packages/javasabr/maven/com.spaceshift.rlib.common/images/download.svg) ](https://bintray.com/javasabr/maven/com.spaceshift.rlib.common/_latestVersion)
 
 
-## How to use
+## How to use for java 10+
 
 #### Gradle
 
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:7.3.1'
+    compile 'com.spaceshift:rlib.common:8.1.0'
 }
 ```
     
@@ -37,7 +37,44 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>7.3.1</version>
+    <version>8.1.0</version>
+</dependency>
+```
+
+## How to use for java 8+
+
+#### Gradle
+
+```groovy
+repositories {
+    maven {
+        url  "https://dl.bintray.com/javasabr/maven" 
+    }
+}
+
+dependencies {
+    compile 'com.spaceshift:rlib.common:7.3.3'
+}
+```
+    
+#### Maven
+
+```xml
+<repositories>
+    <repository>
+        <snapshots>;
+            <enabled>false</enabled>
+        </snapshots>
+        <id>bintray-javasabr-maven</id>
+        <name>bintray</name>
+        <url>https://dl.bintray.com/javasabr/maven</url>
+    </repository>
+</repositories>
+
+<dependency>
+    <groupId>com.spaceshift</groupId>
+    <artifactId>rlib.common</artifactId>
+    <version>7.3.3</version>
 </dependency>
 ```
 

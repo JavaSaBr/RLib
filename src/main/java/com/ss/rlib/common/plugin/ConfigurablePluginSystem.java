@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * The interface to implement configurable plugin system.
@@ -36,12 +38,28 @@ public interface ConfigurablePluginSystem extends PluginSystem {
     /**
      * Preload all plugins.
      */
-    void preLoad();
+    @NotNull CompletableFuture<ConfigurablePluginSystem> preLoad();
+
+    /**
+     * Preload all plugins.
+     *
+     * @param executor the executor.
+     * @return the future.
+     */
+    @NotNull CompletableFuture<ConfigurablePluginSystem> preLoad(@NotNull Executor executor);
 
     /**
      * Initialize all plugins.
      */
-    void initialize();
+    @NotNull CompletableFuture<ConfigurablePluginSystem> initialize();
+
+    /**
+     * Initialize all plugins.
+     *
+     * @param executor the executor.
+     * @return the future.
+     */
+    @NotNull CompletableFuture<ConfigurablePluginSystem> initialize(@NotNull Executor executor);
 
     /**
      * Install a new plugin.
