@@ -666,6 +666,24 @@ public class FileUtils {
     }
 
     /**
+     * @see Path#relativize(Path)
+     */
+    public static @NotNull Path relativize(@NotNull Path base, @NotNull Path other) {
+        return Utils.get(base, other, Path::relativize);
+    }
+
+    /**
+     * @see Path#relativize(Path)
+     */
+    public static @Nullable Path safeRelativize(@Nullable Path base, @Nullable Path other) {
+        if (base == null || other == null) {
+            return null;
+        } else {
+            return Utils.safeGet(base, other, Path::relativize);
+        }
+    }
+
+    /**
      * Create a new default watch service.
      *
      * @return the new default watch service.
@@ -744,7 +762,6 @@ public class FileUtils {
             @NotNull T argument,
             @NotNull BiConsumer<@NotNull Path, @NotNull T> consumer
     ) {
-
         validateDirectory(directory);
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
@@ -789,10 +806,9 @@ public class FileUtils {
             @NotNull T argument,
             @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
     ) {
-
         validateDirectory(directory);
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+        try (var stream = Files.newDirectoryStream(directory)) {
             for (Path path : stream) {
                 consumer.accept(argument, path);
             }
@@ -816,17 +832,14 @@ public class FileUtils {
             @NotNull Predicate<@NotNull Path> condition,
             @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
     ) {
-
         validateDirectory(directory);
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-
+        try (var stream = Files.newDirectoryStream(directory)) {
             for (Path path : stream) {
                 if (condition.test(path)) {
                     consumer.accept(argument, path);
                 }
             }
-
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
