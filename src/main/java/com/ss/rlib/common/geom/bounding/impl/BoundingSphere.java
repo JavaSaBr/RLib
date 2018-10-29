@@ -44,21 +44,25 @@ public class BoundingSphere extends AbstractBounding {
         return GeometryUtils.getSquareDistance(startX, centerY, centerZ, x, y, z) < squareRadius;
     }
 
+    /** {@inheritDoc} */
     @Override
     public float getResultCenterZ() {
         return center.getZ() + offset.getZ();
     }
 
+    /** {@inheritDoc} */
     @Override
     public float getResultCenterY() {
         return center.getY() + offset.getY();
     }
 
+    /** {@inheritDoc} */
     @Override
     public float getResultCenterX() {
         return center.getX() + offset.getX();
     }
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull BoundingType getBoundingType() {
         return BoundingType.SPHERE;
@@ -73,6 +77,7 @@ public class BoundingSphere extends AbstractBounding {
         return radius;
     }
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer) {
 
@@ -85,6 +90,7 @@ public class BoundingSphere extends AbstractBounding {
         return vector.addLocal(offset);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean intersects(@NotNull Bounding bounding, @NotNull Vector3fBuffer buffer) {
         switch (bounding.getBoundingType()) {
@@ -118,6 +124,7 @@ public class BoundingSphere extends AbstractBounding {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean intersects(@NotNull Vector3f start, @NotNull Vector3f direction, @NotNull Vector3fBuffer buffer) {
 

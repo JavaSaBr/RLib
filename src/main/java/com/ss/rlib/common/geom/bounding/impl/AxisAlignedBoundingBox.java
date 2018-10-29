@@ -76,6 +76,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         this.offsetZ = offset.getZ();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean contains(float x, float y, float z) {
         return Math.abs(getResultCenterX() - x) < sizeX &&
@@ -83,11 +84,13 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
                Math.abs(getResultCenterZ() - z) < sizeZ;
     }
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull BoundingType getBoundingType() {
         return BoundingType.AXIS_ALIGNED_BOX;
     }
 
+    /** {@inheritDoc} */
     @Override
     public @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer) {
 
@@ -99,16 +102,19 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         return vector.addLocal(offsetX, offsetY, offsetZ);
     }
 
+    /** {@inheritDoc} */
     @Override
     public float getResultCenterZ() {
         return center.getZ() + offsetZ;
     }
 
+    /** {@inheritDoc} */
     @Override
     public float getResultCenterY() {
         return center.getY() + offsetY;
     }
 
+    /** {@inheritDoc} */
     @Override
     public float getResultCenterX() {
         return center.getX() + offsetX;
@@ -160,6 +166,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         return buffer.take(size);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean intersects(@NotNull Bounding bounding, @NotNull Vector3fBuffer buffer) {
         switch (bounding.getBoundingType()) {
@@ -216,6 +223,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean intersects(
             @NotNull Vector3f start,
@@ -254,6 +262,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
         return tmin <= tmax && tmax > 0.f;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void update(@NotNull Quaternion4f rotation, @NotNull Vector3fBuffer buffer) {
 
