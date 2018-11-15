@@ -50,9 +50,9 @@ public final class DefaultServerNetwork extends AbstractAsyncNetwork implements 
     private Consumer<@NotNull Client> destroyedHandler;
 
     public DefaultServerNetwork(
-            @NotNull NetworkConfig config,
-            @NotNull ReadablePacketRegistry packetRegistry,
-            @NotNull AcceptHandler acceptHandler
+        @NotNull NetworkConfig config,
+        @NotNull ReadablePacketRegistry packetRegistry,
+        @NotNull AcceptHandler acceptHandler
     ) throws IOException {
 
         super(config, packetRegistry);
@@ -66,8 +66,8 @@ public final class DefaultServerNetwork extends AbstractAsyncNetwork implements 
 
     @Override
     public <A> void accept(
-            @Nullable A attachment,
-            @NotNull CompletionHandler<AsynchronousSocketChannel, ? super A> handler
+        @Nullable A attachment,
+        @NotNull CompletionHandler<AsynchronousSocketChannel, ? super A> handler
     ) {
         channel.accept(attachment, handler);
     }

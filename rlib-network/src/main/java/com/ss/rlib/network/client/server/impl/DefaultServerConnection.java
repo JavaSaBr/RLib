@@ -23,9 +23,9 @@ public class DefaultServerConnection extends AbstractAsyncConnection implements 
     }
 
     public DefaultServerConnection(
-            @NotNull ClientNetwork network,
-            @NotNull AsynchronousSocketChannel channel,
-            @NotNull Class<? extends WritablePacket> sendableType
+        @NotNull ClientNetwork network,
+        @NotNull AsynchronousSocketChannel channel,
+        @NotNull Class<? extends WritablePacket> sendableType
     ) {
         super(network, channel, sendableType);
     }
@@ -38,7 +38,9 @@ public class DefaultServerConnection extends AbstractAsyncConnection implements 
     @Override
     protected void doClose() throws IOException {
         super.doClose();
-        ClientNetwork clientNetwork = (ClientNetwork) getNetwork();
+
+        var clientNetwork = (ClientNetwork) getNetwork();
+
         if (clientNetwork.getCurrentServer() == getOwner()) {
             clientNetwork.setCurrentServer(null);
         }

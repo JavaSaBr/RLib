@@ -25,7 +25,7 @@ public interface WritablePacket extends Packet {
      * @param buffer the buffer.
      * @param value  the value.
      */
-    default void writeByte(@NotNull final ByteBuffer buffer, final int value) {
+    default void writeByte(@NotNull ByteBuffer buffer, int value) {
         buffer.put((byte) value);
     }
 
@@ -34,7 +34,7 @@ public interface WritablePacket extends Packet {
      *
      * @param buffer the buffer.
      */
-    default void writePacketId(@NotNull final ByteBuffer buffer) {
+    default void writePacketId(@NotNull ByteBuffer buffer) {
         writeShort(buffer, getPacketId());
     }
 
@@ -44,8 +44,9 @@ public interface WritablePacket extends Packet {
      * @return the packet id.
      */
     default int getPacketId() {
-        final PacketDescription description = getClass().getAnnotation(PacketDescription.class);
-        return description.id();
+        return getClass()
+            .getAnnotation(PacketDescription.class)
+            .id();
     }
 
     /**
@@ -54,7 +55,7 @@ public interface WritablePacket extends Packet {
      * @param buffer the buffer.
      * @param value  the value.
      */
-    default void writeChar(@NotNull final ByteBuffer buffer, final char value) {
+    default void writeChar(@NotNull ByteBuffer buffer, char value) {
         buffer.putChar(value);
     }
 
@@ -74,7 +75,7 @@ public interface WritablePacket extends Packet {
      * @param buffer the buffer.
      * @param value  the value.
      */
-    default void writeFloat(@NotNull final ByteBuffer buffer, final float value) {
+    default void writeFloat(@NotNull ByteBuffer buffer, float value) {
         buffer.putFloat(value);
     }
 
@@ -84,7 +85,7 @@ public interface WritablePacket extends Packet {
      * @param buffer     the buffer.
      * @param packetSize the result packet size.
      */
-    default void writePacketSize(@NotNull final ByteBuffer buffer, final int packetSize) {
+    default void writePacketSize(@NotNull ByteBuffer buffer, int packetSize) {
         buffer.putShort(0, (short) packetSize);
     }
 
@@ -94,7 +95,7 @@ public interface WritablePacket extends Packet {
      * @param buffer the buffer.
      * @param value  the value.
      */
-    default void writeInt(@NotNull final ByteBuffer buffer, final int value) {
+    default void writeInt(@NotNull ByteBuffer buffer, int value) {
         buffer.putInt(value);
     }
 
@@ -104,7 +105,7 @@ public interface WritablePacket extends Packet {
      * @param buffer the buffer.
      * @param value  the value.
      */
-    default void writeLong(@NotNull final ByteBuffer buffer, final long value) {
+    default void writeLong(@NotNull ByteBuffer buffer, long value) {
         buffer.putLong(value);
     }
 
@@ -113,7 +114,7 @@ public interface WritablePacket extends Packet {
      *
      * @param buffer the buffer
      */
-    default void prepareWritePosition(@NotNull final ByteBuffer buffer) {
+    default void prepareWritePosition(@NotNull ByteBuffer buffer) {
         buffer.position(2);
     }
 
@@ -123,7 +124,7 @@ public interface WritablePacket extends Packet {
      * @param buffer the buffer.
      * @param value  the value for writing.
      */
-    default void writeShort(@NotNull final ByteBuffer buffer, final int value) {
+    default void writeShort(@NotNull ByteBuffer buffer, int value) {
         buffer.putShort((short) value);
     }
 
@@ -133,7 +134,7 @@ public interface WritablePacket extends Packet {
      * @param buffer the buffer.
      * @param string the string for writing.
      */
-    default void writeString(@NotNull final ByteBuffer buffer, @NotNull final String string) {
+    default void writeString(@NotNull ByteBuffer buffer, @NotNull String string) {
         writeInt(buffer, string.length());
 
         for (int i = 0, length = string.length(); i < length; i++) {
@@ -147,7 +148,7 @@ public interface WritablePacket extends Packet {
      * @param buffer thr packet buffer.
      * @param data   the data buffer.
      */
-    default void writeBuffer(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer data) {
+    default void writeBuffer(@NotNull ByteBuffer buffer, @NotNull ByteBuffer data) {
         buffer.put(data.array(), data.position(), data.limit());
     }
 

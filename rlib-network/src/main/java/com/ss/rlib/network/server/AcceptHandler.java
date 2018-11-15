@@ -1,5 +1,12 @@
 package com.ss.rlib.network.server;
 
+import com.ss.rlib.network.server.client.Client;
+import com.ss.rlib.network.server.client.ClientConnection;
+import com.ss.rlib.network.server.client.impl.DefaultClient;
+import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.StandardSocketOptions;
@@ -8,14 +15,6 @@ import java.nio.channels.CompletionHandler;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import com.ss.rlib.network.server.client.Client;
-import com.ss.rlib.network.server.client.ClientConnection;
-import com.ss.rlib.network.server.client.impl.DefaultClient;
-import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
 
 /**
  * The interface to implement a handler of accepted connections.
@@ -33,9 +32,9 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
      * @return the accept handler.
      */
     static @NotNull AcceptHandler newSimple(
-            @NotNull BiFunction<ServerNetwork, AsynchronousSocketChannel, ClientConnection> connectionFactory,
-            @NotNull Function<ClientConnection, Client> clientFactory,
-            @Nullable Consumer<Client> clientConsumer
+        @NotNull BiFunction<ServerNetwork, AsynchronousSocketChannel, ClientConnection> connectionFactory,
+        @NotNull Function<ClientConnection, Client> clientFactory,
+        @Nullable Consumer<Client> clientConsumer
     ) {
         return (channel, network) -> {
 
@@ -46,8 +45,8 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
                 throw new UncheckedIOException(e);
             }
 
-            ClientConnection connection = connectionFactory.apply(network, channel);
-            Client client = clientFactory.apply(connection);
+            var connection = connectionFactory.apply(network, channel);
+            var client = clientFactory.apply(connection);
             connection.setOwner(client);
             client.notifyConnected();
             connection.startRead();

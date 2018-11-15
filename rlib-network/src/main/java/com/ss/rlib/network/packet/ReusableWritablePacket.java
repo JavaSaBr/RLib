@@ -31,7 +31,7 @@ public interface ReusableWritablePacket extends WritablePacket, Reusable {
      *
      * @param count the count.
      */
-    void decreaseSends(final int count);
+    void decreaseSends(int count);
 
     /**
      * Increase sending count.
@@ -43,7 +43,7 @@ public interface ReusableWritablePacket extends WritablePacket, Reusable {
      *
      * @param count the count.
      */
-    void increaseSends(final int count);
+    void increaseSends(int count);
 
     /**
      * Set the pool.

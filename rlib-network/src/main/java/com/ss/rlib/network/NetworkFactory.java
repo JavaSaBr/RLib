@@ -60,9 +60,9 @@ public final class NetworkFactory {
      * @return the client network.
      */
     public static @NotNull ClientNetwork newDefaultAsyncClientNetwork(
-            @NotNull NetworkConfig config,
-            @NotNull ReadablePacketRegistry registry,
-            @NotNull ConnectHandler connectHandler
+        @NotNull NetworkConfig config,
+        @NotNull ReadablePacketRegistry registry,
+        @NotNull ConnectHandler connectHandler
     ) {
         try {
             return new DefaultClientNetwork(config, registry, connectHandler);
@@ -131,11 +131,11 @@ public final class NetworkFactory {
      * @return the client network.
      */
     public static @NotNull ServerNetwork newDefaultAsyncServerNetwork(
-            @NotNull ReadablePacketRegistry registry,
-            @NotNull Consumer<@NotNull Client> clientConsumer
+        @NotNull ReadablePacketRegistry registry,
+        @NotNull Consumer<@NotNull Client> clientConsumer
     ) {
         return newDefaultAsyncServerNetwork(NetworkConfig.DEFAULT_SERVER, registry,
-                AcceptHandler.newDefault(clientConsumer));
+            AcceptHandler.newDefault(clientConsumer));
     }
 
     /**
@@ -146,8 +146,8 @@ public final class NetworkFactory {
      * @return the client network.
      */
     public static @NotNull ServerNetwork newDefaultAsyncServerNetwork(
-            @NotNull ReadablePacketRegistry registry,
-            @NotNull AcceptHandler acceptHandler
+        @NotNull ReadablePacketRegistry registry,
+        @NotNull AcceptHandler acceptHandler
     ) {
         return newDefaultAsyncServerNetwork(NetworkConfig.DEFAULT_SERVER, registry, acceptHandler);
     }
@@ -161,9 +161,9 @@ public final class NetworkFactory {
      * @return the client network.
      */
     public static @NotNull ServerNetwork newDefaultAsyncServerNetwork(
-            @NotNull NetworkConfig config,
-            @NotNull ReadablePacketRegistry registry,
-            @NotNull AcceptHandler acceptHandler
+        @NotNull NetworkConfig config,
+        @NotNull ReadablePacketRegistry registry,
+        @NotNull AcceptHandler acceptHandler
     ) {
         try {
             return new DefaultServerNetwork(config, registry, acceptHandler);

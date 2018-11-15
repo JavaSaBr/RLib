@@ -12,9 +12,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractPacket implements Packet {
 
-    /**
-     * The constant LOGGER.
-     */
     @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(Packet.class);
 

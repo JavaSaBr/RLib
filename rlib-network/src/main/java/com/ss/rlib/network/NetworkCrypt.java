@@ -35,7 +35,7 @@ public interface NetworkCrypt {
     }
 
     /**
-     * Decrypt a byte array.
+     * Decrypt the byte array.
      *
      * @param data   the byte array.
      * @param offset the offset.
@@ -44,7 +44,7 @@ public interface NetworkCrypt {
     void decrypt(@NotNull byte[] data, int offset, int length);
 
     /**
-     * Encrypt a byte array.
+     * Encrypt the byte array.
      *
      * @param data   the byte array.
      * @param offset the offset.

@@ -2,7 +2,6 @@ package com.ss.rlib.network.server.client.impl;
 
 import com.ss.rlib.network.NetworkCrypt;
 import com.ss.rlib.network.impl.AbstractConnectionOwner;
-import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
 import com.ss.rlib.network.server.client.ClientConnection;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ public class DefaultClient extends AbstractConnectionOwner implements Client {
     @Override
     protected void doDestroy() {
 
-        ServerNetwork serverNetwork = getConnection()
+        var serverNetwork = getConnection()
             .getNetwork();
 
         super.doDestroy();

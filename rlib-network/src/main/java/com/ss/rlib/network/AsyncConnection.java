@@ -11,30 +11,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface AsyncConnection {
 
-    /**
-     * Get a connection owner.
-     *
-     * @return the connection owner.
-     */
     @Nullable ConnectionOwner getOwner();
 
-    /**
-     * Get the connection network.
-     *
-     * @return the connection network.
-     */
-    @NotNull AsyncNetwork getNetwork();
-
-    /**
-     * Set the new connection owner.
-     *
-     * @param owner the connection owner.
-     */
     void setOwner(@Nullable ConnectionOwner owner);
 
-    /**
-     * Close this connection.
-     */
+    @NotNull AsyncNetwork getNetwork();
+
+
     void close();
 
     /**
@@ -44,11 +27,6 @@ public interface AsyncConnection {
      */
     long getLastActivity();
 
-    /**
-     * Check if the connection is closed.
-     *
-     * @return true if this connection is closed.
-     */
     boolean isClosed();
 
     /**

@@ -20,15 +20,16 @@ public abstract class AbstractWritablePacket extends AbstractPacket implements W
     private int packetId;
 
     protected AbstractWritablePacket() {
-        final PacketDescription description = getClass().getAnnotation(PacketDescription.class);
-        this.packetId = description.id();
+        this.packetId = getClass()
+            .getAnnotation(PacketDescription.class)
+            .id();
     }
 
     @Override
-    public void write(@NotNull final ByteBuffer buffer) {
+    public void write(@NotNull ByteBuffer buffer) {
         try {
             writeImpl(buffer);
-        } catch (final Exception e) {
+        } catch (Exception e) {
             LOGGER.warning(this, e);
             LOGGER.warning(this, "Buffer " + buffer + "\n" + Utils.hexdump(buffer.array(), buffer.position()));
         }
@@ -39,7 +40,7 @@ public abstract class AbstractWritablePacket extends AbstractPacket implements W
      *
      * @param buffer the buffer
      */
-    protected void writeImpl(@NotNull final ByteBuffer buffer) {
+    protected void writeImpl(@NotNull ByteBuffer buffer) {
         writePacketId(buffer);
     }
 

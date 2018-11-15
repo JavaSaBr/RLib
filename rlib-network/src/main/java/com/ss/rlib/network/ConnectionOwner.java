@@ -18,18 +18,8 @@ public interface ConnectionOwner {
      */
     void destroy();
 
-    /**
-     * Get the network crypt of this owner.
-     *
-     * @return the network crypt.
-     */
     @NotNull NetworkCrypt getCrypt();
 
-    /**
-     * Get the connection.
-     *
-     * @return the connection.
-     */
     @NotNull AsyncConnection getConnection();
 
     /**
@@ -48,7 +38,7 @@ public interface ConnectionOwner {
     void readPacket(@NotNull ReadablePacket packet, @NotNull ByteBuffer buffer);
 
     /**
-     * Send the packet to the owner.
+     * Send the packet to this owner.
      *
      * @param packet the packet.
      */

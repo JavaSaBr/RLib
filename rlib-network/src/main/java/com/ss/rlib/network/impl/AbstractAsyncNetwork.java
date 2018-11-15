@@ -24,34 +24,10 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(AsyncNetwork.class);
 
-    /**
-     * The pool with read buffers.
-     */
-    @NotNull
     protected final Pool<ByteBuffer> readBufferPool;
-
-    /**
-     * The pool with wait buffers.
-     */
-    @NotNull
     protected final Pool<ByteBuffer> waitBufferPool;
-
-    /**
-     * The pool with write buffers.
-     */
-    @NotNull
     protected final Pool<ByteBuffer> writeBufferPool;
-
-    /**
-     * The readable packet registry.
-     */
-    @NotNull
     protected final ReadablePacketRegistry registry;
-
-    /**
-     * The network config.
-     */
-    @NotNull
     protected final NetworkConfig config;
 
     protected AbstractAsyncNetwork(@NotNull NetworkConfig config, @NotNull ReadablePacketRegistry registry) {
@@ -74,7 +50,7 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
 
     @Override
     public @NotNull ByteBuffer takeReadBuffer() {
-        ByteBuffer buffer = readBufferPool.take(config, readBufferFactory());
+        var buffer = readBufferPool.take(config, readBufferFactory());
         buffer.clear();
         return buffer;
     }
@@ -86,12 +62,13 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
      */
     protected @NotNull Function<NetworkConfig, ByteBuffer> readBufferFactory() {
         return conf -> (conf.isDirectByteBuffer() ?
-                allocateDirect(conf.getReadBufferSize()) : allocate(conf.getReadBufferSize())).order(LITTLE_ENDIAN);
+            allocateDirect(conf.getReadBufferSize()) : allocate(conf.getReadBufferSize()))
+            .order(LITTLE_ENDIAN);
     }
 
     @Override
     public @NotNull ByteBuffer takeWaitBuffer() {
-        ByteBuffer buffer = writeBufferPool.take(config, waitBufferFactory());
+        var buffer = writeBufferPool.take(config, waitBufferFactory());
         buffer.clear();
         return buffer;
     }
@@ -103,12 +80,13 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
      */
     protected @NotNull Function<NetworkConfig, ByteBuffer> waitBufferFactory() {
         return conf -> (conf.isDirectByteBuffer() ?
-                allocateDirect(conf.getReadBufferSize() * 2) : allocate(conf.getReadBufferSize() * 2)).order(LITTLE_ENDIAN);
+            allocateDirect(conf.getReadBufferSize() * 2) : allocate(conf.getReadBufferSize() * 2))
+            .order(LITTLE_ENDIAN);
     }
 
     @Override
     public @NotNull ByteBuffer takeWriteBuffer() {
-        ByteBuffer buffer = writeBufferPool.take(config, writeBufferFactory());
+        var buffer = writeBufferPool.take(config, writeBufferFactory());
         buffer.clear();
         return buffer;
     }
@@ -120,22 +98,26 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
      */
     protected Function<NetworkConfig, ByteBuffer> writeBufferFactory() {
         return conf -> (conf.isDirectByteBuffer() ?
-                allocateDirect(conf.getWriteBufferSize()) : allocate(conf.getWriteBufferSize())).order(LITTLE_ENDIAN);
+            allocateDirect(conf.getWriteBufferSize()) : allocate(conf.getWriteBufferSize()))
+            .order(LITTLE_ENDIAN);
     }
 
     @Override
-    public void putReadBuffer(@NotNull ByteBuffer buffer) {
+    public @NotNull AbstractAsyncNetwork putReadBuffer(@NotNull ByteBuffer buffer) {
         readBufferPool.put(buffer);
+        return this;
     }
 
     @Override
-    public void putWaitBuffer(@NotNull ByteBuffer buffer) {
+    public @NotNull AbstractAsyncNetwork putWaitBuffer(@NotNull ByteBuffer buffer) {
         waitBufferPool.put(buffer);
+        return this;
     }
 
     @Override
-    public void putWriteBuffer(@NotNull ByteBuffer buffer) {
+    public @NotNull AbstractAsyncNetwork putWriteBuffer(@NotNull ByteBuffer buffer) {
         writeBufferPool.put(buffer);
+        return this;
     }
 
     @Override

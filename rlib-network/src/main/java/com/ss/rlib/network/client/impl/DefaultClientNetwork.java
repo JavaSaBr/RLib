@@ -17,7 +17,6 @@ import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * The base implementation of a async client network.
@@ -26,27 +25,12 @@ import java.util.concurrent.Future;
  */
 public final class DefaultClientNetwork extends AbstractAsyncNetwork implements ClientNetwork {
 
-    /**
-     * The asynchronous channel group.
-     */
-    @NotNull
     protected final AsynchronousChannelGroup group;
-
-    /**
-     * The connection handler.
-     */
-    @NotNull
     protected final ConnectHandler connectHandler;
 
-    /**
-     * The asynchronous channel.
-     */
     @Nullable
     protected volatile AsynchronousSocketChannel channel;
 
-    /**
-     * The current server.
-     */
     @Nullable
     protected volatile Server currentServer;
 
@@ -58,8 +42,14 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
 
         super(config, packetRegistry);
 
-        this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(),
-                new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
+        this.group = AsynchronousChannelGroup.withFixedThreadPool(
+            config.getGroupSize(),
+            new GroupThreadFactory(
+                config.getGroupName(),
+                config.getThreadClass(),
+                config.getThreadPriority()
+            )
+        );
 
         this.connectHandler = connectHandler;
     }
@@ -110,7 +100,7 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
     @Override
     public synchronized @NotNull Server connect(@NotNull InetSocketAddress serverAddress) {
 
-        Future<Void> future = prepareChannel().connect(serverAddress);
+        var future = prepareChannel().connect(serverAddress);
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {
@@ -125,11 +115,13 @@ public final class DefaultClientNetwork extends AbstractAsyncNetwork implements 
     @Override
     public synchronized void shutdown() {
 
-        Server currentServer = getCurrentServer();
+        var currentServer = getCurrentServer();
 
         if (currentServer != null) {
             currentServer.destroy();
         }
+
+        setCurrentServer(null);
 
         group.shutdown();
     }

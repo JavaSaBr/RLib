@@ -19,7 +19,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer to read data.
      * @return true if reading was success.
      */
-    boolean read(@NotNull final ConnectionOwner owner, @NotNull final ByteBuffer buffer);
+    boolean read(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer);
 
     /**
      * Read 1 byte from this packet.
@@ -27,7 +27,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer for reading.
      * @return 1 byte from this packet.
      */
-    default int readByte(@NotNull final ByteBuffer buffer) {
+    default int readByte(@NotNull ByteBuffer buffer) {
         return buffer.get();
     }
 
@@ -37,7 +37,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer for reading.
      * @param array  the bytes array.
      */
-    default void readBytes(@NotNull final ByteBuffer buffer, @NotNull final byte[] array) {
+    default void readBytes(@NotNull ByteBuffer buffer, @NotNull byte[] array) {
         buffer.get(array);
     }
 
@@ -49,8 +49,7 @@ public interface ReadablePacket extends Packet {
      * @param offset the offset for reading.
      * @param length the length for reading.
      */
-    default void readBytes(@NotNull final ByteBuffer buffer, @NotNull final byte[] array, final int offset,
-                           final int length) {
+    default void readBytes(@NotNull ByteBuffer buffer, @NotNull byte[] array, int offset, int length) {
         buffer.get(array, offset, length);
     }
 
@@ -60,7 +59,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer for reading.
      * @return 4 bytes from this packet.
      */
-    default float readFloat(@NotNull final ByteBuffer buffer) {
+    default float readFloat(@NotNull ByteBuffer buffer) {
         return buffer.getFloat();
     }
 
@@ -70,7 +69,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer for reading.
      * @return 4 bytes from this packet.
      */
-    default int readInt(@NotNull final ByteBuffer buffer) {
+    default int readInt(@NotNull ByteBuffer buffer) {
         return buffer.getInt();
     }
 
@@ -80,7 +79,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer for reading.
      * @return 8 bytes from this packet.
      */
-    default long readLong(@NotNull final ByteBuffer buffer) {
+    default long readLong(@NotNull ByteBuffer buffer) {
         return buffer.getLong();
     }
 
@@ -90,7 +89,7 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer for reading.
      * @return 2 bytes from this packet.
      */
-    default int readShort(@NotNull final ByteBuffer buffer) {
+    default int readShort(@NotNull ByteBuffer buffer) {
         return buffer.getShort();
     }
 
@@ -100,10 +99,10 @@ public interface ReadablePacket extends Packet {
      * @param buffer the buffer.
      * @return the read string.
      */
-    default @NotNull String readString(@NotNull final ByteBuffer buffer) {
+    default @NotNull String readString(@NotNull ByteBuffer buffer) {
 
-        final int length = readInt(buffer);
-        final char[] array = new char[length];
+        var length = readInt(buffer);
+        var array = new char[length];
 
         for (int i = 0; i < length; i++) {
             array[i] = buffer.getChar();

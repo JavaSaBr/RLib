@@ -22,9 +22,9 @@ public class DefaultClientConnection extends AbstractAsyncConnection implements 
     }
 
     public DefaultClientConnection(
-            @NotNull ServerNetwork network,
-            @NotNull AsynchronousSocketChannel channel,
-            @NotNull Class<? extends WritablePacket> sendableType
+        @NotNull ServerNetwork network,
+        @NotNull AsynchronousSocketChannel channel,
+        @NotNull Class<? extends WritablePacket> sendableType
     ) {
         super(network, channel, sendableType);
     }

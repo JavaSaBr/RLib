@@ -52,21 +52,21 @@ public interface AsyncNetwork {
      *
      * @param buffer the old buffer.
      */
-    void putReadBuffer(@NotNull ByteBuffer buffer);
+    @NotNull AsyncNetwork putReadBuffer(@NotNull ByteBuffer buffer);
 
     /**
      * Store the old wait buffer.
      *
      * @param buffer the old wait buffer.
      */
-    void putWaitBuffer(@NotNull ByteBuffer buffer);
+    @NotNull AsyncNetwork putWaitBuffer(@NotNull ByteBuffer buffer);
 
     /**
      * Store the old write buffer.
      *
      * @param buffer the old buffer.
      */
-    void putWriteBuffer(@NotNull ByteBuffer buffer);
+    @NotNull AsyncNetwork putWriteBuffer(@NotNull ByteBuffer buffer);
 
     /**
      * Shutdown this network.

@@ -28,15 +28,18 @@ public interface ConnectHandler extends CompletionHandler<Void, ClientNetwork> {
      * @return the connection handler.
      */
     static @NotNull ConnectHandler newSimple(
-            @NotNull BiFunction<ClientNetwork, AsynchronousSocketChannel, ServerConnection> connectionFactory,
-            @NotNull Function<ServerConnection, Server> serverFactory
+        @NotNull BiFunction<ClientNetwork, AsynchronousSocketChannel, ServerConnection> connectionFactory,
+        @NotNull Function<ServerConnection, Server> serverFactory
     ) {
         return (network) -> {
-            AsynchronousSocketChannel channel = notNull(network.getChannel());
-            ServerConnection connection = connectionFactory.apply(network, channel);
-            Server server = serverFactory.apply(connection);
+
+            var channel = notNull(network.getChannel());
+            var connection = connectionFactory.apply(network, channel);
+            var server = serverFactory.apply(connection);
+
             connection.setOwner(server);
             connection.startRead();
+
             network.setCurrentServer(server);
         };
     }

@@ -33,8 +33,8 @@ public interface ServerNetwork extends AsyncNetwork {
      * @param handler    the handler.
      */
     <A> void accept(
-            @Nullable A attachment,
-            @NotNull CompletionHandler<@NotNull AsynchronousSocketChannel, @Nullable ? super A> handler
+        @Nullable A attachment,
+        @NotNull CompletionHandler<@NotNull AsynchronousSocketChannel, @Nullable ? super A> handler
     );
 
     /**

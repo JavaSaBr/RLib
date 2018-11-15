@@ -22,22 +22,8 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(Server.class);
 
-    /**
-     * The connection.
-     */
-    @NotNull
     protected final AsyncConnection connection;
-
-    /**
-     * The crypt.
-     */
-    @NotNull
     protected final NetworkCrypt crypt;
-
-    /**
-     * The flag of destroying this owner.
-     */
-    @NotNull
     protected final AtomicBoolean destroyed;
 
     protected AbstractConnectionOwner(@NotNull AsyncConnection connection, @NotNull NetworkCrypt crypt) {

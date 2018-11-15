@@ -24,10 +24,6 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     protected static final ThreadLocal<Map<Class<? super ReusableWritablePacket>, Pool<ReusableWritablePacket>>>
             LOCAL_POOLS = ThreadLocal.withInitial(HashMap::new);
 
-    /**
-     * The counter of pending sendings.
-     */
-    @NotNull
     protected final AtomicInteger counter;
 
     /**
@@ -35,15 +31,8 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
      */
     @Nullable
     protected volatile Pool<ReusableWritablePacket> pool;
-
-    /**
-     * The memory barrier.
-     */
     protected volatile int barrier;
 
-    /**
-     * The sink for the memory barrier.
-     */
     protected int barrierSink;
 
     public AbstractReusableWritablePacket() {
@@ -129,7 +118,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     protected @NotNull Pool<ReusableWritablePacket> getThreadLocalPool() {
         Class<ReusableWritablePacket> packetClass = ClassUtils.unsafeNNCast(getClass());
         return LOCAL_POOLS.get().computeIfAbsent(packetClass,
-                PoolFactory::newConcurrentStampedLockReusablePool);
+            PoolFactory::newConcurrentStampedLockReusablePool);
     }
 
     @Override
