@@ -1,0 +1,94 @@
+
+.simple-popup-dialog {
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-background-color: white;
+}
+
+.simple-popup-dialog > .dialog-header {
+    -fx-background-color: black;
+    -fx-padding: 2px;
+    -fx-alignment: center-left;
+}
+
+.simple-popup-dialog > .dialog-header > .button-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8d8d8d;
+}
+
+.simple-popup-dialog > .dialog-header > .button-close:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.simple-popup-dialog > .dialog-header > .button-close:pressed {
+    -fx-background-color: transparent;
+    -fx-text-fill: #727272;
+}
+
+.simple-popup-dialog > .dialog-header > .dialog-title {
+    -fx-text-fill: white;
+}
+
+.control-dialog {
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-background-color: white;
+}
+
+.control-dialog > .dialog-header {
+    -fx-background-color: black;
+    -fx-padding: 2px;
+    -fx-alignment: center-left;
+    -fx-min-height: 26px;
+}
+
+.control-dialog > .dialog-header > .dialog-title {
+    -fx-text-fill: white;
+}
+
+.control-dialog > .dialog-header > .button-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8d8d8d;
+}
+
+.control-dialog > .dialog-header > .button-close:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.control-dialog > .dialog-header > .button-close:pressed {
+    -fx-background-color: transparent;
+    -fx-text-fill: #727272;
+}
+
+.control-dialog > .dialog-actions {
+    -fx-padding: 2px;
+    -fx-alignment: center-right;
+    -fx-min-height: 34px;
+    -fx-hgap: 2px;
+}
+
+.control-dialog > .dialog-actions > .button-action {
+    -fx-max-height: 30px;
+    -fx-background-color: black;
+    -fx-background-radius: 0px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-text-fill: #8d8d8d;
+}
+
+.control-dialog > .dialog-actions > .button-action:hover {
+    -fx-background-color: black;
+    -fx-background-radius: 0px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-text-fill: white;
+}
+.control-dialog > .dialog-actions > .button-action:pressed {
+    -fx-background-color: black;
+    -fx-background-radius: 0px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+    -fx-text-fill: #727272;
+}

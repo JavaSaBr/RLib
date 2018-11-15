@@ -1,2 +1,5 @@
 rootProject.name = 'rlib'
-
+enableFeaturePreview('STABLE_PUBLISHING')
+include ':rlib-common'
+include ':rlib-fx'
+include ':rlib-network'
