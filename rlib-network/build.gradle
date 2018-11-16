@@ -1,3 +1,9 @@
+ext.baseName = "afwfe"
+
 dependencies {
     compile project(":rlib-common")
+}
+
+jar {
+    baseName "rlib.network"
 }
