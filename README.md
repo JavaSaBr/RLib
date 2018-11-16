@@ -16,9 +16,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:9.0.0'
-    compile 'com.spaceshift:rlib.fx:9.0.0'
-    compile 'com.spaceshift:rlib.network:9.0.0'
+    compile 'com.spaceshift:rlib.common:9.0.1'
+    compile 'com.spaceshift:rlib.fx:9.0.1'
+    compile 'com.spaceshift:rlib.network:9.0.1'
 }
 ```
     
@@ -39,17 +39,17 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>9.0.0</version>
+    <version>9.0.1</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.fx</artifactId>
-    <version>9.0.0</version>
+    <version>9.0.1</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.network</artifactId>
-    <version>9.0.0</version>
+    <version>9.0.1</version>
 </dependency>
 
 ```
@@ -169,8 +169,8 @@ dependencies {
     
     // Stream Collector
     Array<Integer> result = IntStream.range(0, 1000)
-                    .mapToObj(value -> value)
-                    .collect(ArrayCollectors.toArray(Integer.class));
+        .mapToObj(value -> value)
+        .collect(ArrayCollectors.toArray(Integer.class));
 ```
 
 ### Concurrent Array API
@@ -201,9 +201,9 @@ dependencies {
     
     // Stream Collector
     ConcurrentArray<Integer> result = IntStream.range(0, 1000)
-                    .parallel()
-                    .mapToObj(value -> value)
-                    .collect(ArrayCollectors.toConcurrentArray(Integer.class));
+        .parallel()
+        .mapToObj(value -> value)
+        .collect(ArrayCollectors.toConcurrentArray(Integer.class));
 ```
 
 ### Logger API
@@ -244,7 +244,7 @@ dependencies {
 
             @Override
             protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
-                final String message = readString(buffer);
+                var message = readString(buffer);
                 System.out.println("Server: received \"" + message + "\"");
                 owner.sendPacket(new MessageResponse("Response of " + message));
             }
@@ -292,7 +292,7 @@ dependencies {
 
             @Override
             protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
-                final String message = readString(buffer);
+                var message = readString(buffer);
                 System.out.println("client: received \"" + message + "\"");
             }
         }
@@ -301,12 +301,12 @@ dependencies {
     var address = new InetSocketAddress(2222);
 
     serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(
-            ReadablePacketRegistry.of(ServerPackets.MessageRequest.class));
+        ReadablePacketRegistry.of(ServerPackets.MessageRequest.class));
     
     serverNetwork.bind(address);
     
     clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(
-            ReadablePacketRegistry.of(ClientPackets.MessageResponse.class));
+        ReadablePacketRegistry.of(ClientPackets.MessageResponse.class));
     
     clientNetwork.connect(address);
     

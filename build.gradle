@@ -8,7 +8,8 @@ buildscript {
     }
 }
 
-rootProject.version = "9.0.0"
+rootProject.version = "9.0.1"
+group = "com.spaceshift"
 
 subprojects {
 
@@ -78,6 +79,7 @@ subprojects {
                 version = rootProject.version
                 afterEvaluate {
                     artifactId = jar.baseName
+                    groupId = rootProject.group
                 }
             }
         }
