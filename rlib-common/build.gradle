@@ -1,0 +1,4 @@
+
+jar {
+    baseName "rlib.common"
+}

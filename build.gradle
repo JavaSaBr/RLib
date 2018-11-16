@@ -8,106 +8,106 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'idea'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
+rootProject.version = "9.0.0"
 
-group = 'com.spaceshift'
-version = '8.1.0'
+subprojects {
 
-sourceCompatibility = 1.10
-targetCompatibility = 1.10
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
 
+    apply plugin: "java"
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'maven-publish'
 
-compileTestJava {
-    sourceCompatibility = 1.10
-    targetCompatibility = 1.10
-    options.compilerArgs += '-parameters'
-}
+    sourceCompatibility = JavaVersion.VERSION_1_10
+    targetCompatibility = JavaVersion.VERSION_1_10
 
-ext.junitJupiterVersion = "5.2.0"
-ext.log4jVersion = '2.6.2'
-ext.bintrayVersion = version
+    ext {
+        junitJupiterVersion = "5.2.0"
+        jetbrainsAnnotation = '16.0.3'
+        bintrayVersion = version
+    }
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
+    javadoc {
+        failOnError = false
+    }
 
-publishing {
-    publications {
-        RlibArtifact(MavenPublication) {
-            from components.java
-            groupId group
-            artifactId 'rlib.common'
-            version bintrayVersion
-            artifact sourcesJar
-            artifact javadocJar
+    test {
+        useJUnitPlatform()
+
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
+
+        reports {
+            html.enabled = true
+        }
+    }
+
+    dependencies {
+        compileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
+        testCompile  "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+        testCompileOnly  "org.jetbrains:annotations:$jetbrainsAnnotation"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        afterEvaluate {
+            classifier = 'sources'
+            baseName = jar.baseName
+            from sourceSets.main.allSource
+        }
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        afterEvaluate {
+            classifier = 'javadoc'
+            baseName = jar.baseName
+            from sourceSets.main.allSource
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+                version = rootProject.version
+                afterEvaluate {
+                    artifactId = jar.baseName
+                }
+            }
+        }
+    }
+
+    bintray {
+        afterEvaluate {
+            user = System.getProperty('bintrayUser')
+            key = System.getProperty('bintrayKey')
+            publications = ['mavenJava']
+            pkg {
+                repo = 'maven'
+                name = 'com.spaceshift.' + jar.baseName
+                licenses = ['Apache-2.0']
+                websiteUrl = 'https://github.com/JavaSaBr/Rlib'
+                vcsUrl = 'https://github.com/JavaSaBr/RLib.git'
+                issueTrackerUrl = 'https://github.com/JavaSaBr/RLib/issues'
+                githubRepo = 'JavaSaBr/RLib'
+                githubReleaseNotesFile = 'README.md'
+                version {
+                    name = rootProject.version
+                    desc = rootProject.version
+                    released  = new Date()
+                }
+            }
         }
     }
 }
 
-bintray {
-    user = System.getProperty('bintrayUser')
-    key = System.getProperty('bintrayKey')
-    publications = ['RlibArtifact']
-    pkg {
-        repo = 'maven'
-        name = 'com.spaceshift.rlib.common'
-        licenses = ['Apache-2.0']
-        websiteUrl = 'https://github.com/JavaSaBr/Rlib'
-        vcsUrl = 'https://github.com/JavaSaBr/RLib.git'
-        issueTrackerUrl = 'https://github.com/JavaSaBr/RLib/issues'
-        githubRepo = 'JavaSaBr/RLib'
-        githubReleaseNotesFile = 'README.md'
-        version {
-            name = bintrayVersion
-            desc = bintrayVersion
-            released  = new Date()
-        }
-    }
-}
-
-dependencies {
-    compileOnly group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
-    compileOnly group: 'com.jolbox', name: 'bonecp', version: '0.8.0.RELEASE'
-    compileOnly group: 'org.jetbrains', name: 'annotations', version: '15.0'
-
-    testCompile group: 'org.jetbrains', name: 'annotations', version: '15.0'
-
-    testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
-}
-
-test {
-    useJUnitPlatform()
-
-    testLogging {
-        events "passed", "skipped", "failed"
-    }
-
-    reports {
-        html.enabled = true
-    }
-}
-
-javadoc {
-    failOnError = false
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.9'
+wrapper {
+    gradleVersion = '4.10'
     distributionType = Wrapper.DistributionType.ALL
 }
