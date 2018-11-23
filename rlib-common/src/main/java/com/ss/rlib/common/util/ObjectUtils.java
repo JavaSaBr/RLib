@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.LongFunction;
 import java.util.function.Supplier;
 
 /**
@@ -45,6 +46,7 @@ public final class ObjectUtils {
      * @param obj      the checked object.
      * @param supplier the exception factory.
      * @return the object.
+     * @since 9.0.2
      */
     public static <T> @NotNull T notNull(@Nullable T obj, @NotNull Supplier<? extends RuntimeException> supplier) {
 
@@ -62,11 +64,34 @@ public final class ObjectUtils {
      * @param arg     the argument for the exception factory.
      * @param factory the exception factory.
      * @return the object.
+     * @since 9.0.2
      */
     public static <T, F> @NotNull T notNull(
         @Nullable T obj,
         @NotNull F arg,
         @NotNull Function<F, ? extends RuntimeException> factory
+    ) {
+
+        if (obj == null) {
+            throw factory.apply(arg);
+        }
+
+        return obj;
+    }
+
+    /**
+     * Check the object to be not null. If the object is null this method throws an exception from the factory.
+     *
+     * @param obj     the checked object.
+     * @param arg     the argument for the exception factory.
+     * @param factory the exception factory.
+     * @return the object.
+     * @since 9.0.3
+     */
+    public static <T, F> @NotNull T notNull(
+        @Nullable T obj,
+        long arg,
+        @NotNull LongFunction<? extends RuntimeException> factory
     ) {
 
         if (obj == null) {

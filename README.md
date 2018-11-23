@@ -16,9 +16,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:9.0.2'
-    compile 'com.spaceshift:rlib.fx:9.0.2'
-    compile 'com.spaceshift:rlib.network:9.0.2'
+    compile 'com.spaceshift:rlib.common:9.0.3'
+    compile 'com.spaceshift:rlib.fx:9.0.3'
+    compile 'com.spaceshift:rlib.network:9.0.3'
 }
 ```
     
