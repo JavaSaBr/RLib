@@ -97,10 +97,7 @@ public final class Utils {
     }
 
     /**
-     * Convert the string from HEX to a plain string.
-     *
-     * @param string the HEX string.
-     * @return the plain string.
+     * @see StringUtils#fromHex(String)
      */
     @Deprecated(forRemoval = true)
     public static @NotNull String fromHEX(@NotNull String string) {
@@ -108,12 +105,9 @@ public final class Utils {
     }
 
     /**
-     * Convert the string from HEX to a plain string.
-     *
-     * @param string the HEX string.
-     * @return the plain string.
-     * @since 8.1.0
+     * @see StringUtils#fromHex(String)
      */
+    @Deprecated(forRemoval = true)
     public static @NotNull String fromHex(@NotNull String string) {
 
         var array = string.toCharArray();
@@ -648,11 +642,7 @@ public final class Utils {
     }
 
     /**
-     * Convert a string to HEX string.
-     *
-     * @param string the original string.
-     * @return the hex string.
-     * @see #toHex(String)
+     * @see StringUtils#toHex(String)
      */
     @Deprecated(forRemoval = true)
     public static @NotNull String toHEX(@NotNull String string) {
@@ -660,12 +650,9 @@ public final class Utils {
     }
 
     /**
-     * Convert the plain string to a HEX string.
-     *
-     * @param string the plain string.
-     * @return the hex string.
-     * @since 8.1.0
+     * @see StringUtils#toHex(String)
      */
+    @Deprecated(forRemoval = true)
     public static @NotNull String toHex(@NotNull String string) {
 
         var builder = new StringBuilder(string.length() * 2);
@@ -695,7 +682,7 @@ public final class Utils {
      * @param owner the owner
      * @param e     the e
      */
-    public static void print(@NotNull final Class<?> owner, @NotNull final Exception e) {
+    public static void print(@NotNull Class<?> owner, @NotNull Exception e) {
         LoggerManager.getDefaultLogger().warning(owner, e);
     }
 
@@ -705,7 +692,7 @@ public final class Utils {
      * @param owner   the owner
      * @param message the message
      */
-    public static void print(@NotNull final Class<?> owner, @NotNull final String message) {
+    public static void print(@NotNull Class<?> owner, @NotNull String message) {
         LoggerManager.getDefaultLogger().warning(owner, message);
     }
 

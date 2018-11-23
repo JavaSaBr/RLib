@@ -212,10 +212,11 @@ public class ArrayFactory {
     }
 
     /**
-     * Create the a float array.
+     * Create a new float array.
      *
-     * @param elements the elements of the new array.
-     * @return the new array.
+     * @param elements the elements of the new float array.
+     * @return the new float array.
+     * @since 8.1.0
      */
     public static float[] toFloatArray(float... elements) {
         return elements;
@@ -224,23 +225,22 @@ public class ArrayFactory {
     /**
      * Create a new int array.
      *
-     * @param elements the elements of the new array.
-     * @return the new array.
-     * @see #toIntArray(int...)
+     * @param elements the elements of the new int array.
+     * @return the new int array.
+     * @since 8.1.0
      */
-    @Deprecated(forRemoval = true)
-    public static int[] toIntegerArray(int... elements) {
+    public static int[] toIntArray(int... elements) {
         return elements;
     }
 
     /**
-     * Create a new int array.
+     * Create a new long array.
      *
-     * @param elements the elements of the new array.
-     * @return the new array.
-     * @since 8.1.0
+     * @param elements the elements of the new long array.
+     * @return the new int array.
+     * @since 9.0.3
      */
-    public static int[] toIntArray(int... elements) {
+    public static long[] toLongArray(long... elements) {
         return elements;
     }
 

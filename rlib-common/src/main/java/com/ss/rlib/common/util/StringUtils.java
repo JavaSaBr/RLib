@@ -233,4 +233,99 @@ public class StringUtils {
         hashMD5.update(string.getBytes(), 0, string.length());
         return new BigInteger(1, hashMD5.digest()).toString(16);
     }
+
+    /**
+     * Present the byte array as a hex string.
+     *
+     * @param array the byte array.
+     * @return the hex string.
+     * @since 9.0.3
+     */
+    public static @NotNull String bytesToHexString(@NotNull byte[] array) {
+
+        var builder = new StringBuilder(array.length * 2);
+
+        for (var value : array) {
+
+            var element = Integer.toHexString(value & 0xFF);
+
+            if (element.length() == 1) {
+                element = "0" + element;
+            }
+
+            builder.append(element);
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Parse the hex string to a byte array.
+     *
+     * @param string the hex string.
+     * @return the byte array.
+     * @since 9.0.3
+     */
+    public static @NotNull byte[] hexStringToBytes(@NotNull String string) {
+
+        var array = string.toCharArray();
+        var result = new byte[string.length() / 2];
+
+        for (int i = 0, g = 0, length = array.length - 1; i < length; i += 2) {
+            var element = String.valueOf(array, i, 2);
+            result[g++] = (byte) Integer.parseInt(element, 16);
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert the string from HEX to a plain string.
+     *
+     * @param string the HEX string.
+     * @return the plain string.
+     * @since 9.0.3
+     */
+    public static @NotNull String fromHex(@NotNull String string) {
+
+        var array = string.toCharArray();
+        var builder = new StringBuilder(string.length() / 4);
+
+        for (int i = 0, length = array.length - 3; i < length; i += 4) {
+            var element = String.valueOf(array, i, 4);
+            builder.append((char) Integer.parseInt(element, 16));
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Convert the plain string to a HEX string.
+     *
+     * @param string the plain string.
+     * @return the hex string.
+     * @since 9.0.3
+     */
+    public static @NotNull String toHex(@NotNull String string) {
+
+        var builder = new StringBuilder(string.length() * 2);
+
+        for (int i = 0, length = string.length(); i < length; i++) {
+
+            var charAt = string.charAt(i);
+            var element = Integer.toHexString(charAt);
+
+            if (element.length() == 1) {
+                element = "000" + element;
+            } else if (element.length() == 2) {
+                element = "00" + element;
+            } else if (element.length() == 3) {
+                element = "0" + element;
+            }
+
+            builder.append(element);
+        }
+
+        return builder.toString();
+    }
 }
