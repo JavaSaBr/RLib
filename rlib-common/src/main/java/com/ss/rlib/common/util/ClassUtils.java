@@ -152,7 +152,7 @@ public final class ClassUtils {
      * @param objects     the arguments.
      * @return the new instance.
      */
-    public static <T> @NotNull T newInstance(@NotNull Constructor<?> constructor, @Nullable Object... objects) {
+    public static <T> @NotNull T newInstance(@NotNull Constructor<? super T> constructor, @Nullable Object... objects) {
         try {
             //noinspection ConstantConditions
             return unsafeCast(constructor.newInstance(objects));
