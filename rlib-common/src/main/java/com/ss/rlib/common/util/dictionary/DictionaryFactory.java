@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public final class DictionaryFactory {
 
     public static final ObjectDictionary<?, ?> EMPTY_OD = new ReadOnlyFastObjectDictionary<>();
+    public static final LongDictionary<?> EMPTY_LD = new ReadOnlyFastLongDictionary<>();
 
     /**
      * New concurrent atomic integer dictionary concurrent integer dictionary.

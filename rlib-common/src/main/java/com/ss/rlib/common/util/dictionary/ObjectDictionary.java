@@ -44,8 +44,8 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @return the new object dictionary.
      */
     static <K, V> @NotNull ObjectDictionary<K, V> ofType(
-            @NotNull Class<? super K> keyType,
-            @NotNull Class<? super V> valueType
+        @NotNull Class<? super K> keyType,
+        @NotNull Class<? super V> valueType
     ) {
         return DictionaryFactory.newObjectDictionary();
     }
@@ -63,19 +63,19 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
-     * Get an empty object dictionary.
+     * Get an empty read-only object dictionary.
      *
      * @param <K> the key's type.
      * @param <V> the value's type.
-     * @return the empty dictionary.
+     * @return the read-only empty dictionary.
      */
     static <K, V> @NotNull ObjectDictionary<K, V> empty() {
         return ClassUtils.unsafeNNCast(DictionaryFactory.EMPTY_OD);
     }
 
     static <K, V, M extends ObjectDictionary<K, V>> @NotNull M append(
-            @NotNull M first,
-            @NotNull M second
+        @NotNull M first,
+        @NotNull M second
     ) {
         second.copyTo(first);
         return first;
@@ -177,7 +177,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @see #getOrCompute(Object, Object, Function)
      */
     @Deprecated
-    default <T> @NotNull V get(@NotNull K key, @Nullable T argument, @NotNull Function<T, V> factory) {
+    default <T> @NotNull V get(@NotNull K key, @NotNull T argument, @NotNull Function<T, V> factory) {
         return getOrCompute(key, argument, factory);
     }
 
@@ -192,9 +192,9 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @return the stored value by the key or the new value.
      */
     default <T> @NotNull V getOrCompute(
-            @NotNull K key,
-            @NotNull T argument,
-            @NotNull Function<@NotNull T, @NotNull V> factory
+        @NotNull K key,
+        @NotNull T argument,
+        @NotNull Function<@NotNull T, @NotNull V> factory
     ) {
         throw new UnsupportedOperationException();
     }
@@ -210,7 +210,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @return the stored value by the key or the new value.
      * @see #getOrCompute(Object, Object, BiFunction)
      */
-    default <T> @NotNull V get(@NotNull K key, @Nullable T argument, @NotNull BiFunction<K, T, V> factory) {
+    default <T> @NotNull V get(@NotNull K key, @NotNull T argument, @NotNull BiFunction<K, T, V> factory) {
         return getOrCompute(key, argument, factory);
     }
 
@@ -225,11 +225,10 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @return the stored value by the key or the new value.
      */
     default <T> @NotNull V getOrCompute(
-            @NotNull K key,
-            @NotNull T argument,
-            @NotNull BiFunction<@NotNull K, @NotNull T, @NotNull V> factory
+        @NotNull K key,
+        @NotNull T argument,
+        @NotNull BiFunction<@NotNull K, @NotNull T, @NotNull V> factory
     ) {
-
         throw new UnsupportedOperationException();
     }
 
@@ -276,7 +275,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
-     * Remove a mapping of the key.
+     * Remove a mapping by the key.
      *
      * @param key the key.
      * @return the previous value for the key or null.
@@ -286,7 +285,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
-     * Remove a mapping of the key.
+     * Remove a mapping by the key.
      *
      * @param key the key.
      * @return the optional value of the previous value for the key.
@@ -312,8 +311,8 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param <T>      the argument's type.
      */
     default <T> void forEach(
-            @NotNull T argument,
-            @NotNull TripleConsumer<@NotNull ? super T, @NotNull ? super K, @NotNull ? super V> consumer
+        @NotNull T argument,
+        @NotNull TripleConsumer<@NotNull ? super T, @NotNull ? super K, @NotNull ? super V> consumer
     ) {
         throw new UnsupportedOperationException();
     }
@@ -328,9 +327,9 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param <S>      the second argument's type.
      */
     default <F, S> void forEach(
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull FourObjectConsumer<@NotNull ? super F, @NotNull ? super S, @NotNull ? super K, @NotNull ? super V> consumer
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull FourObjectConsumer<@NotNull ? super F, @NotNull ? super S, @NotNull ? super K, @NotNull ? super V> consumer
     ) {
         throw new UnsupportedOperationException();
     }

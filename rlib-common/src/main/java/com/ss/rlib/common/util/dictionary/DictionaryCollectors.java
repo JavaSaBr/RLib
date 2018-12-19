@@ -1,16 +1,17 @@
 package com.ss.rlib.common.util.dictionary;
 
+import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collector.Characteristics;
 import com.ss.rlib.common.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-
-import static java.util.stream.Collector.*;
 
 /**
  * The collectors to {@link Dictionary}
@@ -19,8 +20,8 @@ import static java.util.stream.Collector.*;
  */
 public final class DictionaryCollectors {
 
-    static final Set<Characteristics> CH_ID
-            = Collections.unmodifiableSet(EnumSet.of(Characteristics.IDENTITY_FINISH));
+    static final Set<Characteristics> CH_ID =
+        unmodifiableSet(EnumSet.of(Characteristics.IDENTITY_FINISH));
 
     /**
      * Simple implementation class for {@code Collector}.
@@ -36,11 +37,13 @@ public final class DictionaryCollectors {
         private final Function<A, R> finisher;
         private final Set<Characteristics> characteristics;
 
-        CollectorImpl(Supplier<A> supplier,
-                      BiConsumer<A, T> accumulator,
-                      BinaryOperator<A> combiner,
-                      Function<A,R> finisher,
-                      Set<Characteristics> characteristics) {
+        CollectorImpl(
+            @NotNull Supplier<A> supplier,
+            @NotNull BiConsumer<A, T> accumulator,
+            @NotNull BinaryOperator<A> combiner,
+            @NotNull Function<A, R> finisher,
+            @NotNull Set<Characteristics> characteristics
+        ) {
             this.supplier = supplier;
             this.accumulator = accumulator;
             this.combiner = combiner;
@@ -48,10 +51,12 @@ public final class DictionaryCollectors {
             this.characteristics = characteristics;
         }
 
-        CollectorImpl(Supplier<A> supplier,
-                      BiConsumer<A, T> accumulator,
-                      BinaryOperator<A> combiner,
-                      Set<Characteristics> characteristics) {
+        CollectorImpl(
+            @NotNull Supplier<A> supplier,
+            @NotNull BiConsumer<A, T> accumulator,
+            @NotNull BinaryOperator<A> combiner,
+            @NotNull Set<Characteristics> characteristics
+        ) {
             this(supplier, accumulator, combiner, a -> (R) a, characteristics);
         }
 
@@ -82,30 +87,44 @@ public final class DictionaryCollectors {
     }
 
     public static <T, K, U> @NotNull Collector<T, ?, ObjectDictionary<K, U>> toObjectDictionary(
-            @NotNull Function<? super T, ? extends K> keyMapper,
-            @NotNull Function<? super T, ? extends U> valueMapper
+        @NotNull Function<? super T, ? extends K> keyMapper,
+        @NotNull Function<? super T, ? extends U> valueMapper
     ) {
-        return new CollectorImpl<>(DictionaryFactory::newObjectDictionary,
-                uniqKeysMapAccumulator(keyMapper, valueMapper),
-                ObjectDictionary::append,
-                CH_ID);
+        return new CollectorImpl<>(
+            DictionaryFactory::newObjectDictionary,
+            uniqKeysAccumulator(keyMapper, valueMapper),
+            ObjectDictionary::append,
+            CH_ID
+        );
+    }
+
+    public static <T, U> @NotNull Collector<T, ?, LongDictionary<U>> toLongDictionary(
+        @NotNull Function<? super T, Number> keyMapper,
+        @NotNull Function<? super T, ? extends U> valueMapper
+    ) {
+        return new CollectorImpl<>(
+            DictionaryFactory::newLongDictionary,
+            uniqLongsAccumulator(keyMapper, valueMapper),
+            LongDictionary::append,
+            CH_ID
+        );
     }
 
     /**
-     * {@code BiConsumer<Map, T>} that accumulates (key, value) pairs
-     * extracted from elements into the map, throwing {@code IllegalStateException}
+     * {@code BiConsumer<ObjectDictionary, T>} that accumulates (key, value) pairs
+     * extracted from elements into the dictionary, throwing {@code IllegalStateException}
      * if duplicate keys are encountered.
      *
-     * @param keyMapper a function that maps an element into a key
-     * @param valueMapper a function that maps an element into a value
-     * @param <T> type of elements
-     * @param <K> type of map keys
-     * @param <V> type of map values
-     * @return an accumulating consumer
+     * @param keyMapper a function that dictionaries an element into a key.
+     * @param valueMapper a function that dictionaries an element into a value.
+     * @param <T> type of elements.
+     * @param <K> type of dictionaries keys.
+     * @param <V> type of dictionaries values.
+     * @return an accumulating consumer.
      */
-    private static <T, K, V> BiConsumer<ObjectDictionary<K, V>, T> uniqKeysMapAccumulator(
-            @NotNull Function<? super T, ? extends K> keyMapper,
-            @NotNull Function<? super T, ? extends V> valueMapper
+    private static <T, K, V> BiConsumer<ObjectDictionary<K, V>, T> uniqKeysAccumulator(
+        @NotNull Function<? super T, ? extends K> keyMapper,
+        @NotNull Function<? super T, ? extends V> valueMapper
     ) {
         return (map, element) -> {
 
@@ -120,6 +139,33 @@ public final class DictionaryCollectors {
     }
 
     /**
+     * {@code BiConsumer<LongDictionary, T>} that accumulates (key, value) pairs
+     * extracted from elements into the dictionary, throwing {@code IllegalStateException}
+     * if duplicate keys are encountered.
+     *
+     * @param keyMapper   a function that dictionaries an element into a key.
+     * @param valueMapper a function that dictionaries an element into a value.
+     * @param <T>         type of elements.
+     * @param <V>         type of dictionaries values.
+     * @return an accumulating consumer.
+     */
+    private static <T, V> BiConsumer<LongDictionary<V>, T> uniqLongsAccumulator(
+        @NotNull Function<? super T, Number> keyMapper,
+        @NotNull Function<? super T, ? extends V> valueMapper
+    ) {
+        return (map, element) -> {
+
+            var key = keyMapper.apply(element);
+            var value = ObjectUtils.notNull(valueMapper.apply(element));
+            var prevValue = map.put(key.longValue(), value);
+
+            if (prevValue != null) {
+                throw duplicateKeyException(key, prevValue, value);
+            }
+        };
+    }
+
+    /**
      * Construct an {@code IllegalStateException} with appropriate message.
      *
      * @param k the duplicate key
@@ -127,8 +173,9 @@ public final class DictionaryCollectors {
      * @param v 2nd value to be accumulated/merged
      */
     private static IllegalStateException duplicateKeyException(Object k, Object u, Object v) {
-        return new IllegalStateException(String.format(
-                "Duplicate key %s (attempted merging values %s and %s)", k, u, v));
+        return new IllegalStateException(
+            String.format("Duplicate key %s (attempted merging values %s and %s)", k, u, v)
+        );
     }
 
     private DictionaryCollectors() {

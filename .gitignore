@@ -7,3 +7,6 @@
 /.project
 /.directory
 /.settings/
+/**/build
+/**/out
+/**/.gradle
