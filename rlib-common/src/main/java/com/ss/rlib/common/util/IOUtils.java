@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util;
 
+import static java.lang.ThreadLocal.withInitial;
 import com.ss.rlib.common.function.SafeSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +15,8 @@ import java.nio.charset.StandardCharsets;
  * @author JavaSaBr
  */
 public final class IOUtils {
+
+    private static final ThreadLocal<char[]> LOCAL_CHAR_BUFFER = withInitial(() -> new char[1024]);
 
     /**
      * Close a closeable object.
@@ -38,7 +41,7 @@ public final class IOUtils {
      *
      * @param in the input stream.
      * @return the result string.
-     * @throws UncheckedIOException if happened something wrong with the input stream.
+     * @throws UncheckedIOException if input stream thrown an io exception.
      */
     public static @NotNull String toString(@NotNull InputStream in) {
 
@@ -58,7 +61,7 @@ public final class IOUtils {
      *
      * @param inFactory the input stream.
      * @return the result string.
-     * @throws UncheckedIOException if happened something wrong with an input stream.
+     * @throws UncheckedIOException if input stream thrown an io exception.
      * @throws RuntimeException     if happened something wrong with the supplier.
      */
     public static @NotNull String toString(@NotNull SafeSupplier<InputStream> inFactory) {
@@ -107,6 +110,33 @@ public final class IOUtils {
             close(in);
             close(out);
         }
+    }
+
+    /**
+     * Read the reader to the result string.
+     *
+     * @param reader the reader.
+     * @return the result string.
+     * @throws UncheckedIOException if reader thrown an io exception.
+     */
+    public static @NotNull String toStringUsingTLB(@NotNull Reader reader) {
+        return toString(reader, LOCAL_CHAR_BUFFER.get());
+    }
+
+    private static @NotNull String toString(@NotNull Reader reader, @NotNull char[] buffer) {
+
+        var builder = new StringBuilder();
+        try {
+
+            for (int read = reader.read(buffer); read != -1; read = reader.read(buffer)) {
+                builder.append(buffer, 0, read);
+            }
+
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return builder.toString();
     }
 
     private IOUtils() {

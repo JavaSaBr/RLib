@@ -27,6 +27,8 @@ import java.util.function.Consumer;
  */
 public final class Utils {
 
+    public static final int CORES = Runtime.getRuntime().availableProcessors();
+
     private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() ->
             new SimpleDateFormat("HH:mm:ss:SSS"));
 
