@@ -339,7 +339,12 @@ public class StringUtils {
      */
     public static @NotNull String replace(@NotNull String string, @NotNull String firstName, @NotNull String firstVal) {
 
-        StringBuilder builder = new StringBuilder(string);
+        var capacity = string.length();
+        capacity = capacity - firstName.length() + firstVal.length();
+        capacity = Math.max(capacity, string.length());
+
+        var builder = new StringBuilder(capacity);
+        builder.append(string);
 
         replace(builder, firstName, firstVal);
 
@@ -364,7 +369,13 @@ public class StringUtils {
         @NotNull String secondVal
     ) {
 
-        StringBuilder builder = new StringBuilder(string);
+        var capacity = string.length();
+        capacity = capacity - firstName.length() + firstVal.length();
+        capacity = capacity - secondName.length() + secondVal.length();
+        capacity = Math.max(capacity, string.length());
+
+        var builder = new StringBuilder(capacity);
+        builder.append(string);
 
         replace(builder, firstName, firstVal);
         replace(builder, secondName, secondVal);
@@ -386,9 +397,18 @@ public class StringUtils {
             throw new IllegalArgumentException("Wrong params count.");
         }
 
-        StringBuilder builder = new StringBuilder(string);
+        var capacity = string.length();
 
         for (int i = 0; i < params.length - 1; i += 2) {
+            capacity = capacity - params[i].length() + params[i + 1].length();
+        }
+
+        capacity = Math.max(capacity, string.length());
+
+        var builder = new StringBuilder(capacity);
+        builder.append(string);
+
+        for (var i = 0; i < params.length - 1; i += 2) {
             replace(builder, params[i], params[i + 1]);
         }
 
