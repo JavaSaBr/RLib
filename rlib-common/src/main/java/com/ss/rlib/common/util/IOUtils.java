@@ -1,9 +1,12 @@
 package com.ss.rlib.common.util;
 
+import com.ss.rlib.common.function.SafeSupplier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The class with utility methods.
@@ -27,6 +30,56 @@ public final class IOUtils {
             closeable.close();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Convert the input stream to a string using UTF-8 encoding.
+     *
+     * @param in the input stream.
+     * @return the result string.
+     * @throws UncheckedIOException if happened something wrong with the input stream.
+     */
+    public static @NotNull String toString(@NotNull InputStream in) {
+
+        var result = new StringBuilder();
+
+        try (var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+            toString(result, reader);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return result.toString();
+    }
+
+    /**
+     * Convert the input stream to a string using UTF-8 encoding.
+     *
+     * @param inFactory the input stream.
+     * @return the result string.
+     * @throws UncheckedIOException if happened something wrong with an input stream.
+     * @throws RuntimeException     if happened something wrong with the supplier.
+     */
+    public static @NotNull String toString(@NotNull SafeSupplier<InputStream> inFactory) {
+
+        var result = new StringBuilder();
+
+        try (var reader = new InputStreamReader(inFactory.get(), StandardCharsets.UTF_8)) {
+            toString(result, reader);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return result.toString();
+    }
+
+    private static void toString(@NotNull StringBuilder result, @NotNull InputStreamReader reader) throws IOException {
+        for (var buffer = CharBuffer.allocate(100); reader.read(buffer) != -1; ) {
+            buffer.flip();
+            result.append(buffer.array(), 0, buffer.limit());
         }
     }
 

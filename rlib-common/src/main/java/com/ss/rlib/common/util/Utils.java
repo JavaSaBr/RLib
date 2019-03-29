@@ -109,16 +109,7 @@ public final class Utils {
      */
     @Deprecated(forRemoval = true)
     public static @NotNull String fromHex(@NotNull String string) {
-
-        var array = string.toCharArray();
-        var builder = new StringBuilder(string.length() / 4);
-
-        for (int i = 0, length = array.length - 3; i < length; i += 4) {
-            var element = String.valueOf(array, i, 4);
-            builder.append((char) Integer.parseInt(element, 16));
-        }
-
-        return builder.toString();
+        return StringUtils.fromHex(string);
     }
 
     /**
@@ -654,26 +645,7 @@ public final class Utils {
      */
     @Deprecated(forRemoval = true)
     public static @NotNull String toHex(@NotNull String string) {
-
-        var builder = new StringBuilder(string.length() * 2);
-
-        for (int i = 0, length = string.length(); i < length; i++) {
-
-            var charAt = string.charAt(i);
-            var element = Integer.toHexString(charAt);
-
-            if (element.length() == 1) {
-                element = "000" + element;
-            } else if (element.length() == 2) {
-                element = "00" + element;
-            } else if (element.length() == 3) {
-                element = "0" + element;
-            }
-
-            builder.append(element);
-        }
-
-        return builder.toString();
+        return StringUtils.toHex(string);
     }
 
     /**

@@ -1,17 +1,17 @@
 buildscript {
     repositories {
-        mavenCentral()
-        jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.19"
     }
 }
 
-rootProject.version = "9.0.4"
+rootProject.version = "9.1.0"
 group = "com.spaceshift"
 
-subprojects {
+allprojects {
 
     repositories {
         mavenCentral()
@@ -22,10 +22,11 @@ subprojects {
     apply plugin: 'com.jfrog.bintray'
     apply plugin: 'maven-publish'
 
-    sourceCompatibility = JavaVersion.VERSION_1_10
-    targetCompatibility = JavaVersion.VERSION_1_10
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
     ext {
+        lombokVersion = '1.18.4'
         junitJupiterVersion = "5.2.0"
         jetbrainsAnnotation = '16.0.3'
         bintrayVersion = version
@@ -49,9 +50,11 @@ subprojects {
 
     dependencies {
         compileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
-        testCompile  "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
-        testCompileOnly  "org.jetbrains:annotations:$jetbrainsAnnotation"
+        testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+        testCompileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+        compileOnly "org.projectlombok:lombok:$lombokVersion"
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -102,7 +105,7 @@ subprojects {
                 version {
                     name = rootProject.version
                     desc = rootProject.version
-                    released  = new Date()
+                    released = new Date()
                 }
             }
         }
@@ -110,6 +113,6 @@ subprojects {
 }
 
 wrapper {
-    gradleVersion = '4.10'
+    gradleVersion = '5.2'
     distributionType = Wrapper.DistributionType.ALL
 }
