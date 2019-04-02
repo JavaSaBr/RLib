@@ -53,6 +53,18 @@ class StringUtilsTest {
     }
 
     @Test
+    void shouldReplaceTwoVariablesInStringTwice() {
+
+        var original = "some text ${test_var1} with two variable ${test_var2}, and ${test_var1} and ${test_var2}";
+        var expected = "some text var_val_1 with two variable var_val_2, and var_val_1 and var_val_2";
+
+        Assertions.assertEquals(
+            expected,
+            StringUtils.replace(original, "${test_var1}", "var_val_1", "${test_var2}", "var_val_2")
+        );
+    }
+
+    @Test
     void shouldReplaceVariablesInString() {
 
         var original = "some text ${test_var1} with variables ${test_var2}, ${test_var3}";

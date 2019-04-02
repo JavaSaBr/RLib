@@ -416,7 +416,10 @@ public class StringUtils {
     }
 
     private static void replace(@NotNull StringBuilder builder, @NotNull String name, @NotNull String value) {
-        int startIndex = builder.indexOf(name);
-        builder.replace(startIndex, startIndex + name.length(), value);
+
+        for (int index = builder.indexOf(name), count = 0;
+             index != -1 && count < 100; index = builder.indexOf(name), count++) {
+            builder.replace(index, index + name.length(), value);
+        }
     }
 }
