@@ -1,15 +1,15 @@
 buildscript {
     repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath "net.ltgt.gradle:gradle-apt-plugin:0.19"
+        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.19'
     }
 }
 
-rootProject.version = "9.1.0"
-group = "com.spaceshift"
+rootProject.version = '9.1.0'
+group = 'com.spaceshift'
 
 allprojects {
 
@@ -18,7 +18,7 @@ allprojects {
         jcenter()
     }
 
-    apply plugin: "java"
+    apply plugin: 'java'
     apply plugin: 'com.jfrog.bintray'
     apply plugin: 'maven-publish'
 
@@ -26,6 +26,7 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_11
 
     ext {
+        testcontainersVersion = '1.10.1'
         lombokVersion = '1.18.4'
         junitJupiterVersion = "5.2.0"
         jetbrainsAnnotation = '16.0.3'
@@ -54,21 +55,22 @@ allprojects {
         testCompileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
         compileOnly "org.projectlombok:lombok:$lombokVersion"
+        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
         annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         afterEvaluate {
-            classifier = 'sources'
-            baseName = jar.baseName
+            archiveClassifier = 'sources'
+            archiveBaseName = jar.getArchiveBaseName()
             from sourceSets.main.allSource
         }
     }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         afterEvaluate {
-            classifier = 'javadoc'
-            baseName = jar.baseName
+            archiveClassifier = 'javadoc'
+            archiveBaseName = jar.getArchiveBaseName()
             from sourceSets.main.allSource
         }
     }
@@ -109,6 +111,23 @@ allprojects {
                 }
             }
         }
+    }
+
+    configurations {
+        testArtifacts.extendsFrom testRuntime
+    }
+
+    task testJar(type: Jar) {
+        archiveClassifier  = "test"
+        from sourceSets.test.output
+    }
+
+    artifacts {
+        testArtifacts testJar
+    }
+
+    tasks.withType(Test) {
+        maxParallelForks = Runtime.runtime.availableProcessors()
     }
 }
 

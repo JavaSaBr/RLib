@@ -1,0 +1,8 @@
+dependencies {
+    compile project(":rlib-common")
+    compile "org.testcontainers:testcontainers:$testcontainersVersion"
+}
+
+jar {
+    baseName "rlib.testcontainers"
+}
