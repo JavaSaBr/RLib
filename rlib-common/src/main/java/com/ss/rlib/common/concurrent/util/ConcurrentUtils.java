@@ -2,13 +2,9 @@ package com.ss.rlib.common.concurrent.util;
 
 import com.ss.rlib.common.function.ObjectIntFunction;
 import com.ss.rlib.common.function.ObjectLongFunction;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.concurrent.lock.Lockable;
-import com.ss.rlib.common.function.ObjectIntFunction;
-import com.ss.rlib.common.function.ObjectLongFunction;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

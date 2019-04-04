@@ -1,8 +1,8 @@
 package com.ss.rlib.network.test;
 
 import com.ss.rlib.common.concurrent.util.ThreadUtils;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.util.StringUtils;
 import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.common.util.array.Array;

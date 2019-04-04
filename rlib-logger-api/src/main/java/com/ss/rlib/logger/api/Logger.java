@@ -1,11 +1,7 @@
-package com.ss.rlib.common.logging;
+package com.ss.rlib.logger.api;
 
-import com.ss.rlib.common.function.TripleFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * The interface to implement a logger.
@@ -13,6 +9,30 @@ import java.util.function.Function;
  * @author JavaSaBr
  */
 public interface Logger {
+
+    @FunctionalInterface
+    interface Factory {
+
+        @NotNull String make();
+    }
+
+    @FunctionalInterface
+    interface SinFactory<F> {
+
+        @NotNull String make(@Nullable F first);
+    }
+
+    @FunctionalInterface
+    interface BiFactory<F, S> {
+
+        @NotNull String make(@Nullable F first, @Nullable S second);
+    }
+
+    @FunctionalInterface
+    interface TriFactory<F, S, T> {
+
+        @NotNull String make(@Nullable F first, @Nullable S second, @Nullable T third);
+    }
 
     /**
      * Print the debug message.
@@ -32,11 +52,7 @@ public interface Logger {
      * @param messageFactory the message factory.
      * @param <T>            the argument's type.
      */
-    default <T> void debug(
-            @NotNull Object owner,
-            @Nullable T arg,
-            @NotNull Function<T, @NotNull String> messageFactory
-    ) {
+    default <T> void debug(@NotNull Object owner, @Nullable T arg, @NotNull Logger.SinFactory<T> messageFactory) {
         print(LoggerLevel.DEBUG, owner, arg, messageFactory);
     }
 
@@ -51,10 +67,10 @@ public interface Logger {
      * @param <S>            the second argument's type.
      */
     default <F, S> void debug(
-            @NotNull Object owner,
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull BiFunction<F, S, @NotNull String> messageFactory
+        @NotNull Object owner,
+        @Nullable F first,
+        @Nullable S second,
+        @NotNull Logger.BiFactory<F, S> messageFactory
     ) {
         print(LoggerLevel.DEBUG, owner, first, second, messageFactory);
     }
@@ -73,11 +89,11 @@ public interface Logger {
      * @param <T>            the third argument's type.
      */
     default <F, S, T> void debug(
-            @NotNull Object owner,
-            @Nullable F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
+        @NotNull Object owner,
+        @Nullable F first,
+        @Nullable S second,
+        @Nullable T third,
+        @NotNull Logger.TriFactory<F, S, T> messageFactory
     ) {
         print(LoggerLevel.DEBUG, owner, first, second, third, messageFactory);
     }
@@ -98,7 +114,7 @@ public interface Logger {
      * @param messageFactory the message factory.
      * @param <T>            the argument's type.
      */
-    default <T> void debug(@Nullable T arg, @NotNull Function<T, @NotNull String> messageFactory) {
+    default <T> void debug(@Nullable T arg, @NotNull Logger.SinFactory<T> messageFactory) {
         print(LoggerLevel.DEBUG, arg, messageFactory);
     }
 
@@ -112,9 +128,7 @@ public interface Logger {
      * @param <S>            the second argument's type.
      */
     default <F, S> void debug(
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull BiFunction<F, S, @NotNull String> messageFactory
+        @Nullable F first, @Nullable S second, @NotNull Logger.BiFactory<F, S> messageFactory
     ) {
         print(LoggerLevel.DEBUG, first, second, messageFactory);
     }
@@ -131,10 +145,10 @@ public interface Logger {
      * @param <T>            the third argument's type.
      */
     default <F, S, T> void debug(
-            @NotNull F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
+        @NotNull F first,
+        @Nullable S second,
+        @Nullable T third,
+        @NotNull Logger.TriFactory<F, S, T> messageFactory
     ) {
         print(LoggerLevel.DEBUG, first, second, third, messageFactory);
     }
@@ -178,20 +192,6 @@ public interface Logger {
     }
 
     /**
-     * Get the name of this logger.
-     *
-     * @return the logger name.
-     */
-    @NotNull String getName();
-
-    /**
-     * Set the name of this logger.
-     *
-     * @param name the logger name.
-     */
-    void setName(@NotNull String name);
-
-    /**
      * Print the information message.
      *
      * @param owner   the owner of the message.
@@ -210,9 +210,9 @@ public interface Logger {
      * @param <T>            the argument's type.
      */
     default <T> void info(
-            @NotNull Object owner,
-            @Nullable T arg,
-            @NotNull Function<T, @NotNull String> messageFactory
+        @NotNull Object owner,
+        @Nullable T arg,
+        @NotNull Logger.SinFactory<T> messageFactory
     ) {
         print(LoggerLevel.INFO, owner, arg, messageFactory);
     }
@@ -228,10 +228,10 @@ public interface Logger {
      * @param <S>            the second argument's type.
      */
     default <F, S> void info(
-            @NotNull Object owner,
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull BiFunction<F, S, @NotNull String> messageFactory
+        @NotNull Object owner,
+        @Nullable F first,
+        @Nullable S second,
+        @NotNull Logger.BiFactory<F, S> messageFactory
     ) {
         print(LoggerLevel.INFO, owner, first, second, messageFactory);
     }
@@ -249,11 +249,11 @@ public interface Logger {
      * @param <T>            the third argument's type.
      */
     default <F, S, T> void info(
-            @NotNull Object owner,
-            @Nullable F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
+        @NotNull Object owner,
+        @Nullable F first,
+        @Nullable S second,
+        @Nullable T third,
+        @NotNull Logger.TriFactory<F, S, T> messageFactory
     ) {
         print(LoggerLevel.INFO, owner, first, second, third, messageFactory);
     }
@@ -274,7 +274,7 @@ public interface Logger {
      * @param messageFactory the message factory.
      * @param <T>            the argument's type.
      */
-    default <T> void info(@NotNull T arg, @NotNull Function<T, @NotNull String> messageFactory) {
+    default <T> void info(@NotNull T arg, @NotNull Logger.SinFactory<T> messageFactory) {
         print(LoggerLevel.INFO, arg, messageFactory);
     }
 
@@ -288,9 +288,9 @@ public interface Logger {
      * @param <S>            the second argument's type.
      */
     default <F, S> void info(
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull BiFunction<F, S, @NotNull String> messageFactory
+        @Nullable F first,
+        @Nullable S second,
+        @NotNull Logger.BiFactory<F, S> messageFactory
     ) {
         print(LoggerLevel.INFO, first, second, messageFactory);
     }
@@ -308,10 +308,10 @@ public interface Logger {
      * @param <T>            the third argument's type.
      */
     default <F, S, T> void info(
-            @Nullable F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
+        @Nullable F first,
+        @Nullable S second,
+        @Nullable T third,
+        @NotNull Logger.TriFactory<F, S, T> messageFactory
     ) {
         print(LoggerLevel.INFO, first, second, third, messageFactory);
     }
@@ -429,10 +429,10 @@ public interface Logger {
      * @param <T>            the argument's type.
      */
     <T> void print(
-            @NotNull LoggerLevel level,
-            @NotNull Object owner,
-            @Nullable T arg,
-            @NotNull Function<T, @NotNull String> messageFactory
+        @NotNull LoggerLevel level,
+        @NotNull Object owner,
+        @Nullable T arg,
+        @NotNull Logger.SinFactory<T> messageFactory
     );
 
     /**
@@ -447,11 +447,11 @@ public interface Logger {
      * @param <S>            the second argument's type.
      */
     <F, S> void print(
-            @NotNull LoggerLevel level,
-            @NotNull Object owner,
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull BiFunction<F, S, @NotNull String> messageFactory
+        @NotNull LoggerLevel level,
+        @NotNull Object owner,
+        @Nullable F first,
+        @Nullable S second,
+        @NotNull Logger.BiFactory<F, S> messageFactory
     );
 
     /**
@@ -468,12 +468,12 @@ public interface Logger {
      * @param <T>            the third argument's type.
      */
     <F, S, T> void print(
-            @NotNull LoggerLevel level,
-            @NotNull Object owner,
-            @Nullable F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
+        @NotNull LoggerLevel level,
+        @NotNull Object owner,
+        @Nullable F first,
+        @Nullable S second,
+        @Nullable T third,
+        @NotNull Logger.TriFactory<F, S, T> messageFactory
     );
 
     /**
@@ -484,7 +484,7 @@ public interface Logger {
      * @param messageFactory the message factory.
      * @param <T>            the argument's type.
      */
-    <T> void print(@NotNull LoggerLevel level, @NotNull T arg, @NotNull Function<T, @NotNull String> messageFactory);
+    <T> void print(@NotNull LoggerLevel level, @Nullable T arg, @NotNull Logger.SinFactory<T> messageFactory);
 
     /**
      * Print the message.
@@ -497,12 +497,11 @@ public interface Logger {
      * @param <S>            the second argument's type.
      */
     <F, S> void print(
-            @NotNull LoggerLevel level,
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull BiFunction<F, S, @NotNull String> messageFactory
+        @NotNull LoggerLevel level,
+        @Nullable F first,
+        @Nullable S second,
+        @NotNull Logger.BiFactory<F, S> messageFactory
     );
-
 
     /**
      * Print the message.
@@ -517,10 +516,10 @@ public interface Logger {
      * @param <T>            the third argument's type.
      */
     <F, S, T> void print(
-            @NotNull LoggerLevel level,
-            @Nullable F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
+        @NotNull LoggerLevel level,
+        @Nullable F first,
+        @Nullable S second,
+        @Nullable T third,
+        @NotNull Logger.TriFactory<F, S, T> messageFactory
     );
 }

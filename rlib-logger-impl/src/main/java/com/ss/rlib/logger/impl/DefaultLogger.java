@@ -1,22 +1,17 @@
-package com.ss.rlib.common.logging.impl;
+package com.ss.rlib.logger.impl;
 
-import static com.ss.rlib.common.logging.LoggerManager.write;
-import com.ss.rlib.common.function.TripleFunction;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerLevel;
 import com.ss.rlib.common.util.StringUtils;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * The base implementation of the logger.
  *
  * @author JavaSaBr
  */
-public final class LoggerImpl implements Logger {
+public final class DefaultLogger implements Logger {
 
     private static final LoggerLevel[] VALUES = LoggerLevel.values();
 
@@ -28,22 +23,17 @@ public final class LoggerImpl implements Logger {
     /**
      * The logger name.
      */
-    @NotNull
-    private String name;
+    private final String name;
 
-    public LoggerImpl() {
-        this.name = "<empty name>";
-        this.override = new Boolean[VALUES.length];
-    }
+    /**
+     * The default logger factory.
+     */
+    private final DefaultLoggerFactory loggerFactory;
 
-    @Override
-    public @NotNull String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(@NotNull String name) {
+    public DefaultLogger(@NotNull String name, @NotNull DefaultLoggerFactory loggerFactory) {
         this.name = name;
+        this.loggerFactory = loggerFactory;
+        this.override = new Boolean[VALUES.length];
     }
 
     @Override
@@ -67,28 +57,28 @@ public final class LoggerImpl implements Logger {
     @Override
     public void print(@NotNull LoggerLevel level, @NotNull String message) {
         if (isEnabled(level)) {
-            write(level, getName(), message);
+            loggerFactory.write(level, name, message);
         }
     }
 
     @Override
     public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull String message) {
         if (isEnabled(level)) {
-            write(level, owner.getClass().getSimpleName(), message);
+            loggerFactory.write(level, owner.getClass().getSimpleName(), message);
         }
     }
 
     @Override
     public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull Throwable exception) {
         if (isEnabled(level)) {
-            write(level, owner.getClass().getSimpleName(), StringUtils.toString(exception));
+            loggerFactory.write(level, owner.getClass().getSimpleName(), StringUtils.toString(exception));
         }
     }
 
     @Override
     public void print(@NotNull LoggerLevel level, @NotNull Throwable exception) {
         if (isEnabled(level)) {
-            write(level, getName(), StringUtils.toString(exception));
+            loggerFactory.write(level, name, StringUtils.toString(exception));
         }
     }
 
@@ -97,10 +87,10 @@ public final class LoggerImpl implements Logger {
             @NotNull LoggerLevel level,
             @NotNull Object owner,
             @Nullable T arg,
-            @NotNull Function<T, @NotNull String> messageFactory
+            @NotNull Logger.SinFactory<T> messageFactory
     ) {
         if (isEnabled(level)) {
-            write(level, owner.getClass().getSimpleName(), arg, messageFactory);
+            loggerFactory.write(level, owner.getClass().getSimpleName(), arg, messageFactory);
         }
     }
 
@@ -110,10 +100,10 @@ public final class LoggerImpl implements Logger {
             @NotNull Object owner,
             @Nullable F first,
             @Nullable S second,
-            @NotNull BiFunction<F, S, @NotNull String> messageFactory
+            @NotNull Logger.BiFactory<F, S> messageFactory
     ) {
         if (isEnabled(level)) {
-            write(level, owner.getClass().getSimpleName(), first, second, messageFactory);
+            loggerFactory.write(level, owner.getClass().getSimpleName(), first, second, messageFactory);
         }
     }
 
@@ -124,10 +114,10 @@ public final class LoggerImpl implements Logger {
             @Nullable F first,
             @Nullable S second,
             @Nullable T third,
-            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
+            @NotNull Logger.TriFactory<F, S, T> messageFactory
     ) {
         if (isEnabled(level)) {
-            write(level, owner.getClass().getSimpleName(), first, second, third, messageFactory);
+            loggerFactory.write(level, owner.getClass().getSimpleName(), first, second, third, messageFactory);
         }
     }
 
@@ -135,10 +125,10 @@ public final class LoggerImpl implements Logger {
     public <T> void print(
             @NotNull LoggerLevel level,
             @Nullable T arg,
-            @NotNull Function<T, @NotNull String> messageFactory
+            @NotNull Logger.SinFactory<T> messageFactory
     ) {
         if (isEnabled(level)) {
-            write(level, getName(), arg, messageFactory);
+            loggerFactory.write(level, name, arg, messageFactory);
         }
     }
 
@@ -147,10 +137,10 @@ public final class LoggerImpl implements Logger {
             @NotNull LoggerLevel level,
             @Nullable F first,
             @Nullable S second,
-            @NotNull BiFunction<F, S, @NotNull String> messageFactory
+            @NotNull Logger.BiFactory<F, S> messageFactory
     ) {
         if (isEnabled(level)) {
-            write(level, getName(), first, second, messageFactory);
+            loggerFactory.write(level, name, first, second, messageFactory);
         }
     }
 
@@ -160,10 +150,10 @@ public final class LoggerImpl implements Logger {
             @Nullable F first,
             @Nullable S second,
             @Nullable T third,
-            @NotNull TripleFunction<F, S, T, @NotNull String> messageFactory
+            @NotNull Logger.TriFactory<F, S, T> messageFactory
     ) {
         if (isEnabled(level)) {
-            write(level, getName(), first, second, third, messageFactory);
+            loggerFactory.write(level, name, first, second, third, messageFactory);
         }
     }
 }

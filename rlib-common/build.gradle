@@ -1,3 +1,6 @@
+dependencies {
+    compile project(":rlib-logger-api")
+}
 
 jar {
     baseName "rlib.common"

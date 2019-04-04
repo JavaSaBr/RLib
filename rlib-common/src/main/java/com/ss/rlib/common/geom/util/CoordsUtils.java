@@ -1,8 +1,8 @@
 package com.ss.rlib.common.geom.util;
 
 import com.ss.rlib.common.geom.Vector3f;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.util.ExtMath;
 import org.jetbrains.annotations.NotNull;
 

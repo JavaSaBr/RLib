@@ -6,8 +6,8 @@ import com.ss.rlib.common.geom.Vector3f;
 import com.ss.rlib.common.geom.Vector3fBuffer;
 import com.ss.rlib.common.geom.bounding.Bounding;
 import com.ss.rlib.common.geom.bounding.BoundingType;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
 /**

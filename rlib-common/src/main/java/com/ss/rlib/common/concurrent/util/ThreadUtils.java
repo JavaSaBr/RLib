@@ -1,9 +1,7 @@
 package com.ss.rlib.common.concurrent.util;
 
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
 
 /**
  * The class with utilities methods to work with threads.
