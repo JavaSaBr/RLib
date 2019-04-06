@@ -26,7 +26,7 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_11
 
     ext {
-        sl4jVersion = '1.8.0-beta4'
+        sl4jVersion = '1.7.26'
         javaxMailVersion = "1.5.0-b01"
         testcontainersVersion = '1.11.1'
         lombokVersion = '1.18.4'
