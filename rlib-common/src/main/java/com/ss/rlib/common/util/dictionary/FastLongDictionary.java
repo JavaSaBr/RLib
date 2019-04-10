@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The fast implementation of {@link LongDictionary} without threadsafe supporting.
  *
- * @param <V> the type parameter
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public class FastLongDictionary<V> extends AbstractLongDictionary<V> {

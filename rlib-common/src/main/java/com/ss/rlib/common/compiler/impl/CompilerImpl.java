@@ -1,9 +1,8 @@
 package com.ss.rlib.common.compiler.impl;
 
 import com.ss.rlib.common.compiler.Compiler;
-import com.ss.rlib.common.compiler.Compiler;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayCollectors;
 import com.ss.rlib.common.util.array.ArrayFactory;

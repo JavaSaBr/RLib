@@ -2,6 +2,7 @@ package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.function.LongBiObjectConsumer;
 import com.ss.rlib.common.function.LongObjectConsumer;
+import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.LongArray;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,16 @@ import java.util.function.Supplier;
  * @author JavaSaBr
  */
 public interface LongDictionary<V> extends Dictionary<LongKey, V> {
+
+    /**
+     * Get an empty read-only long dictionary.
+     *
+     * @param <V> the value's type.
+     * @return the read-only empty dictionary.
+     */
+    static <V> @NotNull LongDictionary<V> empty() {
+        return ClassUtils.unsafeNNCast(DictionaryFactory.EMPTY_LD);
+    }
 
     /**
      * Create a new long dictionary for the value's type.
@@ -43,13 +54,21 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
             throw new IllegalArgumentException("Incorrect argument's count.");
         }
 
-        LongDictionary<V> dictionary = DictionaryFactory.newLongDictionary();
+        var dictionary = DictionaryFactory.<V>newLongDictionary();
 
         for (int i = 0, length = values.length - 2; i <= length; i += 2) {
-            dictionary.put((Long) values[i], (V) values[i + 1]);
+            dictionary.put(((Number) values[i]).longValue(), (V) values[i + 1]);
         }
 
         return dictionary;
+    }
+
+    static <V, M extends LongDictionary<V>> @NotNull M append(
+        @NotNull M first,
+        @NotNull M second
+    ) {
+        second.copyTo(first);
+        return first;
     }
 
     /**
@@ -109,7 +128,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @see #getOrCompute(long, LongFunction)
      */
     @Deprecated
-    default @Nullable V get(final long key, @NotNull final LongFunction<V> factory) {
+    default @Nullable V get(long key, @NotNull LongFunction<V> factory) {
         return getOrCompute(key, factory);
     }
 
@@ -137,7 +156,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @see #getOrCompute(long, Object, Function)
      */
     @Deprecated
-    default <T> @Nullable V get(final long key, @Nullable final T argument, @NotNull final Function<T, V> factory) {
+    default <T> @Nullable V get(long key, @Nullable T argument, @NotNull Function<T, V> factory) {
         return getOrCompute(key, argument, factory);
     }
 
@@ -152,9 +171,9 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * @return the stored value by the key or the new value.
      */
     default <T> @Nullable V getOrCompute(
-            long key,
-            @NotNull T argument,
-            @NotNull Function<@NotNull T, @NotNull V> factory
+        long key,
+        @NotNull T argument,
+        @NotNull Function<@NotNull T, @NotNull V> factory
     ) {
         throw new UnsupportedOperationException();
     }

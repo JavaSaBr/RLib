@@ -1,5 +1,10 @@
 rootProject.name = 'rlib'
-enableFeaturePreview('STABLE_PUBLISHING')
+
 include ':rlib-common'
 include ':rlib-fx'
 include ':rlib-network'
+include ':rlib-testcontainers'
+include ':rlib-mail'
+include ':rlib-logger-api'
+include ':rlib-logger-impl'
+include ':rlib-logger-slf4j'

@@ -1,7 +1,7 @@
 package com.ss.rlib.network.impl;
 
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.AsyncConnection;
 import com.ss.rlib.network.ConnectionOwner;
 import com.ss.rlib.network.NetworkCrypt;

@@ -7,7 +7,6 @@ import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -24,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.ss.rlib.common.classpath.ClassPathScannerFactory;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.plugin.ConfigurablePluginSystem;
 import com.ss.rlib.common.plugin.Plugin;
 import com.ss.rlib.common.plugin.PluginContainer;

@@ -1,4 +1,4 @@
-package com.ss.rlib.common.logging.impl;
+package com.ss.rlib.logger.impl;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -9,9 +9,8 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.ss.rlib.logger.api.LoggerListener;
 import org.jetbrains.annotations.NotNull;
-
-import com.ss.rlib.common.logging.LoggerListener;
 
 /**
  * The implementation of a logger listener to save log to files in a directory.
@@ -33,12 +32,7 @@ public class FolderFileListener implements LoggerListener {
      */
     private Writer writer;
 
-    /**
-     * Instantiates a new Folder file listener.
-     *
-     * @param folder the folder
-     */
-    public FolderFileListener(@NotNull final Path folder) {
+    public FolderFileListener(@NotNull Path folder) {
 
         if (!Files.isDirectory(folder)) {
             throw new IllegalArgumentException("file is not directory.");
@@ -62,13 +56,12 @@ public class FolderFileListener implements LoggerListener {
      * @return the writer.
      * @throws IOException the io exception
      */
-    @NotNull
-    public Writer getWriter() throws IOException {
+    public @NotNull Writer getWriter() throws IOException {
 
         if (writer == null) {
 
-            final LocalDateTime dateTime = LocalDateTime.now();
-            final String filename = TIME_FORMATTER.format(dateTime) + ".log";
+            var dateTime = LocalDateTime.now();
+            var filename = TIME_FORMATTER.format(dateTime) + ".log";
 
             writer = Files.newBufferedWriter(folder.resolve(filename), Charset.forName("UTF-8"));
         }
@@ -77,13 +70,13 @@ public class FolderFileListener implements LoggerListener {
     }
 
     @Override
-    public void println(@NotNull final String text) {
+    public void println(@NotNull String text) {
         try {
-            final Writer writer = getWriter();
+            var writer = getWriter();
             writer.append(text);
             writer.append('\n');
             writer.flush();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

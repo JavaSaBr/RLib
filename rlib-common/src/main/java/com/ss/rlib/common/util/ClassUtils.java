@@ -1,8 +1,7 @@
 package com.ss.rlib.common.util;
 
 import static java.lang.Class.forName;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +16,6 @@ import java.util.Arrays;
  */
 public final class ClassUtils {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(ClassUtils.class);
-
     /**
      * Get a class for the name.
      *
@@ -30,7 +27,7 @@ public final class ClassUtils {
         try {
             return unsafeCast(forName(name));
         } catch (ClassNotFoundException e) {
-            LOGGER.warning(e);
+            LoggerManager.getDefaultLogger().warning(ClassUtils.class, e);
             return null;
         }
     }
@@ -50,7 +47,7 @@ public final class ClassUtils {
         try {
             return unsafeCast(cs.getConstructor(classes));
         } catch (NoSuchMethodException | SecurityException e) {
-            LOGGER.warning(e);
+            LoggerManager.getDefaultLogger().warning(ClassUtils.class, e);
             return null;
         }
     }
@@ -87,7 +84,7 @@ public final class ClassUtils {
             Class<?> cs = forName(className);
             return unsafeCast(cs.getConstructor(classes));
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            LOGGER.warning(e);
+            LoggerManager.getDefaultLogger().warning(ClassUtils.class, e);
             return null;
         }
     }

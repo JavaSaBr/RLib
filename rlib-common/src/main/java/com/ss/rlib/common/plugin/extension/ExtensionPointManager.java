@@ -1,7 +1,7 @@
 package com.ss.rlib.common.plugin.extension;
 
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.dictionary.ConcurrentObjectDictionary;
 import com.ss.rlib.common.util.dictionary.DictionaryFactory;

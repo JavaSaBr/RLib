@@ -1,4 +1,4 @@
-package com.ss.rlib.common.logging;
+package com.ss.rlib.logger.api;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,31 +1,35 @@
 buildscript {
     repositories {
-        mavenCentral()
-        jcenter()
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.19'
     }
 }
 
-rootProject.version = "9.0.3"
-group = "com.spaceshift"
+rootProject.version = '9.1.0'
+group = 'com.spaceshift'
 
-subprojects {
+allprojects {
 
     repositories {
         mavenCentral()
         jcenter()
     }
 
-    apply plugin: "java"
+    apply plugin: 'java'
     apply plugin: 'com.jfrog.bintray'
     apply plugin: 'maven-publish'
 
-    sourceCompatibility = JavaVersion.VERSION_1_10
-    targetCompatibility = JavaVersion.VERSION_1_10
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
     ext {
+        sl4jVersion = '1.7.26'
+        javaxMailVersion = "1.5.0-b01"
+        testcontainersVersion = '1.11.1'
+        lombokVersion = '1.18.4'
         junitJupiterVersion = "5.2.0"
         jetbrainsAnnotation = '16.0.3'
         bintrayVersion = version
@@ -49,23 +53,36 @@ subprojects {
 
     dependencies {
         compileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
-        testCompile  "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
-        testCompileOnly  "org.jetbrains:annotations:$jetbrainsAnnotation"
+        testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+        testCompileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+        compileOnly "org.projectlombok:lombok:$lombokVersion"
+        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     }
+
+    /*compileJava {
+        inputs.property("moduleName", jar.baseName)
+        doFirst {
+            options.compilerArgs = [
+                '--module-path', classpath.asPath,
+            ]
+            classpath = files()
+        }
+    }*/
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         afterEvaluate {
-            classifier = 'sources'
-            baseName = jar.baseName
+            archiveClassifier = 'sources'
+            archiveBaseName = jar.getArchiveBaseName()
             from sourceSets.main.allSource
         }
     }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         afterEvaluate {
-            classifier = 'javadoc'
-            baseName = jar.baseName
+            archiveClassifier = 'javadoc'
+            archiveBaseName = jar.getArchiveBaseName()
             from sourceSets.main.allSource
         }
     }
@@ -102,14 +119,31 @@ subprojects {
                 version {
                     name = rootProject.version
                     desc = rootProject.version
-                    released  = new Date()
+                    released = new Date()
                 }
             }
         }
     }
+
+    configurations {
+        testArtifacts.extendsFrom testRuntime
+    }
+
+    task testJar(type: Jar) {
+        archiveClassifier  = "test"
+        from sourceSets.test.output
+    }
+
+    artifacts {
+        testArtifacts testJar
+    }
+
+    tasks.withType(Test) {
+        maxParallelForks = Runtime.runtime.availableProcessors()
+    }
 }
 
 wrapper {
-    gradleVersion = '4.10'
+    gradleVersion = '5.3.1'
     distributionType = Wrapper.DistributionType.ALL
 }

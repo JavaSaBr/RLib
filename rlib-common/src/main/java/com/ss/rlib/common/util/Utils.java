@@ -2,7 +2,7 @@ package com.ss.rlib.common.util;
 
 import static java.lang.ThreadLocal.withInitial;
 import com.ss.rlib.common.function.*;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +26,8 @@ import java.util.function.Consumer;
  * @author JavaSaBr
  */
 public final class Utils {
+
+    public static final int CORES = Runtime.getRuntime().availableProcessors();
 
     private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(() ->
             new SimpleDateFormat("HH:mm:ss:SSS"));
@@ -109,16 +111,7 @@ public final class Utils {
      */
     @Deprecated(forRemoval = true)
     public static @NotNull String fromHex(@NotNull String string) {
-
-        var array = string.toCharArray();
-        var builder = new StringBuilder(string.length() / 4);
-
-        for (int i = 0, length = array.length - 3; i < length; i += 4) {
-            var element = String.valueOf(array, i, 4);
-            builder.append((char) Integer.parseInt(element, 16));
-        }
-
-        return builder.toString();
+        return StringUtils.fromHex(string);
     }
 
     /**
@@ -654,26 +647,7 @@ public final class Utils {
      */
     @Deprecated(forRemoval = true)
     public static @NotNull String toHex(@NotNull String string) {
-
-        var builder = new StringBuilder(string.length() * 2);
-
-        for (int i = 0, length = string.length(); i < length; i++) {
-
-            var charAt = string.charAt(i);
-            var element = Integer.toHexString(charAt);
-
-            if (element.length() == 1) {
-                element = "000" + element;
-            } else if (element.length() == 2) {
-                element = "00" + element;
-            } else if (element.length() == 3) {
-                element = "0" + element;
-            }
-
-            builder.append(element);
-        }
-
-        return builder.toString();
+        return StringUtils.toHex(string);
     }
 
     /**

@@ -4,7 +4,7 @@ Please see the file called LICENSE.
  [ ![Download](https://api.bintray.com/packages/javasabr/maven/com.spaceshift.rlib.common/images/download.svg) ](https://bintray.com/javasabr/maven/com.spaceshift.rlib.common/_latestVersion)
 
 
-## How to use for java 10+
+## How to use for java 11+
 
 #### Gradle
 
@@ -16,9 +16,11 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:9.0.3'
-    compile 'com.spaceshift:rlib.fx:9.0.3'
-    compile 'com.spaceshift:rlib.network:9.0.3'
+    compile 'com.spaceshift:rlib.common:9.1.0'
+    compile 'com.spaceshift:rlib.fx:9.1.0'
+    compile 'com.spaceshift:rlib.network:9.1.0'
+    compile 'com.spaceshift:rlib.mail:9.1.0'
+    compile 'com.spaceshift:rlib.testcontainers:9.1.0'
 }
 ```
     
@@ -27,7 +29,7 @@ dependencies {
 ```xml
 <repositories>
     <repository>
-        <snapshots>;
+        <snapshots>
             <enabled>false</enabled>
         </snapshots>
         <id>bintray-javasabr-maven</id>
@@ -39,17 +41,27 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>9.0.2</version>
+    <version>9.1.0</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.fx</artifactId>
-    <version>9.0.2</version>
+    <version>9.1.2</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.network</artifactId>
-    <version>9.0.2</version>
+    <version>9.1.0</version>
+</dependency>
+<dependency>
+    <groupId>com.spaceshift</groupId>
+    <artifactId>rlib.mail</artifactId>
+    <version>9.1.0</version>
+</dependency>
+<dependency>
+    <groupId>com.spaceshift</groupId>
+    <artifactId>rlib.testcontainers</artifactId>
+    <version>9.1.0</version>
 </dependency>
 
 ```
@@ -92,6 +104,25 @@ dependencies {
 ```
 
 ## Most interesting parts:
+### Fake SMTP Server
+
+```java
+
+    var container = new FakeSMTPTestContainer()
+        .withSmtpPassword("pwd")
+        .withSmtpUser("test_user");
+    
+    container.start();
+    container.waitForReadyState();
+    
+    // sending emails to this server
+    
+    // checking API
+    var count = container.getEmailCountFrom("from@test.com")
+    // clearing API
+    container.deleteEmails();
+```
+
 ### Classpath Scanner API
 
 ```java
@@ -233,6 +264,31 @@ dependencies {
     logger.debug("Showed");
 ```
 
+### Mail Sender
+
+```java
+    var config = MailSenderConfig.builder()
+        .from("from@test.com")
+        .host("smtp.test.com")
+        .port(smtpPort)
+        .password(smtpPassword)
+        .username(smtpUser)
+        .useAuth(true)
+        .enableTtls(true)
+        .sslHost("smtp.test.com")
+        .build();
+    
+    var javaxConfig = JavaxMailSender.JavaxMailSenderConfig.builder()
+        .executorKeepAlive(120)
+        .executorMaxThreads(20)
+        .executorMinThreads(1)
+        .build();
+    
+    var sender = new JavaxMailSender(config, javaxConfig);
+    sender.send("to@test.com", "Test Subject", "Content");
+    sender.sendAsync("to@test.com", "Test Subject", "Content")
+        .thenAccept(aVoid -> System.out.println("done!"));
+```
 ### Network API
 
 ```java

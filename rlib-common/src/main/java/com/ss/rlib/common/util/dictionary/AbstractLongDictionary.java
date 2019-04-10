@@ -15,11 +15,11 @@ import java.util.function.Supplier;
 /**
  * The base implementation of the {@link LongDictionary}.
  *
- * @param <V> the type parameter
+ * @param <V> the value's type.
  * @author JavaSaBr
  */
 public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongKey, V, LongEntry<V>>
-        implements UnsafeLongDictionary<V> {
+    implements UnsafeLongDictionary<V> {
 
     protected AbstractLongDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
@@ -52,16 +52,16 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
      */
     private void addEntry(int hash, long key, @NotNull V value, int index) {
 
-        LongEntry<V>[] content = entries();
-        LongEntry<V> entry = content[index];
+        var entries = entries();
+        var entry = entries[index];
 
-        LongEntry<V> newEntry = entryPool.take(LongEntry::new);
+        var newEntry = entryPool.take(LongEntry::new);
         newEntry.set(hash, key, value, entry);
 
-        content[index] = newEntry;
+        entries[index] = newEntry;
 
         if (incrementSizeAndGet() >= getThreshold()) {
-            resize(2 * content.length);
+            resize(2 * entries.length);
         }
     }
 
@@ -72,14 +72,14 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
 
     @Override
     public final @Nullable V get(long key) {
-        LongEntry<V> entry = getEntry(key);
+        var entry = getEntry(key);
         return entry == null ? null : entry.getValue();
     }
 
     @Override
     public @NotNull V getOrCompute(long key, @NotNull Supplier<@NotNull V> factory) {
 
-        LongEntry<V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.get());
@@ -96,7 +96,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     @Override
     public @NotNull V getOrCompute(long key, @NotNull LongFunction<@NotNull V> factory) {
 
-        LongEntry<V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.apply(key));
@@ -112,12 +112,12 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
 
     @Override
     public <T> @Nullable V getOrCompute(
-            long key,
-            @NotNull T argument,
-            @NotNull Function<@NotNull T, @NotNull V> factory
+        long key,
+        @NotNull T argument,
+        @NotNull Function<@NotNull T, @NotNull V> factory
     ) {
 
-        LongEntry<V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.apply(argument));
@@ -139,12 +139,12 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
      */
     private @Nullable LongEntry<V> getEntry(long key) {
 
-        LongEntry<V>[] entries = entries();
+        var entries = entries();
 
         int hash = hash(key);
         int index = indexFor(hash, entries.length);
 
-        for (LongEntry<V> entry = entries[index]; entry != null; entry = entry.getNext()) {
+        for (var entry = entries[index]; entry != null; entry = entry.getNext()) {
             if (entry.getHash() == hash && key == entry.getKey()) {
                 return entry;
             }
@@ -161,7 +161,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     @Override
     public @NotNull LongArray keyArray(@NotNull LongArray container) {
 
-        for (LongEntry<V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 container.add(entry.getKey());
                 entry = entry.getNext();
@@ -178,25 +178,24 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
             return;
         }
 
-        LongDictionary<V> target = ClassUtils.unsafeNNCast(dictionary);
+        var targetDictionary = ClassUtils.<LongDictionary<V>>unsafeNNCast(dictionary);
 
-        for (LongEntry<V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
-                target.put(entry.getKey(), entry.getValue());
+                targetDictionary.put(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
             }
         }
     }
 
     @Override
-    public final V put(long key, @NotNull V value) {
+    public V put(long key, @NotNull V value) {
 
-        LongEntry<V>[] entries = entries();
+        var entries = entries();
+        var hash = hash(key);
+        var i = indexFor(hash, entries.length);
 
-        int hash = hash(key);
-        int i = indexFor(hash, entries.length);
-
-        for (LongEntry<V> entry = entries[i]; entry != null; entry = entry.getNext()) {
+        for (var entry = entries[i]; entry != null; entry = entry.getNext()) {
             if (entry.getHash() == hash && key == entry.getKey()) {
                 return entry.setValue(value);
             }
@@ -208,14 +207,14 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    public final @Nullable V remove(long key) {
+    public @Nullable V remove(long key) {
 
-        LongEntry<V> old = removeEntryForKey(key);
+        var oldEntry = removeEntryForKey(key);
 
-        V value = old == null ? null : old.getValue();
+        V value = oldEntry == null ? null : oldEntry.getValue();
 
-        if (old != null) {
-            entryPool.put(old);
+        if (oldEntry != null) {
+            entryPool.put(oldEntry);
         }
 
         return value;
@@ -224,32 +223,31 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     @Override
     public final LongEntry<V> removeEntryForKey(long key) {
 
-        LongEntry<V>[] entries = entries();
+        var entries = entries();
+        var hash = hash(key);
+        var i = indexFor(hash, entries.length);
 
-        int hash = hash(key);
-        int i = indexFor(hash, entries.length);
-
-        LongEntry<V> prev = entries[i];
-        LongEntry<V> entry = prev;
+        var prevEntry = entries[i];
+        var entry = prevEntry;
 
         while (entry != null) {
 
-            LongEntry<V> next = entry.getNext();
+            var nextEntry = entry.getNext();
 
             if (entry.getHash() == hash && key == entry.getKey()) {
                 decrementSizeAndGet();
 
-                if (prev == entry) {
-                    entries[i] = next;
+                if (prevEntry == entry) {
+                    entries[i] = nextEntry;
                 } else {
-                    prev.setNext(next);
+                    prevEntry.setNext(nextEntry);
                 }
 
                 return entry;
             }
 
-            prev = entry;
-            entry = next;
+            prevEntry = entry;
+            entry = nextEntry;
         }
 
         return null;
@@ -258,16 +256,16 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     @Override
     public final String toString() {
 
-        int size = size();
+        var size = size();
 
-        StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+        var builder = new StringBuilder(getClass().getSimpleName());
         builder.append(" size = ")
                 .append(size)
                 .append(" :\n");
 
-        LongEntry<V>[] entries = entries();
+        var entries = entries();
 
-        for (LongEntry<V> entry : entries) {
+        for (var entry : entries) {
             while (entry != null) {
 
                 builder.append("[")
@@ -290,7 +288,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
 
     @Override
     public <T> void forEach(@NotNull T argument, @NotNull LongBiObjectConsumer<@NotNull V, @NotNull T> consumer) {
-        for (LongEntry<V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue(), argument);
                 entry = entry.getNext();
@@ -300,7 +298,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
 
     @Override
     public void forEach(@NotNull LongObjectConsumer<@NotNull V> consumer) {
-        for (LongEntry<V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue());
                 entry = entry.getNext();

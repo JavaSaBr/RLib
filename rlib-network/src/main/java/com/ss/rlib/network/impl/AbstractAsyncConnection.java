@@ -2,8 +2,8 @@ package com.ss.rlib.network.impl;
 
 import static com.ss.rlib.common.util.ObjectUtils.notNull;
 import static java.lang.Math.min;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.*;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.ReusableWritablePacket;

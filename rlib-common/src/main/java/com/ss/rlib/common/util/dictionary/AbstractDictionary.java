@@ -2,7 +2,6 @@ package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.UnsafeArray;
 import com.ss.rlib.common.util.pools.PoolFactory;
 import com.ss.rlib.common.util.pools.ReusablePool;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +72,6 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
     /**
      * The pool with entries.
      */
-    @NotNull
     protected final ReusablePool<E> entryPool;
 
     /**
@@ -91,7 +89,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
 
     @Override
     public final void apply(@NotNull Function<? super V, V> function) {
-        for (E entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 entry.setValue(function.apply(entry.getValue()));
                 entry = entry.getNext();
@@ -102,7 +100,8 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
     @Override
     public void clear() {
 
-        E[] entries = entries();
+        var entries = entries();
+
         E next;
 
         for (E entry : entries) {
@@ -121,9 +120,9 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
     @Override
     public final boolean containsValue(@Nullable V value) {
 
-        for (E entry : entries()) {
-            for (E next = entry; next != null; next = next.getNext()) {
-                if (Objects.equals(value, next.getValue())) {
+        for (var entry : entries()) {
+            for (var nextEntry = entry; nextEntry != null; nextEntry = nextEntry.getNext()) {
+                if (Objects.equals(value, nextEntry.getValue())) {
                     return true;
                 }
             }
@@ -134,7 +133,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
 
     @Override
     public final void forEach(@NotNull Consumer<? super V> consumer) {
-        for (E entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(entry.getValue());
                 entry = entry.getNext();
@@ -149,16 +148,15 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
      */
     protected final void resize(int newLength) {
 
-        E[] prevEntries = entries();
-
-        int oldLength = prevEntries.length;
+        var prevEntries = entries();
+        var oldLength = prevEntries.length;
 
         if (oldLength >= DEFAULT_MAXIMUM_CAPACITY) {
             setThreshold(Integer.MAX_VALUE);
             return;
         }
 
-        E[] newEntries = ArrayUtils.create(getEntryType(), newLength);
+        var newEntries = ArrayUtils.<E>create(getEntryType(), newLength);
 
         transfer(newEntries);
         setEntries(newEntries);
@@ -172,11 +170,10 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
      */
     private void transfer(@NotNull E[] newEntries) {
 
-        E[] entries = entries();
+        var entries = entries();
+        var newCapacity = newEntries.length;
 
-        int newCapacity = newEntries.length;
-
-        for (E entry : entries) {
+        for (var entry : entries) {
 
             if (entry == null) {
                 continue;
@@ -184,12 +181,12 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
 
             do {
 
-                E next = entry.getNext();
-                int i = indexFor(entry.getHash(), newCapacity);
+                var nextEntry = entry.getNext();
+                var i = indexFor(entry.getHash(), newCapacity);
 
                 entry.setNext(newEntries[i]);
                 newEntries[i] = entry;
-                entry = next;
+                entry = nextEntry;
 
             } while (entry != null);
         }
@@ -198,10 +195,10 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
     @Override
     public final @NotNull Array<V> values(@NotNull Array<V> container) {
 
-        UnsafeArray<V> unsafeArray = container.asUnsafe();
+        var unsafeArray = container.asUnsafe();
         unsafeArray.prepareForSize(container.size() + size());
 
-        for (E entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 unsafeArray.unsafeAdd(entry.getValue());
                 entry = entry.getNext();

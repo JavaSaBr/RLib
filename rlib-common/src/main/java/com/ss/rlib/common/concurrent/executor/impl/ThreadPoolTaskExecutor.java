@@ -1,7 +1,5 @@
 package com.ss.rlib.common.concurrent.executor.impl;
 
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.linkedlist.LinkedList;
@@ -13,12 +11,8 @@ import com.ss.rlib.common.concurrent.lock.Lockable;
 import com.ss.rlib.common.concurrent.task.CallableTask;
 import com.ss.rlib.common.concurrent.task.SimpleTask;
 import com.ss.rlib.common.concurrent.util.ConcurrentUtils;
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.linkedlist.LinkedList;
-import com.ss.rlib.common.util.linkedlist.LinkedListFactory;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Executors;

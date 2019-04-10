@@ -1,7 +1,7 @@
 package com.ss.rlib.network.packet.impl;
 
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.packet.Packet;
 import org.jetbrains.annotations.NotNull;
 

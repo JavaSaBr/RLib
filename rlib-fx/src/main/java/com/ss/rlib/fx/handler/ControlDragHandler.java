@@ -1,15 +1,12 @@
 package com.ss.rlib.fx.handler;
 
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerLevel;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerLevel;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.fx.LoggerClass;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of a handler to process windows dragging.

@@ -1,8 +1,8 @@
 package com.ss.rlib.fx.handler;
 
-import com.ss.rlib.common.logging.Logger;
-import com.ss.rlib.common.logging.LoggerLevel;
-import com.ss.rlib.common.logging.LoggerManager;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerLevel;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.fx.LoggerClass;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;

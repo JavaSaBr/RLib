@@ -328,4 +328,98 @@ public class StringUtils {
 
         return builder.toString();
     }
+
+    /**
+     * Replace the variable in the string.
+     *
+     * @param string    the source string.
+     * @param firstName the variable's name.
+     * @param firstVal  the variable's value.
+     * @return result string.
+     */
+    public static @NotNull String replace(@NotNull String string, @NotNull String firstName, @NotNull String firstVal) {
+
+        var capacity = string.length();
+        capacity = capacity - firstName.length() + firstVal.length();
+        capacity = Math.max(capacity, string.length());
+
+        var builder = new StringBuilder(capacity);
+        builder.append(string);
+
+        replace(builder, firstName, firstVal);
+
+        return builder.toString();
+    }
+
+    /**
+     * Replace the variables in the string.
+     *
+     * @param string     the source string.
+     * @param firstName  the first variable's name.
+     * @param firstVal   the first variable's value.
+     * @param secondName the second variable's name.
+     * @param secondVal  the second variable's value.
+     * @return result string.
+     */
+    public static @NotNull String replace(
+        @NotNull String string,
+        @NotNull String firstName,
+        @NotNull String firstVal,
+        @NotNull String secondName,
+        @NotNull String secondVal
+    ) {
+
+        var capacity = string.length();
+        capacity = capacity - firstName.length() + firstVal.length();
+        capacity = capacity - secondName.length() + secondVal.length();
+        capacity = Math.max(capacity, string.length());
+
+        var builder = new StringBuilder(capacity);
+        builder.append(string);
+
+        replace(builder, firstName, firstVal);
+        replace(builder, secondName, secondVal);
+
+        return builder.toString();
+    }
+
+    /**
+     * Replace the variables in the string.
+     *
+     * @param string the source string.
+     * @param params the variable's parameters, name -> val, name -> val.
+     * @return result string.
+     * @throws IllegalArgumentException if params count < 2 or % 2 != 0
+     */
+    public static @NotNull String replace(@NotNull String string, @NotNull String... params) {
+
+        if (params.length < 2 || params.length % 2 != 0) {
+            throw new IllegalArgumentException("Wrong params count.");
+        }
+
+        var capacity = string.length();
+
+        for (int i = 0; i < params.length - 1; i += 2) {
+            capacity = capacity - params[i].length() + params[i + 1].length();
+        }
+
+        capacity = Math.max(capacity, string.length());
+
+        var builder = new StringBuilder(capacity);
+        builder.append(string);
+
+        for (var i = 0; i < params.length - 1; i += 2) {
+            replace(builder, params[i], params[i + 1]);
+        }
+
+        return builder.toString();
+    }
+
+    private static void replace(@NotNull StringBuilder builder, @NotNull String name, @NotNull String value) {
+
+        for (int index = builder.indexOf(name), count = 0;
+             index != -1 && count < 100; index = builder.indexOf(name), count++) {
+            builder.replace(index, index + name.length(), value);
+        }
+    }
 }
