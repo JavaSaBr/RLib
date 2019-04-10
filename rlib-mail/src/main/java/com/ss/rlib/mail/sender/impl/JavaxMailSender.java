@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.mail.*;
 import javax.mail.Message.RecipientType;
 import javax.mail.internet.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.*;
 
@@ -75,6 +76,7 @@ public class JavaxMailSender implements MailSender {
         }
 
         LOGGER.info("Initialized javax mail sender with settings:");
+        LOGGER.info("user : " + username);
         LOGGER.info("host : " + config.getHost() + ":" + config.getPort());
         LOGGER.info("from : " + config.getFrom());
 
@@ -101,10 +103,10 @@ public class JavaxMailSender implements MailSender {
             var message = new MimeMessage(session);
             message.setFrom(from);
             message.setRecipients(RecipientType.TO, InternetAddress.parse(email));
-            message.setSubject(subject);
+            message.setSubject(subject, StandardCharsets.UTF_8.name());
 
             var mimeBodyPart = new MimeBodyPart();
-            mimeBodyPart.setContent(content, "text/html");
+            mimeBodyPart.setContent(content, "text/html; charset=UTF-8");
 
             var multipart = new MimeMultipart();
             multipart.addBodyPart(mimeBodyPart);
