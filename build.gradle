@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-rootProject.version = '9.1.0'
+rootProject.version = '9.1.1'
 group = 'com.spaceshift'
 
 allprojects {
