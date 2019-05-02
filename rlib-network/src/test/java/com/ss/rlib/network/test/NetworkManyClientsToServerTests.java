@@ -98,7 +98,7 @@ public class NetworkManyClientsToServerTests extends NetworkTestConfig {
 
     private static ServerNetwork serverNetwork;
 
-    @BeforeAll
+    //@BeforeAll
     public static void createNetworks() throws IOException {
 
         var clientChannelGroup = AsynchronousChannelGroup.withThreadPool(Executors.newFixedThreadPool(4));
@@ -133,7 +133,7 @@ public class NetworkManyClientsToServerTests extends NetworkTestConfig {
         }
     }
 
-    @Test
+    //@Test
     public void sendPackets() {
 
         for (var client : AVAILABLE_CLIENTS) {
@@ -173,7 +173,7 @@ public class NetworkManyClientsToServerTests extends NetworkTestConfig {
                     "received: " + RECEIVED_CLIENT_PACKETS.get());
     }
 
-    @AfterAll
+    //@AfterAll
     public static void shutdownNetwork() {
         CLIENT_NETWORKS.forEach(AsyncNetwork::shutdown);
         serverNetwork.shutdown();

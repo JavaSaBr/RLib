@@ -157,7 +157,7 @@ public class NetworkPerformanceTests {
 
     private static ServerNetwork serverNetwork;
 
-    @BeforeAll
+   // @BeforeAll
     public static void createNetworks() throws IOException {
 
         var serverRegistry = ReadablePacketRegistry.of(ServerPackets.MessageRequest.class);
@@ -185,7 +185,7 @@ public class NetworkPerformanceTests {
         }
     }
 
-    @Test
+  //  @Test
     public void sendPackets() {
 
         int order = 1;
@@ -232,7 +232,7 @@ public class NetworkPerformanceTests {
                         ", sent : " + SENT_SERVER_PACKETS + ", wrote " + WROTE_SERVER_PACKETS.get());
     }
 
-    @AfterAll
+   // @AfterAll
     public static void shutdownNetwork() {
         CLIENT_NETWORKS.forEach(AsyncNetwork::shutdown);
         serverNetwork.shutdown();

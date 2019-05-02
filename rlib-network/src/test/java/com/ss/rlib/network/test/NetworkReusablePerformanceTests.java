@@ -221,7 +221,7 @@ public class NetworkReusablePerformanceTests {
 
     private static ServerNetwork serverNetwork;
 
-    @BeforeAll
+   // @BeforeAll
     public static void createNetworks() throws IOException {
 
         ReadablePacketRegistry serverRegistry = ReadablePacketRegistry.of(ServerPackets.MessageRequest.class);
@@ -245,7 +245,7 @@ public class NetworkReusablePerformanceTests {
         }
     }
 
-    @Test
+   // @Test
     public void sendPackets() {
 
         int order = 1;
@@ -297,7 +297,7 @@ public class NetworkReusablePerformanceTests {
                 "Expected packets from server: " + totalServerPackets + ", received: " + RECEIVED_SERVER_PACKETS);
     }
 
-    @AfterAll
+   // @AfterAll
     public static void shutdownNetwork() {
         CLIENT_NETWORKS.forEach(AsyncNetwork::shutdown);
         serverNetwork.shutdown();

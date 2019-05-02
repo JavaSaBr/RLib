@@ -95,20 +95,26 @@ public class Slf4jLogger implements Logger {
     @Override
     public <T> void print(@NotNull LoggerLevel level, @Nullable T arg, @NotNull SinFactory<T> messageFactory) {
 
-        var message = messageFactory.make(arg);
-
         switch (level) {
             case INFO:
-                logger.info(message);
+                if (logger.isInfoEnabled()) {
+                    logger.info(messageFactory.make(arg));
+                }
                 return;
             case DEBUG:
-                logger.debug(message);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(messageFactory.make(arg));
+                }
                 return;
             case ERROR:
-                logger.error(message);
+                if (logger.isErrorEnabled()) {
+                    logger.error(messageFactory.make(arg));
+                }
                 return;
             case WARNING:
-                logger.warn(message);
+                if (logger.isWarnEnabled()) {
+                    logger.warn(messageFactory.make(arg));
+                }
         }
     }
 
@@ -120,20 +126,26 @@ public class Slf4jLogger implements Logger {
         @NotNull BiFactory<F, S> messageFactory
     ) {
 
-        var message = messageFactory.make(first, second);
-
         switch (level) {
             case INFO:
-                logger.info(message);
+                if (logger.isInfoEnabled()) {
+                    logger.info(messageFactory.make(first, second));
+                }
                 return;
             case DEBUG:
-                logger.debug(message);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(messageFactory.make(first, second));
+                }
                 return;
             case ERROR:
-                logger.error(message);
+                if (logger.isErrorEnabled()) {
+                    logger.error(messageFactory.make(first, second));
+                }
                 return;
             case WARNING:
-                logger.warn(message);
+                if (logger.isWarnEnabled()) {
+                    logger.warn(messageFactory.make(first, second));
+                }
         }
     }
 
@@ -146,20 +158,26 @@ public class Slf4jLogger implements Logger {
         @NotNull TriFactory<F, S, T> messageFactory
     ) {
 
-        var message = messageFactory.make(first, second, third);
-
         switch (level) {
             case INFO:
-                logger.info(message);
+                if (logger.isInfoEnabled()) {
+                    logger.info(messageFactory.make(first, second, third));
+                }
                 return;
             case DEBUG:
-                logger.debug(message);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(messageFactory.make(first, second, third));
+                }
                 return;
             case ERROR:
-                logger.error(message);
+                if (logger.isErrorEnabled()) {
+                    logger.error(messageFactory.make(first, second, third));
+                }
                 return;
             case WARNING:
-                logger.warn(message);
+                if (logger.isWarnEnabled()) {
+                    logger.warn(messageFactory.make(first, second, third));
+                }
         }
     }
 }
