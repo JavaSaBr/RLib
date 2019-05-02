@@ -16,11 +16,11 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:9.1.1'
-    compile 'com.spaceshift:rlib.fx:9.1.1'
-    compile 'com.spaceshift:rlib.network:9.1.1'
-    compile 'com.spaceshift:rlib.mail:9.1.1'
-    compile 'com.spaceshift:rlib.testcontainers:9.1.1'
+    compile 'com.spaceshift:rlib.common:9.2.0'
+    compile 'com.spaceshift:rlib.fx:9.2.0'
+    compile 'com.spaceshift:rlib.network:9.2.0'
+    compile 'com.spaceshift:rlib.mail:9.2.0'
+    compile 'com.spaceshift:rlib.testcontainers:9.2.0'
 }
 ```
     
@@ -41,27 +41,27 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>9.1.1</version>
+    <version>9.2.0</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.fx</artifactId>
-    <version>9.1.1</version>
+    <version>9.2.0</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.network</artifactId>
-    <version>9.1.1</version>
+    <version>9.2.0</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.mail</artifactId>
-    <version>9.1.1</version>
+    <version>9.2.0</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.testcontainers</artifactId>
-    <version>9.1.1</version>
+    <version>9.2.0</version>
 </dependency>
 
 ```
