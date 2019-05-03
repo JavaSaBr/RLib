@@ -1,5 +1,7 @@
 package com.ss.rlib.network.client;
 
+import static com.ss.rlib.common.util.ObjectUtils.notNull;
+import com.ss.rlib.common.util.ObjectUtils;
 import com.ss.rlib.network.AsyncNetwork;
 import com.ss.rlib.network.client.server.Server;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +45,15 @@ public interface ClientNetwork extends AsyncNetwork {
      * @return the current server or null.
      */
     @Nullable Server getCurrentServer();
+
+    /**
+     * Required the current server.
+     *
+     * @return the current server.
+     */
+    default @NotNull Server requireCurrentServer() {
+        return notNull(getCurrentServer());
+    }
 
     /**
      * Set the current server.

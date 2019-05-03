@@ -6,16 +6,13 @@ import com.ss.rlib.network.NetworkFactory;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.client.server.Server;
-import com.ss.rlib.network.packet.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
 import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -133,7 +130,7 @@ public class NetworkTests {
 
         checkClientMessage = new CompletableFuture<>();
 
-        server.sendPacket(new ClientPackets.MessageRequest("Test client message"));
+        server.getConnection().sendPacket(new ClientPackets.MessageRequest("Test client message"));
 
         final String received = Utils.get(() -> checkClientMessage.get());
 
@@ -147,7 +144,7 @@ public class NetworkTests {
 
         checkServerMessage = new CompletableFuture<>();
 
-        client.sendPacket(new ServerPackets.MessageResponse("Test server message"));
+        client.getConnection().sendPacket(new ServerPackets.MessageResponse("Test server message"));
 
         final String received = Utils.get(() -> checkServerMessage.get());
 

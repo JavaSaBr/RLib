@@ -10,11 +10,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Client extends ConnectionOwner {
 
-    /**
-     * Handle successful connect.
-     */
-    void notifyConnected();
-
     @Override
     @NotNull ClientConnection getConnection();
 }

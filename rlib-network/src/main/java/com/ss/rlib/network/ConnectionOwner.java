@@ -1,46 +1,42 @@
 package com.ss.rlib.network;
 
 import com.ss.rlib.network.packet.ReadablePacket;
-import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.ByteBuffer;
+import java.util.function.Consumer;
 
 /**
- * The interface to implement a connection owner.
+ * The interface to implement a connection's owner.
  *
  * @author JavaSaBr
  */
 public interface ConnectionOwner {
 
     /**
-     * Destroy this owner.
+     * Get a network connection to this owner.
+     *
+     * @return the network connection to this owner.
      */
-    void destroy();
-
-    @NotNull NetworkCrypt getCrypt();
-
     @NotNull AsyncConnection getConnection();
 
     /**
-     * Check if the owner is ready to work.
-     *
-     * @return true if this owner is ready to work.
+     * Handle the closed connection to this connection's owner.
      */
-    boolean isReady();
+    void connectionWasClosed();
 
     /**
-     * Read and handle the packet.
+     * Add the handler of each read packet from this owner.
      *
-     * @param packet the packet.
-     * @param buffer the data.
+     * @param handler the handler.
+     * @param <P>     the readable packet's type.
+     * @return the added handler.
      */
-    void readPacket(@NotNull ReadablePacket packet, @NotNull ByteBuffer buffer);
+    <P extends ReadablePacket> @NotNull Consumer<P> addPacketHandler(@NotNull Consumer<P> handler);
 
     /**
-     * Send the packet to this owner.
+     * Remove the handler.
      *
-     * @param packet the packet.
+     * @param handler the handler.
      */
-    void sendPacket(@NotNull WritablePacket packet);
+    void removePacketHandler(@NotNull Consumer<? extends ReadablePacket> handler);
 }

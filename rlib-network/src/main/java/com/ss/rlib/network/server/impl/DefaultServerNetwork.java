@@ -3,7 +3,7 @@ package com.ss.rlib.network.server.impl;
 import com.ss.rlib.common.concurrent.GroupThreadFactory;
 import com.ss.rlib.network.NetworkConfig;
 import com.ss.rlib.network.impl.AbstractAsyncNetwork;
-import com.ss.rlib.network.packet.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import com.ss.rlib.network.server.AcceptHandler;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.client.Client;

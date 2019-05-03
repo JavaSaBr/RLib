@@ -42,10 +42,27 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      * @param condition the condition.
      * @param function  the function.
      */
-    default void forEach(@NotNull final Predicate<E> condition, @NotNull final Consumer<? super E> function) {
-        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
-            final E item = node.getItem();
-            if (condition.test(item)) function.accept(item);
+    default void forEach(@NotNull Predicate<E> condition, @NotNull Consumer<? super E> function) {
+        for (var node = getFirstNode(); node != null; node = node.getNext()) {
+            var item = node.getItem();
+            if (condition.test(item)) {
+                function.accept(item);
+            }
+        }
+    }
+
+    /**
+     * Apply the function to each element which is an instance of the passed type.
+     *
+     * @param type     the interested element's type.
+     * @param function the function.
+     */
+    default <T> void applyIfType(@NotNull Class<T> type, @NotNull Consumer<? super T> function) {
+        for (var node = getFirstNode(); node != null; node = node.getNext()) {
+            var item = node.getItem();
+            if (type.isInstance(item)) {
+                function.accept(type.cast(item));
+            }
         }
     }
 

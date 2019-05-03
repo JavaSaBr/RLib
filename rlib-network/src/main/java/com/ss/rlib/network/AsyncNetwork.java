@@ -1,6 +1,6 @@
 package com.ss.rlib.network;
 
-import com.ss.rlib.network.packet.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -13,14 +13,14 @@ import java.nio.ByteBuffer;
 public interface AsyncNetwork {
 
     /**
-     * Get the config of this network.
+     * Get a network's config.
      *
-     * @return the config.
+     * @return the network's config.
      */
     @NotNull NetworkConfig getConfig();
 
     /**
-     * Get the readable packet registry.
+     * Get a readable packet registry.
      *
      * @return the readable packet registry.
      */

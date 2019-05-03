@@ -14,7 +14,7 @@ import com.ss.rlib.network.NetworkConfig;
 import com.ss.rlib.network.NetworkFactory;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.client.ClientNetwork;
-import com.ss.rlib.network.packet.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
 import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
 import com.ss.rlib.network.server.AcceptHandler;
@@ -23,10 +23,7 @@ import com.ss.rlib.network.server.client.Client;
 import com.ss.rlib.network.server.client.impl.DefaultClient;
 import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -143,7 +140,7 @@ public class NetworkManyClientsToServerTests extends NetworkTestConfig {
                 var random = ThreadLocalRandom.current();
 
                 for (int i = 0; i < PACKETS_FOR_CLIENT; i++) {
-                    client.sendPacket(new ServerPackets.Message(
+                    client.getConnection().sendPacket(new ServerPackets.Message(
                         StringUtils.generate(random.nextInt(10, 70))
                     ));
                 }

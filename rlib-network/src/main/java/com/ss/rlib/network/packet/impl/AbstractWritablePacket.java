@@ -20,7 +20,11 @@ public abstract class AbstractWritablePacket extends AbstractPacket implements W
     private int packetId;
 
     protected AbstractWritablePacket() {
-        this.packetId = getClass()
+        this.packetId = loadPacketId();
+    }
+
+    protected int loadPacketId() {
+        return getClass()
             .getAnnotation(PacketDescription.class)
             .id();
     }

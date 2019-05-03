@@ -7,7 +7,7 @@ import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.AsyncNetwork;
 import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.packet.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import com.ss.rlib.common.util.pools.PoolFactory;
 import org.jetbrains.annotations.NotNull;
 import com.ss.rlib.common.util.pools.Pool;

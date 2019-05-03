@@ -14,7 +14,7 @@ import com.ss.rlib.network.NetworkFactory;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.client.ConnectHandler;
-import com.ss.rlib.network.packet.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
 import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
 import com.ss.rlib.network.server.AcceptHandler;
@@ -24,10 +24,7 @@ import com.ss.rlib.network.server.client.ClientConnection;
 import com.ss.rlib.network.server.client.impl.DefaultClient;
 import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -86,7 +83,7 @@ public class NetworkPerformanceTests {
                 EXECUTOR_SERVICE.execute(() -> {
                     AVAILABLE_CLIENTS.runInReadLock(new MessageResponse(message), (clients, packet) -> {
                         clients.forEach(packet, (client, messageResponse) -> {
-                            client.sendPacket(messageResponse);
+                            client.getConnection().sendPacket(messageResponse);
                             SENT_SERVER_PACKETS.incrementAndGet();
                         });
                     });
@@ -198,7 +195,7 @@ public class NetworkPerformanceTests {
                 var random = ThreadLocalRandom.current();
 
                 for (int i = 0; i < CLIENT_PACKETS_PER_CLIENT; i++) {
-                    server.sendPacket(new ClientPackets.MessageRequest(StringUtils.generate(random.nextInt(10, 70))));
+                    server.getConnection().sendPacket(new ClientPackets.MessageRequest(StringUtils.generate(random.nextInt(10, 70))));
                 }
 
             }, "SendPacketThread_" + order++);

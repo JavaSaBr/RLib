@@ -7,7 +7,7 @@ import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.client.ConnectHandler;
 import com.ss.rlib.network.client.server.Server;
 import com.ss.rlib.network.impl.AbstractAsyncNetwork;
-import com.ss.rlib.network.packet.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

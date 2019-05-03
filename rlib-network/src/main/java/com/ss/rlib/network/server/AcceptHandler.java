@@ -47,8 +47,8 @@ public interface AcceptHandler extends CompletionHandler<AsynchronousSocketChann
 
             var connection = connectionFactory.apply(network, channel);
             var client = clientFactory.apply(connection);
+
             connection.setOwner(client);
-            client.notifyConnected();
             connection.startRead();
 
             if (clientConsumer != null) {
