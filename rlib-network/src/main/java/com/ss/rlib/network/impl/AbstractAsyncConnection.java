@@ -1,15 +1,18 @@
 package com.ss.rlib.network.impl;
 
+import com.ss.rlib.common.util.array.Array;
+import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.*;
 import com.ss.rlib.network.packet.*;
-import com.ss.rlib.network.packet.impl.AbstractReusableWritablePacket;
 import com.ss.rlib.common.util.linkedlist.LinkedList;
 import com.ss.rlib.common.util.linkedlist.LinkedListFactory;
 import com.ss.rlib.network.packet.impl.DefaultPacketReader;
 import com.ss.rlib.network.packet.impl.DefaultPacketWriter;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.StampedLock;
+import java.util.function.Consumer;
 
 /**
  * The base implementation of {@link AsyncConnection}.
@@ -28,30 +32,36 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(AsyncNetwork.class);
 
-    protected static final int PACKET_SIZE_BYTES_COUNT = 2;
+    protected static final int PACKET_DATA_LENGTH_HEADER_SIZE = 2;
+    protected static final int PACKET_ID_HEADER_SIZE = 2;
 
     @Getter
     protected final AsyncNetwork network;
 
+    @Getter
+    protected final NetworkCrypt crypt;
+
+    @Getter
+    protected final ConnectionOwner owner;
+
     protected final AsynchronousSocketChannel channel;
     protected final PacketReader packetReader;
     protected final PacketWriter packetWriter;
-    protected final NetworkCrypt crypt;
 
     protected final ByteBuffer readBuffer;
-    protected final ByteBuffer swapBuffer;
+    protected final ByteBuffer readPendingBuffer;
+    protected final ByteBuffer readDecryptedBuffer;
     protected final ByteBuffer writeBuffer;
-    protected final ByteBuffer waitBuffer;
+    protected final ByteBuffer writeEncryptedBuffer;
 
     protected final AtomicBoolean isWriting;
     protected final AtomicBoolean closed;
     protected final NetworkConfig config;
 
-    protected final LinkedList<WritablePacket> waitPackets;
+    protected final LinkedList<WritablePacket> pendingPackets;
     protected final StampedLock lock;
 
-    @Getter
-    protected final ConnectionOwner owner;
+    protected final Array<Consumer<? extends ReadablePacket>> readPacketHandlers;
 
     @Getter
     protected volatile long lastActivity;
@@ -59,36 +69,44 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     public AbstractAsyncConnection(
         @NotNull AsyncNetwork network,
         @NotNull AsynchronousSocketChannel channel,
-        @NotNull Class<? extends WritablePacket> writablePacketType,
-        @NotNull ConnectionOwner owner
+        @NotNull NetworkCrypt crypt,
+        @NotNull ConnectionOwner owner,
+        @NotNull NetworkConfig config
     ) {
         this.owner = owner;
+        this.config = config;
         this.lock = new StampedLock();
+        this.crypt = crypt;
         this.channel = channel;
-        this.waitPackets = LinkedListFactory.newLinkedList(writablePacketType);
+        this.pendingPackets = LinkedListFactory.newLinkedList(WritablePacket.class);
         this.network = network;
-        this.readBuffer = network.takeReadBuffer();
-        this.readBuffer.clear();
-        this.writeBuffer = network.takeWriteBuffer();
-        this.config = network.getConfig();
         this.isWriting = new AtomicBoolean(false);
         this.closed = new AtomicBoolean(false);
-        this.waitBuffer = network.takeWaitBuffer();
-        this.waitBuffer.flip();
-        this.swapBuffer = network.takeWaitBuffer();
-        this.swapBuffer.flip();
+        this.readBuffer = network.takeReadBuffer();
+        this.readPendingBuffer = network.takePendingBuffer();
+        this.readDecryptedBuffer = network.takeReadBuffer();
+        this.writeBuffer = network.takeWriteBuffer();
+        this.writeEncryptedBuffer = network.takeWriteBuffer();
         this.packetReader = createPacketReader();
         this.packetWriter = createPacketWriter();
+        this.readPacketHandlers = ArrayFactory.newCopyOnModifyArray(Consumer.class);
     }
 
     protected @NotNull PacketReader createPacketReader() {
         return new DefaultPacketReader(
-            readBuffer,
-            swapBuffer,
-            waitBuffer,
             this,
-            this::updateLastActivity
+            channel,
+            readBuffer,
+            readPendingBuffer,
+            readDecryptedBuffer,
+            getMaxPacketsByRead(),
+            this::updateLastActivity,
+            (packet, buffer) -> packet.read(owner, buffer)
         );
+    }
+
+    protected int getMaxPacketsByRead() {
+        return 100;
     }
 
     protected @NotNull PacketWriter createPacketWriter() {
@@ -96,7 +114,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
             this,
             channel,
             writeBuffer,
-            waitBuffer,
+            writeEncryptedBuffer,
             this::updateLastActivity,
             this::nextPacketToWrite
         );
@@ -105,15 +123,30 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     protected @Nullable WritablePacket nextPacketToWrite() {
         long stamp = lock.writeLock();
         try {
-            return waitPackets.poll();
+            return pendingPackets.poll();
         } finally {
             lock.unlockWrite(stamp);
         }
     }
 
     @Override
-    public int getPacketSizeByteCount() {
-        return PACKET_SIZE_BYTES_COUNT;
+    public int getPacketLengthHeaderSize() {
+        return PACKET_DATA_LENGTH_HEADER_SIZE;
+    }
+
+    @Override
+    public int getPacketIdHeaderSize() {
+        return PACKET_ID_HEADER_SIZE;
+    }
+
+    @Override
+    public @NotNull <P extends ReadablePacket> Consumer<P> addPacketHandler(@NotNull Consumer<P> handler) {
+        return null;
+    }
+
+    @Override
+    public void removePacketHandler(@NotNull Consumer<? extends ReadablePacket> handler) {
+
     }
 
     @Override
@@ -142,10 +175,12 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
         }
 
         clearWaitPackets();
+
         getNetwork().putReadBuffer(readBuffer)
+            .putReadBuffer(readDecryptedBuffer)
+            .putPendingBuffer(readPendingBuffer)
             .putWriteBuffer(writeBuffer)
-            .putWaitBuffer(waitBuffer)
-            .putWaitBuffer(swapBuffer);
+            .putWriteBuffer(writeEncryptedBuffer);
 
         owner.connectionWasClosed();
     }
@@ -183,7 +218,7 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
         long stamp = lock.writeLock();
         try {
-            waitPackets.add(packet);
+            pendingPackets.add(packet);
         } finally {
             lock.unlockWrite(stamp);
         }
@@ -192,13 +227,8 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
     }
 
     @Override
-    public final void startRead() {
+    public void startRead() {
         packetReader.startRead();
-    }
-
-    @Override
-    public @NotNull NetworkCrypt getCrypt() {
-        return crypt;
     }
 
     /**
@@ -208,22 +238,19 @@ public abstract class AbstractAsyncConnection implements AsyncConnection {
 
         long stamp = lock.writeLock();
         try {
-
-            waitPackets.applyIfType(
-                AbstractReusableWritablePacket.class,
-                AbstractReusableWritablePacket::forceComplete
-            );
-
-            waitPackets.clear();
-
+            doClearWaitPackets();
         } finally {
             lock.unlockWrite(stamp);
         }
     }
 
+    protected void doClearWaitPackets() {
+        pendingPackets.clear();
+    }
+
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" + "network=" + network + ", waitPackets=" + waitPackets + ", channel=" +
+        return getClass().getSimpleName() + "{" + "network=" + network + ", pendingPackets=" + pendingPackets + ", channel=" +
                 channel + ", isWriting=" + isWriting + ", closed=" + closed + ", lastActivity=" + lastActivity + '}';
     }
 }

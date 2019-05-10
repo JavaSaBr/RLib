@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 
 /**
- * The list of test to test working with classpath scanner API.
- *
  * @author JavaSaBr
  */
 public class ClasspathScannerTests {

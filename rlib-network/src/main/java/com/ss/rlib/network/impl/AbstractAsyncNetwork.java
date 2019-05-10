@@ -25,17 +25,18 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
     protected static final Logger LOGGER = LoggerManager.getLogger(AsyncNetwork.class);
 
     protected final Pool<ByteBuffer> readBufferPool;
-    protected final Pool<ByteBuffer> waitBufferPool;
+    protected final Pool<ByteBuffer> pendingBufferPool;
     protected final Pool<ByteBuffer> writeBufferPool;
+
     protected final ReadablePacketRegistry registry;
     protected final NetworkConfig config;
 
     protected AbstractAsyncNetwork(@NotNull NetworkConfig config, @NotNull ReadablePacketRegistry registry) {
         this.config = config;
         this.registry = registry;
-        this.readBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
-        this.waitBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
-        this.writeBufferPool = PoolFactory.newConcurrentAtomicARSWLockPool(ByteBuffer.class);
+        this.readBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
+        this.pendingBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
+        this.writeBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
     }
 
     @Override
@@ -50,56 +51,63 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
 
     @Override
     public @NotNull ByteBuffer takeReadBuffer() {
-        var buffer = readBufferPool.take(config, readBufferFactory());
-        buffer.clear();
-        return buffer;
-    }
-
-    /**
-     * Get the read buffers factory.
-     *
-     * @return the read buffers factory.
-     */
-    protected @NotNull Function<NetworkConfig, ByteBuffer> readBufferFactory() {
-        return conf -> (conf.isDirectByteBuffer() ?
-            allocateDirect(conf.getReadBufferSize()) : allocate(conf.getReadBufferSize()))
-            .order(LITTLE_ENDIAN);
+        return readBufferPool.take(config, readBufferFactory()).clear();
     }
 
     @Override
-    public @NotNull ByteBuffer takeWaitBuffer() {
-        var buffer = writeBufferPool.take(config, waitBufferFactory());
-        buffer.clear();
-        return buffer;
-    }
-
-    /**
-     * Get the wait buffers factory.
-     *
-     * @return the wait buffers factory.
-     */
-    protected @NotNull Function<NetworkConfig, ByteBuffer> waitBufferFactory() {
-        return conf -> (conf.isDirectByteBuffer() ?
-            allocateDirect(conf.getReadBufferSize() * 2) : allocate(conf.getReadBufferSize() * 2))
-            .order(LITTLE_ENDIAN);
+    public @NotNull ByteBuffer takePendingBuffer() {
+        return pendingBufferPool.take(config, pendingBufferFactory()).clear();
     }
 
     @Override
     public @NotNull ByteBuffer takeWriteBuffer() {
-        var buffer = writeBufferPool.take(config, writeBufferFactory());
-        buffer.clear();
-        return buffer;
+        return writeBufferPool.take(config, writeBufferFactory()).clear();
     }
 
     /**
-     * Get the write buffers factory.
+     * Get a pending buffers factory.
+     *
+     * @return the pending buffers factory.
+     */
+    protected @NotNull Function<NetworkConfig, ByteBuffer> pendingBufferFactory() {
+        return conf -> {
+            if (conf.isDirectByteBuffer()) {
+                return allocateDirect(conf.getReadBufferSize() * 2).order(LITTLE_ENDIAN);
+            } else {
+                return allocate(conf.getReadBufferSize() * 2).order(LITTLE_ENDIAN);
+            }
+        };
+    }
+
+
+    /**
+     * Get a read buffers factory.
+     *
+     * @return the read buffers factory.
+     */
+    protected @NotNull Function<NetworkConfig, ByteBuffer> readBufferFactory() {
+        return conf -> {
+            if (conf.isDirectByteBuffer()) {
+                return allocateDirect(conf.getReadBufferSize()).order(LITTLE_ENDIAN);
+            } else {
+                return allocate(conf.getReadBufferSize()).order(LITTLE_ENDIAN);
+            }
+        };
+    }
+
+    /**
+     * Get a write buffers factory.
      *
      * @return the write buffers factory.
      */
-    protected Function<NetworkConfig, ByteBuffer> writeBufferFactory() {
-        return conf -> (conf.isDirectByteBuffer() ?
-            allocateDirect(conf.getWriteBufferSize()) : allocate(conf.getWriteBufferSize()))
-            .order(LITTLE_ENDIAN);
+    protected @NotNull Function<NetworkConfig, ByteBuffer> writeBufferFactory() {
+        return conf -> {
+            if (conf.isDirectByteBuffer()) {
+                return allocateDirect(conf.getWriteBufferSize()).order(LITTLE_ENDIAN);
+            } else {
+                return allocate(conf.getWriteBufferSize()).order(LITTLE_ENDIAN);
+            }
+        };
     }
 
     @Override
@@ -109,8 +117,8 @@ public abstract class AbstractAsyncNetwork implements AsyncNetwork {
     }
 
     @Override
-    public @NotNull AbstractAsyncNetwork putWaitBuffer(@NotNull ByteBuffer buffer) {
-        waitBufferPool.put(buffer);
+    public @NotNull AbstractAsyncNetwork putPendingBuffer(@NotNull ByteBuffer buffer) {
+        pendingBufferPool.put(buffer);
         return this;
     }
 

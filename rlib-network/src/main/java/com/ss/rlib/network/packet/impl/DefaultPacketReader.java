@@ -1,11 +1,9 @@
 package com.ss.rlib.network.packet.impl;
 
-import static java.lang.Math.min;
+import com.ss.rlib.common.util.BufferUtils;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.AsyncConnection;
-import com.ss.rlib.network.NetworkCrypt;
-import com.ss.rlib.network.impl.AbstractAsyncConnection;
 import com.ss.rlib.network.packet.PacketReader;
 import com.ss.rlib.network.packet.ReadablePacket;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +20,6 @@ public class DefaultPacketReader implements PacketReader {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(DefaultPacketReader.class);
 
-    protected static final int MAX_PACKETS_BY_READ = Integer.parseInt(
-        System.getProperty(
-            AbstractAsyncConnection.class.getName() + ".maxPacketsByRead",
-            "100"
-        )
-    );
-
-    /**
-     * The read handler.
-     */
     @NotNull
     private final CompletionHandler<Integer, Void> readHandler = new CompletionHandler<>() {
 
@@ -50,259 +38,100 @@ public class DefaultPacketReader implements PacketReader {
     protected final AsynchronousSocketChannel channel;
 
     protected final ByteBuffer readBuffer;
-    protected final ByteBuffer swapBuffer;
-    protected final ByteBuffer waitBuffer;
+    protected final ByteBuffer pendingBuffer;
+    protected final ByteBuffer decryptedBuffer;
+
+    protected final int maxPacketsByRead;
 
     protected final Runnable updateActivityFunction;
     protected final BiConsumer<ReadablePacket, ByteBuffer> readPacketFunction;
 
     @Override
-    public final void startRead() {
+    public void startRead() {
         channel.read(readBuffer, null, readHandler);
     }
 
     /**
-     * Read the buffer with received data.
+     * Read packets from the buffer with received data.
      *
-     * @param buffer the buffer with received data
+     * @param buffer the buffer with received data.
      * @return count of read packets.
      */
-    protected int readPacket(@NotNull ByteBuffer buffer) {
+    protected int readPackets(@NotNull ByteBuffer buffer, @NotNull ByteBuffer pendingBuffer) {
 
         var crypt = connection.getCrypt();
 
-        int resultCount = 0;
-        int waitedBytes = waitBuffer.remaining();
+        var readPackets = 0;
+        var waitedBytes = pendingBuffer.remaining();
 
-        // если есть кусок пакета ожидающего
+        // if we have some waited data we need take it to the reading now buffer
         if (waitedBytes > 0) {
-            takeFromWaitBuffer(buffer, waitBuffer);
+            takeFromPendingBuffer(buffer, pendingBuffer);
         }
 
-        int sizeByteCount = connection.getPacketSizeByteCount();
-        int maxPacketsByRead = getMaxPacketsByRead();
+        var packetLengthHeaderSize = connection.getPacketLengthHeaderSize();
+        var maxPacketsByRead = getMaxPacketsByRead();
 
-        for (int i = 0, limit = 0, size; buffer.remaining() >= sizeByteCount && i < maxPacketsByRead; i++) {
+        for (int i = 0, endPosition = 0; buffer.remaining() >= packetLengthHeaderSize && i < maxPacketsByRead; i++) {
 
-            size = getPacketSize(buffer);
-            limit += size;
+            // set position of start a next packet
+            buffer.position(endPosition);
 
-            // если пакет не вместился в этот буффер
-            if (limit > buffer.limit()) {
+            var packetLength = readPacketLength(buffer);
 
-                var missedBytes = limit - buffer.limit();
+            // calculate position of end the next packet
+            endPosition += packetLength;
 
-                // проверка остались ли данные в ожидаемом буффере для до прочтения и если да,
-                // то достаточно ли там байт что бы дочитать пакет
-                if (waitedBytes > 0 && waitBuffer.position() > 0 && waitBuffer.remaining() >= missedBytes) {
-                    takeMissedFromWaitBuffer(buffer, waitBuffer);
-                    limit = size;
-                } else {
-                    saveDataToWaitBuffer(buffer, waitBuffer, sizeByteCount);
-                    break;
-                }
+            // if the packet isn't full presented in this buffer
+            if (endPosition > buffer.limit()) {
+                BufferUtils.append(pendingBuffer, buffer.position(buffer.position() - packetLengthHeaderSize));
+                break;
             }
 
-            //FIXME
-            decrypt(buffer, crypt, buffer.position(), size - sizeByteCount);
+            var decryptedData = crypt.decrypt(
+                buffer,
+                packetLength - packetLengthHeaderSize,
+                decryptedBuffer.clear()
+            );
 
-            ReadablePacket packet = createPacketFor(buffer);
+            ReadablePacket packet;
+
+            if (decryptedData != null) {
+                packet = createPacketFor(decryptedData);
+            } else {
+                packet = createPacketFor(buffer);
+            }
 
             if (packet != null) {
                 readPacketFunction.accept(packet, buffer);
-                resultCount++;
+                readPackets++;
             }
         }
 
         if (buffer.hasRemaining()) {
-            if (buffer.remaining() < sizeByteCount) {
-                saveDataToWaitBuffer(buffer, waitBuffer, 0);
-            } else {
-                LOGGER.warning(this, "Have not read data from the read buffer...");
-            }
+            BufferUtils.append(pendingBuffer, buffer);
         }
 
-        // если ожидаеющий буффер фрагментировал
-        if (waitBuffer.position() > 0) {
-            compactWaitBuffer(waitBuffer);
-        }
-
-        return resultCount;
+        return readPackets;
     }
 
     /**
-     * Take waited data from the wait buffer.
+     * Take pending data from a pending buffer.
      *
-     * @param buffer     the read buffer.
-     * @param waitBuffer the wait buffer.
+     * @param buffer the currently reading buffer.
+     * @param buffer the pending buffer.
      */
-    protected void takeFromWaitBuffer(@NotNull ByteBuffer buffer, @NotNull ByteBuffer waitBuffer) {
+    protected void takeFromPendingBuffer(@NotNull ByteBuffer buffer, @NotNull ByteBuffer pendingBuffer) {
 
-        int prevLimit = waitBuffer.limit();
-        int prevPosition = waitBuffer.position();
-        int length = buffer.limit() - buffer.position();
+        BufferUtils.append(pendingBuffer, buffer);
+        BufferUtils.loadFrom(pendingBuffer, buffer);
 
-        // add all current data to the wait buffer
-        waitBuffer.clear();
-        waitBuffer.position(prevLimit);
-        waitBuffer.put(buffer.array(), buffer.position(), length);
-        waitBuffer.flip();
-        waitBuffer.position(prevPosition);
-
-        // clear the read buffer and put result data from wait buffer
-        buffer.clear();
-        buffer.put(waitBuffer.array(), prevPosition, min(waitBuffer.remaining(), buffer.remaining()));
-        buffer.flip();
-
-        // update the position of wait buffer to understand of existing wait data
-        waitBuffer.position(waitBuffer.position() + buffer.limit());
-
-        // clear wait buffer if it doesn't have wait data
-        if (!waitBuffer.hasRemaining()) {
-            waitBuffer.clear();
-            waitBuffer.flip();
-        }
-
-        /* if (buffer.limit() >= 4) {
-            final int size = buffer.getShort() & 0xFFFF;
-            final int id = buffer.getShort() & 0xFFFF;
-            buffer.position(0);
-        } */
-    }
-
-    /**
-     * Take missed bytes from the wait buffer.
-     *
-     * @param buffer     the read buffer.
-     * @param waitBuffer the wait buffer.
-     */
-    protected void takeMissedFromWaitBuffer(@NotNull ByteBuffer buffer, @NotNull ByteBuffer waitBuffer) {
-
-        // делаем отступ назад на кол-во байт которых осталось непрочитанных в буффере
-        int newPosition = waitBuffer.position() - buffer.remaining();
-        int prevLimit = waitBuffer.limit();
-
-        waitBuffer.clear();
-        waitBuffer.position(newPosition);
-
-        // добавляем спереди непрочитанный кусок
-        waitBuffer.put(buffer.array(), buffer.position(), buffer.remaining());
-        waitBuffer.position(newPosition);
-        waitBuffer.limit(prevLimit);
-
-        buffer.clear();
-        buffer.put(waitBuffer.array(), newPosition, min(waitBuffer.remaining(), buffer.remaining()));
-        buffer.flip();
-
-        // сдвигаем позицию на кол-во сколько скинули данных в буффер
-        waitBuffer.position(waitBuffer.position() + buffer.limit());
-
-        // очищаем ожидающий буффер если мы его весь прочитали
-        if (!waitBuffer.hasRemaining()) {
-            waitBuffer.clear();
-            waitBuffer.flip();
-        }
-
-        /* if (waitBuffer.limit() >= 4) {
-            final int size = waitBuffer.getShort() & 0xFFFF;
-            final int id = waitBuffer.getShort() & 0xFFFF;
-            waitBuffer.position(0);
-        } */
-    }
-
-    /**
-     * Save not read data to the wait buffer.
-     *
-     * @param buffer        the read buffer.
-     * @param waitBuffer    the wait buffer.
-     * @param sizeByteCount the byte count of packet size.
-     */
-    protected void saveDataToWaitBuffer(
-        @NotNull ByteBuffer buffer,
-        @NotNull ByteBuffer waitBuffer,
-        int sizeByteCount
-    ) {
-
-        int offset = buffer.position() - sizeByteCount;
-        int length = buffer.limit() - offset;
-
-        // если ожидаеющий буффер фрагментировал
-        if (waitBuffer.position() > 0) {
-
-            swapBuffer.clear();
-            swapBuffer.put(buffer.array(), offset, length);
-            swapBuffer.put(waitBuffer.array(), waitBuffer.position(), waitBuffer.remaining());
-            swapBuffer.flip();
-
-            waitBuffer.clear();
-            waitBuffer.put(swapBuffer.array(), 0, swapBuffer.remaining());
-            waitBuffer.flip();
-
-            /*if (waitBuffer.limit() >= 4) {
-                final int size = waitBuffer.getShort() & 0xFFFF;
-                final int id = waitBuffer.getShort() & 0xFFFF;
-                waitBuffer.position(0);
-            }*/
-
+        if (pendingBuffer.hasRemaining()) {
+            pendingBuffer.compact();
+            pendingBuffer.position(0);
         } else {
-
-            waitBuffer.clear();
-            waitBuffer.put(buffer.array(), offset, length);
-            waitBuffer.flip();
-
-            /* if (waitBuffer.limit() >= 4) {
-                final int size = waitBuffer.getShort() & 0xFFFF;
-                final int id = waitBuffer.getShort() & 0xFFFF;
-                waitBuffer.position(0);
-            } */
+            pendingBuffer.clear();
         }
-
-        buffer.clear().flip();
-    }
-
-    /**
-     * Decrypt data using the crypt of the connection owner.
-     *
-     * @param buffer the data buffer.
-     * @param crypt  the crypt.
-     * @param offset the offset.
-     * @param length the length.
-     * @return the decrypted data or null if this crypt implementation does encrypting inside the passed byte array.
-     */
-    protected @Nullable byte[] decrypt(
-        @NotNull ByteBuffer buffer,
-        @NotNull NetworkCrypt crypt,
-        int offset,
-        int length
-    ) {
-
-        if (crypt.isNull()) {
-            return null;
-        }
-
-        return crypt.decrypt(buffer.array(), offset, length);
-    }
-
-    /**
-     * Compact the wait buffer.
-     *
-     * @param waitBuffer the wait buffer.
-     */
-    protected void compactWaitBuffer(@NotNull ByteBuffer waitBuffer) {
-
-        swapBuffer.clear();
-        swapBuffer.put(waitBuffer.array(), waitBuffer.position(), waitBuffer.remaining());
-        swapBuffer.flip();
-
-        waitBuffer.clear();
-        waitBuffer.put(swapBuffer.array(), 0, swapBuffer.remaining());
-        waitBuffer.flip();
-
-        /* if (waitBuffer.limit() >= 4) {
-            final int size = waitBuffer.getShort() & 0xFFFF;
-            final int id = waitBuffer.getShort() & 0xFFFF;
-            waitBuffer.position(0);
-        } */
     }
 
     /**
@@ -322,11 +151,10 @@ public class DefaultPacketReader implements PacketReader {
         try {
 
             if (isReadyToRead(readBuffer)) {
-                readPacket(readBuffer);
+                readPackets(readBuffer, pendingBuffer);
             }
 
         } catch (Exception e) {
-            waitBuffer.clear().flip();
             LOGGER.error(this, e);
         } finally {
             readBuffer.clear();
@@ -362,42 +190,62 @@ public class DefaultPacketReader implements PacketReader {
         return true;
     }
 
-
     /**
-     * Get the how many packets can be read by the one method call readPacket().
+     * Get the how many packets can be read by the one method call {@link #readPackets(ByteBuffer, ByteBuffer)}}.
      *
-     * @return the how many packets can be read by the one method call readPacket().
+     * @return the how many packets can be read.
      */
     protected int getMaxPacketsByRead() {
-        return MAX_PACKETS_BY_READ;
+        return maxPacketsByRead;
     }
 
     /**
-     * Get the data size of the packet.
+     * Get the packet's data length of next packet in the buffer.
      *
-     * @param buffer the packet data buffer.
-     * @return the packet size.
+     * @param buffer the buffer with received data.
+     * @return the packet length.
      */
-    protected int getPacketSize(@NotNull ByteBuffer buffer) {
-        return buffer.getShort() & 0xFFFF;
+    protected int readPacketLength(@NotNull ByteBuffer buffer) {
+        return readHeader(buffer, connection.getPacketLengthHeaderSize());
     }
 
     /**
-     * Create a packet to read the data buffer.
+     * Get the packet's id of next packet in the buffer.
      *
-     * @param buffer the buffer
-     * @return the readable packet
+     * @param buffer the buffer with received data.
+     * @return the packet id.
+     */
+    protected int readPacketId(@NotNull ByteBuffer buffer) {
+        return readHeader(buffer, connection.getPacketIdHeaderSize());
+    }
+
+    protected int readHeader(@NotNull ByteBuffer buffer, int headerSize) {
+        switch (headerSize) {
+            case 1:
+                return buffer.get() & 0xFF;
+            case 2:
+                return buffer.getShort() & 0xFFFF;
+            case 4:
+                return buffer.getInt();
+            default:
+                throw new IllegalStateException("Wrong packet's header size: " + headerSize);
+        }
+    }
+
+    /**
+     * Create a packet to read received data.
+     *
+     * @param buffer the buffer with received data.
+     * @return the readable packet.
      */
     protected @Nullable ReadablePacket createPacketFor(@NotNull ByteBuffer buffer) {
 
-        if (buffer.remaining() < 2) {
+        if (buffer.remaining() < connection.getPacketIdHeaderSize()) {
             return null;
+        } else {
+            return connection.getNetwork()
+                .getPacketRegistry()
+                .findById(readPacketId(buffer));
         }
-
-        int packetId = buffer.getShort() & 0xFFFF;
-
-        return connection.getNetwork()
-            .getPacketRegistry()
-            .findById(packetId);
     }
 }

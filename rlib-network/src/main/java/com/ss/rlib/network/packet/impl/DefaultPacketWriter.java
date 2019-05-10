@@ -3,12 +3,9 @@ package com.ss.rlib.network.packet.impl;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.AsyncConnection;
-import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.NetworkCrypt;
 import com.ss.rlib.network.packet.PacketWriter;
 import com.ss.rlib.network.packet.ReusableWritablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,30 +19,27 @@ public class DefaultPacketWriter implements PacketWriter {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(DefaultPacketWriter.class);
 
-    /**
-     * The write handler.
-     */
-    @NotNull @Getter
+    @NotNull
     private final CompletionHandler<Integer, WritablePacket> writeHandler = new CompletionHandler<>() {
 
         @Override
         public void completed(@NotNull Integer result, @NotNull WritablePacket packet) {
-            handleWroteData(result, packet);
+            handleSuccessfulWriting(result, packet);
         }
 
         @Override
         public void failed(@NotNull Throwable exc, @NotNull WritablePacket packet) {
-            handleFailedWrite(exc, packet);
+            handleFailedWriting(exc, packet);
         }
     };
 
     protected final AsyncConnection connection;
     protected final AsynchronousSocketChannel channel;
     protected final ByteBuffer writeBuffer;
-    protected final ByteBuffer waitBuffer;
+    protected final ByteBuffer encryptedBuffer;
 
     protected final Runnable updateActivityFunction;
-    protected final Supplier<@Nullable WritablePacket> nextWritePacketFunction;
+    protected final Supplier<@Nullable WritablePacket> nextWritePacketSupplier;
 
     protected final AtomicBoolean isWriting;
 
@@ -53,65 +47,89 @@ public class DefaultPacketWriter implements PacketWriter {
         @NotNull AsyncConnection connection,
         @NotNull AsynchronousSocketChannel channel,
         @NotNull ByteBuffer writeBuffer,
-        @NotNull ByteBuffer waitBuffer,
+        @NotNull ByteBuffer encryptedBuffer,
         @NotNull Runnable updateActivityFunction,
-        @NotNull Supplier<@Nullable WritablePacket> nextWritePacketFunction
+        @NotNull Supplier<@Nullable WritablePacket> nextWritePacketSupplier
     ) {
         this.connection = connection;
         this.channel = channel;
         this.writeBuffer = writeBuffer;
-        this.waitBuffer = waitBuffer;
+        this.encryptedBuffer = encryptedBuffer;
         this.updateActivityFunction = updateActivityFunction;
-        this.nextWritePacketFunction = nextWritePacketFunction;
+        this.nextWritePacketSupplier = nextWritePacketSupplier;
         this.isWriting = new AtomicBoolean();
     }
 
-    /**
-     * Write a next packet.
-     */
-    protected final void writeNextPacket() {
+    @Override
+    public final void writeNextPacket() {
 
         if (connection.isClosed() || !isWriting.compareAndSet(false, true)) {
             return;
         }
 
-        var waitPacket = nextWritePacketFunction.get();
+        var waitPacket = nextWritePacketSupplier.get();
 
         if (waitPacket == null) {
             isWriting.set(false);
             return;
         }
 
-        channel.write(
-            writePacketToBuffer(waitPacket, waitBuffer),
-            waitPacket,
-            writeHandler
-        );
+        channel.write(serialize(waitPacket), waitPacket, writeHandler);
 
         completed(waitPacket);
     }
 
-    /**
-     * Write the packet to the write buffer.
-     *
-     * @param packet the packet.
-     * @param buffer the write buffer.
-     * @return the write buffer.
-     */
-    protected @NotNull ByteBuffer writePacketToBuffer(@NotNull WritablePacket packet, @NotNull ByteBuffer buffer) {
+    protected @NotNull ByteBuffer serialize(@NotNull WritablePacket packet) {
 
-        buffer.clear();
-        packet.prepareWritePosition(buffer);
-        packet.write(buffer);
-        buffer.flip();
-        packet.writePacketSize(buffer, buffer.limit());
+        var dataOffset = connection.getPacketLengthHeaderSize();
+
+        writeBuffer.clear();
+        writeBuffer.position(dataOffset);
+
+        packet.write(writePacketId(writeBuffer, packet.getPacketId()));
+
+        writeBuffer.flip();
+        writeBuffer.position(dataOffset);
 
         var crypt = connection.getCrypt();
-        var sizeByteCount = connection.getPacketSizeByteCount();
-        var length = buffer.limit() - sizeByteCount;
+        var encrypted = crypt.encrypt(writeBuffer, writeBuffer.limit() - dataOffset, encryptedBuffer.clear());
 
-        // FIXME
-        encrypt(buffer, crypt, sizeByteCount, length);
+        // nothing to encrypt
+        if (encrypted == null) {
+            return writePacketLength(writeBuffer, writeBuffer.limit());
+        }
+
+        writeBuffer.clear();
+        writeBuffer.position(dataOffset);
+        writeBuffer.put(encrypted);
+        writeBuffer.flip();
+
+        return writePacketLength(writeBuffer, writeBuffer.limit());
+    }
+
+    protected @NotNull ByteBuffer writePacketLength(@NotNull ByteBuffer buffer, int dataLength) {
+        return writeHeader(buffer, 0, dataLength, connection.getPacketLengthHeaderSize());
+    }
+
+    protected @NotNull ByteBuffer writePacketId(@NotNull ByteBuffer buffer, int packetId) {
+        return writeHeader(buffer, buffer.position(), packetId, connection.getPacketIdHeaderSize());
+    }
+
+    protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int position, int value, int headerSize) {
+
+        switch (headerSize) {
+            case 1:
+                buffer.put(position, (byte) value);
+                break;
+            case 2:
+                buffer.putShort(position, (short) value);
+                break;
+            case 4:
+                buffer.putInt(position, value);
+                break;
+            default:
+                throw new IllegalStateException("Wrong packet's header size: " + headerSize);
+        }
 
         return buffer;
     }
@@ -128,31 +146,12 @@ public class DefaultPacketWriter implements PacketWriter {
     }
 
     /**
-     * Encrypt data using the crypt of the connection owner.
-     *
-     * @param buffer the data buffer.
-     * @param crypt  the crypt.
-     * @param offset the offset.
-     * @param length the length.
-     * @return the encrypted data or null if this crypt implementation does encrypting inside the passed byte array.
-     */
-    protected @Nullable byte[] encrypt(@NotNull ByteBuffer buffer, @NotNull NetworkCrypt crypt, int offset, int length) {
-
-        if (crypt.isNull()) {
-            return null;
-        }
-
-        return crypt.encrypt(buffer.array(), offset, length);
-    }
-
-    /**
-
-     * Handle wrote data.
+     * Handle successful wrote data.
      *
      * @param result the count of wrote bytes.
      * @param packet the sent packet.
      */
-    protected void handleWroteData(@NotNull Integer result, @NotNull WritablePacket packet) {
+    protected void handleSuccessfulWriting(@NotNull Integer result, @NotNull WritablePacket packet) {
         updateActivityFunction.run();
 
         if (result == -1) {
@@ -176,13 +175,13 @@ public class DefaultPacketWriter implements PacketWriter {
      * @param exception the exception.
      * @param packet    the packet.
      */
-    protected void handleFailedWrite(@NotNull Throwable exception, @NotNull WritablePacket packet) {
+    protected void handleFailedWriting(@NotNull Throwable exception, @NotNull WritablePacket packet) {
 
         var config = connection.getNetwork()
             .getConfig();
 
         if (config.isVisibleWriteException()) {
-            LOGGER.warning(this, new Exception("incorrect write packet " + packet, exception));
+            LOGGER.warning(this, new Exception("Failed writing the packet: " + packet, exception));
         }
 
         if (connection.isClosed()) {

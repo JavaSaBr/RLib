@@ -39,6 +39,7 @@ public abstract class AbstractArray<E> implements Array<E> {
         }
 
         setArray(ArrayUtils.create(type, size));
+        setSize(size);
     }
 
     public AbstractArray(@NotNull E[] array) {
@@ -78,30 +79,6 @@ public abstract class AbstractArray<E> implements Array<E> {
      * @param size the new size of the array.
      */
     protected abstract void setSize(int size);
-
-    @Override
-    public boolean fastRemove(@NotNull Object object) {
-
-        int index = indexOf(object);
-
-        if (index >= 0) {
-            fastRemove(index);
-        }
-
-        return index >= 0;
-    }
-
-    @Override
-    public final boolean slowRemove(@NotNull Object object) {
-
-        int index = indexOf(object);
-
-        if (index >= 0) {
-            slowRemove(index);
-        }
-
-        return index >= 0;
-    }
 
     @Override
     public String toString() {

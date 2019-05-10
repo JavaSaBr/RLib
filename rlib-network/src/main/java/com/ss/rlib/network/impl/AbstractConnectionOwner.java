@@ -32,23 +32,11 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
         this.destroyed = new AtomicBoolean();
     }
 
-    @Override
-    public void destroy() {
-        if (destroyed.compareAndSet(false, true)) {
-            doDestroy();
-        }
-    }
-
     /**
      * The process of destroying.
      */
     protected void doDestroy() {
         getConnection().close();
-    }
-
-    @Override
-    public @NotNull NetworkCrypt getCrypt() {
-        return crypt;
     }
 
     @Override
@@ -58,22 +46,6 @@ public abstract class AbstractConnectionOwner implements ConnectionOwner {
 
     public boolean isDestroyed() {
         return destroyed.get();
-    }
-
-    @Override
-    public boolean isReady() {
-        return !isDestroyed() && !connection.isClosed();
-    }
-
-    @Override
-    public void readPacket(@NotNull ReadablePacket packet, @NotNull ByteBuffer buffer) {
-        packet.read(this, buffer);
-    }
-
-    @Override
-    public void sendPacket(@NotNull WritablePacket packet) {
-        packet.notifyAddedToSend();
-        connection.sendPacket(packet);
     }
 
     @Override

@@ -3,6 +3,8 @@ package com.ss.rlib.network;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.ByteBuffer;
+
 /**
  * The interface to implement a network crypt.
  *
@@ -16,47 +18,33 @@ public interface NetworkCrypt {
     @NotNull NetworkCrypt NULL = new NetworkCrypt() {
 
         @Override
-        public @Nullable byte[] decrypt(@NotNull byte[] data, int offset, int length) {
+        public @Nullable ByteBuffer decrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore) {
             return null;
         }
 
         @Override
-        public @Nullable byte[] encrypt(@NotNull byte[] data, int offset, int length) {
+        public @Nullable ByteBuffer encrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore) {
             return null;
-        }
-
-        @Override
-        public boolean isNull() {
-            return true;
         }
     };
 
     /**
-     * Return true if this crypt doesn't crypt data.
+     * Decrypt data.
      *
-     * @return true if this crypt doesn't crypt data.
+     * @param data    the buffer with data to decrypt.
+     * @param length  the data length.
+     * @param toStore the buffer to store decrypted data.
+     * @return the buffer with decrypted data or null if don't need to decrypt anything.
      */
-    default boolean isNull() {
-        return false;
-    }
+    @Nullable ByteBuffer decrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore);
 
     /**
-     * Decrypt the byte array.
+     * Encrypt data.
      *
-     * @param data   the byte array.
-     * @param offset the offset.
-     * @param length the byte count.
-     * @return the decrypted data or null if this crypt implementation does decrypting inside the passed byte array.
+     * @param data    the buffer with data to encrypt.
+     * @param length  the data length.
+     * @param toStore the buffer to store encrypted data.
+     * @return the buffer with encrypted data or null if don't need to decrypt encrypt.
      */
-    @Nullable byte[] decrypt(@NotNull byte[] data, int offset, int length);
-
-    /**
-     * Encrypt the byte array.
-     *
-     * @param data   the byte array.
-     * @param offset the offset.
-     * @param length the byte count.
-     * @return the encrypted data or null if this crypt implementation does encrypting inside the passed byte array.
-     */
-    @Nullable byte[] encrypt(@NotNull byte[] data, int offset, int length);
+    @Nullable ByteBuffer encrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore);
 }

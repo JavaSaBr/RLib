@@ -34,11 +34,11 @@ public interface AsyncNetwork {
     @NotNull ByteBuffer takeReadBuffer();
 
     /**
-     * Get a new wait buffer to use.
+     * Get a new pending buffer to use.
      *
-     * @return the new wait buffer.
+     * @return the new pending buffer.
      */
-    @NotNull ByteBuffer takeWaitBuffer();
+    @NotNull ByteBuffer takePendingBuffer();
 
     /**
      * Get a new write buffer to use.
@@ -55,11 +55,11 @@ public interface AsyncNetwork {
     @NotNull AsyncNetwork putReadBuffer(@NotNull ByteBuffer buffer);
 
     /**
-     * Store the old wait buffer.
+     * Store the old pending buffer.
      *
-     * @param buffer the old wait buffer.
+     * @param buffer the old pending buffer.
      */
-    @NotNull AsyncNetwork putWaitBuffer(@NotNull ByteBuffer buffer);
+    @NotNull AsyncNetwork putPendingBuffer(@NotNull ByteBuffer buffer);
 
     /**
      * Store the old write buffer.

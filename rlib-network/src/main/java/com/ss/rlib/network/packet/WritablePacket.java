@@ -30,15 +30,6 @@ public interface WritablePacket extends Packet {
     }
 
     /**
-     * Write packet type id of this packet to the buffer.
-     *
-     * @param buffer the buffer.
-     */
-    default void writePacketId(@NotNull ByteBuffer buffer) {
-        writeShort(buffer, getPacketId());
-    }
-
-    /**
      * Get the packet id of this packet.
      *
      * @return the packet id.
@@ -80,16 +71,6 @@ public interface WritablePacket extends Packet {
     }
 
     /**
-     * Write size of the packet data to the buffer.
-     *
-     * @param buffer     the buffer.
-     * @param packetSize the result packet size.
-     */
-    default void writePacketSize(@NotNull ByteBuffer buffer, int packetSize) {
-        buffer.putShort(0, (short) packetSize);
-    }
-
-    /**
      * Write 4 bytes to the buffer.
      *
      * @param buffer the buffer.
@@ -107,15 +88,6 @@ public interface WritablePacket extends Packet {
      */
     default void writeLong(@NotNull ByteBuffer buffer, long value) {
         buffer.putLong(value);
-    }
-
-    /**
-     * Prepare the start position in the buffer to write data from this packet.
-     *
-     * @param buffer the buffer
-     */
-    default void prepareWritePosition(@NotNull ByteBuffer buffer) {
-        buffer.position(2);
     }
 
     /**

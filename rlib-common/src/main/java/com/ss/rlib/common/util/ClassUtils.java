@@ -222,6 +222,18 @@ public final class ClassUtils {
         return type.isInstance(object) ? type.cast(object) : null;
     }
 
+    /**
+     * Safe cast of an not null object to the type.
+     *
+     * @param <T>    the object's type.
+     * @param type   the target type.
+     * @param object the object.
+     * @return the casted object.
+     */
+    public static <T> @NotNull T nnCast(@NotNull Class<T> type, @NotNull Object object) {
+        return type.cast(object);
+    }
+
     private ClassUtils() {
         throw new RuntimeException();
     }

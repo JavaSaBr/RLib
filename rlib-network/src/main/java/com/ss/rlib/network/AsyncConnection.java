@@ -1,8 +1,11 @@
 package com.ss.rlib.network;
 
+import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 /**
  * The interface to implement an async connection.
@@ -71,9 +74,32 @@ public interface AsyncConnection {
     @NotNull NetworkCrypt getCrypt();
 
     /**
-     * Get the byte count of packet size bytes.
+     * Get length of packet's header with packet's data length.
      *
-     * @return the byte count of packet size bytes.
+     * @return the length of packet's header with packet's data length.
      */
-    int getPacketSizeByteCount();
+    int getPacketLengthHeaderSize();
+
+    /**
+     * Get length of packet's header with packet's id.
+     *
+     * @return the length of packet's header with packet's id.
+     */
+    int getPacketIdHeaderSize();
+
+    /**
+     * Add the handler of each read packet from this owner.
+     *
+     * @param handler the handler.
+     * @param <P>     the readable packet's type.
+     * @return the added handler.
+     */
+    <P extends ReadablePacket> @NotNull Consumer<P> addPacketHandler(@NotNull Consumer<P> handler);
+
+    /**
+     * Remove the handler.
+     *
+     * @param handler the handler.
+     */
+    void removePacketHandler(@NotNull Consumer<? extends ReadablePacket> handler);
 }

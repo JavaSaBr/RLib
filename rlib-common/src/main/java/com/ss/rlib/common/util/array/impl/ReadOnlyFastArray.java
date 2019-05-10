@@ -38,6 +38,16 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
     }
 
     @Override
+    public boolean fastRemove(@NotNull Object object) {
+        throw new IllegalStateException("This array is read only.");
+    }
+
+    @Override
+    public boolean slowRemove(@NotNull Object object) {
+        throw new IllegalStateException("This array is read only.");
+    }
+
+    @Override
     public boolean addAll(@NotNull Array<? extends E> elements) {
         throw new IllegalStateException("This array is read only.");
     }
