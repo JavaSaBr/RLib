@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class FastLongDictionaryTests {
 
     @Test
-    void testFastLongDictionary() {
+    void generalTest() {
 
         var dictionary = DictionaryFactory.<String>newLongDictionary();
         dictionary.put(5, "5");
@@ -44,7 +44,7 @@ public class FastLongDictionaryTests {
     }
 
     @Test
-    void testEmptyLongDictionary() {
+    void emptyDictionaryTest() {
 
         var emptyDictionary = LongDictionary.<String>empty();
 
@@ -55,7 +55,7 @@ public class FastLongDictionaryTests {
     }
 
     @Test
-    void testFastLongDictionaryOf() {
+    void dictionaryOfTest() {
 
         var dictionary = LongDictionary.<String>of(1, "val1", 2, "val2", 3, "val3");
 
@@ -63,13 +63,12 @@ public class FastLongDictionaryTests {
         assertEquals("val1", dictionary.get(1));
         assertEquals("val3", dictionary.get(3));
 
-
         assertThrows(IllegalArgumentException.class, () -> LongDictionary.of("Key1", 1, "Key2", 2, "Key3"));
         assertThrows(IllegalArgumentException.class, () -> LongDictionary.of("Key1"));
     }
 
     @Test
-    void testFastLongDictionaryCollector() {
+    void collectorTest() {
 
         var dictionary = List.of(1, 2, 3, 4, 5)
             .stream()

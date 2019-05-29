@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 public class ObjectDictionaryTests {
 
     @Test
-    public void testFastObjectDictionary() {
+    void generalTest() {
 
-        ObjectDictionary<String, Integer> dictionary = DictionaryFactory.newObjectDictionary();
+        var dictionary = DictionaryFactory.<String, Integer>newObjectDictionary();
         dictionary.put("Key5", 5);
         dictionary.put("Key6", 6);
 
@@ -37,37 +37,20 @@ public class ObjectDictionaryTests {
     }
 
     @Test
-    public void testObjectDictionaryOf() {
+    void dictionaryOfTest() {
 
-        ObjectDictionary<String, Integer> dictionary = ObjectDictionary.of(
-                "Key1", 1,
-                "Key2", 2,
-                "Key3", 3
-        );
+        var dictionary = ObjectDictionary.<String, Integer>of("Key1", 1, "Key2", 2, "Key3", 3);
 
         Assertions.assertEquals(3, dictionary.size());
-    }
 
-    @Test
-    public void testObjectDictionaryOfIncorrectArg() {
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> ObjectDictionary.of("Key1", 1, "Key2", 2, "Key3")
+        );
 
-        try {
-
-            ObjectDictionary.of(
-                "Key1", 1,
-                "Key2", 2,
-                "Key3"
-            );
-
-            throw new RuntimeException();
-
-        } catch (IllegalArgumentException e) {
-        }
-
-        try {
-            ObjectDictionary.of("Key1");
-            throw new RuntimeException();
-        } catch (IllegalArgumentException e) {
-        }
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> ObjectDictionary.of("Key1")
+        );
     }
 }

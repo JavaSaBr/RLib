@@ -6,16 +6,16 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.ByteBuffer;
 
 /**
- * The interface to implement a network crypt.
+ * The interface to implement a network cryptor.
  *
  * @author JavaSaBr
  */
-public interface NetworkCrypt {
+public interface NetworkCryptor {
 
     /**
      * Default NULL implementation of the network crypt.
      */
-    @NotNull NetworkCrypt NULL = new NetworkCrypt() {
+    @NotNull NetworkCryptor NULL = new NetworkCryptor() {
 
         @Override
         public @Nullable ByteBuffer decrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore) {

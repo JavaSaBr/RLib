@@ -30,17 +30,6 @@ public interface WritablePacket extends Packet {
     }
 
     /**
-     * Get the packet id of this packet.
-     *
-     * @return the packet id.
-     */
-    default int getPacketId() {
-        return getClass()
-            .getAnnotation(PacketDescription.class)
-            .id();
-    }
-
-    /**
      * Write 2 bytes to the buffer.
      *
      * @param buffer the buffer.
@@ -122,11 +111,5 @@ public interface WritablePacket extends Packet {
      */
     default void writeBuffer(@NotNull ByteBuffer buffer, @NotNull ByteBuffer data) {
         buffer.put(data.array(), data.position(), data.limit());
-    }
-
-    /**
-     * Notify this packet that it was added to queue to send.
-     */
-    default void notifyAddedToSend() {
     }
 }

@@ -1,23 +1,5 @@
 package com.ss.rlib.network.test;
 
-import com.ss.rlib.common.util.Utils;
-import com.ss.rlib.network.ConnectionOwner;
-import com.ss.rlib.network.NetworkFactory;
-import com.ss.rlib.network.annotation.PacketDescription;
-import com.ss.rlib.network.client.ClientNetwork;
-import com.ss.rlib.network.client.server.Server;
-import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
-import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
-import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
-import com.ss.rlib.network.server.ServerNetwork;
-import com.ss.rlib.network.server.client.Client;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * The test ot test network.
@@ -26,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class NetworkTests {
 
-    @NotNull
+    /*@NotNull
     private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(2222);
 
     @NotNull
@@ -37,9 +19,6 @@ public class NetworkTests {
 
     public static class ServerPackets {
 
-        /**
-         * It's a packet which a server receives from a client.
-         */
         @PacketDescription(id = 1)
         public static class MessageRequest extends AbstractReadablePacket {
 
@@ -51,9 +30,6 @@ public class NetworkTests {
             }
         }
 
-        /**
-         * It's a packet which a server sends to a client.
-         */
         @PacketDescription(id = 2)
         public static class MessageResponse extends AbstractWritablePacket {
 
@@ -74,9 +50,6 @@ public class NetworkTests {
 
     public static class ClientPackets {
 
-        /**
-         * It's a packet which a client sends to a server.
-         */
         @PacketDescription(id = 1)
         public static class MessageRequest extends AbstractWritablePacket {
 
@@ -94,9 +67,6 @@ public class NetworkTests {
             }
         }
 
-        /**
-         * It's a packet which a client receives from a server.
-         */
         @PacketDescription(id = 2)
         public static class MessageResponse extends AbstractReadablePacket {
 
@@ -155,5 +125,5 @@ public class NetworkTests {
     public static void shutdownNetwork() {
         clientNetwork.shutdown();
         serverNetwork.shutdown();
-    }
+    }*/
 }

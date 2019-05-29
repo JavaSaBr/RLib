@@ -63,9 +63,7 @@ public final class ArrayUtils {
      * @param array the array.
      */
     public static void clear(@NotNull Object[] array) {
-        for (int i = 0, length = array.length; i < length; i++) {
-            array[i] = null;
-        }
+        Arrays.fill(array, null);
     }
 
     /**
@@ -102,9 +100,7 @@ public final class ArrayUtils {
      * @param <T>     the element's type.
      */
     public static <T> void fill(@NotNull T[] array, @NotNull IntFunction<T> factory) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = factory.apply(i);
-        }
+        Arrays.setAll(array, factory);
     }
 
     /**

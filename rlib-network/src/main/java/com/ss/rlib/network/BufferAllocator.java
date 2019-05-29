@@ -1,30 +1,15 @@
 package com.ss.rlib.network;
 
-import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
 /**
- * The interface to implement an asynchronous network.
+ * The interface to implement a buffer allocator for network things.
  *
  * @author JavaSaBr
  */
-public interface AsyncNetwork {
-
-    /**
-     * Get a network's config.
-     *
-     * @return the network's config.
-     */
-    @NotNull NetworkConfig getConfig();
-
-    /**
-     * Get a readable packet registry.
-     *
-     * @return the readable packet registry.
-     */
-    @NotNull ReadablePacketRegistry getPacketRegistry();
+public interface BufferAllocator {
 
     /**
      * Get a new read buffer to use.
@@ -52,24 +37,19 @@ public interface AsyncNetwork {
      *
      * @param buffer the old buffer.
      */
-    @NotNull AsyncNetwork putReadBuffer(@NotNull ByteBuffer buffer);
+    @NotNull BufferAllocator putReadBuffer(@NotNull ByteBuffer buffer);
 
     /**
      * Store the old pending buffer.
      *
      * @param buffer the old pending buffer.
      */
-    @NotNull AsyncNetwork putPendingBuffer(@NotNull ByteBuffer buffer);
+    @NotNull BufferAllocator putPendingBuffer(@NotNull ByteBuffer buffer);
 
     /**
      * Store the old write buffer.
      *
      * @param buffer the old buffer.
      */
-    @NotNull AsyncNetwork putWriteBuffer(@NotNull ByteBuffer buffer);
-
-    /**
-     * Shutdown this network.
-     */
-    void shutdown();
+    @NotNull BufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer);
 }

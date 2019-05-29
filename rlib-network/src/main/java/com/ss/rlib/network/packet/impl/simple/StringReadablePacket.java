@@ -1,6 +1,6 @@
 package com.ss.rlib.network.packet.impl.simple;
 
-import com.ss.rlib.network.ConnectionOwner;
+import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class StringReadablePacket extends AbstractReadablePacket {
     private volatile String data;
 
     @Override
-    protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
+    protected void readImpl(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer) {
         this.data = readString(buffer);
     }
 }

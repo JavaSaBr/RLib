@@ -39,7 +39,6 @@ public abstract class AbstractArray<E> implements Array<E> {
         }
 
         setArray(ArrayUtils.create(type, size));
-        setSize(size);
     }
 
     public AbstractArray(@NotNull E[] array) {

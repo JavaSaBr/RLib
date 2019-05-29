@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
@@ -306,10 +307,103 @@ public final class Utils {
      * Execute the function with auto-converting checked exception to runtime.
      *
      * @param function the function.
+     * @see #unchecked(SafeRunnable)
      */
+    @Deprecated(forRemoval = true)
     public static void run(@NotNull SafeRunnable function) {
         try {
             function.run();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting a checked exception to an unchecked.
+     *
+     * @param function the function.
+     */
+    public static void unchecked(@NotNull SafeRunnable function) {
+        try {
+            function.run();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting checked exception to runtime.
+     *
+     * @param <F>      the argument's type.
+     * @param first    the first argument.
+     * @param function the function.
+     * @see #unchecked(Object, SafeConsumer)
+     */
+    @Deprecated(forRemoval = true)
+    public static <F> void run(@Nullable F first, @NotNull SafeConsumer<F> function) {
+        try {
+            function.accept(first);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting a checked exception to an unchecked.
+     *
+     * @param <F>      the argument's type.
+     * @param first    the argument.
+     * @param function the function.
+     */
+    public static <F> void unchecked(@NotNull F first, @NotNull SafeConsumer<@NotNull F> function) {
+        try {
+            function.accept(first);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting checked exception to runtime.
+     *
+     * @param <F>      the first argument's type.
+     * @param <S>      the second argument's type.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     * @see #unchecked(Object, Object, SafeBiConsumer)
+     */
+    @Deprecated(forRemoval = true)
+    public static <F, S> void run(@Nullable F first, @Nullable S second, @NotNull SafeBiConsumer<F, S> consumer) {
+        try {
+            consumer.accept(first, second);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting a checked exception to an unchecked.
+     *
+     * @param <F>      the first argument's type.
+     * @param <S>      the second argument's type.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     */
+    public static <F, S> void unchecked(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull SafeBiConsumer<@NotNull F, @NotNull S> consumer
+    ) {
+        try {
+            consumer.accept(first, second);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -330,15 +424,78 @@ public final class Utils {
     }
 
     /**
-     * Execute the function with auto-converting checked exception to runtime.
+     * Execute the function with auto-converting a checked exception to an unchecked.
      *
-     * @param <R>      the type parameter
+     * @param <R>      the result type.
      * @param function the function.
      * @return the result.
+     * @see #uncheckedGet(SafeFactory)
      */
+    @Deprecated(forRemoval = true)
     public static <R> @NotNull R get(@NotNull SafeFactory<R> function) {
         try {
             return function.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting a checked exception to an unchecked.
+     *
+     * @param <R>      the result type.
+     * @param function the function.
+     * @return the result.
+     */
+    public static <R> @NotNull R uncheckedGet(@NotNull SafeFactory<@NotNull R> function) {
+        try {
+            return function.get();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting checked exception to runtime.
+     *
+     * @param first    the first argument.
+     * @param function the function.
+     * @param <F> the first argument's type.
+     * @param <R> the result's type.
+     * @return the result.
+     * @see #uncheckedGet(Object, SafeFunction)
+     */
+    @Deprecated(forRemoval = true)
+    public static <F, R> @NotNull R get(
+        @NotNull F first,
+        @NotNull SafeFunction<F, R> function
+    ) {
+        try {
+            return function.apply(first);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting a checked exception to an unchecked.
+     *
+     * @param <F>      the argument's type.
+     * @param <R>      the result's type.
+     * @param argument the argument.
+     * @param function the function.
+     * @return the result.
+     */
+    public static <F, R> @NotNull R uncheckedGet(
+        @NotNull F argument,
+        @NotNull SafeFunction<F, R> function
+    ) {
+        try {
+            return function.apply(argument);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -382,58 +539,44 @@ public final class Utils {
     }
 
     /**
-     * Execute the function with auto-converting checked exception to runtime.
+     * Execute the function with skipping any exception.
      *
      * @param <F>      the argument's type.
-     * @param first    the first argument.
+     * @param <R>      the result's type.
+     * @param argument the argument.
      * @param function the function.
+     * @return the result or null.
      */
-    public static <F> void run(@Nullable F first, @NotNull SafeConsumer<F> function) {
-        try {
-            function.accept(first);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Execute the function with auto-converting checked exception to runtime.
-     *
-     * @param first    the first argument.
-     * @param function the function.
-     * @param <F> the first argument's type.
-     * @param <R> the result's type.
-     * @return the result.
-     */
-    public static <F, R> @NotNull R get(
-            @NotNull F first,
-            @NotNull SafeFunction<F, R> function
+    public static <F, R> @Nullable R safeGet(
+        @NotNull F argument,
+        @NotNull SafeFunction<@NotNull F, @NotNull R> function
     ) {
         try {
-            return function.apply(first);
+            return function.apply(argument);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            // can be ignored
+            return null;
         }
     }
 
     /**
      * Execute the function with skipping any exception.
      *
-     * @param first    the first argument.
+     * @param <F>      the argument's type.
+     * @param <R>      the result's type.
+     * @param argument the argument.
      * @param function the function.
-     * @param <F> the first argument's type.
-     * @param <R> the result's type.
      * @return the result or null.
      */
-    public static <F, R> @Nullable R safeGet(
-            @NotNull F first,
-            @NotNull SafeFunction<F, R> function
+    public static <F, R> @NotNull R safeGet(
+        @NotNull F argument,
+        @NotNull SafeFunction<@NotNull F, @NotNull R> function,
+        @NotNull R def
     ) {
         try {
-            return function.apply(first);
+            return function.apply(argument);
         } catch (Exception e) {
-            // can be ignored
-            return null;
+            return def;
         }
     }
 
@@ -592,23 +735,6 @@ public final class Utils {
         }
 
         return null;
-    }
-
-    /**
-     * Execute the function with auto-converting checked exception to runtime.
-     *
-     * @param <F>      the first argument's type.
-     * @param <S>      the second argument's type.
-     * @param first    the first argument.
-     * @param second   the second argument.
-     * @param consumer the function,
-     */
-    public static <F, S> void run(@Nullable F first, @Nullable S second, @NotNull SafeBiConsumer<F, S> consumer) {
-        try {
-            consumer.accept(first, second);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**

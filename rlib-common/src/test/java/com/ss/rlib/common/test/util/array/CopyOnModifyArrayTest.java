@@ -195,10 +195,54 @@ public class CopyOnModifyArrayTest {
     @Test
     void removeElementTest(){
 
+        var array = ArrayFactory.newCopyOnModifyArray(String.class);
+        array.add("First");
+        array.add("Second");
+        array.add("Third");
+        array.add("Fourth");
+
+        array.remove("Second");
+
+        Assertions.assertEquals(3, array.size());
+        Assertions.assertArrayEquals(toArray("First", "Third", "Fourth"), array.array());
+
+        array.add("Second");
+
+        array.remove("First");
+
+        Assertions.assertArrayEquals(toArray("Third", "Fourth", "Second"), array.array());
+
+        array.remove("Third");
+        array.remove("Second");
+
+        Assertions.assertArrayEquals(toArray("Fourth"), array.array());
+
+        array.clear();
+
+        Assertions.assertArrayEquals(toArray(), array.array());
+
+        array.add("First");
+        array.add("First");
+        array.add("First");
+        array.add("Second");
+        array.add("Second");
+
+        array.remove("First");
+        array.remove("Second");
+
+        Assertions.assertArrayEquals(toArray("First", "First", "Second"), array.array());
     }
 
     @Test
     void sortTest() {
-        
+
+        var array = ArrayFactory.newCopyOnModifyArray(Integer.class);
+        array.add(10);
+        array.add(5);
+        array.add(9);
+        array.add(1);
+        array.sort(Integer::compareTo);
+
+        Assertions.assertArrayEquals(toArray(1, 5, 9, 10), array.array());
     }
 }

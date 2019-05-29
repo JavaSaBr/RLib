@@ -1,46 +1,12 @@
 package com.ss.rlib.network.test;
 
-import com.ss.rlib.common.concurrent.util.ThreadUtils;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
-import com.ss.rlib.common.util.StringUtils;
-import com.ss.rlib.common.util.Utils;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.array.ConcurrentArray;
-import com.ss.rlib.network.AsyncNetwork;
-import com.ss.rlib.network.ConnectionOwner;
-import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.NetworkFactory;
-import com.ss.rlib.network.annotation.PacketDescription;
-import com.ss.rlib.network.client.ClientNetwork;
-import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
-import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
-import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
-import com.ss.rlib.network.server.AcceptHandler;
-import com.ss.rlib.network.server.ServerNetwork;
-import com.ss.rlib.network.server.client.Client;
-import com.ss.rlib.network.server.client.impl.DefaultClient;
-import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * Test to check creating many clients to one server.
  *
  * @author JavaSaBr
  */
 public class NetworkManyClientsToServerTests extends NetworkTestConfig {
-
+/*
     private static final Logger LOGGER = LoggerManager.getLogger(NetworkManyClientsToServerTests.class);
 
     private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(Utils.getFreePort(3344));
@@ -172,7 +138,7 @@ public class NetworkManyClientsToServerTests extends NetworkTestConfig {
 
     //@AfterAll
     public static void shutdownNetwork() {
-        CLIENT_NETWORKS.forEach(AsyncNetwork::shutdown);
+        CLIENT_NETWORKS.forEach(Network::shutdown);
         serverNetwork.shutdown();
-    }
+    }*/
 }

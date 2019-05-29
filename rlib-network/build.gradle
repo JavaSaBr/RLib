@@ -1,9 +1,8 @@
-ext.baseName = "afwfe"
+jar {
+    baseName "rlib.network"
+}
 
 dependencies {
     compile project(":rlib-common")
-}
-
-jar {
-    baseName "rlib.network"
+    compile "io.projectreactor:reactor-core:$projectreactorVersion"
 }

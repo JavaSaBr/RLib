@@ -21,10 +21,10 @@ public class ClasspathScannerTests {
 
         var implementations = scanner.findImplements(Collection.class);
 
-        Assertions.assertTrue(!implementations.isEmpty());
+        Assertions.assertFalse(implementations.isEmpty());
 
         var inherited = scanner.findInherited(AbstractArray.class);
 
-        Assertions.assertTrue(!inherited.isEmpty());
+        Assertions.assertFalse(inherited.isEmpty());
     }
 }

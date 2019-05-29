@@ -1,40 +1,5 @@
 package com.ss.rlib.network.test;
 
-import com.ss.rlib.common.concurrent.util.ThreadUtils;
-import com.ss.rlib.common.util.ObjectUtils;
-import com.ss.rlib.common.util.StringUtils;
-import com.ss.rlib.common.util.Utils;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.array.ConcurrentArray;
-import com.ss.rlib.network.AsyncNetwork;
-import com.ss.rlib.network.ConnectionOwner;
-import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.NetworkFactory;
-import com.ss.rlib.network.annotation.PacketDescription;
-import com.ss.rlib.network.client.ClientNetwork;
-import com.ss.rlib.network.client.ConnectHandler;
-import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
-import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
-import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
-import com.ss.rlib.network.server.AcceptHandler;
-import com.ss.rlib.network.server.ServerNetwork;
-import com.ss.rlib.network.server.client.Client;
-import com.ss.rlib.network.server.client.ClientConnection;
-import com.ss.rlib.network.server.client.impl.DefaultClient;
-import com.ss.rlib.network.server.client.impl.DefaultClientConnection;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * The test ot test performance of reusable packets of network.
  *
@@ -42,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class NetworkPerformanceTests {
 
-    private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(Utils.getFreePort(3344));
+  /*  private static final InetSocketAddress SERVER_ADDRESS = new InetSocketAddress(Utils.getFreePort(3344));
 
     private static class TestClient extends DefaultClient {
 
@@ -70,9 +35,6 @@ public class NetworkPerformanceTests {
 
     public static class ServerPackets {
 
-        /**
-         * It's a packet which a server receives from a client.
-         */
         @PacketDescription(id = 1)
         public static class MessageRequest extends AbstractReadablePacket {
 
@@ -91,9 +53,6 @@ public class NetworkPerformanceTests {
             }
         }
 
-        /**
-         * It's a packet which a server sends to a client.
-         */
         @PacketDescription(id = 2)
         public static class MessageResponse extends AbstractWritablePacket {
 
@@ -115,9 +74,6 @@ public class NetworkPerformanceTests {
 
     public static class ClientPackets {
 
-        /**
-         * It's a packet which a client sends to a server.
-         */
         @PacketDescription(id = 1)
         public static class MessageRequest extends AbstractWritablePacket {
 
@@ -135,9 +91,6 @@ public class NetworkPerformanceTests {
             }
         }
 
-        /**
-         * It's a packet which a client receives from a server.
-         */
         @PacketDescription(id = 2)
         public static class MessageResponse extends AbstractReadablePacket {
 
@@ -231,7 +184,7 @@ public class NetworkPerformanceTests {
 
    // @AfterAll
     public static void shutdownNetwork() {
-        CLIENT_NETWORKS.forEach(AsyncNetwork::shutdown);
+        CLIENT_NETWORKS.forEach(Network::shutdown);
         serverNetwork.shutdown();
-    }
+    }*/
 }

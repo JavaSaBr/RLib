@@ -257,9 +257,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Removes the element at index with reordering.
+     * Removes the element at index possible with reordering.
      *
-     * @param index the index for removing the element.
+     * @param index the index of removing the element.
      * @return the removed element.
      */
     @NotNull E fastRemove(int index);
@@ -981,9 +981,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     void set(int index, @NotNull E element);
 
     /**
-     * Remove the element by the index without reordering.
+     * Removes the element at index without reordering.
      *
-     * @param index the index of the element.
+     * @param index the index of removing the element.
      * @return the removed element.
      */
     @NotNull E slowRemove(int index);

@@ -6,10 +6,12 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayComparator;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 /**
@@ -114,7 +116,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
 
     @Override
     public boolean slowRemove(@NotNull Object object) {
-        return fastRemove(object);
+        return remove(object);
     }
 
     @Override
@@ -169,7 +171,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public boolean fastRemove(@NotNull Object object) {
+    public boolean remove(@NotNull Object object) {
 
         var current = array.get();
         var index = ArrayUtils.indexOf(current, object);
@@ -197,6 +199,11 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean fastRemove(@NotNull Object object) {
+        return remove(object);
     }
 
     @Override
@@ -274,5 +281,12 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
         var clone = (CopyOnModifyArray<E>) super.clone();
         clone.array = new AtomicReference<>(ArrayUtils.copyOf(array()));
         return clone;
+    }
+
+    @Override
+    public <T> void forEach(@Nullable T argument, @NotNull BiConsumer<E, T> function) {
+        for (E element : array()) {
+            function.accept(element, argument);
+        }
     }
 }

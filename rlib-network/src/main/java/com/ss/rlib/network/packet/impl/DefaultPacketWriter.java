@@ -2,10 +2,11 @@ package com.ss.rlib.network.packet.impl;
 
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
-import com.ss.rlib.network.AsyncConnection;
+import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.PacketWriter;
 import com.ss.rlib.network.packet.ReusableWritablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,50 +16,34 @@ import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
-public class DefaultPacketWriter implements PacketWriter {
+@RequiredArgsConstructor
+public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<?, W>> implements PacketWriter {
 
-    protected static final Logger LOGGER = LoggerManager.getLogger(DefaultPacketWriter.class);
+    private static final Logger LOGGER = LoggerManager.getLogger(DefaultPacketWriter.class);
 
-    @NotNull
-    private final CompletionHandler<Integer, WritablePacket> writeHandler = new CompletionHandler<>() {
+    private final CompletionHandler<Integer, W> writeHandler = new CompletionHandler<>() {
 
         @Override
-        public void completed(@NotNull Integer result, @NotNull WritablePacket packet) {
+        public void completed(@NotNull Integer result, @NotNull W packet) {
             handleSuccessfulWriting(result, packet);
         }
 
         @Override
-        public void failed(@NotNull Throwable exc, @NotNull WritablePacket packet) {
+        public void failed(@NotNull Throwable exc, @NotNull W packet) {
             handleFailedWriting(exc, packet);
         }
     };
 
-    protected final AsyncConnection connection;
+    protected final AtomicBoolean isWriting = new AtomicBoolean();
+
+    protected final C connection;
     protected final AsynchronousSocketChannel channel;
     protected final ByteBuffer writeBuffer;
     protected final ByteBuffer encryptedBuffer;
 
     protected final Runnable updateActivityFunction;
-    protected final Supplier<@Nullable WritablePacket> nextWritePacketSupplier;
-
-    protected final AtomicBoolean isWriting;
-
-    public DefaultPacketWriter(
-        @NotNull AsyncConnection connection,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull ByteBuffer writeBuffer,
-        @NotNull ByteBuffer encryptedBuffer,
-        @NotNull Runnable updateActivityFunction,
-        @NotNull Supplier<@Nullable WritablePacket> nextWritePacketSupplier
-    ) {
-        this.connection = connection;
-        this.channel = channel;
-        this.writeBuffer = writeBuffer;
-        this.encryptedBuffer = encryptedBuffer;
-        this.updateActivityFunction = updateActivityFunction;
-        this.nextWritePacketSupplier = nextWritePacketSupplier;
-        this.isWriting = new AtomicBoolean();
-    }
+    protected final Supplier<@Nullable W> nextWritePacketSupplier;
+    protected final int packetLengthHeaderSize;
 
     @Override
     public final void writeNextPacket() {
@@ -79,20 +64,18 @@ public class DefaultPacketWriter implements PacketWriter {
         completed(waitPacket);
     }
 
-    protected @NotNull ByteBuffer serialize(@NotNull WritablePacket packet) {
-
-        var dataOffset = connection.getPacketLengthHeaderSize();
+    protected @NotNull ByteBuffer serialize(@NotNull W packet) {
 
         writeBuffer.clear();
-        writeBuffer.position(dataOffset);
+        writeBuffer.position(packetLengthHeaderSize);
 
-        packet.write(writePacketId(writeBuffer, packet.getPacketId()));
+        doWrite(packet);
 
         writeBuffer.flip();
-        writeBuffer.position(dataOffset);
+        writeBuffer.position(packetLengthHeaderSize);
 
         var crypt = connection.getCrypt();
-        var encrypted = crypt.encrypt(writeBuffer, writeBuffer.limit() - dataOffset, encryptedBuffer.clear());
+        var encrypted = crypt.encrypt(writeBuffer, writeBuffer.limit() - packetLengthHeaderSize, encryptedBuffer.clear());
 
         // nothing to encrypt
         if (encrypted == null) {
@@ -100,19 +83,19 @@ public class DefaultPacketWriter implements PacketWriter {
         }
 
         writeBuffer.clear();
-        writeBuffer.position(dataOffset);
+        writeBuffer.position(packetLengthHeaderSize);
         writeBuffer.put(encrypted);
         writeBuffer.flip();
 
         return writePacketLength(writeBuffer, writeBuffer.limit());
     }
 
-    protected @NotNull ByteBuffer writePacketLength(@NotNull ByteBuffer buffer, int dataLength) {
-        return writeHeader(buffer, 0, dataLength, connection.getPacketLengthHeaderSize());
+    protected void doWrite(@NotNull W packet) {
+        packet.write(writeBuffer);
     }
 
-    protected @NotNull ByteBuffer writePacketId(@NotNull ByteBuffer buffer, int packetId) {
-        return writeHeader(buffer, buffer.position(), packetId, connection.getPacketIdHeaderSize());
+    protected @NotNull ByteBuffer writePacketLength(@NotNull ByteBuffer buffer, int dataLength) {
+        return writeHeader(buffer, 0, dataLength, packetLengthHeaderSize);
     }
 
     protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int position, int value, int headerSize) {
@@ -139,7 +122,7 @@ public class DefaultPacketWriter implements PacketWriter {
      *
      * @param packet the writable packet.
      */
-    protected void completed(@NotNull WritablePacket packet) {
+    protected void completed(@NotNull W packet) {
         if (packet instanceof ReusableWritablePacket) {
             ((ReusableWritablePacket) packet).complete();
         }
@@ -151,7 +134,7 @@ public class DefaultPacketWriter implements PacketWriter {
      * @param result the count of wrote bytes.
      * @param packet the sent packet.
      */
-    protected void handleSuccessfulWriting(@NotNull Integer result, @NotNull WritablePacket packet) {
+    protected void handleSuccessfulWriting(@NotNull Integer result, @NotNull W packet) {
         updateActivityFunction.run();
 
         if (result == -1) {
@@ -175,21 +158,13 @@ public class DefaultPacketWriter implements PacketWriter {
      * @param exception the exception.
      * @param packet    the packet.
      */
-    protected void handleFailedWriting(@NotNull Throwable exception, @NotNull WritablePacket packet) {
+    protected void handleFailedWriting(@NotNull Throwable exception, @NotNull W packet) {
+        LOGGER.error(this, new RuntimeException("Failed writing packet: " + packet, exception));
 
-        var config = connection.getNetwork()
-            .getConfig();
-
-        if (config.isVisibleWriteException()) {
-            LOGGER.warning(this, new Exception("Failed writing the packet: " + packet, exception));
-        }
-
-        if (connection.isClosed()) {
-            return;
-        }
-
-        if (isWriting.compareAndSet(true, false)) {
-            writeNextPacket();
+        if (!connection.isClosed()) {
+            if (isWriting.compareAndSet(true, false)) {
+                writeNextPacket();
+            }
         }
     }
 }

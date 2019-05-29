@@ -1,6 +1,6 @@
 package com.ss.rlib.common.test.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import com.ss.rlib.common.util.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -69,11 +69,11 @@ public class FileUtilsTest {
         var path6 = "D:\\folder\\folder.folder\\test";
         var path7 = "/folder/folder.folder/test";
 
-        assertEquals(true, FileUtils.hasExtension(path1));
-        assertEquals(true, FileUtils.hasExtension(path2));
-        assertEquals(true, FileUtils.hasExtension(path3));
-        assertEquals(true, FileUtils.hasExtension(path4));
-        assertEquals(false, FileUtils.hasExtension(path6));
-        assertEquals(false, FileUtils.hasExtension(path7));
+        assertTrue(FileUtils.hasExtension(path1));
+        assertTrue(FileUtils.hasExtension(path2));
+        assertTrue(FileUtils.hasExtension(path3));
+        assertTrue(FileUtils.hasExtension(path4));
+        assertFalse(FileUtils.hasExtension(path6));
+        assertFalse(FileUtils.hasExtension(path7));
     }
 }

@@ -1,14 +1,11 @@
 package com.ss.rlib.network.server;
 
-import com.ss.rlib.network.AsyncNetwork;
-import com.ss.rlib.network.server.client.Client;
+import com.ss.rlib.network.Connection;
+import com.ss.rlib.network.Network;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import reactor.core.publisher.ConnectableFlux;
 
-import java.io.IOException;
-import java.net.SocketAddress;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
+import java.net.InetSocketAddress;
 import java.util.function.Consumer;
 
 /**
@@ -16,39 +13,27 @@ import java.util.function.Consumer;
  *
  * @author JavaSaBr
  */
-public interface ServerNetwork extends AsyncNetwork {
+public interface ServerNetwork<C extends Connection<?, ?>> extends Network<C> {
 
     /**
-     * Set the handler to handle destroyed clients.
+     * Start a server by the address.
      *
-     * @param handler the handler.
+     * @param serverAddress the sever address.
+     * @return this network.
      */
-    void setDestroyedHandler(@NotNull Consumer<@NotNull Client> handler);
+    <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress);
 
     /**
-     * Put a handler to wait for a new connection.
+     * Register a consumer of new connections.
      *
-     * @param <A>        the type of an attachment.
-     * @param attachment the additional argument.
-     * @param handler    the handler.
+     * @param consumer the consumer of new connections.
      */
-    <A> void accept(
-        @Nullable A attachment,
-        @NotNull CompletionHandler<@NotNull AsynchronousSocketChannel, @Nullable ? super A> handler
-    );
+    void onAccept(@NotNull Consumer<? super C> consumer);
 
     /**
-     * Start a server using the socket address.
+     * Get a stream of new accepted connections.
      *
-     * @param address the socket address.
-     * @throws IOException if a socket can't be created.
+     * @return the stream of new accepted connections.
      */
-    void bind(@NotNull SocketAddress address) throws IOException;
-
-    /**
-     * Notify the server about destroying the client.
-     *
-     * @param client the destroyed client.
-     */
-    void onDestroyed(@NotNull Client client);
+    @NotNull ConnectableFlux<? extends C> accept();
 }

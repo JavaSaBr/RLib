@@ -45,7 +45,6 @@ public abstract class AbstractWritablePacket extends AbstractPacket implements W
      * @param buffer the buffer
      */
     protected void writeImpl(@NotNull ByteBuffer buffer) {
-        writePacketId(buffer);
     }
 
     @Override
