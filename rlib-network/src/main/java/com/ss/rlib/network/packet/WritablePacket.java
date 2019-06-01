@@ -1,6 +1,5 @@
 package com.ss.rlib.network.packet;
 
-import com.ss.rlib.network.annotation.PacketDescription;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -16,8 +15,18 @@ public interface WritablePacket extends Packet {
      * Write this packet to the buffer.
      *
      * @param buffer the buffer.
+     * @return true if writing was successful.
      */
-    void write(@NotNull ByteBuffer buffer);
+    boolean write(@NotNull ByteBuffer buffer);
+
+    /**
+     * Return an expected data length of this packet or -1.
+     *
+     * @return expected data length of this packet or -1.
+     */
+    default int getExpectedLength() {
+        return -1;
+    }
 
     /**
      * Write 1 byte to the buffer.

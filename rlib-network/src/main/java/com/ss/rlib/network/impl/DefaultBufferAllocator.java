@@ -1,5 +1,6 @@
 package com.ss.rlib.network.impl;
 
+import com.ss.rlib.common.util.BufferUtils;
 import com.ss.rlib.common.util.pools.Pool;
 import com.ss.rlib.common.util.pools.PoolFactory;
 import com.ss.rlib.logger.api.Logger;
@@ -9,9 +10,20 @@ import com.ss.rlib.network.NetworkConfig;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.EnumSet;
 
 /**
+ * The default byte buffer allocator.
+ *
  * @author JavaSaBr
  */
 @ToString
@@ -60,6 +72,11 @@ public class DefaultBufferAllocator implements BufferAllocator {
     }
 
     @Override
+    public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+        return BufferUtils.allocateRWMappedByteBuffer(size);
+    }
+
+    @Override
     public @NotNull DefaultBufferAllocator putReadBuffer(@NotNull ByteBuffer buffer) {
         LOGGER.debug("Skip storing a read buffer.");
         return this;
@@ -67,13 +84,19 @@ public class DefaultBufferAllocator implements BufferAllocator {
 
     @Override
     public @NotNull DefaultBufferAllocator putPendingBuffer(@NotNull ByteBuffer buffer) {
-        LOGGER.debug("Skip storing a read buffer.");
+        LOGGER.debug("Skip storing a pending buffer.");
         return this;
     }
 
     @Override
     public @NotNull DefaultBufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer) {
-        LOGGER.debug("Skip storing a read buffer.");
+        LOGGER.debug("Skip storing a write buffer.");
+        return this;
+    }
+
+    @Override
+    public @NotNull BufferAllocator putMappedByteBuffer(@NotNull MappedByteBuffer buffer) {
+        LOGGER.debug("Skip storing a mapped byte buffer.");
         return this;
     }
 }

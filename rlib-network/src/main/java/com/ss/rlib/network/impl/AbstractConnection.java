@@ -44,13 +44,6 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     protected final PacketReader packetReader;
     protected final PacketWriter packetWriter;
 
-    protected final ByteBuffer readBuffer;
-    protected final ByteBuffer readPendingBuffer;
-    protected final ByteBuffer readDecryptedBuffer;
-
-    protected final ByteBuffer writeBuffer;
-    protected final ByteBuffer writeEncryptedBuffer;
-
     protected final AtomicBoolean isWriting;
     protected final AtomicBoolean closed;
 
@@ -58,7 +51,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     protected final StampedLock lock;
 
     protected final Array<Consumer<? super R>> subscribers;
-    protected final ConnectableFlux<R> receivedPacketStream;
+    protected final Flux<R> receivedPacketStream;
 
     protected final int maxPacketsByRead;
     protected final int packetLengthHeaderSize;
@@ -84,16 +77,12 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         this.network = network;
         this.isWriting = new AtomicBoolean(false);
         this.closed = new AtomicBoolean(false);
-        this.readBuffer = bufferAllocator.takeReadBuffer();
-        this.readPendingBuffer = bufferAllocator.takePendingBuffer();
-        this.readDecryptedBuffer = bufferAllocator.takeReadBuffer();
-        this.writeBuffer = bufferAllocator.takeWriteBuffer();
-        this.writeEncryptedBuffer = bufferAllocator.takeWriteBuffer();
         this.packetReader = createPacketReader();
         this.packetWriter = createPacketWriter();
         this.subscribers = ArrayFactory.newCopyOnModifyArray(Consumer.class);
         this.receivedPacketStream = Flux.<R>create(fluxSink -> onReceive(fluxSink::next))
-            .publish();
+            .publish()
+            .autoConnect(0);
     }
 
     protected abstract @NotNull PacketReader createPacketReader();
@@ -117,8 +106,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         return new DefaultPacketWriter<W, Connection<R, W>>(
             this,
             channel,
-            writeBuffer,
-            writeEncryptedBuffer,
+            bufferAllocator,
             this::updateLastActivity,
             this::nextPacketToWrite,
             packetLengthHeaderSize
@@ -143,7 +131,6 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     /**
      * Does the process of closing this connection.
-     *
      */
     protected void doClose() {
 
@@ -151,11 +138,8 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
         clearWaitPackets();
 
-        bufferAllocator.putReadBuffer(readBuffer)
-            .putReadBuffer(readDecryptedBuffer)
-            .putPendingBuffer(readPendingBuffer)
-            .putWriteBuffer(writeBuffer)
-            .putWriteBuffer(writeEncryptedBuffer);
+        packetReader.close();
+        packetWriter.close();
     }
 
     @Override

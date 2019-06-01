@@ -25,18 +25,38 @@ public interface ServerNetworkConfig extends NetworkConfig {
         }
     };
 
+    /**
+     * Get a minimal size of network thread executor.
+     *
+     * @return the minimal executor size.
+     */
     default int getGroupSize() {
         return 1;
     }
 
+    /**
+     * Get a maximum size of network thread executor.
+     *
+     * @return the maximum executor size.
+     */
     default int getGroupMaxSize() {
         return getGroupSize();
     }
 
+    /**
+     * Get a thread constructor which should be used to create network threads.
+     *
+     * @return the thread constructor.
+     */
     default @NotNull GroupThreadFactory.ThreadConstructor getThreadConstructor() {
         return Thread::new;
     }
 
+    /**
+     * Get a priority of network threads.
+     *
+     * @return the priority of network threads.
+     */
     default int getThreadPriority() {
         return Thread.NORM_PRIORITY;
     }

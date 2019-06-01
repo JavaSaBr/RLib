@@ -3,11 +3,13 @@ package com.ss.rlib.network.packet.impl.simple;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
 import lombok.Getter;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 
+@ToString
 @Getter(onMethod_ = @Nullable)
 public class StringReadablePacket extends AbstractReadablePacket {
 

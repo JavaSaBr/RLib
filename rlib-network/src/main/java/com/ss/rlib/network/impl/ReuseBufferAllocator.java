@@ -1,5 +1,8 @@
 package com.ss.rlib.network.impl;
 
+import com.ss.rlib.common.util.BufferUtils;
+import com.ss.rlib.common.util.array.ArrayFactory;
+import com.ss.rlib.common.util.array.ConcurrentArray;
 import com.ss.rlib.common.util.pools.Pool;
 import com.ss.rlib.common.util.pools.PoolFactory;
 import com.ss.rlib.logger.api.Logger;
@@ -10,19 +13,22 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.util.Collection;
 import java.util.function.Function;
 
 /**
  * @author JavaSaBr
  */
 @ToString
-public abstract class ReuseBufferAllocator implements BufferAllocator {
+public class ReuseBufferAllocator implements BufferAllocator {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ReuseBufferAllocator.class);
 
     protected final Pool<ByteBuffer> readBufferPool;
     protected final Pool<ByteBuffer> pendingBufferPool;
     protected final Pool<ByteBuffer> writeBufferPool;
+    protected final ConcurrentArray<MappedByteBuffer> mappedByteBuffers;
 
     protected final NetworkConfig config;
 
@@ -31,6 +37,7 @@ public abstract class ReuseBufferAllocator implements BufferAllocator {
         this.readBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
         this.pendingBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
         this.writeBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
+        this.mappedByteBuffers = ArrayFactory.newConcurrentStampedLockArray(MappedByteBuffer.class);
     }
 
     @Override
@@ -82,6 +89,35 @@ public abstract class ReuseBufferAllocator implements BufferAllocator {
     }
 
     @Override
+    public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+
+        // check of existing enough buffer for the size under read lock
+        var exist = mappedByteBuffers.anyMatchInReadLock(size,
+            (buffer, capacity) -> buffer.capacity() > capacity);
+
+        // if we already possible have this buffer we need to take it under write lock
+        if (exist != null) {
+            long stamp = mappedByteBuffers.writeLock();
+            try {
+
+                // re-find enough buffer again
+                exist = mappedByteBuffers.findAny(size,
+                    (buffer, capacity) -> buffer.capacity() > capacity);
+
+                // take it from pool if exist
+                if (exist != null && mappedByteBuffers.fastRemove(exist)) {
+                    return exist;
+                }
+
+            } finally {
+                mappedByteBuffers.writeUnlock(stamp);
+            }
+        }
+
+        return BufferUtils.allocateRWMappedByteBuffer(size);
+    }
+
+    @Override
     public @NotNull ReuseBufferAllocator putReadBuffer(@NotNull ByteBuffer buffer) {
         readBufferPool.put(buffer);
         return this;
@@ -96,6 +132,12 @@ public abstract class ReuseBufferAllocator implements BufferAllocator {
     @Override
     public @NotNull ReuseBufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer) {
         writeBufferPool.put(buffer);
+        return this;
+    }
+
+    @Override
+    public @NotNull BufferAllocator putMappedByteBuffer(@NotNull MappedByteBuffer buffer) {
+        mappedByteBuffers.runInWriteLock(buffer, Collection::add);
         return this;
     }
 }

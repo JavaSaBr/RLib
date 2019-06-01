@@ -17,4 +17,9 @@ public class StringWritablePacket extends AbstractWritablePacket {
         super.writeImpl(buffer);
         writeString(buffer, data);
     }
+
+    @Override
+    public int getExpectedLength() {
+        return 4 + data.length() * 2;
+    }
 }

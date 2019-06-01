@@ -38,8 +38,19 @@ public final class NetworkFactory {
      * @return the client network.
      */
     public static @NotNull ClientNetwork<StringDataConnection> newStringDataClientNetwork() {
+        return newStringDataClientNetwork(NetworkConfig.DEFAULT_CLIENT);
+    }
 
-        var networkConfig = NetworkConfig.DEFAULT_CLIENT;
+    /**
+     * Create a string packet based asynchronous client network.
+     *
+     * @param networkConfig the network config.
+     * @return the client network.
+     */
+    public static @NotNull ClientNetwork<StringDataConnection> newStringDataClientNetwork(
+        @NotNull NetworkConfig networkConfig
+    ) {
+
         var allocator = new DefaultBufferAllocator(networkConfig);
 
         return newClientNetwork(
@@ -54,8 +65,19 @@ public final class NetworkFactory {
      * @return the server network.
      */
     public static @NotNull ServerNetwork<StringDataConnection> newStringDataServerNetwork() {
+        return newStringDataServerNetwork(ServerNetworkConfig.DEFAULT_SERVER);
+    }
 
-        var networkConfig = ServerNetworkConfig.DEFAULT_SERVER;
+    /**
+     * Create string packet based asynchronous server network.
+     *
+     * @param networkConfig the network config.
+     * @return the server network.
+     */
+    public static @NotNull ServerNetwork<StringDataConnection> newStringDataServerNetwork(
+        @NotNull ServerNetworkConfig networkConfig
+    ) {
+
         var allocator = new DefaultBufferAllocator(networkConfig);
 
         return newServerNetwork(

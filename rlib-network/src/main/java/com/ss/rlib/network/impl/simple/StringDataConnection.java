@@ -39,14 +39,12 @@ public class StringDataConnection extends AbstractConnection<StringReadablePacke
         return new DefaultPacketReader<>(
             this,
             channel,
-            readBuffer,
-            readPendingBuffer,
-            readDecryptedBuffer,
+            bufferAllocator,
             this::updateLastActivity,
             this::handleReadPacket,
             value -> new StringReadablePacket(),
-            maxPacketsByRead,
-            packetLengthHeaderSize
+            packetLengthHeaderSize,
+            maxPacketsByRead
         );
     }
 }

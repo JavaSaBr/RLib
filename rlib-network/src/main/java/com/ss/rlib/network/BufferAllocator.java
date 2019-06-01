@@ -3,6 +3,7 @@ package com.ss.rlib.network;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 
 /**
  * The interface to implement a buffer allocator for network things.
@@ -33,23 +34,39 @@ public interface BufferAllocator {
     @NotNull ByteBuffer takeWriteBuffer();
 
     /**
-     * Store the old read buffer.
+     * Get a new mapped buffer for temporary usage.
      *
-     * @param buffer the old buffer.
+     * @param size the size of the mapped buffer.
+     * @return the mapped buffer.
+     */
+    @NotNull MappedByteBuffer takeMappedBuffer(int size);
+
+    /**
+     * Store an old read buffer if need.
+     *
+     * @param buffer the old read buffer.
      */
     @NotNull BufferAllocator putReadBuffer(@NotNull ByteBuffer buffer);
 
     /**
-     * Store the old pending buffer.
+     * Store an old pending buffer if need.
      *
      * @param buffer the old pending buffer.
      */
     @NotNull BufferAllocator putPendingBuffer(@NotNull ByteBuffer buffer);
 
     /**
-     * Store the old write buffer.
+     * Store an old write buffer if need.
      *
-     * @param buffer the old buffer.
+     * @param buffer the old write buffer.
      */
     @NotNull BufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer);
+
+    /**
+     * Store an old mapped byte buffer if need.
+     *
+     * @param buffer the old mapped byte buffer.
+     */
+
+    @NotNull BufferAllocator putMappedByteBuffer(@NotNull MappedByteBuffer buffer);
 }

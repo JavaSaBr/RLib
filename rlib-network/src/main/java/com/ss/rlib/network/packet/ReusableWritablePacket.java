@@ -52,7 +52,6 @@ public interface ReusableWritablePacket extends WritablePacket, Reusable {
      */
     void setPool(@NotNull Pool<ReusableWritablePacket> pool);
 
-    @Override
     default void notifyAddedToSend() {
         increaseSends();
     }

@@ -40,11 +40,11 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     }
 
     @Override
-    public void write(@NotNull ByteBuffer buffer) {
+    public boolean write(@NotNull ByteBuffer buffer) {
 
         if (counter.get() < 1) {
             LOGGER.warning(this, "write finished packet " + this + " on thread " + Thread.currentThread().getName());
-            return;
+            return false;
         }
 
         notifyStartedWriting();
@@ -53,6 +53,8 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
         } finally {
             notifyFinishedWriting();
         }
+
+        return true;
     }
 
     /**

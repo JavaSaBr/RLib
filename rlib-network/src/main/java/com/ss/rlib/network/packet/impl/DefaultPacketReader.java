@@ -1,5 +1,6 @@
 package com.ss.rlib.network.packet.impl;
 
+import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.ReadablePacket;
 import org.jetbrains.annotations.NotNull;
@@ -18,9 +19,7 @@ public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<
     public DefaultPacketReader(
         @NotNull C connection,
         @NotNull AsynchronousSocketChannel channel,
-        @NotNull ByteBuffer readBuffer,
-        @NotNull ByteBuffer pendingBuffer,
-        @NotNull ByteBuffer decryptedBuffer,
+        @NotNull BufferAllocator bufferAllocator,
         @NotNull Runnable updateActivityFunction,
         @NotNull Consumer<R> readPacketHandler,
         @NotNull IntFunction<R> readPacketFactory,
@@ -30,9 +29,7 @@ public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<
         super(
             connection,
             channel,
-            readBuffer,
-            pendingBuffer,
-            decryptedBuffer,
+            bufferAllocator,
             updateActivityFunction,
             readPacketHandler,
             packetLengthHeaderSize,

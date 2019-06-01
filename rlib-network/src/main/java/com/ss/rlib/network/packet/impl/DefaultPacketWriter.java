@@ -2,15 +2,16 @@ package com.ss.rlib.network.packet.impl;
 
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
+import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.PacketWriter;
-import com.ss.rlib.network.packet.ReusableWritablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,15 +39,37 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
 
     protected final C connection;
     protected final AsynchronousSocketChannel channel;
+    protected final BufferAllocator bufferAllocator;
     protected final ByteBuffer writeBuffer;
     protected final ByteBuffer encryptedBuffer;
+
+    protected volatile MappedByteBuffer writeMappedBuffer;
+    protected volatile MappedByteBuffer encryptedMappedBuffer;
 
     protected final Runnable updateActivityFunction;
     protected final Supplier<@Nullable W> nextWritePacketSupplier;
     protected final int packetLengthHeaderSize;
 
+    public DefaultPacketWriter(
+        @NotNull C connection,
+        @NotNull AsynchronousSocketChannel channel,
+        @NotNull BufferAllocator bufferAllocator,
+        @NotNull Runnable updateActivityFunction,
+        @NotNull Supplier<@Nullable W> nextWritePacketSupplier,
+        int packetLengthHeaderSize
+    ) {
+        this.connection = connection;
+        this.channel = channel;
+        this.bufferAllocator = bufferAllocator;
+        this.writeBuffer = bufferAllocator.takeWriteBuffer();
+        this.encryptedBuffer = bufferAllocator.takeWriteBuffer();
+        this.updateActivityFunction = updateActivityFunction;
+        this.nextWritePacketSupplier = nextWritePacketSupplier;
+        this.packetLengthHeaderSize = packetLengthHeaderSize;
+    }
+
     @Override
-    public final void writeNextPacket() {
+    public void writeNextPacket() {
 
         if (connection.isClosed() || !isWriting.compareAndSet(false, true)) {
             return;
@@ -59,43 +82,73 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
             return;
         }
 
-        channel.write(serialize(waitPacket), waitPacket, writeHandler);
+        var byteBuffer = serialize(waitPacket);
+
+        if (byteBuffer.limit() != 0) {
+            channel.write(byteBuffer, waitPacket, writeHandler);
+        } else {
+            isWriting.set(false);
+        }
 
         completed(waitPacket);
     }
 
     protected @NotNull ByteBuffer serialize(@NotNull W packet) {
 
-        writeBuffer.clear();
-        writeBuffer.position(packetLengthHeaderSize);
+        var expectedLength = packet.getExpectedLength();
+        var totalSize = expectedLength + packetLengthHeaderSize;
 
-        doWrite(packet);
+        // if the packet is too big to use a write buffer
+        if (expectedLength != -1 && totalSize > writeBuffer.capacity()) {
+            writeMappedBuffer = bufferAllocator.takeMappedBuffer(totalSize);
+            encryptedMappedBuffer = bufferAllocator.takeMappedBuffer(totalSize);
+            return serialize(packet, writeMappedBuffer, encryptedMappedBuffer);
+        } else {
+            return serialize(packet, writeBuffer, encryptedBuffer);
+        }
+    }
 
-        writeBuffer.flip();
-        writeBuffer.position(packetLengthHeaderSize);
+    protected @NotNull ByteBuffer serialize(
+        @NotNull W packet,
+        @NotNull ByteBuffer buffer,
+        @NotNull ByteBuffer encryptedBuffer
+    ) {
+
+        buffer.clear();
+        buffer.position(packetLengthHeaderSize);
+
+        if (!doWrite(buffer, packet)) {
+            return buffer.clear()
+                .limit(0);
+        }
+
+        buffer.flip();
+        buffer.position(packetLengthHeaderSize);
 
         var crypt = connection.getCrypt();
-        var encrypted = crypt.encrypt(writeBuffer, writeBuffer.limit() - packetLengthHeaderSize, encryptedBuffer.clear());
+        var encrypted = crypt.encrypt(buffer, buffer.limit() - packetLengthHeaderSize, encryptedBuffer.clear());
 
         // nothing to encrypt
         if (encrypted == null) {
-            return writePacketLength(writeBuffer, writeBuffer.limit());
+            return writePacketLength(buffer, buffer.limit())
+                .position(0);
         }
 
-        writeBuffer.clear();
-        writeBuffer.position(packetLengthHeaderSize);
-        writeBuffer.put(encrypted);
-        writeBuffer.flip();
+        buffer.clear();
+        buffer.position(packetLengthHeaderSize);
+        buffer.put(encrypted);
+        buffer.flip();
 
-        return writePacketLength(writeBuffer, writeBuffer.limit());
+        return writePacketLength(buffer, buffer.limit())
+            .position(0);
     }
 
-    protected void doWrite(@NotNull W packet) {
-        packet.write(writeBuffer);
+    protected boolean doWrite(@NotNull ByteBuffer buffer, @NotNull W packet) {
+        return packet.write(buffer);
     }
 
-    protected @NotNull ByteBuffer writePacketLength(@NotNull ByteBuffer buffer, int dataLength) {
-        return writeHeader(buffer, 0, dataLength, packetLengthHeaderSize);
+    protected @NotNull ByteBuffer writePacketLength(@NotNull ByteBuffer buffer, int packetLength) {
+        return writeHeader(buffer, 0, packetLength, packetLengthHeaderSize);
     }
 
     protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int position, int value, int headerSize) {
@@ -123,9 +176,6 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
      * @param packet the writable packet.
      */
     protected void completed(@NotNull W packet) {
-        if (packet instanceof ReusableWritablePacket) {
-            ((ReusableWritablePacket) packet).complete();
-        }
     }
 
     /**
@@ -142,9 +192,26 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
             return;
         }
 
-        if (writeBuffer.remaining() > 0) {
-            channel.write(writeBuffer, packet, writeHandler);
-            return;
+        // if we have data in mapped write buffer we need to use it
+        if (writeMappedBuffer != null) {
+
+            if (writeMappedBuffer.remaining() > 0) {
+                channel.write(writeMappedBuffer, packet, writeHandler);
+                return;
+            }
+            // if all data from mapped buffers was written then we can remove it
+            else {
+                bufferAllocator.putMappedByteBuffer(writeMappedBuffer);
+                bufferAllocator.putMappedByteBuffer(encryptedMappedBuffer);
+                writeMappedBuffer = null;
+                encryptedMappedBuffer = null;
+            }
+
+        } else {
+            if (writeBuffer.remaining() > 0) {
+                channel.write(writeBuffer, packet, writeHandler);
+                return;
+            }
         }
 
         if (isWriting.compareAndSet(true, false)) {
@@ -165,6 +232,24 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
             if (isWriting.compareAndSet(true, false)) {
                 writeNextPacket();
             }
+        }
+    }
+
+    @Override
+    public void close() {
+
+        bufferAllocator
+            .putWriteBuffer(writeBuffer)
+            .putWriteBuffer(encryptedBuffer);
+
+        if (encryptedMappedBuffer != null) {
+            bufferAllocator.putMappedByteBuffer(encryptedMappedBuffer);
+            encryptedMappedBuffer = null;
+        }
+
+        if (writeMappedBuffer != null) {
+            bufferAllocator.putMappedByteBuffer(writeMappedBuffer);
+            writeMappedBuffer = null;
         }
     }
 }

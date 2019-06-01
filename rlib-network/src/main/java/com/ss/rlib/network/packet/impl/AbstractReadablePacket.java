@@ -41,26 +41,6 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
     protected abstract void readImpl(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer);
 
     /**
-     * Handle the exception.
-     *
-     * @param buffer    the data buffer.
-     * @param exception the exception.
-     */
-    protected void handleException(@NotNull ByteBuffer buffer, @NotNull Exception exception) {
-        LOGGER.warning(this, exception);
-
-        if (buffer.isDirect()) {
-            byte[] array = new byte[buffer.limit()];
-            buffer.get(array, 0, buffer.limit());
-            LOGGER.warning(this, "buffer " +
-                    buffer + "\n" + Utils.hexdump(array, array.length));
-        } else {
-            LOGGER.warning(this, "buffer " +
-                    buffer + "\n" + Utils.hexdump(buffer.array(), buffer.limit()));
-        }
-    }
-
-    /**
      * Read 1 byte from this packet.
      *
      * @param buffer the buffer for reading.

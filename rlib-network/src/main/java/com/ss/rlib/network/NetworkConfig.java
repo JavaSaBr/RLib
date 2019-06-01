@@ -19,18 +19,39 @@ public interface NetworkConfig {
         }
     };
 
+    /**
+     * Get a group name of network threads.
+     *
+     * @return the group name.
+     */
     default @NotNull String getGroupName() {
         return "NetworkThread";
     }
 
+    /**
+     * Get size of buffer with used to collect received data from network.
+     *
+     * @return the read buffer's size.
+     */
     default int getReadBufferSize() {
         return 2048;
     }
 
+    /**
+     * Get size of buffer with pending data. Pending buffer allows to construct a packet with
+     * bigger data than {@link #getReadBufferSize()}. It should be at least 2x of {@link #getReadBufferSize()}
+     *
+     * @return the pending buffer's size.
+     */
     default int getPendingBufferSize() {
         return getReadBufferSize() * 2;
     }
 
+    /**
+     * Get size of buffer which used to serialize packets to bytes.
+     *
+     * @return the write buffer's size.
+     */
     default int getWriteBufferSize() {
         return 2048;
     }
