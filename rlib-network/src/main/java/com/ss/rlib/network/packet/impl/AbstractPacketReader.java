@@ -91,6 +91,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
      */
     protected int readPackets(@NotNull ByteBuffer receivedBuffer, @NotNull ByteBuffer pendingBuffer) {
 
+        LOGGER.debug(receivedBuffer, buf -> "Start reading packets from received buffer: " + buf);
+
         var crypt = connection.getCrypt();
 
         var waitedBytes = pendingBuffer.position();
@@ -100,12 +102,14 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
         // if we have read mapped buffer it means that we are reading a really big packet now
         if (readMappedBuffer != null) {
+            LOGGER.debug(receivedBuffer, buf -> "Put received bytes " + buf + " to read mapped buffer");
             bufferToRead = BufferUtils.putToAndFlip(readMappedBuffer, receivedBuffer);
             bufferToDecrypt = decryptedMappedBuffer;
         }
         // if we have some pending data we need to append the received buffer to the pending buffer
         // and start to read pending buffer with result received data
         else if (waitedBytes > 0) {
+            LOGGER.debug(receivedBuffer, buf -> "Put received bytes " + buf + " to pending buffer");
             bufferToRead = BufferUtils.putToAndFlip(pendingBuffer, receivedBuffer);
         }
 
@@ -114,8 +118,6 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         var readPackets = 0;
         var endPosition = 0;
 
-        bufferToRead.position(0);
-
         while (bufferToRead.remaining() >= packetLengthHeaderSize && readPackets < maxPacketsByRead) {
 
             // set position of start a next packet
@@ -123,6 +125,9 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
             var packetLength = readPacketLength(bufferToRead);
             var dataLength = packetLength - packetLengthHeaderSize;
+
+            LOGGER.debug(packetLength, bufferToRead.position() - packetLengthHeaderSize,
+                (length, pos) -> "Find next packet from position: " + pos + " with length: " + length);
 
             // calculate position of end the next packet
             endPosition += packetLength;
@@ -137,30 +142,50 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                 if (bufferToRead == receivedBuffer) {
                     if (packetLength <= pendingBuffer.capacity()) {
                         pendingBuffer.put(receivedBuffer);
+                        LOGGER.debug(pendingBuffer,
+                            buf -> "Put pending data form received buffer to pending buffer: " + buf);
                     } else {
-
-                        readMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
-                        readMappedBuffer.put(receivedBuffer);
-
-                        this.readMappedBuffer = readMappedBuffer;
-                        this.decryptedMappedBuffer = bufferAllocator.takeMappedBuffer(readMappedBuffer.capacity());
+                        allocMappedBuffers(receivedBuffer, packetLength);
                     }
                 }
                 // if we already read this pending buffer we need to compact it
                 else if (bufferToRead == pendingBuffer) {
-                    pendingBuffer.compact();
+
+                    if (packetLength <= pendingBuffer.capacity()) {
+                        pendingBuffer.compact();
+                        LOGGER.debug(pendingBuffer, buf -> "Compact pending buffer: " + buf);
+                    } else {
+                        allocMappedBuffers(pendingBuffer, packetLength);
+                        LOGGER.debug(pendingBuffer, buf -> "Clear pending buffer: " + buf);
+                        pendingBuffer.clear();
+                    }
+
                 } else if (bufferToRead == readMappedBuffer) {
 
                     // if not read data is less than pending buffer then we can switch to use the pending buffer
                     if (Math.max(packetLength, readMappedBuffer.remaining()) <= pendingBuffer.capacity()) {
-                        pendingBuffer.put(receivedBuffer);
+
+                        pendingBuffer.clear()
+                            .put(readMappedBuffer);
+
+                        LOGGER.debug(pendingBuffer,
+                            buf -> "Moved pending data from mapped buffer to pending buffer: " + buf);
+
                         freeMappedBuffers();
+                    }
+                    // if a new packet is bigger than current read mapped buffer
+                    else if (packetLength > readMappedBuffer.capacity()) {
+                        reallocateMappedBuffer(bufferToRead, readMappedBuffer, packetLength);
                     }
                     // or just compact this current mapped buffer
                     else {
+                        LOGGER.debug(readMappedBuffer, buf -> "Compact mapped buffer: " + buf);
                         readMappedBuffer.compact();
                     }
                 }
+
+                LOGGER.debug(readPackets, count -> "Read " + count + " packet(s) from buffered data, " +
+                    "but 1 packet is still waiting for receiving additional data.");
 
                 return readPackets;
             }
@@ -180,9 +205,13 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             }
 
             if (packet != null) {
+                LOGGER.debug(packet, pck -> "Created instance of packet to read data: " + pck);
                 packet.read(connection, bufferToRead, dataLength);
                 readPacketHandler.accept(packet);
+                LOGGER.debug(packet, pck -> "Finished reading data for packet: " + pck);
                 readPackets++;
+            } else {
+                LOGGER.warning("Cannot create any instance of packet to read data.");
             }
         }
 
@@ -190,13 +219,56 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
             if (bufferToRead == receivedBuffer) {
                 pendingBuffer.put(receivedBuffer);
+                LOGGER.debug("Found not yet read data from receive buffer, will put it to pending buffer.");
+            } else {
+                bufferToRead.compact();
             }
 
+        } else if (bufferToRead == pendingBuffer) {
+            pendingBuffer.clear();
         } else if (readMappedBuffer != null) {
             freeMappedBuffers();
         }
 
+        LOGGER.debug(readPackets, count -> "Finished reading " + count + " packet(s) from buffered data.");
+
         return readPackets;
+    }
+
+    protected void reallocateMappedBuffer(
+        @NotNull ByteBuffer bufferToRead,
+        @NotNull MappedByteBuffer readMappedBuffer,
+        int packetLength
+    ) {
+
+        LOGGER.debug(readMappedBuffer.capacity(), packetLength, (currentSize, newSize) ->
+            "Resize read mapped buffer from: " + currentSize + " to: " + newSize);
+
+        var newReadMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength);
+        newReadMappedBuffer.put(bufferToRead);
+
+        LOGGER.debug(newReadMappedBuffer,
+            buf -> "Moved pending data from old mapped buffer to new mapped buffer: " + buf);
+
+        freeMappedBuffers();
+
+        this.readMappedBuffer = newReadMappedBuffer;
+        this.decryptedMappedBuffer = bufferAllocator.takeMappedBuffer(newReadMappedBuffer.capacity());
+    }
+
+    protected void allocMappedBuffers(@NotNull ByteBuffer receivedBuffer, int packetLength) {
+
+        LOGGER.debug(packetLength, receivedBuffer.remaining(), (length, part) ->
+            "Request mapped buffers to store a part: " + part + " of big packet with length: " + length);
+
+        var readMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
+        readMappedBuffer.put(receivedBuffer);
+
+        LOGGER.debug(readMappedBuffer,
+            buf -> "Put the part of packet to mapped buffer: " + buf);
+
+        this.readMappedBuffer = readMappedBuffer;
+        this.decryptedMappedBuffer = bufferAllocator.takeMappedBuffer(readMappedBuffer.capacity());
     }
 
     protected void freeMappedBuffers() {
@@ -225,7 +297,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         try {
             readPackets(readBuffer, pendingBuffer);
         } catch (Exception e) {
-            LOGGER.error(this, e);
+            LOGGER.error(e);
         } finally {
             readBuffer.clear();
         }

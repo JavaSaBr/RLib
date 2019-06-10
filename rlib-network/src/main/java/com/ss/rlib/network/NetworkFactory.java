@@ -50,12 +50,26 @@ public final class NetworkFactory {
     public static @NotNull ClientNetwork<StringDataConnection> newStringDataClientNetwork(
         @NotNull NetworkConfig networkConfig
     ) {
+        return newStringDataClientNetwork(
+            networkConfig,
+            new DefaultBufferAllocator(networkConfig)
+        );
+    }
 
-        var allocator = new DefaultBufferAllocator(networkConfig);
-
+    /**
+     * Create a string packet based asynchronous client network.
+     *
+     * @param networkConfig   the network config.
+     * @param bufferAllocator the buffer allocator.
+     * @return the client network.
+     */
+    public static @NotNull ClientNetwork<StringDataConnection> newStringDataClientNetwork(
+        @NotNull NetworkConfig networkConfig,
+        @NotNull BufferAllocator bufferAllocator
+    ) {
         return newClientNetwork(
             networkConfig,
-            (network, channel) -> new StringDataConnection(network, channel, allocator)
+            (network, channel) -> new StringDataConnection(network, channel, bufferAllocator)
         );
     }
 
@@ -77,12 +91,26 @@ public final class NetworkFactory {
     public static @NotNull ServerNetwork<StringDataConnection> newStringDataServerNetwork(
         @NotNull ServerNetworkConfig networkConfig
     ) {
+        return newStringDataServerNetwork(
+            networkConfig,
+            new DefaultBufferAllocator(networkConfig)
+        );
+    }
 
-        var allocator = new DefaultBufferAllocator(networkConfig);
-
+    /**
+     * Create string packet based asynchronous server network.
+     *
+     * @param networkConfig   the network config.
+     * @param bufferAllocator the buffer allocator.
+     * @return the server network.
+     */
+    public static @NotNull ServerNetwork<StringDataConnection> newStringDataServerNetwork(
+        @NotNull ServerNetworkConfig networkConfig,
+        @NotNull BufferAllocator bufferAllocator
+    ) {
         return newServerNetwork(
             networkConfig,
-            (network, channel) -> new StringDataConnection(network, channel, allocator)
+            (network, channel) -> new StringDataConnection(network, channel, bufferAllocator)
         );
     }
 

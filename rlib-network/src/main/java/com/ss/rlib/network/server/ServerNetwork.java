@@ -16,6 +16,13 @@ import java.util.function.Consumer;
 public interface ServerNetwork<C extends Connection<?, ?>> extends Network<C> {
 
     /**
+     * Start a server using any available address.
+     *
+     * @return this server's address.
+     */
+    @NotNull InetSocketAddress start();
+
+    /**
      * Start a server by the address.
      *
      * @param serverAddress the sever address.

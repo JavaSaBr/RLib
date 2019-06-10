@@ -80,7 +80,9 @@ public class BufferUtils {
     }
 
     public @NotNull ByteBuffer putToAndFlip(@NotNull ByteBuffer buffer, @NotNull ByteBuffer additional) {
-        return buffer.put(additional)
+        return buffer
+            .limit(buffer.capacity())
+            .put(additional)
             .flip();
     }
 

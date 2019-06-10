@@ -16,7 +16,7 @@ public interface ServerNetworkConfig extends NetworkConfig {
 
         @Override
         public int getGroupSize() {
-            return 2;
+            return 1;
         }
 
         @Override

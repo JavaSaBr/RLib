@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.*;
 import java.util.concurrent.Executors;
@@ -40,14 +41,20 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
 
         @Override
         public void completed(@NotNull AsynchronousSocketChannel channel, @NotNull DefaultServerNetwork<C> network) {
+            LOGGER.debug(channel, ch -> "Accepted new connection: " + ch);
             network.onAccept(network.channelToConnection.apply(DefaultServerNetwork.this, channel));
             network.acceptNext();
         }
 
         @Override
         public void failed(@NotNull Throwable exc, @NotNull DefaultServerNetwork<C> network) {
+
+            LOGGER.error("Got exception during accepting new connection:");
             LOGGER.error(exc);
-            network.acceptNext();
+
+            if (channel.isOpen()) {
+                network.acceptNext();
+            }
         }
     };
 
@@ -79,6 +86,10 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
             new ThreadPoolExecutor.CallerRunsPolicy()
         ) : Executors.newFixedThreadPool(config.getGroupSize(), threadFactory);
 
+        LOGGER.info("Executor configuration:");
+        LOGGER.info(config, conf -> "Min threads: " + conf.getGroupSize());
+        LOGGER.info(config, conf -> "Max threads: " + conf.getGroupMaxSize());
+
         this.group = uncheckedGet(executor, AsynchronousChannelGroup::withThreadPool);
         this.channel = uncheckedGet(group, AsynchronousServerSocketChannel::open);
         this.subscribers = ArrayFactory.newCopyOnModifyArray(Consumer.class);
@@ -87,14 +98,39 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     }
 
     @Override
+    public @NotNull InetSocketAddress start() {
+
+        InetSocketAddress address = null;
+
+        while (address == null) {
+
+            address = new InetSocketAddress(Utils.getFreePort(1500));
+            try {
+                channel.bind(address);
+            } catch (IOException e) {
+                address = null;
+            }
+        }
+
+        LOGGER.info(address, adr -> "Started server on address: " + adr);
+        acceptNext();
+        return address;
+    }
+
+    @Override
     public <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress) {
         Utils.unchecked(channel, serverAddress, AsynchronousServerSocketChannel::bind);
+        LOGGER.info(serverAddress, adr -> "Started server on address: " + adr);
         acceptNext();
         return ClassUtils.unsafeCast(this);
     }
 
     protected void acceptNext() {
-        channel.accept(this, acceptHandler);
+        if (channel.isOpen()) {
+            channel.accept(this, acceptHandler);
+        } else {
+            LOGGER.warning("Cannot accept a next connection because server channel is already closed.");
+        }
     }
 
     protected void onAccept(@NotNull C connection) {

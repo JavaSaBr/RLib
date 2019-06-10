@@ -47,7 +47,7 @@ public class DefaultBufferAllocator implements BufferAllocator {
     @Override
     public @NotNull ByteBuffer takeReadBuffer() {
         var bufferSize = config.getReadBufferSize();
-        LOGGER.debug(bufferSize, size -> "Allocate a new read buffer with size:" + size);
+        LOGGER.debug(bufferSize, size -> "Allocate a new read buffer with size: " + size);
         return config.isDirectByteBuffer()? ByteBuffer.allocateDirect(bufferSize) : ByteBuffer.allocate(bufferSize)
             .order(config.getByteOrder())
             .clear();
@@ -56,7 +56,7 @@ public class DefaultBufferAllocator implements BufferAllocator {
     @Override
     public @NotNull ByteBuffer takePendingBuffer() {
         var bufferSize = config.getPendingBufferSize();
-        LOGGER.debug(bufferSize, size -> "Allocate a new pending buffer with size:" + size);
+        LOGGER.debug(bufferSize, size -> "Allocate a new pending buffer with size: " + size);
         return config.isDirectByteBuffer()? ByteBuffer.allocateDirect(bufferSize) : ByteBuffer.allocate(bufferSize)
             .order(config.getByteOrder())
             .clear();
@@ -65,7 +65,7 @@ public class DefaultBufferAllocator implements BufferAllocator {
     @Override
     public @NotNull ByteBuffer takeWriteBuffer() {
         var bufferSize = config.getWriteBufferSize();
-        LOGGER.debug(bufferSize, size -> "Allocate a new write buffer with size:" + size);
+        LOGGER.debug(bufferSize, size -> "Allocate a new write buffer with size: " + size);
         return config.isDirectByteBuffer()? ByteBuffer.allocateDirect(bufferSize) : ByteBuffer.allocate(bufferSize)
             .order(config.getByteOrder())
             .clear();
@@ -73,30 +73,31 @@ public class DefaultBufferAllocator implements BufferAllocator {
 
     @Override
     public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+        LOGGER.debug(size, s -> "Allocate a new mapped buffer with size: " + s);
         return BufferUtils.allocateRWMappedByteBuffer(size);
     }
 
     @Override
     public @NotNull DefaultBufferAllocator putReadBuffer(@NotNull ByteBuffer buffer) {
-        LOGGER.debug("Skip storing a read buffer.");
+        LOGGER.debug("Skip storing a read buffer");
         return this;
     }
 
     @Override
     public @NotNull DefaultBufferAllocator putPendingBuffer(@NotNull ByteBuffer buffer) {
-        LOGGER.debug("Skip storing a pending buffer.");
+        LOGGER.debug("Skip storing a pending buffer");
         return this;
     }
 
     @Override
     public @NotNull DefaultBufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer) {
-        LOGGER.debug("Skip storing a write buffer.");
+        LOGGER.debug("Skip storing a write buffer");
         return this;
     }
 
     @Override
     public @NotNull BufferAllocator putMappedByteBuffer(@NotNull MappedByteBuffer buffer) {
-        LOGGER.debug("Skip storing a mapped byte buffer.");
+        LOGGER.debug("Skip storing a mapped byte buffer");
         return this;
     }
 }

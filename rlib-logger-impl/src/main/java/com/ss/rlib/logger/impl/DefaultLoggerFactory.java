@@ -4,12 +4,10 @@ import static com.ss.rlib.common.util.ObjectUtils.notNull;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ConcurrentArray;
 import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.Logger.Factory;
 import com.ss.rlib.logger.api.LoggerFactory;
 import com.ss.rlib.logger.api.LoggerLevel;
 import com.ss.rlib.logger.api.LoggerListener;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -104,98 +102,6 @@ public class DefaultLoggerFactory implements LoggerFactory {
 
         var timeStump = timeFormatter.format(LocalTime.now());
         var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + message;
-
-        write(level, result);
-    }
-
-    /**
-     * Process of writing message to a console and writers.
-     *
-     * @param level          the level of the message.
-     * @param name           the name of owner.
-     * @param messageFactory the message factory.
-     */
-    void write(@NotNull LoggerLevel level, @NotNull String name, @NotNull Factory messageFactory) {
-
-        var timeStump = timeFormatter.format(LocalTime.now());
-        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.make();
-
-        write(level, result);
-    }
-
-    /**
-     * Process of writing message to a console and writers.
-     *
-     * @param level          the level of the message.
-     * @param name           the name of owner.
-     * @param arg            the arg for the message factory.
-     * @param messageFactory the message factory.
-     * @param <T>            the argument's type.
-     */
-    <T> void write(
-        @NotNull LoggerLevel level,
-        @NotNull String name,
-        @Nullable T arg,
-        @NotNull Logger.SinFactory<T> messageFactory
-    ) {
-
-        var timeStump = timeFormatter.format(LocalTime.now());
-        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + messageFactory.make(arg);
-
-        write(level, result);
-    }
-
-    /**
-     * Process of writing message to a console and writers.
-     *
-     * @param level          the level of the message.
-     * @param name           the name of owner.
-     * @param first          the first arg for the message factory.
-     * @param second         the second arg for the message factory.
-     * @param messageFactory the message factory.
-     * @param <F>            the first argument's type.
-     * @param <S>            the second argument's type.
-     */
-    <F, S> void write(
-        @NotNull LoggerLevel level,
-        @NotNull String name,
-        @Nullable F first,
-        @Nullable S second,
-        @NotNull Logger.BiFactory<F, S> messageFactory
-    ) {
-
-        var timeStump = timeFormatter.format(LocalTime.now());
-        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " +
-                messageFactory.make(first, second);
-
-        write(level, result);
-    }
-
-    /**
-     * Process of writing message to a console and writers.
-     *
-     * @param level          the level of the message.
-     * @param name           the name of owner.
-     * @param first          the first arg for the message factory.
-     * @param second         the second arg for the message factory.
-     * @param third          the third arg for the message factory.
-     * @param messageFactory the message factory.
-     * @param <F>            the first argument's type.
-     * @param <S>            the second argument's type.
-     * @param <T>            the third argument's type.
-     */
-    <F, S, T> void write(
-            @NotNull LoggerLevel level,
-            @NotNull String name,
-            @Nullable F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull Logger.TriFactory<F, S, T> messageFactory
-    ) {
-
-        var timeStump = timeFormatter.format(LocalTime.now());
-        var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " +
-                messageFactory.make(first, second, third);
 
         write(level, result);
     }
