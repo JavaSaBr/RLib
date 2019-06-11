@@ -45,6 +45,18 @@ public class BaseNetworkTest {
     }
 
     protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork(
+        @NotNull BufferAllocator serverBufferAllocator,
+        @NotNull BufferAllocator clientBufferAllocator
+    ) {
+        return buildStringNetwork(
+            ServerNetworkConfig.DEFAULT_SERVER,
+            serverBufferAllocator,
+            NetworkConfig.DEFAULT_CLIENT,
+            clientBufferAllocator
+        );
+    }
+
+    protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork(
         @NotNull ServerNetworkConfig serverNetworkConfig,
         @NotNull BufferAllocator serverBufferAllocator
     ) {

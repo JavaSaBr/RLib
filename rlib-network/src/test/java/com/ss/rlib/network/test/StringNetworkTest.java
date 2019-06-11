@@ -3,25 +3,18 @@ package com.ss.rlib.network.test;
 import static java.util.stream.Collectors.toList;
 import com.ss.rlib.common.util.ObjectUtils;
 import com.ss.rlib.common.util.StringUtils;
-import com.ss.rlib.common.util.Utils;
-import com.ss.rlib.logger.api.LoggerLevel;
-import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.NetworkFactory;
 import com.ss.rlib.network.ServerNetworkConfig;
-import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.impl.DefaultBufferAllocator;
-import com.ss.rlib.network.impl.simple.StringDataConnection;
 import com.ss.rlib.network.packet.impl.simple.StringWritablePacket;
-import com.ss.rlib.network.server.ServerNetwork;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.net.InetSocketAddress;
+import java.nio.MappedByteBuffer;
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
@@ -32,117 +25,38 @@ import java.util.stream.IntStream;
  */
 public class StringNetworkTest extends BaseNetworkTest {
 
-    private static final CompletableFuture<StringDataConnection> CON_CLIENT_TO_SERVER = new CompletableFuture<>();
-    private static final CompletableFuture<StringDataConnection> CON_SERVER_TO_CLIENT = new CompletableFuture<>();
-
-    private static volatile ServerNetwork<StringDataConnection> serverNetwork;
-    private static volatile ClientNetwork<StringDataConnection> clientNetwork;
-
     @BeforeAll
     static void beforeAll() {
         //LoggerLevel.DEBUG.setEnabled(true);
-        LoggerManager.getLogger(DefaultBufferAllocator.class)
-            .setEnabled(LoggerLevel.DEBUG, false);
+        //LoggerManager.getLogger(DefaultBufferAllocator.class)
+        //    .setEnabled(LoggerLevel.DEBUG, false);
     }
 
     @Test
-    void testSendMessageToServer() {
+    void shouldNotUseMappedBuffers() {
 
-        var clientToServer = CON_CLIENT_TO_SERVER.join();
-        var serverToClient = CON_SERVER_TO_CLIENT.join();
-
-        var pendingPackets = serverToClient.receive()
-            .buffer(10);
-
-        for (int i = 1, attempts = 10; i <= attempts; i++) {
-            clientToServer.send(new StringWritablePacket("message from client " + i));
-        }
-
-        var receivedPackets = pendingPackets.blockFirst(Duration.ofSeconds(1));
-
-        Assertions.assertNotNull(receivedPackets);
-
-        for (int i = 0; i < receivedPackets.size(); i++) {
-            Assertions.assertEquals("message from client " + (i + 1), receivedPackets.get(i).getData());
-        }
-    }
-
-    @Test
-    void testSendMessageToClient() {
-
-        var clientToServer = CON_CLIENT_TO_SERVER.join();
-        var serverToClient = CON_SERVER_TO_CLIENT.join();
-
-        var pendingPackets = clientToServer.receive()
-            .buffer(10);
-
-        for (int i = 1, attempts = 10; i <= attempts; i++) {
-            serverToClient.send(new StringWritablePacket("message from client " + i));
-        }
-
-        var receivedPackets = pendingPackets.blockFirst(Duration.ofSeconds(1));
-
-        Assertions.assertNotNull(receivedPackets);
-
-        for (int i = 0; i < receivedPackets.size(); i++) {
-            Assertions.assertEquals("message from server " + (i + 1), receivedPackets.get(i).getData());
-        }
-    }
-
-    @Test
-    void testSendTooBigMessageToServer() {
-
-        var serverAddress = new InetSocketAddress(Utils.getFreePort(10000));
-
-        var clientToServerAsync = new CompletableFuture<StringDataConnection>();
-        var serverToClientAsync = new CompletableFuture<StringDataConnection>();
-
-        var networkConfig = new NetworkConfig() {
+        var serverAllocator = new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER) {
 
             @Override
-            public int getWriteBufferSize() {
-                return (int) (ServerNetworkConfig.DEFAULT_SERVER.getReadBufferSize() * 1.5);
+            public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+                throw new RuntimeException();
             }
         };
 
-        var serverNetwork = NetworkFactory.newStringDataServerNetwork();
-        serverNetwork.start(serverAddress);
-        serverNetwork.onAccept(serverToClientAsync::complete);
+        var clientAllocator = new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT) {
 
-        var clientNetwork = NetworkFactory.newStringDataClientNetwork(networkConfig);
-        clientNetwork.connect(serverAddress)
-            .thenApply(clientToServerAsync::complete);
+            @Override
+            public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+                throw new RuntimeException();
+            }
+        };
 
-        var messages = IntStream.range(0, 10)
-            .mapToObj(value -> StringUtils.generate((int) (networkConfig.getWriteBufferSize() * 0.45)))
-            .collect(toList());
+        int packetCount = 200;
 
-        var serverToClient = serverToClientAsync.join();
-        var clientToServer = clientToServerAsync.join();
+        try(var testNetwork = buildStringNetwork(serverAllocator, clientAllocator)) {
 
-        var pendingPackets = serverToClient.receive()
-            .buffer(10);
-
-        for (var message : messages) {
-            clientToServer.send(new StringWritablePacket(message));
-        }
-
-        var receivedPackets = pendingPackets.blockFirst(Duration.ofSeconds(1));
-
-        Assertions.assertNotNull(receivedPackets);
-
-        for (int i = 0; i < receivedPackets.size(); i++) {
-            Assertions.assertEquals(messages.get(i), receivedPackets.get(i).getData());
-        }
-    }
-
-    @Test
-    void shouldReceiveManyPacketsFromSmallToBigSize() {
-
-        try(var testNetwork = buildStringNetwork()) {
-
-            var bufferSize = testNetwork.clientNetworkConfig
-                .getWriteBufferSize();
+            var bufferSize = testNetwork.serverNetworkConfig
+                .getReadBufferSize() / 3;
 
             var random = ThreadLocalRandom.current();
 
@@ -150,30 +64,71 @@ public class StringNetworkTest extends BaseNetworkTest {
             var serverToClient = testNetwork.serverToClient;
 
             var pendingPacketsOnServer = serverToClient.receive()
-                .buffer(100);
+                .buffer(packetCount);
 
-            var messages = IntStream.range(0, 100)
+            var messages = IntStream.range(0, packetCount)
+                .mapToObj(value -> StringUtils.generate(random.nextInt(0, bufferSize)))
+                .peek(message -> clientToServer.send(new StringWritablePacket(message)))
+                .collect(toList());
+
+            var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofSeconds(5)));
+
+            Assertions.assertEquals(receivedPackets.size(), packetCount, "Didn't receive all packets");
+
+            var wrongPacket = receivedPackets.stream()
+                .filter(packet -> messages.stream()
+                    .noneMatch(message -> message.equals(packet.getData())))
+                .findFirst()
+                .orElse(null);
+
+            Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
+        }
+    }
+
+    @Test
+    void shouldReceiveManyPacketsFromSmallToBigSize() {
+
+        int packetCount = 200;
+
+        try(var testNetwork = buildStringNetwork()) {
+
+            var bufferSize = testNetwork.serverNetworkConfig
+                .getReadBufferSize();
+
+            var random = ThreadLocalRandom.current();
+
+            var clientToServer = testNetwork.clientToServer;
+            var serverToClient = testNetwork.serverToClient;
+
+            var pendingPacketsOnServer = serverToClient.receive()
+                .buffer(packetCount);
+
+            var messages = IntStream.range(0, packetCount)
                 .mapToObj(value -> {
-                    var length = value % 3 == 0 ? bufferSize : random.nextInt(0, (int) (bufferSize / 1.5F));
+                    var length = value % 3 == 0 ? bufferSize : random.nextInt(0, bufferSize / 2 - 1);
                     return StringUtils.generate(length);
                 })
                 .peek(message -> clientToServer.send(new StringWritablePacket(message)))
                 .collect(toList());
 
-            var received = pendingPacketsOnServer.blockFirst(Duration.ofSeconds(1));
+            var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofSeconds(5)));
 
-            for (int i = 0; i < received.size(); i++) {
-                Assertions.assertEquals(received.get(i).getData(), messages.get(i));
-            }
+            Assertions.assertEquals(receivedPackets.size(), packetCount, "Didn't receive all packets");
+
+            var wrongPacket = receivedPackets.stream()
+                .filter(packet -> messages.stream()
+                    .noneMatch(message -> message.equals(packet.getData())))
+                .findFirst()
+                .orElse(null);
+
+            Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
         }
     }
 
     @Test
     void shouldSendBiggerPacketThanWriteBuffer() {
-        testSendingToServer(100, 2, 2);
-    }
 
-    private void testSendingToServer(int packetCount, int extraSizeMod, int seconds) {
+        int packetCount = 100;
 
         try(var testNetwork = buildStringNetwork()) {
 
@@ -190,13 +145,13 @@ public class StringNetworkTest extends BaseNetworkTest {
 
             var messages = IntStream.range(0, packetCount)
                 .mapToObj(value -> {
-                    var length = value % extraSizeMod == 0 ? bufferSize : random.nextInt(0, bufferSize / 2 - 1);
+                    var length = value % 2 == 0 ? bufferSize : random.nextInt(0, bufferSize / 2 - 1);
                     return StringUtils.generate(length);
                 })
                 .peek(message -> clientToServer.send(new StringWritablePacket(message)))
                 .collect(toList());
 
-            var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofSeconds(seconds)));
+            var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofSeconds(5)));
 
             Assertions.assertEquals(receivedPackets.size(), packetCount, "Didn't receive all packets");
 
@@ -212,6 +167,6 @@ public class StringNetworkTest extends BaseNetworkTest {
 
     @AfterAll
     static void afterAll() {
-        LoggerLevel.DEBUG.setEnabled(false);
+        //LoggerLevel.DEBUG.setEnabled(false);
     }
 }
