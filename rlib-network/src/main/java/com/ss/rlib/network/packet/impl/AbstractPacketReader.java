@@ -120,17 +120,22 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
             if (pendingBuffer.remaining() < receivedBuffer.remaining()) {
 
-                LOGGER.debug(receivedBuffer, pendingBuffer,
-                    (buf, penBuf) -> "Pending buffer: " + penBuf + " is too small to append received buffer: " +
+                LOGGER.debug(pendingBuffer, receivedBuffer,
+                    (penBuf, buf) -> "Pending buffer: " + penBuf + " is too small to append received buffer: " +
                         buf + ", allocate mapped buffer for this");
 
                 allocMappedBuffers(pendingBuffer.flip(), pendingBuffer.capacity());
 
                 LOGGER.debug(pendingBuffer, buf -> "Clear pending buffer: " + buf);
+
                 pendingBuffer.clear();
 
                 readMappedBuffer = this.readMappedBuffer;
                 bufferToDecrypt = decryptedMappedBuffer;
+
+                LOGGER.debug(receivedBuffer, readMappedBuffer,
+                    (buf, mappedBuf) -> "Put received buffer: " + buf + " to mapped buffer: " + mappedBuf);
+
                 bufferToRead = BufferUtils.putToAndFlip(readMappedBuffer, receivedBuffer);
 
             } else {
@@ -208,8 +213,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                     }
                     // or just compact this current mapped buffer
                     else {
-                        LOGGER.debug(readMappedBuffer, buf -> "Compact mapped buffer: " + buf);
                         readMappedBuffer.compact();
+                        LOGGER.debug(readMappedBuffer, buf -> "Compact mapped buffer: " + buf);
                     }
                 }
 
@@ -273,10 +278,11 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             "Resize read mapped buffer from: " + currentSize + " to: " + newSize);
 
         var newReadMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
-        newReadMappedBuffer.put(readMappedBuffer);
 
-        LOGGER.debug(newReadMappedBuffer,
-            buf -> "Moved pending data from old mapped buffer to new mapped buffer: " + buf);
+        LOGGER.debug(readMappedBuffer, newReadMappedBuffer,
+            (old, buf) -> "Moved pending data from old mapped buffer: " + old + " to new mapped buffer: " + buf);
+
+        newReadMappedBuffer.put(readMappedBuffer);
 
         freeMappedBuffers();
 
@@ -290,10 +296,11 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             "Request mapped buffers to store a part: " + part + " of big packet with length: " + length);
 
         var readMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
-        readMappedBuffer.put(receivedBuffer);
 
-        LOGGER.debug(readMappedBuffer,
-            buf -> "Put the part of packet to mapped buffer: " + buf);
+        LOGGER.debug(receivedBuffer, readMappedBuffer,
+            (recBuf, buf) -> "Put the part of packet: " + recBuf + " to mapped buffer: " + buf);
+
+        readMappedBuffer.put(receivedBuffer);
 
         this.readMappedBuffer = readMappedBuffer;
         this.decryptedMappedBuffer = bufferAllocator.takeMappedBuffer(readMappedBuffer.capacity());

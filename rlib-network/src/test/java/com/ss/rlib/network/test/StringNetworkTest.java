@@ -224,11 +224,11 @@ public class StringNetworkTest extends BaseNetworkTest {
             }
         });
         var serverAddress = serverNetwork.start();
-        var clientCount = 5;
+        var clientCount = 2;
         var packetsPerClient = 10;
         var counter = new CountDownLatch(clientCount * packetsPerClient);
         var minMessageLength = 10;
-        var maxMessageLength = ServerNetworkConfig.DEFAULT_SERVER.getReadBufferSize() * 3;
+        var maxMessageLength = 1000;//(int) (ServerNetworkConfig.DEFAULT_SERVER.getReadBufferSize() * 1.5);
         var sentPacketsToServer = new AtomicInteger();
         var receivedPacketsOnServer = new AtomicInteger();
         var receivedPacketsOnClients = new AtomicInteger();
@@ -257,6 +257,59 @@ public class StringNetworkTest extends BaseNetworkTest {
                 receivedPacketsOnClients.incrementAndGet();
                 counter.countDown();
             }));
+
+        Assertions.assertTrue(
+            counter.await(10000, TimeUnit.MILLISECONDS),
+            "Still wait for " + counter.getCount() + " packets... " +
+                "Sent packets to server: " + sentPacketsToServer + ", " +
+                "Received packets on server: " +  receivedPacketsOnServer + ", " +
+                "Received packets on clients: " + receivedPacketsOnClients
+        );
+
+        clients.forEach(Network::shutdown);
+        serverNetwork.shutdown();
+    }
+
+    @Test
+    @SneakyThrows
+    void testServerWithMultiplyClientsUsingOldApi() {
+
+        var serverNetwork = NetworkFactory.newStringDataServerNetwork(new ServerNetworkConfig() {
+
+            @Override
+            public int getGroupSize() {
+                return 1;
+            }
+        });
+        var serverAddress = serverNetwork.start();
+        var clientCount = 10;
+        var packetsPerClient = 100;
+        var counter = new CountDownLatch(clientCount * packetsPerClient);
+        var minMessageLength = 10;
+        var maxMessageLength = 1000;//(int) (ServerNetworkConfig.DEFAULT_SERVER.getReadBufferSize() * 1.5);
+        var sentPacketsToServer = new AtomicInteger();
+        var receivedPacketsOnServer = new AtomicInteger();
+        var receivedPacketsOnClients = new AtomicInteger();
+
+        serverNetwork.onAccept(connection -> connection.onReceive((cn, packet) -> {
+            receivedPacketsOnServer.incrementAndGet();
+            cn.send(new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength)));
+        }));
+
+        var clients = IntStream.range(0, clientCount)
+            .mapToObj(value -> NetworkFactory.newStringDataClientNetwork())
+            .collect(toList());
+
+        clients.forEach(clientNetwork -> clientNetwork.connect(serverAddress)
+            .whenComplete((connection, ex) -> IntStream.range(0, packetsPerClient)
+                .forEach(val -> {
+                    connection.send(new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength)));
+                    sentPacketsToServer.incrementAndGet();
+                }))
+            .thenAccept(connection -> connection.onReceive((cn, pck) -> {
+                receivedPacketsOnClients.incrementAndGet();
+                counter.countDown();
+            })));
 
         Assertions.assertTrue(
             counter.await(10000, TimeUnit.MILLISECONDS),
