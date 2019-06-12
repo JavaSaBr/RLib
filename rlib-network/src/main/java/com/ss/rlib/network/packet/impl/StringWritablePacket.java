@@ -1,6 +1,5 @@
-package com.ss.rlib.network.packet.impl.simple;
+package com.ss.rlib.network.packet.impl;
 
-import com.ss.rlib.network.packet.impl.AbstractWritablePacket;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 

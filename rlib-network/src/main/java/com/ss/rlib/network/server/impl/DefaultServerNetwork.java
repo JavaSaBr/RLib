@@ -16,6 +16,7 @@ import com.ss.rlib.network.server.ServerNetwork;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,6 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -61,7 +63,6 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     protected final AsynchronousChannelGroup group;
     protected final AsynchronousServerSocketChannel channel;
     protected final Array<Consumer<? super C>> subscribers;
-    protected final ConnectableFlux<C> acceptStream;
 
     public DefaultServerNetwork(
         @NotNull ServerNetworkConfig config,
@@ -93,8 +94,6 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
         this.group = uncheckedGet(executor, AsynchronousChannelGroup::withThreadPool);
         this.channel = uncheckedGet(group, AsynchronousServerSocketChannel::open);
         this.subscribers = ArrayFactory.newCopyOnModifyArray(Consumer.class);
-        this.acceptStream = Flux.<C>create(fluxSink -> onAccept(fluxSink::next))
-            .publish();
     }
 
     @Override
@@ -143,8 +142,14 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     }
 
     @Override
-    public @NotNull ConnectableFlux<C> accept() {
-        return acceptStream;
+    public @NotNull Flux<C> accepted() {
+        return Flux.create(this::registerFluxOnAccepted);
+    }
+
+    protected void registerFluxOnAccepted(@NotNull FluxSink<C> sink) {
+        Consumer<? super C> listener = connection -> sink.next(connection);
+        onAccept(listener);
+        sink.onDispose(() -> subscribers.remove(listener));
     }
 
     @Override

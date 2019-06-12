@@ -2,11 +2,11 @@ package com.ss.rlib.network;
 
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * The interface to implement an async connection.
@@ -14,6 +14,12 @@ import java.util.function.Consumer;
  * @author JavaSaBr
  */
 public interface Connection<R extends ReadablePacket, W extends WritablePacket> {
+
+    @AllArgsConstructor
+    class ReceivedPacketEvent<C extends Connection<?, ?>, R extends ReadablePacket> {
+        @NotNull public final C connection;
+        @NotNull public final R packet;
+    }
 
     /**
      * Get a remote address or 'unkonwn'.
@@ -53,14 +59,21 @@ public interface Connection<R extends ReadablePacket, W extends WritablePacket> 
      *
      * @param consumer the consumer.
      */
-    void onReceive(@NotNull Consumer<? super R> consumer);
+    void onReceive(@NotNull BiConsumer<? super Connection<R, W>, ? super R> consumer);
+
+    /**
+     * Get a stream of received packet events.
+     *
+     * @return the stream of received packet events.
+     */
+    @NotNull Flux<ReceivedPacketEvent<? extends Connection<R, W>, ? extends R>> receivedEvents();
 
     /**
      * Get a stream of received packets.
      *
      * @return the stream of received packets.
      */
-    @NotNull Flux<? extends R> receive();
+    @NotNull Flux<? extends R> receivedPackets();
 
     /**
      * Get a used implementation of a data crypt.

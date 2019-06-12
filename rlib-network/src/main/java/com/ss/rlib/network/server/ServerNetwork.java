@@ -4,6 +4,7 @@ import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.ConnectableFlux;
+import reactor.core.publisher.Flux;
 
 import java.net.InetSocketAddress;
 import java.util.function.Consumer;
@@ -42,5 +43,5 @@ public interface ServerNetwork<C extends Connection<?, ?>> extends Network<C> {
      *
      * @return the stream of new accepted connections.
      */
-    @NotNull ConnectableFlux<? extends C> accept();
+    @NotNull Flux<? extends C> accepted();
 }

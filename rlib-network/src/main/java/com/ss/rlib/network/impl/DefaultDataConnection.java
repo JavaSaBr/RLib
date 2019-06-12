@@ -1,30 +1,22 @@
-package com.ss.rlib.network.impl.simple;
+package com.ss.rlib.network.impl;
 
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
 import com.ss.rlib.network.NetworkCryptor;
-import com.ss.rlib.network.impl.AbstractConnection;
 import com.ss.rlib.network.packet.PacketReader;
+import com.ss.rlib.network.packet.ReadablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import com.ss.rlib.network.packet.impl.DefaultPacketReader;
-import com.ss.rlib.network.packet.impl.simple.StringReadablePacket;
-import com.ss.rlib.network.packet.impl.simple.StringWritablePacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.channels.AsynchronousSocketChannel;
 
-public class StringDataConnection extends AbstractConnection<StringReadablePacket, StringWritablePacket> {
+public abstract class DefaultDataConnection<R extends ReadablePacket, W extends WritablePacket> extends
+    AbstractConnection<R, W> {
 
-    public StringDataConnection(
-        @NotNull Network<? extends Connection<StringReadablePacket, StringWritablePacket>> network,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator
-    ) {
-        this(network, channel, NetworkCryptor.NULL, bufferAllocator, 100, 2);
-    }
-
-    public StringDataConnection(
-        @NotNull Network<? extends Connection<StringReadablePacket, StringWritablePacket>> network,
+    public DefaultDataConnection(
+        @NotNull Network<? extends Connection<R, W>> network,
         @NotNull AsynchronousSocketChannel channel,
         @NotNull NetworkCryptor crypt,
         @NotNull BufferAllocator bufferAllocator,
@@ -42,9 +34,11 @@ public class StringDataConnection extends AbstractConnection<StringReadablePacke
             bufferAllocator,
             this::updateLastActivity,
             this::handleReadPacket,
-            value -> new StringReadablePacket(),
+            value -> createReadablePacket(),
             packetLengthHeaderSize,
             maxPacketsByRead
         );
     }
+
+    protected abstract @NotNull R createReadablePacket();
 }

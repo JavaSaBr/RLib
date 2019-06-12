@@ -178,18 +178,32 @@ public class StringUtils {
     }
 
     /**
-     * Generate a random string.
+     * Generate a random string using Aa-Zz characters.
      *
-     * @param length the length.
+     * @param length the length of result string.
      * @return the new string.
      */
     public static @NotNull String generate(int length) {
+        return generate(length, length);
+    }
 
-        final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
-        final char[] array = new char[length];
+    /**
+     * Generate a random string using Aa-Zz characters.
+     *
+     * @param minLength the min length of result string.
+     * @param maxLength the max length of result string.
+     * @return the new string.
+     */
+    public static @NotNull String generate(int minLength, int maxLength) {
+
+        var localRandom = ThreadLocalRandom.current();
+        var length = minLength == maxLength ? maxLength : localRandom.nextInt(minLength, maxLength);
+        var array = new char[length];
+        var min = Math.min('a', 'A');
+        var max = Math.max('z', 'z');
 
         for (int i = 0; i < length; i++) {
-            array[i] = (char) localRandom.nextInt('a', 'z');
+            array[i] = (char) localRandom.nextInt(min, max);
         }
 
         return String.valueOf(array);

@@ -12,6 +12,7 @@ import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.impl.AbstractNetwork;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.AsynchronousChannelGroup;
@@ -77,6 +78,19 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
         });
 
         return asyncResult;
+    }
+
+    @Override
+    public @NotNull Mono<C> connected(@NotNull InetSocketAddress serverAddress) {
+
+        return Mono.create(monoSink -> connect(serverAddress)
+            .whenComplete((connection, ex) -> {
+                if(ex != null) {
+                    monoSink.error(ex);
+                } else {
+                    monoSink.success(connection);
+                }
+            }));
     }
 
     @Override

@@ -14,15 +14,14 @@ import com.ss.rlib.network.packet.impl.DefaultPacketWriter;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 
-import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.StampedLock;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * The base implementation of {@link Connection}.
@@ -50,8 +49,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     protected final LinkedList<W> pendingPackets;
     protected final StampedLock lock;
 
-    protected final Array<Consumer<? super R>> subscribers;
-    protected final Flux<R> receivedPacketStream;
+    protected final Array<BiConsumer<? super Connection<R, W>, ? super R>> subscribers;
 
     protected final int maxPacketsByRead;
     protected final int packetLengthHeaderSize;
@@ -79,27 +77,51 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         this.closed = new AtomicBoolean(false);
         this.packetReader = createPacketReader();
         this.packetWriter = createPacketWriter();
-        this.subscribers = ArrayFactory.newCopyOnModifyArray(Consumer.class);
-        this.receivedPacketStream = Flux.<R>create(fluxSink -> onReceive(fluxSink::next))
-            .publish()
-            .autoConnect(0);
+        this.subscribers = ArrayFactory.newCopyOnModifyArray(BiConsumer.class);
     }
 
     protected abstract @NotNull PacketReader createPacketReader();
 
     protected void handleReadPacket(@NotNull R packet) {
-        subscribers.forEach(packet, Consumer::accept);
+        subscribers.forEach(this, packet, BiConsumer::accept);
     }
 
     @Override
-    public void onReceive(@NotNull Consumer<? super R> consumer) {
+    public void onReceive(@NotNull BiConsumer<? super Connection<R, W>, ? super R> consumer) {
         packetReader.startRead();
         subscribers.add(consumer);
     }
 
     @Override
-    public @NotNull Flux<? extends R> receive() {
-        return receivedPacketStream;
+    public @NotNull Flux<ReceivedPacketEvent<? extends Connection<R, W>, ? extends R>> receivedEvents() {
+        return Flux.create(this::registerFluxOnReceivedEvents);
+    }
+
+    @Override
+    public @NotNull Flux<? extends R> receivedPackets() {
+        return Flux.create(this::registerFluxOnReceivedPackets);
+    }
+
+    protected void registerFluxOnReceivedEvents(
+        @NotNull FluxSink<ReceivedPacketEvent<? extends Connection<R, W>, ? extends R>> sink
+    ) {
+
+        BiConsumer<Connection<R, W>, R> listener =
+            (connection, packet) -> sink.next(new ReceivedPacketEvent<>(connection, packet));
+
+        onReceive(listener);
+
+        sink.onDispose(() -> subscribers.remove(listener));
+    }
+
+    protected void registerFluxOnReceivedPackets(@NotNull FluxSink<? super R> sink) {
+
+        BiConsumer<Connection<R, W>, R> listener =
+            (connection, packet) -> sink.next(packet);
+
+        onReceive(listener);
+
+        sink.onDispose(() -> subscribers.remove(listener));
     }
 
     protected @NotNull PacketWriter createPacketWriter() {

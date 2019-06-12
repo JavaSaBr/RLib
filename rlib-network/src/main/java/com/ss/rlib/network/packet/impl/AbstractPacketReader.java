@@ -102,15 +102,44 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
         // if we have read mapped buffer it means that we are reading a really big packet now
         if (readMappedBuffer != null) {
-            LOGGER.debug(receivedBuffer, buf -> "Put received bytes " + buf + " to read mapped buffer");
+
+            if (readMappedBuffer.remaining() < receivedBuffer.remaining()) {
+                reallocateMappedBuffer(readMappedBuffer.flip(), readMappedBuffer.capacity());
+                readMappedBuffer = this.readMappedBuffer;
+            }
+
+            LOGGER.debug(receivedBuffer, readMappedBuffer,
+                (buf, mappedBuf) -> "Put received buffer: " + buf + " to read mapped buffer: " + mappedBuf);
+
             bufferToRead = BufferUtils.putToAndFlip(readMappedBuffer, receivedBuffer);
             bufferToDecrypt = decryptedMappedBuffer;
         }
         // if we have some pending data we need to append the received buffer to the pending buffer
         // and start to read pending buffer with result received data
         else if (waitedBytes > 0) {
-            LOGGER.debug(receivedBuffer, buf -> "Put received bytes " + buf + " to pending buffer");
-            bufferToRead = BufferUtils.putToAndFlip(pendingBuffer, receivedBuffer);
+
+            if (pendingBuffer.remaining() < receivedBuffer.remaining()) {
+
+                LOGGER.debug(receivedBuffer, pendingBuffer,
+                    (buf, penBuf) -> "Pending buffer: " + penBuf + " is too small to append received buffer: " +
+                        buf + ", allocate mapped buffer for this");
+
+                allocMappedBuffers(pendingBuffer.flip(), pendingBuffer.capacity());
+
+                LOGGER.debug(pendingBuffer, buf -> "Clear pending buffer: " + buf);
+                pendingBuffer.clear();
+
+                readMappedBuffer = this.readMappedBuffer;
+                bufferToDecrypt = decryptedMappedBuffer;
+                bufferToRead = BufferUtils.putToAndFlip(readMappedBuffer, receivedBuffer);
+
+            } else {
+
+                LOGGER.debug(receivedBuffer, pendingBuffer,
+                    (buf, penBuf) -> "Put received buffer: " + buf + " to pending buffer: " + penBuf);
+
+                bufferToRead = BufferUtils.putToAndFlip(pendingBuffer, receivedBuffer);
+            }
         }
 
         var maxPacketsByRead = getMaxPacketsByRead();
@@ -175,7 +204,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                     }
                     // if a new packet is bigger than current read mapped buffer
                     else if (packetLength > readMappedBuffer.capacity()) {
-                        reallocateMappedBuffer(bufferToRead, readMappedBuffer, packetLength);
+                        reallocateMappedBuffer(readMappedBuffer, packetLength);
                     }
                     // or just compact this current mapped buffer
                     else {
@@ -236,7 +265,6 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     }
 
     protected void reallocateMappedBuffer(
-        @NotNull ByteBuffer bufferToRead,
         @NotNull MappedByteBuffer readMappedBuffer,
         int packetLength
     ) {
@@ -244,8 +272,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         LOGGER.debug(readMappedBuffer.capacity(), packetLength, (currentSize, newSize) ->
             "Resize read mapped buffer from: " + currentSize + " to: " + newSize);
 
-        var newReadMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength);
-        newReadMappedBuffer.put(bufferToRead);
+        var newReadMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
+        newReadMappedBuffer.put(readMappedBuffer);
 
         LOGGER.debug(newReadMappedBuffer,
             buf -> "Moved pending data from old mapped buffer to new mapped buffer: " + buf);

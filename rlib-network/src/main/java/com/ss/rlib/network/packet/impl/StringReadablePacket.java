@@ -1,7 +1,6 @@
-package com.ss.rlib.network.packet.impl.simple;
+package com.ss.rlib.network.packet.impl;
 
 import com.ss.rlib.network.Connection;
-import com.ss.rlib.network.packet.impl.AbstractReadablePacket;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;

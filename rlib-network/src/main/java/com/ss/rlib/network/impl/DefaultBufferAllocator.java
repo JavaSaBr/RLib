@@ -73,7 +73,7 @@ public class DefaultBufferAllocator implements BufferAllocator {
 
     @Override
     public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
-        LOGGER.debug(size, s -> "Allocate a new mapped buffer with size: " + s);
+        LOGGER.debug(size, requestedSize -> "Allocate a new mapped buffer with size: " + requestedSize);
         return BufferUtils.allocateRWMappedByteBuffer(size);
     }
 
