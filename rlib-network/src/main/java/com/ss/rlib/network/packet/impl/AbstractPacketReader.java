@@ -280,7 +280,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         LOGGER.debug(readMappedBuffer.capacity(), packetLength, (currentSize, newSize) ->
             "Resize read mapped buffer from: " + currentSize + " to: " + newSize);
 
-        var newReadMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
+        //FIXME
+        var newReadMappedBuffer = BufferUtils.allocateRWMappedByteBuffer(packetLength + readBuffer.capacity());//bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
 
         LOGGER.debug(readMappedBuffer, newReadMappedBuffer,
             (old, buf) -> "Moved pending data from old mapped buffer: " + old + " to new mapped buffer: " + buf);
@@ -290,7 +291,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         freeMappedBuffers();
 
         this.readMappedBuffer = newReadMappedBuffer;
-        this.decryptedMappedBuffer = bufferAllocator.takeMappedBuffer(newReadMappedBuffer.capacity());
+        //FIXME
+        this.decryptedMappedBuffer = BufferUtils.allocateRWMappedByteBuffer(packetLength + readBuffer.capacity());//bufferAllocator.takeMappedBuffer(newReadMappedBuffer.capacity());
     }
 
     protected void allocMappedBuffers(@NotNull ByteBuffer receivedBuffer, int packetLength) {
@@ -298,7 +300,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         LOGGER.debug(packetLength, receivedBuffer.remaining(), (length, part) ->
             "Request mapped buffers to store a part: " + part + " of big packet with length: " + length);
 
-        var readMappedBuffer = bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
+        //FIXME
+        var readMappedBuffer = BufferUtils.allocateRWMappedByteBuffer(packetLength + readBuffer.capacity());//bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
 
         LOGGER.debug(receivedBuffer, readMappedBuffer,
             (recBuf, buf) -> "Put the part of packet: " + recBuf + " to mapped buffer: " + buf);
@@ -306,7 +309,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         readMappedBuffer.put(receivedBuffer);
 
         this.readMappedBuffer = readMappedBuffer;
-        this.decryptedMappedBuffer = bufferAllocator.takeMappedBuffer(readMappedBuffer.capacity());
+        //FIXME
+        this.decryptedMappedBuffer = BufferUtils.allocateRWMappedByteBuffer(packetLength + readBuffer.capacity());//bufferAllocator.takeMappedBuffer(readMappedBuffer.capacity());
     }
 
     protected void freeMappedBuffers() {

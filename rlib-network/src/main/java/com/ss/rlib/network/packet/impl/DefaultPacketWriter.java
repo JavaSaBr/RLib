@@ -226,7 +226,7 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
      * @param packet    the packet.
      */
     protected void handleFailedWriting(@NotNull Throwable exception, @NotNull W packet) {
-        LOGGER.error(this, new RuntimeException("Failed writing packet: " + packet, exception));
+        LOGGER.error(new RuntimeException("Failed writing packet: " + packet, exception));
 
         if (!connection.isClosed()) {
             if (isWriting.compareAndSet(true, false)) {

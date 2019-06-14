@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -114,7 +115,11 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
         }
 
         LOGGER.info(address, adr -> "Started server on address: " + adr);
-        acceptNext();
+
+        if (!subscribers.isEmpty()) {
+            acceptNext();
+        }
+
         return address;
     }
 
@@ -122,13 +127,15 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     public <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress) {
         Utils.unchecked(channel, serverAddress, AsynchronousServerSocketChannel::bind);
         LOGGER.info(serverAddress, adr -> "Started server on address: " + adr);
-        acceptNext();
         return ClassUtils.unsafeCast(this);
     }
 
     protected void acceptNext() {
         if (channel.isOpen()) {
-            channel.accept(this, acceptHandler);
+            try {
+                channel.accept(this, acceptHandler);
+            } catch (AcceptPendingException ignored) {
+            }
         } else {
             LOGGER.warning("Cannot accept a next connection because server channel is already closed.");
         }
@@ -141,6 +148,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     @Override
     public void onAccept(@NotNull Consumer<? super C> consumer) {
         subscribers.add(consumer);
+        acceptNext();
     }
 
     @Override
@@ -149,7 +157,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     }
 
     protected void registerFluxOnAccepted(@NotNull FluxSink<C> sink) {
-        Consumer<? super C> listener = connection -> sink.next(connection);
+        Consumer<? super C> listener = sink::next;
         onAccept(listener);
         sink.onDispose(() -> subscribers.remove(listener));
     }

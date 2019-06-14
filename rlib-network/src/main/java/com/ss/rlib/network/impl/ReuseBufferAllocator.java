@@ -32,7 +32,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
 
     protected final NetworkConfig config;
 
-    protected ReuseBufferAllocator(@NotNull NetworkConfig config) {
+    public ReuseBufferAllocator(@NotNull NetworkConfig config) {
         this.config = config;
         this.readBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
         this.pendingBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
@@ -89,7 +89,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
     }
 
     @Override
-    public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+    public synchronized @NotNull MappedByteBuffer takeMappedBuffer(int size) {
 
         // check of existing enough buffer for the size under read lock
         var exist = mappedByteBuffers.anyMatchInReadLock(size,
@@ -106,7 +106,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
 
                 // take it from pool if exist
                 if (exist != null && mappedByteBuffers.fastRemove(exist)) {
-                    return exist;
+                    return exist.clear();
                 }
 
             } finally {
@@ -136,7 +136,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
     }
 
     @Override
-    public @NotNull BufferAllocator putMappedByteBuffer(@NotNull MappedByteBuffer buffer) {
+    public synchronized @NotNull BufferAllocator putMappedByteBuffer(@NotNull MappedByteBuffer buffer) {
         mappedByteBuffers.runInWriteLock(buffer, Collection::add);
         return this;
     }

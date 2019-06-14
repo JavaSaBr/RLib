@@ -129,8 +129,8 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
             throw new NoSuchElementException();
         }
 
-        final int newSize = size.decrementAndGet();
-        final E old = array[index];
+        var newSize = size.decrementAndGet();
+        var old = array[index];
 
         array[index] = array[newSize];
         array[newSize] = null;

@@ -90,8 +90,8 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     @Override
     public void onReceive(@NotNull BiConsumer<? super Connection<R, W>, ? super R> consumer) {
-        packetReader.startRead();
         subscribers.add(consumer);
+        packetReader.startRead();
     }
 
     @Override
