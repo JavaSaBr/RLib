@@ -1,6 +1,8 @@
 package com.ss.rlib.network;
 
 import com.ss.rlib.common.concurrent.GroupThreadFactory;
+import lombok.Builder;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteOrder;
@@ -11,6 +13,29 @@ import java.nio.ByteOrder;
  * @author JavaSaBr
  */
 public interface ServerNetworkConfig extends NetworkConfig {
+
+    @Builder
+    @Getter
+    class SimpleServerNetworkConfig implements ServerNetworkConfig {
+
+        @Builder.Default
+        private String groupName = "ServerNetworkThread";
+        @Builder.Default
+        private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+        @Builder.Default
+        private GroupThreadFactory.ThreadConstructor threadConstructor = Thread::new;
+
+        @Builder.Default
+        private int readBufferSize = 2048;
+        @Builder.Default
+        private int pendingBufferSize = 4096;
+        @Builder.Default
+        private int writeBufferSize = 2048;
+        @Builder.Default
+        private int groupSize = 1;
+        @Builder.Default
+        private int threadPriority = Thread.NORM_PRIORITY;
+    }
 
     @NotNull ServerNetworkConfig DEFAULT_SERVER = new ServerNetworkConfig() {
 

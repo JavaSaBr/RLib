@@ -35,6 +35,12 @@ public interface Logger {
     }
 
     @FunctionalInterface
+    interface ObjIntFactory<F> {
+
+        @NotNull String make(F first, int second);
+    }
+
+    @FunctionalInterface
     interface IntBiFactory {
 
         @NotNull String make(int first, int second);
@@ -157,6 +163,22 @@ public interface Logger {
         @NotNull F first,
         @NotNull S second,
         @NotNull Logger.BiFactory<@NotNull F, @NotNull S> messageFactory
+    ) {
+        print(LoggerLevel.DEBUG, first, second, messageFactory);
+    }
+
+    /**
+     * Print a build debug message.
+     *
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     */
+    default <F> void debug(
+        @NotNull F first,
+        int second,
+        @NotNull Logger.ObjIntFactory<@NotNull F> messageFactory
     ) {
         print(LoggerLevel.DEBUG, first, second, messageFactory);
     }
@@ -584,6 +606,26 @@ public interface Logger {
         @NotNull F first,
         @NotNull S second,
         @NotNull Logger.BiFactory<@NotNull F, @NotNull S> messageFactory
+    ) {
+        if (isEnabled(level)) {
+            print(level, messageFactory.make(first, second));
+        }
+    }
+
+    /**
+     * Print a build message.
+     *
+     * @param level          the level of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     */
+    default <F> void print(
+        @NotNull LoggerLevel level,
+        @NotNull F first,
+        int second,
+        @NotNull Logger.ObjIntFactory<@NotNull F> messageFactory
     ) {
         if (isEnabled(level)) {
             print(level, messageFactory.make(first, second));

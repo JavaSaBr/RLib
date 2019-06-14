@@ -1,5 +1,7 @@
 package com.ss.rlib.network;
 
+import lombok.Builder;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteOrder;
@@ -10,6 +12,23 @@ import java.nio.ByteOrder;
  * @author JavaSaBr
  */
 public interface NetworkConfig {
+
+    @Builder
+    @Getter
+    class SimpleNetworkConfig implements NetworkConfig {
+
+        @Builder.Default
+        private String groupName = "NetworkThread";
+        @Builder.Default
+        private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+
+        @Builder.Default
+        private int readBufferSize = 2048;
+        @Builder.Default
+        private int pendingBufferSize = 4096;
+        @Builder.Default
+        private int writeBufferSize = 2048;
+    }
 
     @NotNull NetworkConfig DEFAULT_CLIENT = new NetworkConfig() {
 

@@ -1,6 +1,7 @@
 package com.ss.rlib.network.server.impl;
 
 import static com.ss.rlib.common.util.Utils.uncheckedGet;
+import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.concurrent.GroupThreadFactory;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.Utils;
@@ -13,6 +14,7 @@ import com.ss.rlib.network.Network;
 import com.ss.rlib.network.ServerNetworkConfig;
 import com.ss.rlib.network.impl.AbstractNetwork;
 import com.ss.rlib.network.server.ServerNetwork;
+import com.ss.rlib.network.util.NetworkUtils;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
@@ -43,7 +45,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
 
         @Override
         public void completed(@NotNull AsynchronousSocketChannel channel, @NotNull DefaultServerNetwork<C> network) {
-            LOGGER.debug(channel, ch -> "Accepted new connection: " + ch);
+            LOGGER.debug(channel, ch -> "Accepted new connection: " + getSocketAddress(ch));
             network.onAccept(network.channelToConnection.apply(DefaultServerNetwork.this, channel));
             network.acceptNext();
         }
@@ -103,7 +105,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
 
         while (address == null) {
 
-            address = new InetSocketAddress(Utils.getFreePort(1500));
+            address = new InetSocketAddress(NetworkUtils.getAvailablePort(1500));
             try {
                 channel.bind(address);
             } catch (IOException e) {

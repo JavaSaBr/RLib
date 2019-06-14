@@ -2,6 +2,7 @@ package com.ss.rlib.network.impl;
 
 import static com.ss.rlib.common.util.Utils.safeGet;
 import static com.ss.rlib.common.util.Utils.unchecked;
+import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.logger.api.Logger;
@@ -31,7 +32,7 @@ import java.util.function.BiConsumer;
 public abstract class AbstractConnection<R extends ReadablePacket, W extends WritablePacket> implements
     Connection<R, W> {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(Network.class);
+    private static final Logger LOGGER = LoggerManager.getLogger(AbstractConnection.class);
 
     @Getter
     protected final NetworkCryptor crypt;
@@ -83,6 +84,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     protected abstract @NotNull PacketReader createPacketReader();
 
     protected void handleReadPacket(@NotNull R packet) {
+        LOGGER.debug(channel, packet, (ch, pck) -> "Handle read packet: " + pck + " from: " + getSocketAddress(ch));
         subscribers.forEach(this, packet, BiConsumer::accept);
     }
 

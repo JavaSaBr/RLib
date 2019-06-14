@@ -1,5 +1,6 @@
 package com.ss.rlib.network.packet.impl;
 
+import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.util.BufferUtils;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
@@ -218,8 +219,9 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                     }
                 }
 
-                LOGGER.debug(readPackets, count -> "Read " + count + " packet(s) from buffered data, " +
-                    "but 1 packet is still waiting for receiving additional data.");
+                LOGGER.debug(channel, readPackets,
+                    (ch, count) -> "Read " + count + " packet(s) from buffered data of " + getSocketAddress(ch) + ", " +
+                        "but 1 packet is still waiting for receiving additional data.");
 
                 return readPackets;
             }
@@ -242,7 +244,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                 LOGGER.debug(packet, pck -> "Created instance of packet to read data: " + pck);
                 packet.read(connection, bufferToRead, dataLength);
                 readPacketHandler.accept(packet);
-                LOGGER.debug(packet, pck -> "Finished reading data for packet: " + pck);
+                LOGGER.debug(packet, pck -> "Read data of packet: " + pck);
                 readPackets++;
             } else {
                 LOGGER.warning("Cannot create any instance of packet to read data.");
@@ -264,7 +266,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             freeMappedBuffers();
         }
 
-        LOGGER.debug(readPackets, count -> "Finished reading " + count + " packet(s) from buffered data.");
+        LOGGER.debug(channel, readPackets,
+            (ch, count) -> "Read " + count + " packet(s) from buffered data of " + getSocketAddress(ch) + ".");
 
         return readPackets;
     }

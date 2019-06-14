@@ -8,11 +8,10 @@ import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerLevel;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.*;
+import com.ss.rlib.network.ServerNetworkConfig.SimpleServerNetworkConfig;
 import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.impl.DefaultBufferAllocator;
-import com.ss.rlib.network.impl.StringDataConnection;
 import com.ss.rlib.network.packet.impl.StringWritablePacket;
-import com.ss.rlib.network.server.ServerNetwork;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
@@ -22,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.MappedByteBuffer;
 import java.time.Duration;
-import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -39,9 +38,9 @@ public class StringNetworkTest extends BaseNetworkTest {
 
     @BeforeAll
     static void beforeAll() {
-        LoggerLevel.DEBUG.setEnabled(true);
-        //LoggerManager.getLogger(DefaultBufferAllocator.class)
-        //    .setEnabled(LoggerLevel.DEBUG, false);
+        //LoggerLevel.DEBUG.setEnabled(true);
+        LoggerManager.getLogger(DefaultBufferAllocator.class)
+            .setEnabled(LoggerLevel.DEBUG, false);
     }
 
     @Test
@@ -232,13 +231,14 @@ public class StringNetworkTest extends BaseNetworkTest {
         var sentPacketsToServer = new AtomicInteger();
         var receivedPacketsOnServer = new AtomicInteger();
         var receivedPacketsOnClients = new AtomicInteger();
+        var connectedClients = new CountDownLatch(clientCount);
 
         serverNetwork.accepted()
+            .doOnNext(con -> connectedClients.countDown())
             .flatMap(Connection::receivedEvents)
             .subscribe(event -> {
                 receivedPacketsOnServer.incrementAndGet();
-                event.connection.send(
-                    new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength))
+                event.connection.send(newMessage(minMessageLength, maxMessageLength)
                 );
             });
 
@@ -249,7 +249,7 @@ public class StringNetworkTest extends BaseNetworkTest {
         clients.forEach(clientNetwork -> clientNetwork.connected(serverAddress)
             .doOnNext(connection -> IntStream.range(0, packetsPerClient)
                 .forEach(val -> {
-                    connection.send(new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength)));
+                    connection.send(newMessage(minMessageLength, maxMessageLength));
                     sentPacketsToServer.incrementAndGet();
                 }))
             .flatMapMany(Connection::receivedEvents)
@@ -274,45 +274,50 @@ public class StringNetworkTest extends BaseNetworkTest {
     @SneakyThrows
     void testServerWithMultiplyClientsUsingOldApi() {
 
-        var serverNetwork = NetworkFactory.newStringDataServerNetwork(new ServerNetworkConfig() {
+        var serverNetwork = NetworkFactory.newStringDataServerNetwork(SimpleServerNetworkConfig.builder()
+            .groupSize(10)
+            .build());
 
-            @Override
-            public int getGroupSize() {
-                return 1;
-            }
-        });
         var serverAddress = serverNetwork.start();
-        var clientCount = 10;
-        var packetsPerClient = 100;
+        var clientCount = 100;
+        var packetsPerClient = 10;
         var counter = new CountDownLatch(clientCount * packetsPerClient);
         var minMessageLength = 10;
-        var maxMessageLength = 1000;//(int) (ServerNetworkConfig.DEFAULT_SERVER.getReadBufferSize() * 1.5);
+        var maxMessageLength = (int) (ServerNetworkConfig.DEFAULT_SERVER.getReadBufferSize() * 1.5);
         var sentPacketsToServer = new AtomicInteger();
         var receivedPacketsOnServer = new AtomicInteger();
         var receivedPacketsOnClients = new AtomicInteger();
+        var connectedClients = new CountDownLatch(clientCount);
 
-        serverNetwork.onAccept(connection -> connection.onReceive((cn, packet) -> {
-            receivedPacketsOnServer.incrementAndGet();
-            cn.send(new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength)));
-        }));
+        serverNetwork.onAccept(connection -> {
+            connection.onReceive((con, packet) -> {
+                receivedPacketsOnServer.incrementAndGet();
+                con.send(newMessage(minMessageLength, maxMessageLength));
+            });
+            connectedClients.countDown();
+        });
 
         var clients = IntStream.range(0, clientCount)
             .mapToObj(value -> NetworkFactory.newStringDataClientNetwork())
+            .peek(client -> client.connect(serverAddress))
             .collect(toList());
 
-        clients.forEach(clientNetwork -> clientNetwork.connect(serverAddress)
-            .whenComplete((connection, ex) -> IntStream.range(0, packetsPerClient)
-                .forEach(val -> {
-                    connection.send(new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength)));
-                    sentPacketsToServer.incrementAndGet();
-                }))
-            .thenAccept(connection -> connection.onReceive((cn, pck) -> {
+        connectedClients.await();
+
+        clients.stream()
+            .map(ClientNetwork::getCurrentConnection)
+            .filter(Objects::nonNull)
+            .peek(connection -> connection.onReceive((con, packet) -> {
                 receivedPacketsOnClients.incrementAndGet();
                 counter.countDown();
-            })));
+            }))
+            .forEach(connection -> IntStream.range(0, packetsPerClient)
+                .peek(value -> connection.send(newMessage(minMessageLength, maxMessageLength)))
+                .forEach(val -> sentPacketsToServer.incrementAndGet())
+            );
 
         Assertions.assertTrue(
-            counter.await(10000, TimeUnit.MILLISECONDS),
+            counter.await(5, TimeUnit.SECONDS),
             "Still wait for " + counter.getCount() + " packets... " +
                 "Sent packets to server: " + sentPacketsToServer + ", " +
                 "Received packets on server: " +  receivedPacketsOnServer + ", " +
@@ -321,6 +326,10 @@ public class StringNetworkTest extends BaseNetworkTest {
 
         clients.forEach(Network::shutdown);
         serverNetwork.shutdown();
+    }
+
+    private static @NotNull StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {
+        return new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength));
     }
 
     @AfterAll

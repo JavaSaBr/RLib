@@ -42,6 +42,7 @@ public final class Utils {
      * @param port the port.
      * @return true if the port is free.
      */
+    @Deprecated(forRemoval = true)
     public static boolean checkFreePort(@NotNull String host, int port) {
 
         try {
@@ -121,6 +122,7 @@ public final class Utils {
      * @param port the start port.
      * @return the free port or -1.
      */
+    @Deprecated(forRemoval = true)
     public static int getFreePort(final int port) {
 
         final int limit = Short.MAX_VALUE * 2;
