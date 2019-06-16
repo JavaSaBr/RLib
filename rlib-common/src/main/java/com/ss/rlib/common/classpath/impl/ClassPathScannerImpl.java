@@ -438,7 +438,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
                 continue;
             }
 
-            LOGGER.debug(this, file, toScan -> "scan " + toScan);
+            LOGGER.debug(file, toScan -> "scan " + toScan);
 
             String filename = file.getFileName().toString();
 
@@ -452,7 +452,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         this.classes = classes.toArray(new Class[classes.size()]);
         this.resources = resources.toArray(new String[resources.size()]);
 
-        LOGGER.debug(this, getClasses(), getResources(),
+        LOGGER.debug(getClasses(), getResources(),
                 (cses, rses) -> "scanned for " + cses.length + " classes and " + rses.length + " resources.");
     }
 

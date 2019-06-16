@@ -17,43 +17,6 @@ import org.w3c.dom.Node;
  */
 public class VarTable {
 
-    @Deprecated(forRemoval = true)
-    public static @NotNull VarTable newInstance() {
-        return new VarTable();
-    }
-
-    /**
-     * New instance var table.
-     *
-     * @param node the xml node.
-     * @return the new table with attributes of the node.
-     * @see XmlUtils#toVarsTable(Node)
-     */
-    @Deprecated(forRemoval = true)
-    public static @NotNull VarTable newInstance(@Nullable Node node) {
-        return XmlUtils.toVarsTable(node);
-    }
-
-    /**
-     * New instance var table.
-     *
-     * @param node      the node
-     * @param childName the child name
-     * @param nameType  the name type
-     * @param nameValue the name value
-     * @return the var table
-     * @see XmlUtils#toVarsTable(Node, String, String, String)
-     */
-    @Deprecated(forRemoval = true)
-    public static @NotNull VarTable newInstance(
-            @Nullable Node node,
-            @NotNull String childName,
-            @NotNull String nameType,
-            @NotNull String nameValue
-    ) {
-        return XmlUtils.toVarsTable(node, childName, nameType, nameValue);
-    }
-
     /**
      * The table with values.
      */

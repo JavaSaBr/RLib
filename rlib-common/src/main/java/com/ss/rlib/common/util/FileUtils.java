@@ -651,7 +651,7 @@ public class FileUtils {
      * @see Files#createDirectories(Path, FileAttribute[])
      */
     public static void createDirectories(@NotNull Path directory, @NotNull FileAttribute<?>... attrs) {
-        Utils.run(directory, attrs, Files::createDirectories);
+        Utils.unchecked(directory, attrs, Files::createDirectories);
     }
 
     /**
@@ -670,7 +670,7 @@ public class FileUtils {
      * @return the {@link URI}.
      */
     public static @NotNull URI getUri(@NotNull Path file) {
-        return Utils.get(file, Path::toUri);
+        return Utils.uncheckedGet(file, Path::toUri);
     }
 
     /**
@@ -680,7 +680,7 @@ public class FileUtils {
      * @return the {@link URI}.
      */
     public static @NotNull URI getUri(@NotNull URL url) {
-        return Utils.get(url, URL::toURI);
+        return Utils.uncheckedGet(url, URL::toURI);
     }
 
     /**
@@ -690,7 +690,7 @@ public class FileUtils {
      * @return the {@link URL}.
      */
     public static @NotNull URL getUrl(@NotNull Path file) {
-        return Utils.get(getUri(file), URI::toURL);
+        return Utils.uncheckedGet(getUri(file), URI::toURL);
     }
 
     /**

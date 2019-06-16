@@ -158,7 +158,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
 
             var current = state.get();
 
-            LOGGER.debug(this, "start to pre-load all plugins.");
+            LOGGER.debug("start to pre-load all plugins.");
 
             var futures = Array.optionals(
                     CompletableFuture.class,
@@ -174,10 +174,9 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             var idToContainer = containers.stream()
                     .collect(toObjectDictionary(PluginContainer::getId, container -> container));
 
-            LOGGER.debug(this, containers,
-                    c -> "Pre-loaded: " + c);
+            LOGGER.debug(containers, c -> "Pre-loaded: " + c);
 
-            LOGGER.debug(this, "all plugins were pre-loaded.");
+            LOGGER.debug("all plugins were pre-loaded.");
 
             if (state.compareAndSet(current, new State(containers, idToContainer, ObjectDictionary.empty()))) {
                 return this;
@@ -200,7 +199,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             throw new PluginException("This system was already initialized.");
         }
 
-        LOGGER.debug(this, "start to load all plugins.");
+        LOGGER.debug("start to load all plugins.");
 
         return supplyAsync(() -> {
 
@@ -213,7 +212,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
                     .collect(toObjectDictionary(Plugin::getId, plugin -> plugin));
 
 
-            LOGGER.debug(this, "all plugins were initialized.");
+            LOGGER.debug("all plugins were initialized.");
 
             if (state.compareAndSet(current, new State(current.containers, current.idToContainer, plugins))) {
                 return this;
@@ -240,8 +239,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
 
             var pluginClass = container.getPluginClass();
 
-            LOGGER.debug(this, pluginClass,
-                    cs -> "start to create a plugin " + cs);
+            LOGGER.debug(pluginClass, cs -> "start to create a plugin " + cs);
 
             var constructor = ClassUtils.<Plugin>getConstructor(pluginClass, PluginContainer.class);
 
@@ -296,8 +294,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             boolean embedded
     ) {
 
-        LOGGER.debug(this, path,
-                p -> "try to pre-load plugins from the folder " + p + ".");
+        LOGGER.debug(path, p -> "try to pre-load plugins from the folder " + p + ".");
 
         return supplyAsync(() -> FileUtils.stream(path)
                 .filter(Files::isDirectory)
@@ -347,8 +344,8 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
             var files = FileUtils.getFiles(directory, ".jar");
 
             var urls = files.stream()
-                    .map(path -> Utils.get(path, Path::toUri))
-                    .map(uri -> Utils.get(uri, URI::toURL))
+                    .map(path -> Utils.uncheckedGet(path, Path::toUri))
+                    .map(uri -> Utils.uncheckedGet(uri, URI::toURL))
                     .toArray(URL[]::new);
 
             var additionalPaths = files.stream()
