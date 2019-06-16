@@ -6,12 +6,16 @@ import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.PacketWriter;
 import com.ss.rlib.network.packet.WritablePacket;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,6 +25,20 @@ import java.util.function.Supplier;
 public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<?, W>> implements PacketWriter {
 
     private static final Logger LOGGER = LoggerManager.getLogger(DefaultPacketWriter.class);
+
+    private static final VarHandle WTB_CAS;
+    private static final VarHandle ETB_CAS;
+
+    static {
+        try {
+            WTB_CAS = MethodHandles.lookup()
+                .findVarHandle(DefaultPacketWriter.class, "writeTempBuffer", ByteBuffer.class);
+            ETB_CAS = MethodHandles.lookup()
+                .findVarHandle(DefaultPacketWriter.class, "encryptedTempBuffer", ByteBuffer.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private final CompletionHandler<Integer, W> writeHandler = new CompletionHandler<>() {
 
@@ -43,8 +61,13 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
     protected final ByteBuffer writeBuffer;
     protected final ByteBuffer encryptedBuffer;
 
-    protected volatile MappedByteBuffer writeMappedBuffer;
-    protected volatile MappedByteBuffer encryptedMappedBuffer;
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    protected volatile ByteBuffer writeTempBuffer;
+
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    protected volatile ByteBuffer encryptedTempBuffer;
 
     protected final Runnable updateActivityFunction;
     protected final Supplier<@Nullable W> nextWritePacketSupplier;
@@ -100,9 +123,9 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
 
         // if the packet is too big to use a write buffer
         if (expectedLength != -1 && totalSize > writeBuffer.capacity()) {
-            writeMappedBuffer = bufferAllocator.takeMappedBuffer(totalSize);
-            encryptedMappedBuffer = bufferAllocator.takeMappedBuffer(totalSize);
-            return serialize(packet, writeMappedBuffer, encryptedMappedBuffer);
+            writeTempBuffer = bufferAllocator.takeBuffer(totalSize);
+            encryptedTempBuffer = bufferAllocator.takeBuffer(totalSize);
+            return serialize(packet, writeTempBuffer, encryptedTempBuffer);
         } else {
             return serialize(packet, writeBuffer, encryptedBuffer);
         }
@@ -192,19 +215,18 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
             return;
         }
 
-        // if we have data in mapped write buffer we need to use it
-        if (writeMappedBuffer != null) {
+        var writeTempBuffer = this.writeTempBuffer;
 
-            if (writeMappedBuffer.remaining() > 0) {
-                channel.write(writeMappedBuffer, packet, writeHandler);
+        // if we have data in temp write buffer we need to use it
+        if (writeTempBuffer != null) {
+
+            if (writeTempBuffer.remaining() > 0) {
+                channel.write(writeTempBuffer, packet, writeHandler);
                 return;
             }
-            // if all data from mapped buffers was written then we can remove it
+            // if all data from temp buffers was written then we can remove it
             else {
-                bufferAllocator.putMappedByteBuffer(writeMappedBuffer);
-                bufferAllocator.putMappedByteBuffer(encryptedMappedBuffer);
-                writeMappedBuffer = null;
-                encryptedMappedBuffer = null;
+                clearTempBuffers();
             }
 
         } else {
@@ -242,14 +264,22 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
             .putWriteBuffer(writeBuffer)
             .putWriteBuffer(encryptedBuffer);
 
-        if (encryptedMappedBuffer != null) {
-            bufferAllocator.putMappedByteBuffer(encryptedMappedBuffer);
-            encryptedMappedBuffer = null;
+        clearTempBuffers();
+    }
+
+    protected void clearTempBuffers() {
+
+        var encryptedTempBuffer = getEncryptedTempBuffer();
+        var writeTempBuffer = getWriteTempBuffer();
+
+        if (encryptedTempBuffer != null) {
+            setEncryptedTempBuffer(null);
+            bufferAllocator.putBuffer(encryptedTempBuffer);
         }
 
-        if (writeMappedBuffer != null) {
-            bufferAllocator.putMappedByteBuffer(writeMappedBuffer);
-            writeMappedBuffer = null;
+        if (writeTempBuffer != null) {
+            setWriteTempBuffer(null);
+            bufferAllocator.putBuffer(writeTempBuffer);
         }
     }
 }

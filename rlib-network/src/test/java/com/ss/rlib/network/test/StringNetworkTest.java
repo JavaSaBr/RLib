@@ -8,7 +8,6 @@ import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
 import com.ss.rlib.common.util.ObjectUtils;
 import com.ss.rlib.common.util.StringUtils;
 import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerLevel;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.*;
 import com.ss.rlib.network.ServerNetworkConfig.SimpleServerNetworkConfig;
@@ -18,13 +17,11 @@ import com.ss.rlib.network.impl.ReuseBufferAllocator;
 import com.ss.rlib.network.packet.impl.StringWritablePacket;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
-import java.nio.MappedByteBuffer;
+import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -40,11 +37,6 @@ import java.util.stream.IntStream;
 public class StringNetworkTest extends BaseNetworkTest {
 
     private static final Logger LOGGER = LoggerManager.getLogger(StringNetworkTest.class);
-
-    @BeforeAll
-    static void beforeAll() {
-        //LoggerLevel.DEBUG.setEnabled(true);
-    }
 
     @Test
     @SneakyThrows
@@ -87,7 +79,7 @@ public class StringNetworkTest extends BaseNetworkTest {
         var serverAllocator = new DefaultBufferAllocator(DEFAULT_SERVER) {
 
             @Override
-            public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+            public @NotNull ByteBuffer takeBuffer(int bufferSize) {
                 throw new RuntimeException();
             }
         };
@@ -95,7 +87,7 @@ public class StringNetworkTest extends BaseNetworkTest {
         var clientAllocator = new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT) {
 
             @Override
-            public @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+            public @NotNull ByteBuffer takeBuffer(int bufferSize) {
                 throw new RuntimeException();
             }
         };
@@ -225,8 +217,8 @@ public class StringNetworkTest extends BaseNetworkTest {
         var serverAllocator = new ReuseBufferAllocator(serverConfig);
         var clientAllocator = new ReuseBufferAllocator(NetworkConfig.DEFAULT_CLIENT);
 
-        var clientCount = 10;
-        var packetsPerClient = 10;
+        var clientCount = 100;
+        var packetsPerClient = 100;
         var counter = new CountDownLatch(clientCount * packetsPerClient);
         var minMessageLength = 10;
         var maxMessageLength = (int) (DEFAULT_SERVER.getReadBufferSize() * 1.5);
@@ -238,7 +230,6 @@ public class StringNetworkTest extends BaseNetworkTest {
         var serverAddress = serverNetwork.start();
 
         serverNetwork.accepted()
-            //.doOnNext(con -> connectedClients.countDown())
             .flatMap(Connection::receivedEvents)
             .doOnNext(event -> receivedPacketsOnServer.incrementAndGet())
             .subscribe(event -> event.connection.send(newMessage(minMessageLength, maxMessageLength)));
@@ -329,10 +320,5 @@ public class StringNetworkTest extends BaseNetworkTest {
 
     private static @NotNull StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {
         return new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength));
-    }
-
-    @AfterAll
-    static void afterAll() {
-        //LoggerLevel.DEBUG.setEnabled(false);
     }
 }

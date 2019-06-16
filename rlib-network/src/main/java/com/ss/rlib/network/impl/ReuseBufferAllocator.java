@@ -1,6 +1,5 @@
 package com.ss.rlib.network.impl;
 
-import com.ss.rlib.common.util.BufferUtils;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.ConcurrentArray;
 import com.ss.rlib.common.util.pools.Pool;
@@ -13,7 +12,6 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -28,7 +26,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
     protected final Pool<ByteBuffer> readBufferPool;
     protected final Pool<ByteBuffer> pendingBufferPool;
     protected final Pool<ByteBuffer> writeBufferPool;
-    protected final ConcurrentArray<MappedByteBuffer> mappedByteBuffers;
+    protected final ConcurrentArray<ByteBuffer> byteBuffers;
 
     protected final NetworkConfig config;
 
@@ -37,7 +35,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
         this.readBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
         this.pendingBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
         this.writeBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
-        this.mappedByteBuffers = ArrayFactory.newConcurrentStampedLockArray(MappedByteBuffer.class);
+        this.byteBuffers = ArrayFactory.newConcurrentStampedLockArray(ByteBuffer.class);
     }
 
     @Override
@@ -61,7 +59,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
     protected @NotNull Function<NetworkConfig, ByteBuffer> pendingBufferFactory() {
         return config -> {
             var bufferSize = config.getPendingBufferSize();
-            LOGGER.debug(bufferSize, size -> "Allocate a new pending buffer with size:" + size);
+            LOGGER.debug(bufferSize, size -> "Allocate a new pending buffer with size: " + size);
             return config.isDirectByteBuffer()? ByteBuffer.allocateDirect(bufferSize) : ByteBuffer.allocate(bufferSize)
                 .order(config.getByteOrder())
                 .clear();
@@ -71,7 +69,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
     protected @NotNull Function<NetworkConfig, ByteBuffer> readBufferFactory() {
         return config -> {
             var bufferSize = config.getReadBufferSize();
-            LOGGER.debug(bufferSize, size -> "Allocate a new read buffer with size:" + size);
+            LOGGER.debug(bufferSize, size -> "Allocate a new read buffer with size: " + size);
             return config.isDirectByteBuffer()? ByteBuffer.allocateDirect(bufferSize) : ByteBuffer.allocate(bufferSize)
                 .order(config.getByteOrder())
                 .clear();
@@ -81,7 +79,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
     protected @NotNull Function<NetworkConfig, ByteBuffer> writeBufferFactory() {
         return config -> {
             var bufferSize = config.getWriteBufferSize();
-            LOGGER.debug(bufferSize, size -> "Allocate a new write buffer with size:" + size);
+            LOGGER.debug(bufferSize, size -> "Allocate a new write buffer with size: " + size);
             return config.isDirectByteBuffer()? ByteBuffer.allocateDirect(bufferSize) : ByteBuffer.allocate(bufferSize)
                 .order(config.getByteOrder())
                 .clear();
@@ -89,32 +87,36 @@ public class ReuseBufferAllocator implements BufferAllocator {
     }
 
     @Override
-    public synchronized @NotNull MappedByteBuffer takeMappedBuffer(int size) {
+    public @NotNull ByteBuffer takeBuffer(int bufferSize) {
 
         // check of existing enough buffer for the size under read lock
-        var exist = mappedByteBuffers.anyMatchInReadLock(size,
+        var exist = byteBuffers.anyMatchInReadLock(bufferSize,
             (buffer, capacity) -> buffer.capacity() > capacity);
 
         // if we already possible have this buffer we need to take it under write lock
         if (exist != null) {
-            long stamp = mappedByteBuffers.writeLock();
+            long stamp = byteBuffers.writeLock();
             try {
 
                 // re-find enough buffer again
-                exist = mappedByteBuffers.findAny(size,
+                exist = byteBuffers.findAny(bufferSize,
                     (buffer, capacity) -> buffer.capacity() > capacity);
 
                 // take it from pool if exist
-                if (exist != null && mappedByteBuffers.fastRemove(exist)) {
-                    return exist.clear();
+                if (exist != null && byteBuffers.fastRemove(exist)) {
+                    LOGGER.debug(exist, buffer -> "Reuse old buffer: " + buffer + " - (" + buffer.hashCode() + ")");
+                    return exist;
                 }
 
             } finally {
-                mappedByteBuffers.writeUnlock(stamp);
+                byteBuffers.writeUnlock(stamp);
             }
         }
 
-        return BufferUtils.allocateRWMappedByteBuffer(size);
+        LOGGER.debug(bufferSize, size -> "Allocate a new buffer with size: " + size);
+        return config.isDirectByteBuffer()? ByteBuffer.allocateDirect(bufferSize) : ByteBuffer.allocate(bufferSize)
+            .order(config.getByteOrder())
+            .clear();
     }
 
     @Override
@@ -136,8 +138,9 @@ public class ReuseBufferAllocator implements BufferAllocator {
     }
 
     @Override
-    public synchronized @NotNull BufferAllocator putMappedByteBuffer(@NotNull MappedByteBuffer buffer) {
-        mappedByteBuffers.runInWriteLock(buffer, Collection::add);
+    public @NotNull BufferAllocator putBuffer(@NotNull ByteBuffer buffer) {
+        LOGGER.debug(buffer, buf -> "Save used temp buffer: " + buf + " - (" + buf.hashCode() + ")");
+        byteBuffers.runInWriteLock(buffer.clear(), Collection::add);
         return this;
     }
 }

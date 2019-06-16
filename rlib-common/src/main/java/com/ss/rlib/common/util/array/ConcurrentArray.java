@@ -270,7 +270,7 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Execute the function in write lock of this array.
+     * Execute a function for this array in write lock block.
      *
      * @param <F>      the argument's type.
      * @param argument the argument.
@@ -278,8 +278,8 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @return this array.
      */
     default <F> ConcurrentArray<E> runInWriteLock(
-            @NotNull F argument,
-            @NotNull BiConsumer<@NotNull ConcurrentArray<E>, @NotNull F> function
+        @NotNull F argument,
+        @NotNull BiConsumer<@NotNull ConcurrentArray<E>, @NotNull F> function
     ) {
 
         long stamp = writeLock();

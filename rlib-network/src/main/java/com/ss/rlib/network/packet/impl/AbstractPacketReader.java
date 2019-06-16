@@ -8,11 +8,14 @@ import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.PacketReader;
 import com.ss.rlib.network.packet.ReadablePacket;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,8 +52,13 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     protected final Runnable updateActivityFunction;
     protected final Consumer<? super R> readPacketHandler;
 
-    protected volatile MappedByteBuffer readMappedBuffer;
-    protected volatile MappedByteBuffer decryptedMappedBuffer;
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    protected volatile ByteBuffer readTempBuffer;
+
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    protected volatile ByteBuffer decryptedTempBuffer;
 
     protected final int packetLengthHeaderSize;
     protected final int maxPacketsByRead;
@@ -99,21 +107,21 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         var waitedBytes = pendingBuffer.position();
         var bufferToRead = receivedBuffer;
         var bufferToDecrypt = decryptedBuffer;
-        var readMappedBuffer = this.readMappedBuffer;
+        var readTempBuffer = getReadTempBuffer();
 
         // if we have read mapped buffer it means that we are reading a really big packet now
-        if (readMappedBuffer != null) {
+        if (readTempBuffer != null) {
 
-            if (readMappedBuffer.remaining() < receivedBuffer.remaining()) {
-                reallocateMappedBuffer(readMappedBuffer.flip(), readMappedBuffer.capacity());
-                readMappedBuffer = this.readMappedBuffer;
+            if (readTempBuffer.remaining() < receivedBuffer.remaining()) {
+                reAllocTempBuffers(readTempBuffer.flip(), readTempBuffer.capacity());
+                readTempBuffer = this.readTempBuffer;
             }
 
-            LOGGER.debug(receivedBuffer, readMappedBuffer,
+            LOGGER.debug(receivedBuffer, readTempBuffer,
                 (buf, mappedBuf) -> "Put received buffer: " + buf + " to read mapped buffer: " + mappedBuf);
 
-            bufferToRead = BufferUtils.putToAndFlip(readMappedBuffer, receivedBuffer);
-            bufferToDecrypt = decryptedMappedBuffer;
+            bufferToRead = BufferUtils.putToAndFlip(readTempBuffer, receivedBuffer);
+            bufferToDecrypt = decryptedTempBuffer;
         }
         // if we have some pending data we need to append the received buffer to the pending buffer
         // and start to read pending buffer with result received data
@@ -125,19 +133,19 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                     (penBuf, buf) -> "Pending buffer: " + penBuf + " is too small to append received buffer: " +
                         buf + ", allocate mapped buffer for this");
 
-                allocMappedBuffers(pendingBuffer.flip(), pendingBuffer.capacity());
+                allocTempBuffers(pendingBuffer.flip(), pendingBuffer.capacity());
 
                 LOGGER.debug(pendingBuffer, buf -> "Clear pending buffer: " + buf);
 
                 pendingBuffer.clear();
 
-                readMappedBuffer = this.readMappedBuffer;
-                bufferToDecrypt = decryptedMappedBuffer;
+                readTempBuffer = this.readTempBuffer;
+                bufferToDecrypt = decryptedTempBuffer;
 
-                LOGGER.debug(receivedBuffer, readMappedBuffer,
+                LOGGER.debug(receivedBuffer, readTempBuffer,
                     (buf, mappedBuf) -> "Put received buffer: " + buf + " to mapped buffer: " + mappedBuf);
 
-                bufferToRead = BufferUtils.putToAndFlip(readMappedBuffer, receivedBuffer);
+                bufferToRead = BufferUtils.putToAndFlip(readTempBuffer, receivedBuffer);
 
             } else {
 
@@ -180,7 +188,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                         LOGGER.debug(pendingBuffer,
                             buf -> "Put pending data form received buffer to pending buffer: " + buf);
                     } else {
-                        allocMappedBuffers(receivedBuffer, packetLength);
+                        allocTempBuffers(receivedBuffer, packetLength);
                     }
                 }
                 // if we already read this pending buffer we need to compact it
@@ -190,32 +198,32 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                         pendingBuffer.compact();
                         LOGGER.debug(pendingBuffer, buf -> "Compact pending buffer: " + buf);
                     } else {
-                        allocMappedBuffers(pendingBuffer, packetLength);
+                        allocTempBuffers(pendingBuffer, packetLength);
                         LOGGER.debug(pendingBuffer, buf -> "Clear pending buffer: " + buf);
                         pendingBuffer.clear();
                     }
 
-                } else if (bufferToRead == readMappedBuffer) {
+                } else if (bufferToRead == readTempBuffer) {
 
                     // if not read data is less than pending buffer then we can switch to use the pending buffer
-                    if (Math.max(packetLength, readMappedBuffer.remaining()) <= pendingBuffer.capacity()) {
+                    if (Math.max(packetLength, readTempBuffer.remaining()) <= pendingBuffer.capacity()) {
 
                         pendingBuffer.clear()
-                            .put(readMappedBuffer);
+                            .put(readTempBuffer);
 
                         LOGGER.debug(pendingBuffer,
                             buf -> "Moved pending data from mapped buffer to pending buffer: " + buf);
 
-                        freeMappedBuffers();
+                        freeTempBuffers();
                     }
                     // if a new packet is bigger than current read mapped buffer
-                    else if (packetLength > readMappedBuffer.capacity()) {
-                        reallocateMappedBuffer(readMappedBuffer, packetLength);
+                    else if (packetLength > readTempBuffer.capacity()) {
+                        reAllocTempBuffers(readTempBuffer, packetLength);
                     }
                     // or just compact this current mapped buffer
                     else {
-                        readMappedBuffer.compact();
-                        LOGGER.debug(readMappedBuffer, buf -> "Compact mapped buffer: " + buf);
+                        readTempBuffer.compact();
+                        LOGGER.debug(readTempBuffer, buf -> "Compact mapped buffer: " + buf);
                     }
                 }
 
@@ -262,8 +270,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
         } else if (bufferToRead == pendingBuffer) {
             pendingBuffer.clear();
-        } else if (readMappedBuffer != null) {
-            freeMappedBuffers();
+        } else if (readTempBuffer != null) {
+            freeTempBuffers();
         }
 
         LOGGER.debug(channel, readPackets,
@@ -272,54 +280,57 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         return readPackets;
     }
 
-    protected void reallocateMappedBuffer(
-        @NotNull MappedByteBuffer readMappedBuffer,
+    protected void reAllocTempBuffers(
+        @NotNull ByteBuffer sourceBuffer,
         int packetLength
     ) {
 
-        LOGGER.debug(readMappedBuffer.capacity(), packetLength, (currentSize, newSize) ->
-            "Resize read mapped buffer from: " + currentSize + " to: " + newSize);
+        LOGGER.debug(sourceBuffer.capacity(), packetLength, (currentSize, newSize) ->
+            "Resize read temp buffer from: " + currentSize + " to: " + newSize);
 
-        //FIXME
-        var newReadMappedBuffer = BufferUtils.allocateRWMappedByteBuffer(packetLength + readBuffer.capacity());//bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
+        var newReadTempBuffer = bufferAllocator.takeBuffer(packetLength + readBuffer.capacity());
 
-        LOGGER.debug(readMappedBuffer, newReadMappedBuffer,
-            (old, buf) -> "Moved pending data from old mapped buffer: " + old + " to new mapped buffer: " + buf);
+        LOGGER.debug(sourceBuffer, newReadTempBuffer,
+            (old, buf) -> "Moved pending data from old temp buffer: " + old + " to new temp buffer: " + buf);
 
-        newReadMappedBuffer.put(readMappedBuffer);
+        newReadTempBuffer.put(sourceBuffer);
 
-        freeMappedBuffers();
+        freeTempBuffers();
 
-        this.readMappedBuffer = newReadMappedBuffer;
-        //FIXME
-        this.decryptedMappedBuffer = BufferUtils.allocateRWMappedByteBuffer(packetLength + readBuffer.capacity());//bufferAllocator.takeMappedBuffer(newReadMappedBuffer.capacity());
+        this.readTempBuffer = newReadTempBuffer;
+        this.decryptedTempBuffer = bufferAllocator.takeBuffer(newReadTempBuffer.capacity());
     }
 
-    protected void allocMappedBuffers(@NotNull ByteBuffer receivedBuffer, int packetLength) {
+    protected void allocTempBuffers(@NotNull ByteBuffer sourceBuffer, int packetLength) {
 
-        LOGGER.debug(packetLength, receivedBuffer.remaining(), (length, part) ->
-            "Request mapped buffers to store a part: " + part + " of big packet with length: " + length);
+        LOGGER.debug(packetLength, sourceBuffer.remaining(), (length, part) ->
+            "Request temp buffer to store a part: " + part + " of big packet with length: " + length);
 
-        //FIXME
-        var readMappedBuffer = BufferUtils.allocateRWMappedByteBuffer(packetLength + readBuffer.capacity());//bufferAllocator.takeMappedBuffer(packetLength + readBuffer.capacity());
+        var readTempBuffer = bufferAllocator.takeBuffer(packetLength + readBuffer.capacity());
 
-        LOGGER.debug(receivedBuffer, readMappedBuffer,
+        LOGGER.debug(sourceBuffer, readTempBuffer,
             (recBuf, buf) -> "Put the part of packet: " + recBuf + " to mapped buffer: " + buf);
 
-        readMappedBuffer.put(receivedBuffer);
+        readTempBuffer.put(sourceBuffer);
 
-        this.readMappedBuffer = readMappedBuffer;
-        //FIXME
-        this.decryptedMappedBuffer = BufferUtils.allocateRWMappedByteBuffer(packetLength + readBuffer.capacity());//bufferAllocator.takeMappedBuffer(readMappedBuffer.capacity());
+        this.readTempBuffer = readTempBuffer;
+        this.decryptedTempBuffer = bufferAllocator.takeBuffer(readTempBuffer.capacity());
     }
 
-    protected void freeMappedBuffers() {
+    protected void freeTempBuffers() {
 
-        bufferAllocator.putMappedByteBuffer(readMappedBuffer);
-        bufferAllocator.putMappedByteBuffer(decryptedMappedBuffer);
+        var readTempBuffer = getReadTempBuffer();
+        var decryptedTempBuffer = getDecryptedTempBuffer();
 
-        readMappedBuffer = null;
-        decryptedMappedBuffer = null;
+        if (readTempBuffer != null) {
+            setReadTempBuffer(null);
+            bufferAllocator.putBuffer(readTempBuffer);
+        }
+
+        if (decryptedTempBuffer != null) {
+            setDecryptedTempBuffer(null);
+            bufferAllocator.putBuffer(decryptedTempBuffer);
+        }
     }
 
     /**
@@ -407,14 +418,6 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             .putReadBuffer(readBuffer)
             .putPendingBuffer(pendingBuffer);
 
-        if (readMappedBuffer != null) {
-            bufferAllocator.putMappedByteBuffer(readMappedBuffer);
-            readMappedBuffer = null;
-        }
-
-        if (decryptedMappedBuffer != null) {
-            bufferAllocator.putMappedByteBuffer(decryptedMappedBuffer);
-            decryptedMappedBuffer = null;
-        }
+        freeTempBuffers();
     }
 }
