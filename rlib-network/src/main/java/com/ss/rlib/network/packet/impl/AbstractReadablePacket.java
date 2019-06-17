@@ -33,90 +33,101 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
     }
 
     /**
-     * Read this packet.
+     * Read packet's data from byte buffer.
      *
      * @param connection the network connection.
-     * @param buffer     the buffer with received.
+     * @param buffer     the buffer with received data.
      */
-    protected abstract void readImpl(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer);
+    protected void readImpl(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer) {
+    }
 
     /**
-     * Read 1 byte from this packet.
+     * Read 1 byte from buffer.
      *
-     * @param buffer the buffer for reading.
-     * @return 1 byte from this packet.
+     * @param buffer the buffer to read.
+     * @return 1 byte from the buffer.
      */
     protected int readByte(@NotNull ByteBuffer buffer) {
         return buffer.get();
     }
 
     /**
-     * Read the bytes array from this packet.
+     * Fill byte array with data from received buffer.
      *
-     * @param buffer the buffer for reading.
-     * @param array  the bytes array.
+     * @param buffer the buffer to read.
+     * @param array  the filled byte array.
      */
     protected void readBytes(@NotNull ByteBuffer buffer, @NotNull byte[] array) {
         buffer.get(array);
     }
 
     /**
-     * Read the bytes array from this packet.
+     * Fill byte array with data from received buffer.
      *
-     * @param buffer the buffer for reading.
-     * @param array  the bytes array.
-     * @param offset the offset for reading.
-     * @param length the length for reading.
+     * @param buffer the buffer to read.
+     * @param array  the byte array.
+     * @param offset the offset to fill the byte array.
+     * @param length the length to fill the byte array.
      */
     protected void readBytes(@NotNull ByteBuffer buffer, @NotNull byte[] array, int offset, int length) {
         buffer.get(array, offset, length);
     }
 
     /**
-     * Read 4 bytes from this packet.
+     * Read 4 bytes from buffer.
      *
-     * @param buffer the buffer for reading.
-     * @return 4 bytes from this packet.
+     * @param buffer the buffer to read.
+     * @return 4 bytes as <code>float</code> from the buffer.
      */
     protected float readFloat(@NotNull ByteBuffer buffer) {
         return buffer.getFloat();
     }
 
     /**
-     * Read 4 bytes from this packet.
+     * Read 8 bytes from buffer.
      *
-     * @param buffer the buffer for reading.
-     * @return 4 bytes from this packet.
+     * @param buffer the buffer to read.
+     * @return 4 bytes as <code>double</code> from the buffer.
+     */
+    protected double readDouble(@NotNull ByteBuffer buffer) {
+        return buffer.getDouble();
+    }
+
+    /**
+     * Read 4 bytes from buffer.
+     *
+     * @param buffer the buffer to read.
+     * @return 4 bytes as <code>int</code> from the buffer.
      */
     protected int readInt(@NotNull ByteBuffer buffer) {
         return buffer.getInt();
     }
 
     /**
-     * Read 8 bytes from this packet.
+     * Read 8 bytes from buffer.
      *
-     * @param buffer the buffer for reading.
-     * @return 8 bytes from this packet.
+     * @param buffer the buffer to read.
+     * @return 8 bytes as <code>long</code> from buffer.
      */
     protected long readLong(@NotNull ByteBuffer buffer) {
         return buffer.getLong();
     }
 
     /**
-     * Read 2 bytes from this packet.
+     * Read 2 bytes from buffer.
      *
-     * @param buffer the buffer for reading.
-     * @return 2 bytes from this packet.
+     * @param buffer the buffer to read.
+     * @return 2 bytes as <code>short</code> from buffer.
      */
     protected int readShort(@NotNull ByteBuffer buffer) {
         return buffer.getShort();
     }
 
     /**
-     * Read a string form this packet.
+     * Read a string from buffer.
      *
-     * @param buffer the buffer.
-     * @return the read string.
+     * @param buffer the buffer to read.
+     * @return the read string from the buffer.
      */
     protected @NotNull String readString(@NotNull ByteBuffer buffer) {
 

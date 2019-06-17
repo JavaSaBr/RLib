@@ -13,10 +13,10 @@ import java.nio.ByteBuffer;
 public interface ReadablePacket extends Packet {
 
     /**
-     * Read this packet.
+     * Read packet's data from byte buffer.
      *
      * @param connection the network connection.
-     * @param buffer     the buffer with received.
+     * @param buffer     the buffer with received data.
      * @param length     the data length.
      * @return true if reading was success.
      */

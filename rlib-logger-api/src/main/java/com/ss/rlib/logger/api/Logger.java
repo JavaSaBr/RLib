@@ -453,6 +453,23 @@ public interface Logger {
     }
 
     /**
+     * Print a warning debug message.
+     *
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     */
+    default <F, S> void warning(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull Logger.BiFactory<@NotNull F, @NotNull S> messageFactory
+    ) {
+        print(LoggerLevel.WARNING, first, second, messageFactory);
+    }
+
+    /**
      * Print the message.
      *
      * @param level   the level of the message.
