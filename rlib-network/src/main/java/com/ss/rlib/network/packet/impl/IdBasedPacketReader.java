@@ -11,13 +11,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.function.Consumer;
 
-public class PacketIdPacketReader<R extends IdBasedReadablePacket, C extends Connection<R, ?>> extends
+public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends Connection<R, ?>> extends
     AbstractPacketReader<R, C> {
 
     private final ReadablePacketRegistry<R> packetRegistry;
     private final int packetIdHeaderSize;
 
-    public PacketIdPacketReader(
+    public IdBasedPacketReader(
         @NotNull C connection,
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
@@ -43,6 +43,7 @@ public class PacketIdPacketReader<R extends IdBasedReadablePacket, C extends Con
 
     @Override
     protected @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int length) {
-        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize));
+        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize))
+            .newInstance();
     }
 }

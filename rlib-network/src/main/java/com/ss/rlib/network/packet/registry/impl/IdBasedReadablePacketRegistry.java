@@ -7,7 +7,6 @@ import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.packet.IdBasedReadablePacket;
-import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,7 +21,7 @@ import java.util.function.Supplier;
  *
  * @author JavaSaBr
  */
-public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket> implements ReadablePacketRegistry<R> {
+public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> implements ReadablePacketRegistry<R> {
 
     private static final Logger LOGGER = LoggerManager.getLogger(IdBasedReadablePacketRegistry.class);
 
@@ -53,6 +52,19 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket> impl
      */
     public @NotNull IdBasedReadablePacketRegistry<R> register(@NotNull Array<Class<? extends R>> classes) {
         return register(classes.array(), classes.size());
+    }
+
+    /**
+     * Register classes of readable packets.
+     *
+     * @param classes the classes array.
+     * @return the reference to this registry.
+     * @throws IllegalArgumentException if found a class without packet description annotation or
+     *                                  if found duplication by id.
+     */
+    @SafeVarargs
+    public final @NotNull IdBasedReadablePacketRegistry<R> register(@NotNull Class<? extends R>... classes) {
+        return register(classes, classes.length);
     }
 
     /**

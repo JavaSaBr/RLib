@@ -13,32 +13,19 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+/**
+ * @author JavaSaBr
+ */
 @RequiredArgsConstructor
 public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<?, W>> implements PacketWriter {
 
     private static final Logger LOGGER = LoggerManager.getLogger(DefaultPacketWriter.class);
-
-    private static final VarHandle WTB_CAS;
-    private static final VarHandle ETB_CAS;
-
-    static {
-        try {
-            WTB_CAS = MethodHandles.lookup()
-                .findVarHandle(DefaultPacketWriter.class, "writeTempBuffer", ByteBuffer.class);
-            ETB_CAS = MethodHandles.lookup()
-                .findVarHandle(DefaultPacketWriter.class, "encryptedTempBuffer", ByteBuffer.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private final CompletionHandler<Integer, W> writeHandler = new CompletionHandler<>() {
 
@@ -185,6 +172,25 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
                 break;
             case 4:
                 buffer.putInt(position, value);
+                break;
+            default:
+                throw new IllegalStateException("Wrong packet's header size: " + headerSize);
+        }
+
+        return buffer;
+    }
+
+    protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int value, int headerSize) {
+
+        switch (headerSize) {
+            case 1:
+                buffer.put((byte) value);
+                break;
+            case 2:
+                buffer.putShort((short) value);
+                break;
+            case 4:
+                buffer.putInt(value);
                 break;
             default:
                 throw new IllegalStateException("Wrong packet's header size: " + headerSize);

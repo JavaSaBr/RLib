@@ -3,7 +3,10 @@ package com.ss.rlib.network;
 import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.client.impl.DefaultClientNetwork;
 import com.ss.rlib.network.impl.DefaultBufferAllocator;
+import com.ss.rlib.network.impl.DefaultConnection;
 import com.ss.rlib.network.impl.StringDataConnection;
+import com.ss.rlib.network.packet.impl.DefaultReadablePacket;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.impl.DefaultServerNetwork;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +77,30 @@ public final class NetworkFactory {
     }
 
     /**
+     * Create id based packet default asynchronous client network.
+     *
+     * @param networkConfig   the network config.
+     * @param bufferAllocator the buffer allocator.
+     * @param packetRegistry  the readable packet registry.
+     * @return the server network.
+     */
+    public static @NotNull ClientNetwork<DefaultConnection> newDefaultClientNetwork(
+        @NotNull NetworkConfig networkConfig,
+        @NotNull BufferAllocator bufferAllocator,
+        @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry
+    ) {
+        return newClientNetwork(
+            networkConfig,
+            (network, channel) -> new DefaultConnection(network,
+                channel,
+                NetworkCryptor.NULL,
+                bufferAllocator,
+                packetRegistry
+            )
+        );
+    }
+
+    /**
      * Create string packet based asynchronous server network.
      *
      * @return the server network.
@@ -111,6 +138,30 @@ public final class NetworkFactory {
         return newServerNetwork(
             networkConfig,
             (network, channel) -> new StringDataConnection(network, channel, bufferAllocator)
+        );
+    }
+
+    /**
+     * Create id based packet default asynchronous server network.
+     *
+     * @param networkConfig   the network config.
+     * @param bufferAllocator the buffer allocator.
+     * @param packetRegistry  the readable packet registry.
+     * @return the server network.
+     */
+    public static @NotNull ServerNetwork<DefaultConnection> newDefaultServerNetwork(
+        @NotNull ServerNetworkConfig networkConfig,
+        @NotNull BufferAllocator bufferAllocator,
+        @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry
+    ) {
+        return newServerNetwork(
+            networkConfig,
+            (network, channel) -> new DefaultConnection(network,
+                channel,
+                NetworkCryptor.NULL,
+                bufferAllocator,
+                packetRegistry
+            )
         );
     }
 

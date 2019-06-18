@@ -11,7 +11,6 @@ import com.ss.rlib.network.*;
 import com.ss.rlib.network.packet.*;
 import com.ss.rlib.common.util.linkedlist.LinkedList;
 import com.ss.rlib.common.util.linkedlist.LinkedListFactory;
-import com.ss.rlib.network.packet.impl.DefaultPacketWriter;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,8 +40,6 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     protected final BufferAllocator bufferAllocator;
 
     protected final AsynchronousSocketChannel channel;
-    protected final PacketReader packetReader;
-    protected final PacketWriter packetWriter;
 
     protected final AtomicBoolean isWriting;
     protected final AtomicBoolean closed;
@@ -76,12 +73,12 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         this.network = network;
         this.isWriting = new AtomicBoolean(false);
         this.closed = new AtomicBoolean(false);
-        this.packetReader = createPacketReader();
-        this.packetWriter = createPacketWriter();
         this.subscribers = ArrayFactory.newCopyOnModifyArray(BiConsumer.class);
     }
 
-    protected abstract @NotNull PacketReader createPacketReader();
+    protected abstract @NotNull PacketReader getPacketReader();
+
+    protected abstract @NotNull PacketWriter getPacketWriter();
 
     protected void handleReadPacket(@NotNull R packet) {
         LOGGER.debug(channel, packet, (ch, pck) -> "Handle read packet: " + pck + " from: " + getSocketAddress(ch));
@@ -91,7 +88,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     @Override
     public void onReceive(@NotNull BiConsumer<? super Connection<R, W>, ? super R> consumer) {
         subscribers.add(consumer);
-        packetReader.startRead();
+        getPacketReader().startRead();
     }
 
     @Override
@@ -126,17 +123,6 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         sink.onDispose(() -> subscribers.remove(listener));
     }
 
-    protected @NotNull PacketWriter createPacketWriter() {
-        return new DefaultPacketWriter<W, Connection<R, W>>(
-            this,
-            channel,
-            bufferAllocator,
-            this::updateLastActivity,
-            this::nextPacketToWrite,
-            packetLengthHeaderSize
-        );
-    }
-
     protected @Nullable W nextPacketToWrite() {
         long stamp = lock.writeLock();
         try {
@@ -162,8 +148,8 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
         clearWaitPackets();
 
-        packetReader.close();
-        packetWriter.close();
+        getPacketReader().close();
+        getPacketWriter().close();
     }
 
     @Override
@@ -197,7 +183,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
             lock.unlockWrite(stamp);
         }
 
-        packetWriter.writeNextPacket();
+        getPacketWriter().writeNextPacket();
     }
 
     /**

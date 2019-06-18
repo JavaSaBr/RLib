@@ -5,6 +5,7 @@ import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of a class loader of compiled classes.
@@ -28,19 +29,20 @@ public class CompileClassLoader extends ClassLoader {
      *
      * @param byteCode the byte code
      */
-    public void addByteCode(@NotNull final ByteCode byteCode) {
+    public synchronized void addByteCode(@NotNull ByteCode byteCode) {
         this.byteCode.add(byteCode);
     }
 
     @Override
-    protected Class<?> findClass(@NotNull final String name) {
+    protected synchronized @Nullable Class<?> findClass(@NotNull String name) {
 
-        synchronized (byteCode) {
-            if (byteCode.isEmpty()) return null;
-            for (final ByteCode byteCode : this.byteCode) {
-                final byte[] content = byteCode.getByteCode();
-                return Utils.get(() -> defineClass(name, content, 0, content.length));
-            }
+        if (byteCode.isEmpty()) {
+            return null;
+        }
+
+        for (var byteCode : this.byteCode) {
+            var content = byteCode.getByteCode();
+            return Utils.uncheckedGet(() -> defineClass(name, content, 0, content.length));
         }
 
         return null;

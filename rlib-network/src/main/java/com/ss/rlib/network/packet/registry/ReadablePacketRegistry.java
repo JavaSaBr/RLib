@@ -14,14 +14,14 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author JavaSaBr
  */
-public interface ReadablePacketRegistry<R extends IdBasedReadablePacket> {
+public interface ReadablePacketRegistry<R extends IdBasedReadablePacket<R>> {
 
     /**
      * Create a new empty readable packet registry.
      *
      * @return the new packet registry.
      */
-    static @NotNull ReadablePacketRegistry<IdBasedReadablePacket> empty() {
+    static @NotNull ReadablePacketRegistry<?> empty() {
         return new IdBasedReadablePacketRegistry<>(IdBasedReadablePacket.class);
     }
 
@@ -31,7 +31,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket> {
      * @param type the packet's type.
      * @return the new packet registry.
      */
-    static <T extends IdBasedReadablePacket> @NotNull ReadablePacketRegistry<T> empty(@NotNull Class<T> type) {
+    static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> empty(@NotNull Class<T> type) {
         return new IdBasedReadablePacketRegistry<>(type);
     }
 
@@ -40,7 +40,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket> {
      *
      * @return the new packet registry.
      */
-    static @NotNull ReadablePacketRegistry<IdBasedReadablePacket> newDefault() {
+    static @NotNull ReadablePacketRegistry<?> newDefault() {
 
         var scanner = ClassPathScannerFactory.newDefaultScanner();
         scanner.setUseSystemClasspath(true);
@@ -55,7 +55,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket> {
      * @param mainClass the main class of application.
      * @return the new packet registry.
      */
-    static @NotNull ReadablePacketRegistry<IdBasedReadablePacket> newDefault(@NotNull Class<?> mainClass) {
+    static @NotNull ReadablePacketRegistry<?> newDefault(@NotNull Class<?> mainClass) {
 
         var scanner = ClassPathScannerFactory.newManifestScanner(mainClass);
         scanner.setUseSystemClasspath(false);
@@ -70,7 +70,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket> {
      * @param scanner the classpath scanner.
      * @return the new packet registry.
      */
-    static @NotNull ReadablePacketRegistry<IdBasedReadablePacket> of(@NotNull ClassPathScanner scanner) {
+    static @NotNull ReadablePacketRegistry<?> of(@NotNull ClassPathScanner scanner) {
 
         var result = scanner.findImplements(IdBasedReadablePacket.class)
             .stream()
@@ -91,7 +91,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket> {
      * @return the new packet registry.
      */
     @SafeVarargs
-    static <T extends IdBasedReadablePacket> @NotNull ReadablePacketRegistry<T> of(
+    static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> of(
         @NotNull Class<T> type,
         @NotNull Class<? extends T>... classes
     ) {
@@ -107,7 +107,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket> {
      * @param classes the classes array.
      * @return the new packet registry.
      */
-    static <T extends IdBasedReadablePacket> @NotNull ReadablePacketRegistry<T> of(
+    static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> of(
         @NotNull Class<T> type,
         @NotNull Array<Class<? extends T>> classes
     ) {
