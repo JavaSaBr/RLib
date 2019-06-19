@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 
 /**
- * The list of test to test working with classpath scanner API.
- *
  * @author JavaSaBr
  */
 public class ClasspathScannerTests {
@@ -23,10 +21,10 @@ public class ClasspathScannerTests {
 
         var implementations = scanner.findImplements(Collection.class);
 
-        Assertions.assertTrue(!implementations.isEmpty());
+        Assertions.assertFalse(implementations.isEmpty());
 
         var inherited = scanner.findInherited(AbstractArray.class);
 
-        Assertions.assertTrue(!inherited.isEmpty());
+        Assertions.assertFalse(inherited.isEmpty());
     }
 }

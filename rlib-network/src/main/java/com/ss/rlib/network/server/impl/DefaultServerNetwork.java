@@ -1,21 +1,32 @@
 package com.ss.rlib.network.server.impl;
 
+import static com.ss.rlib.common.util.Utils.uncheckedGet;
+import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.concurrent.GroupThreadFactory;
-import com.ss.rlib.network.NetworkConfig;
-import com.ss.rlib.network.impl.AbstractAsyncNetwork;
-import com.ss.rlib.network.packet.ReadablePacketRegistry;
-import com.ss.rlib.network.server.AcceptHandler;
+import com.ss.rlib.common.util.ClassUtils;
+import com.ss.rlib.common.util.Utils;
+import com.ss.rlib.common.util.array.Array;
+import com.ss.rlib.common.util.array.ArrayFactory;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
+import com.ss.rlib.network.Connection;
+import com.ss.rlib.network.Network;
+import com.ss.rlib.network.ServerNetworkConfig;
+import com.ss.rlib.network.impl.AbstractNetwork;
 import com.ss.rlib.network.server.ServerNetwork;
-import com.ss.rlib.network.server.client.Client;
+import com.ss.rlib.network.util.NetworkUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 
 import java.io.IOException;
-import java.net.SocketAddress;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.nio.channels.AsynchronousServerSocketChannel;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
+import java.net.InetSocketAddress;
+import java.nio.channels.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
@@ -23,84 +34,134 @@ import java.util.function.Consumer;
  *
  * @author JavaSaBr
  */
-public final class DefaultServerNetwork extends AbstractAsyncNetwork implements ServerNetwork {
+public final class DefaultServerNetwork<C extends Connection<?, ?>> extends AbstractNetwork<C> implements
+    ServerNetwork<C> {
 
-    /**
-     * The asynchronous channel group.
-     */
-    @NotNull
-    private final AsynchronousChannelGroup group;
+    private static final Logger LOGGER = LoggerManager.getLogger(DefaultServerNetwork.class);
 
-    /**
-     * The asynchronous server socket channel.
-     */
-    @NotNull
-    private final AsynchronousServerSocketChannel channel;
+    private final CompletionHandler<AsynchronousSocketChannel, DefaultServerNetwork<C>> acceptHandler = new CompletionHandler<>() {
 
-    /**
-     * The accept handler.
-     */
-    @NotNull
-    private final AcceptHandler acceptHandler;
+        @Override
+        public void completed(@NotNull AsynchronousSocketChannel channel, @NotNull DefaultServerNetwork<C> network) {
+            LOGGER.debug(channel, ch -> "Accepted new connection: " + getSocketAddress(ch));
+            network.onAccept(network.channelToConnection.apply(DefaultServerNetwork.this, channel));
+            network.acceptNext();
+        }
 
-    /**
-     * The destroyed handler.
-     */
-    @Nullable
-    private Consumer<@NotNull Client> destroyedHandler;
+        @Override
+        public void failed(@NotNull Throwable exc, @NotNull DefaultServerNetwork<C> network) {
+
+            LOGGER.error("Got exception during accepting new connection:");
+            LOGGER.error(exc);
+
+            if (channel.isOpen()) {
+                network.acceptNext();
+            }
+        }
+    };
+
+    protected final AsynchronousChannelGroup group;
+    protected final AsynchronousServerSocketChannel channel;
+    protected final Array<Consumer<? super C>> subscribers;
 
     public DefaultServerNetwork(
-        @NotNull NetworkConfig config,
-        @NotNull ReadablePacketRegistry packetRegistry,
-        @NotNull AcceptHandler acceptHandler
-    ) throws IOException {
-
-        super(config, packetRegistry);
-
-        this.group = AsynchronousChannelGroup.withFixedThreadPool(config.getGroupSize(),
-                new GroupThreadFactory(config.getGroupName(), config.getThreadClass(), config.getThreadPriority()));
-
-        this.channel = AsynchronousServerSocketChannel.open(group);
-        this.acceptHandler = acceptHandler;
-    }
-
-    @Override
-    public <A> void accept(
-        @Nullable A attachment,
-        @NotNull CompletionHandler<AsynchronousSocketChannel, ? super A> handler
+        @NotNull ServerNetworkConfig config,
+        @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection
     ) {
-        channel.accept(attachment, handler);
+
+        super(config, channelToConnection);
+
+        var threadFactory = new GroupThreadFactory(
+            config.getGroupName(),
+            config.getThreadConstructor(),
+            config.getThreadPriority()
+        );
+
+        var executor = config.getGroupSize() < config.getGroupMaxSize() ? new ThreadPoolExecutor(
+            config.getGroupSize(),
+            config.getGroupMaxSize(),
+            120,
+            TimeUnit.SECONDS,
+            new SynchronousQueue<>(),
+            threadFactory,
+            new ThreadPoolExecutor.CallerRunsPolicy()
+        ) : Executors.newFixedThreadPool(config.getGroupSize(), threadFactory);
+
+        LOGGER.info("Executor configuration:");
+        LOGGER.info(config, conf -> "Min threads: " + conf.getGroupSize());
+        LOGGER.info(config, conf -> "Max threads: " + conf.getGroupMaxSize());
+
+        this.group = uncheckedGet(executor, AsynchronousChannelGroup::withThreadPool);
+        this.channel = uncheckedGet(group, AsynchronousServerSocketChannel::open);
+        this.subscribers = ArrayFactory.newCopyOnModifyArray(Consumer.class);
     }
 
     @Override
-    public void bind(@NotNull SocketAddress address) throws IOException {
-        channel.bind(address);
-        channel.accept(this, acceptHandler);
+    public @NotNull InetSocketAddress start() {
+
+        InetSocketAddress address = null;
+
+        while (address == null) {
+
+            address = new InetSocketAddress(NetworkUtils.getAvailablePort(1500));
+            try {
+                channel.bind(address);
+            } catch (IOException e) {
+                address = null;
+            }
+        }
+
+        LOGGER.info(address, adr -> "Started server on address: " + adr);
+
+        if (!subscribers.isEmpty()) {
+            acceptNext();
+        }
+
+        return address;
+    }
+
+    @Override
+    public <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress) {
+        Utils.unchecked(channel, serverAddress, AsynchronousServerSocketChannel::bind);
+        LOGGER.info(serverAddress, adr -> "Started server on address: " + adr);
+        return ClassUtils.unsafeCast(this);
+    }
+
+    protected void acceptNext() {
+        if (channel.isOpen()) {
+            try {
+                channel.accept(this, acceptHandler);
+            } catch (AcceptPendingException ignored) {
+            }
+        } else {
+            LOGGER.warning("Cannot accept a next connection because server channel is already closed.");
+        }
+    }
+
+    protected void onAccept(@NotNull C connection) {
+        subscribers.forEach(connection, Consumer::accept);
+    }
+
+    @Override
+    public void onAccept(@NotNull Consumer<? super C> consumer) {
+        subscribers.add(consumer);
+        acceptNext();
+    }
+
+    @Override
+    public @NotNull Flux<C> accepted() {
+        return Flux.create(this::registerFluxOnAccepted);
+    }
+
+    protected void registerFluxOnAccepted(@NotNull FluxSink<C> sink) {
+        Consumer<? super C> listener = sink::next;
+        onAccept(listener);
+        sink.onDispose(() -> subscribers.remove(listener));
     }
 
     @Override
     public void shutdown() {
+        Utils.unchecked(channel, AsynchronousChannel::close);
         group.shutdown();
-    }
-
-    @Override
-    public void setDestroyedHandler(@Nullable Consumer<@NotNull Client> destroyedHandler) {
-        this.destroyedHandler = destroyedHandler;
-    }
-
-    @Override
-    public void onDestroyed(@NotNull Client client) {
-        if (destroyedHandler != null) {
-            destroyedHandler.accept(client);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "DefaultServerNetwork{" +
-                "group=" + group +
-                ", channel=" + channel +
-                ", acceptHandler=" + acceptHandler +
-                "} " + super.toString();
     }
 }

@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util.array;
 
+import com.ss.rlib.common.function.ObjectIntPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -269,7 +270,7 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Execute the function in write lock of this array.
+     * Execute a function for this array in write lock block.
      *
      * @param <F>      the argument's type.
      * @param argument the argument.
@@ -277,8 +278,8 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @return this array.
      */
     default <F> ConcurrentArray<E> runInWriteLock(
-            @NotNull F argument,
-            @NotNull BiConsumer<@NotNull ConcurrentArray<E>, @NotNull F> function
+        @NotNull F argument,
+        @NotNull BiConsumer<@NotNull ConcurrentArray<E>, @NotNull F> function
     ) {
 
         long stamp = writeLock();
@@ -292,7 +293,7 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Search an element using the condition in the {@link #readLock()} block.
+     * Search an element using the condition under a {@link #readLock()} block.
      *
      * @param <T>       the argument's type.
      * @param argument  the argument.
@@ -300,6 +301,37 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @return the found element or null.
      */
     default <T> @Nullable E anyMatchInReadLock(@Nullable T argument, @NotNull BiPredicate<E, T> predicate) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        long stamp = readLock();
+        try {
+
+            for (E element : array()) {
+                if (element == null) {
+                    break;
+                } else if (predicate.test(element, argument)) {
+                    return element;
+                }
+            }
+
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return null;
+    }
+
+    /**
+     * Search an element using the condition under a {@link #readLock()} block.
+     *
+     * @param argument  the argument.
+     * @param predicate the condition.
+     * @return the found element or null.
+     */
+    default @Nullable E anyMatchInReadLock(int argument, @NotNull ObjectIntPredicate<@NotNull E> predicate) {
 
         if (isEmpty()) {
             return null;

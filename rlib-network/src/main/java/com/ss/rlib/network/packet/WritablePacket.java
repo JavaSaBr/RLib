@@ -1,6 +1,5 @@
 package com.ss.rlib.network.packet;
 
-import com.ss.rlib.network.annotation.PacketDescription;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -16,8 +15,18 @@ public interface WritablePacket extends Packet {
      * Write this packet to the buffer.
      *
      * @param buffer the buffer.
+     * @return true if writing was successful.
      */
-    void write(@NotNull ByteBuffer buffer);
+    boolean write(@NotNull ByteBuffer buffer);
+
+    /**
+     * Return an expected data length of this packet or -1.
+     *
+     * @return expected data length of this packet or -1.
+     */
+    default int getExpectedLength() {
+        return -1;
+    }
 
     /**
      * Write 1 byte to the buffer.
@@ -27,26 +36,6 @@ public interface WritablePacket extends Packet {
      */
     default void writeByte(@NotNull ByteBuffer buffer, int value) {
         buffer.put((byte) value);
-    }
-
-    /**
-     * Write packet type id of this packet to the buffer.
-     *
-     * @param buffer the buffer.
-     */
-    default void writePacketId(@NotNull ByteBuffer buffer) {
-        writeShort(buffer, getPacketId());
-    }
-
-    /**
-     * Get the packet id of this packet.
-     *
-     * @return the packet id.
-     */
-    default int getPacketId() {
-        return getClass()
-            .getAnnotation(PacketDescription.class)
-            .id();
     }
 
     /**
@@ -80,16 +69,6 @@ public interface WritablePacket extends Packet {
     }
 
     /**
-     * Write size of the packet data to the buffer.
-     *
-     * @param buffer     the buffer.
-     * @param packetSize the result packet size.
-     */
-    default void writePacketSize(@NotNull ByteBuffer buffer, int packetSize) {
-        buffer.putShort(0, (short) packetSize);
-    }
-
-    /**
      * Write 4 bytes to the buffer.
      *
      * @param buffer the buffer.
@@ -107,15 +86,6 @@ public interface WritablePacket extends Packet {
      */
     default void writeLong(@NotNull ByteBuffer buffer, long value) {
         buffer.putLong(value);
-    }
-
-    /**
-     * Prepare the start position in the buffer to write data from this packet.
-     *
-     * @param buffer the buffer
-     */
-    default void prepareWritePosition(@NotNull ByteBuffer buffer) {
-        buffer.position(2);
     }
 
     /**
@@ -150,11 +120,5 @@ public interface WritablePacket extends Packet {
      */
     default void writeBuffer(@NotNull ByteBuffer buffer, @NotNull ByteBuffer data) {
         buffer.put(data.array(), data.position(), data.limit());
-    }
-
-    /**
-     * Notify this packet that it was added to queue to send.
-     */
-    default void notifyAddedToSend() {
     }
 }

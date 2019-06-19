@@ -74,11 +74,10 @@ public class ControlDragHandler {
      */
     protected void processMove(@NotNull MouseEvent event) {
 
-        LOGGER.debug(this, event,
-                ev -> "processMove -> " + ev);
+        LOGGER.debug(event, ev -> "processMove -> " + ev);
 
         if (LOGGER.isEnabled(LoggerLevel.DEBUG)) {
-            LOGGER.debug(this, "processMove -> dragOffset -> " + offsetX + "," + offsetY);
+            LOGGER.debug("processMove -> dragOffset -> " + offsetX + "," + offsetY);
         }
 
         var dragPosition = draggableNode.getParent()
@@ -88,14 +87,14 @@ public class ControlDragHandler {
         var dragY = dragPosition.getY() - offsetY;
 
         if (LOGGER.isEnabled(LoggerLevel.DEBUG)) {
-            LOGGER.debug(this, "processMove -> dragXY -> " + (dragX - offsetX) + "-" + (dragY - offsetY));
+            LOGGER.debug("processMove -> dragXY -> " + (dragX - offsetX) + "-" + (dragY - offsetY));
         }
 
         var newXPos = startX + dragX;
         var newYPos = startY + dragY;
 
         if (LOGGER.isEnabled(LoggerLevel.DEBUG)) {
-            LOGGER.debug(this, "processMove -> newXY -> " + newXPos + ", " + newYPos);
+            LOGGER.debug("processMove -> newXY -> " + newXPos + ", " + newYPos);
         }
 
         draggableNode.setTranslateX(newXPos);
@@ -109,19 +108,19 @@ public class ControlDragHandler {
      */
     protected void processStartDrag(@NotNull MouseEvent event) {
 
-        LOGGER.debug(this, event,
+        LOGGER.debug(event,
                 ev -> "processStartDrag -> " + ev);
 
         startX = draggableNode.getTranslateX();
         startY = draggableNode.getTranslateY();
 
-        LOGGER.debug(this, this, handler ->
+        LOGGER.debug(this, handler ->
                 "processStartDrag -> initXY -> " + handler.startX + ", " + handler.startY);
 
         var offset = draggableNode.getParent()
                 .sceneToLocal(draggableControl.localToScene(event.getX(), event.getY()));
 
-        LOGGER.debug(this, offset,
+        LOGGER.debug(offset,
                 point -> "processStartDrag -> dragOffset -> " + point);
 
         offsetX = offset.getX();
@@ -140,7 +139,6 @@ public class ControlDragHandler {
         offsetX = 0;
         offsetY = 0;
 
-        LOGGER.debug(this, event,
-                ev -> "processStopDrag -> " + ev);
+        LOGGER.debug(event, ev -> "processStopDrag -> " + ev);
     }
 }

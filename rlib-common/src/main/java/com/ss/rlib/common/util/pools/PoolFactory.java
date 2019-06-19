@@ -78,10 +78,21 @@ public final class PoolFactory {
      *
      * @param type the object's type.
      * @param <T>  the object's type.
-     * @return the reusable pool.
+     * @return the pool.
      */
     public static <T> @NotNull Pool<T> newConcurrentAtomicARSWLockPool(@NotNull Class<? super T> type) {
         return new ConcurrentAtomicARSWLockPool<>(type);
+    }
+
+    /**
+     * Create a pool based on {@link java.util.concurrent.locks.StampedLock}.
+     *
+     * @param type the object's type.
+     * @param <T>  the object's type.
+     * @return the pool.
+     */
+    public static <T> @NotNull Pool<T> newConcurrentStampedLockPool(@NotNull Class<? super T> type) {
+        return new ConcurrentStampedLockPool<>(type);
     }
 
     /**

@@ -22,24 +22,13 @@ public class StringUtils {
     public static final String EMPTY = "";
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
-            "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+" +
-                "(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
+            "^[_\\p{L}0-9-]+(\\.[_\\p{L}0-9-]+)*@[\\p{L}0-9]+" +
+                "(\\.[\\p{L}0-9]+)*(\\.[\\p{L}]{2,})$",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
     );
 
     private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD =
             ThreadLocal.withInitial(StringUtils::getHashMD5);
-
-    /**
-     * Return an empty string if the received string is null.
-     *
-     * @param string the string.
-     * @return an empty string if the received string is null.
-     */
-    @Deprecated
-    public static @NotNull String toNotNull(@Nullable String string) {
-        return emptyIfNull(string);
-    }
 
     /**
      * Return an empty string if the received string is null.
@@ -63,14 +52,39 @@ public class StringUtils {
     }
 
     /**
+     * @see #isValidEmail(String)
+     */
+    @Deprecated
+    public static boolean checkEmail(@NotNull String email) {
+        var matcher = EMAIL_PATTERN.matcher(email);
+        return matcher.matches();
+    }
+
+    /**
      * Check a string email.
      *
      * @param email the string email.
      * @return true if the email is correct.
      */
-    public static boolean checkEmail(@NotNull String email) {
-        Matcher matcher = EMAIL_PATTERN.matcher(email);
+    public static boolean isValidEmail(@NotNull String email) {
+        var matcher = EMAIL_PATTERN.matcher(email);
         return matcher.matches();
+    }
+
+    /**
+     * Simple check of the string value about does it look like an email.
+     *
+     * @param value the string value.
+     * @return true if it looks like an email.
+     */
+    public static boolean isEmail(@NotNull String value) {
+
+        var lastDotIndex = value.lastIndexOf('.');
+        var lastSignIndex = value.lastIndexOf('@');
+
+        return lastSignIndex > 1 &&
+            lastDotIndex > lastSignIndex &&
+            lastDotIndex < value.length() - 1;
     }
 
     /**
@@ -164,18 +178,32 @@ public class StringUtils {
     }
 
     /**
-     * Generate a random string.
+     * Generate a random string using Aa-Zz characters.
      *
-     * @param length the length.
+     * @param length the length of result string.
      * @return the new string.
      */
     public static @NotNull String generate(int length) {
+        return generate(length, length);
+    }
 
-        final ThreadLocalRandom localRandom = ThreadLocalRandom.current();
-        final char[] array = new char[length];
+    /**
+     * Generate a random string using Aa-Zz characters.
+     *
+     * @param minLength the min length of result string.
+     * @param maxLength the max length of result string.
+     * @return the new string.
+     */
+    public static @NotNull String generate(int minLength, int maxLength) {
+
+        var localRandom = ThreadLocalRandom.current();
+        var length = minLength == maxLength ? maxLength : localRandom.nextInt(minLength, maxLength);
+        var array = new char[length];
+        var min = Math.min('a', 'A');
+        var max = Math.max('z', 'z');
 
         for (int i = 0; i < length; i++) {
-            array[i] = (char) localRandom.nextInt('a', 'z');
+            array[i] = (char) localRandom.nextInt(min, max);
         }
 
         return String.valueOf(array);

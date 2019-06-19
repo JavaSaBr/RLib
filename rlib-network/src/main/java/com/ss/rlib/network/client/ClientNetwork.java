@@ -1,53 +1,42 @@
 package com.ss.rlib.network.client;
 
-import com.ss.rlib.network.AsyncNetwork;
-import com.ss.rlib.network.client.server.Server;
+import com.ss.rlib.network.Connection;
+import com.ss.rlib.network.Network;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.CompletableFuture;
 
 /**
- * The interface to implement a client network.
+ * Interface to implement a client network.
  *
  * @author JavaSaBr
  */
-public interface ClientNetwork extends AsyncNetwork {
-
-    /**
-     * Async connect to a server by the address.
-     *
-     * @param serverAddress the sever address.
-     */
-    void asyncConnect(@NotNull InetSocketAddress serverAddress);
+public interface ClientNetwork<C extends Connection<?, ?>> extends Network<C> {
 
     /**
      * Connect to a server by the address.
      *
      * @param serverAddress the sever address.
-     * @return the connected server.
+     * @return the future with result connection.
      */
-    @NotNull Server connect(@NotNull InetSocketAddress serverAddress);
+    @NotNull CompletableFuture<C> connect(@NotNull InetSocketAddress serverAddress);
 
     /**
-     * Get the network channel to a server.
+     * Connect to a server by the address.
      *
-     * @return the network channel to a server.
+     * @param serverAddress the sever address.
+     * @return the future with result connection.
      */
-    @Nullable AsynchronousSocketChannel getChannel();
+    @NotNull Mono<C> connected(@NotNull InetSocketAddress serverAddress);
+
 
     /**
-     * Get the current server.
+     * Get a current connection to a server or null.
      *
-     * @return the current server or null.
+     * @return the current connection or null.
      */
-    @Nullable Server getCurrentServer();
-
-    /**
-     * Set the current server.
-     *
-     * @param server the current server.
-     */
-    void setCurrentServer(@Nullable Server server);
+    @Nullable C getCurrentConnection();
 }

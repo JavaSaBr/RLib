@@ -1,9 +1,7 @@
 package com.ss.rlib.network.packet.impl;
 
-import com.ss.rlib.network.annotation.PacketDescription;
-import org.jetbrains.annotations.NotNull;
 import com.ss.rlib.network.packet.WritablePacket;
-import com.ss.rlib.common.util.Utils;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
@@ -14,24 +12,14 @@ import java.nio.ByteBuffer;
  */
 public abstract class AbstractWritablePacket extends AbstractPacket implements WritablePacket {
 
-    /**
-     * The packet id.
-     */
-    private int packetId;
-
-    protected AbstractWritablePacket() {
-        this.packetId = getClass()
-            .getAnnotation(PacketDescription.class)
-            .id();
-    }
-
     @Override
-    public void write(@NotNull ByteBuffer buffer) {
+    public boolean write(@NotNull ByteBuffer buffer) {
         try {
             writeImpl(buffer);
+            return true;
         } catch (Exception e) {
-            LOGGER.warning(this, e);
-            LOGGER.warning(this, "Buffer " + buffer + "\n" + Utils.hexdump(buffer.array(), buffer.position()));
+            handleException(buffer, e);
+            return false;
         }
     }
 
@@ -41,11 +29,5 @@ public abstract class AbstractWritablePacket extends AbstractPacket implements W
      * @param buffer the buffer
      */
     protected void writeImpl(@NotNull ByteBuffer buffer) {
-        writePacketId(buffer);
-    }
-
-    @Override
-    public int getPacketId() {
-        return packetId;
     }
 }

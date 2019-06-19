@@ -92,4 +92,30 @@ class StringUtilsTest {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
             StringUtils.replace("string"));
     }
+
+    @Test
+    void shouldVerifyEmails() {
+
+        Assertions.assertTrue(StringUtils.isValidEmail("test@test.com"));
+        Assertions.assertTrue(StringUtils.isValidEmail("тест@test.com"));
+        Assertions.assertTrue(StringUtils.isValidEmail("тест@тест.рф"));
+        Assertions.assertTrue(StringUtils.isValidEmail("my-name.test@test.com"));
+
+        Assertions.assertFalse(StringUtils.isValidEmail("@test.com"));
+        Assertions.assertFalse(StringUtils.isValidEmail("test@.com"));
+        Assertions.assertFalse(StringUtils.isValidEmail("%$%&$&%@$%&&%$&.com"));
+    }
+
+    @Test
+    void shouldDetectEmails() {
+
+        Assertions.assertTrue(StringUtils.isEmail("test@test.com"));
+        Assertions.assertTrue(StringUtils.isEmail("test.test@test.com"));
+        Assertions.assertTrue(StringUtils.isEmail("test.test@test.test.com"));
+
+        Assertions.assertFalse(StringUtils.isEmail("@test.com"));
+        Assertions.assertFalse(StringUtils.isEmail("test-test.com"));
+        Assertions.assertFalse(StringUtils.isEmail("test@test"));
+        Assertions.assertFalse(StringUtils.isEmail("test@test."));
+    }
 }

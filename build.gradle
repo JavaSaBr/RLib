@@ -4,11 +4,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.19'
+        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.21'
     }
 }
 
-rootProject.version = '9.1.0'
+rootProject.version = '9.2.0'
 group = 'com.spaceshift'
 
 allprojects {
@@ -26,12 +26,13 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_11
 
     ext {
+        projectreactorVersion = '3.2.9.RELEASE'
         sl4jVersion = '1.7.26'
         javaxMailVersion = "1.5.0-b01"
         testcontainersVersion = '1.11.1'
-        lombokVersion = '1.18.4'
-        junitJupiterVersion = "5.2.0"
-        jetbrainsAnnotation = '16.0.3'
+        lombokVersion = '1.18.6'
+        junitJupiterVersion = "5.4.2"
+        jetbrainsAnnotation = '17.0.0'
         bintrayVersion = version
     }
 
@@ -41,24 +42,18 @@ allprojects {
 
     test {
         useJUnitPlatform()
-
-        testLogging {
-            events "passed", "skipped", "failed"
-        }
-
-        reports {
-            html.enabled = true
-        }
     }
 
     dependencies {
         compileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
+        compileOnly "org.projectlombok:lombok:$lombokVersion"
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    
         testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
         testCompileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
-        compileOnly "org.projectlombok:lombok:$lombokVersion"
-        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+        testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
     }
 
     /*compileJava {
@@ -144,6 +139,6 @@ allprojects {
 }
 
 wrapper {
-    gradleVersion = '5.3.1'
+    gradleVersion = '5.4.1'
     distributionType = Wrapper.DistributionType.ALL
 }

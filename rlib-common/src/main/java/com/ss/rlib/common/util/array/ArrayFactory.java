@@ -15,18 +15,15 @@ public class ArrayFactory {
     public static final Array<?> EMPTY_ARRAY = newReadOnlyArray(ArrayUtils.EMPTY_OBJECT_ARRAY);
 
     /**
-     * Create the new array.
+     * Wrap arguments as an array collection..
      *
-     * @param <E>  the type parameter
-     * @param args the elements for the new array.
-     * @return the new array.
+     * @param <E>  the argument's type.
+     * @param args the elements to be wrapped.
+     * @return the new array collection with the wrapped arguments.
      */
     @SafeVarargs
     public static <E> Array<E> asArray(@NotNull E... args) {
-        Class<?> type = args.getClass().getComponentType();
-        Array<E> array = new FastArray<>(unsafeCast(type), args.length);
-        array.addAll(args);
-        return array;
+        return new FastArray<>(args);
     }
 
     /**

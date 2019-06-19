@@ -2,10 +2,10 @@ package com.ss.rlib.network.packet.impl;
 
 import static com.ss.rlib.common.util.ObjectUtils.notNull;
 import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
-import com.ss.rlib.network.packet.ReusableWritablePacket;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.pools.Pool;
 import com.ss.rlib.common.util.pools.PoolFactory;
+import com.ss.rlib.network.packet.ReusableWritablePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,11 +40,11 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     }
 
     @Override
-    public void write(@NotNull ByteBuffer buffer) {
+    public boolean write(@NotNull ByteBuffer buffer) {
 
         if (counter.get() < 1) {
             LOGGER.warning(this, "write finished packet " + this + " on thread " + Thread.currentThread().getName());
-            return;
+            return false;
         }
 
         notifyStartedWriting();
@@ -53,6 +53,8 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
         } finally {
             notifyFinishedWriting();
         }
+
+        return true;
     }
 
     /**
@@ -117,8 +119,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
      */
     protected @NotNull Pool<ReusableWritablePacket> getThreadLocalPool() {
         Class<ReusableWritablePacket> packetClass = ClassUtils.unsafeNNCast(getClass());
-        return LOCAL_POOLS.get().computeIfAbsent(packetClass,
-            PoolFactory::newConcurrentStampedLockReusablePool);
+        return LOCAL_POOLS.get().computeIfAbsent(packetClass, PoolFactory::newConcurrentStampedLockReusablePool);
     }
 
     @Override

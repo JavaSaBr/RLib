@@ -8,6 +8,7 @@ import com.ss.rlib.common.util.array.LongArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.*;
@@ -62,9 +63,7 @@ public final class ArrayUtils {
      * @param array the array.
      */
     public static void clear(@NotNull Object[] array) {
-        for (int i = 0, length = array.length; i < length; i++) {
-            array[i] = null;
-        }
+        Arrays.fill(array, null);
     }
 
     /**
@@ -101,9 +100,7 @@ public final class ArrayUtils {
      * @param <T>     the element's type.
      */
     public static <T> void fill(@NotNull T[] array, @NotNull IntFunction<T> factory) {
-        for (int i = 0; i < array.length; i++) {
-            array[i] = factory.apply(i);
-        }
+        Arrays.setAll(array, factory);
     }
 
     /**
@@ -146,32 +143,32 @@ public final class ArrayUtils {
     }
 
     /**
-     * Combine the two arrays.
+     * Combine two arrays to one single array.
      *
      * @param <T>   the base array's component type.
      * @param <E>   the added array's component type.
-     * @param base  the source array.
-     * @param added the add array.
+     * @param base  the base array.
+     * @param added the additional array.
      * @return the combined array.
      */
-    public static <T, E extends T> @NotNull T[] combine(@Nullable T[] base, @Nullable E[] added) {
-        return combine(base, added, ClassUtils.unsafeCast(base.getClass().getComponentType()));
+    public static <T, E extends T> @NotNull T[] combine(@NotNull T[] base, @Nullable E[] added) {
+        return combine(base, added, getComponentType(base));
     }
 
     /**
-     * Combine the two arrays.
+     * Combine two arrays to one single array.
      *
      * @param <T>   the base array's component type.
      * @param <E>   the added array's component type.
-     * @param base  the source array.
-     * @param added the add array.
+     * @param base  the base array.
+     * @param added the additional array.
      * @param type  the base array's component type.
      * @return the combined array.
      */
     public static <T, E extends T> @NotNull T[] combine(
-            @Nullable T[] base,
-            @Nullable E[] added,
-            @NotNull Class<T> type
+        @Nullable T[] base,
+        @Nullable E[] added,
+        @NotNull Class<T> type
     ) {
 
         if (base == null) {
@@ -202,24 +199,32 @@ public final class ArrayUtils {
      * @param val   the value.
      * @return true if the array contains the value.
      */
-    public static boolean contains(@NotNull final int[] array, final int val) {
-        for (final int value : array) {
-            if (value == val) return true;
+    public static boolean contains(@NotNull int[] array, int val) {
+
+        for (int value : array) {
+            if (value == val) {
+                return true;
+            }
         }
+
         return false;
     }
 
     /**
-     * Check the array on contains the object.
+     * Return true if an array contains an object.
      *
      * @param array  the array.
      * @param object the object.
      * @return true if the array contains the object.
      */
-    public static boolean contains(@NotNull final Object[] array, @Nullable final Object object) {
-        for (final Object element : array) {
-            if (Objects.equals(element, object)) return true;
+    public static boolean contains(@NotNull Object[] array, @NotNull Object object) {
+
+        for (var element : array) {
+            if (Objects.equals(element, object)) {
+                return true;
+            }
         }
+
         return false;
     }
 
@@ -263,23 +268,27 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy and extend the array.
+     * Copy a native array.
      *
      * @param <T>      the array component's type.
-     * @param original the source array.
-     * @param added    the added size.
-     * @return the new array.
+     * @param original the original array.
+     * @return the new copied native array.
      */
+    public static <T> @NotNull T[] copyOf(@NotNull T[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    /**
+     * Copy and extend if need a native array array.
+     *
+     * @param <T>      the array component's type.
+     * @param original the original array.
+     * @param added    the added size.
+     * @return the new copied native array.
+     */
+    @SuppressWarnings("unchecked")
     public static <T> @NotNull T[] copyOf(@NotNull T[] original, int added) {
-
-        Class<? extends Object[]> newType = original.getClass();
-        Object[] newArray = create(newType.getComponentType(), original.length + added);
-
-        T[] copy = ClassUtils.unsafeCast(newArray);
-
-        System.arraycopy(original, 0, copy, 0, Math.min(original.length, copy.length));
-
-        return copy;
+        return Arrays.copyOf(original, original.length + added);
     }
 
     /**
@@ -380,6 +389,29 @@ public final class ArrayUtils {
         System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
 
         return copy;
+    }
+
+    /**
+     * Get a component type of an array.
+     *
+     * @param <T>     the array's component type.
+     * @param example the array's example.
+     * @return the component type.
+     */
+    public static <T> @NotNull Class<T> getComponentType(@NotNull T[] example) {
+        return ClassUtils.unsafeNNCast(example.getClass().getComponentType());
+    }
+
+    /**
+     * Create the array by the type.
+     *
+     * @param <T>     the type parameter
+     * @param example the array's example.
+     * @param size    the size.
+     * @return the new array.
+     */
+    public static <T> @NotNull T[] create(@NotNull T[] example, int size) {
+        return ClassUtils.unsafeCast(java.lang.reflect.Array.newInstance(example.getClass().getComponentType(), size));
     }
 
     /**

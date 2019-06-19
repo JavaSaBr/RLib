@@ -48,7 +48,6 @@ public class FileUtils {
         return firstLength - secondLength;
     };
 
-    @NotNull
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile(
             "# Match a valid Windows filename (unspecified file system).          \n" +
                     "^                                # Anchor to start of string.        \n" +
@@ -67,7 +66,7 @@ public class FileUtils {
 
     private static final Pattern NORMALIZE_FILE_NAME_PATTERN = Pattern.compile("[\\\\/:*?\"<>|]");
 
-    private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<Path>() {
+    private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<>() {
 
         @Override
         public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
@@ -257,11 +256,34 @@ public class FileUtils {
     }
 
     /**
+     * Check the path about existing an extension.
+     *
+     * @param path the path.
+     * @return true if the path contains any extension.
+     */
+    public static boolean hasExtension(@Nullable String path) {
+
+        if (StringUtils.isEmpty(path)) {
+            return false;
+        }
+
+        var index = path.lastIndexOf('.');
+
+        if (index == -1) {
+            return false;
+        }
+
+        var separatorIndex = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+
+        return separatorIndex < index;
+    }
+
+    /**
      * Get an extension of the path.
      *
      * @param path        the path.
      * @param toLowerCase true if need that extension was only in lower case.
-     * @return the extension or the path if the path doesn't have an extension.
+     * @return the extension or empty string.
      */
     public static @NotNull String getExtension(@Nullable String path, boolean toLowerCase) {
 
@@ -269,13 +291,19 @@ public class FileUtils {
             return StringUtils.EMPTY;
         }
 
-        int index = path.lastIndexOf('.');
+        var index = path.lastIndexOf('.');
 
         if (index == -1) {
             return StringUtils.EMPTY;
         }
 
-        String result = path.substring(index + 1, path.length());
+        var separatorIndex = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+
+        if (separatorIndex > index) {
+            return StringUtils.EMPTY;
+        }
+
+        var result = path.substring(index + 1);
 
         if (toLowerCase) {
             return result.toLowerCase();
@@ -288,7 +316,7 @@ public class FileUtils {
      * Get an extension of the file.
      *
      * @param file the file.
-     * @return the extension or the file name if the file doesn't have an extension.
+     * @return the extension or empty string.
      */
     public static @NotNull String getExtension(@NotNull Path file) {
 
@@ -304,7 +332,7 @@ public class FileUtils {
      *
      * @param file        the file.
      * @param toLowerCase true if need that extension was only in lower case.
-     * @return the extension or the file name if the file doesn't have an extension.
+     * @return the extension or empty string.
      */
     public static @NotNull String getExtension(@NotNull Path file, boolean toLowerCase) {
 
@@ -623,7 +651,7 @@ public class FileUtils {
      * @see Files#createDirectories(Path, FileAttribute[])
      */
     public static void createDirectories(@NotNull Path directory, @NotNull FileAttribute<?>... attrs) {
-        Utils.run(directory, attrs, Files::createDirectories);
+        Utils.unchecked(directory, attrs, Files::createDirectories);
     }
 
     /**
@@ -642,7 +670,7 @@ public class FileUtils {
      * @return the {@link URI}.
      */
     public static @NotNull URI getUri(@NotNull Path file) {
-        return Utils.get(file, Path::toUri);
+        return Utils.uncheckedGet(file, Path::toUri);
     }
 
     /**
@@ -652,7 +680,7 @@ public class FileUtils {
      * @return the {@link URI}.
      */
     public static @NotNull URI getUri(@NotNull URL url) {
-        return Utils.get(url, URL::toURI);
+        return Utils.uncheckedGet(url, URL::toURI);
     }
 
     /**
@@ -662,7 +690,7 @@ public class FileUtils {
      * @return the {@link URL}.
      */
     public static @NotNull URL getUrl(@NotNull Path file) {
-        return Utils.get(getUri(file), URI::toURL);
+        return Utils.uncheckedGet(getUri(file), URI::toURL);
     }
 
     /**

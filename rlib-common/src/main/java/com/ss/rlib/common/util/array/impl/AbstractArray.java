@@ -80,30 +80,6 @@ public abstract class AbstractArray<E> implements Array<E> {
     protected abstract void setSize(int size);
 
     @Override
-    public boolean fastRemove(@NotNull Object object) {
-
-        int index = indexOf(object);
-
-        if (index >= 0) {
-            fastRemove(index);
-        }
-
-        return index >= 0;
-    }
-
-    @Override
-    public final boolean slowRemove(@NotNull Object object) {
-
-        int index = indexOf(object);
-
-        if (index >= 0) {
-            slowRemove(index);
-        }
-
-        return index >= 0;
-    }
-
-    @Override
     public String toString() {
         return getClass().getSimpleName() + " size = " + size() +
                 " :\n " + ArrayUtils.toString(this);

@@ -6,6 +6,7 @@ import static com.ss.rlib.common.util.ClassUtils.unsafeNNCast;
 import com.ss.rlib.common.function.*;
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.ClassUtils;
+import com.ss.rlib.common.util.array.impl.DefaultArrayIterator;
 import com.ss.rlib.common.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the empty array.
      */
     static <T> @NotNull ReadOnlyArray<T> empty() {
-        return unsafeCast(ArrayFactory.EMPTY_ARRAY);
+        return unsafeNNCast(ArrayFactory.EMPTY_ARRAY);
     }
 
     /**
@@ -47,14 +48,14 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Wrap the array to a read only array.
+     * Wrap a native array to a read only array.
      *
      * @param elements the elements to wrap.
      * @param <T> the element's type.
      * @return the new read only array.
      */
     static <T> @NotNull ReadOnlyArray<T> of(@NotNull T[] elements) {
-        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(elements, 0));
+        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(elements));
     }
 
     /**
@@ -256,15 +257,15 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Removes the element at index with reordering.
+     * Removes the element at index possible with reordering.
      *
-     * @param index the index for removing the element.
+     * @param index the index of removing the element.
      * @return the removed element.
      */
     @NotNull E fastRemove(int index);
 
     /**
-     * Removes the specified element with reordering.
+     * Removes an element without saving original ordering of other elements.
      *
      * @param object the element to remove.
      * @return <code>true</code> if the element was removed.
@@ -273,12 +274,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
 
         int index = indexOf(object);
 
-        if (index == -1) {
-            return false;
+        if (index >= 0) {
+            fastRemove(index);
         }
 
-        fastRemove(index);
-        return true;
+        return index >= 0;
     }
 
     /**
@@ -572,6 +572,54 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Calculate a count of matched elements.
+     *
+     * @param <F>       the argument's type.
+     * @param arg       the argument.
+     * @param predicate the condition.
+     * @return the count of matched elements.
+     */
+    default <F> int count(@NotNull F arg, @NotNull BiPredicate<E, F> predicate) {
+
+        int count = 0;
+
+        for (var element : array()) {
+
+            if (element == null) {
+                break;
+            } else if (predicate.test(element, arg)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Calculate a count of matched elements with reserved ordering of arguments.
+     *
+     * @param <F>       the argument's type.
+     * @param arg       the argument.
+     * @param predicate the condition.
+     * @return the count of matched elements.
+     */
+    default <F> int countR(@NotNull F arg, @NotNull BiPredicate<F, E> predicate) {
+
+        int count = 0;
+
+        for (var element : array()) {
+
+            if (element == null) {
+                break;
+            } else if (predicate.test(arg, element)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /**
      * Gets the element by the index.
      *
      * @param index the index of the element.
@@ -604,7 +652,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     @Override
-    @NotNull ArrayIterator<E> iterator();
+    default @NotNull ArrayIterator<E> iterator() {
+        return new DefaultArrayIterator<>(this);
+    }
 
     /**
      * Try to get the last element.
@@ -682,7 +732,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         for (Object element : target.array()) {
             if (element == null) {
                 break;
-            } else if (fastRemove(element)) {
+            } else if (slowRemove(element)) {
                 count++;
             }
         }
@@ -702,7 +752,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         for (Object element : target) {
             if (element == null) {
                 break;
-            } else if (fastRemove(element)) {
+            } else if (slowRemove(element)) {
                 count++;
             }
         }
@@ -854,9 +904,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the found element or null.
      */
     default <F, S> @Nullable E findAny(
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull TriplePredicate<E, F, S> predicate
+        @Nullable F first,
+        @Nullable S second,
+        @NotNull TriplePredicate<E, F, S> predicate
     ) {
 
         if (isEmpty()) {
@@ -931,9 +981,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     void set(int index, @NotNull E element);
 
     /**
-     * Remove the element by the index without reordering.
+     * Removes the element at index without reordering.
      *
-     * @param index the index of the element.
+     * @param index the index of removing the element.
      * @return the removed element.
      */
     @NotNull E slowRemove(int index);
@@ -949,7 +999,16 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param object the element.
      * @return true if the element was removed.
      */
-    boolean slowRemove(@NotNull Object object);
+    default boolean slowRemove(@NotNull Object object) {
+
+        int index = indexOf(object);
+
+        if (index >= 0) {
+            slowRemove(index);
+        }
+
+        return index >= 0;
+    }
 
     /**
      * Sort this array using the comparator.
@@ -1007,8 +1066,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the unsafe interface of this array.
      */
     default @NotNull UnsafeArray<E> asUnsafe() {
-        if (this instanceof UnsafeArray) return (UnsafeArray<E>) this;
-        throw new UnsupportedOperationException();
+        if (this instanceof UnsafeArray) {
+            return (UnsafeArray<E>) this;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
@@ -1017,9 +1079,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     @Override
-    default @NotNull Object[] toArray() {
+    default @NotNull E[] toArray() {
         E[] array = array();
-        return Arrays.copyOf(array, size(), array.getClass());
+        return Arrays.copyOf(array, size(), (Class<E[]>) array.getClass());
     }
 
     @NotNull String toString(@NotNull Function<E, @NotNull String> toString);

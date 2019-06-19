@@ -76,9 +76,10 @@ public class JavaxMailSender implements MailSender {
         }
 
         LOGGER.info("Initialized javax mail sender with settings:");
-        LOGGER.info("user : " + username);
-        LOGGER.info("host : " + config.getHost() + ":" + config.getPort());
-        LOGGER.info("from : " + config.getFrom());
+        LOGGER.info("User : " + username);
+        LOGGER.info("From : " + config.getFrom());
+        LOGGER.info("Server : " + config.getHost() + ":" + config.getPort());
+        LOGGER.info("Using SSL : " + config.isEnableTtls());
 
         if (javaxConfig.getExecutor() != null) {
             this.executor = javaxConfig.getExecutor();

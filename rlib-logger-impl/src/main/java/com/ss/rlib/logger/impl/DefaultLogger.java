@@ -6,6 +6,8 @@ import com.ss.rlib.logger.api.LoggerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * The base implementation of the logger.
  *
@@ -38,8 +40,8 @@ public final class DefaultLogger implements Logger {
 
     @Override
     public boolean isEnabled(@NotNull LoggerLevel level) {
-        Boolean value = override[level.ordinal()];
-        return value != null && value || level.isEnabled();
+        var value = override[level.ordinal()];
+        return Objects.requireNonNullElse(value, level.isEnabled());
     }
 
     @Override
@@ -62,6 +64,13 @@ public final class DefaultLogger implements Logger {
     }
 
     @Override
+    public void print(@NotNull LoggerLevel level, @NotNull Throwable exception) {
+        if (isEnabled(level)) {
+            loggerFactory.write(level, name, StringUtils.toString(exception));
+        }
+    }
+
+    @Override
     public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull String message) {
         if (isEnabled(level)) {
             loggerFactory.write(level, owner.getClass().getSimpleName(), message);
@@ -72,88 +81,6 @@ public final class DefaultLogger implements Logger {
     public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull Throwable exception) {
         if (isEnabled(level)) {
             loggerFactory.write(level, owner.getClass().getSimpleName(), StringUtils.toString(exception));
-        }
-    }
-
-    @Override
-    public void print(@NotNull LoggerLevel level, @NotNull Throwable exception) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, name, StringUtils.toString(exception));
-        }
-    }
-
-    @Override
-    public <T> void print(
-            @NotNull LoggerLevel level,
-            @NotNull Object owner,
-            @Nullable T arg,
-            @NotNull Logger.SinFactory<T> messageFactory
-    ) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, owner.getClass().getSimpleName(), arg, messageFactory);
-        }
-    }
-
-    @Override
-    public <F, S> void print(
-            @NotNull LoggerLevel level,
-            @NotNull Object owner,
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull Logger.BiFactory<F, S> messageFactory
-    ) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, owner.getClass().getSimpleName(), first, second, messageFactory);
-        }
-    }
-
-    @Override
-    public <F, S, T> void print(
-            @NotNull LoggerLevel level,
-            @NotNull Object owner,
-            @Nullable F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull Logger.TriFactory<F, S, T> messageFactory
-    ) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, owner.getClass().getSimpleName(), first, second, third, messageFactory);
-        }
-    }
-
-    @Override
-    public <T> void print(
-            @NotNull LoggerLevel level,
-            @Nullable T arg,
-            @NotNull Logger.SinFactory<T> messageFactory
-    ) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, name, arg, messageFactory);
-        }
-    }
-
-    @Override
-    public <F, S> void print(
-            @NotNull LoggerLevel level,
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull Logger.BiFactory<F, S> messageFactory
-    ) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, name, first, second, messageFactory);
-        }
-    }
-
-    @Override
-    public <F, S, T> void print(
-            @NotNull LoggerLevel level,
-            @Nullable F first,
-            @Nullable S second,
-            @Nullable T third,
-            @NotNull Logger.TriFactory<F, S, T> messageFactory
-    ) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, name, first, second, third, messageFactory);
         }
     }
 }

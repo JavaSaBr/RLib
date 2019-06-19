@@ -56,7 +56,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
 
         final Thread currentThread = Thread.currentThread();
         final ClassLoader loader = currentThread.getContextClassLoader();
-        final Enumeration<URL> urls = Utils.get(loader, first -> first.getResources(JarFile.MANIFEST_NAME));
+        final Enumeration<URL> urls = Utils.uncheckedGet(loader, first -> first.getResources(JarFile.MANIFEST_NAME));
 
         while (urls.hasMoreElements()) {
 
