@@ -79,6 +79,21 @@ public final class NetworkFactory {
     /**
      * Create id based packet default asynchronous client network.
      *
+     * @param packetRegistry  the readable packet registry.
+     * @return the server network.
+     */
+    public static @NotNull ClientNetwork<DefaultConnection> newDefaultClientNetwork(
+        @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry
+    ) {
+        return newDefaultClientNetwork(
+            NetworkConfig.DEFAULT_CLIENT,
+            new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
+            packetRegistry
+        );
+    }
+    /**
+     * Create id based packet default asynchronous client network.
+     *
      * @param networkConfig   the network config.
      * @param bufferAllocator the buffer allocator.
      * @param packetRegistry  the readable packet registry.
@@ -141,6 +156,21 @@ public final class NetworkFactory {
         );
     }
 
+    /**
+     * Create id based packet default asynchronous server network.
+     *
+     * @param packetRegistry  the readable packet registry.
+     * @return the server network.
+     */
+    public static @NotNull ServerNetwork<DefaultConnection> newDefaultServerNetwork(
+        @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry
+    ) {
+        return newDefaultServerNetwork(
+            ServerNetworkConfig.DEFAULT_SERVER,
+            new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
+            packetRegistry
+        );
+    }
     /**
      * Create id based packet default asynchronous server network.
      *

@@ -1,6 +1,6 @@
 package com.ss.rlib.network.packet.impl;
 
-import com.ss.rlib.network.Connection;
+import com.ss.rlib.network.impl.StringDataConnection;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.ByteBuffer;
 
 @Getter(onMethod_ = @Nullable)
-public class StringReadablePacket extends AbstractReadablePacket {
+public class StringReadablePacket extends AbstractReadablePacket<StringDataConnection> {
 
     /**
      * Read data.
@@ -16,7 +16,7 @@ public class StringReadablePacket extends AbstractReadablePacket {
     private volatile String data;
 
     @Override
-    protected void readImpl(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer) {
+    protected void readImpl(@NotNull StringDataConnection connection, @NotNull ByteBuffer buffer) {
         this.data = readString(buffer);
     }
 

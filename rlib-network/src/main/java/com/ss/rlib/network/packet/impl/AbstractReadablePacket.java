@@ -1,5 +1,6 @@
 package com.ss.rlib.network.packet.impl;
 
+import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.common.util.Utils;
@@ -15,14 +16,14 @@ import java.nio.ByteBuffer;
  * @author JavaSaBr
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractReadablePacket extends AbstractPacket implements ReadablePacket {
+public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends AbstractPacket implements ReadablePacket {
 
     @Override
     public boolean read(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer, int length) {
         var oldLimit = buffer.limit();
         try {
             buffer.limit(buffer.position() + length);
-            readImpl(connection, buffer);
+            readImpl(ClassUtils.unsafeNNCast(connection), buffer);
             return true;
         } catch (Exception e) {
             handleException(buffer, e);
@@ -38,7 +39,7 @@ public abstract class AbstractReadablePacket extends AbstractPacket implements R
      * @param connection the network connection.
      * @param buffer     the buffer with received data.
      */
-    protected void readImpl(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer) {
+    protected void readImpl(@NotNull C connection, @NotNull ByteBuffer buffer) {
     }
 
     /**

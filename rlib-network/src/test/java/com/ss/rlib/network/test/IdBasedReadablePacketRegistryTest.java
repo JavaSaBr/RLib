@@ -4,8 +4,10 @@ import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.network.annotation.PacketDescription;
+import com.ss.rlib.network.impl.DefaultConnection;
 import com.ss.rlib.network.packet.IdBasedReadablePacket;
 import com.ss.rlib.network.packet.impl.AbstractIdBasedReadablePacket;
+import com.ss.rlib.network.packet.impl.DefaultReadablePacket;
 import com.ss.rlib.network.packet.registry.impl.IdBasedReadablePacketRegistry;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Assertions;
@@ -15,21 +17,21 @@ public class IdBasedReadablePacketRegistryTest {
 
     @NoArgsConstructor
     @PacketDescription(id = 1)
-    public static class Impl1 extends AbstractIdBasedReadablePacket<Impl1> {
+    public static class Impl1 extends DefaultReadablePacket {
     }
 
     @NoArgsConstructor
     @PacketDescription(id = 2)
-    public static class Impl2 extends AbstractIdBasedReadablePacket<Impl2> {
+    public static class Impl2 extends DefaultReadablePacket {
     }
 
     @NoArgsConstructor
     @PacketDescription(id = 3)
-    public static class Impl3 extends AbstractIdBasedReadablePacket<Impl3> {
+    public static class Impl3 extends DefaultReadablePacket {
     }
 
     @NoArgsConstructor
-    private static class PrivateBase extends AbstractIdBasedReadablePacket<PrivateBase> {
+    private static class PrivateBase extends AbstractIdBasedReadablePacket<DefaultConnection, PrivateBase> {
     }
 
     @NoArgsConstructor
@@ -43,7 +45,7 @@ public class IdBasedReadablePacketRegistryTest {
     }
 
     @NoArgsConstructor
-    public static class PublicBase extends AbstractIdBasedReadablePacket<PublicBase> {
+    public static class PublicBase extends AbstractIdBasedReadablePacket<DefaultConnection, PublicBase> {
     }
 
     @NoArgsConstructor

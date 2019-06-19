@@ -1,7 +1,6 @@
 package com.ss.rlib.network.test;
 
-import static com.ss.rlib.network.NetworkFactory.newStringDataClientNetwork;
-import static com.ss.rlib.network.NetworkFactory.newStringDataServerNetwork;
+import static com.ss.rlib.network.NetworkFactory.*;
 import static com.ss.rlib.network.ServerNetworkConfig.DEFAULT_SERVER;
 import static java.util.stream.Collectors.toList;
 import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
@@ -16,18 +15,23 @@ import com.ss.rlib.network.ServerNetworkConfig.SimpleServerNetworkConfig;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.impl.DefaultBufferAllocator;
+import com.ss.rlib.network.impl.DefaultConnection;
 import com.ss.rlib.network.impl.ReuseBufferAllocator;
+import com.ss.rlib.network.packet.impl.DefaultReadablePacket;
 import com.ss.rlib.network.packet.impl.DefaultWritablePacket;
 import com.ss.rlib.network.packet.impl.StringWritablePacket;
+import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
 import java.nio.ByteBuffer;
-import java.time.Duration;
+import java.time.*;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
@@ -48,7 +52,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
 
         @RequiredArgsConstructor
         @PacketDescription(id = 1)
-        class GetEchoMessage extends DefaultWritablePacket {
+        class RequestEchoMessage extends DefaultWritablePacket {
 
             private final String message;
 
@@ -60,48 +64,125 @@ public class DefaultNetworkTest extends BaseNetworkTest {
         }
 
         @PacketDescription(id = 2)
-        class GetActiveConnections extends DefaultWritablePacket {
+        class RequestServerTime extends DefaultWritablePacket {
+        }
+
+        @ToString
+        @RequiredArgsConstructor
+        @PacketDescription(id = 3)
+        class ResponseEchoMessage extends DefaultReadablePacket {
+
+            @Getter
+            private volatile String message;
+
+            @Override
+            protected void readImpl(@NotNull DefaultConnection connection, @NotNull ByteBuffer buffer) {
+                super.readImpl(connection, buffer);
+                message = readString(buffer);
+            }
+        }
+
+        @ToString
+        @PacketDescription(id = 4)
+        class ResponseServerTime extends DefaultReadablePacket {
+
+            @Getter
+            private volatile LocalDateTime localDateTime;
+
+            @Override
+            protected void readImpl(@NotNull DefaultConnection connection, @NotNull ByteBuffer buffer) {
+                super.readImpl(connection, buffer);
+                localDateTime = LocalDateTime.ofEpochSecond(
+                    readLong(buffer),
+                    0,
+                    ZoneOffset.ofTotalSeconds(readInt(buffer))
+                );
+            }
+        }
+    }
+
+    // server packets
+    interface ServerPackets {
+
+        @ToString
+        @PacketDescription(id = 1)
+        class RequestEchoMessage extends DefaultReadablePacket {
+
+            @Override
+            protected void readImpl(@NotNull DefaultConnection connection, @NotNull ByteBuffer buffer) {
+                super.readImpl(connection, buffer);
+                connection.send(new ResponseEchoMessage(readString(buffer)));
+            }
+        }
+
+        @ToString
+        @PacketDescription(id = 2)
+        class RequestServerTime extends DefaultReadablePacket {
+
+            @Override
+            protected void readImpl(@NotNull DefaultConnection connection, @NotNull ByteBuffer buffer) {
+                super.readImpl(connection, buffer);
+                connection.send(new ResponseServerTime());
+            }
         }
 
         @RequiredArgsConstructor
         @PacketDescription(id = 3)
-        class BroadcastMessage extends DefaultWritablePacket {
+        class ResponseEchoMessage extends DefaultWritablePacket {
 
             private final String message;
 
             @Override
             protected void writeImpl(@NotNull ByteBuffer buffer) {
                 super.writeImpl(buffer);
-                writeString(buffer, message);
+                writeString(buffer, "Echo: " + message);
+            }
+        }
+
+        @PacketDescription(id = 4)
+        class ResponseServerTime extends DefaultWritablePacket {
+
+            @Override
+            protected void writeImpl(@NotNull ByteBuffer buffer) {
+                super.writeImpl(buffer);
+                var dateTime = ZonedDateTime.now();
+                writeLong(buffer, dateTime.toEpochSecond());
+                writeInt(buffer, dateTime.getOffset().getTotalSeconds());
             }
         }
     }
-
-    // server packets
 
     @Test
     @SneakyThrows
     void echoNetworkTest() {
 
-        var serverNetwork = newStringDataServerNetwork();
+        var serverNetwork = newDefaultServerNetwork(ReadablePacketRegistry.of(DefaultReadablePacket.class,
+            ServerPackets.RequestEchoMessage.class,
+            ServerPackets.RequestServerTime.class
+        ));
         var serverAddress = serverNetwork.start();
         var counter = new CountDownLatch(90);
 
         serverNetwork.accepted()
             .flatMap(Connection::receivedEvents)
-            .subscribe(event -> {
-                var message = event.packet.getData();
-                LOGGER.info("Received from client: " + message);
-                event.connection.send(new StringWritablePacket("Echo: " + message));
-            });
+            .subscribe(event -> LOGGER.info("Received from client: " + event.packet));
 
-        var clientNetwork = newStringDataClientNetwork();
+        var clientNetwork = newDefaultClientNetwork(ReadablePacketRegistry.of(DefaultReadablePacket.class,
+            ClientPackets.ResponseEchoMessage.class,
+            ClientPackets.ResponseServerTime.class
+        ));
         clientNetwork.connected(serverAddress)
             .doOnNext(connection -> IntStream.range(10, 100)
-                .forEach(length -> connection.send(new StringWritablePacket(StringUtils.generate(length)))))
+                .forEach(length -> {
+                   if(length % 2 == 0) {
+                       connection.send(new ClientPackets.RequestServerTime());
+                   } else {
+                       connection.send(new ClientPackets.RequestEchoMessage(StringUtils.generate(length)));
+                   }
+                }))
             .flatMapMany(Connection::receivedEvents)
             .subscribe(event -> {
-                LOGGER.info("Received from server: " + event.packet.getData());
+                LOGGER.info("Received from server: " + event.packet);
                 counter.countDown();
             });
 
