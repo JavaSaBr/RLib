@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 
+/**
+ * @author JavaSaBr
+ */
 @RequiredArgsConstructor
 public class StringWritablePacket extends AbstractWritablePacket {
 

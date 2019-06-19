@@ -11,6 +11,11 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.function.Consumer;
 
+/**
+ * @param <R> the readable packet's type.
+ * @param <C> the connection's type.
+ * @author JavaSaBr
+ */
 public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends Connection<R, ?>> extends
     AbstractPacketReader<R, C> {
 
@@ -43,7 +48,6 @@ public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends C
 
     @Override
     protected @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int length) {
-        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize))
-            .newInstance();
+        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize)).newInstance();
     }
 }

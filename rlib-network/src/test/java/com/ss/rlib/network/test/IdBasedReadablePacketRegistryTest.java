@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author JavaSaBr
+ */
 public class IdBasedReadablePacketRegistryTest {
 
     @NoArgsConstructor

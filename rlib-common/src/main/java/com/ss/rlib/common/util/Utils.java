@@ -229,6 +229,7 @@ public final class Utils {
      * @param size  the size
      * @return строка с дампом.
      */
+    @Deprecated(forRemoval = true)
     public static @NotNull String hexdump(final byte[] array, final int size) {
         return hexdump(array, 0, size);
     }
@@ -241,6 +242,7 @@ public final class Utils {
      * @param size   the size
      * @return the string dump.
      */
+    @Deprecated(forRemoval = true)
     public static @NotNull String hexdump(@NotNull final byte[] array, final int offset, final int size) {
 
         final StringBuilder builder = new StringBuilder();

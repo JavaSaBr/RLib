@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.19'
+        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.21'
     }
 }
 
@@ -46,12 +46,14 @@ allprojects {
 
     dependencies {
         compileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
+        compileOnly "org.projectlombok:lombok:$lombokVersion"
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    
         testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
         testCompileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
-        compileOnly "org.projectlombok:lombok:$lombokVersion"
-        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+        testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
     }
 
     /*compileJava {

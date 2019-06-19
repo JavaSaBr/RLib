@@ -4,19 +4,18 @@ import com.ss.rlib.network.*;
 import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.impl.DefaultBufferAllocator;
 import com.ss.rlib.network.impl.DefaultConnection;
-import com.ss.rlib.network.impl.IdBasedPacketConnection;
 import com.ss.rlib.network.impl.StringDataConnection;
-import com.ss.rlib.network.packet.IdBasedReadablePacket;
-import com.ss.rlib.network.packet.IdBasedWritablePacket;
 import com.ss.rlib.network.packet.impl.DefaultReadablePacket;
 import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
-import com.ss.rlib.network.packet.registry.impl.IdBasedReadablePacketRegistry;
 import com.ss.rlib.network.server.ServerNetwork;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * @author JavaSaBr
+ */
 public class BaseNetworkTest {
 
     @AllArgsConstructor
@@ -114,6 +113,22 @@ public class BaseNetworkTest {
             serverPacketRegistry,
             NetworkConfig.DEFAULT_CLIENT,
             new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
+            clientPacketRegistry
+        );
+    }
+
+    protected @NotNull TestNetwork<DefaultConnection> buildDefaultNetwork(
+        @NotNull BufferAllocator serverBufferAllocator,
+        @NotNull ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
+        @NotNull BufferAllocator clientBufferAllocator,
+        @NotNull ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry
+    ) {
+        return buildDefaultNetwork(
+            ServerNetworkConfig.DEFAULT_SERVER,
+            serverBufferAllocator,
+            serverPacketRegistry,
+            NetworkConfig.DEFAULT_CLIENT,
+            clientBufferAllocator,
             clientPacketRegistry
         );
     }

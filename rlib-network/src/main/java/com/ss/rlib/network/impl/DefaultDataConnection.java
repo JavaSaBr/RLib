@@ -42,8 +42,7 @@ public abstract class DefaultDataConnection<R extends ReadablePacket, W extends 
     }
 
     protected @NotNull PacketReader createPacketReader() {
-        return new DefaultPacketReader<>(
-            this,
+        return new DefaultPacketReader<>(this,
             channel,
             bufferAllocator,
             this::updateLastActivity,
@@ -55,8 +54,7 @@ public abstract class DefaultDataConnection<R extends ReadablePacket, W extends 
     }
 
     protected @NotNull PacketWriter createPacketWriter() {
-        return new DefaultPacketWriter<W, Connection<R, W>>(
-            this,
+        return new DefaultPacketWriter<W, Connection<R, W>>(this,
             channel,
             bufferAllocator,
             this::updateLastActivity,

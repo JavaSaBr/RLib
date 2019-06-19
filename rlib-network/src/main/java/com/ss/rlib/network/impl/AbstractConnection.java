@@ -5,12 +5,18 @@ import static com.ss.rlib.common.util.Utils.unchecked;
 import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
-import com.ss.rlib.network.*;
-import com.ss.rlib.network.packet.*;
 import com.ss.rlib.common.util.linkedlist.LinkedList;
 import com.ss.rlib.common.util.linkedlist.LinkedListFactory;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
+import com.ss.rlib.network.BufferAllocator;
+import com.ss.rlib.network.Connection;
+import com.ss.rlib.network.Network;
+import com.ss.rlib.network.NetworkCryptor;
+import com.ss.rlib.network.packet.PacketReader;
+import com.ss.rlib.network.packet.PacketWriter;
+import com.ss.rlib.network.packet.ReadablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,8 +121,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     protected void registerFluxOnReceivedPackets(@NotNull FluxSink<? super R> sink) {
 
-        BiConsumer<Connection<R, W>, R> listener =
-            (connection, packet) -> sink.next(packet);
+        BiConsumer<Connection<R, W>, R> listener = (connection, packet) -> sink.next(packet);
 
         onReceive(listener);
 

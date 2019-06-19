@@ -7,6 +7,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 
+/**
+ * @author JavaSaBr
+ */
 @Getter(onMethod_ = @Nullable)
 public class StringReadablePacket extends AbstractReadablePacket<StringDataConnection> {
 

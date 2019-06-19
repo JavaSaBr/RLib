@@ -1,6 +1,7 @@
 package com.ss.rlib.network.packet;
 
 import com.ss.rlib.common.util.ClassUtils;
+import com.ss.rlib.network.Connection;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,5 +16,14 @@ public interface IdBasedReadablePacket<S extends IdBasedReadablePacket<S>> exten
      */
     default @NotNull S newInstance() {
         return ClassUtils.newInstance(getClass());
+    }
+
+    /**
+     * Execute a logic of this packet.
+     *
+     * @param connection the owner's connection.
+     */
+    default void execute(@NotNull Connection<?, ?> connection) {
+
     }
 }

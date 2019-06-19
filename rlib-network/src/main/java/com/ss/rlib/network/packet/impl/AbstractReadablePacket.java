@@ -3,7 +3,6 @@ package com.ss.rlib.network.packet.impl;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.ReadablePacket;
-import com.ss.rlib.common.util.Utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +15,8 @@ import java.nio.ByteBuffer;
  * @author JavaSaBr
  */
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends AbstractPacket implements ReadablePacket {
+public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends AbstractPacket implements
+    ReadablePacket {
 
     @Override
     public boolean read(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer, int length) {

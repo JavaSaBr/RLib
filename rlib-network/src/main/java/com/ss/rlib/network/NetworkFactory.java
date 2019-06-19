@@ -79,7 +79,7 @@ public final class NetworkFactory {
     /**
      * Create id based packet default asynchronous client network.
      *
-     * @param packetRegistry  the readable packet registry.
+     * @param packetRegistry the readable packet registry.
      * @return the server network.
      */
     public static @NotNull ClientNetwork<DefaultConnection> newDefaultClientNetwork(
@@ -91,6 +91,7 @@ public final class NetworkFactory {
             packetRegistry
         );
     }
+
     /**
      * Create id based packet default asynchronous client network.
      *
@@ -159,7 +160,7 @@ public final class NetworkFactory {
     /**
      * Create id based packet default asynchronous server network.
      *
-     * @param packetRegistry  the readable packet registry.
+     * @param packetRegistry the readable packet registry.
      * @return the server network.
      */
     public static @NotNull ServerNetwork<DefaultConnection> newDefaultServerNetwork(
@@ -171,6 +172,7 @@ public final class NetworkFactory {
             packetRegistry
         );
     }
+
     /**
      * Create id based packet default asynchronous server network.
      *

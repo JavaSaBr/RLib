@@ -1,9 +1,10 @@
 package com.ss.rlib.network.packet.impl;
 
-import com.ss.rlib.common.util.Utils;
+import static com.ss.rlib.network.util.NetworkUtils.hexDump;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.packet.Packet;
+import com.ss.rlib.network.util.NetworkUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -40,11 +41,9 @@ public abstract class AbstractPacket implements Packet {
         if (buffer.isDirect()) {
             byte[] array = new byte[buffer.limit()];
             buffer.get(array, 0, buffer.limit());
-            LOGGER.warning(this, "buffer " +
-                buffer + "\n" + Utils.hexdump(array, array.length));
+            LOGGER.warning(this, "buffer " + buffer + "\n" + NetworkUtils.hexDump(array, array.length));
         } else {
-            LOGGER.warning(this, "buffer " +
-                buffer + "\n" + Utils.hexdump(buffer.array(), buffer.limit()));
+            LOGGER.warning(this, "buffer " + buffer + "\n" + NetworkUtils.hexDump(buffer.array(), buffer.limit()));
         }
     }
 

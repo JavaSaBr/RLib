@@ -10,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.channels.AsynchronousSocketChannel;
 
+/**
+ * @author JavaSaBr
+ */
 public class StringDataConnection extends DefaultDataConnection<StringReadablePacket, StringWritablePacket> {
 
     public StringDataConnection(

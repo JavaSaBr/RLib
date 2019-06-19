@@ -4,7 +4,6 @@ import static com.ss.rlib.common.util.Utils.unchecked;
 import static com.ss.rlib.common.util.Utils.uncheckedGet;
 import com.ss.rlib.common.concurrent.GroupThreadFactory;
 import com.ss.rlib.common.concurrent.atomic.AtomicReference;
-import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
 import com.ss.rlib.network.NetworkConfig;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * The default implementation of a client network.
@@ -100,7 +98,8 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
 
     @Override
     public void shutdown() {
-        Optional.ofNullable(getCurrentConnection())
+        Optional
+            .ofNullable(getCurrentConnection())
             .ifPresent(connection -> {
                 unchecked(connection, C::close);
                 unchecked(group, AsynchronousChannelGroup::shutdown);

@@ -13,7 +13,8 @@ import java.util.function.Supplier;
 /**
  * @author JavaSaBr
  */
-public class IdBasedPacketWriter<W extends IdBasedWritablePacket, C extends Connection<?, W>> extends DefaultPacketWriter<W, C> {
+public class IdBasedPacketWriter<W extends IdBasedWritablePacket, C extends Connection<?, W>> extends
+    DefaultPacketWriter<W, C> {
 
     protected final int packetIdHeaderSize;
 

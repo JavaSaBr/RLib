@@ -1,7 +1,7 @@
 package com.ss.rlib.network.packet.impl;
 
-import org.jetbrains.annotations.NotNull;
 import com.ss.rlib.network.packet.WritablePacket;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 

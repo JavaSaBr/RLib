@@ -20,6 +20,11 @@ import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+/**
+ * @param <R> the readable packet's type.
+ * @param <C> the connection's type.
+ * @author JavaSaBr
+ */
 public abstract class AbstractPacketReader<R extends ReadablePacket, C extends Connection<R, ?>> implements
     PacketReader {
 

@@ -108,8 +108,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket<R>> {
      * @return the new packet registry.
      */
     static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> of(
-        @NotNull Class<T> type,
-        @NotNull Array<Class<? extends T>> classes
+        @NotNull Class<T> type, @NotNull Array<Class<? extends T>> classes
     ) {
 
         var registry = new IdBasedReadablePacketRegistry<>(type);

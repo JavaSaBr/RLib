@@ -11,6 +11,11 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
+/**
+ * @param <R> the readable packet's type.
+ * @param <C> the connections' type.
+ * @author JavaSaBR
+ */
 public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<R, ?>> extends
     AbstractPacketReader<R, C> {
 
