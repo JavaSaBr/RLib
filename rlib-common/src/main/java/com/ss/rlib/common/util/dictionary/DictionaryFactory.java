@@ -112,9 +112,9 @@ public final class DictionaryFactory {
     }
 
     /**
-     * New long dictionary long dictionary.
+     * Create a new long dictionary.
      *
-     * @param <V> the type parameter
+     * @param <V> the value's type.
      * @return the new {@link FastLongDictionary}.
      */
     public static <V> @NotNull LongDictionary<V> newLongDictionary() {
@@ -122,10 +122,21 @@ public final class DictionaryFactory {
     }
 
     /**
-     * New long dictionary long dictionary.
+     * Create a new long dictionary.
      *
-     * @param loadFactor   the load factor
-     * @param initCapacity the init capacity
+     * @param initCapacity the init capacity.
+     * @param <V>          the value's type.
+     * @return the new {@link FastLongDictionary}.
+     */
+    public static <V> @NotNull LongDictionary<V> newLongDictionary(int initCapacity) {
+        return new FastLongDictionary<>(initCapacity);
+    }
+
+    /**
+     * Create a new long dictionary.
+     *
+     * @param loadFactor   the load factor.
+     * @param initCapacity the init capacity.
      * @param <V>          the value's type.
      * @return the new {@link FastLongDictionary}.
      */
