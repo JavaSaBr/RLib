@@ -10,6 +10,7 @@ import org.w3c.dom.Node;
  *
  * @author JavaSaBR
  */
+@Deprecated(forRemoval = true)
 public class XmlUtils {
 
     /**

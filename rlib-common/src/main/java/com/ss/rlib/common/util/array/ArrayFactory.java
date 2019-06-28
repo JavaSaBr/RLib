@@ -6,7 +6,7 @@ import com.ss.rlib.common.util.array.impl.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The factory for creating arrays.
+ * The factory to create different kinds of arrays.
  *
  * @author JavaSaBr
  */
@@ -215,7 +215,7 @@ public class ArrayFactory {
      * @return the new float array.
      * @since 8.1.0
      */
-    public static float[] toFloatArray(float... elements) {
+    public static @NotNull float[] toFloatArray(float... elements) {
         return elements;
     }
 
@@ -226,7 +226,7 @@ public class ArrayFactory {
      * @return the new int array.
      * @since 8.1.0
      */
-    public static int[] toIntArray(int... elements) {
+    public static @NotNull int[] toIntArray(int... elements) {
         return elements;
     }
 
@@ -234,23 +234,34 @@ public class ArrayFactory {
      * Create a new long array.
      *
      * @param elements the elements of the new long array.
-     * @return the new int array.
+     * @return the new long array.
      * @since 9.0.3
      */
-    public static long[] toLongArray(long... elements) {
+    public static @NotNull long[] toLongArray(long... elements) {
+        return elements;
+    }
+
+    /**
+     * Create a new boolean array.
+     *
+     * @param elements the elements of the new boolean array.
+     * @return the new boolean array.
+     * @since 9.2.1
+     */
+    public static @NotNull boolean[] toBooleanArray(boolean... elements) {
         return elements;
     }
 
     /**
      * Create a new object array.
      *
-     * @param <T>      the type parameter
-     * @param <K>      the type parameter
+     * @param <T>      the base array's element type.
+     * @param <K>      the array's element type.
      * @param elements the elements of the new array.
      * @return the new array.
      */
     @SafeVarargs
-    public static <T, K extends T> T[] toArray(K... elements) {
+    public static <T, K extends T> @NotNull T[] toArray(K... elements) {
         return elements;
     }
 }

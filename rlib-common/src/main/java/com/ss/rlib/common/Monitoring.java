@@ -10,6 +10,7 @@ import java.lang.management.*;
  *
  * @author JavaSaBr
  */
+@Deprecated(forRemoval = true)
 public final class Monitoring {
 
     @NotNull

@@ -8,7 +8,6 @@ import com.ss.rlib.common.util.dictionary.DictionaryFactory;
 import com.ss.rlib.common.util.dictionary.ObjectDictionary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Node;
 
 /**
  * The utility class to contain properties of different types.
@@ -43,7 +42,7 @@ public class VarTable {
      * @param key the key.
      * @param <T> the value's type.
      * @return the value.
-     * @throws IllegalArgumentException if the value is not exist.
+     * @throws IllegalArgumentException if the value is null.
      */
     public <T> @NotNull T get(@NotNull String key) {
 
@@ -53,44 +52,45 @@ public class VarTable {
             return result;
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found value for the key: " + key);
     }
 
     /**
-     * Get the value by the key.
+     * Get a value by a key.
      *
-     * @param <T>  the type parameter
+     * @param <T>  the value's type.
      * @param key  the key.
      * @param type the type.
      * @return the value.
+     * @throws IllegalArgumentException if the value is null or has wrong type.
      */
-    public <T> @NotNull T get(@NotNull final String key, @NotNull final Class<T> type) {
+    public <T> @NotNull T get(@NotNull String key, @NotNull Class<T> type) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Not found value for the key: " + key);
         } else if (type.isInstance(object)) {
             return type.cast(object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException(
+            "Value: " + object + " has another type than requested: " + type + " by the key: " + key);
     }
 
     /**
-     * Get the value by the key.
+     * Get a value by a key.
      *
-     * @param <T>  the type parameter
-     * @param <E>  the type parameter
+     * @param <T>  the value's type.
+     * @param <E>  the default value's type.
      * @param key  the key.
      * @param type the type.
      * @param def  the default value.
-     * @return the value.
+     * @return the value or default if the value is null or has wrong type.
      */
-    public <T, E extends T> @NotNull T get(@NotNull final String key, @NotNull final Class<T> type,
-                                           @NotNull final E def) {
+    public <T, E extends T> @NotNull T get(@NotNull String key, @NotNull Class<T> type, @NotNull E def) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
             return def;
@@ -102,19 +102,19 @@ public class VarTable {
     }
 
     /**
-     * Get the value by the key.
+     * Get a value by a key.
      *
-     * @param <T>  the type parameter
-     * @param <E>  the type parameter
+     * @param <T>  the value's type.
+     * @param <E>  the default value's type.
      * @param key  the key.
      * @param type the type.
      * @param def  the default value.
-     * @return the value.
+     * @return the value or default if the value not found.
+     * @throws IllegalArgumentException if the value has wrong type.
      */
-    public <T, E extends T> @NotNull T getNullable(@NotNull final String key, @NotNull final Class<T> type,
-                                                   @Nullable final E def) {
+    public <T, E extends T> @Nullable T getNullable(@NotNull String key, @NotNull Class<T> type, @Nullable E def) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
             return def;
@@ -122,129 +122,123 @@ public class VarTable {
             return type.cast(object);
         }
 
-        return def;
+        throw new IllegalArgumentException(
+            "Value: " + object + " has another type than requested: " + type + " by the key: " + key);
     }
 
     /**
-     * Get the value by the key.
+     * Get a value by a key.
      *
-     * @param <T> the type parameter
+     * @param <T>  the value's type.
      * @param key the key.
      * @param def the default value.
-     * @return the value.
+     * @return the value or default if the value is null.
      */
-    public <T> @NotNull T get(@NotNull final String key, @NotNull final T def) {
+    public <T> @NotNull T get(@NotNull String key, @NotNull T def) {
 
-        final Object object = values.get(key);
-        if (object == null) return def;
-
-        final Class<?> type = def.getClass();
-
-        if (type.isInstance(object)) {
-            return notNull(ClassUtils.unsafeCast(object));
-        }
-
-        return def;
-    }
-
-    /**
-     * Get the value by the key.
-     *
-     * @param <T> the type parameter
-     * @param key the key.
-     * @param def the default value.
-     * @return the value.
-     */
-    public <T> @NotNull T getNullable(@NotNull final String key, @Nullable final T def) {
-
-        final Object object = values.get(key);
-        if (object == null || def == null) return def;
-
-        final Class<?> type = def.getClass();
-
-        if (type.isInstance(object)) {
-            return notNull(ClassUtils.unsafeCast(object));
-        }
-
-        return def;
-    }
-
-    /**
-     * Get an array by the key.
-     *
-     * @param <T>  the type parameter
-     * @param key  the key.
-     * @param type the type.
-     * @return the array.
-     */
-    public <T> @NotNull T[] getArray(@NotNull final String key, @NotNull final Class<T[]> type) {
-
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
-        } else if (type.isInstance(object)) {
+            return def;
+        }
+
+        var type = def.getClass();
+
+        if (type.isInstance(object)) {
             return notNull(ClassUtils.unsafeCast(object));
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException(
+            "Value: " + object + " has another type than requested: " + type + " by the key: " + key);
     }
 
     /**
-     * Get an array of the key.
+     * Get a value by a key.
      *
-     * @param <T>  the type parameter
+     * @param <T>  the value's type.
+     * @param key the key.
+     * @param def the default value.
+     * @return the value or default if the value is not found.
+     */
+    public <T> @Nullable T getNullable(@NotNull String key, @Nullable T def) {
+
+        var object = values.get(key);
+
+        if (object == null) {
+            return def;
+        }
+
+        if (def != null) {
+
+            var type = def.getClass();
+
+            if (type.isInstance(object)) {
+                return ClassUtils.unsafeCast(object);
+            }
+
+            return def;
+
+        } else {
+            return ClassUtils.unsafeCast(object);
+        }
+    }
+
+    /**
+     * Get an array of a key.
+     *
+     * @param <T>  the array element's type.
      * @param key  the key.
-     * @param type the type.
+     * @param type the array's type.
      * @param def  the default array.
      * @return the array.
      */
     @SafeVarargs
-    public final <T> @NotNull T[] getArray(@NotNull final String key, @NotNull final Class<T[]> type,
-                                           @NotNull final T... def) {
+    public final <T> @NotNull T[] getArray(@NotNull String key, @NotNull Class<T[]> type, @NotNull T... def) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
             return def;
         } else if (type.isInstance(object)) {
-            return notNull(ClassUtils.unsafeCast(object));
+            return ClassUtils.unsafeNNCast(object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException(
+            "Value: " + object + " has another type than requested: " + type + " by the key: " + key);
     }
 
     /**
-     * Get a boolean value by the key.
+     * Get a boolean value by a key.
      *
      * @param key the key.
      * @return the value.
      */
-    public boolean getBoolean(@NotNull final String key) {
+    public boolean getBoolean(@NotNull String key) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found value for the key: " + key);
         } else if (object instanceof Boolean) {
             return (Boolean) object;
         } else if (object instanceof String) {
             return Boolean.parseBoolean(object.toString());
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException(
+            "Value: " + object + " cannot be converted to boolean by the key: " + key);
     }
 
     /**
-     * Get a boolean value by the key.
+     * Get a boolean value by a key.
      *
      * @param key the key.
      * @param def the default value.
      * @return the value.
      */
-    public boolean getBoolean(@NotNull final String key, final boolean def) {
+    public boolean getBoolean(@NotNull String key, boolean def) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
             return def;
@@ -254,41 +248,43 @@ public class VarTable {
             return Boolean.parseBoolean(object.toString());
         }
 
-        return def;
+        throw new IllegalArgumentException(
+            "Value: " + object + " cannot be converted to boolean by the key: " + key);
     }
 
     /**
-     * Get a boolean array by the key.
+     * Get a boolean array by a key.
      *
      * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the boolean array.
      */
-    public @NotNull boolean[] getBooleanArray(@NotNull final String key, @NotNull final String regex) {
+    public @NotNull boolean[] getBooleanArray(@NotNull String key, @NotNull String regex) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found value for the key: " + key);
         } else if (object instanceof boolean[]) {
             return (boolean[]) object;
         } else if (object instanceof String) {
             return parseBooleanArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException(
+            "Value: " + object + " cannot be converted to boolean array by the key: " + key);
     }
 
-    private boolean[] parseBooleanArray(@NotNull final String regex, @NotNull final Object object) {
+    private boolean[] parseBooleanArray(@NotNull String regex, @NotNull Object object) {
 
-        final String[] strings = object.toString().split(regex);
-        final boolean[] result = new boolean[strings.length];
+        var strings = object.toString().split(regex);
+        var booleans = new boolean[strings.length];
 
         for (int i = 0, length = strings.length; i < length; i++) {
-            result[i] = Boolean.parseBoolean(strings[i]);
+            booleans[i] = Boolean.parseBoolean(strings[i].trim());
         }
 
-        return result;
+        return booleans;
     }
 
     /**

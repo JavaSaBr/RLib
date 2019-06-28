@@ -1,5 +1,7 @@
 package com.ss.rlib.common.test.util;
 
+import static com.ss.rlib.common.util.array.ArrayFactory.toArray;
+import static com.ss.rlib.common.util.array.ArrayFactory.toBooleanArray;
 import com.ss.rlib.common.util.VarTable;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.ref.ReferenceType;
@@ -12,6 +14,61 @@ import org.junit.jupiter.api.Test;
  * @author JavaSaBr
  */
 public class VarTableTests {
+
+    @Test
+    void testAllGets() {
+
+        var vars = new VarTable();
+        vars.put("number", 10);
+        vars.put("array", toArray(1, 2, 3, 4));
+        vars.put("arrayString", "1,2,3,4");
+        vars.put("boolean", true);
+        vars.put("booleanString", "true");
+        vars.put("booleanArray", toBooleanArray(true, false, true));
+        vars.put("booleanArrayString", "true, false, true");
+
+        Assertions.assertEquals(vars.<Integer>get("number"), 10);
+
+        Assertions.assertEquals(vars.get("number", Integer.class), 10);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.get("number", Double.class));
+
+        Assertions.assertEquals(vars.get("number", Integer.class, 11), 10);
+        Assertions.assertEquals(vars.get("not_exist", Integer.class, 11), 11);
+        Assertions.assertEquals(vars.get("number", Double.class, 12D), 12D);
+
+        Assertions.assertEquals(vars.getNullable("number", Integer.class, null), 10);
+        Assertions.assertNull(vars.getNullable("not_exist", Double.class, null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getNullable("number", Double.class, null));
+
+        Assertions.assertEquals(vars.get("number",11), 10);
+        Assertions.assertEquals(vars.get("not_exist",11), 11);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.get("number",11D));
+
+        Assertions.assertNull(vars.getNullable("not_exist", null));
+        Assertions.assertEquals(vars.getNullable("number",11D), 11D);
+        Assertions.assertEquals(vars.getNullable("number",11), 10);
+        Assertions.assertEquals(vars.<Integer>getNullable("number",null), 10);
+        Assertions.assertThrows(ClassCastException.class, () -> {
+            Double d = vars.<Double>getNullable("number",null);
+        });
+
+        Assertions.assertArrayEquals(vars.getArray("array", Integer[].class, 1, 3, 3), toArray(1, 2, 3, 4));
+        Assertions.assertArrayEquals(vars.getArray("not_exist", Integer[].class, 1, 3, 3), toArray(1, 3, 3));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getArray("array", Double[].class, 1D, 3D, 3D));
+
+        Assertions.assertTrue(vars.getBoolean("boolean"));
+        Assertions.assertTrue(vars.getBoolean("booleanString"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getBoolean("not_exist"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getBoolean("number"));
+
+        Assertions.assertTrue(vars.getBoolean("boolean", false));
+        Assertions.assertTrue(vars.getBoolean("booleanString", false));
+        Assertions.assertFalse(vars.getBoolean("not_exist", false));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getBoolean("number", false));
+
+        Assertions.assertArrayEquals(vars.getBooleanArray("booleanArray", ","), toBooleanArray(true, false, true));
+        Assertions.assertArrayEquals(vars.getBooleanArray("booleanArrayString", ","), toBooleanArray(true, false, true));
+    }
 
     @Test
     void testAddAndGetIntegers() {
