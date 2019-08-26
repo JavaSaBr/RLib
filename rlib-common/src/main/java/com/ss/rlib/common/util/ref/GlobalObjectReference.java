@@ -1,11 +1,11 @@
 package com.ss.rlib.common.util.ref;
 
 /**
- * The reference to byte value.
+ * The reference to object.
  *
  * @author JavaSaBr
  */
-final class TLByteReference extends ByteReference {
+final class GlobalObjectReference<T> extends ObjectReference<T> {
 
     @Override
     public void release() {

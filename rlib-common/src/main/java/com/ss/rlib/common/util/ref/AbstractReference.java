@@ -5,19 +5,5 @@ package com.ss.rlib.common.util.ref;
  *
  * @author JavaSaBr
  */
-public abstract class AbstractReference implements UnsafeReference {
-
-    protected AbstractReference() {
-        super();
-    }
-
-    @Override
-    public boolean isThreadLocal() {
-        return false;
-    }
-
-    @Override
-    public void release() {
-        getType().put(this);
-    }
+public abstract class AbstractReference implements Reference {
 }

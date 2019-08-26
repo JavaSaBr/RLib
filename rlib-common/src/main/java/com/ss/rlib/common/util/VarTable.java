@@ -806,6 +806,30 @@ public class VarTable {
      * Get an int array value by the key.
      *
      * @param key   the key.
+     * @return the int array value.
+     * @throws IllegalStateException if the value can't be presented as int array.
+     * @throws IllegalArgumentException if the value isn't exist.
+     * @since 9.2.1
+     */
+    public @NotNull int[] getIntArray(@NotNull String key) {
+
+        var object = values.get(key);
+
+        if(object == null) {
+            throw new IllegalArgumentException("not found " + key);
+        } else if (object instanceof int[]) {
+            return (int[]) object;
+        } else if (object instanceof Integer[]) {
+            return ArrayUtils.toIntArray((Integer[]) object);
+        }
+
+        throw new IllegalStateException("the value: " + object + " can't be presented as int array, key: " + key);
+    }
+
+    /**
+     * Get an int array value by the key.
+     *
+     * @param key   the key.
      * @param regex the regex to split if a value is string.
      * @return the int array value.
      * @throws IllegalArgumentException if the value isn't exist.
@@ -836,22 +860,10 @@ public class VarTable {
         } else if (object instanceof int[]) {
             return (int[]) object;
         } else if (object instanceof String) {
-            return parseIntArray(regex, object);
+            return ArrayUtils.toIntArray((String) object, regex);
         }
 
         throw new IllegalStateException("the value: " + object + " can't be presented as int array, key: " + key);
-    }
-
-    private @NotNull int[] parseIntArray(@NotNull String regex, @NotNull Object object) {
-
-        var strings = object.toString().split(regex);
-        var result = new int[strings.length];
-
-        for (int i = 0, length = strings.length; i < length; i++) {
-            result[i] = Integer.parseInt(strings[i]);
-        }
-
-        return result;
     }
 
     /**
@@ -888,7 +900,7 @@ public class VarTable {
         } else if (object instanceof int[]) {
             return (int[]) object;
         } else if (object instanceof String) {
-            return parseIntArray(regex, object);
+            return ArrayUtils.toIntArray((String) object, regex);
         }
 
         throw new IllegalStateException("the value: " + object + " can't be presented as int array, key: " + key);

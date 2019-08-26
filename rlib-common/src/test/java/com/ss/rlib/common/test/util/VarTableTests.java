@@ -1,10 +1,8 @@
 package com.ss.rlib.common.test.util;
 
-import static com.ss.rlib.common.util.array.ArrayFactory.toArray;
-import static com.ss.rlib.common.util.array.ArrayFactory.toBooleanArray;
+import static com.ss.rlib.common.util.array.ArrayFactory.*;
 import com.ss.rlib.common.util.VarTable;
 import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.ref.ReferenceType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -71,6 +69,19 @@ public class VarTableTests {
     }
 
     @Test
+    void testGetIntArrays() {
+
+        var vars = new VarTable();
+        vars.put("array", toArray(1, 2, 3, 4));
+        vars.put("arrayInt", toIntArray(2, 4, 6, 1));
+        vars.put("arrayString", "1, 2, 3, 4");
+
+        Assertions.assertArrayEquals(vars.getIntArray("array"), toIntArray(1, 2, 3, 4));
+        Assertions.assertArrayEquals(vars.getIntArray("arrayInt"), toIntArray(2, 4, 6, 1));
+        Assertions.assertArrayEquals(vars.getIntArray("arrayString", ","), toIntArray(1, 2, 3, 4));
+    }
+
+    @Test
     void testAddAndGetIntegers() {
 
         var vars = new VarTable();
@@ -120,6 +131,12 @@ public class VarTableTests {
         }
     }
 
+    enum SimpleEnum {
+        FIRST,
+        SECOND,
+        THIRD
+    }
+
     @Test
     void testAddAndGetSomeTypes() {
 
@@ -127,21 +144,21 @@ public class VarTableTests {
         vars.put("string", "Hello");
         vars.put("intArray", ArrayFactory.toIntArray(1, 2, 3, 5));
         vars.put("floatStringArray", "1.5,4.2,5.5");
-        vars.put("stringEnum", "FLOAT");
-        vars.put("enum", ReferenceType.BYTE);
+        vars.put("stringEnum", "THIRD");
+        vars.put("enum", SimpleEnum.SECOND);
 
         var string = vars.getString("string");
         var array = vars.getIntArray("intArray", "");
         var floatStringArray = vars.getFloatArray("floatStringArray", ",");
-        var stringEnum = vars.getEnum("stringEnum", ReferenceType.class);
-        var anEnum = vars.getEnum("enum", ReferenceType.class);
+        var stringEnum = vars.getEnum("stringEnum", SimpleEnum.class);
+        var anEnum = vars.getEnum("enum", SimpleEnum.class);
         var unsafeGet = vars.get("enum");
 
         Assertions.assertEquals("Hello", string);
         Assertions.assertArrayEquals(array, ArrayFactory.toIntArray(1, 2, 3, 5));
         Assertions.assertArrayEquals(floatStringArray, ArrayFactory.toFloatArray(1.5F, 4.2F, 5.5F));
-        Assertions.assertEquals(ReferenceType.FLOAT, stringEnum);
-        Assertions.assertEquals(ReferenceType.BYTE, anEnum);
-        Assertions.assertEquals(ReferenceType.BYTE, unsafeGet);
+        Assertions.assertEquals(SimpleEnum.THIRD, stringEnum);
+        Assertions.assertEquals(SimpleEnum.SECOND, anEnum);
+        Assertions.assertEquals(SimpleEnum.SECOND, unsafeGet);
     }
 }
