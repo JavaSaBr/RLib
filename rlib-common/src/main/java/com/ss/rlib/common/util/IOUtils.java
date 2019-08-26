@@ -96,10 +96,10 @@ public final class IOUtils {
      * @throws IOException the io exception
      */
     public static void copy(
-            @NotNull InputStream in,
-            @NotNull OutputStream out,
-            @NotNull byte[] buffer,
-            boolean needClose
+        @NotNull InputStream in,
+        @NotNull OutputStream out,
+        @NotNull byte[] buffer,
+        boolean needClose
     ) throws IOException {
 
         for (int i = in.read(buffer); i != -1; i = in.read(buffer)) {

@@ -1,16 +1,9 @@
 package com.ss.rlib.common.util;
 
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.dictionary.ConcurrentObjectDictionary;
-import com.ss.rlib.common.util.dictionary.DictionaryFactory;
-import com.ss.rlib.common.util.dictionary.DictionaryUtils;
-import com.ss.rlib.common.util.dictionary.ObjectDictionary;
 import com.ss.rlib.common.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.LongFunction;
@@ -22,9 +15,6 @@ import java.util.function.Supplier;
  * @author JavaSaBr
  */
 public final class ObjectUtils {
-
-    private static final ConcurrentObjectDictionary<Class<?>, Array<Field>> FIELDS_CACHE =
-            DictionaryFactory.newConcurrentAtomicObjectDictionary();
 
     /**
      * @see Objects#requireNonNull(Object, String)
@@ -88,7 +78,7 @@ public final class ObjectUtils {
      * @return the object.
      * @since 9.0.3
      */
-    public static <T, F> @NotNull T notNull(
+    public static <T> @NotNull T notNull(
         @Nullable T obj,
         long arg,
         @NotNull LongFunction<? extends RuntimeException> factory
@@ -153,56 +143,6 @@ public final class ObjectUtils {
      */
     public static int hash(@Nullable Object object) {
         return object == null ? 0 : object.hashCode();
-    }
-
-    /**
-     * Update all fields of an original object to a target object.
-     *
-     * @param <O>      the type parameter
-     * @param <N>      the type parameter
-     * @param original the original object.
-     * @param target   the target object.
-     * @param cache    the flag of using cache.
-     */
-    public static <O, N extends O> void reload(@NotNull O original, @NotNull N target, boolean cache) {
-
-        final Class<?> type = original.getClass();
-
-        boolean needPutToCache = false;
-        Array<Field> array = null;
-
-
-        if (cache) {
-            array = DictionaryUtils.getInReadLock(FIELDS_CACHE, type, ObjectDictionary::get);
-        }
-
-        if (array == null) {
-            needPutToCache = cache;
-
-            array = ArrayFactory.newArray(Field.class);
-
-            for (Class<?> cs = type; cs != null; cs = cs.getSuperclass()) {
-                array.addAll(cs.getDeclaredFields());
-            }
-
-            array.forEach(filtered -> {
-                final String fieldName = filtered.toString();
-                return !(fieldName.contains("final") || fieldName.contains("static"));
-            }, toUpdate -> toUpdate.setAccessible(true));
-        }
-
-
-        array.forEach(field -> {
-            try {
-                field.set(original, field.get(target));
-            } catch (final IllegalArgumentException | IllegalAccessException e) {
-                Utils.print(ObjectUtils.class, e);
-            }
-        });
-
-        if (needPutToCache) {
-            DictionaryUtils.runInWriteLock(FIELDS_CACHE, type, array, ObjectDictionary::put);
-        }
     }
 
     /**

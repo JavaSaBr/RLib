@@ -1,8 +1,8 @@
 package com.ss.rlib.common.test.util;
 
+import static com.ss.rlib.common.util.array.ArrayFactory.*;
 import com.ss.rlib.common.util.VarTable;
 import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.ref.ReferenceType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +12,74 @@ import org.junit.jupiter.api.Test;
  * @author JavaSaBr
  */
 public class VarTableTests {
+
+    @Test
+    void testAllGets() {
+
+        var vars = new VarTable();
+        vars.put("number", 10);
+        vars.put("array", toArray(1, 2, 3, 4));
+        vars.put("arrayString", "1,2,3,4");
+        vars.put("boolean", true);
+        vars.put("booleanString", "true");
+        vars.put("booleanArray", toBooleanArray(true, false, true));
+        vars.put("booleanArrayString", "true, false, true");
+
+        Assertions.assertEquals(vars.<Integer>get("number"), 10);
+
+        Assertions.assertEquals(vars.get("number", Integer.class), 10);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.get("number", Double.class));
+
+        Assertions.assertEquals(vars.get("number", Integer.class, 11), 10);
+        Assertions.assertEquals(vars.get("not_exist", Integer.class, 11), 11);
+        Assertions.assertEquals(vars.get("number", Double.class, 12D), 12D);
+
+        Assertions.assertEquals(vars.getNullable("number", Integer.class, null), 10);
+        Assertions.assertNull(vars.getNullable("not_exist", Double.class, null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getNullable("number", Double.class, null));
+
+        Assertions.assertEquals(vars.get("number",11), 10);
+        Assertions.assertEquals(vars.get("not_exist",11), 11);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.get("number",11D));
+
+        Assertions.assertNull(vars.getNullable("not_exist", null));
+        Assertions.assertEquals(vars.getNullable("number",11D), 11D);
+        Assertions.assertEquals(vars.getNullable("number",11), 10);
+        Assertions.assertEquals(vars.<Integer>getNullable("number",null), 10);
+        Assertions.assertThrows(ClassCastException.class, () -> {
+            Double d = vars.<Double>getNullable("number",null);
+        });
+
+        Assertions.assertArrayEquals(vars.getArray("array", Integer[].class, 1, 3, 3), toArray(1, 2, 3, 4));
+        Assertions.assertArrayEquals(vars.getArray("not_exist", Integer[].class, 1, 3, 3), toArray(1, 3, 3));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getArray("array", Double[].class, 1D, 3D, 3D));
+
+        Assertions.assertTrue(vars.getBoolean("boolean"));
+        Assertions.assertTrue(vars.getBoolean("booleanString"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getBoolean("not_exist"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getBoolean("number"));
+
+        Assertions.assertTrue(vars.getBoolean("boolean", false));
+        Assertions.assertTrue(vars.getBoolean("booleanString", false));
+        Assertions.assertFalse(vars.getBoolean("not_exist", false));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> vars.getBoolean("number", false));
+
+        Assertions.assertArrayEquals(vars.getBooleanArray("booleanArray", ","), toBooleanArray(true, false, true));
+        Assertions.assertArrayEquals(vars.getBooleanArray("booleanArrayString", ","), toBooleanArray(true, false, true));
+    }
+
+    @Test
+    void testGetIntArrays() {
+
+        var vars = new VarTable();
+        vars.put("array", toArray(1, 2, 3, 4));
+        vars.put("arrayInt", toIntArray(2, 4, 6, 1));
+        vars.put("arrayString", "1, 2, 3, 4");
+
+        Assertions.assertArrayEquals(vars.getIntArray("array"), toIntArray(1, 2, 3, 4));
+        Assertions.assertArrayEquals(vars.getIntArray("arrayInt"), toIntArray(2, 4, 6, 1));
+        Assertions.assertArrayEquals(vars.getIntArray("arrayString", ","), toIntArray(1, 2, 3, 4));
+    }
 
     @Test
     void testAddAndGetIntegers() {
@@ -63,6 +131,12 @@ public class VarTableTests {
         }
     }
 
+    enum SimpleEnum {
+        FIRST,
+        SECOND,
+        THIRD
+    }
+
     @Test
     void testAddAndGetSomeTypes() {
 
@@ -70,21 +144,21 @@ public class VarTableTests {
         vars.put("string", "Hello");
         vars.put("intArray", ArrayFactory.toIntArray(1, 2, 3, 5));
         vars.put("floatStringArray", "1.5,4.2,5.5");
-        vars.put("stringEnum", "FLOAT");
-        vars.put("enum", ReferenceType.BYTE);
+        vars.put("stringEnum", "THIRD");
+        vars.put("enum", SimpleEnum.SECOND);
 
         var string = vars.getString("string");
         var array = vars.getIntArray("intArray", "");
         var floatStringArray = vars.getFloatArray("floatStringArray", ",");
-        var stringEnum = vars.getEnum("stringEnum", ReferenceType.class);
-        var anEnum = vars.getEnum("enum", ReferenceType.class);
+        var stringEnum = vars.getEnum("stringEnum", SimpleEnum.class);
+        var anEnum = vars.getEnum("enum", SimpleEnum.class);
         var unsafeGet = vars.get("enum");
 
         Assertions.assertEquals("Hello", string);
         Assertions.assertArrayEquals(array, ArrayFactory.toIntArray(1, 2, 3, 5));
         Assertions.assertArrayEquals(floatStringArray, ArrayFactory.toFloatArray(1.5F, 4.2F, 5.5F));
-        Assertions.assertEquals(ReferenceType.FLOAT, stringEnum);
-        Assertions.assertEquals(ReferenceType.BYTE, anEnum);
-        Assertions.assertEquals(ReferenceType.BYTE, unsafeGet);
+        Assertions.assertEquals(SimpleEnum.THIRD, stringEnum);
+        Assertions.assertEquals(SimpleEnum.SECOND, anEnum);
+        Assertions.assertEquals(SimpleEnum.SECOND, unsafeGet);
     }
 }

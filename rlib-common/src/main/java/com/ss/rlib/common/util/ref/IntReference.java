@@ -3,7 +3,7 @@ package com.ss.rlib.common.util.ref;
 import lombok.*;
 
 /**
- * The reference to long value.
+ * The reference to integer value.
  *
  * @author JavaSaBr
  */
@@ -13,15 +13,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class LongReference extends AbstractReference {
+public class IntReference extends AbstractReference {
 
     /**
      * The value of this reference.
      */
-    private long value;
+    private int value;
 
     @Override
     public void free() {
-        this.value = 0L;
+        this.value = 0;
     }
 }

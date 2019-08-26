@@ -17,7 +17,7 @@ public final class NumberUtils {
      * @param bigEndian the big endian
      * @return the int
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static int bytesToInt(@NotNull byte[] array, int offset, boolean bigEndian) {
 
         if (bigEndian) {
@@ -35,7 +35,7 @@ public final class NumberUtils {
      * @param bigEndian the big endian
      * @return the long
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static long bytesToUInt(@NotNull byte[] array, int offset, boolean bigEndian) {
 
         long value = 0;
@@ -58,7 +58,7 @@ public final class NumberUtils {
      * @param byte4 the byte 4
      * @return the int
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static int makeInt(byte byte1, byte byte2, byte byte3, byte byte4) {
         return (byte4 & 0xFF) << 24 | (byte3 & 0xFF) << 16 | (byte2 & 0xFF) << 8 | byte1 & 0xFF;
     }
@@ -69,11 +69,22 @@ public final class NumberUtils {
      * @param bytes the bytes
      * @return the long
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static long makeLong(@NotNull byte[] bytes) {
         return ((long) bytes[7] & 0xFF) << 56 | ((long) bytes[6] & 0xFF) << 48 | ((long) bytes[5] & 0xFF) << 40 |
                 ((long) bytes[4] & 0xFF) << 32 | ((long) bytes[3] & 0xFF) << 24 | ((long) bytes[2] & 0xFF) << 16 |
                 ((long) bytes[1] & 0xFF) << 8 | (long) bytes[0] & 0xFF;
+    }
+
+    /**
+     * Get a short value from a byte array.
+     *
+     * @param bytes  the byte array.
+     * @param offset the offset.
+     * @return the short value.
+     */
+    public static short getShort(@NotNull byte[] bytes, int offset) {
+        return (short) (bytes[offset + 1] << 8 | bytes[offset] & 0xff);
     }
 
     private NumberUtils() {

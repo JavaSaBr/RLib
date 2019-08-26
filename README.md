@@ -16,11 +16,11 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:9.2.0'
-    compile 'com.spaceshift:rlib.fx:9.2.0'
-    compile 'com.spaceshift:rlib.network:9.2.0'
-    compile 'com.spaceshift:rlib.mail:9.2.0'
-    compile 'com.spaceshift:rlib.testcontainers:9.2.0'
+    compile 'com.spaceshift:rlib.common:9.2.1'
+    compile 'com.spaceshift:rlib.fx:9.2.1'
+    compile 'com.spaceshift:rlib.network:9.2.1'
+    compile 'com.spaceshift:rlib.mail:9.2.1'
+    compile 'com.spaceshift:rlib.testcontainers:9.2.1'
 }
 ```
     
@@ -41,27 +41,27 @@ dependencies {
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.common</artifactId>
-    <version>9.2.0</version>
+    <version>9.2.1</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.fx</artifactId>
-    <version>9.2.0</version>
+    <version>9.2.1</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.network</artifactId>
-    <version>9.2.0</version>
+    <version>9.2.1</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.mail</artifactId>
-    <version>9.2.0</version>
+    <version>9.2.1</version>
 </dependency>
 <dependency>
     <groupId>com.spaceshift</groupId>
     <artifactId>rlib.testcontainers</artifactId>
-    <version>9.2.0</version>
+    <version>9.2.1</version>
 </dependency>
 
 ```
@@ -290,82 +290,24 @@ dependencies {
         .thenAccept(aVoid -> System.out.println("done!"));
 ```
 ### Network API
-
+#### Simple String Echo Server/Client
 ```java
 
-    public static class ServerPackets {
+    var serverNetwork = NetworkFactory.newStringDataServerNetwork();
+    var serverAddress = serverNetwork.start();
 
-        @PacketDescription(id = 1)
-        public static class MessageRequest extends AbstractReadablePacket {
+    serverNetwork.accepted()
+        .flatMap(Connection::receivedEvents)
+        .subscribe(event -> {
+            var message = event.packet.getData();
+            System.out.println("Received from client: " + message);
+            event.connection.send(new StringWritablePacket("Echo: " + message));
+        });
 
-            @Override
-            protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
-                var message = readString(buffer);
-                System.out.println("Server: received \"" + message + "\"");
-                owner.sendPacket(new MessageResponse("Response of " + message));
-            }
-        }
-        
-        @PacketDescription(id = 2)
-        public static class MessageResponse extends AbstractWritablePacket {
-
-            @NotNull
-            private final String message;
-
-            public MessageResponse(@NotNull String message) {
-                this.message = message;
-            }
-
-            @Override
-            protected void writeImpl(@NotNull ByteBuffer buffer) {
-                super.writeImpl(buffer);
-                writeString(buffer, message);
-            }
-        }
-    }
-
-    public static class ClientPackets {
-
-        @PacketDescription(id = 1)
-        public static class MessageRequest extends AbstractWritablePacket {
-
-            @NotNull
-            private final String message;
-
-            public MessageRequest(@NotNull String message) {
-                this.message = message;
-            }
-
-            @Override
-            protected void writeImpl(@NotNull ByteBuffer buffer) {
-                super.writeImpl(buffer);
-                writeString(buffer, message);
-            }
-        }
-
-        @PacketDescription(id = 2)
-        public static class MessageResponse extends AbstractReadablePacket {
-
-            @Override
-            protected void readImpl(@NotNull ConnectionOwner owner, @NotNull ByteBuffer buffer) {
-                var message = readString(buffer);
-                System.out.println("client: received \"" + message + "\"");
-            }
-        }
-    }
-    
-    var address = new InetSocketAddress(2222);
-
-    serverNetwork = NetworkFactory.newDefaultAsyncServerNetwork(
-        ReadablePacketRegistry.of(ServerPackets.MessageRequest.class));
-    
-    serverNetwork.bind(address);
-    
-    clientNetwork = NetworkFactory.newDefaultAsyncClientNetwork(
-        ReadablePacketRegistry.of(ClientPackets.MessageResponse.class));
-    
-    clientNetwork.connect(address);
-    
-    var server = clientNetwork.getCurrentServer();
-    server.sendPacket(new ClientPackets.MessageRequest("Test client message"));
+    var clientNetwork = newStringDataClientNetwork();
+    clientNetwork.connected(serverAddress)
+        .doOnNext(connection -> IntStream.range(10, 100)
+            .forEach(length -> connection.send(new StringWritablePacket(StringUtils.generate(length)))))
+        .flatMapMany(Connection::receivedEvents)
+        .subscribe(event -> System.out.println("Received from server: " + event.packet.getData()));
 ```

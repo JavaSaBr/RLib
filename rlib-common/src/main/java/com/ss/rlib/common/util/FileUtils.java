@@ -69,13 +69,13 @@ public class FileUtils {
     private static final SimpleFileVisitor<Path> DELETE_FOLDER_VISITOR = new SimpleFileVisitor<>() {
 
         @Override
-        public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+        public FileVisitResult postVisitDirectory(@NotNull Path dir, @Nullable IOException exc) throws IOException {
             Files.delete(dir);
             return FileVisitResult.CONTINUE;
         }
 
         @Override
-        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+        public FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attrs) throws IOException {
             Files.delete(file);
             return FileVisitResult.CONTINUE;
         }
@@ -105,7 +105,7 @@ public class FileUtils {
      * @param filename the string with file name.
      * @return normalized file name.
      */
-    public static @NotNull String normalizeName(@Nullable final String filename) {
+    public static @NotNull String normalizeName(@Nullable String filename) {
 
         if (StringUtils.isEmpty(filename)) {
             return "_";
@@ -124,10 +124,10 @@ public class FileUtils {
      * @param extensions  extensions filter.
      */
     public static void addFilesTo(
-            @NotNull Array<Path> container,
-            @NotNull Path dir,
-            boolean withFolders,
-            @Nullable String... extensions
+        @NotNull Array<Path> container,
+        @NotNull Path dir,
+        boolean withFolders,
+        @Nullable String... extensions
     ) {
 
         if (Files.isDirectory(dir) && withFolders) {
@@ -139,8 +139,8 @@ public class FileUtils {
             return;
         }
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-            for (Path path : stream) {
+        try (var stream = Files.newDirectoryStream(dir)) {
+            for (var path : stream) {
                 if (Files.isDirectory(path)) {
                     addFilesTo(container, path, withFolders, extensions);
                 } else if (extensions == null || extensions.length < 1 || containsExtensions(extensions, path.getFileName())) {
@@ -508,11 +508,11 @@ public class FileUtils {
      */
     public static @NotNull String read(@NotNull InputStream in) {
 
-        StringBuilder content = new StringBuilder();
+        var content = new StringBuilder();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+        try (var reader = new BufferedReader(new InputStreamReader(in))) {
 
-            CharBuffer buffer = CharBuffer.allocate(512);
+            var buffer = CharBuffer.allocate(512);
 
             while (reader.ready()) {
 
@@ -660,7 +660,7 @@ public class FileUtils {
      * @see Files#getLastModifiedTime(Path, LinkOption...)
      */
     public static @NotNull FileTime getLastModifiedTime(@NotNull Path file, @NotNull LinkOption... options) {
-        return notNull(Utils.safeGet(file, options, Files::getLastModifiedTime));
+        return notNull(Utils.uncheckedGet(file, options, Files::getLastModifiedTime));
     }
 
     /**
@@ -697,7 +697,7 @@ public class FileUtils {
      * @see Path#relativize(Path)
      */
     public static @NotNull Path relativize(@NotNull Path base, @NotNull Path other) {
-        return Utils.get(base, other, Path::relativize);
+        return Utils.uncheckedGet(base, other, Path::relativize);
     }
 
     /**
@@ -707,7 +707,7 @@ public class FileUtils {
         if (base == null || other == null) {
             return null;
         } else {
-            return Utils.safeGet(base, other, Path::relativize);
+            return Utils.uncheckedGet(base, other, Path::relativize);
         }
     }
 
@@ -740,9 +740,9 @@ public class FileUtils {
      * @see Files#createTempFile(String, String, FileAttribute[])
      */
     public static @NotNull Path createTempFile(
-            @NotNull String prefix,
-            @NotNull String suffix,
-            @Nullable FileAttribute<?>... attrs
+        @NotNull String prefix,
+        @NotNull String suffix,
+        @Nullable FileAttribute<?>... attrs
     ) {
         try {
             return Files.createTempFile(prefix, suffix, attrs);
@@ -760,8 +760,8 @@ public class FileUtils {
     public static void forEach(@NotNull Path directory, @NotNull Consumer<@NotNull Path> consumer) {
         validateDirectory(directory);
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-            for (Path path : stream) {
+        try (var stream = Files.newDirectoryStream(directory)) {
+            for (var path : stream) {
                 consumer.accept(path);
             }
         } catch (IOException e) {
@@ -786,14 +786,14 @@ public class FileUtils {
      * @param <T>       the argument's type.
      */
     public static <T> void forEach(
-            @NotNull Path directory,
-            @NotNull T argument,
-            @NotNull BiConsumer<@NotNull Path, @NotNull T> consumer
+        @NotNull Path directory,
+        @NotNull T argument,
+        @NotNull BiConsumer<@NotNull Path, @NotNull T> consumer
     ) {
         validateDirectory(directory);
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-            for (Path path : stream) {
+        try (var stream = Files.newDirectoryStream(directory)) {
+            for (var path : stream) {
                 consumer.accept(path, argument);
             }
         } catch (IOException e) {
@@ -830,14 +830,14 @@ public class FileUtils {
      * @param <T>       the argument's type.
      */
     public static <T> void forEachR(
-            @NotNull Path directory,
-            @NotNull T argument,
-            @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
+        @NotNull Path directory,
+        @NotNull T argument,
+        @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
     ) {
         validateDirectory(directory);
 
         try (var stream = Files.newDirectoryStream(directory)) {
-            for (Path path : stream) {
+            for (var path : stream) {
                 consumer.accept(argument, path);
             }
         } catch (IOException e) {
@@ -855,15 +855,15 @@ public class FileUtils {
      * @param <T>       the argument's type.
      */
     public static <T> void forEachR(
-            @NotNull Path directory,
-            @NotNull T argument,
-            @NotNull Predicate<@NotNull Path> condition,
-            @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
+        @NotNull Path directory,
+        @NotNull T argument,
+        @NotNull Predicate<@NotNull Path> condition,
+        @NotNull BiConsumer<@NotNull T, @NotNull Path> consumer
     ) {
         validateDirectory(directory);
 
         try (var stream = Files.newDirectoryStream(directory)) {
-            for (Path path : stream) {
+            for (var path : stream) {
                 if (condition.test(path)) {
                     consumer.accept(argument, path);
                 }

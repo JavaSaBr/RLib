@@ -8,7 +8,7 @@ buildscript {
     }
 }
 
-rootProject.version = '9.2.0'
+rootProject.version = '9.2.1'
 group = 'com.spaceshift'
 
 allprojects {
@@ -99,8 +99,8 @@ allprojects {
 
     bintray {
         afterEvaluate {
-            user = System.getProperty('bintrayUser')
-            key = System.getProperty('bintrayKey')
+            user = project.hasProperty("bintrayUser") ? project.property("bintrayUser") : ""
+            key = project.hasProperty("bintrayKey") ?  project.property("bintrayKey") : ""
             publications = ['mavenJava']
             pkg {
                 repo = 'maven'
@@ -139,6 +139,6 @@ allprojects {
 }
 
 wrapper {
-    gradleVersion = '5.4.1'
+    gradleVersion = '5.5.1'
     distributionType = Wrapper.DistributionType.ALL
 }

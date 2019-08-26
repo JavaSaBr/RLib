@@ -12,7 +12,6 @@ import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,8 +46,8 @@ public final class Utils {
 
         try {
 
-            ServerSocket serverSocket = host.equalsIgnoreCase("*") ?
-                    new ServerSocket(port) : new ServerSocket(port, 50, InetAddress.getByName(host));
+            ServerSocket serverSocket = host.equalsIgnoreCase("*") ? new ServerSocket(port) :
+                new ServerSocket(port, 50, InetAddress.getByName(host));
 
             serverSocket.close();
 
@@ -67,6 +66,7 @@ public final class Utils {
      * @return true if all ports are free.
      * @throws InterruptedException the interrupted exception
      */
+    @Deprecated(forRemoval = true)
     public static boolean checkFreePorts(@NotNull final String host, @NotNull final int... ports)
             throws InterruptedException {
 
@@ -89,15 +89,15 @@ public final class Utils {
      * Format a time to a string date using a format days/hours/minutes/second.
      *
      * @param time the timestamp.
-     * @return the string
+     * @return the string presentation.
      */
-    public static @NotNull String formatTime(final long time) {
+    public static @NotNull String formatTime(long time) {
 
-        final Date date = LOCAL_DATE.get();
+        var date = LOCAL_DATE.get();
         date.setTime(time);
 
-        final SimpleDateFormat format = LOCAL_DATE_FORMAT.get();
-        return format.format(date);
+        return LOCAL_DATE_FORMAT.get()
+            .format(date);
     }
 
     /**
@@ -142,15 +142,17 @@ public final class Utils {
      */
     public static @NotNull Path getRootFolderFromClass(@NotNull final Class<?> cs) {
 
-        String className = cs.getName();
-
-        final StringBuilder builder = new StringBuilder(className.length());
-        builder.append('/');
+        var className = cs.getName();
+        var builder = new StringBuilder(className.length())
+            .append('/');
 
         for (int i = 0, length = className.length(); i < length; i++) {
 
-            char ch = className.charAt(i);
-            if (ch == '.') ch = '/';
+            var ch = className.charAt(i);
+
+            if (ch == '.') {
+                ch = '/';
+            }
 
             builder.append(ch);
         }
@@ -161,26 +163,32 @@ public final class Utils {
 
         try {
 
-            final URL url = Utils.class.getResource(className);
+            var url = Utils.class.getResource(className);
 
-            String path = url.getPath();
+            var path = url.getPath();
             path = path.substring(0, path.length() - className.length());
             path = path.substring(0, path.lastIndexOf('/'));
 
-            final URI uri = new URI(path);
+            var uri = new URI(path);
+
             path = uri.getPath();
             path = path.replaceAll("%20", " ");
 
-            // замена сепараторов
             if (File.separatorChar != '/') {
 
-                final StringBuilder pathBuilder = new StringBuilder();
+                var pathBuilder = new StringBuilder();
 
                 for (int i = 0, length = path.length(); i < length; i++) {
 
-                    char ch = path.charAt(i);
-                    if (ch == '/' && i == 0) continue;
-                    if (ch == '/') ch = File.separatorChar;
+                    var ch = path.charAt(i);
+
+                    if (ch == '/' && i == 0) {
+                        continue;
+                    }
+
+                    if (ch == '/') {
+                        ch = File.separatorChar;
+                    }
 
                     pathBuilder.append(ch);
                 }
@@ -188,7 +196,7 @@ public final class Utils {
                 path = pathBuilder.toString();
             }
 
-            Path file = Paths.get(path);
+            var file = Paths.get(path);
 
             while (path.lastIndexOf(File.separatorChar) != -1 && !Files.exists(file)) {
                 path = path.substring(0, path.lastIndexOf(File.separatorChar));
@@ -197,7 +205,7 @@ public final class Utils {
 
             return file;
 
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -209,7 +217,8 @@ public final class Utils {
      * @param offset the offset.
      * @return the short value.
      */
-    public static short getShort(final byte[] bytes, final int offset) {
+    @Deprecated(forRemoval = true)
+    public static short getShort(byte[] bytes, int offset) {
         return (short) (bytes[offset + 1] << 8 | bytes[offset] & 0xff);
     }
 
@@ -419,6 +428,7 @@ public final class Utils {
      * @param function     the function.
      * @param errorHandler the handler.
      */
+    @Deprecated(forRemoval = true)
     public static void run(@NotNull SafeRunnable function, @NotNull Consumer<Exception> errorHandler) {
         try {
             function.run();
@@ -506,12 +516,61 @@ public final class Utils {
     }
 
     /**
+     * Execute the function with returning default value if got an exception.
+     *
+     * @param <F>      the argument's type.
+     * @param <R>      the result's type.
+     * @param argument the argument.
+     * @param function the function.
+     * @param def      the default value.
+     * @return the result.
+     */
+    public static <F, R> @NotNull R uncheckedGet(
+        @NotNull F argument,
+        @NotNull SafeFunction<F, R> function,
+        @NotNull R def
+    ) {
+        try {
+            return function.apply(argument);
+        } catch (Exception e) {
+            return def;
+        }
+    }
+
+    /**
+     * Execute the function with auto-converting a checked exception to an unchecked.
+     *
+     * @param <F>      the first's type.
+     * @param <S>      the second's type.
+     * @param <R>      the result's type.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     * @return the result.
+     * @since 9.2.1
+     */
+    public static <F, S, R> @NotNull R uncheckedGet(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull SafeBiFunction<F, S, R> function
+    ) {
+        try {
+            return function.apply(first, second);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Execute the function with auto-converting checked exception to runtime.
      *
      * @param <R>      the type parameter
      * @param function the function.
      * @return the result.
      */
+    @Deprecated(forRemoval = true)
     public static <R> @Nullable R getNullable(@NotNull SafeFactory<R> function) {
         try {
             return function.get();
@@ -528,6 +587,7 @@ public final class Utils {
      * @param errorHandler the handler.
      * @return the result or null.
      */
+    @Deprecated(forRemoval = true)
     public static <R> @Nullable R get(
             @NotNull SafeFactory<R> function,
             @NotNull Consumer<Exception> errorHandler
@@ -551,6 +611,7 @@ public final class Utils {
      * @param function the function.
      * @return the result or null.
      */
+    @Deprecated(forRemoval = true)
     public static <F, R> @Nullable R safeGet(
         @NotNull F argument,
         @NotNull SafeFunction<@NotNull F, @NotNull R> function
@@ -572,6 +633,7 @@ public final class Utils {
      * @param function the function.
      * @return the result or null.
      */
+    @Deprecated(forRemoval = true)
     public static <F, R> @NotNull R safeGet(
         @NotNull F argument,
         @NotNull SafeFunction<@NotNull F, @NotNull R> function,
@@ -593,10 +655,8 @@ public final class Utils {
      * @param <R> the result's type.
      * @return the optional result.
      */
-    public static <F, R> @NotNull Optional<R> safeGetOpt(
-            @NotNull F first,
-            @NotNull SafeFunction<F, R> function
-    ) {
+    @Deprecated(forRemoval = true)
+    public static <F, R> @NotNull Optional<R> safeGetOpt(@NotNull F first, @NotNull SafeFunction<F, R> function) {
         try {
             return Optional.of(function.apply(first));
         } catch (Exception e) {
@@ -616,10 +676,11 @@ public final class Utils {
      * @param <R> the result's type.
      * @return the result.
      */
+    @Deprecated(forRemoval = true)
     public static <F, S, R> @NotNull R get(
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull SafeBiFunction<F, S, R> function
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull SafeBiFunction<F, S, R> function
     ) {
         try {
             return function.apply(first, second);
@@ -639,6 +700,7 @@ public final class Utils {
      * @param <R> the result's type.
      * @return the result or null.
      */
+    @Deprecated(forRemoval = true)
     public static <F, S, R> @Nullable R safeGet(
             @NotNull F first,
             @NotNull S second,
@@ -663,6 +725,7 @@ public final class Utils {
      * @param <R> the result's type.
      * @return the optional result.
      */
+    @Deprecated(forRemoval = true)
     public static <F, S, R> @NotNull Optional<R> safeGetOpt(
             @NotNull F first,
             @NotNull S second,
@@ -685,6 +748,7 @@ public final class Utils {
      * @param function the function.
      * @return the result or null.
      */
+    @Deprecated(forRemoval = true)
     public static <F, R> @Nullable R getNullable(
             @Nullable F first,
             @NotNull SafeFunction<F, R> function
@@ -704,6 +768,7 @@ public final class Utils {
      * @param function     the function.
      * @param errorHandler the handler.
      */
+    @Deprecated(forRemoval = true)
     public static <F> void run(
             @Nullable F first,
             @NotNull SafeConsumer<F> function,
@@ -726,6 +791,7 @@ public final class Utils {
      * @param errorHandler the handler.
      * @return the result or null.
      */
+    @Deprecated(forRemoval = true)
     public static <F, R> @Nullable R get(
             @Nullable F first,
             @NotNull SafeFunction<F, R> function,
@@ -751,6 +817,7 @@ public final class Utils {
      * @param function     the function.
      * @param errorHandler the handler.
      */
+    @Deprecated(forRemoval = true)
     public static <F, S> void run(
             @Nullable F first,
             @Nullable S second,
@@ -781,20 +848,20 @@ public final class Utils {
     }
 
     /**
-     * Print.
+     * Print an exception to log.
      *
-     * @param owner the owner
-     * @param e     the e
+     * @param owner     the owner.
+     * @param exception the exception.
      */
-    public static void print(@NotNull Class<?> owner, @NotNull Exception e) {
-        LoggerManager.getDefaultLogger().warning(owner, e);
+    public static void print(@NotNull Class<?> owner, @NotNull Exception exception) {
+        LoggerManager.getDefaultLogger().warning(owner, exception);
     }
 
     /**
-     * Print.
+     * Print a message to log.
      *
-     * @param owner   the owner
-     * @param message the message
+     * @param owner   the owner.
+     * @param message the message.
      */
     public static void print(@NotNull Class<?> owner, @NotNull String message) {
         LoggerManager.getDefaultLogger().warning(owner, message);

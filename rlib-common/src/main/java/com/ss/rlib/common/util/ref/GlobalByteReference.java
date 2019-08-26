@@ -5,7 +5,7 @@ package com.ss.rlib.common.util.ref;
  *
  * @author JavaSaBr
  */
-final class TLByteReference extends ByteReference {
+final class GlobalByteReference extends ByteReference {
 
     @Override
     public void release() {

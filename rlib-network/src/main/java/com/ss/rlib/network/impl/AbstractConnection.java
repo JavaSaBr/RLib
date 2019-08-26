@@ -1,7 +1,6 @@
 package com.ss.rlib.network.impl;
 
-import static com.ss.rlib.common.util.Utils.safeGet;
-import static com.ss.rlib.common.util.Utils.unchecked;
+import static com.ss.rlib.common.util.Utils.*;
 import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
@@ -159,7 +158,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     @Override
     public @NotNull String getRemoteAddress() {
-        return safeGet(channel, arg -> String.valueOf(arg.getRemoteAddress()), "unknown");
+        return uncheckedGet(channel, arg -> String.valueOf(arg.getRemoteAddress()), "unknown");
     }
 
     /**
