@@ -98,7 +98,7 @@ public class ReferencesTest {
         var doubleRef = ReferenceFactory.newThreadLocalDoubleRef(3.5D);
         var floatRef = ReferenceFactory.newThreadLocalFloatRef(1.5F);
         var intRef = ReferenceFactory.newThreadLocalIntRef(7);
-        var longRef = ReferenceFactory.newReusableLongRef(4L);
+        var longRef = ReferenceFactory.newThreadLocalLongRef(4L);
         var objRef = ReferenceFactory.newThreadLocalObjRef("Val3");
         var shortRef = ReferenceFactory.newThreadLocalShortRef((short) 2);
 
@@ -130,14 +130,14 @@ public class ReferencesTest {
         Assertions.assertEquals(0, shortRef.getValue());
         Assertions.assertEquals(0, byteRef.getValue());
 
-        var byteRef2 = ReferenceFactory.newReusableByteRef((byte) 3);
-        var charRef2 = ReferenceFactory.newReusableCharRef('d');
-        var doubleRef2 = ReferenceFactory.newReusableDoubleRef(3.5D);
-        var floatRef2 = ReferenceFactory.newReusableFloatRef(1.5F);
-        var intRef2 = ReferenceFactory.newReusableIntRef(7);
-        var longRef2 = ReferenceFactory.newReusableLongRef(4L);
-        var objRef2 = ReferenceFactory.newReusableObjRef("Val3");
-        var shortRef2 = ReferenceFactory.newReusableShortRef((short) 2);
+        var byteRef2 = ReferenceFactory.newThreadLocalByteRef((byte) 3);
+        var charRef2 = ReferenceFactory.newThreadLocalCharRef('d');
+        var doubleRef2 = ReferenceFactory.newThreadLocalDoubleRef(3.5D);
+        var floatRef2 = ReferenceFactory.newThreadLocalFloatRef(1.5F);
+        var intRef2 = ReferenceFactory.newThreadLocalIntRef(7);
+        var longRef2 = ReferenceFactory.newThreadLocalLongRef(4L);
+        var objRef2 = ReferenceFactory.newThreadLocalObjRef("Val3");
+        var shortRef2 = ReferenceFactory.newThreadLocalShortRef((short) 2);
 
         Assertions.assertSame(byteRef, byteRef2);
         Assertions.assertSame(charRef, charRef2);

@@ -76,6 +76,17 @@ public final class NumberUtils {
                 ((long) bytes[1] & 0xFF) << 8 | (long) bytes[0] & 0xFF;
     }
 
+    /**
+     * Get a short value from a byte array.
+     *
+     * @param bytes  the byte array.
+     * @param offset the offset.
+     * @return the short value.
+     */
+    public static short getShort(@NotNull byte[] bytes, int offset) {
+        return (short) (bytes[offset + 1] << 8 | bytes[offset] & 0xff);
+    }
+
     private NumberUtils() {
         throw new IllegalArgumentException();
     }

@@ -37,6 +37,7 @@ public final class ArrayUtils {
      *
      * @param array the object integer array.
      * @return the primitive int array.
+     * @since 9.2.1
      */
     public static @NotNull int[] toIntArray(@NotNull Integer[] array) {
 
@@ -60,6 +61,7 @@ public final class ArrayUtils {
      * @param regex  the regex.
      * @return the primitive int array.
      * @throws NumberFormatException if some elements in the string are not an integer.
+     * @since 9.2.1
      */
     public static @NotNull int[] toIntArray(@NotNull String string, @NotNull String regex) {
 
