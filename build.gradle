@@ -99,8 +99,8 @@ allprojects {
 
     bintray {
         afterEvaluate {
-            user = System.getProperty('bintrayUser')
-            key = System.getProperty('bintrayKey')
+            user = project.hasProperty("bintrayUser") ? project.property("bintrayUser") : ""
+            key = project.hasProperty("bintrayKey") ?  project.property("bintrayKey") : ""
             publications = ['mavenJava']
             pkg {
                 repo = 'maven'
