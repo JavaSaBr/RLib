@@ -33,6 +33,56 @@ public final class ArrayUtils {
     public static final char[] EMPTY_CHAR_ARRAY = new char[0];
 
     /**
+     * Convert an object integer array to primitive int array.
+     *
+     * @param array the object integer array.
+     * @return the primitive int array.
+     */
+    public static @NotNull int[] toIntArray(@NotNull Integer[] array) {
+
+        if (array.length < 1) {
+            return ArrayUtils.EMPTY_INT_ARRAY;
+        }
+
+        var intArray = new int[array.length];
+
+        for (int i = 0; i < array.length; i++) {
+            intArray[i] = array[i];
+        }
+
+        return intArray;
+    }
+
+    /**
+     * Convert an string to primitive int array by regex.
+     *
+     * @param string the string.
+     * @param regex  the regex.
+     * @return the primitive int array.
+     * @throws NumberFormatException if some elements in the string are not an integer.
+     */
+    public static @NotNull int[] toIntArray(@NotNull String string, @NotNull String regex) {
+
+        if (string.isBlank()) {
+            return ArrayUtils.EMPTY_INT_ARRAY;
+        }
+
+        var elements = string.split(regex);
+
+        if (elements.length < 1) {
+            return ArrayUtils.EMPTY_INT_ARRAY;
+        }
+
+        var intArray = new int[elements.length];
+
+        for (int i = 0; i < elements.length; i++) {
+            intArray[i] = Integer.parseInt(elements[i].trim());
+        }
+
+        return intArray;
+    }
+
+    /**
      * Add the element to the array and extend or create the array if need.
      *
      * @param <T>     the type parameter
@@ -279,7 +329,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy and extend if need a native array array.
+     * Copy and extend if need a native array.
      *
      * @param <T>      the array component's type.
      * @param original the original array.
