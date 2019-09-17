@@ -8,8 +8,10 @@ import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -29,6 +31,9 @@ public class StringUtils {
 
     private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD =
             ThreadLocal.withInitial(StringUtils::getHashMD5);
+
+    private static final DateTimeFormatter TIMESTAMP_FORMETTER =
+        DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
 
     /**
      * Return an empty string if the received string is null.
@@ -52,9 +57,29 @@ public class StringUtils {
     }
 
     /**
+     * Format a time to a string by pattern HH:mm:ss:SSS
+     *
+     * @param timestamp the timestamp.
+     * @return the string presentation.
+     */
+    public static @NotNull String formatTimestamp(long timestamp) {
+        return TIMESTAMP_FORMETTER.format(Instant.ofEpochMilli(timestamp));
+    }
+
+    /**
+     * Format some temporal accessor to a string by pattern HH:mm:ss:SSS
+     *
+     * @param temporal the timestamp.
+     * @return the string presentation.
+     */
+    public static @NotNull String formatTimestamp(@NotNull TemporalAccessor temporal) {
+        return TIMESTAMP_FORMETTER.format(temporal);
+    }
+
+    /**
      * @see #isValidEmail(String)
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static boolean checkEmail(@NotNull String email) {
         var matcher = EMAIL_PATTERN.matcher(email);
         return matcher.matches();
