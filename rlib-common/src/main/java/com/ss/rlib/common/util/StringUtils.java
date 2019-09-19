@@ -1,6 +1,5 @@
 package com.ss.rlib.common.util;
 
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,9 +8,6 @@ import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
@@ -33,9 +29,6 @@ public class StringUtils {
     private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD =
             ThreadLocal.withInitial(StringUtils::getHashMD5);
 
-    private static final DateTimeFormatter TIMESTAMP_FORMETTER =
-        DateTimeFormatter.ofPattern("HH:mm:ss:SSS");
-
     /**
      * Return an empty string if the received string is null.
      *
@@ -55,46 +48,6 @@ public class StringUtils {
      */
     public static @NotNull String ifEmpty(@Nullable String string, @NotNull String another) {
         return isEmpty(string) ? another : string;
-    }
-
-    /**
-     * Format a time to a string by pattern HH:mm:ss:SSS
-     *
-     * @param timestamp the timestamp.
-     * @return the string presentation.
-     * @since 9.3.0
-     */
-    public static @NotNull String formatShortTimestamp(long timestamp) {
-        return TIMESTAMP_FORMETTER.format(LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(timestamp),
-            ZoneOffset.UTC
-        ));
-    }
-
-    /**
-     * Format some temporal accessor to a string by pattern HH:mm:ss:SSS
-     *
-     * @param temporal the timestamp.
-     * @return the string presentation.
-     * @since 9.3.0
-     */
-    public static @NotNull String formatShortTimestamp(@NotNull TemporalAccessor temporal) {
-        return TIMESTAMP_FORMETTER.format(temporal);
-    }
-
-    /**
-     * Convert a date string to a {@link LocalDate}.
-     *
-     * @param string the string to convert.
-     * @return the local date or null if this string cannot be converted.
-     * @since 9.3.0
-     */
-    public static @Nullable LocalDate toLocalDate(@Nullable String string) {
-        if (StringUtils.isEmpty(string)) {
-            return null;
-        } else {
-            return Utils.tryGetAndConvert(string, ISO_LOCAL_DATE::parse, LocalDate::from);
-        }
     }
 
     /**
