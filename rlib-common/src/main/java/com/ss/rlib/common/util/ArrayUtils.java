@@ -485,12 +485,14 @@ public final class ArrayUtils {
      * @param object the object.
      * @return the object's index or -1.
      */
-    public static int indexOf(@NotNull final Object[] array, @Nullable final Object object) {
+    public static int indexOf(@NotNull Object[] array, @Nullable Object object) {
 
         int index = 0;
 
-        for (final Object element : array) {
-            if (Objects.equals(element, object)) return index;
+        for (var element : array) {
+            if (Objects.equals(element, object)) {
+                return index;
+            }
             index++;
         }
 
@@ -1883,6 +1885,38 @@ public final class ArrayUtils {
      */
     public static boolean isEmpty(@Nullable double[] array) {
         return array == null || array.length == 0;
+    }
+
+    /**
+     * Create a new array with mapped each element from source array.
+     *
+     * @param source     the source array.
+     * @param mapper     the mapper.
+     * @param resultType the result component type.
+     * @param <T>        the source component type.
+     * @param <R>        the result component type.
+     * @return the mapped array or null.
+     * @since 9.3.0
+     */
+    public static <T, R, M extends R> R @Nullable [] mapNullable(
+        T @Nullable [] source,
+        @NotNull Function<@NotNull T, @NotNull M> mapper,
+        @NotNull Class<R> resultType
+    ) {
+
+        if (source == null) {
+            return null;
+        } else if (source.length == 0) {
+            return create(resultType, 0);
+        }
+
+        R[] resultArray = create(resultType, source.length);
+
+        for (int i = 0; i < source.length; i++) {
+            resultArray[i] = mapper.apply(source[i]);
+        }
+
+        return resultArray;
     }
 
     private ArrayUtils() {

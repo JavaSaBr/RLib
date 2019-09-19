@@ -95,6 +95,7 @@ public final class NumberUtils {
      *
      * @param string the string to convert.
      * @return if the string is not null and can be converted to a long.
+     * @since 9.3.0
      */
     public static boolean isLong(@Nullable String string) {
 
@@ -115,6 +116,7 @@ public final class NumberUtils {
      *
      * @param string the string to convert.
      * @return the long object or null.
+     * @since 9.3.0
      */
     public static @Nullable Long safeToLong(@Nullable String string) {
 
@@ -134,6 +136,7 @@ public final class NumberUtils {
      *
      * @param string the string to convert.
      * @return the optional of long object.
+     * @since 9.3.0
      */
     public static @NotNull Optional<Long> toOptionalLong(@Nullable String string) {
 

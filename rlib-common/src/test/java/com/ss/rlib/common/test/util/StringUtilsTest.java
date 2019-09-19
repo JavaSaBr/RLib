@@ -4,6 +4,8 @@ import com.ss.rlib.common.util.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.*;
+
 /**
  * Test methods in {@link com.ss.rlib.common.util.StringUtils}
  *
@@ -117,5 +119,66 @@ class StringUtilsTest {
         Assertions.assertFalse(StringUtils.isEmail("test-test.com"));
         Assertions.assertFalse(StringUtils.isEmail("test@test"));
         Assertions.assertFalse(StringUtils.isEmail("test@test."));
+    }
+
+    @Test
+    void convertToLocalDateTest() {
+
+        Assertions.assertEquals(
+            LocalDate.of(1800, 5, 20),
+            StringUtils.toLocalDate("1800-05-20")
+        );
+
+        Assertions.assertNull(StringUtils.toLocalDate("2020-1-10"));
+        Assertions.assertEquals(
+            LocalDate.of(2020, 1, 10),
+            StringUtils.toLocalDate("2020-01-10")
+        );
+
+        Assertions.assertNull(StringUtils.toLocalDate("2015-5-1"));
+        Assertions.assertEquals(
+            LocalDate.of(2015, 5, 1),
+            StringUtils.toLocalDate("2015-05-01")
+        );
+
+        Assertions.assertNull(StringUtils.toLocalDate("invaliddate"));
+    }
+
+    @Test
+    void formatTimestampTest() {
+
+        var localDateTime = LocalDateTime.of(
+            2010,
+            5,
+            12,
+            23,
+            10,
+            35,
+            0
+        );
+
+        Assertions.assertEquals("23:10:35:000", StringUtils.formatShortTimestamp(localDateTime));
+        Assertions.assertEquals("23:10:35:000", StringUtils.formatShortTimestamp(localDateTime
+            .toInstant(ZoneOffset.UTC)
+            .toEpochMilli())
+        );
+
+        var zonedDateTime = ZonedDateTime.of(
+            2010,
+            5,
+            12,
+            23,
+            10,
+            35,
+            0,
+            ZoneOffset.ofHours(3)
+        );
+
+        Assertions.assertEquals("23:10:35:000", StringUtils.formatShortTimestamp(zonedDateTime));
+        Assertions.assertEquals("23:10:35:000", StringUtils.formatShortTimestamp(zonedDateTime
+            .toLocalDateTime()
+            .toInstant(ZoneOffset.UTC)
+            .toEpochMilli())
+        );
     }
 }

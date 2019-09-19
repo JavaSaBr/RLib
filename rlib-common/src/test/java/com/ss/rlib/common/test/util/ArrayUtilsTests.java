@@ -46,4 +46,25 @@ public class ArrayUtilsTests {
         Assertions.assertThrows(NumberFormatException.class,
             () -> ArrayUtils.toIntArray(" 1 ,2.5 , 3,4, 5", ","));
     }
+
+    @Test
+    void mapNullableTest() {
+
+        String[] nullStrings = null;
+        String[] emptyStrings = new String[0];
+        String[] singleStrings = ArrayFactory.toArray("5");
+        String[] strings = ArrayFactory.toArray("8", "1", "6");
+
+        Assertions.assertNull(ArrayUtils.mapNullable(nullStrings, Integer::parseInt, Integer.class));
+
+        Assertions.assertArrayEquals(
+            new Integer[0], ArrayUtils.mapNullable(emptyStrings, Integer::parseInt, Integer.class)
+        );
+        Assertions.assertArrayEquals(
+            ArrayFactory.toArray(5), ArrayUtils.mapNullable(singleStrings, Integer::parseInt, Integer.class)
+        );
+        Assertions.assertArrayEquals(
+            ArrayFactory.toArray(8, 1, 6), ArrayUtils.mapNullable(strings, Integer::parseInt, Integer.class)
+        );
+    }
 }

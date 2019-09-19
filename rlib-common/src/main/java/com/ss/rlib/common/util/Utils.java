@@ -255,6 +255,7 @@ public final class Utils {
      * @param argument the argument.
      * @param function the function.
      * @return the result or null.
+     * @since 9.3.0
      */
     public static <F, R> @Nullable R tryGet(
         @NotNull F argument,
@@ -276,6 +277,7 @@ public final class Utils {
      * @param argument the argument.
      * @param function the function.
      * @return the result or null.
+     * @since 9.3.0
      */
     public static <F, R> @NotNull R tryGet(
         @NotNull F argument,
@@ -299,6 +301,7 @@ public final class Utils {
      * @param function        the function.
      * @param resultConverter the result converter.
      * @return the final result or null.
+     * @since 9.3.0
      */
     public static <F, R, FR> @Nullable FR tryGetAndConvert(
         @NotNull F argument,

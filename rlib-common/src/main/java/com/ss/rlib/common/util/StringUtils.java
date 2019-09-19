@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util;
 
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,7 +9,7 @@ import java.io.StringWriter;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.concurrent.ThreadLocalRandom;
@@ -61,9 +62,13 @@ public class StringUtils {
      *
      * @param timestamp the timestamp.
      * @return the string presentation.
+     * @since 9.3.0
      */
-    public static @NotNull String formatTimestamp(long timestamp) {
-        return TIMESTAMP_FORMETTER.format(Instant.ofEpochMilli(timestamp));
+    public static @NotNull String formatShortTimestamp(long timestamp) {
+        return TIMESTAMP_FORMETTER.format(LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(timestamp),
+            ZoneOffset.UTC
+        ));
     }
 
     /**
@@ -71,18 +76,25 @@ public class StringUtils {
      *
      * @param temporal the timestamp.
      * @return the string presentation.
+     * @since 9.3.0
      */
-    public static @NotNull String formatTimestamp(@NotNull TemporalAccessor temporal) {
+    public static @NotNull String formatShortTimestamp(@NotNull TemporalAccessor temporal) {
         return TIMESTAMP_FORMETTER.format(temporal);
     }
 
     /**
-     * @see #isValidEmail(String)
+     * Convert a date string to a {@link LocalDate}.
+     *
+     * @param string the string to convert.
+     * @return the local date or null if this string cannot be converted.
+     * @since 9.3.0
      */
-    @Deprecated(forRemoval = true)
-    public static boolean checkEmail(@NotNull String email) {
-        var matcher = EMAIL_PATTERN.matcher(email);
-        return matcher.matches();
+    public static @Nullable LocalDate toLocalDate(@Nullable String string) {
+        if (StringUtils.isEmpty(string)) {
+            return null;
+        } else {
+            return Utils.tryGetAndConvert(string, ISO_LOCAL_DATE::parse, LocalDate::from);
+        }
     }
 
     /**
@@ -179,16 +191,16 @@ public class StringUtils {
      */
     public static @NotNull String toString(@NotNull Throwable throwable, int deepLevel) {
 
-        StringWriter writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
+        var writer = new StringWriter();
+        var printWriter = new PrintWriter(writer);
 
         throwable.printStackTrace(printWriter);
 
-        StringBuilder stackTrace = new StringBuilder(writer.toString());
+        var stackTrace = new StringBuilder(writer.toString());
 
         int level = 0;
 
-        for (Throwable cause = throwable.getCause(); cause != null && level < deepLevel; cause = cause.getCause(), level++) {
+        for (var cause = throwable.getCause(); cause != null && level < deepLevel; cause = cause.getCause(), level++) {
 
             writer = new StringWriter();
             printWriter = new PrintWriter(writer);
