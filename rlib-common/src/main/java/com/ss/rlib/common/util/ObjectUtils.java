@@ -17,6 +17,10 @@ import java.util.function.Supplier;
 public final class ObjectUtils {
 
     /**
+     * @param <T>     the object's type.
+     * @param obj     the object to check on not null.
+     * @param message the message for exception if the object is null.
+     * @return the passed object if it is not null.
      * @see Objects#requireNonNull(Object, String)
      */
     public static <T> @NotNull T notNull(@Nullable T obj, @NotNull String message) {
@@ -24,6 +28,9 @@ public final class ObjectUtils {
     }
 
     /**
+     * @param <T> the object's type.
+     * @param obj the object to check on not null.
+     * @return the passed object if it is not null.
      * @see Objects#requireNonNull(Object)
      */
     public static <T> @NotNull T notNull(@Nullable T obj) {
@@ -33,6 +40,7 @@ public final class ObjectUtils {
     /**
      * Check the object to be not null. If the object is null this method throws an exception from the supplier.
      *
+     * @param <T>      the object's type.
      * @param obj      the checked object.
      * @param supplier the exception factory.
      * @return the object.
@@ -50,6 +58,8 @@ public final class ObjectUtils {
     /**
      * Check the object to be not null. If the object is null this method throws an exception from the factory.
      *
+     * @param <T>     the object's type.
+     * @param <F>     the argument's type.
      * @param obj     the checked object.
      * @param arg     the argument for the exception factory.
      * @param factory the exception factory.
@@ -72,6 +82,7 @@ public final class ObjectUtils {
     /**
      * Check the object to be not null. If the object is null this method throws an exception from the factory.
      *
+     * @param <T>     the object's type.
      * @param obj     the checked object.
      * @param arg     the argument for the exception factory.
      * @param factory the exception factory.

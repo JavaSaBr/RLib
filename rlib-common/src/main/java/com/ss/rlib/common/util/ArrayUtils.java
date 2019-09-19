@@ -158,10 +158,11 @@ public final class ArrayUtils {
     /**
      * Fill the array using the factory.
      *
+     * @param <T>      the element's type.
+     * @param <F>      the argument's type.
      * @param array    the array.
      * @param argument the additional argument.
      * @param factory  the element's factory.
-     * @param <T>      the element's type.
      */
     public static <T, F> void fill(@NotNull T[] array, @Nullable F argument, @NotNull Function<F, T> factory) {
         for (int i = 0; i < array.length; i++) {
@@ -577,6 +578,7 @@ public final class ArrayUtils {
     /**
      * Convert the array to a string presentation.
      *
+     * @param <T>      the element's type.
      * @param array    the array.
      * @param toString the to string function.
      * @return the string presentation.
@@ -587,11 +589,11 @@ public final class ArrayUtils {
             return "[]";
         }
 
-        String className = array.array()
+        var className = array.array()
                 .getClass()
                 .getSimpleName();
 
-        StringBuilder builder = new StringBuilder(className.substring(0, className.length() - 1));
+        var builder = new StringBuilder(className.substring(0, className.length() - 1));
 
         for (int i = 0, length = array.size() - 1; i <= length; i++) {
 
@@ -1890,11 +1892,12 @@ public final class ArrayUtils {
     /**
      * Create a new array with mapped each element from source array.
      *
+     * @param <T>        the source component type.
+     * @param <M>        the mapped element's type.
+     * @param <R>        the result element's type.
      * @param source     the source array.
      * @param mapper     the mapper.
      * @param resultType the result component type.
-     * @param <T>        the source component type.
-     * @param <R>        the result component type.
      * @return the mapped array or null.
      * @since 9.3.0
      */

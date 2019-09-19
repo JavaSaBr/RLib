@@ -452,9 +452,9 @@ public class StringUtils {
      * Replace the variables in the string.
      *
      * @param string the source string.
-     * @param params the variable's parameters, name -> val, name -> val.
+     * @param params the variable's parameters, name -&gt; val, name -&gt; val.
      * @return result string.
-     * @throws IllegalArgumentException if params count < 2 or % 2 != 0
+     * @throws IllegalArgumentException if params count &lt; 2 or % 2 != 0
      */
     public static @NotNull String replace(@NotNull String string, @NotNull String... params) {
 

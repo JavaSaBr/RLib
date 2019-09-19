@@ -276,6 +276,7 @@ public final class Utils {
      * @param <R>      the result's type.
      * @param argument the argument.
      * @param function the function.
+     * @param def      the default value.
      * @return the result or null.
      * @since 9.3.0
      */
@@ -296,7 +297,8 @@ public final class Utils {
      * Try to execute a function with some result and convert this result to another.
      *
      * @param <F>             the argument's type.
-     * @param <R>             the result's type.
+     * @param <R>             the function result's type.
+     * @param <FR>            the converter result's type.
      * @param argument        the argument.
      * @param function        the function.
      * @param resultConverter the result converter.
