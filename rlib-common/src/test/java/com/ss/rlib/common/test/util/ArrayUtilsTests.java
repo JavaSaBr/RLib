@@ -67,4 +67,18 @@ public class ArrayUtilsTests {
             ArrayFactory.toArray(8, 1, 6), ArrayUtils.mapNullable(strings, Integer::parseInt, Integer.class)
         );
     }
+
+    @Test
+    void longsToIntsTest() {
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(1, 5, 3),
+            ArrayUtils.longsToInts(ArrayFactory.toLongArray(1, 5, 3))
+        );
+
+        Assertions.assertArrayEquals(
+            ArrayUtils.EMPTY_INT_ARRAY,
+            ArrayUtils.longsToInts(ArrayUtils.EMPTY_LONG_ARRAY)
+        );
+    }
 }

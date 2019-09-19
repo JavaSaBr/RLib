@@ -1890,7 +1890,7 @@ public final class ArrayUtils {
     }
 
     /**
-     * Create a new array with mapped each element from source array.
+     * Convert T array to R array if a source array is not null.
      *
      * @param <T>        the source component type.
      * @param <M>        the mapped element's type.
@@ -1917,6 +1917,28 @@ public final class ArrayUtils {
 
         for (int i = 0; i < source.length; i++) {
             resultArray[i] = mapper.apply(source[i]);
+        }
+
+        return resultArray;
+    }
+
+    /**
+     * Convert long array to int array.
+     *
+     * @param source the source array.
+     * @return the int array.
+     * @since 9.3.0
+     */
+    public static int @NotNull [] longsToInts(long @NotNull [] source) {
+
+        if (source.length == 0) {
+            return ArrayUtils.EMPTY_INT_ARRAY;
+        }
+
+        int[] resultArray = new int[source.length];
+
+        for (int i = 0; i < source.length; i++) {
+            resultArray[i] = (int) source[i];
         }
 
         return resultArray;
