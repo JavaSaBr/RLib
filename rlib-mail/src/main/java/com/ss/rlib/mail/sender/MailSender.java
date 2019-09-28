@@ -25,7 +25,7 @@ public interface MailSender {
      * @param subject the subject.
      * @param content the email's content.
      * @return the async result of sending process.
-     * @throws CompletionException -> UncheckedMessagingException if something was wrong.
+     * @throws CompletionException -&gt; UncheckedMessagingException if something was wrong.
      */
     @NotNull CompletableFuture<Void> sendAsync(@NotNull String email, @NotNull String subject, @NotNull String content);
 }

@@ -1,6 +1,9 @@
 package com.ss.rlib.common.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
  * The utility class.
@@ -85,6 +88,67 @@ public final class NumberUtils {
      */
     public static short getShort(@NotNull byte[] bytes, int offset) {
         return (short) (bytes[offset + 1] << 8 | bytes[offset] & 0xff);
+    }
+
+    /**
+     * Return true if a string is not null and can be converted to a long.
+     *
+     * @param string the string to convert.
+     * @return if the string is not null and can be converted to a long.
+     * @since 9.3.0
+     */
+    public static boolean isLong(@Nullable String string) {
+
+        if (string == null) {
+            return false;
+        } else {
+            try {
+                Long.parseLong(string);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Convert a string to long object or null if this string is null or not a number.
+     *
+     * @param string the string to convert.
+     * @return the long object or null.
+     * @since 9.3.0
+     */
+    public static @Nullable Long safeToLong(@Nullable String string) {
+
+        if (string == null) {
+            return null;
+        } else {
+            try {
+                return Long.valueOf(string);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Convert a string to long object.
+     *
+     * @param string the string to convert.
+     * @return the optional of long object.
+     * @since 9.3.0
+     */
+    public static @NotNull Optional<Long> toOptionalLong(@Nullable String string) {
+
+        if (string == null) {
+            return Optional.empty();
+        } else {
+            try {
+                return Optional.of(Long.valueOf(string));
+            } catch (NumberFormatException e) {
+                return Optional.empty();
+            }
+        }
     }
 
     private NumberUtils() {

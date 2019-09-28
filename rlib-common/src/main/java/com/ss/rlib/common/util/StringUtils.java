@@ -9,7 +9,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -49,15 +48,6 @@ public class StringUtils {
      */
     public static @NotNull String ifEmpty(@Nullable String string, @NotNull String another) {
         return isEmpty(string) ? another : string;
-    }
-
-    /**
-     * @see #isValidEmail(String)
-     */
-    @Deprecated
-    public static boolean checkEmail(@NotNull String email) {
-        var matcher = EMAIL_PATTERN.matcher(email);
-        return matcher.matches();
     }
 
     /**
@@ -154,16 +144,16 @@ public class StringUtils {
      */
     public static @NotNull String toString(@NotNull Throwable throwable, int deepLevel) {
 
-        StringWriter writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
+        var writer = new StringWriter();
+        var printWriter = new PrintWriter(writer);
 
         throwable.printStackTrace(printWriter);
 
-        StringBuilder stackTrace = new StringBuilder(writer.toString());
+        var stackTrace = new StringBuilder(writer.toString());
 
         int level = 0;
 
-        for (Throwable cause = throwable.getCause(); cause != null && level < deepLevel; cause = cause.getCause(), level++) {
+        for (var cause = throwable.getCause(); cause != null && level < deepLevel; cause = cause.getCause(), level++) {
 
             writer = new StringWriter();
             printWriter = new PrintWriter(writer);
@@ -415,9 +405,9 @@ public class StringUtils {
      * Replace the variables in the string.
      *
      * @param string the source string.
-     * @param params the variable's parameters, name -> val, name -> val.
+     * @param params the variable's parameters, name -&gt; val, name -&gt; val.
      * @return result string.
-     * @throws IllegalArgumentException if params count < 2 or % 2 != 0
+     * @throws IllegalArgumentException if params count &lt; 2 or % 2 != 0
      */
     public static @NotNull String replace(@NotNull String string, @NotNull String... params) {
 
