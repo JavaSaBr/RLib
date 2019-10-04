@@ -40,4 +40,13 @@ class NumberUtilsTest {
         Assertions.assertFalse(NumberUtils.toOptionalLong(null).isPresent());
         Assertions.assertFalse(NumberUtils.toOptionalLong("2.1234").isPresent());
     }
+
+    @Test
+    void shouldSafetyConvertStringToInt() {
+        Assertions.assertNotNull(NumberUtils.safeToInt("1"));
+        Assertions.assertNotNull(NumberUtils.safeToInt("123124"));
+        Assertions.assertNull(NumberUtils.safeToInt("notlong"));
+        Assertions.assertNull(NumberUtils.safeToInt(null));
+        Assertions.assertNull(NumberUtils.safeToInt("2.1234"));
+    }
 }

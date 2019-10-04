@@ -112,6 +112,26 @@ public final class NumberUtils {
     }
 
     /**
+     * Convert a string to int object or null if this string is null or not a number.
+     *
+     * @param string the string to convert.
+     * @return the int object or null.
+     * @since 9.4.0
+     */
+    public static @Nullable Integer safeToInt(@Nullable String string) {
+
+        if (string == null) {
+            return null;
+        } else {
+            try {
+                return Integer.valueOf(string);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+    }
+
+    /**
      * Convert a string to long object or null if this string is null or not a number.
      *
      * @param string the string to convert.
