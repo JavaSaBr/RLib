@@ -74,7 +74,8 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
         var threadFactory = new GroupThreadFactory(
             config.getGroupName(),
             config.getThreadConstructor(),
-            config.getThreadPriority()
+            config.getThreadPriority(),
+            true
         );
 
         var executor = config.getGroupSize() < config.getGroupMaxSize() ? new ThreadPoolExecutor(
@@ -86,6 +87,9 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
             threadFactory,
             new ThreadPoolExecutor.CallerRunsPolicy()
         ) : Executors.newFixedThreadPool(config.getGroupSize(), threadFactory);
+
+        // activate the executor
+        executor.submit(() -> {});
 
         LOGGER.info("Executor configuration:");
         LOGGER.info(config, conf -> "Min threads: " + conf.getGroupSize());
@@ -123,7 +127,13 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     @Override
     public <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress) {
         Utils.unchecked(channel, serverAddress, AsynchronousServerSocketChannel::bind);
+
         LOGGER.info(serverAddress, adr -> "Started server on address: " + adr);
+
+        if (!subscribers.isEmpty()) {
+            acceptNext();
+        }
+
         return ClassUtils.unsafeCast(this);
     }
 

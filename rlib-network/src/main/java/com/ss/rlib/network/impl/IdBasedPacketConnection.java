@@ -20,16 +20,14 @@ import java.nio.channels.AsynchronousSocketChannel;
 /**
  * @author JavaSaBr
  */
+@Getter(AccessLevel.PROTECTED)
 public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W extends IdBasedWritablePacket> extends
     AbstractConnection<R, W> {
 
-    @Getter(AccessLevel.PROTECTED)
     private final PacketReader packetReader;
-
-    @Getter(AccessLevel.PROTECTED)
     private final PacketWriter packetWriter;
-
     private final ReadablePacketRegistry<R> packetRegistry;
+
     private final int packetIdHeaderSize;
 
     public IdBasedPacketConnection(

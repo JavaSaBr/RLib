@@ -20,6 +20,7 @@ public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<
     AbstractPacketReader<R, C> {
 
     private final IntFunction<R> readPacketFactory;
+    private final int packetLengthHeaderSize;
 
     public DefaultPacketReader(
         @NotNull C connection,
@@ -37,14 +38,29 @@ public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<
             bufferAllocator,
             updateActivityFunction,
             readPacketHandler,
-            packetLengthHeaderSize,
             maxPacketsByRead
         );
         this.readPacketFactory = readPacketFactory;
+        this.packetLengthHeaderSize = packetLengthHeaderSize;
     }
 
     @Override
-    protected @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int length) {
-        return readPacketFactory.apply(length);
+    protected boolean canStartReadPacket(@NotNull ByteBuffer buffer) {
+        return buffer.remaining() >= packetLengthHeaderSize;
+    }
+
+    @Override
+    protected int calcDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer) {
+        return packetLength - packetLengthHeaderSize;
+    }
+
+    @Override
+    protected int readPacketLength(@NotNull ByteBuffer buffer) {
+        return readHeader(buffer, packetLengthHeaderSize);
+    }
+
+    @Override
+    protected @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int packetLength, int dataLength) {
+        return readPacketFactory.apply(dataLength);
     }
 }

@@ -64,7 +64,6 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     @Setter(AccessLevel.PROTECTED)
     protected volatile ByteBuffer decryptedTempBuffer;
 
-    protected final int packetLengthHeaderSize;
     protected final int maxPacketsByRead;
 
     protected AbstractPacketReader(
@@ -73,7 +72,6 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         @NotNull BufferAllocator bufferAllocator,
         @NotNull Runnable updateActivityFunction,
         @NotNull Consumer<? super R> readPacketHandler,
-        int packetLengthHeaderSize,
         int maxPacketsByRead
     ) {
         this.connection = connection;
@@ -84,7 +82,6 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         this.decryptedBuffer = bufferAllocator.takePendingBuffer();
         this.updateActivityFunction = updateActivityFunction;
         this.readPacketHandler = readPacketHandler;
-        this.packetLengthHeaderSize = packetLengthHeaderSize;
         this.maxPacketsByRead = maxPacketsByRead;
     }
 
@@ -165,24 +162,25 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         var readPackets = 0;
         var endPosition = 0;
 
-        while (bufferToRead.remaining() >= packetLengthHeaderSize && readPackets < maxPacketsByRead) {
+        while (canStartReadPacket(bufferToRead) && readPackets < maxPacketsByRead) {
 
             // set position of start a next packet
             bufferToRead.position(endPosition);
 
+            var positionBeforeRead = endPosition;
             var packetLength = readPacketLength(bufferToRead);
-            var dataLength = packetLength - packetLengthHeaderSize;
+            var dataLength = calcDataLength(packetLength, bufferToRead.position() - endPosition, bufferToRead);
 
-            LOGGER.debug(packetLength, bufferToRead.position() - packetLengthHeaderSize,
+            LOGGER.debug(packetLength, positionBeforeRead,
                 (length, pos) -> "Find next packet from position: " + pos + " with length: " + length);
 
             // calculate position of end the next packet
             endPosition += packetLength;
 
             // if the packet isn't full presented in this buffer
-            if (endPosition > bufferToRead.limit()) {
+            if (packetLength == -1 || endPosition > bufferToRead.limit()) {
 
-                bufferToRead.position(bufferToRead.position() - packetLengthHeaderSize);
+                bufferToRead.position(positionBeforeRead);
 
                 // if we read the received buffer we need to put
                 // not read data to the pending buffer or big mapped byte buffer
@@ -247,9 +245,9 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             R packet;
 
             if (decryptedData != null) {
-                packet = createPacketFor(decryptedData, dataLength);
+                packet = createPacketFor(decryptedData, packetLength, dataLength);
             } else {
-                packet = createPacketFor(bufferToRead, dataLength);
+                packet = createPacketFor(bufferToRead, packetLength, dataLength);
             }
 
             if (packet != null) {
@@ -283,6 +281,32 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
         return readPackets;
     }
+
+    /**
+     * Check buffer's data.
+     *
+     * @param buffer the buffer to read.
+     * @return true if this buffer has enough data to start initial reading.
+     */
+    protected abstract boolean canStartReadPacket(@NotNull ByteBuffer buffer);
+
+    /**
+     * Calculate size of packet data.
+     *
+     * @param packetLength the full packet length.
+     * @param readBytes    the count of already read bytes from buffer to get packet length.
+     * @param buffer       the buffer.
+     * @return the length of packet data part.
+     */
+    protected abstract int calcDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer);
+
+    /**
+     * Get the packet's data length of next packet in the buffer.
+     *
+     * @param buffer the buffer with received data.
+     * @return the packet length or -1 if we have no enough data to read length.
+     */
+    protected abstract int readPacketLength(@NotNull ByteBuffer buffer);
 
     protected void reAllocTempBuffers(
         @NotNull ByteBuffer sourceBuffer,
@@ -383,16 +407,6 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         return maxPacketsByRead;
     }
 
-    /**
-     * Get the packet's data length of next packet in the buffer.
-     *
-     * @param buffer the buffer with received data.
-     * @return the packet length.
-     */
-    protected int readPacketLength(@NotNull ByteBuffer buffer) {
-        return readHeader(buffer, packetLengthHeaderSize);
-    }
-
     protected int readHeader(@NotNull ByteBuffer buffer, int headerSize) {
         switch (headerSize) {
             case 1:
@@ -409,11 +423,12 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     /**
      * Create a packet to read received data.
      *
-     * @param buffer the buffer with received data.
-     * @param length length of packet's data.
+     * @param buffer       the buffer with received data.
+     * @param packetLength the length of packet.
+     * @param dataLength   length of packet's data.
      * @return the readable packet.
      */
-    protected abstract @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int length);
+    protected abstract @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int packetLength, int dataLength);
 
     @Override
     public void close() {
