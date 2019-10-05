@@ -50,17 +50,17 @@ public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<
     }
 
     @Override
-    protected int calcDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer) {
-        return packetLength - packetLengthHeaderSize;
-    }
-
-    @Override
     protected int readPacketLength(@NotNull ByteBuffer buffer) {
         return readHeader(buffer, packetLengthHeaderSize);
     }
 
     @Override
-    protected @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int packetLength, int dataLength) {
+    protected @Nullable R createPacketFor(
+        @NotNull ByteBuffer buffer,
+        int startPacketPosition,
+        int packetLength,
+        int dataLength
+    ) {
         return readPacketFactory.apply(dataLength);
     }
 }

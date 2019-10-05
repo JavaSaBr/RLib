@@ -19,14 +19,14 @@ import java.nio.channels.AsynchronousSocketChannel;
 /**
  * @author JavaSaBr
  */
+@Getter(AccessLevel.PROTECTED)
 public abstract class DefaultDataConnection<R extends ReadablePacket, W extends WritablePacket> extends
     AbstractConnection<R, W> {
 
-    @Getter(AccessLevel.PROTECTED)
     private final PacketReader packetReader;
-
-    @Getter(AccessLevel.PROTECTED)
     private final PacketWriter packetWriter;
+
+    private final int packetLengthHeaderSize;
 
     public DefaultDataConnection(
         @NotNull Network<? extends Connection<R, W>> network,
@@ -36,7 +36,8 @@ public abstract class DefaultDataConnection<R extends ReadablePacket, W extends 
         int maxPacketsByRead,
         int packetLengthHeaderSize
     ) {
-        super(network, channel, crypt, bufferAllocator, maxPacketsByRead, packetLengthHeaderSize);
+        super(network, channel, crypt, bufferAllocator, maxPacketsByRead);
+        this.packetLengthHeaderSize = packetLengthHeaderSize;
         this.packetReader = createPacketReader();
         this.packetWriter = createPacketWriter();
     }

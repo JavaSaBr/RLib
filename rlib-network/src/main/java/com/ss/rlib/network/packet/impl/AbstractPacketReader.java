@@ -245,9 +245,9 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             R packet;
 
             if (decryptedData != null) {
-                packet = createPacketFor(decryptedData, packetLength, dataLength);
+                packet = createPacketFor(decryptedData, positionBeforeRead, packetLength, dataLength);
             } else {
-                packet = createPacketFor(bufferToRead, packetLength, dataLength);
+                packet = createPacketFor(bufferToRead, positionBeforeRead, packetLength, dataLength);
             }
 
             if (packet != null) {
@@ -259,6 +259,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             } else {
                 LOGGER.warning("Cannot create any instance of packet to read data.");
             }
+
+            bufferToRead.position(endPosition);
         }
 
         if (bufferToRead.hasRemaining()) {
@@ -298,7 +300,9 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
      * @param buffer       the buffer.
      * @return the length of packet data part.
      */
-    protected abstract int calcDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer);
+    protected int calcDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer) {
+        return packetLength - readBytes;
+    }
 
     /**
      * Get the packet's data length of next packet in the buffer.
@@ -423,12 +427,18 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     /**
      * Create a packet to read received data.
      *
-     * @param buffer       the buffer with received data.
-     * @param packetLength the length of packet.
-     * @param dataLength   length of packet's data.
+     * @param buffer              the buffer with received data.
+     * @param startPacketPosition the start position of the packet in the buffer.
+     * @param packetLength        the length of packet.
+     * @param dataLength          length of packet's data.
      * @return the readable packet.
      */
-    protected abstract @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int packetLength, int dataLength);
+    protected abstract @Nullable R createPacketFor(
+        @NotNull ByteBuffer buffer,
+        int startPacketPosition,
+        int packetLength,
+        int dataLength
+    );
 
     @Override
     public void close() {

@@ -53,17 +53,18 @@ public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends C
     }
 
     @Override
-    protected int calcDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer) {
-        return packetLength - packetLengthHeaderSize;
-    }
-
-    @Override
     protected int readPacketLength(@NotNull ByteBuffer buffer) {
         return readHeader(buffer, packetLengthHeaderSize);
     }
 
     @Override
-    protected @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int packetLength, int dataLength) {
-        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize)).newInstance();
+    protected @Nullable R createPacketFor(
+        @NotNull ByteBuffer buffer,
+        int startPacketPosition,
+        int packetLength,
+        int dataLength
+    ) {
+        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize))
+            .newInstance();
     }
 }
