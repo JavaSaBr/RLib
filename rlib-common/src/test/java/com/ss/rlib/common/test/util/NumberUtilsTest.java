@@ -164,13 +164,4 @@ class NumberUtilsTest {
         assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 6), 6));
         assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 7), 7));
     }
-
-    @Test
-    void shouldReadDifferentBitsCorrectly() {
-
-        assertEquals(0b0000_1000, NumberUtils.getHighByteBits(0b1000_0100));
-        System.out.println(Integer.toString(NumberUtils.getHighByteBits(0b1000_0100), 2));
-        System.out.println(Integer.toString(NumberUtils.readBits(0b1000_0100, 4, 1), 2));
-        assertEquals(0b0000_1000, NumberUtils.readBits(0b1000_0100, 1, 4));
-    }
 }

@@ -254,18 +254,6 @@ public final class NumberUtils {
     }
 
     /**
-     * Read several bits from a number from some position.
-     *
-     * @param value    the value.
-     * @param position the position to start read bits.
-     * @param count    the required count of read bits.
-     * @return the result value.
-     */
-    public static int readBits(int value, int position, int count) {
-        return (((1 << count) - 1) & (value >> (position - 1)));
-    }
-
-    /**
      * Covert a byte to unsigned byte.
      *
      * @param value the byte.
