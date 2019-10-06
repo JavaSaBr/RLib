@@ -4,7 +4,6 @@ import static com.ss.rlib.network.util.NetworkUtils.hexDump;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.packet.Packet;
-import com.ss.rlib.network.util.NetworkUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -16,18 +15,7 @@ import java.nio.ByteBuffer;
  */
 public abstract class AbstractPacket implements Packet {
 
-    @NotNull
     protected static final Logger LOGGER = LoggerManager.getLogger(Packet.class);
-
-    /**
-     * The name of this packet.
-     */
-    @NotNull
-    protected final String name;
-
-    public AbstractPacket() {
-        this.name = getNameImpl();
-    }
 
     /**
      * Handle the exception.
@@ -39,30 +27,21 @@ public abstract class AbstractPacket implements Packet {
         LOGGER.warning(this, exception);
 
         if (buffer.isDirect()) {
-            byte[] array = new byte[buffer.limit()];
+            var array = new byte[buffer.limit()];
             buffer.get(array, 0, buffer.limit());
-            LOGGER.warning(this, "buffer " + buffer + "\n" + NetworkUtils.hexDump(array, array.length));
+            LOGGER.warning("buffer: " + buffer + "\n" + hexDump(array, array.length));
         } else {
-            LOGGER.warning(this, "buffer " + buffer + "\n" + NetworkUtils.hexDump(buffer.array(), buffer.limit()));
+            LOGGER.warning("buffer: " + buffer + "\n" + hexDump(buffer.array(), buffer.limit()));
         }
-    }
-
-    /**
-     * Get the name.
-     *
-     * @return the name
-     */
-    protected @NotNull String getNameImpl() {
-        return getClass().getName();
     }
 
     @Override
     public @NotNull String getName() {
-        return name;
+        return getClass().getName();
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" + "name='" + name + '\'' + '}';
+        return getClass().getSimpleName() + "{" + "name='" + getName() + '\'' + '}';
     }
 }

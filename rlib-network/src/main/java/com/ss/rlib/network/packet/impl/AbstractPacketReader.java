@@ -169,7 +169,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
             var positionBeforeRead = endPosition;
             var packetLength = readPacketLength(bufferToRead);
-            var dataLength = calcDataLength(packetLength, bufferToRead.position() - endPosition, bufferToRead);
+            var dataLength = getDataLength(packetLength, bufferToRead.position() - endPosition, bufferToRead);
 
             LOGGER.debug(packetLength, positionBeforeRead,
                 (length, pos) -> "Find next packet from position: " + pos + " with length: " + length);
@@ -300,7 +300,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
      * @param buffer       the buffer.
      * @return the length of packet data part.
      */
-    protected int calcDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer) {
+    protected int getDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer) {
         return packetLength - readBytes;
     }
 
