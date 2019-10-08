@@ -20,6 +20,7 @@ public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends C
     AbstractPacketReader<R, C> {
 
     private final ReadablePacketRegistry<R> packetRegistry;
+    private final int packetLengthHeaderSize;
     private final int packetIdHeaderSize;
 
     public IdBasedPacketReader(
@@ -39,15 +40,31 @@ public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends C
             bufferAllocator,
             updateActivityFunction,
             readPacketHandler,
-            packetLengthHeaderSize,
             maxPacketsByRead
         );
+        this.packetLengthHeaderSize = packetLengthHeaderSize;
         this.packetIdHeaderSize = packetIdHeaderSize;
         this.packetRegistry = packetRegistry;
     }
 
     @Override
-    protected @Nullable R createPacketFor(@NotNull ByteBuffer buffer, int length) {
-        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize)).newInstance();
+    protected boolean canStartReadPacket(@NotNull ByteBuffer buffer) {
+        return buffer.remaining() > packetLengthHeaderSize;
+    }
+
+    @Override
+    protected int readPacketLength(@NotNull ByteBuffer buffer) {
+        return readHeader(buffer, packetLengthHeaderSize);
+    }
+
+    @Override
+    protected @Nullable R createPacketFor(
+        @NotNull ByteBuffer buffer,
+        int startPacketPosition,
+        int packetLength,
+        int dataLength
+    ) {
+        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize))
+            .newInstance();
     }
 }

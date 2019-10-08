@@ -39,8 +39,8 @@ public class IdBasedPacketWriter<W extends IdBasedWritablePacket, C extends Conn
     }
 
     @Override
-    protected boolean doWrite(@NotNull ByteBuffer buffer, @NotNull W packet) {
+    protected boolean onWrite(@NotNull W packet, int expectedLength, int totalSize, @NotNull ByteBuffer buffer) {
         writeHeader(buffer, packet.getPacketId(), packetIdHeaderSize);
-        return super.doWrite(buffer, packet);
+        return super.onWrite(packet, expectedLength, totalSize, buffer);
     }
 }

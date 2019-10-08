@@ -20,16 +20,15 @@ import java.nio.channels.AsynchronousSocketChannel;
 /**
  * @author JavaSaBr
  */
+@Getter(AccessLevel.PROTECTED)
 public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W extends IdBasedWritablePacket> extends
     AbstractConnection<R, W> {
 
-    @Getter(AccessLevel.PROTECTED)
     private final PacketReader packetReader;
-
-    @Getter(AccessLevel.PROTECTED)
     private final PacketWriter packetWriter;
-
     private final ReadablePacketRegistry<R> packetRegistry;
+
+    private final int packetLengthHeaderSize;
     private final int packetIdHeaderSize;
 
     public IdBasedPacketConnection(
@@ -42,8 +41,9 @@ public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W exten
         int packetLengthHeaderSize,
         int packetIdHeaderSize
     ) {
-        super(network, channel, crypt, bufferAllocator, maxPacketsByRead, packetLengthHeaderSize);
+        super(network, channel, crypt, bufferAllocator, maxPacketsByRead);
         this.packetRegistry = packetRegistry;
+        this.packetLengthHeaderSize = packetLengthHeaderSize;
         this.packetIdHeaderSize = packetIdHeaderSize;
         this.packetReader = createPacketReader();
         this.packetWriter = createPacketWriter();

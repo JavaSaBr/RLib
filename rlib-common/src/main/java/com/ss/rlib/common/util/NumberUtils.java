@@ -112,6 +112,26 @@ public final class NumberUtils {
     }
 
     /**
+     * Convert a string to int object or null if this string is null or not a number.
+     *
+     * @param string the string to convert.
+     * @return the int object or null.
+     * @since 9.4.0
+     */
+    public static @Nullable Integer safeToInt(@Nullable String string) {
+
+        if (string == null) {
+            return null;
+        } else {
+            try {
+                return Integer.valueOf(string);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+    }
+
+    /**
      * Convert a string to long object or null if this string is null or not a number.
      *
      * @param string the string to convert.
@@ -149,6 +169,98 @@ public final class NumberUtils {
                 return Optional.empty();
             }
         }
+    }
+
+    /**
+     * Set a bit in a number by a pos to 1.
+     *
+     * @param value the byte.
+     * @param pos   the bit position.
+     * @return the update number.
+     */
+    public static int setBit(int value, int pos) {
+        return value | (1 << pos);
+    }
+
+    /**
+     * Set a bit in a number by a pos to 0.
+     *
+     * @param value the byte.
+     * @param pos   the bit position.
+     * @return the update number.
+     */
+    public static int unsetBit(int value, int pos) {
+        return value & ~(1 << pos);
+    }
+
+    /**
+     * Return true if bit by pos in a byte is 1.
+     *
+     * @param value the byte.
+     * @return true if the bit is 1.
+     */
+    public static boolean isSetBit(int value, int pos) {
+        return (value & (1L << pos)) != 0;
+    }
+
+    /**
+     * Return true if bit by pos in a byte is 0.
+     *
+     * @param value the byte.
+     * @return true if the bit is 0.
+     */
+    public static boolean isNotSetBit(int value, int pos) {
+        return (value & (1L << pos)) == 0;
+    }
+
+    /**
+     * Set last high 4 bits to a byte.
+     *
+     * @param value the byte value.
+     * @return the result value with updating last high 4 bits.
+     */
+    public static int setHighByteBits(int value, int highBits) {
+        return value | highBits << 4;
+    }
+
+    /**
+     * Get last high 4 bits from a byte.
+     *
+     * @param value the byte value.
+     * @return the value of last 4 high bits.
+     */
+    public static byte getHighByteBits(int value) {
+        return (byte) (value >> 4);
+    }
+
+    /**
+     * Set first low 4 bits to a byte.
+     *
+     * @param value the byte value.
+     * @return the result value with updating first low 4 bits.
+     */
+    public static int setLowByteBits(int value, int lowBits) {
+        return value | lowBits & 0x0F;
+    }
+
+    /**
+     * Get first low 4 bits from a byte.
+     *
+     * @param value the byte value.
+     * @return the value of last 4 low bits.
+     */
+    public static byte getLowByteBits(int value) {
+        return (byte) (value & 0x0F);
+    }
+
+    /**
+     * Covert a byte to unsigned byte.
+     *
+     * @param value the byte.
+     * @return the unsigned byte.
+     */
+    public static int toUnsignedByte(byte value) {
+        return value & 0xFF;
     }
 
     private NumberUtils() {

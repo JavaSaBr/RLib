@@ -55,7 +55,6 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     protected final Array<BiConsumer<? super Connection<R, W>, ? super R>> subscribers;
 
     protected final int maxPacketsByRead;
-    protected final int packetLengthHeaderSize;
 
     @Getter
     protected volatile long lastActivity;
@@ -65,12 +64,10 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         @NotNull AsynchronousSocketChannel channel,
         @NotNull NetworkCryptor crypt,
         @NotNull BufferAllocator bufferAllocator,
-        int maxPacketsByRead,
-        int packetLengthHeaderSize
+        int maxPacketsByRead
     ) {
         this.bufferAllocator = bufferAllocator;
         this.maxPacketsByRead = maxPacketsByRead;
-        this.packetLengthHeaderSize = packetLengthHeaderSize;
         this.lock = new StampedLock();
         this.crypt = crypt;
         this.channel = channel;

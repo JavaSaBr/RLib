@@ -20,30 +20,13 @@ public class GroupThreadFactory implements ThreadFactory {
         @NotNull Thread create(@NotNull ThreadGroup group, @NotNull Runnable runnable, @NotNull String name);
     }
 
-    /**
-     * The order of the next thread.
-     */
     private final AtomicInteger ordinal;
-
-    /**
-     * The name of this group.
-     */
     private final String name;
-
-    /**
-     * The group of threads.
-     */
     private final ThreadGroup group;
-
-    /**
-     * The thread's constructor.
-     */
     private final ThreadConstructor constructor;
 
-    /**
-     * The priority of these threads.
-     */
     private final int priority;
+    private final boolean daemon;
 
     public GroupThreadFactory(@NotNull String name) {
         this(name, Thread::new, Thread.NORM_PRIORITY);
@@ -54,11 +37,21 @@ public class GroupThreadFactory implements ThreadFactory {
     }
 
     public GroupThreadFactory(@NotNull String name, @NotNull ThreadConstructor constructor, int priority) {
+        this(name, constructor, priority, false);
+    }
+
+    public GroupThreadFactory(
+        @NotNull String name,
+        @NotNull ThreadConstructor constructor,
+        int priority,
+        boolean daemon
+    ) {
         this.constructor = constructor;
         this.priority = priority;
         this.name = name;
         this.group = new ThreadGroup(name);
         this.ordinal = new AtomicInteger();
+        this.daemon = daemon;
     }
 
     @Deprecated
@@ -67,6 +60,7 @@ public class GroupThreadFactory implements ThreadFactory {
         this.name = name;
         this.group = new ThreadGroup(name);
         this.ordinal = new AtomicInteger();
+        this.daemon = false;
         this.constructor = new ThreadConstructor() {
 
             Constructor<? extends Thread> constructor =
@@ -87,6 +81,7 @@ public class GroupThreadFactory implements ThreadFactory {
     public @NotNull Thread newThread(@NotNull Runnable runnable) {
         var thread = constructor.create(group, runnable, name + "-" + ordinal.incrementAndGet());
         thread.setPriority(priority);
+        thread.setDaemon(daemon);
         return thread;
     }
 }
