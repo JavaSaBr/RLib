@@ -16,11 +16,11 @@ repositories {
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:9.4.0'
-    compile 'com.spaceshift:rlib.fx:9.4.0'
-    compile 'com.spaceshift:rlib.network:9.4.0'
-    compile 'com.spaceshift:rlib.mail:9.4.0'
-    compile 'com.spaceshift:rlib.testcontainers:9.4.0'
+    compile 'com.spaceshift:rlib.common:9.5.0'
+    compile 'com.spaceshift:rlib.fx:9.5.0'
+    compile 'com.spaceshift:rlib.network:9.5.0'
+    compile 'com.spaceshift:rlib.mail:9.5.0'
+    compile 'com.spaceshift:rlib.testcontainers:9.5.0'
 }
 ```
     

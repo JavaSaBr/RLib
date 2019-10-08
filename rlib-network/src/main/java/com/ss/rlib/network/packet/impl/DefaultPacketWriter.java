@@ -42,14 +42,14 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
     }
 
     @Override
-    protected boolean onBeforeWrite(@NotNull W packet, int expectedLength, int totalSize, @NotNull ByteBuffer buffer) {
-        buffer.position(packetLengthHeaderSize);
-        return true;
-    }
-
-    @Override
-    protected boolean onAfterWrite(@NotNull W packet, int expectedLength, int totalSize, @NotNull ByteBuffer buffer) {
-        buffer.position(packetLengthHeaderSize);
+    protected boolean onBeforeWrite(
+        @NotNull W packet,
+        int expectedLength,
+        int totalSize,
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
+    ) {
+        firstBuffer.clear().position(packetLengthHeaderSize);
         return true;
     }
 
@@ -58,9 +58,10 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
         @NotNull W packet,
         int expectedLength,
         int totalSize,
-        @NotNull ByteBuffer buffer
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
     ) {
-        return writePacketLength(buffer, buffer.limit()).position(0);
+        return writePacketLength(firstBuffer, firstBuffer.limit()).position(0);
     }
 
     protected @NotNull ByteBuffer writePacketLength(@NotNull ByteBuffer buffer, int packetLength) {

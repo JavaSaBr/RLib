@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * The utility class.
@@ -177,6 +178,7 @@ public final class NumberUtils {
      * @param value the byte.
      * @param pos   the bit position.
      * @return the update number.
+     * @since 9.4.0
      */
     public static int setBit(int value, int pos) {
         return value | (1 << pos);
@@ -188,6 +190,7 @@ public final class NumberUtils {
      * @param value the byte.
      * @param pos   the bit position.
      * @return the update number.
+     * @since 9.4.0
      */
     public static int unsetBit(int value, int pos) {
         return value & ~(1 << pos);
@@ -198,6 +201,7 @@ public final class NumberUtils {
      *
      * @param value the byte.
      * @return true if the bit is 1.
+     * @since 9.4.0
      */
     public static boolean isSetBit(int value, int pos) {
         return (value & (1L << pos)) != 0;
@@ -208,6 +212,7 @@ public final class NumberUtils {
      *
      * @param value the byte.
      * @return true if the bit is 0.
+     * @since 9.4.0
      */
     public static boolean isNotSetBit(int value, int pos) {
         return (value & (1L << pos)) == 0;
@@ -218,6 +223,7 @@ public final class NumberUtils {
      *
      * @param value the byte value.
      * @return the result value with updating last high 4 bits.
+     * @since 9.4.0
      */
     public static int setHighByteBits(int value, int highBits) {
         return value | highBits << 4;
@@ -228,6 +234,7 @@ public final class NumberUtils {
      *
      * @param value the byte value.
      * @return the value of last 4 high bits.
+     * @since 9.4.0
      */
     public static byte getHighByteBits(int value) {
         return (byte) (value >> 4);
@@ -238,6 +245,7 @@ public final class NumberUtils {
      *
      * @param value the byte value.
      * @return the result value with updating first low 4 bits.
+     * @since 9.4.0
      */
     public static int setLowByteBits(int value, int lowBits) {
         return value | lowBits & 0x0F;
@@ -248,6 +256,7 @@ public final class NumberUtils {
      *
      * @param value the byte value.
      * @return the value of last 4 low bits.
+     * @since 9.4.0
      */
     public static byte getLowByteBits(int value) {
         return (byte) (value & 0x0F);
@@ -258,9 +267,83 @@ public final class NumberUtils {
      *
      * @param value the byte.
      * @return the unsigned byte.
+     * @see Byte#toUnsignedInt(byte)
      */
+    @Deprecated(forRemoval = true)
     public static int toUnsignedByte(byte value) {
-        return value & 0xFF;
+        return Byte.toUnsignedInt(value);
+    }
+
+    /**
+     * Validate a number and throw an exception when the number is not valid.
+     *
+     * @param value the value.
+     * @param min   the min number.
+     * @param max   the max number.
+     * @return the passed number.
+     * @since 9.5.0
+     */
+    public static int validate(int value, int min, int max) {
+        return validate(value, min, max, IllegalArgumentException::new);
+    }
+
+    /**
+     * Validate a number and throw an exception when the number is not valid.
+     *
+     * @param value            the value.
+     * @param min              the min number.
+     * @param max              the max number.
+     * @param exceptionFactory the exception factory.
+     * @return the passed number.
+     * @since 9.5.0
+     */
+    public static int validate(
+        int value,
+        int min,
+        int max,
+        @NotNull Function<String, RuntimeException> exceptionFactory
+    ) {
+        if (value < min || value > max) {
+            throw exceptionFactory.apply("Invalid value: " + value + " when should be " + min + " < v < " + max);
+        } else {
+            return value;
+        }
+    }
+
+    /**
+     * Validate a number and throw an exception when the number is not valid.
+     *
+     * @param value the value.
+     * @param min   the min number.
+     * @param max   the max number.
+     * @return the passed number.
+     * @since 9.5.0
+     */
+    public static long validate(long value, long min, long max) {
+        return validate(value, min, max, IllegalArgumentException::new);
+    }
+
+    /**
+     * Validate a number and throw an exception when the number is not valid.
+     *
+     * @param value            the value.
+     * @param min              the min number.
+     * @param max              the max number.
+     * @param exceptionFactory the exception factory.
+     * @return the passed number.
+     * @since 9.5.0
+     */
+    public static long validate(
+        long value,
+        long min,
+        long max,
+        @NotNull Function<String, RuntimeException> exceptionFactory
+    ) {
+        if (value < min || value > max) {
+            throw exceptionFactory.apply("Invalid value: " + value + " when should be " + min + " < v < " + max);
+        } else {
+            return value;
+        }
     }
 
     private NumberUtils() {

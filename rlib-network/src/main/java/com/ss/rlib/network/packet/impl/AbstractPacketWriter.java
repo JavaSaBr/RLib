@@ -6,10 +6,7 @@ import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.PacketWriter;
 import com.ss.rlib.network.packet.WritablePacket;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,16 +43,11 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
     protected final C connection;
     protected final AsynchronousSocketChannel channel;
     protected final BufferAllocator bufferAllocator;
-    protected final ByteBuffer writeBuffer;
-    protected final ByteBuffer encryptedBuffer;
+    protected final ByteBuffer firstWriteBuffer;
+    protected final ByteBuffer secondWriteBuffer;
 
-    @Getter(AccessLevel.PROTECTED)
-    @Setter(AccessLevel.PROTECTED)
-    protected volatile ByteBuffer writeTempBuffer;
-
-    @Getter(AccessLevel.PROTECTED)
-    @Setter(AccessLevel.PROTECTED)
-    protected volatile ByteBuffer encryptedTempBuffer;
+    protected volatile ByteBuffer firstWriteTempBuffer;
+    protected volatile ByteBuffer secondWriteTempBuffer;
 
     protected final Runnable updateActivityFunction;
     protected final Supplier<@Nullable W> nextWritePacketSupplier;
@@ -70,8 +62,8 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         this.connection = connection;
         this.channel = channel;
         this.bufferAllocator = bufferAllocator;
-        this.writeBuffer = bufferAllocator.takeWriteBuffer();
-        this.encryptedBuffer = bufferAllocator.takeWriteBuffer();
+        this.firstWriteBuffer = bufferAllocator.takeWriteBuffer();
+        this.secondWriteBuffer = bufferAllocator.takeWriteBuffer();
         this.updateActivityFunction = updateActivityFunction;
         this.nextWritePacketSupplier = nextWritePacketSupplier;
     }
@@ -107,12 +99,12 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         var totalSize = getTotalSize(packet, expectedLength);
 
         // if the packet is too big to use a write buffer
-        if (expectedLength != -1 && totalSize > writeBuffer.capacity()) {
-            writeTempBuffer = bufferAllocator.takeBuffer(totalSize);
-            encryptedTempBuffer = bufferAllocator.takeBuffer(totalSize);
-            return serialize(packet, expectedLength, totalSize, writeTempBuffer, encryptedTempBuffer);
+        if (expectedLength != -1 && totalSize > firstWriteBuffer.capacity()) {
+            firstWriteTempBuffer = bufferAllocator.takeBuffer(totalSize);
+            secondWriteTempBuffer = bufferAllocator.takeBuffer(totalSize);
+            return serialize(packet, expectedLength, totalSize, firstWriteTempBuffer, secondWriteTempBuffer);
         } else {
-            return serialize(packet, expectedLength, totalSize, writeBuffer, encryptedBuffer);
+            return serialize(packet, expectedLength, totalSize, firstWriteBuffer, secondWriteBuffer);
         }
     }
 
@@ -128,33 +120,27 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
     /**
      * Serialize packet to byte buffer.
      *
-     * @param packet          the packet to serialize.
-     * @param expectedLength  the packet's expected size.
-     * @param totalSize       the packet's total size.
-     * @param buffer          the byte buffer.
-     * @param encryptedBuffer the byte buffer to store encrypted data.
+     * @param packet         the packet to serialize.
+     * @param expectedLength the packet's expected size.
+     * @param totalSize      the packet's total size.
+     * @param firstBuffer    the first byte buffer.
+     * @param secondBuffer   the second byte buffer.
      * @return the buffer to write to channel.
      */
     protected @NotNull ByteBuffer serialize(
         @NotNull W packet,
         int expectedLength,
         int totalSize,
-        @NotNull ByteBuffer buffer,
-        @NotNull ByteBuffer encryptedBuffer
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
     ) {
 
-        buffer.clear();
-
-        if(!onBeforeWrite(packet, expectedLength, totalSize, buffer)) {
-            return buffer.clear().limit(0);
-        } else if (!onWrite(packet, expectedLength, totalSize, buffer)) {
-            return buffer.clear().limit(0);
-        }
-
-        buffer.flip();
-
-        if(!onAfterWrite(packet, expectedLength, totalSize, buffer)) {
-            return buffer.clear().limit(0);
+        if(!onBeforeWrite(packet, expectedLength, totalSize, firstBuffer, secondBuffer)) {
+            return firstBuffer.clear().limit(0);
+        } else if (!onWrite(packet, expectedLength, totalSize, firstBuffer, secondBuffer)) {
+            return firstBuffer.clear().limit(0);
+        } else if(!onAfterWrite(packet, expectedLength, totalSize, firstBuffer, secondBuffer)) {
+            return firstBuffer.clear().limit(0);
         }
 
         // FIXME need to rewrite in more flexible style
@@ -171,7 +157,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         buffer.put(encrypted);
         buffer.flip();*/
 
-        return onResult(packet, expectedLength, totalSize, buffer);
+        return onResult(packet, expectedLength, totalSize, firstBuffer, secondBuffer);
     }
 
     /**
@@ -180,10 +166,18 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
      * @param packet         the packet.
      * @param expectedLength the packet's expected size.
      * @param totalSize      the packet's total size.
-     * @param buffer         the buffer.
+     * @param firstBuffer    the first byte buffer.
+     * @param secondBuffer   the second byte buffer.
      * @return true if handling was successful.
      */
-    protected boolean onBeforeWrite(@NotNull W packet, int expectedLength, int totalSize, @NotNull ByteBuffer buffer) {
+    protected boolean onBeforeWrite(
+        @NotNull W packet,
+        int expectedLength,
+        int totalSize,
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
+    ) {
+        firstBuffer.clear();
         return true;
     }
 
@@ -193,11 +187,18 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
      * @param packet         the packet.
      * @param expectedLength the packet's expected size.
      * @param totalSize      the packet's total size.
-     * @param buffer         the buffer.
+     * @param firstBuffer    the first byte buffer.
+     * @param secondBuffer   the second byte buffer.
      * @return true if writing was successful.
      */
-    protected boolean onWrite(@NotNull W packet, int expectedLength, int totalSize, @NotNull ByteBuffer buffer) {
-        return packet.write(buffer);
+    protected boolean onWrite(
+        @NotNull W packet,
+        int expectedLength,
+        int totalSize,
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
+    ) {
+        return packet.write(firstBuffer);
     }
 
     /**
@@ -206,10 +207,18 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
      * @param packet         the packet.
      * @param expectedLength the packet's expected size.
      * @param totalSize      the packet's total size.
-     * @param buffer         the buffer.
+     * @param firstBuffer    the first byte buffer.
+     * @param secondBuffer   the second byte buffer.
      * @return true if handling was successful.
      */
-    protected boolean onAfterWrite(@NotNull W packet, int expectedLength, int totalSize, @NotNull ByteBuffer buffer) {
+    protected boolean onAfterWrite(
+        @NotNull W packet,
+        int expectedLength,
+        int totalSize,
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
+    ) {
+        firstBuffer.flip();
         return true;
     }
 
@@ -219,16 +228,18 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
      * @param packet         the packet.
      * @param expectedLength the packet's expected size.
      * @param totalSize      the packet's total size.
-     * @param buffer         the buffer.
+     * @param firstBuffer    the first byte buffer.
+     * @param secondBuffer   the second byte buffer.
      * @return the same byte buffer.
      */
     protected @NotNull ByteBuffer onResult(
         @NotNull W packet,
         int expectedLength,
         int totalSize,
-        @NotNull ByteBuffer buffer
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
     ) {
-        return buffer.position(0);
+        return firstBuffer.position(0);
     }
 
     protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int position, int value, int headerSize) {
@@ -291,7 +302,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
             return;
         }
 
-        var writeTempBuffer = this.writeTempBuffer;
+        var writeTempBuffer = this.firstWriteTempBuffer;
 
         // if we have data in temp write buffer we need to use it
         if (writeTempBuffer != null) {
@@ -306,8 +317,8 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
             }
 
         } else {
-            if (writeBuffer.remaining() > 0) {
-                channel.write(writeBuffer, packet, writeHandler);
+            if (firstWriteBuffer.remaining() > 0) {
+                channel.write(firstWriteBuffer, packet, writeHandler);
                 return;
             }
         }
@@ -337,25 +348,25 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
     public void close() {
 
         bufferAllocator
-            .putWriteBuffer(writeBuffer)
-            .putWriteBuffer(encryptedBuffer);
+            .putWriteBuffer(firstWriteBuffer)
+            .putWriteBuffer(secondWriteBuffer);
 
         clearTempBuffers();
     }
 
     protected void clearTempBuffers() {
 
-        var encryptedTempBuffer = getEncryptedTempBuffer();
-        var writeTempBuffer = getWriteTempBuffer();
+        var secondWriteTempBuffer = this.secondWriteTempBuffer;
+        var firstWriteTempBuffer = this.firstWriteTempBuffer;
 
-        if (encryptedTempBuffer != null) {
-            setEncryptedTempBuffer(null);
-            bufferAllocator.putBuffer(encryptedTempBuffer);
+        if (secondWriteTempBuffer != null) {
+            this.secondWriteTempBuffer = null;
+            bufferAllocator.putBuffer(secondWriteTempBuffer);
         }
 
-        if (writeTempBuffer != null) {
-            setWriteTempBuffer(null);
-            bufferAllocator.putBuffer(writeTempBuffer);
+        if (firstWriteTempBuffer != null) {
+            this.firstWriteTempBuffer = null;
+            bufferAllocator.putBuffer(firstWriteTempBuffer);
         }
     }
 }

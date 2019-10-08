@@ -164,4 +164,46 @@ class NumberUtilsTest {
         assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 6), 6));
         assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 7), 7));
     }
+
+    @Test
+    void shouldValidateIntegerCorrectly() {
+
+        // int
+        assertEquals(10, NumberUtils.validate(10, 1, 20));
+        assertEquals(-20, NumberUtils.validate(-20, -21, 10));
+        assertEquals(-1000, NumberUtils.validate(-1000, -1050, -1000));
+
+        assertEquals(10, NumberUtils.validate(10, 1, 20, IllegalArgumentException::new));
+        assertEquals(-20, NumberUtils.validate(-20, -21, 10, IllegalArgumentException::new));
+        assertEquals(-1000, NumberUtils.validate(-1000, -1050, -1000, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(10, 20, 50, IllegalArgumentException::new));
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(-50, -70, -51, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(10, 20, 50));
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(-50, -70, -51));
+
+        // long
+        assertEquals(10, NumberUtils.validate(10L, 1, 20));
+        assertEquals(-20, NumberUtils.validate(-20L, -21, 10));
+        assertEquals(-1000, NumberUtils.validate(-1000L, -1050, -1000));
+
+        assertEquals(10, NumberUtils.validate(10L, 1, 20, IllegalArgumentException::new));
+        assertEquals(-20, NumberUtils.validate(-20L, -21, 10, IllegalArgumentException::new));
+        assertEquals(-1000, NumberUtils.validate(-1000L, -1050, -1000, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(10L, 20, 50, IllegalArgumentException::new));
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(-50L, -70, -51, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(10L, 20, 50));
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(-50L, -70, -51));
+    }
 }
