@@ -1890,6 +1890,68 @@ public final class ArrayUtils {
     }
 
     /**
+     * Convert T array to R array.
+     *
+     * @param <T>        the source component type.
+     * @param <M>        the mapped element's type.
+     * @param <R>        the result element's type.
+     * @param source     the source array.
+     * @param mapper     the mapper.
+     * @param resultType the result component type.
+     * @return the mapped array.
+     * @since 9.5.0
+     */
+    public static <T, R, M extends R> R @Nullable [] map(
+        T @NotNull [] source,
+        @NotNull Function<@NotNull T, @NotNull M> mapper,
+        @NotNull Class<R> resultType
+    ) {
+
+        if (source.length == 0) {
+            return create(resultType, 0);
+        }
+
+        R[] resultArray = create(resultType, source.length);
+
+        for (int i = 0; i < source.length; i++) {
+            resultArray[i] = mapper.apply(source[i]);
+        }
+
+        return resultArray;
+    }
+
+    /**
+     * Convert T array to R array.
+     *
+     * @param <T>    the source component type.
+     * @param <M>    the mapped element's type.
+     * @param <R>    the result element's type.
+     * @param source the source array.
+     * @param mapper the mapper.
+     * @param def    the default result if source array is null.
+     * @return the mapped array.
+     * @since 9.5.0
+     */
+    public static <T, R, M extends R> R @NotNull [] map(
+        T @Nullable [] source,
+        @NotNull Function<@NotNull T, @NotNull M> mapper,
+        @NotNull R[] def
+    ) {
+
+        if (source == null || source.length == 0) {
+            return def;
+        }
+
+        R[] resultArray = create(def.getClass().getComponentType(), source.length);
+
+        for (int i = 0; i < source.length; i++) {
+            resultArray[i] = mapper.apply(source[i]);
+        }
+
+        return resultArray;
+    }
+
+    /**
      * Convert T array to R array if a source array is not null.
      *
      * @param <T>        the source component type.
