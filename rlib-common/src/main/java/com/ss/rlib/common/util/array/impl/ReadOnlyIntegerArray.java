@@ -3,6 +3,10 @@ package com.ss.rlib.common.util.array.impl;
 import com.ss.rlib.common.util.array.ArrayIterator;
 import com.ss.rlib.common.util.array.IntegerArray;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Simple implementation of read only integer array.
@@ -53,6 +57,29 @@ public class ReadOnlyIntegerArray implements IntegerArray {
     @Override
     public final int size() {
         return array.length;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object another) {
+
+        if (this == another) {
+            return true;
+        } else if (!(another instanceof IntegerArray)) {
+            return false;
+        }
+
+        var array = (IntegerArray) another;
+        var size = this.array.length;
+
+        return size == array.size() &&
+            Arrays.equals(this.array, 0, size, array.array(), 0, size);
+    }
+
+    @Override
+    public int hashCode() {
+        var result = Objects.hash(array.length);
+        result = 31 * result + Arrays.hashCode(array);
+        return result;
     }
 
     private final class ReadOnlyIterator implements ArrayIterator<Integer> {

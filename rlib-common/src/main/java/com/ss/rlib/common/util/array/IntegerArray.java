@@ -11,6 +11,22 @@ public interface IntegerArray extends Iterable<Integer> {
 
     @NotNull IntegerArray EMPTY = new ReadOnlyIntegerArray(ArrayUtils.EMPTY_INT_ARRAY);
 
+    static @NotNull IntegerArray of(int value) {
+        return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(value));
+    }
+
+    static @NotNull IntegerArray of(int v1, int v2) {
+        return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(v1, v2));
+    }
+
+    static @NotNull IntegerArray of(int v1, int v2, int v3) {
+        return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(v1, v2, v3));
+    }
+
+    static @NotNull IntegerArray of(int... values) {
+        return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(values));
+    }
+
     /**
      * Return the wrapped int array.
      * Don't change this array, please.

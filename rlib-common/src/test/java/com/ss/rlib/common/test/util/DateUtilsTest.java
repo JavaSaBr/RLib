@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-public class DateUtilsTests {
+public class DateUtilsTest {
 
     @Test
     void stringToLocalDateTest() {

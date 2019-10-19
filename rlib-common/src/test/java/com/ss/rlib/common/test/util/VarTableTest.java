@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author JavaSaBr
  */
-public class VarTableTests {
+public class VarTableTest {
 
     @Test
     void testAllGets() {

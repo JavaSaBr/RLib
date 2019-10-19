@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author JavaSaBr
  */
-public class ArrayUtilsTests {
+public class ArrayUtilsTest {
 
     @Test
     void convertIntegerArrayToIntArrayTest() {

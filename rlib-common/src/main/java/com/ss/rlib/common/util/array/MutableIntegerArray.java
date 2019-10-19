@@ -113,7 +113,7 @@ public interface MutableIntegerArray extends IntegerArray {
 
         for (int i = 0, length = size(); i < length; i++) {
             if (!numbers.contains(array[i])) {
-                fastRemoveByIndex(i--);
+                removeByIndex(i--);
                 length--;
                 count++;
             }

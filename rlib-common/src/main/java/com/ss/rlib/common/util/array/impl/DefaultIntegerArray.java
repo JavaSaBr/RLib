@@ -5,6 +5,10 @@ import com.ss.rlib.common.util.array.ArrayIterator;
 import com.ss.rlib.common.util.array.IntegerArray;
 import com.ss.rlib.common.util.array.MutableIntegerArray;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Simple implementation of dynamic integer array.
@@ -115,13 +119,21 @@ public class DefaultIntegerArray implements MutableIntegerArray {
     }
 
     @Override
-    public final int first() {
-        return size < 1 ? -1 : array[0];
+    public int first() {
+        if (isEmpty()) {
+            throw new IllegalStateException("Array is empty.");
+        } else {
+            return array[0];
+        }
     }
 
     @Override
     public final int get(int index) {
-        return array[index];
+        if (index >= size) {
+            throw new IndexOutOfBoundsException(index);
+        } else {
+            return array[index];
+        }
     }
 
     @Override
@@ -131,7 +143,11 @@ public class DefaultIntegerArray implements MutableIntegerArray {
 
     @Override
     public final int last() {
-        return size < 1 ? -1 : array[size - 1];
+        if (isEmpty()) {
+            throw new IllegalStateException("Array is empty.");
+        } else {
+            return array.length < 1 ? -1 : array[array.length - 1];
+        }
     }
 
     @Override
@@ -186,6 +202,28 @@ public class DefaultIntegerArray implements MutableIntegerArray {
 
         this.array = ArrayUtils.copyOfRange(array, 0, size);
         return this;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object another) {
+
+        if (this == another) {
+            return true;
+        } else if (!(another instanceof IntegerArray)) {
+            return false;
+        }
+
+        var array = (IntegerArray) another;
+
+        return size == array.size() &&
+            Arrays.equals(this.array, 0, size, array.array(), 0, size);
+    }
+
+    @Override
+    public int hashCode() {
+        var result = Objects.hash(size);
+        result = 31 * result + Arrays.hashCode(array);
+        return result;
     }
 
     private final class DefaultIterator implements ArrayIterator<Integer> {
