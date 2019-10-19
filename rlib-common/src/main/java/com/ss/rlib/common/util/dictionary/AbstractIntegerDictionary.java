@@ -4,6 +4,7 @@ import com.ss.rlib.common.function.IntBiObjectConsumer;
 import com.ss.rlib.common.function.IntObjectConsumer;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.IntegerArray;
+import com.ss.rlib.common.util.array.MutableIntegerArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -173,9 +174,9 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     }
 
     @Override
-    public @NotNull IntegerArray keyArray(@NotNull IntegerArray container) {
+    public @NotNull IntegerArray keyArray(@NotNull MutableIntegerArray container) {
 
-        for (IntegerEntry<V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 container.add(entry.getKey());
                 entry = entry.getNext();

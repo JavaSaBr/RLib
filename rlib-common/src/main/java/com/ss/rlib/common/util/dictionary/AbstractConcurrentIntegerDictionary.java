@@ -49,7 +49,7 @@ public abstract class AbstractConcurrentIntegerDictionary<V> extends AbstractInt
     }
 
     @Override
-    public @NotNull IntegerEntry<V>[] entries() {
+    public IntegerEntry<V> @NotNull [] entries() {
         return entries;
     }
 

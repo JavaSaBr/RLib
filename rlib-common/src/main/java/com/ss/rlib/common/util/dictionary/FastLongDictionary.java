@@ -53,7 +53,7 @@ public class FastLongDictionary<V> extends AbstractLongDictionary<V> {
     }
 
     @Override
-    public @NotNull LongEntry<V>[] entries() {
+    public LongEntry<V> @NotNull [] entries() {
         return entries;
     }
 

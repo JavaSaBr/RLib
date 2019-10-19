@@ -54,7 +54,7 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
     }
 
     @Override
-    public @NotNull ObjectEntry<K, V>[] entries() {
+    public ObjectEntry<K, V> @NotNull [] entries() {
         return entries;
     }
 

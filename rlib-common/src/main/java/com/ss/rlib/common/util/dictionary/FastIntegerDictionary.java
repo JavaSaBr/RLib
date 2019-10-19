@@ -53,7 +53,7 @@ public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> imple
     }
 
     @Override
-    public @NotNull IntegerEntry<V>[] entries() {
+    public IntegerEntry<V> @NotNull [] entries() {
         return entries;
     }
 

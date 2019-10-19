@@ -301,7 +301,7 @@ public final class NumberUtils {
         int value,
         int min,
         int max,
-        @NotNull Function<String, RuntimeException> exceptionFactory
+        @NotNull Function<@NotNull String, @NotNull RuntimeException> exceptionFactory
     ) {
         if (value < min || value > max) {
             throw exceptionFactory.apply("Invalid value: " + value + " when should be " + min + " < v < " + max);
@@ -313,7 +313,7 @@ public final class NumberUtils {
     /**
      * Validate a number and throw an exception when the number is not valid.
      *
-     * @param value the value.
+     * @param value the validated value.
      * @param min   the min number.
      * @param max   the max number.
      * @return the passed number.
@@ -326,7 +326,7 @@ public final class NumberUtils {
     /**
      * Validate a number and throw an exception when the number is not valid.
      *
-     * @param value            the value.
+     * @param value            the validated value.
      * @param min              the min number.
      * @param max              the max number.
      * @param exceptionFactory the exception factory.
@@ -337,12 +337,40 @@ public final class NumberUtils {
         long value,
         long min,
         long max,
-        @NotNull Function<String, RuntimeException> exceptionFactory
+        @NotNull Function<@NotNull String, @NotNull RuntimeException> exceptionFactory
     ) {
         if (value < min || value > max) {
             throw exceptionFactory.apply("Invalid value: " + value + " when should be " + min + " < v < " + max);
         } else {
             return value;
+        }
+    }
+
+    /**
+     * Convert a number to boolean which should be only 0 or 1 or throw an exception.
+     *
+     * @param value the validated value.
+     * @return the validated value.
+     */
+    public static boolean toBoolean(int value) {
+        return toBoolean(value, IllegalArgumentException::new);
+    }
+
+    /**
+     * Convert a number to boolean which should be only 0 or 1 or throw an exception.
+     *
+     * @param value            the validated value.
+     * @param exceptionFactory the exception factory.
+     * @return the validated value.
+     */
+    public static boolean toBoolean(
+        int value,
+        @NotNull Function<@NotNull String, @NotNull RuntimeException> exceptionFactory
+    ) {
+        if (value == 0 || value == 1) {
+            return value == 1;
+        } else {
+            throw exceptionFactory.apply("Invalid value: " + value + " when should be only 0 or 1");
         }
     }
 

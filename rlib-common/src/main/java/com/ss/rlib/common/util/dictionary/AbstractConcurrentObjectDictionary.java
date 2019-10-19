@@ -50,7 +50,7 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
     }
 
     @Override
-    public @NotNull ObjectEntry<K, V>[] entries() {
+    public ObjectEntry<K, V> @NotNull [] entries() {
         return entries;
     }
 

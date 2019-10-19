@@ -49,7 +49,7 @@ public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDi
     }
 
     @Override
-    public @NotNull LongEntry<V>[] entries() {
+    public LongEntry<V> @NotNull [] entries() {
         return entries;
     }
 

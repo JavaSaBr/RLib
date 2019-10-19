@@ -1,91 +1,51 @@
 package com.ss.rlib.common.util.array;
 
 import com.ss.rlib.common.util.ArrayUtils;
+import com.ss.rlib.common.util.array.impl.ReadOnlyIntegerArray;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * The interface Integer array.
+ * The interface of dynamic integer array.
  */
 public interface IntegerArray extends Iterable<Integer> {
 
-    /**
-     * Add integer array.
-     *
-     * @param element the element
-     * @return the integer array
-     */
-    IntegerArray add(int element);
+    @NotNull IntegerArray EMPTY = new ReadOnlyIntegerArray(ArrayUtils.EMPTY_INT_ARRAY);
 
     /**
-     * Add all integer array.
+     * Return the wrapped int array.
+     * Don't change this array, please.
      *
-     * @param array the array
-     * @return the integer array
+     * @return the wrapped int array.
      */
-    IntegerArray addAll(int[] array);
+    int @NotNull [] array();
 
-    /**
-     * Add all integer array.
-     *
-     * @param array the array
-     * @return the integer array
-     */
-    IntegerArray addAll(IntegerArray array);
+    default boolean contains(int element) {
 
-    /**
-     * Array int [ ].
-     *
-     * @return the int [ ]
-     */
-    int[] array();
-
-    /**
-     * Clear integer array.
-     *
-     * @return the integer array
-     */
-    IntegerArray clear();
-
-    /**
-     * Contains boolean.
-     *
-     * @param element the element
-     * @return the boolean
-     */
-    default boolean contains(final int element) {
-
-        final int[] array = array();
+        var array = array();
 
         for (int i = 0, length = size(); i < length; i++) {
-            if (array[i] == element) return true;
+            if (array[i] == element) {
+                return true;
+            }
         }
 
         return false;
     }
 
-    /**
-     * Contains all boolean.
-     *
-     * @param array the array
-     * @return the boolean
-     */
-    default boolean containsAll(final int[] array) {
+    default boolean containsAll(int @NotNull [] array) {
 
-        for (final int val : array) {
-            if (!contains(val)) return false;
+        for (int val : array) {
+            if (!contains(val)) {
+                return false;
+            }
         }
 
         return true;
     }
 
-    /**
-     * Contains all boolean.
-     *
-     * @param array the array
-     * @return the boolean
-     */
-    default boolean containsAll(final IntegerArray array) {
+    default boolean containsAll(@NotNull IntegerArray array) {
 
-        final int[] elements = array.array();
+        var elements = array.array();
 
         for (int i = 0, length = array.size(); i < length; i++) {
             if (!contains(elements[i])) {
@@ -97,206 +57,96 @@ public interface IntegerArray extends Iterable<Integer> {
     }
 
     /**
-     * Fast remove boolean.
+     * Get the first number.
      *
-     * @param element the element
-     * @return the boolean
-     */
-    default boolean fastRemove(final int element) {
-
-        final int index = indexOf(element);
-        if (index > -1) fastRemoveByIndex(index);
-
-        return index > -1;
-    }
-
-    /**
-     * Fast remove by index boolean.
-     *
-     * @param index the index
-     * @return the boolean
-     */
-    boolean fastRemoveByIndex(int index);
-
-    /**
-     * First int.
-     *
-     * @return the int
+     * @return the first number.
+     * @throws IllegalStateException if this array is empty.
      */
     int first();
 
     /**
-     * Get int.
+     * Get a number by the index.
      *
-     * @param index the index
-     * @return the int
+     * @param index the index.
+     * @return the number.
      */
     int get(int index);
 
     /**
-     * Index of int.
+     * Find index of the first equal number in this array.
      *
-     * @param element the element
-     * @return the int
+     * @param element the checked number.
+     * @return the found index or -1.
      */
-    default int indexOf(final int element) {
+    default int indexOf(int element) {
 
-        final int[] array = array();
+        var array = array();
 
         for (int i = 0, length = size(); i < length; i++) {
-            if (element == array[i]) return i;
+            if (element == array[i]) {
+                return i;
+            }
         }
 
         return -1;
     }
 
     /**
-     * Is empty boolean.
+     * Return true if this array is empty.
      *
-     * @return the boolean
+     * @return true if this array is empty.
      */
     default boolean isEmpty() {
         return size() < 1;
     }
 
     @Override
-    ArrayIterator<Integer> iterator();
+    @NotNull ArrayIterator<Integer> iterator();
 
     /**
-     * Last int.
+     * Get the last number in this array.
      *
-     * @return the int
+     * @return the last number.
+     * @throws IllegalStateException if this array is empty.
      */
     int last();
 
     /**
-     * Last index of int.
+     * Find index of the last equal number in this array.
      *
-     * @param element the element
-     * @return the int
+     * @param element the checked number.
+     * @return the found index or -1.
      */
-    default int lastIndexOf(final int element) {
+    default int lastIndexOf(int element) {
 
-        final int[] array = array();
-
-        int last = -1;
+        var array = array();
+        var last = -1;
 
         for (int i = 0, length = size(); i < length; i++) {
-            if (element == array[i]) last = i;
+            if (element == array[i]) {
+                last = i;
+            }
         }
 
         return last;
     }
 
     /**
-     * Poll int.
+     * Get the current count of numbers in this array.
      *
-     * @return the int
-     */
-    int poll();
-
-    /**
-     * Pop int.
-     *
-     * @return the int
-     */
-    int pop();
-
-    /**
-     * Read lock.
-     */
-    default void readLock() {
-    }
-
-    /**
-     * Read unlock.
-     */
-    default void readUnlock() {
-    }
-
-    /**
-     * Remove all boolean.
-     *
-     * @param target the target
-     * @return the boolean
-     */
-    default boolean removeAll(final IntegerArray target) {
-        if (target.isEmpty()) return true;
-
-        final int[] array = target.array();
-
-        for (int i = 0, length = target.size(); i < length; i++) {
-            fastRemove(array[i]);
-        }
-
-        return true;
-    }
-
-    /**
-     * Retain all boolean.
-     *
-     * @param target the target
-     * @return the boolean
-     */
-    default boolean retainAll(final IntegerArray target) {
-
-        final int[] array = array();
-
-        for (int i = 0, length = size(); i < length; i++) {
-            if (!target.contains(array[i])) {
-                fastRemoveByIndex(i--);
-                length--;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Size int.
-     *
-     * @return the int
+     * @return the current count of numbers in this array.
      */
     int size();
 
     /**
-     * Slow remove boolean.
+     * Copy or create new array from this array.
      *
-     * @param element the element
-     * @return the boolean
+     * @param newArray the new array.
+     * @return the array with data from this array.
      */
-    default boolean slowRemove(final int element) {
+    default int @NotNull [] toArray(int @NotNull [] newArray) {
 
-        final int index = indexOf(element);
-        if (index > -1) slowRemoveByIndex(index);
-
-        return index > -1;
-    }
-
-    /**
-     * Slow remove by index boolean.
-     *
-     * @param index the index
-     * @return the boolean
-     */
-    boolean slowRemoveByIndex(int index);
-
-    /**
-     * Sort integer array.
-     *
-     * @return the integer array
-     */
-    IntegerArray sort();
-
-    /**
-     * To array int [ ].
-     *
-     * @param newArray the new array
-     * @return the int [ ]
-     */
-    default int[] toArray(final int[] newArray) {
-
-        final int[] array = array();
+        var array = array();
 
         if (newArray.length >= size()) {
 
@@ -308,24 +158,5 @@ public interface IntegerArray extends Iterable<Integer> {
         }
 
         return ArrayUtils.copyOf(array, 0);
-    }
-
-    /**
-     * Trim to size integer array.
-     *
-     * @return the integer array
-     */
-    IntegerArray trimToSize();
-
-    /**
-     * Write lock.
-     */
-    default void writeLock() {
-    }
-
-    /**
-     * Write unlock.
-     */
-    default void writeUnlock() {
     }
 }

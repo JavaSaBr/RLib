@@ -3,67 +3,60 @@ package com.ss.rlib.common.util.array.impl;
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.ArrayIterator;
 import com.ss.rlib.common.util.array.IntegerArray;
+import com.ss.rlib.common.util.array.MutableIntegerArray;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Реализация не потокобезопасного динамического массива примитивов int.
+ * Simple implementation of dynamic integer array.
  *
  * @author JavaSaBr
  */
-public class FastIntegerArray implements IntegerArray {
+public class DefaultIntegerArray implements MutableIntegerArray {
 
-    /**
-     * Массив элементов.
-     */
     protected int[] array;
-
-    /**
-     * Кол-во элементов в колекции.
-     */
     protected int size;
 
-    /**
-     * Instantiates a new Fast integer array.
-     */
-    public FastIntegerArray() {
+    public DefaultIntegerArray() {
         this(10);
     }
 
-    /**
-     * Instantiates a new Fast integer array.
-     *
-     * @param size the size
-     */
-    public FastIntegerArray(final int size) {
+    public DefaultIntegerArray(int size) {
         this.array = new int[size];
         this.size = 0;
     }
 
+    public DefaultIntegerArray(int @NotNull [] numbers) {
+        this.array = numbers;
+        this.size = numbers.length;
+    }
+
     @Override
-    public FastIntegerArray add(final int element) {
+    public @NotNull DefaultIntegerArray add(int number) {
 
         if (size == array.length) {
             array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
         }
 
-        array[size++] = element;
+        array[size++] = number;
+
         return this;
     }
 
     @Override
-    public final FastIntegerArray addAll(final int[] elements) {
+    public @NotNull DefaultIntegerArray addAll(int @NotNull [] numbers) {
 
-        if (elements == null || elements.length < 1) {
+        if (numbers.length < 1) {
             return this;
         }
 
-        final int current = array.length;
-        final int diff = size() + elements.length - current;
+        var current = array.length;
+        var diff = size() + numbers.length - current;
 
         if (diff > 0) {
             array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
         }
 
-        for (final int value : elements) {
+        for (var value : numbers) {
             add(value);
         }
 
@@ -71,22 +64,22 @@ public class FastIntegerArray implements IntegerArray {
     }
 
     @Override
-    public final FastIntegerArray addAll(final IntegerArray elements) {
+    public final @NotNull DefaultIntegerArray addAll(@NotNull IntegerArray numbers) {
 
-        if (elements == null || elements.isEmpty()) {
+        if (numbers.isEmpty()) {
             return this;
         }
 
-        final int current = array.length;
-        final int diff = size() + elements.size() - current;
+        var current = array.length;
+        var diff = size() + numbers.size() - current;
 
         if (diff > 0) {
             array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
         }
 
-        final int[] array = elements.array();
+        var array = numbers.array();
 
-        for (int i = 0, length = elements.size(); i < length; i++) {
+        for (int i = 0, length = numbers.size(); i < length; i++) {
             add(array[i]);
         }
 
@@ -94,24 +87,24 @@ public class FastIntegerArray implements IntegerArray {
     }
 
     @Override
-    public final int[] array() {
+    public final @NotNull int[] array() {
         return array;
     }
 
     @Override
-    public final FastIntegerArray clear() {
+    public final @NotNull DefaultIntegerArray clear() {
         size = 0;
         return this;
     }
 
     @Override
-    public final boolean fastRemoveByIndex(final int index) {
+    public final boolean fastRemoveByIndex(int index) {
 
         if (index < 0 || size < 1 || index >= size) {
             return false;
         }
 
-        final int[] array = array();
+        var array = array();
 
         size -= 1;
 
@@ -127,13 +120,13 @@ public class FastIntegerArray implements IntegerArray {
     }
 
     @Override
-    public final int get(final int index) {
+    public final int get(int index) {
         return array[index];
     }
 
     @Override
-    public final ArrayIterator<Integer> iterator() {
-        return new FastIterator();
+    public final @NotNull ArrayIterator<Integer> iterator() {
+        return new DefaultIterator();
     }
 
     @Override
@@ -143,13 +136,13 @@ public class FastIntegerArray implements IntegerArray {
 
     @Override
     public final int poll() {
-        final int val = first();
-        return slowRemoveByIndex(0) ? val : -1;
+        var val = first();
+        return removeByIndex(0) ? val : -1;
     }
 
     @Override
     public final int pop() {
-        final int last = last();
+        var last = last();
         return fastRemoveByIndex(size - 1) ? last : -1;
     }
 
@@ -159,12 +152,14 @@ public class FastIntegerArray implements IntegerArray {
     }
 
     @Override
-    public final boolean slowRemoveByIndex(final int index) {
-        if (index < 0 || size < 1) return false;
+    public final boolean removeByIndex(int index) {
 
-        final int[] array = array();
+        if (index < 0 || size < 1) {
+            return false;
+        }
 
-        final int numMoved = size - index - 1;
+        var array = array();
+        var numMoved = size - index - 1;
 
         if (numMoved > 0) {
             System.arraycopy(array, index + 1, array, index, numMoved);
@@ -175,15 +170,15 @@ public class FastIntegerArray implements IntegerArray {
     }
 
     @Override
-    public final FastIntegerArray sort() {
+    public final @NotNull DefaultIntegerArray sort() {
         ArrayUtils.sort(array, 0, size);
         return this;
     }
 
     @Override
-    public final FastIntegerArray trimToSize() {
+    public final @NotNull DefaultIntegerArray trimToSize() {
 
-        int[] array = array();
+        var array = array();
 
         if (size == array.length) {
             return this;
@@ -193,23 +188,13 @@ public class FastIntegerArray implements IntegerArray {
         return this;
     }
 
-    private final class FastIterator implements ArrayIterator<Integer> {
+    private final class DefaultIterator implements ArrayIterator<Integer> {
 
-        /**
-         * текущая позиция в массиве
-         */
-        private int ordinal;
-
-        /**
-         * Instantiates a new Fast iterator.
-         */
-        public FastIterator() {
-            ordinal = 0;
-        }
+        private int ordinal = 0;
 
         @Override
         public void fastRemove() {
-            FastIntegerArray.this.fastRemove(--ordinal);
+            DefaultIntegerArray.this.fastRemove(--ordinal);
         }
 
         @Override
@@ -223,13 +208,13 @@ public class FastIntegerArray implements IntegerArray {
         }
 
         @Override
-        public Integer next() {
+        public @NotNull Integer next() {
             return array[ordinal++];
         }
 
         @Override
         public void remove() {
-            FastIntegerArray.this.fastRemove(--ordinal);
+            DefaultIntegerArray.this.fastRemove(--ordinal);
         }
     }
 }

@@ -227,7 +227,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
      *
      * @return the array of entries.
      */
-    protected abstract @NotNull E[] entries();
+    protected abstract E @NotNull [] entries();
 
     /**
      * Set the next size value at which to resize (capacity * load factor).

@@ -170,23 +170,16 @@ public class ArrayFactory {
         return new SynchronizedArray<>(type);
     }
 
-    /**
-     * Create a new integer array.
-     *
-     * @return the new array.
-     */
-    public static @NotNull IntegerArray newIntegerArray() {
-        return new FastIntegerArray();
+    public static @NotNull MutableIntegerArray newMutableIntegerArray() {
+        return new DefaultIntegerArray();
     }
 
-    /**
-     * Create a new integer array.
-     *
-     * @param capacity the init size of the array.
-     * @return the new array.
-     */
-    public static @NotNull IntegerArray newIntegerArray(int capacity) {
-        return new FastIntegerArray(capacity);
+    public static @NotNull MutableIntegerArray newMutableIntegerArray(int capacity) {
+        return new DefaultIntegerArray(capacity);
+    }
+
+    public static @NotNull MutableIntegerArray newMutableIntegerArray(int... numbers) {
+        return new DefaultIntegerArray(numbers);
     }
 
     /**
