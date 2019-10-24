@@ -1,7 +1,5 @@
 package com.ss.rlib.common.util;
 
-import static java.lang.Math.min;
-
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +11,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.EnumSet;
+import java.util.function.Consumer;
 
 /**
  * The utility class.
@@ -87,76 +86,15 @@ public class BufferUtils {
     }
 
     /**
-     * Move data and flip from a buffer to a destination.
+     * Create a new byte buffer with with writing some data inside the consumer and to flip in the result.
      *
-     * @param buffer      the source buffer.
-     * @param destination the destination buffer.
+     * @param size     the buffer's size.
+     * @param consumer the consumer to write data.
+     * @return the flipped buffer.
      */
-    @Deprecated(forRemoval = true)
-    public static void moveAndFlip(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination) {
-        destination.put(buffer);
-        destination.flip();
-    }
-
-    /**
-     * Move data and flip from a buffer to a destination.
-     *
-     * @param buffer               the source buffer.
-     * @param destination          the destination buffer.
-     * @param needClearDestination true if need to clear the destination buffer before moving.
-     */
-    @Deprecated(forRemoval = true)
-    public static void moveAndFlip(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination,
-                                   final boolean needClearDestination) {
-        if (needClearDestination) destination.clear();
-        moveAndFlip(buffer, destination);
-    }
-
-    /**
-     * Copy data and flip from a buffer to a destination.
-     *
-     * @param buffer      the source buffer.
-     * @param destination the destination buffer.
-     */
-    @Deprecated(forRemoval = true)
-    public static void copyAndFlip(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination) {
-        destination.put(buffer.array(), buffer.position(), min(destination.remaining(), buffer.remaining()));
-        destination.flip();
-    }
-
-    /**
-     * Copy data from a buffer to a destination.
-     *
-     * @param buffer      the source buffer.
-     * @param destination the destination buffer.
-     */
-    @Deprecated(forRemoval = true)
-    public static void copy(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination) {
-        destination.put(buffer.array(), buffer.position(), min(destination.remaining(), buffer.remaining()));
-    }
-
-    /**
-     * Copy data and flip from a buffer to a destination.
-     *
-     * @param buffer               the source buffer.
-     * @param destination          the destination buffer.
-     * @param needClearDestination true if need to clear the destination buffer before copying.
-     */
-    @Deprecated(forRemoval = true)
-    public static void copyAndFlip(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination,
-                                   final boolean needClearDestination) {
-        if (needClearDestination) destination.clear();
-        copyAndFlip(buffer, destination);
-    }
-
-    /**
-     * Move data from a buffer to a destination.
-     *
-     * @param buffer      the source buffer.
-     * @param destination the destination buffer.
-     */
-    @Deprecated(forRemoval = true)
-    public static void move(@NotNull final ByteBuffer buffer, @NotNull final ByteBuffer destination) {
-        destination.put(buffer);
+    public @NotNull ByteBuffer prepareBuffer(int size, @NotNull Consumer<@NotNull ByteBuffer> consumer) {
+        var buffer = ByteBuffer.allocate(size);
+        consumer.accept(buffer);
+        return buffer.flip();
     }
 }
