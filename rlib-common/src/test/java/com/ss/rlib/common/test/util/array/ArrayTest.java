@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
  *
  * @author JavaSaBr
  */
-public class ArrayTests {
+public class ArrayTest {
 
     @Test
     public void testFastArray() {

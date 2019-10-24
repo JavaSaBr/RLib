@@ -29,9 +29,9 @@ public abstract class AbstractPacket implements Packet {
         if (buffer.isDirect()) {
             var array = new byte[buffer.limit()];
             buffer.get(array, 0, buffer.limit());
-            LOGGER.warning("buffer: " + buffer + "\n" + hexDump(array, array.length));
+            LOGGER.warning(getName() + " -> buffer: " + buffer + "\n" + hexDump(array, array.length));
         } else {
-            LOGGER.warning("buffer: " + buffer + "\n" + hexDump(buffer.array(), buffer.limit()));
+            LOGGER.warning(getName() + " -> buffer: " + buffer + "\n" + hexDump(buffer.array(), buffer.limit()));
         }
     }
 

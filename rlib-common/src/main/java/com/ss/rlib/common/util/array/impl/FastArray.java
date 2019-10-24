@@ -7,9 +7,12 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayIterator;
 import com.ss.rlib.common.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * The fast implementation of the array. This array is not threadsafe.
@@ -258,7 +261,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    public FastArray<E> trimToSize() {
+    public @NotNull FastArray<E> trimToSize() {
 
         if (size == array.length) {
             return this;
@@ -294,8 +297,28 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
 
     @Override
     public @NotNull FastArray<E> clone() throws CloneNotSupportedException {
-        FastArray<E> clone = (FastArray<E>) super.clone();
+        var clone = (FastArray<E>) super.clone();
         clone.array = ArrayUtils.copyOf(array, size());
         return clone;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object another) {
+
+        if (this == another) {
+            return true;
+        } else if (!(another instanceof Array)) {
+            return false;
+        }
+
+        var array = (Array<?>) another;
+        return size == array.size() && Arrays.equals(this.array, 0, size, array.array(), 0, array.size());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(size);
+        result = 31 * result + Arrays.hashCode(array);
+        return result;
     }
 }
