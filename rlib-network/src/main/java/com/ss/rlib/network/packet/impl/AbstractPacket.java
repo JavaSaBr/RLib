@@ -24,7 +24,7 @@ public abstract class AbstractPacket implements Packet {
      * @param exception the exception.
      */
     protected void handleException(@NotNull ByteBuffer buffer, @NotNull Exception exception) {
-        LOGGER.warning(this, exception);
+        LOGGER.warning(exception);
 
         if (buffer.isDirect()) {
             var array = new byte[buffer.limit()];
@@ -37,7 +37,7 @@ public abstract class AbstractPacket implements Packet {
 
     @Override
     public @NotNull String getName() {
-        return getClass().getName();
+        return getClass().getSimpleName();
     }
 
     @Override

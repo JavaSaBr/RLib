@@ -420,6 +420,7 @@ public interface Logger {
      * @param owner   the owner of the message.
      * @param message the message.
      */
+    @Deprecated(forRemoval = true)
     default void warning(@NotNull Object owner, @NotNull String message) {
         print(LoggerLevel.WARNING, owner, message);
     }
@@ -430,6 +431,7 @@ public interface Logger {
      * @param owner     the owner of the message,
      * @param exception the exception.
      */
+    @Deprecated(forRemoval = true)
     default void warning(@NotNull Object owner, @NotNull Throwable exception) {
         print(LoggerLevel.WARNING, owner, exception);
     }
