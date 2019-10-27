@@ -149,4 +149,60 @@ public class DefaultIntegerArrayTest {
 
         Assertions.assertEquals(first, second);
     }
+
+    @Test
+    void toArrayTest() {
+
+        var array = ArrayFactory.newMutableIntegerArray(5, -4, 25, -1, 70);
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+            array.toArray()
+        );
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+            array.toArray(new int[0])
+        );
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+            array.toArray(new int[array.size()])
+        );
+    }
+
+    @Test
+    void streamTest() {
+
+        var array = ArrayFactory.newMutableIntegerArray(5, -4, 25, -1, 70);
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+            array.stream().toArray()
+        );
+    }
+
+    @Test
+    void forEachTest() {
+
+        var array = ArrayFactory.newMutableIntegerArray(5, -4, 25, -1, 70);
+        var toCollect = ArrayFactory.newMutableIntegerArray();
+
+        array.forEachInt(toCollect::add);
+
+        Assertions.assertEquals(toCollect, array);
+
+        array = ArrayFactory.newMutableIntegerArray();
+        array.add(5);
+        array.add(-4);
+        array.add(25);
+        array.add(-1);
+        array.add(70);
+
+        var toCollect2 = ArrayFactory.newMutableIntegerArray();
+
+        array.forEachInt(toCollect2::add);
+
+        Assertions.assertEquals(toCollect2, array);
+    }
 }

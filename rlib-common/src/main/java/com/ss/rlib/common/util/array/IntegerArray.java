@@ -4,6 +4,11 @@ import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.impl.ReadOnlyIntegerArray;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
+
 /**
  * The interface of dynamic integer array.
  */
@@ -119,6 +124,25 @@ public interface IntegerArray extends Iterable<Integer> {
     @Override
     @NotNull ArrayIterator<Integer> iterator();
 
+    @Override
+    default void forEach(@NotNull Consumer<? super Integer> consumer) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(array[i]);
+        }
+    }
+
+    default void forEachInt(@NotNull IntConsumer consumer) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(array[i]);
+        }
+    }
+
     /**
      * Get the last number in this array.
      *
@@ -155,6 +179,15 @@ public interface IntegerArray extends Iterable<Integer> {
     int size();
 
     /**
+     * Create new array from this array.
+     *
+     * @return the array with data from this array.
+     */
+    default int @NotNull [] toArray() {
+        return ArrayUtils.copyOfRange(array(), 0, size());
+    }
+
+    /**
      * Copy or create new array from this array.
      *
      * @param newArray the new array.
@@ -173,6 +206,10 @@ public interface IntegerArray extends Iterable<Integer> {
             return newArray;
         }
 
-        return ArrayUtils.copyOf(array, 0);
+        return ArrayUtils.copyOfRange(array(), 0, size());
+    }
+
+    default @NotNull IntStream stream() {
+        return Arrays.stream(array(), 0, size());
     }
 }

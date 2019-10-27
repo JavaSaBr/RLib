@@ -1,5 +1,6 @@
 package com.ss.rlib.common.test.util.array;
 
+import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.IntegerArray;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,5 +31,48 @@ public class ReadOnlyIntegerArrayTest {
 
         Assertions.assertEquals(first, second);
         Assertions.assertNotEquals(IntegerArray.of(5, -4, 4, -1, 70), second);
+    }
+
+    @Test
+    void toArrayTest() {
+
+        var array = IntegerArray.of(5, -4, 25, -1, 70);
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+            array.toArray()
+        );
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+            array.toArray(new int[0])
+        );
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+            array.toArray(new int[array.size()])
+        );
+    }
+
+    @Test
+    void streamTest() {
+
+        var array = IntegerArray.of(5, -4, 25, -1, 70);
+
+        Assertions.assertArrayEquals(
+            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+            array.stream().toArray()
+        );
+    }
+
+    @Test
+    void forEachTest() {
+
+        var array = IntegerArray.of(5, -4, 25, -1, 70);
+        var toCollect = ArrayFactory.newMutableIntegerArray();
+
+        array.forEachInt(toCollect::add);
+
+        Assertions.assertEquals(toCollect, array);
     }
 }
