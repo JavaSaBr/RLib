@@ -359,12 +359,40 @@ public final class NumberUtils {
     /**
      * Convert a number to boolean which should be only 0 or 1 or throw an exception.
      *
+     * @param value the validated value.
+     * @return the validated value.
+     */
+    public static boolean toBoolean(long value) {
+        return toBoolean(value, IllegalArgumentException::new);
+    }
+
+    /**
+     * Convert a number to boolean which should be only 0 or 1 or throw an exception.
+     *
      * @param value            the validated value.
      * @param exceptionFactory the exception factory.
      * @return the validated value.
      */
     public static boolean toBoolean(
         int value,
+        @NotNull Function<@NotNull String, @NotNull RuntimeException> exceptionFactory
+    ) {
+        if (value == 0 || value == 1) {
+            return value == 1;
+        } else {
+            throw exceptionFactory.apply("Invalid value: " + value + " when should be only 0 or 1");
+        }
+    }
+
+    /**
+     * Convert a number to boolean which should be only 0 or 1 or throw an exception.
+     *
+     * @param value            the validated value.
+     * @param exceptionFactory the exception factory.
+     * @return the validated value.
+     */
+    public static boolean toBoolean(
+        long value,
         @NotNull Function<@NotNull String, @NotNull RuntimeException> exceptionFactory
     ) {
         if (value == 0 || value == 1) {

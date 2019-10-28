@@ -202,10 +202,16 @@ class NumberUtilsTest {
 
         assertTrue(NumberUtils.toBoolean(1));
         assertFalse(NumberUtils.toBoolean(0));
+        assertTrue(NumberUtils.toBoolean(1L));
+        assertFalse(NumberUtils.toBoolean(0L));
         assertTrue(NumberUtils.toBoolean(1, IllegalArgumentException::new));
         assertFalse(NumberUtils.toBoolean(0, IllegalArgumentException::new));
+        assertTrue(NumberUtils.toBoolean(1L, IllegalArgumentException::new));
+        assertFalse(NumberUtils.toBoolean(0L, IllegalArgumentException::new));
 
         assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(2));
         assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(-1));
+        assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(2L));
+        assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(-1L));
     }
 }
