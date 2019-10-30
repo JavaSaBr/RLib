@@ -457,6 +457,17 @@ public interface Logger {
     /**
      * Print a warning debug message.
      *
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
+     * @param <A>            the argument's type.
+     */
+    default <A> void warning(@NotNull A arg, @NotNull Logger.SinFactory<A> messageFactory) {
+        print(LoggerLevel.WARNING, arg, messageFactory);
+    }
+
+    /**
+     * Print a warning debug message.
+     *
      * @param first          the first arg for the message factory.
      * @param second         the second arg for the message factory.
      * @param messageFactory the message factory.

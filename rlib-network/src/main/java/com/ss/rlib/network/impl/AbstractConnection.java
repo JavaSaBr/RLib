@@ -1,7 +1,6 @@
 package com.ss.rlib.network.impl;
 
 import static com.ss.rlib.common.util.Utils.unchecked;
-import static com.ss.rlib.common.util.Utils.uncheckedGet;
 import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
@@ -17,6 +16,7 @@ import com.ss.rlib.network.packet.PacketReader;
 import com.ss.rlib.network.packet.PacketWriter;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
+import com.ss.rlib.network.util.NetworkUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,13 +39,13 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     private static final Logger LOGGER = LoggerManager.getLogger(AbstractConnection.class);
 
-    @Getter
-    protected final NetworkCryptor crypt;
+    protected final @Getter NetworkCryptor crypt;
 
     protected final Network<? extends Connection<R, W>> network;
     protected final BufferAllocator bufferAllocator;
 
     protected final AsynchronousSocketChannel channel;
+    protected final  @Getter String remoteAddress;
 
     protected final AtomicBoolean isWriting;
     protected final AtomicBoolean closed;
@@ -57,8 +57,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     protected final int maxPacketsByRead;
 
-    @Getter
-    protected volatile long lastActivity;
+    protected volatile @Getter long lastActivity;
 
     public AbstractConnection(
         @NotNull Network<? extends Connection<R, W>> network,
@@ -77,6 +76,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         this.isWriting = new AtomicBoolean(false);
         this.closed = new AtomicBoolean(false);
         this.subscribers = ArrayFactory.newCopyOnModifyArray(BiConsumer.class);
+        this.remoteAddress = String.valueOf(NetworkUtils.getSocketAddress(channel));
     }
 
     protected abstract @NotNull PacketReader getPacketReader();
@@ -156,11 +156,6 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         getPacketWriter().close();
     }
 
-    @Override
-    public @NotNull String getRemoteAddress() {
-        return uncheckedGet(channel, arg -> String.valueOf(arg.getRemoteAddress()), "unknown");
-    }
-
     /**
      * Update the time of last activity.
      */
@@ -194,7 +189,6 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
      * Clear waited packets.
      */
     protected void clearWaitPackets() {
-
         long stamp = lock.writeLock();
         try {
             doClearWaitPackets();

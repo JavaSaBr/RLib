@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -398,8 +399,12 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
      * @param exception the exception.
      */
     protected void handleFailedRead(@NotNull Throwable exception) {
-        LOGGER.error(exception);
-        connection.close();
+        if (exception instanceof AsynchronousCloseException) {
+            LOGGER.warning(connection, cn -> "Connection " + cn.getRemoteAddress() + " was closed.");
+        } else {
+            LOGGER.error(exception);
+            connection.close();
+        }
     }
 
     /**
