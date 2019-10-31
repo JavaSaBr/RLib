@@ -82,9 +82,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
     protected AbstractDictionary(float loadFactor, int initCapacity) {
         this.loadFactor = loadFactor;
         this.entryPool = PoolFactory.newReusablePool(getEntryType());
-        setEntries(ArrayUtils.create(getEntryType(), initCapacity));
         setThreshold((int) (initCapacity * loadFactor));
-        setSize(0);
     }
 
     @Override

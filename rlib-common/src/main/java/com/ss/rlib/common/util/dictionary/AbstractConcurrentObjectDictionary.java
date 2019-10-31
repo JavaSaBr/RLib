@@ -1,5 +1,7 @@
 package com.ss.rlib.common.util.dictionary;
 
+import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
+import com.ss.rlib.common.util.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,24 +11,14 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
-public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractObjectDictionary<K, V>
-        implements ConcurrentObjectDictionary<K, V> {
+public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> implements
+    ConcurrentObjectDictionary<K, V> {
 
-    /**
-     * Тhe array of entries.
-     */
-    @NotNull
-    private volatile ObjectEntry<K, V>[] entries;
+    private final @NotNull AtomicInteger size;
 
-    /**
-     * The next size value at which to resize (capacity * load factor).
-     */
+    private volatile @NotNull ObjectEntry<K, V>[] entries;
+
     private volatile int threshold;
-
-    /**
-     * The count of values in this {@link Dictionary}.
-     */
-    private volatile int size;
 
     protected AbstractConcurrentObjectDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
@@ -42,6 +34,8 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
 
     protected AbstractConcurrentObjectDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
+        this.entries = ArrayUtils.create(getEntryType(), initCapacity);
+        this.size = new AtomicInteger(0);
     }
 
     @Override
@@ -61,7 +55,7 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
 
     @Override
     protected void setSize(int size) {
-        this.size = size;
+        this.size.set(size);
     }
 
     @Override
@@ -71,18 +65,16 @@ public abstract class AbstractConcurrentObjectDictionary<K, V> extends AbstractO
 
     @Override
     protected int decrementSizeAndGet() {
-        size -= 1;
-        return size;
+        return size.decrementAndGet();
     }
 
     @Override
     protected int incrementSizeAndGet() {
-        size += 1;
-        return size;
+        return size.incrementAndGet();
     }
 
     @Override
     public final int size() {
-        return size;
+        return size.get();
     }
 }

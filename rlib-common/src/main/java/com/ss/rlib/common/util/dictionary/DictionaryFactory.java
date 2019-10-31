@@ -2,6 +2,8 @@ package com.ss.rlib.common.util.dictionary;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.locks.StampedLock;
+
 /**
  * The factory for creating new {@link Dictionary}.
  *
@@ -31,8 +33,8 @@ public final class DictionaryFactory {
      * @return the new {@link ConcurrentAtomicARSWLockIntegerDictionary}.
      */
     public static <V> @NotNull ConcurrentIntegerDictionary<V> newConcurrentAtomicIntegerDictionary(
-            float loadFactor,
-            int initCapacity
+        float loadFactor,
+        int initCapacity
     ) {
         return new ConcurrentAtomicARSWLockIntegerDictionary<>(loadFactor, initCapacity);
     }
@@ -56,8 +58,8 @@ public final class DictionaryFactory {
      * @return the new {@link ConcurrentAtomicARSWLockLongDictionary}.
      */
     public static <V> @NotNull ConcurrentLongDictionary<V> newConcurrentAtomicLongDictionary(
-            float loadFactor,
-            int initCapacity
+        float loadFactor,
+        int initCapacity
     ) {
         return new ConcurrentAtomicARSWLockLongDictionary<>(loadFactor, initCapacity);
     }
@@ -83,10 +85,37 @@ public final class DictionaryFactory {
      * @return the new {@link ConcurrentAtomicARSWLockLongDictionary}.
      */
     public static <K, V> @NotNull ConcurrentObjectDictionary<K, V> newConcurrentAtomicObjectDictionary(
-            float loadFactor,
-            int initCapacity
+        float loadFactor,
+        int initCapacity
     ) {
         return new ConcurrentAtomicARSWLockObjectDictionary<>(loadFactor, initCapacity);
+    }
+
+    /**
+     * Create new concurrent object dictionary based on {@link StampedLock}.
+     *
+     * @param <K> the keys type.
+     * @param <V> the values type.
+     * @return the new concurrent object dictionary.
+     */
+    public static <K, V> @NotNull ConcurrentObjectDictionary<K, V> newConcurrentStampedLockObjectDictionary() {
+        return new ConcurrentStampedLockObjectDictionary<>();
+    }
+
+    /**
+     * Create new concurrent object dictionary based on {@link StampedLock}.
+     *
+     * @param loadFactor   the load factor.
+     * @param initCapacity the init capacity.
+     * @param <K>          the keys type.
+     * @param <V>          the values type.
+     * @return the new concurrent object dictionary.
+     */
+    public static <K, V> @NotNull ConcurrentObjectDictionary<K, V> newConcurrentStampedLockObjectDictionary(
+        float loadFactor,
+        int initCapacity
+    ) {
+        return new ConcurrentStampedLockObjectDictionary<>(loadFactor, initCapacity);
     }
 
     /**
@@ -160,8 +189,8 @@ public final class DictionaryFactory {
      *
      * @param loadFactor   the load factor
      * @param initCapacity the init capacity
-     * @param <K>    the key's  type.
-     * @param <V>    the value's type.
+     * @param <K>          the key's  type.
+     * @param <V>          the value's type.
      * @return the new {@link FastObjectDictionary}.
      */
     public static <K, V> @NotNull ObjectDictionary<K, V> newObjectDictionary(float loadFactor, int initCapacity) {
@@ -176,7 +205,7 @@ public final class DictionaryFactory {
      * @param <V>    the value's type.
      * @return the new {@link ReadOnlyFastObjectDictionary}.
      */
-    public static <K, V> @NotNull ObjectDictionary<K, V> newReadOnlyObjectDictionary(Object... values) {
+    public static <K, V> @NotNull ObjectDictionary<K, V> newReadOnlyObjectDictionary(@NotNull Object... values) {
         return new ReadOnlyFastObjectDictionary<>(values);
     }
 

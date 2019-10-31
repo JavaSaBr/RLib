@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
- * The interface with methods for supporting threadsafe for the {@link ObjectDictionary}.
+ * The interface with methods for supporting thread-safe for the {@link ObjectDictionary}.
  *
  * @param <K> the key's type.
  * @param <V> the value's type.
@@ -38,8 +38,8 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @return the new concurrent object dictionary.
      */
     static <K, V> @NotNull ConcurrentObjectDictionary<K, V> ofType(
-            @NotNull Class<? super K> keyType,
-            @NotNull Class<? super V> valueType
+        @NotNull Class<? super K> keyType,
+        @NotNull Class<? super V> valueType
     ) {
         return DictionaryFactory.newConcurrentAtomicObjectDictionary();
     }
@@ -51,10 +51,10 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @return this dictionary.
      */
     default @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-            @NotNull Consumer<@NotNull ConcurrentObjectDictionary<K, V>> consumer
+        @NotNull Consumer<@NotNull ConcurrentObjectDictionary<K, V>> consumer
     ) {
 
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
             consumer.accept(this);
         } finally {
@@ -72,11 +72,11 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @return this dictionary.
      */
     default @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-            @NotNull K key,
-            @NotNull BiConsumer<@NotNull ConcurrentObjectDictionary<K, V>, @NotNull K> consumer
+        @NotNull K key,
+        @NotNull BiConsumer<@NotNull ConcurrentObjectDictionary<K, V>, @NotNull K> consumer
     ) {
 
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
             consumer.accept(this, key);
         } finally {
@@ -96,12 +96,12 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @return this dictionary.
      */
     default <F> @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-            @NotNull K key,
-            @NotNull F argument,
-            @NotNull TripleConsumer<@NotNull ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull F> consumer
+        @NotNull K key,
+        @NotNull F argument,
+        @NotNull TripleConsumer<@NotNull ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull F> consumer
     ) {
 
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
             consumer.accept(this, key, argument);
         } finally {
@@ -120,10 +120,10 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @return the result of the function.
      */
     default @Nullable V getInReadLock(
-            @NotNull K key,
-            @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull V> function
+        @NotNull K key,
+        @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull V> function
     ) {
-        long stamp = readLock();
+        var stamp = readLock();
         try {
             return function.apply(this, key);
         } finally {
@@ -140,10 +140,10 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @return the result of the function.
      */
     default @Nullable V getInWriteLock(
-            @NotNull K key,
-            @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull V> function
+        @NotNull K key,
+        @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull V> function
     ) {
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
             return function.apply(this, key);
         } finally {
@@ -157,7 +157,7 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @param consumer the consumer.
      */
     default void forEachInReadLock(@NotNull BiConsumer<@NotNull ? super K, @NotNull ? super V> consumer) {
-        long stamp = readLock();
+        var stamp = readLock();
         try {
             forEach(consumer);
         } finally {

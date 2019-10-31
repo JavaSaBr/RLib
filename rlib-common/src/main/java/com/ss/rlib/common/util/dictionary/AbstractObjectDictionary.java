@@ -3,7 +3,6 @@ package com.ss.rlib.common.util.dictionary;
 import com.ss.rlib.common.function.FourObjectConsumer;
 import com.ss.rlib.common.function.TripleConsumer;
 import com.ss.rlib.common.util.ClassUtils;
-import com.ss.rlib.common.util.ObjectUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
@@ -56,10 +55,10 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
      */
     private void addEntry(int hash, K key, V value, int index) {
 
-        ObjectEntry<K, V>[] entries = entries();
-        ObjectEntry<K, V> entry = entries[index];
+        var entries = entries();
+        var entry = entries[index];
 
-        ObjectEntry<K, V> newEntry = entryPool.take(ObjectEntry::new);
+        var newEntry = entryPool.take(ObjectEntry::new);
         newEntry.set(hash, key, value, entry);
 
         entries[index] = newEntry;
@@ -76,14 +75,14 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public @Nullable V get(@NotNull K key) {
-        ObjectEntry<K, V> entry = getEntry(key);
+        var entry = getEntry(key);
         return entry == null ? null : entry.getValue();
     }
 
     @Override
     public @NotNull V getOrCompute(@NotNull K key, @NotNull Supplier<@NotNull V> factory) {
 
-        ObjectEntry<K, V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.get());
@@ -91,16 +90,17 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         }
 
         if (entry == null) {
-            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+            throw new IllegalStateException("Factory " + factory + " returned a null value.");
         }
 
+        //noinspection ConstantConditions
         return entry.getValue();
     }
 
     @Override
     public @NotNull V getOrCompute(@NotNull K key, @NotNull Function<@NotNull K, @NotNull V> factory) {
 
-        ObjectEntry<K, V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.apply(key));
@@ -108,20 +108,21 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         }
 
         if (entry == null) {
-            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+            throw new IllegalStateException("Factory " + factory + " returned a null value.");
         }
 
+        //noinspection ConstantConditions
         return entry.getValue();
     }
 
     @Override
     public <T> @NotNull V getOrCompute(
-            @NotNull K key,
-            @NotNull T argument,
-            @NotNull Function<@NotNull T, @NotNull V> factory
+        @NotNull K key,
+        @NotNull T argument,
+        @NotNull Function<@NotNull T, @NotNull V> factory
     ) {
 
-        ObjectEntry<K, V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.apply(argument));
@@ -129,30 +130,32 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
         }
 
         if (entry == null) {
-            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+            throw new IllegalStateException("Factory " + factory + " returned a null value.");
         }
 
+        //noinspection ConstantConditions
         return entry.getValue();
     }
 
     @Override
     public <T> @NotNull V getOrCompute(
-            @NotNull K key,
-            @NotNull T argument,
-            @NotNull BiFunction<@NotNull K, @NotNull T, @NotNull V> factory
+        @NotNull K key,
+        @NotNull T argument,
+        @NotNull BiFunction<@NotNull K, @NotNull T, @NotNull V> factory
     ) {
 
-        ObjectEntry<K, V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
-            put(key, ObjectUtils.notNull(factory.apply(key, argument)));
+            put(key, factory.apply(key, argument));
             entry = getEntry(key);
         }
 
         if (entry == null) {
-            throw new IllegalStateException("The factory " + factory + " returned a null value.");
+            throw new IllegalStateException("Factory " + factory + " returned a null value.");
         }
 
+        //noinspection ConstantConditions
         return entry.getValue();
     }
 
@@ -164,11 +167,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
      */
     private @Nullable ObjectEntry<K, V> getEntry(K key) {
 
-        ObjectEntry<K, V>[] entries = entries();
-        int hash = hash(key.hashCode());
-        int index = indexFor(hash, entries.length);
+        var entries = entries();
 
-        for (ObjectEntry<K, V> entry = entries[index]; entry != null; entry = entry.getNext()) {
+        var hash = hash(key.hashCode());
+        var entryIndex = indexFor(hash, entries.length);
+
+        for (var entry = entries[entryIndex]; entry != null; entry = entry.getNext()) {
             if (entry.getHash() == hash && key.equals(entry.getKey())) {
                 return entry;
             }
@@ -185,11 +189,12 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     @Override
     public final @NotNull Array<K> keyArray(@NotNull Array<K> container) {
 
-        UnsafeArray<K> unsafeArray = container.asUnsafe();
+        var unsafeArray = container.asUnsafe();
         unsafeArray.prepareForSize(container.size() + size());
 
-        for (ObjectEntry<K, V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
+                //noinspection ConstantConditions
                 unsafeArray.unsafeAdd(entry.getKey());
                 entry = entry.getNext();
             }
@@ -205,10 +210,11 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
             return;
         }
 
-        ObjectDictionary<K, V> target = ClassUtils.unsafeNNCast(dictionary);
+        var target = ClassUtils.<ObjectDictionary<K, V>>unsafeNNCast(dictionary);
 
-        for (ObjectEntry<K, V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
+                //noinspection ConstantConditions
                 target.put(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
             }
@@ -216,33 +222,35 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public @Nullable V put(@NotNull K key, @Nullable V value) {
+    public @Nullable V put(@NotNull K key, @NotNull V value) {
 
-        ObjectEntry<K, V>[] entries = entries();
+        var entries = entries();
 
-        int hash = hash(key.hashCode());
-        int i = indexFor(hash, entries.length);
+        var hash = hash(key.hashCode());
+        var entryIndex = indexFor(hash, entries.length);
 
-        for (ObjectEntry<K, V> entry = entries[i]; entry != null; entry = entry.getNext()) {
+        for (var entry = entries[entryIndex]; entry != null; entry = entry.getNext()) {
             if (entry.getHash() == hash && key.equals(entry.getKey())) {
                 return entry.setValue(value);
             }
         }
 
-        addEntry(hash, key, value, i);
+        addEntry(hash, key, value, entryIndex);
         return null;
     }
 
     @Override
     public @Nullable V remove(@NotNull K key) {
 
-        ObjectEntry<K, V> old = removeEntryForKey(key);
+        var old = removeEntryForKey(key);
 
-        V value = old == null ? null : old.getValue();
-
-        if (old != null) {
-            entryPool.put(old);
+        if (old == null) {
+            return null;
         }
+
+        var value = old.getValue();
+
+        entryPool.put(old);
 
         return value;
     }
@@ -250,23 +258,23 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     @Override
     public @Nullable ObjectEntry<K, V> removeEntryForKey(@NotNull K key) {
 
-        ObjectEntry<K, V>[] entries = entries();
+        var entries = entries();
 
-        int hash = hash(key.hashCode());
-        int i = indexFor(hash, entries.length);
+        var hash = hash(key.hashCode());
+        var entryIndex = indexFor(hash, entries.length);
 
-        ObjectEntry<K, V> prev = entries[i];
-        ObjectEntry<K, V> entry = prev;
+        var prev = entries[entryIndex];
+        var entry = prev;
 
         while (entry != null) {
 
-            ObjectEntry<K, V> next = entry.getNext();
+            var next = entry.getNext();
 
             if (entry.getHash() == hash && key.equals(entry.getKey())) {
                 decrementSizeAndGet();
 
                 if (prev == entry) {
-                    entries[i] = next;
+                    entries[entryIndex] = next;
                 } else {
                     prev.setNext(next);
                 }
@@ -286,22 +294,21 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
         int size = size();
 
-        StringBuilder builder = new StringBuilder(getClass().getSimpleName());
-        builder.append(" size = ")
-                .append(size)
-                .append(" : ");
+        var builder = new StringBuilder(getClass().getSimpleName())
+            .append(" size = ")
+            .append(size)
+            .append(" : ");
 
-        ObjectEntry<K, V>[] table = entries();
+        var entries = entries();
 
-        for (ObjectEntry<K, V> entry : table) {
+        for (var entry : entries) {
             while (entry != null) {
-
-                builder.append("[")
-                        .append(entry.getKey())
-                        .append(" - ")
-                        .append(entry.getValue())
-                        .append("]\n");
-
+                builder
+                    .append("[")
+                    .append(entry.getKey())
+                    .append(" - ")
+                    .append(entry.getValue())
+                    .append("]\n");
                 entry = entry.getNext();
             }
         }
@@ -315,7 +322,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public void forEach(@NotNull BiConsumer<? super K, ? super V> consumer) {
-        for (ObjectEntry<K, V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
@@ -325,10 +332,10 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public <T> void forEach(
-            @NotNull T argument,
-            @NotNull TripleConsumer<@NotNull ? super T, @NotNull ? super K, @NotNull ? super V> consumer
+        @NotNull T argument,
+        @NotNull TripleConsumer<@NotNull ? super T, @NotNull ? super K, @NotNull ? super V> consumer
     ) {
-        for (ObjectEntry<K, V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(argument, entry.getKey(), entry.getValue());
                 entry = entry.getNext();
@@ -338,11 +345,11 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
     @Override
     public <F, S> void forEach(
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull FourObjectConsumer<@NotNull ? super F, @NotNull ? super S, @NotNull ? super K, @NotNull ? super V> consumer
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull FourObjectConsumer<@NotNull ? super F, @NotNull ? super S, @NotNull ? super K, @NotNull ? super V> consumer
     ) {
-        for (ObjectEntry<K, V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(first, second, entry.getKey(), entry.getValue());
                 entry = entry.getNext();

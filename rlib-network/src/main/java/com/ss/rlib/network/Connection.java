@@ -60,6 +60,7 @@ public interface Connection<R extends ReadablePacket, W extends WritablePacket> 
      *
      * @param packet the writable packet.
      * @return the async result with true if the packet was sent or false if sending was failed.
+     * @since 9.5.0
      */
     @NotNull CompletableFuture<Boolean> sendWithFeedback(@NotNull W packet);
 

@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util.dictionary;
 
+import com.ss.rlib.common.util.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,20 +11,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements UnsafeIntegerDictionary<V> {
 
-    /**
-     * The array of entries.
-     */
-    @NotNull
-    private IntegerEntry<V>[] entries;
+    private @NotNull IntegerEntry<V>[] entries;
 
-    /**
-     * The next size value at which to resize (capacity * load factor).
-     */
     private int threshold;
-
-    /**
-     * The count of values in this {@link Dictionary}.
-     */
     private int size;
 
     protected FastIntegerDictionary() {
@@ -40,6 +30,7 @@ public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> imple
 
     protected FastIntegerDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
+        this.entries = ArrayUtils.create(getEntryType(), initCapacity);
     }
 
     @Override

@@ -19,8 +19,8 @@ import java.util.function.Supplier;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
-public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<IntKey, V, IntegerEntry<V>>
-        implements UnsafeIntegerDictionary<V> {
+public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<IntKey, V, IntegerEntry<V>> implements
+    UnsafeIntegerDictionary<V> {
 
     protected AbstractIntegerDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
@@ -45,10 +45,10 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
      */
     protected final void addEntry(int hash, int key, @NotNull V value, int index) {
 
-        IntegerEntry<V>[] entries = entries();
-        IntegerEntry<V> entry = entries[index];
+        var entries = entries();
+        var entry = entries[index];
 
-        IntegerEntry<V> newEntry = entryPool.take(IntegerEntry::new);
+        var newEntry = entryPool.take(IntegerEntry::new);
         newEntry.set(hash, key, value, entry);
 
         entries[index] = newEntry;
@@ -65,7 +65,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
     @Override
     public void forEach(@NotNull IntObjectConsumer<@NotNull ? super V> consumer) {
-        for (IntegerEntry<V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue());
                 entry = entry.getNext();
@@ -75,10 +75,10 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
     @Override
     public <T> void forEach(
-            @NotNull T argument,
-            @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer
+        @NotNull T argument,
+        @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer
     ) {
-        for (IntegerEntry<V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue(), argument);
                 entry = entry.getNext();
@@ -88,14 +88,14 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
     @Override
     public final @Nullable V get(int key) {
-        IntegerEntry<V> entry = getEntry(key);
+        var entry = getEntry(key);
         return entry == null ? null : entry.getValue();
     }
 
     @Override
     public @NotNull V getOrCompute(int key, @NotNull Supplier<@NotNull V> factory) {
 
-        IntegerEntry<V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.get());
@@ -112,7 +112,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     @Override
     public @NotNull V getOrCompute(int key, @NotNull IntFunction<@NotNull V> factory) {
 
-        IntegerEntry<V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.apply(key));
@@ -128,12 +128,12 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
     @Override
     public <T> @Nullable V getOrCompute(
-            int key,
-            @NotNull T argument,
-            @NotNull Function<@NotNull T, @NotNull V> factory
+        int key,
+        @NotNull T argument,
+        @NotNull Function<@NotNull T, @NotNull V> factory
     ) {
 
-        IntegerEntry<V> entry = getEntry(key);
+        var entry = getEntry(key);
 
         if (entry == null) {
             put(key, factory.apply(argument));
@@ -156,8 +156,8 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
     private @Nullable IntegerEntry<V> getEntry(int key) {
 
-        IntegerEntry<V>[] entries = entries();
-        int index = indexFor(hash(key), entries.length);
+        var entries = entries();
+        var index = indexFor(hash(key), entries.length);
 
         for (IntegerEntry<V> entry = entries[index]; entry != null; entry = entry.getNext()) {
             if (key == entry.getKey()) {
@@ -206,33 +206,34 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     @Override
     public final @Nullable V put(int key, @NotNull V value) {
 
-        IntegerEntry<V>[] entries = entries();
+        var entries = entries();
 
-        int hash = hash(key);
-        int i = indexFor(hash, entries.length);
+        var hash = hash(key);
+        var entryIndex = indexFor(hash, entries.length);
 
-        for (IntegerEntry<V> entry = entries[i]; entry != null; entry = entry.getNext()) {
+        for (var entry = entries[entryIndex]; entry != null; entry = entry.getNext()) {
             if (entry.getHash() == hash && key == entry.getKey()) {
                 return entry.setValue(value);
             }
         }
 
-        addEntry(hash, key, value, i);
-
+        addEntry(hash, key, value, entryIndex);
         return null;
     }
 
 
     @Override
-    public final @Nullable V remove(int key) {
+    public @Nullable V remove(int key) {
 
-        IntegerEntry<V> old = removeEntryForKey(key);
+        var old = removeEntryForKey(key);
 
-        V value = old == null ? null : old.getValue();
-
-        if (old != null) {
-            entryPool.put(old);
+        if (old == null) {
+            return null;
         }
+
+        var value = old.getValue();
+
+        entryPool.put(old);
 
         return value;
     }
@@ -246,16 +247,16 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     @Override
     public final @Nullable IntegerEntry<V> removeEntryForKey(int key) {
 
-        IntegerEntry<V>[] entries = entries();
+        var entries = entries();
 
         int i = indexFor(hash(key), entries.length);
 
-        IntegerEntry<V> prev = entries[i];
-        IntegerEntry<V> entry = prev;
+        var prev = entries[i];
+        var entry = prev;
 
         while (entry != null) {
 
-            IntegerEntry<V> next = entry.getNext();
+            var next = entry.getNext();
 
             if (key == entry.getKey()) {
                 decrementSizeAndGet();
@@ -279,23 +280,23 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
     @Override
     public final String toString() {
 
-        int size = size();
+        var size = size();
 
-        StringBuilder builder = new StringBuilder(getClass().getSimpleName());
-        builder.append(" size = ")
-                .append(size)
-                .append(" : ");
+        var builder = new StringBuilder(getClass().getSimpleName());
+        builder
+            .append(" size = ")
+            .append(size)
+            .append(" : ");
 
-        for (IntegerEntry<V> entry : entries()) {
+        for (var entry : entries()) {
             while (entry != null) {
-
-                builder.append("[")
-                        .append(entry.getKey())
-                        .append(" - ")
-                        .append(entry.getValue())
-                        .append("]")
-                        .append("\n");
-
+                builder
+                    .append("[")
+                    .append(entry.getKey())
+                    .append(" - ")
+                    .append(entry.getValue())
+                    .append("]")
+                    .append("\n");
                 entry = entry.getNext();
             }
         }
