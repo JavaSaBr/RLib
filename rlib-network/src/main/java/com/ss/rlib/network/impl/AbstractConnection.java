@@ -16,6 +16,7 @@ import com.ss.rlib.network.packet.PacketReader;
 import com.ss.rlib.network.packet.PacketWriter;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
+import com.ss.rlib.network.packet.impl.WritablePacketWrapper;
 import com.ss.rlib.network.util.NetworkUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ import reactor.core.publisher.FluxSink;
 
 import java.nio.channels.AsynchronousChannel;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.BiConsumer;
@@ -39,19 +41,25 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     private static final Logger LOGGER = LoggerManager.getLogger(AbstractConnection.class);
 
+    private static class WritablePacketWithFeedback<W extends WritablePacket> extends
+        WritablePacketWrapper<CompletableFuture<Boolean>, W> {
+
+        public WritablePacketWithFeedback(@NotNull CompletableFuture<Boolean> attachment, @NotNull W packet) {
+            super(attachment, packet);
+        }
+    }
+
     protected final @Getter NetworkCryptor crypt;
+    protected final @Getter String remoteAddress;
 
     protected final Network<? extends Connection<R, W>> network;
     protected final BufferAllocator bufferAllocator;
-
     protected final AsynchronousSocketChannel channel;
-    protected final  @Getter String remoteAddress;
+    protected final LinkedList<WritablePacket> pendingPackets;
+    protected final StampedLock lock;
 
     protected final AtomicBoolean isWriting;
     protected final AtomicBoolean closed;
-
-    protected final LinkedList<W> pendingPackets;
-    protected final StampedLock lock;
 
     protected final Array<BiConsumer<? super Connection<R, W>, ? super R>> subscribers;
 
@@ -125,7 +133,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         sink.onDispose(() -> subscribers.remove(listener));
     }
 
-    protected @Nullable W nextPacketToWrite() {
+    protected @Nullable WritablePacket nextPacketToWrite() {
         long stamp = lock.writeLock();
         try {
             return pendingPackets.poll();
@@ -168,8 +176,20 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         return closed.get();
     }
 
+    protected void onWrittenPacket(@NotNull WritablePacket packet) { }
+
+    protected void onSentPacket(@NotNull WritablePacket packet, @NotNull Boolean result) {
+        if (packet instanceof WritablePacketWithFeedback) {
+            ((WritablePacketWithFeedback<W>) packet).getAttachment().complete(result);
+        }
+    }
+
     @Override
     public final void send(@NotNull W packet) {
+        sendImpl(packet);
+    }
+
+    protected void sendImpl(@NotNull WritablePacket packet) {
 
         if (isClosed()) {
             return;
@@ -185,6 +205,20 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         getPacketWriter().writeNextPacket();
     }
 
+    @Override
+    public @NotNull CompletableFuture<Boolean> sendWithFeedback(@NotNull W packet) {
+
+        var asyncResult = new CompletableFuture<Boolean>();
+
+        sendImpl(new WritablePacketWithFeedback<>(asyncResult, packet));
+
+        if (isClosed()) {
+            return CompletableFuture.completedFuture(Boolean.FALSE);
+        }
+
+        return asyncResult;
+    }
+
     /**
      * Clear waited packets.
      */
@@ -198,6 +232,11 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     }
 
     protected void doClearWaitPackets() {
+
+        for (var pendingPacket : pendingPackets) {
+            onSentPacket(pendingPacket, Boolean.FALSE);
+        }
+
         pendingPackets.clear();
     }
 }

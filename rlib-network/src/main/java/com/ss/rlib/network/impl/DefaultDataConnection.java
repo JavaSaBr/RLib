@@ -60,6 +60,8 @@ public abstract class DefaultDataConnection<R extends ReadablePacket, W extends 
             bufferAllocator,
             this::updateLastActivity,
             this::nextPacketToWrite,
+            this::onWrittenPacket,
+            this::onSentPacket,
             packetLengthHeaderSize
         );
     }

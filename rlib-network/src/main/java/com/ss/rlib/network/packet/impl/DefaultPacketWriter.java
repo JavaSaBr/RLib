@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -23,7 +25,9 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
         @NotNull Runnable updateActivityFunction,
-        @NotNull Supplier<@Nullable W> nextWritePacketSupplier,
+        @NotNull Supplier<@Nullable WritablePacket> nextWritePacketSupplier,
+        @NotNull Consumer<@NotNull WritablePacket> writtenPacketHandler,
+        @NotNull BiConsumer<@NotNull WritablePacket, Boolean> sentPacketHandler,
         int packetLengthHeaderSize
     ) {
         super(
@@ -31,13 +35,15 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
             channel,
             bufferAllocator,
             updateActivityFunction,
-            nextWritePacketSupplier
+            nextWritePacketSupplier,
+            writtenPacketHandler,
+            sentPacketHandler
         );
         this.packetLengthHeaderSize = packetLengthHeaderSize;
     }
 
     @Override
-    protected int getTotalSize(@NotNull W packet, int expectedLength) {
+    protected int getTotalSize(@NotNull WritablePacket packet, int expectedLength) {
         return expectedLength + packetLengthHeaderSize;
     }
 

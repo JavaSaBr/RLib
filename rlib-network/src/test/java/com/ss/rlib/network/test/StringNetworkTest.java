@@ -24,6 +24,7 @@ import reactor.core.publisher.Flux;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +75,7 @@ public class StringNetworkTest extends BaseNetworkTest {
     }
 
     @Test
-    void shouldNotUseMappedBuffers() {
+    void shouldNotUseBigBuffers() {
 
         var serverAllocator = new DefaultBufferAllocator(DEFAULT_SERVER) {
 
@@ -316,6 +317,46 @@ public class StringNetworkTest extends BaseNetworkTest {
 
         clients.forEach(Network::shutdown);
         serverNetwork.shutdown();
+    }
+
+    @Test
+    void shouldGetAllPacketWithFeedback() {
+
+        int packetCount = 200;
+
+        try(var testNetwork = buildStringNetwork()) {
+
+            var bufferSize = testNetwork.serverNetworkConfig
+                .getReadBufferSize() / 3;
+
+            var random = ThreadLocalRandom.current();
+
+            var clientToServer = testNetwork.clientToServer;
+            var serverToClient = testNetwork.serverToClient;
+
+            var pendingPacketsOnServer = serverToClient.receivedPackets()
+                .buffer(packetCount);
+
+            var asyncResults = IntStream.range(0, packetCount)
+                .mapToObj(value -> StringUtils.generate(random.nextInt(0, bufferSize)))
+                .map(message -> clientToServer.sendWithFeedback(new StringWritablePacket(message)))
+                .collect(toList());
+
+            CompletableFuture.allOf(asyncResults.toArray(CompletableFuture[]::new)).join();
+
+            var notSentPacket = asyncResults.stream()
+                .map(CompletableFuture::join)
+                .filter(sent -> !sent)
+                .findFirst()
+                .orElse(null);
+
+            Assertions.assertNull(notSentPacket, "Found not sent packets...");
+
+            // so all packets are already sent, we should not wait for long time to get result
+            var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofMillis(10)));
+
+            Assertions.assertEquals(receivedPackets.size(), packetCount, "Didn't receive all packets");
+        }
     }
 
     private static @NotNull StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {

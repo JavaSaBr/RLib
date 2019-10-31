@@ -271,8 +271,4 @@ public class DefaultNetworkTest extends BaseNetworkTest {
             Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
         }
     }
-
-    private static @NotNull StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {
-        return new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength));
-    }
 }
