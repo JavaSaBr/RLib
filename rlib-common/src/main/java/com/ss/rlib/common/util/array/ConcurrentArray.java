@@ -213,6 +213,27 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
+     * Execute the function in read lock of this array with additional argument.
+     *
+     * @param <F>      the argument's type.
+     * @param <R>      the function result's type.
+     * @param argument the additional argument.
+     * @param function the function.
+     * @return the result of the function.
+     */
+    default <F, R> @NotNull R getInReadLock(
+        @Nullable F argument,
+        @NotNull BiFunction<@NotNull ConcurrentArray<E>, @Nullable F, @NotNull R> function
+    ) {
+        long stamp = readLock();
+        try {
+            return function.apply(this, argument);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
      * Execute the function and get a result of the function in write lock of the array.
      *
      * @param function the function.
@@ -223,6 +244,27 @@ public interface ConcurrentArray<E> extends Array<E> {
         long stamp = writeLock();
         try {
             return function.apply(this);
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Execute the function in write lock of this array with additional argument.
+     *
+     * @param <F>      the argument's type.
+     * @param <R>      the function result's type.
+     * @param argument the argument.
+     * @param function the function.
+     * @return the result of the function.
+     */
+    default <F, R> @NotNull R getInWriteLock(
+        @NotNull F argument,
+        @NotNull BiFunction<@NotNull Array<E>, @Nullable F, @NotNull R> function
+    ) {
+        long stamp = writeLock();
+        try {
+            return function.apply(this, argument);
         } finally {
             writeUnlock(stamp);
         }

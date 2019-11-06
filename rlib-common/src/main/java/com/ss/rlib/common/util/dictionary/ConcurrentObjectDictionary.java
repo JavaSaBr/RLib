@@ -1,6 +1,7 @@
 package com.ss.rlib.common.util.dictionary;
 
 import com.ss.rlib.common.function.TripleConsumer;
+import com.ss.rlib.common.function.TripleFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,19 +134,65 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
 
     /**
      * Get the value using a function from a dictionary in the block {@link
+     * ConcurrentObjectDictionary#readLock()} with additional argument.
+     *
+     * @param <F>      the argument's type
+     * @param key      the key value.
+     * @param argument the additional argument
+     * @param function the function.
+     * @return the result of the function.
+     */
+    default <F> @Nullable V getInReadLock(
+        @NotNull K key,
+        @Nullable F argument,
+        @NotNull TripleFunction<@NotNull ConcurrentObjectDictionary<K, V>, @NotNull K, @Nullable F, @Nullable V> function
+    ) {
+        var stamp = readLock();
+        try {
+            return function.apply(this, key, argument);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
+     * Get the value using a function from a dictionary in the block {@link
      * ConcurrentObjectDictionary#writeLock()}.
      *
      * @param key      the key value.
      * @param function the function.
      * @return the result of the function.
      */
-    default @Nullable V getInWriteLock(
+    default @NotNull V getInWriteLock(
         @NotNull K key,
         @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull V> function
     ) {
         var stamp = writeLock();
         try {
             return function.apply(this, key);
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Get the value using a function from a dictionary in the block {@link
+     * ConcurrentObjectDictionary#writeLock()} with additional argument.
+     *
+     * @param <F>      the argument's type
+     * @param key      the key value.
+     * @param argument the additional argument
+     * @param function the function.
+     * @return the result of the function.
+     */
+    default <F> @Nullable V getInWriteLock(
+        @NotNull K key,
+        @NotNull F argument,
+        @NotNull TripleFunction<ConcurrentObjectDictionary<K, V>, @NotNull K, @Nullable F, @NotNull V> function
+    ) {
+        var stamp = writeLock();
+        try {
+            return function.apply(this, key, argument);
         } finally {
             writeUnlock(stamp);
         }
