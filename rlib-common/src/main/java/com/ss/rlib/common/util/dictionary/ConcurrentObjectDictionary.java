@@ -44,6 +44,29 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
     }
 
     /**
+     * Execute a function for this dictionary under block {@link ConcurrentObjectDictionary#readLock()}.
+     *
+     * @param argument the argument.
+     * @param consumer the function.
+     * @param <A>      the argument's type.
+     * @return this dictionary.
+     */
+    default <A> @NotNull ConcurrentObjectDictionary<K, V> runInReadLock(
+        @NotNull A argument,
+        @NotNull NotNullBiConsumer<ConcurrentObjectDictionary<K, V>, A> consumer
+    ) {
+
+        var stamp = readLock();
+        try {
+            consumer.accept(this, argument);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
      * Execute a function for this dictionary under block {@link ConcurrentObjectDictionary#writeLock()}.
      *
      * @param consumer the function.
@@ -118,11 +141,12 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @param argument the argument.
      * @param function the function.
      * @param <A>      the argument's type.
+     * @param <R>      the result's type.
      * @return the result of the function.
      */
-    default <A> @Nullable V getInReadLock(
+    default <A, R> @Nullable R getInReadLock(
         @NotNull A argument,
-        @NotNull NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, V> function
+        @NotNull NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, R> function
     ) {
         var stamp = readLock();
         try {
@@ -138,11 +162,12 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @param argument the argument.
      * @param function the function.
      * @param <A>      the argument's type.
+     * @param <R>      the result's type.
      * @return the result of the function.
      */
-    default <A> @Nullable V getInWriteLock(
+    default <A, R> @Nullable R getInWriteLock(
         @NotNull A argument,
-        @NotNull NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, V> function
+        @NotNull NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, R> function
     ) {
         var stamp = writeLock();
         try {

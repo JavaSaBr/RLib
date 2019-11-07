@@ -44,4 +44,19 @@ public class ConcurrentObjectDictionaryTest extends BaseTest {
             assertType(arg2, Integer.class);
         });
     }
+
+    @Test
+    void runInReadLockTest() {
+
+        var dictionary = ConcurrentObjectDictionary.ofType(
+            String.class,
+            Integer.class
+        );
+
+        dictionary.runInReadLock("4", (dic, arg) -> {
+            assertType(dic, ConcurrentObjectDictionary.class);
+            assertType(arg, String.class);
+            dic.get(arg);
+        });
+    }
 }
