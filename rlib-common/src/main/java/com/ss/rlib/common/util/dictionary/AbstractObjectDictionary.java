@@ -1,18 +1,12 @@
 package com.ss.rlib.common.util.dictionary;
 
-import com.ss.rlib.common.function.FourObjectConsumer;
-import com.ss.rlib.common.function.TripleConsumer;
+import com.ss.rlib.common.function.*;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * The base implementation of the {@link ObjectDictionary}.
@@ -80,7 +74,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public @NotNull V getOrCompute(@NotNull K key, @NotNull Supplier<@NotNull V> factory) {
+    public @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullSupplier<V> factory) {
 
         var entry = getEntry(key);
 
@@ -98,7 +92,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public @NotNull V getOrCompute(@NotNull K key, @NotNull Function<@NotNull K, @NotNull V> factory) {
+    public @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullFunction<K, V> factory) {
 
         var entry = getEntry(key);
 
@@ -116,11 +110,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public <T> @NotNull V getOrCompute(
-        @NotNull K key,
-        @NotNull T argument,
-        @NotNull Function<@NotNull T, @NotNull V> factory
-    ) {
+    public <T> @NotNull V getOrCompute(@NotNull K key, @NotNull T argument, @NotNull NotNullFunction<T, V> factory) {
 
         var entry = getEntry(key);
 
@@ -141,7 +131,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     public <T> @NotNull V getOrCompute(
         @NotNull K key,
         @NotNull T argument,
-        @NotNull BiFunction<@NotNull K, @NotNull T, @NotNull V> factory
+        @NotNull NotNullBiFunction<K, T, V> factory
     ) {
 
         var entry = getEntry(key);
@@ -321,7 +311,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     }
 
     @Override
-    public void forEach(@NotNull BiConsumer<? super K, ? super V> consumer) {
+    public void forEach(@NotNull NotNullBiConsumer<? super K, ? super V> consumer) {
         for (var entry : entries()) {
             while (entry != null) {
                 consumer.accept(entry.getKey(), entry.getValue());
@@ -333,7 +323,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
     @Override
     public <T> void forEach(
         @NotNull T argument,
-        @NotNull TripleConsumer<@NotNull ? super T, @NotNull ? super K, @NotNull ? super V> consumer
+        @NotNull NotNullTripleConsumer<? super T, ? super K, ? super V> consumer
     ) {
         for (var entry : entries()) {
             while (entry != null) {

@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util.dictionary;
 
+import com.ss.rlib.common.function.NotNullFunction;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.pools.Reusable;
@@ -21,7 +22,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
      *
      * @param function the function.
      */
-    default void apply(@NotNull Function<@NotNull ? super V, @NotNull V> function) {
+    default void apply(@NotNull NotNullFunction<? super V, V> function) {
         throw new UnsupportedOperationException();
     }
 

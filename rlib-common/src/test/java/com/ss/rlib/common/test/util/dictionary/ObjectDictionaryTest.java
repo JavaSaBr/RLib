@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author JavaSaBr
  */
-public class ObjectDictionaryTests {
+public class ObjectDictionaryTest {
 
     @Test
     void generalTest() {
