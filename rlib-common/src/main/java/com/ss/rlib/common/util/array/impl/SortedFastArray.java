@@ -8,18 +8,18 @@ import com.ss.rlib.common.util.array.Array;
 /**
  * The sorted implementation of the {@link FastArray}.
  *
- * @param <E> the type parameter
+ * @param <E> the array's element type.
  * @author JavaSaBr
  */
-public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
+public class SortedFastArray<E extends Comparable<E>> extends FastArray<E> {
 
     private static final long serialVersionUID = 1L;
 
-    public SortedArray(@NotNull Class<? super E> type) {
+    public SortedFastArray(@NotNull Class<? super E> type) {
         super(type);
     }
 
-    public SortedArray(@NotNull Class<? super E> type, int size) {
+    public SortedFastArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
     }
 
@@ -35,17 +35,21 @@ public class SortedArray<E extends Comparable<E>> extends FastArray<E> {
 
     @Override
     protected void processAdd(@NotNull Array<? extends E> elements, int selfSize, int targetSize) {
-        for (E element : elements.array()) {
-            if (element == null) break;
-            add(element);
+        var array = elements.array();
+        for (int i = 0, length = elements.size(); i < length; i++) {
+            E element = array[i];
+            if (!contains(element)) {
+                unsafeAdd(element);
+            }
         }
     }
 
     @Override
     protected void processAdd(@NotNull E[] elements, int selfSize, int targetSize) {
         for (E element : elements) {
-            if (element == null) break;
-            add(element);
+            if (!contains(element)) {
+                unsafeAdd(element);
+            }
         }
     }
 

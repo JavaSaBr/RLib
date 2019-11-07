@@ -15,12 +15,12 @@ public class DefaultArrayIterator<E> implements ArrayIterator<E> {
     /**
      * The array for iteration.
      */
-    private final Array<E> array;
+    private final @NotNull Array<E> array;
 
     /**
      * The unsafe array for directly access.
      */
-    private final E[] unsafeArray;
+    private final @NotNull E[] unsafeArray;
 
     /**
      * The current position in the array.
@@ -48,13 +48,13 @@ public class DefaultArrayIterator<E> implements ArrayIterator<E> {
     }
 
     @Override
-    public E next() {
+    public @NotNull E next() {
         return ordinal >= unsafeArray.length ? null : unsafeArray[ordinal++];
     }
 
     @Override
     public void remove() {
-        array.slowRemove(--ordinal);
+        array.remove(--ordinal);
     }
 
     @Override

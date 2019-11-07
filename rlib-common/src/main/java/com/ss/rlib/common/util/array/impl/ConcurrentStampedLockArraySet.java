@@ -4,24 +4,24 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ConcurrentArray;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.StampedLock;
 
 /**
- * The concurrent implementation of the array without duplications using {@link ReentrantReadWriteLock} for {@link
+ * The concurrent implementation of the array without duplications using {@link StampedLock} for {@link
  * ConcurrentArray#readLock()}* and {@link ConcurrentArray#writeLock()}.
  *
  * @param <E> the array's element type.
  * @author JavaSaBr
  */
-public class ConcurrentReentrantRWLockArraySet<E> extends ConcurrentReentrantRWLockArray<E> {
+public class ConcurrentStampedLockArraySet<E> extends ConcurrentStampedLockArray<E> {
 
-    private static final long serialVersionUID = -3394386864246350866L;
+    private static final long serialVersionUID = -6291504312637658721L;
 
-    public ConcurrentReentrantRWLockArraySet(@NotNull Class<? super E> type) {
-        super(type);
+    public ConcurrentStampedLockArraySet(@NotNull Class<? super E> type) {
+        this(type, 10);
     }
 
-    public ConcurrentReentrantRWLockArraySet(@NotNull Class<? super E> type, int size) {
+    public ConcurrentStampedLockArraySet(@NotNull Class<? super E> type, int size) {
         super(type, size);
     }
 

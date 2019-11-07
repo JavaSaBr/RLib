@@ -40,7 +40,7 @@ public interface ReadOnlyArray<E> extends Array<E> {
 
     @Override
     @Deprecated
-    boolean slowRemove(@NotNull Object object);
+    @NotNull E remove(int index);
 
     @Override
     @Deprecated

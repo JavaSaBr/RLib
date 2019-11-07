@@ -28,8 +28,9 @@ public class FastArraySet<E> extends FastArray<E> {
 
     @Override
     protected void processAdd(@NotNull Array<? extends E> elements, int selfSize, int targetSize) {
-        for (E element : elements.array()) {
-            if (element == null) break;
+        var array = elements.array();
+        for (int i = 0, length = elements.size(); i < length; i++) {
+            E element = array[i];
             if (!contains(element)) {
                 unsafeAdd(element);
             }
@@ -39,7 +40,6 @@ public class FastArraySet<E> extends FastArray<E> {
     @Override
     protected void processAdd(@NotNull E[] elements, int selfSize, int targetSize) {
         for (E element : elements) {
-            if (element == null) break;
             if (!contains(element)) {
                 unsafeAdd(element);
             }

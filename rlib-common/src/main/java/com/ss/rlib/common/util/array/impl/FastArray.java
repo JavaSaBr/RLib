@@ -17,7 +17,7 @@ import java.util.Objects;
 /**
  * The fast implementation of the array. This array is not threadsafe.
  *
- * @param <E> the element's type.
+ * @param <E> the array's element type.
  * @author JavaSaBr
  */
 public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
@@ -27,7 +27,8 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     /**
      * The unsafe array.
      */
-    protected E[] array;
+    @SuppressWarnings("NullableProblems")
+    protected E @NotNull [] array;
 
     /**
      * The current size of this array.
@@ -176,18 +177,8 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
      * @param targetSize the target size.
      */
     protected void processAdd(@NotNull Array<? extends E> elements, int selfSize, int targetSize) {
-        // если надо срау большой массив добавить, то лучше черзе нативный метод
-        if (targetSize > SIZE_BIG_ARRAY) {
-            System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
-            size = selfSize + targetSize;
-        } else {
-            // если добавляемый массив небольшой, можно и обычным способом
-            // внести
-            for (E element : elements.array()) {
-                if (element == null) break;
-                unsafeAdd(element);
-            }
-        }
+        System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
+        size = selfSize + targetSize;
     }
 
     /**
@@ -198,18 +189,8 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
      * @param targetSize the target size.
      */
     protected void processAdd(@NotNull E[] elements, int selfSize, int targetSize) {
-        // если надо срау большой массив добавить, то лучше черзе нативный метод
-        if (targetSize > SIZE_BIG_ARRAY) {
-            System.arraycopy(elements, 0, array, selfSize, targetSize);
-            size = selfSize + targetSize;
-        } else {
-            // если добавляемый массив небольшой, можно и обычным способом
-            // внести
-            for (final E element : elements) {
-                if (element == null) break;
-                unsafeAdd(element);
-            }
-        }
+        System.arraycopy(elements, 0, array, selfSize, targetSize);
+        size = selfSize + targetSize;
     }
 
     @Override
@@ -223,7 +204,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    protected final void setArray(@NotNull E[] array) {
+    protected final void setArray(E @NotNull [] array) {
         this.array = array;
     }
 

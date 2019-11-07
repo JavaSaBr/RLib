@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 /**
  * The implementation of the array with synchronization all methods.
  *
- * @param <E> the type parameter
+ * @param <E> the array's element type.
  * @author JavaSaBr
  */
 public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
@@ -138,9 +138,8 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         return array[index];
     }
 
-    @NotNull
     @Override
-    public synchronized final ArrayIterator<E> iterator() {
+    public synchronized @NotNull ArrayIterator<E> iterator() {
         return new DefaultArrayIterator<>(this);
     }
 
@@ -190,56 +189,25 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
     }
 
     @Override
-    public final SynchronizedArray<E> trimToSize() {
+    public synchronized @NotNull SynchronizedArray<E> trimToSize() {
 
-        final int size = size();
-        if (size == array.length) return this;
+        var size = size();
+
+        if (size == array.length) {
+            return this;
+        }
 
         array = ArrayUtils.copyOfRange(array, 0, size);
         return this;
     }
 
-    /**
-     * Process add.
-     *
-     * @param elements   the elements
-     * @param selfSize   the self size
-     * @param targetSize the target size
-     */
     protected void processAdd(@NotNull final Array<? extends E> elements, final int selfSize, final int targetSize) {
-        // если надо срау большой массив добавить, то лучше черзе нативный метод
-        if (targetSize > SIZE_BIG_ARRAY) {
-            System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
-            size.set(selfSize + targetSize);
-        } else {
-            // если добавляемый массив небольшой, можно и обычным способом
-            // внести
-            for (final E element : elements.array()) {
-                if (element == null) break;
-                unsafeAdd(element);
-            }
-        }
+        System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
+        size.set(selfSize + targetSize);
     }
 
-    /**
-     * Process add.
-     *
-     * @param elements   the elements
-     * @param selfSize   the self size
-     * @param targetSize the target size
-     */
     protected void processAdd(@NotNull final E[] elements, final int selfSize, final int targetSize) {
-        // если надо срау большой массив добавить, то лучше черзе нативный метод
-        if (targetSize > SIZE_BIG_ARRAY) {
-            System.arraycopy(elements, 0, array, selfSize, targetSize);
-            size.set(selfSize + targetSize);
-        } else {
-            // если добавляемый массив небольшой, можно и обычным способом
-            // внести
-            for (final E element : elements) {
-                if (element == null) break;
-                unsafeAdd(element);
-            }
-        }
+        System.arraycopy(elements, 0, array, selfSize, targetSize);
+        size.set(selfSize + targetSize);
     }
 }
