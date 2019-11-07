@@ -155,7 +155,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     }
 
     protected void onAccept(@NotNull C connection) {
-        subscribers.forEach(connection, Consumer::accept);
+        subscribers.forEachR(connection, Consumer::accept);
     }
 
     @Override

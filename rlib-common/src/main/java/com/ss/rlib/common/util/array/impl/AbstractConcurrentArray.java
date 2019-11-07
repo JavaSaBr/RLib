@@ -164,18 +164,13 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     }
 
     @Override
-    public final void set(int index, @NotNull E element) {
+    public void replace(int index, @NotNull E element) {
 
         if (index < 0 || index >= size()) {
             throw new ArrayIndexOutOfBoundsException();
         }
 
-        if (array[index] != null) {
-            size.decrementAndGet();
-        }
-
         array[index] = element;
-        size.incrementAndGet();
     }
 
     @Override

@@ -12,7 +12,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -324,317 +327,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         return isEmpty() ? null : get(0);
     }
 
-    @Override
-    default void forEach(@NotNull Consumer<? super E> consumer) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            consumer.accept(element);
-        }
-    }
-
     /**
-     * Apply the function to each filtered element.
-     *
-     * @param condition the condition.
-     * @param function  the function.
-     */
-    default void forEach(@NotNull Predicate<E> condition, @NotNull Consumer<? super E> function) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (condition.test(element)) {
-                function.accept(element);
-            }
-        }
-    }
-
-    /**
-     * Apply the function to each element.
-     *
-     * @param <T>      the type of an argument.
-     * @param argument the argument.
-     * @param function the function.
-     */
-    default <T> void forEach(@NotNull T argument, @NotNull NotNullBiConsumer<? super E, T> function) {
-
-        var array = array();
-
-        for (int i = 0, length = size(); i < length; i++) {
-            function.accept(array[i], argument);
-        }
-    }
-
-    /**
-     * Apply the function to each element.
-     *
-     * @param argument the argument.
-     * @param function the function.
-     * @param <T>      the argument's type.
-     */
-    default <T> void forEachR(@NotNull T argument, @NotNull BiConsumer<@NotNull T, @NotNull E> function) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            function.accept(argument, element);
-        }
-    }
-
-    /**
-     * Apply a function to each converted element.
-     *
-     * @param argument  the argument.
-     * @param converter the converter from T to C.
-     * @param function  the function.
-     * @param <T>       the argument's type.
-     * @param <C>       the converted type.
-     */
-    default <T, C> void forEachConverted(
-        @NotNull T argument,
-        @NotNull NotNullFunction<? super E, C> converter,
-        @NotNull NotNullBiConsumer<C, T> function
-    ) {
-
-        var array = array();
-
-        for (int i = 0, length = size(); i < length; i++) {
-            function.accept(converter.apply(array[i]), argument);
-        }
-    }
-
-    /**
-     * Apply a function to each element and converted argument.
-     *
-     * @param argument  the argument.
-     * @param converter the converter from T to C.
-     * @param function  the function.
-     * @param <T>       the argument's type.
-     * @param <C>       the converted type.
-     */
-    default <T, C> void forEach(
-        @NotNull T argument,
-        @NotNull NotNullFunction<T, C> converter,
-        @NotNull NotNullBiConsumer<C, E> function
-    ) {
-
-        var array = array();
-
-        for (int i = 0, length = size(); i < length; i++) {
-            function.accept(converter.apply(argument), array[i]);
-        }
-    }
-
-    /**
-     * Apply the function to each filtered element.
-     *
-     * @param <T>       the type of an argument.
-     * @param argument  the argument.
-     * @param condition the condition.
-     * @param function  the function.
-     */
-    default <T> void forEach(
-            @Nullable T argument,
-            @NotNull BiPredicate<E, T> condition,
-            @NotNull BiConsumer<E, T> function
-    ) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (condition.test(element, argument)) {
-                function.accept(element, argument);
-            }
-        }
-    }
-
-    /**
-     * Apply the function to each element.
-     *
-     * @param first    the first argument.
-     * @param second   the second argument.
-     * @param function the function.
-     * @param <F>      the firs argument's type.
-     * @param <S>      the second argument's type.
-     */
-    default <F, S> void forEach(@Nullable F first, @Nullable S second, @NotNull TripleConsumer<E, F, S> function) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            function.accept(element, first, second);
-        }
-    }
-
-    /**
-     * Apply the function to each element.
-     *
-     * @param first    the first argument.
-     * @param second   the second argument.
-     * @param function the function.
-     * @param <F>      the firs argument's type.
-     * @param <S>      the second argument's type.
-     */
-    default <F, S> void forEachRm(
-            @NotNull F first,
-            @NotNull S second,
-            @NotNull TripleConsumer<@NotNull F, @NotNull E, @NotNull S> function
-    ) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            function.accept(first, element, second);
-        }
-    }
-
-    /**
-     * Apply the function to each filtered element.
-     *
-     * @param <F>       the type parameter
-     * @param <S>       the type parameter
-     * @param first     the first argument.
-     * @param second    the second argument.
-     * @param condition the condition.
-     * @param function  the function.
-     */
-    default <F, S> void forEach(
-            @Nullable F first,
-            @Nullable S second,
-            @NotNull TriplePredicate<E, F, S> condition,
-            @NotNull TripleConsumer<E, F, S> function
-    ) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            if (condition.test(element, first, second)) {
-                function.accept(element, first, second);
-            }
-        }
-    }
-
-    /**
-     * Apply the function to each element.
-     *
-     * @param <F>      the type parameter
-     * @param first    the first argument.
-     * @param second   the second argument.
-     * @param function the function.
-     */
-    default <F> void forEachL(
-            long first,
-            @Nullable F second,
-            @NotNull ObjectLongObjectConsumer<@NotNull E, F> function
-    ) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            function.accept(element, first, second);
-        }
-    }
-
-    /**
-     * Apply the function to each element.
-     *
-     * @param <F>      the type parameter
-     * @param first    the first argument.
-     * @param second   the second argument.
-     * @param function the function.
-     */
-    default <F> void forEachF(
-            float first,
-            @Nullable F second,
-            @NotNull ObjectFloatObjectConsumer<@NotNull E, F> function
-    ) {
-
-        for (E element : array()) {
-
-            if (element == null) {
-                break;
-            }
-
-            function.accept(element, first, second);
-        }
-    }
-
-    /**
-     * Calculate a count of matched elements.
-     *
-     * @param <F>       the argument's type.
-     * @param arg       the argument.
-     * @param predicate the condition.
-     * @return the count of matched elements.
-     */
-    default <F> int count(@NotNull F arg, @NotNull BiPredicate<E, F> predicate) {
-
-        int count = 0;
-
-        for (var element : array()) {
-
-            if (element == null) {
-                break;
-            } else if (predicate.test(element, arg)) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    /**
-     * Calculate a count of matched elements with reserved ordering of arguments.
-     *
-     * @param <F>       the argument's type.
-     * @param arg       the argument.
-     * @param predicate the condition.
-     * @return the count of matched elements.
-     */
-    default <F> int countR(@NotNull F arg, @NotNull BiPredicate<F, E> predicate) {
-
-        int count = 0;
-
-        for (var element : array()) {
-
-            if (element == null) {
-                break;
-            } else if (predicate.test(arg, element)) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    /**
-     * Gets the element by the index.
+     * Get an element by an index.
      *
      * @param index the index of the element.
      * @return the element.
@@ -716,7 +410,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the first element or null.
      */
     default @Nullable E poll() {
-        return isEmpty() ? null : slowRemove(0);
+        return isEmpty() ? null : remove(0);
     }
 
     /**
@@ -811,188 +505,24 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Find an element using the condition.
-     *
-     * @param predicate the condition.
-     * @return the found element or null.
-     */
-    default @Nullable E findAny(@NotNull Predicate<E> predicate) {
-
-        if (isEmpty()) {
-            return null;
-        }
-
-        for (E element : array()) {
-            if (element == null) {
-                break;
-            } else if (predicate.test(element)) {
-                return element;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Search an element using the condition.
-     *
-     * @param <T>       the argument's type.
-     * @param argument  the argument.
-     * @param predicate the condition.
-     * @return the found element or null.
-     */
-    default <T> @Nullable E findAny(@Nullable T argument, @NotNull BiPredicate<? super E, T> predicate) {
-
-        if (isEmpty()) {
-            return null;
-        }
-
-        for (E element : array()) {
-            if (element == null) {
-                break;
-            } else if (predicate.test(element, argument)) {
-                return element;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Return true if there is at least an element for the condition.
-     *
-     * @param <T>       the argument's type.
-     * @param argument  the argument.
-     * @param predicate the condition.
-     * @return true if there is at least an element for the condition.
-     */
-    default <T> boolean anyMatch(@Nullable T argument, @NotNull BiPredicate<? super E, T> predicate) {
-        return findAny(argument, predicate) != null;
-    }
-
-    /**
-     * Find an element for the condition.
-     *
-     * @param <T>       the argument's type.
-     * @param argument  the argument.
-     * @param condition the condition.
-     * @return the found element or null.
-     */
-    default <T> @Nullable E findAnyR(@Nullable T argument, @NotNull BiPredicate<T, ? super E> condition) {
-
-        if (isEmpty()) {
-            return null;
-        }
-
-        for (E element : array()) {
-            if (element == null) {
-                break;
-            } else if (condition.test(argument, element)) {
-                return element;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Return true if there is at least an element for the condition.
-     *
-     * @param <T>       the argument's type.
-     * @param argument  the argument.
-     * @param condition the condition.
-     * @return true if there is at least an element for the condition.
-     */
-    default <T> boolean anyMatchR(@Nullable T argument, @NotNull BiPredicate<T, ? super E> condition) {
-        return findAnyR(argument, condition) != null;
-    }
-
-    /**
-     * Search an element using the condition.
-     *
-     * @param <F>       the first argument's type.
-     * @param <S>       the second argument's type.
-     * @param first     the first argument.
-     * @param second    the second argument.
-     * @param predicate the condition.
-     * @return the found element or null.
-     */
-    default <F, S> @Nullable E findAny(
-        @Nullable F first,
-        @Nullable S second,
-        @NotNull TriplePredicate<E, F, S> predicate
-    ) {
-
-        if (isEmpty()) {
-            return null;
-        }
-
-        for (E element : array()) {
-            if (element == null) {
-                break;
-            } else if (predicate.test(element, first, second)) {
-                return element;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Search an element using the condition.
-     *
-     * @param argument  the argument.
-     * @param predicate the condition.
-     * @return the found element or null.
-     */
-    default @Nullable E findAny(int argument, @NotNull ObjectIntPredicate<E> predicate) {
-
-        if (isEmpty()) {
-            return null;
-        }
-
-        for (E element : array()) {
-            if (element == null) {
-                break;
-            } else if (predicate.test(element, argument)) {
-                return element;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Search an element using the condition.
-     *
-     * @param argument  the argument.
-     * @param predicate the condition.
-     * @return the found element or null.
-     */
-    default @Nullable E findAnyL(long argument, @NotNull ObjectLongPredicate<E> predicate) {
-
-        if (isEmpty()) {
-            return null;
-        }
-
-        for (E element : array()) {
-            if (element == null) {
-                break;
-            } else if (predicate.test(element, argument)) {
-                return element;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Set the element by the index.
      *
      * @param index   the element's index.
      * @param element the new element.
+     * @see Array#replace(int, Object)
      */
-    void set(int index, @NotNull E element);
+    @Deprecated(forRemoval = true)
+    default void set(int index, @NotNull E element) {
+        replace(index, element);
+    }
+
+    /**
+     * Replace an element by an index.
+     *
+     * @param index   the element's index.
+     * @param element the new element.
+     */
+    void replace(int index, @NotNull E element);
 
     /**
      * Removes the element at index without reordering.
@@ -1108,7 +638,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
 
     @Override
     default @NotNull E[] toArray() {
-        E[] array = array();
+        var array = array();
         return Arrays.copyOf(array, size(), (Class<E[]>) array.getClass());
     }
 
@@ -1133,5 +663,592 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         }
 
         return removed > 0;
+    }
+
+    /**
+     * Removes all of the elements of this collection that satisfy the given predicate.
+     *
+     * @param argument the additional argument.
+     * @param filter   the predicate which returns {@code true} for elements to be removed.
+     * @param <A>      the argument's type.
+     * @return {@code true} if any elements were removed.
+     */
+    default <A> boolean removeIf(@NotNull A argument, @NotNull NotNullBiPredicate<A, ? super E> filter) {
+
+        var array = array();
+        var removed = 0;
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, element)) {
+                remove(i);
+                i--;
+                length--;
+                removed++;
+            }
+        }
+
+        return removed > 0;
+    }
+
+    /**
+     * Removes all of the elements of this collection that satisfy the given predicate.
+     *
+     * @param argument  the additional argument.
+     * @param converter the converter of the argument.
+     * @param filter    the predicate which returns {@code true} for elements to be removed.
+     * @param <A>       the argument's type.
+     * @param <B>       the argument converted type.
+     * @return {@code true} if any elements were removed.
+     */
+    default <A, B> boolean removeIf(
+        @NotNull A argument,
+        @NotNull NotNullFunction<A, B> converter,
+        @NotNull NotNullBiPredicate<B, ? super E> filter
+    ) {
+
+        var array = array();
+        var removed = 0;
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(converter.apply(argument), element)) {
+                remove(i);
+                i--;
+                length--;
+                removed++;
+            }
+        }
+
+        return removed > 0;
+    }
+
+    /**
+     * Return true if there is at least an element for the condition.
+     *
+     * @param argument  the argument.
+     * @param filter the condition.
+     * @param <T>       the argument's type.
+     * @return true if there is at least an element for the condition.
+     */
+    default <T> boolean anyMatch(@NotNull T argument, @NotNull NotNullBiPredicate<T, ? super E> filter) {
+        return findAny(argument, filter) != null;
+    }
+
+    /**
+     * Return true if there is at least an element for the condition.
+     *
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @return true if there is at least an element for the condition.
+     */
+    default boolean anyMatch(int argument, @NotNull NotNullIntObjectPredicate<? super E> filter) {
+        return findAny(argument, filter) != null;
+    }
+
+    /**
+     * Return true if there is at least an element for the condition.
+     *
+     * @param <T>      the argument's type.
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @return true if there is at least an element for the condition.
+     */
+    default <T> boolean anyMatchR(@NotNull T argument, @NotNull NotNullBiPredicate<? super E, T> filter) {
+        return findAnyR(argument, filter) != null;
+    }
+
+    /**
+     * Find an element using the condition.
+     *
+     * @param filter the condition.
+     * @return the found element or null.
+     */
+    default @Nullable E findAny(@NotNull NotNullPredicate<E> filter) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search an element using the condition.
+     *
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @param <T>      the argument's type.
+     * @return the found element or null.
+     */
+    default <T> @Nullable E findAny(@NotNull T argument, @NotNull NotNullBiPredicate<T, ? super E> filter) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find an element for the condition.
+     *
+     * @param <T>      the argument's type.
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @return the found element or null.
+     */
+    default <T> @Nullable E findAnyR(@NotNull T argument, @NotNull NotNullBiPredicate<? super E, T> filter) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(element, argument)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search an element using the condition.
+     *
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @return the found element or null.
+     */
+    default @Nullable E findAny(int argument, @NotNull NotNullIntObjectPredicate<? super E> filter) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Search an element using the condition.
+     *
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @return the found element or null.
+     */
+    default @Nullable E findAnyL(long argument, @NotNull NotNullLongObjectPredicate<E> filter) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search an element using the condition.
+     *
+     * @param first  the first argument.
+     * @param second the second argument.
+     * @param filter the condition.
+     * @param <F>    the first argument's type.
+     * @param <S>    the second argument's type.
+     * @return the found element or null.
+     */
+    default <F, S> @Nullable E findAny(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullTriplePredicate<F, S, E> filter
+    ) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(first, second, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Calculate a count of matched elements.
+     *
+     * @param filter the condition.
+     * @return the count of matched elements.
+     * @since 9.5.0
+     */
+    default int count(@NotNull NotNullPredicate<E> filter) {
+
+        var array = array();
+        var count = 0;
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(element)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Calculate a count of matched elements.
+     *
+     * @param arg    the argument.
+     * @param filter the condition.
+     * @param <F>    the argument's type.
+     * @return the count of matched elements.
+     */
+    default <F> int count(@NotNull F arg, @NotNull NotNullBiPredicate<F, E> filter) {
+
+        var array = array();
+        var count = 0;
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(arg, element)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * Calculate a count of matched elements with reversed ordering of arguments.
+     *
+     * @param <F>    the argument's type.
+     * @param arg    the argument.
+     * @param filter the condition.
+     * @return the count of matched elements.
+     */
+    default <F> int countR(@NotNull F arg, @NotNull NotNullBiPredicate<E, F> filter) {
+
+        var array = array();
+        var count = 0;
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(element, arg)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    @Override
+    default void forEach(@NotNull Consumer<? super E> consumer) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(array[i]);
+        }
+    }
+
+    /**
+     * Apply a function to each filtered element.
+     *
+     * @param filter   the condition.
+     * @param consumer the function.
+     */
+    default void forEachFiltered(@NotNull NotNullPredicate<E> filter, @NotNull NotNullConsumer<? super E> consumer) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            E element = array[i];
+
+            if (filter.test(element)) {
+                consumer.accept(element);
+            }
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param argument the argument.
+     * @param consumer the function.
+     * @param <T>      the type of an argument.
+     */
+    default <T> void forEach(@NotNull T argument, @NotNull NotNullBiConsumer<T, ? super E> consumer) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(argument, array[i]);
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param argument the argument.
+     * @param consumer the function.
+     * @param <T>      the argument's type.
+     */
+    default <T> void forEachR(@NotNull T argument, @NotNull NotNullBiConsumer<? super E, T> consumer) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(array[i], argument);
+        }
+    }
+
+    /**
+     * Apply a function to each converted element.
+     *
+     * @param argument  the argument.
+     * @param converter the converter from T to C.
+     * @param consumer  the function.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
+     */
+    default <T, C> void forEachConverted(
+        @NotNull T argument,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiConsumer<T, C> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(argument, converter.apply(array[i]));
+        }
+    }
+
+    /**
+     * Apply a function to each element and converted argument.
+     *
+     * @param argument  the argument.
+     * @param converter the converter from T to C.
+     * @param consumer  the function.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
+     */
+    default <T, C> void forEach(
+        @NotNull T argument,
+        @NotNull NotNullFunction<T, C> converter,
+        @NotNull NotNullBiConsumer<C, E> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(converter.apply(argument), array[i]);
+        }
+    }
+
+    /**
+     * Apply a function to each filtered element.
+     *
+     * @param <T>      the type of an argument.
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @param consumer the function.
+     */
+    default <T> void forEachFiltered(
+        @NotNull T argument,
+        @NotNull NotNullBiPredicate<T, ? super E> filter,
+        @NotNull NotNullBiConsumer<T, ? super E> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            E element = array[i];
+
+            if (filter.test(argument, element)) {
+                consumer.accept(argument, element);
+            }
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     * @param <F>      the firs argument's type.
+     * @param <S>      the second argument's type.
+     */
+    default <F, S> void forEach(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullTripleConsumer<F, S, ? super E> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(first, second, array[i]);
+        }
+    }
+
+    /**
+     * Apply the function to each element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     */
+    default <F, S> void forEachR(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullTripleConsumer<? super E, F, S> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(array[i], first, second);
+        }
+    }
+
+    /**
+     * Apply a function to each filtered element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param filter   the condition.
+     * @param consumer the function.
+     * @param <F>      the firs argument's type.
+     * @param <S>      the second argument's type.
+     */
+    default <F, S> void forEachFiltered(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullTriplePredicate<F, S, ? super E> filter,
+        @NotNull NotNullTripleConsumer<F, S, ? super E> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            E element = array[i];
+
+            if (filter.test(first, second, element)) {
+                consumer.accept(first, second, element);
+            }
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     * @param <F>      the second argument's type.
+     */
+    default <F> void forEachL(
+        long first,
+        @NotNull F second,
+        @NotNull NotNullLongBiObjectConsumer<F, ? super E> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(first, second, array[i]);
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param <F>      the type parameter
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     */
+    default <F> void forEachF(
+        float first,
+        @NotNull F second,
+        @NotNull NotNullFloatBiObjectConsumer<F, ? super E> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(first, second, array[i]);
+        }
     }
 }

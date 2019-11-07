@@ -5,7 +5,8 @@ import com.ss.rlib.common.util.ClassUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * The interface with methods to manage thread-safe access with arrays.
@@ -146,12 +147,35 @@ public interface ConcurrentArray<E> extends Array<E> {
      */
     default <T> @NotNull ConcurrentArray<E> forEachInReadLock(
         @NotNull T argument,
-        @NotNull NotNullBiConsumer<? super E, T> function
+        @NotNull NotNullBiConsumer<T, ? super E> function
     ) {
 
         var stamp = readLock();
         try {
             forEach(argument, function);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Apply a function to each element under {@link #readLock()} block.
+     *
+     * @param argument the argument.
+     * @param function the function.
+     * @param <T>      the argument's type.
+     * @return this array.
+     */
+    default <T> @NotNull ConcurrentArray<E> forEachInReadLockR(
+        @NotNull T argument,
+        @NotNull NotNullBiConsumer<? super E, T> function
+    ) {
+
+        var stamp = readLock();
+        try {
+            forEachR(argument, function);
         } finally {
             readUnlock(stamp);
         }
@@ -171,8 +195,8 @@ public interface ConcurrentArray<E> extends Array<E> {
      */
     default <T, C> @NotNull ConcurrentArray<E> forEachConvertedInReadLock(
         @NotNull T argument,
-        @NotNull NotNullFunction<E, C> converter,
-        @NotNull NotNullBiConsumer<C, T> function
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiConsumer<T, C> function
     ) {
 
         var stamp = readLock();
@@ -371,14 +395,14 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Search an element by condition under {@link #readLock()} block.
+     * Search an element using the condition under {@link #readLock()} block.
      *
-     * @param <T>      the argument's type.
      * @param argument the argument.
      * @param filter   the condition.
      * @return the found element or null.
+     * @since 9.5.0
      */
-    default <T> @Nullable E anyMatchInReadLock(@NotNull T argument, @NotNull NotNullBiPredicate<E, T> filter) {
+    default @Nullable E findAnyInReadLock(int argument, @NotNull NotNullIntObjectPredicate<? super E> filter) {
 
         if (isEmpty()) {
             return null;
@@ -386,23 +410,32 @@ public interface ConcurrentArray<E> extends Array<E> {
 
         var stamp = readLock();
         try {
-
-            var array = array();
-
-            for (int i = 0, length = size(); i < length; i++) {
-
-                var element = array[i];
-
-                if (filter.test(element, argument)) {
-                    return element;
-                }
-            }
-
+            return findAny(argument, filter);
         } finally {
             readUnlock(stamp);
         }
+    }
 
-        return null;
+    /**
+     * Search an element by condition under {@link #readLock()} block.
+     *
+     * @param <T>      the argument's type.
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @return true if there is at least an element for the condition.
+     */
+    default <T> boolean anyMatchInReadLock(@NotNull T argument, @NotNull NotNullBiPredicate<T, ? super E> filter) {
+
+        if (isEmpty()) {
+            return false;
+        }
+
+        var stamp = readLock();
+        try {
+            return anyMatch(argument, filter);
+        } finally {
+            readUnlock(stamp);
+        }
     }
 
     /**
@@ -410,33 +443,20 @@ public interface ConcurrentArray<E> extends Array<E> {
      *
      * @param argument the argument.
      * @param filter   the condition.
-     * @return the found element or null.
+     * @return true if there is at least an element for the condition.
      */
-    default @Nullable E anyMatchInReadLock(int argument, @NotNull NotNullObjectIntPredicate<E> filter) {
+    default boolean anyMatchInReadLock(int argument, @NotNull NotNullIntObjectPredicate<E> filter) {
 
         if (isEmpty()) {
-            return null;
+            return false;
         }
 
         var stamp = readLock();
         try {
-
-            var array = array();
-
-            for (int i = 0, length = size(); i < length; i++) {
-
-                var element = array[i];
-
-                if (filter.test(element, argument)) {
-                    return element;
-                }
-            }
-
+            return anyMatch(argument, filter);
         } finally {
             readUnlock(stamp);
         }
-
-        return null;
     }
 
     /**
@@ -463,27 +483,9 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @return {@code true} if any elements were removed.
      */
     default <A> boolean removeIfInWriteLock(@NotNull A argument, @NotNull NotNullBiPredicate<A, ? super E> filter) {
-
         var stamp = writeLock();
         try {
-
-            var array = array();
-            var removed = 0;
-
-            for (int i = 0, length = size(); i < length; i++) {
-
-                var element = array[i];
-
-                if (filter.test(argument, element)) {
-                    remove(i);
-                    i--;
-                    length--;
-                    removed++;
-                }
-            }
-
-            return removed > 0;
-
+            return removeIf(argument, filter);
         } finally {
             writeUnlock(stamp);
         }
@@ -504,27 +506,9 @@ public interface ConcurrentArray<E> extends Array<E> {
         @NotNull NotNullFunction<A, B> converter,
         @NotNull NotNullBiPredicate<B, ? super E> filter
     ) {
-
         var stamp = writeLock();
         try {
-
-            var array = array();
-            var removed = 0;
-
-            for (int i = 0, length = size(); i < length; i++) {
-
-                var element = array[i];
-
-                if (filter.test(converter.apply(argument), element)) {
-                    remove(i);
-                    i--;
-                    length--;
-                    removed++;
-                }
-            }
-
-            return removed > 0;
-
+            return removeIf(argument, converter, filter);
         } finally {
             writeUnlock(stamp);
         }

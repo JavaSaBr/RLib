@@ -23,12 +23,12 @@ public class ReuseBufferAllocator implements BufferAllocator {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ReuseBufferAllocator.class);
 
-    protected final Pool<ByteBuffer> readBufferPool;
-    protected final Pool<ByteBuffer> pendingBufferPool;
-    protected final Pool<ByteBuffer> writeBufferPool;
-    protected final ConcurrentArray<ByteBuffer> byteBuffers;
+    protected final @NotNull Pool<ByteBuffer> readBufferPool;
+    protected final @NotNull Pool<ByteBuffer> pendingBufferPool;
+    protected final @NotNull Pool<ByteBuffer> writeBufferPool;
+    protected final @NotNull ConcurrentArray<ByteBuffer> byteBuffers;
 
-    protected final NetworkConfig config;
+    protected final @NotNull NetworkConfig config;
 
     public ReuseBufferAllocator(@NotNull NetworkConfig config) {
         this.config = config;
@@ -90,8 +90,10 @@ public class ReuseBufferAllocator implements BufferAllocator {
     public @NotNull ByteBuffer takeBuffer(int bufferSize) {
 
         // check of existing enough buffer for the size under read lock
-        var exist = byteBuffers.anyMatchInReadLock(bufferSize,
-            (buffer, capacity) -> buffer.capacity() > capacity);
+        var exist = byteBuffers.findAnyInReadLock(
+            bufferSize,
+            (required, buffer) -> required < buffer.capacity()
+        );
 
         // if we already possible have this buffer we need to take it under write lock
         if (exist != null) {
@@ -99,8 +101,10 @@ public class ReuseBufferAllocator implements BufferAllocator {
             try {
 
                 // re-find enough buffer again
-                exist = byteBuffers.findAny(bufferSize,
-                    (buffer, capacity) -> buffer.capacity() > capacity);
+                exist = byteBuffers.findAny(
+                    bufferSize,
+                    (required, buffer) -> required < buffer.capacity()
+                );
 
                 // take it from pool if exist
                 if (exist != null && byteBuffers.fastRemove(exist)) {

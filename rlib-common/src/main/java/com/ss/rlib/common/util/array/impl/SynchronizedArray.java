@@ -145,18 +145,13 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
     }
 
     @Override
-    public synchronized final void set(final int index, @NotNull final E element) {
+    public void replace(int index, @NotNull E element) {
 
         if (index < 0 || index >= size()) {
             throw new ArrayIndexOutOfBoundsException();
         }
 
-        if (array[index] != null) {
-            size.decrementAndGet();
-        }
-
         array[index] = element;
-        size.incrementAndGet();
     }
 
     @Override

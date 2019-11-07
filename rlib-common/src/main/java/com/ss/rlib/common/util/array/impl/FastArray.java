@@ -213,16 +213,13 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    public void set(int index, @NotNull E element) {
+    public void replace(int index, @NotNull E element) {
 
         if (index < 0 || index >= size) {
             throw new ArrayIndexOutOfBoundsException();
         }
 
-        if (array[index] != null) size -= 1;
         array[index] = element;
-
-        size += 1;
     }
 
     @Override

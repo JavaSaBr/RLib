@@ -93,7 +93,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     protected void handleReadPacket(@NotNull R packet) {
         LOGGER.debug(channel, packet, (ch, pck) -> "Handle read packet: " + pck + " from: " + getSocketAddress(ch));
-        subscribers.forEach(this, packet, BiConsumer::accept);
+        subscribers.forEachR(this, packet, BiConsumer::accept);
     }
 
     @Override

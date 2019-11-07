@@ -92,7 +92,7 @@ public class DeadLockDetector implements Runnable {
                 continue;
             }
 
-            listeners.runInReadLock(info, (list, inf) -> list.forEach(inf, DeadLockListener::onDetected));
+            listeners.runInReadLock(info, (list, inf) -> list.forEachR(inf, DeadLockListener::onDetected));
 
             LOGGER.warning("DeadLock detected! : " + info);
         }

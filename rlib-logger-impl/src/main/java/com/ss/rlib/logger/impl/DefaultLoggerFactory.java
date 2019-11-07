@@ -114,8 +114,8 @@ public class DefaultLoggerFactory implements LoggerFactory {
      */
     private void write(@NotNull LoggerLevel level, @NotNull String resultMessage) {
 
-        listeners.forEachInReadLock(resultMessage, LoggerListener::println);
-        writers.forEachInReadLock(resultMessage, DefaultLoggerFactory::append);
+        listeners.forEachInReadLockR(resultMessage, LoggerListener::println);
+        writers.forEachInReadLockR(resultMessage, DefaultLoggerFactory::append);
 
         System.err.println(resultMessage);
 

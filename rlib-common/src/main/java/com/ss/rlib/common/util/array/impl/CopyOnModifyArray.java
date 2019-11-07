@@ -233,7 +233,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public void set(int index, @NotNull E element) {
+    public void replace(int index, @NotNull E element) {
         throw new UnsupportedOperationException();
     }
 
