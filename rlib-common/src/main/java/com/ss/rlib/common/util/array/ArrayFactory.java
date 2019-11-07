@@ -2,6 +2,7 @@ package com.ss.rlib.common.util.array;
 
 import static com.ss.rlib.common.util.ClassUtils.unsafeCast;
 import com.ss.rlib.common.util.ArrayUtils;
+import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.impl.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -138,7 +139,7 @@ public class ArrayFactory {
     }
 
     /**
-     * Create the new concurrent array.
+     * Create the new stamped lock based concurrent array.
      *
      * @param <E>  the type parameter
      * @param type the type of the array.
@@ -146,6 +147,22 @@ public class ArrayFactory {
      */
     public static <E> ConcurrentArray<E> newConcurrentStampedLockArray(@NotNull Class<? super E> type) {
         return new ConcurrentStampedLockArray<>(type);
+    }
+
+    /**
+     * Create the new stamped lock based concurrent array.
+     *
+     * @param array the source array.
+     * @return the new array.
+     */
+    public static <E> ConcurrentArray<E> newConcurrentStampedLockArray(E @NotNull [] array) {
+
+        Class<? super E> type = ClassUtils.unsafeNNCast(array.getClass().getComponentType());
+
+        var result = new ConcurrentStampedLockArray<E>(type, array.length);
+        result.addAll(array);
+
+        return result;
     }
 
     /**

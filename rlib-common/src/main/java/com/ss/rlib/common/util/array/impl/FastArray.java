@@ -241,7 +241,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     }
 
     @Override
-    public final @NotNull E slowRemove(int index) {
+    public @NotNull E remove(int index) {
 
         if (index < 0 || index >= size) {
             throw new NoSuchElementException();

@@ -2,7 +2,6 @@ package com.ss.rlib.common.util.array;
 
 import static com.ss.rlib.common.util.ClassUtils.unsafeCast;
 import static com.ss.rlib.common.util.ClassUtils.unsafeNNCast;
-
 import com.ss.rlib.common.function.*;
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.ClassUtils;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -85,9 +83,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     @SafeVarargs
     static <T> @NotNull ReadOnlyArray<T> optionals(@NotNull Class<? super T> type, @NotNull Optional<T>... elements) {
         return ArrayFactory.newReadOnlyArray(Arrays.stream(elements)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toArray(value -> ArrayUtils.create(type, value)));
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toArray(value -> ArrayUtils.create(type, value)));
     }
 
     static <T, A extends Array<T>> @NotNull A append(@NotNull A first, @NotNull A second) {
@@ -98,8 +96,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     static <T> @NotNull ReadOnlyArray<T> combine(@NotNull Array<T> first, @NotNull Array<T> second) {
 
         var componentType = ClassUtils.<Class<T>>unsafeNNCast(first.array()
-                .getClass()
-                .getComponentType());
+            .getClass()
+            .getComponentType());
 
         var newArray = ArrayUtils.combine(first.toArray(componentType), second.toArray(componentType));
 
@@ -163,7 +161,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      *
      * @return the wrapped array.
      */
-    @NotNull E[] array();
+    E @NotNull [] array();
 
     @Override
     default @NotNull Stream<E> stream() {
@@ -201,7 +199,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             return false;
         }
 
-        for (Object element : array.array()) {
+        for (var element : array.array()) {
             if (element == null) {
                 break;
             } else if (!contains(element)) {
@@ -219,7 +217,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             return false;
         }
 
-        for (Object element : array) {
+        for (var element : array) {
             if (element == null) {
                 break;
             } else if (!contains(element)) {
@@ -366,15 +364,12 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param argument the argument.
      * @param function the function.
      */
-    default <T> void forEach(@Nullable T argument, @NotNull BiConsumer<E, T> function) {
+    default <T> void forEach(@NotNull T argument, @NotNull NotNullBiConsumer<? super E, T> function) {
 
-        for (E element : array()) {
+        var array = array();
 
-            if (element == null) {
-                break;
-            }
-
-            function.accept(element, argument);
+        for (int i = 0, length = size(); i < length; i++) {
+            function.accept(array[i], argument);
         }
     }
 
@@ -398,27 +393,46 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Apply the function to each converted element.
+     * Apply a function to each converted element.
      *
-     * @param <T>       the argument's type.
-     * @param <C>       the converted type.
      * @param argument  the argument.
      * @param converter the converter from T to C.
      * @param function  the function.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
      */
-    default <T, C> void forEach(
-            @Nullable T argument,
-            @NotNull Function<E, C> converter,
-            @NotNull BiConsumer<C, T> function
+    default <T, C> void forEachConverted(
+        @NotNull T argument,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiConsumer<C, T> function
     ) {
 
-        for (E element : array()) {
+        var array = array();
 
-            if (element == null) {
-                break;
-            }
+        for (int i = 0, length = size(); i < length; i++) {
+            function.accept(converter.apply(array[i]), argument);
+        }
+    }
 
-            function.accept(converter.apply(element), argument);
+    /**
+     * Apply a function to each element and converted argument.
+     *
+     * @param argument  the argument.
+     * @param converter the converter from T to C.
+     * @param function  the function.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
+     */
+    default <T, C> void forEach(
+        @NotNull T argument,
+        @NotNull NotNullFunction<T, C> converter,
+        @NotNull NotNullBiConsumer<C, E> function
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            function.accept(converter.apply(argument), array[i]);
         }
     }
 
@@ -985,12 +999,31 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      *
      * @param index the index of removing the element.
      * @return the removed element.
+     * @see Array#remove(int) 
      */
-    @NotNull E slowRemove(int index);
+    @Deprecated(forRemoval = true)
+    default @NotNull E slowRemove(int index) {
+        return remove(index);
+    }
+
+    /**
+     * Removes the element at index.
+     *
+     * @param index the index of removing the element.
+     * @return the removed element.
+     */
+    @NotNull E remove(int index);
 
     @Override
     default boolean remove(@NotNull Object object) {
-        return slowRemove(object);
+
+        int index = indexOf(object);
+
+        if (index >= 0) {
+            remove(index);
+        }
+
+        return index >= 0;
     }
 
     /**
@@ -998,16 +1031,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      *
      * @param object the element.
      * @return true if the element was removed.
+     * @see Array#remove(Object)
      */
+    @Deprecated(forRemoval = true)
     default boolean slowRemove(@NotNull Object object) {
-
-        int index = indexOf(object);
-
-        if (index >= 0) {
-            slowRemove(index);
-        }
-
-        return index >= 0;
+        return remove(object);
     }
 
     /**
@@ -1085,4 +1113,25 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     @NotNull String toString(@NotNull Function<E, @NotNull String> toString);
+
+    @Override
+    default boolean removeIf(@NotNull Predicate<@NotNull ? super E> filter) {
+
+        var array = array();
+        var removed = 0;
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(element)) {
+                remove(i);
+                i--;
+                length--;
+                removed++;
+            }
+        }
+
+        return removed > 0;
+    }
 }

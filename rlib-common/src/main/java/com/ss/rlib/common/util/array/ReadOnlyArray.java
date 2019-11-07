@@ -44,7 +44,7 @@ public interface ReadOnlyArray<E> extends Array<E> {
 
     @Override
     @Deprecated
-    boolean removeIf(Predicate<? super E> filter);
+    boolean removeIf(@NotNull Predicate<? super E> filter);
 
     @Override
     @Deprecated

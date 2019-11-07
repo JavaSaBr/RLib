@@ -118,7 +118,7 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
     }
 
     @Override
-    public boolean removeIf(Predicate<? super E> filter) {
+    public boolean removeIf(@NotNull Predicate<? super E> filter) {
         throw new IllegalStateException("This array is read only.");
     }
 }

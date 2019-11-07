@@ -1,18 +1,24 @@
 package com.ss.rlib.common.util.array;
 
-import com.ss.rlib.common.function.ObjectIntPredicate;
+import com.ss.rlib.common.function.*;
+import com.ss.rlib.common.util.ClassUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.*;
 
 /**
- * The interface with methods to manage threadsafe for the Arrays.
+ * The interface with methods to manage thread-safe access with arrays.
  *
- * @param <E> the type parameter
+ * @param <E> the element's type.
  * @author JavaSaBr
  */
 public interface ConcurrentArray<E> extends Array<E> {
+
+    @SafeVarargs
+    static <T> @NotNull ConcurrentArray<T> of(@NotNull T... elements) {
+        return ArrayFactory.newConcurrentStampedLockArray(elements);
+    }
 
     /**
      * Create a new concurrent array for the element's type.
@@ -54,7 +60,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @return the supplier.
      */
     static <T> @NotNull Function<Class<? super T>, ConcurrentArray<T>> function(@NotNull Class<?> type) {
-        return ArrayFactory::newConcurrentStampedLockArray;
+        return aClass -> ArrayFactory.newConcurrentStampedLockArray(ClassUtils.<Class<T>>unsafeNNCast(type));
     }
 
     /**
@@ -113,32 +119,14 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Execute the function in read lock of this array.
-     *
-     * @param function the function.
-     * @return this array.
-     */
-    default @NotNull ConcurrentArray<E> runInReadLock(@NotNull Consumer<ConcurrentArray<E>> function) {
-
-        long stamp = readLock();
-        try {
-            function.accept(this);
-        } finally {
-            readUnlock(stamp);
-        }
-
-        return this;
-    }
-
-    /**
-     * Apply the function to each element in the {@link #readLock()} block.
+     * Apply a function to each element under {@link #readLock()} block.
      *
      * @param consumer the consumer.
      * @return this array.
      */
-    default @NotNull ConcurrentArray<E> forEachInReadLock(@NotNull Consumer<? super E> consumer) {
+    default @NotNull ConcurrentArray<E> forEachInReadLock(@NotNull NotNullConsumer<? super E> consumer) {
 
-        long stamp = readLock();
+        var stamp = readLock();
         try {
             forEach(consumer);
         } finally {
@@ -149,19 +137,19 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Apply the function to each element in the {@link #readLock()} block.
+     * Apply a function to each element under {@link #readLock()} block.
      *
-     * @param <T>      the argument's type.
      * @param argument the argument.
      * @param function the function.
+     * @param <T>      the argument's type.
      * @return this array.
      */
     default <T> @NotNull ConcurrentArray<E> forEachInReadLock(
-            @Nullable T argument,
-            @NotNull BiConsumer<E, T> function
+        @NotNull T argument,
+        @NotNull NotNullBiConsumer<? super E, T> function
     ) {
 
-        long stamp = readLock();
+        var stamp = readLock();
         try {
             forEach(argument, function);
         } finally {
@@ -172,22 +160,48 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Apply the function to each converted element in the {@link #readLock()} block.
+     * Apply a function to each converted element under {@link #readLock()} block.
      *
-     * @param <T>       the argument's type.
-     * @param <C>       the converted type.
      * @param argument  the argument.
      * @param converter the converter from T to C.
      * @param function  the function.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
      * @return this array.
      */
-    default <T, C> ConcurrentArray<E> forEachInReadLock(
-            @Nullable T argument,
-            @NotNull Function<E, C> converter,
-            @NotNull BiConsumer<C, T> function
+    default <T, C> @NotNull ConcurrentArray<E> forEachConvertedInReadLock(
+        @NotNull T argument,
+        @NotNull NotNullFunction<E, C> converter,
+        @NotNull NotNullBiConsumer<C, T> function
     ) {
 
-        long stamp = readLock();
+        var stamp = readLock();
+        try {
+            forEachConverted(argument, converter, function);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Apply a function to each element and converted argument under {@link #readLock()} block.
+     *
+     * @param argument  the argument.
+     * @param converter the converter from T to C.
+     * @param function  the function.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted type.
+     * @return this array.
+     */
+    default <T, C> @NotNull ConcurrentArray<E> forEachInReadLock(
+        @NotNull T argument,
+        @NotNull NotNullFunction<T, C> converter,
+        @NotNull NotNullBiConsumer<C, E> function
+    ) {
+
+        var stamp = readLock();
         try {
             forEach(argument, converter, function);
         } finally {
@@ -198,13 +212,14 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Execute the function in read lock of this array.
+     * Execute a function to get some result under {@link #readLock()} block.
      *
      * @param function the function.
-     * @return some result.
+     * @param <R>      the result's type.
+     * @return the result from the function.
      */
-    default @Nullable E getInReadLock(@NotNull Function<ConcurrentArray<E>, E> function) {
-        long stamp = readLock();
+    default <R> @Nullable R getInReadLock(@NotNull NotNullNullableFunction<ConcurrentArray<E>, R> function) {
+        var stamp = readLock();
         try {
             return function.apply(this);
         } finally {
@@ -213,14 +228,36 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Execute the function and get a result of the function in write lock of the array.
+     * Execute a function to get some result under {@link #readLock()} block.
+     *
+     * @param arg      the argument for the function.
+     * @param function the function.
+     * @param <A>      the argument's type.
+     * @param <R>      the result's type.
+     * @return the result from the function.
+     * @since 9.5.0
+     */
+    default <A, R> @Nullable R getInReadLock(
+        @NotNull A arg,
+        @NotNull NotNullNullableBiFunction<ConcurrentArray<E>, A, R> function
+    ) {
+        var stamp = readLock();
+        try {
+            return function.apply(this, arg);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
+     * Execute a function to get some result under {@link #writeLock()} block.
      *
      * @param function the function.
      * @param <R>      the result's type.
-     * @return the result of the function.
+     * @return the result from the function.
      */
-    default <R> @Nullable R getInWriteLock(@NotNull Function<@NotNull Array<E>, @Nullable R> function) {
-        long stamp = writeLock();
+    default <R> @Nullable R getInWriteLock(@NotNull NotNullNullableFunction<ConcurrentArray<E>, R> function) {
+        var stamp = writeLock();
         try {
             return function.apply(this);
         } finally {
@@ -229,19 +266,60 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Execute the function in read lock of this array.
+     * Execute a function to get some result under {@link #writeLock()} block.
+     *
+     * @param argument      the argument for the function.
+     * @param function the function.
+     * @param <A>      the argument's type.
+     * @param <R>      the result's type.
+     * @return the result from the function.
+     * @since 9.5.0
+     */
+    default <A, R> @Nullable R getInWriteLock(
+        @NotNull A argument,
+        @NotNull NotNullNullableBiFunction<ConcurrentArray<E>, A, R> function
+    ) {
+        var stamp = writeLock();
+        try {
+            return function.apply(this, argument);
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Execute a function under {@link #readLock()} block.
+     *
+     * @param function the function.
+     * @return this array.
+     */
+    default @NotNull ConcurrentArray<E> runInReadLock(@NotNull NotNullConsumer<ConcurrentArray<E>> function) {
+
+        var stamp = readLock();
+        try {
+            function.accept(this);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+
+    /**
+     * Execute a function under {@link #readLock()} block.
      *
      * @param <F>      the argument's type.
      * @param argument the argument.
      * @param function the function.
      * @return this array.
      */
-    default <F> ConcurrentArray<E> runInReadLock(
-        @Nullable F argument,
-        @NotNull BiConsumer<ConcurrentArray<E>, F> function
+    default <F> @NotNull ConcurrentArray<E> runInReadLock(
+        @NotNull F argument,
+        @NotNull NotNullBiConsumer<ConcurrentArray<E>, F> function
     ) {
 
-        long stamp = readLock();
+        var stamp = readLock();
         try {
             function.accept(this, argument);
         } finally {
@@ -252,14 +330,14 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Execute the function in write lock of this array.
+     * Execute a function under {@link #writeLock()} block.
      *
      * @param function the function.
      * @return this array.
      */
-    default @NotNull ConcurrentArray<E> runInWriteLock(@NotNull Consumer<ConcurrentArray<E>> function) {
+    default @NotNull ConcurrentArray<E> runInWriteLock(@NotNull NotNullConsumer<ConcurrentArray<E>> function) {
 
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
             function.accept(this);
         } finally {
@@ -270,19 +348,19 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Execute a function for this array in write lock block.
+     * Execute a function under {@link #writeLock()} block.
      *
      * @param <F>      the argument's type.
      * @param argument the argument.
      * @param function the function.
      * @return this array.
      */
-    default <F> ConcurrentArray<E> runInWriteLock(
+    default <F> @NotNull ConcurrentArray<E> runInWriteLock(
         @NotNull F argument,
-        @NotNull BiConsumer<@NotNull ConcurrentArray<E>, @NotNull F> function
+        @NotNull NotNullBiConsumer<ConcurrentArray<E>, F> function
     ) {
 
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
             function.accept(this, argument);
         } finally {
@@ -293,26 +371,29 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Search an element using the condition under a {@link #readLock()} block.
+     * Search an element by condition under {@link #readLock()} block.
      *
-     * @param <T>       the argument's type.
-     * @param argument  the argument.
-     * @param predicate the condition.
+     * @param <T>      the argument's type.
+     * @param argument the argument.
+     * @param filter   the condition.
      * @return the found element or null.
      */
-    default <T> @Nullable E anyMatchInReadLock(@Nullable T argument, @NotNull BiPredicate<E, T> predicate) {
+    default <T> @Nullable E anyMatchInReadLock(@NotNull T argument, @NotNull NotNullBiPredicate<E, T> filter) {
 
         if (isEmpty()) {
             return null;
         }
 
-        long stamp = readLock();
+        var stamp = readLock();
         try {
 
-            for (E element : array()) {
-                if (element == null) {
-                    break;
-                } else if (predicate.test(element, argument)) {
+            var array = array();
+
+            for (int i = 0, length = size(); i < length; i++) {
+
+                var element = array[i];
+
+                if (filter.test(element, argument)) {
                     return element;
                 }
             }
@@ -325,25 +406,28 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Search an element using the condition under a {@link #readLock()} block.
+     * Search an element by condition under {@link #readLock()} block.
      *
-     * @param argument  the argument.
-     * @param predicate the condition.
+     * @param argument the argument.
+     * @param filter   the condition.
      * @return the found element or null.
      */
-    default @Nullable E anyMatchInReadLock(int argument, @NotNull ObjectIntPredicate<@NotNull E> predicate) {
+    default @Nullable E anyMatchInReadLock(int argument, @NotNull NotNullObjectIntPredicate<E> filter) {
 
         if (isEmpty()) {
             return null;
         }
 
-        long stamp = readLock();
+        var stamp = readLock();
         try {
 
-            for (E element : array()) {
-                if (element == null) {
-                    break;
-                } else if (predicate.test(element, argument)) {
+            var array = array();
+
+            for (int i = 0, length = size(); i < length; i++) {
+
+                var element = array[i];
+
+                if (filter.test(element, argument)) {
                     return element;
                 }
             }
@@ -353,5 +437,96 @@ public interface ConcurrentArray<E> extends Array<E> {
         }
 
         return null;
+    }
+
+    /**
+     * Removes all of the elements of this collection that satisfy the given predicate under {@link #writeLock()} block.
+     *
+     * @param filter the predicate which returns {@code true} for elements to be removed.
+     * @return {@code true} if any elements were removed.
+     */
+    default boolean removeIfInWriteLock(@NotNull NotNullPredicate<? super E> filter) {
+        var stamp = writeLock();
+        try {
+            return removeIf(filter);
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Removes all of the elements of this collection that satisfy the given predicate under {@link #writeLock()} block.
+     *
+     * @param argument the additional argument.
+     * @param filter   the predicate which returns {@code true} for elements to be removed.
+     * @param <A>      the argument's type.
+     * @return {@code true} if any elements were removed.
+     */
+    default <A> boolean removeIfInWriteLock(@NotNull A argument, @NotNull NotNullBiPredicate<A, ? super E> filter) {
+
+        var stamp = writeLock();
+        try {
+
+            var array = array();
+            var removed = 0;
+
+            for (int i = 0, length = size(); i < length; i++) {
+
+                var element = array[i];
+
+                if (filter.test(argument, element)) {
+                    remove(i);
+                    i--;
+                    length--;
+                    removed++;
+                }
+            }
+
+            return removed > 0;
+
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Removes all of the elements of this collection that satisfy the given predicate under {@link #writeLock()} block.
+     *
+     * @param argument  the additional argument.
+     * @param converter the converter of the argument.
+     * @param filter    the predicate which returns {@code true} for elements to be removed.
+     * @param <A>       the argument's type.
+     * @param <B>       the argument converted type.
+     * @return {@code true} if any elements were removed.
+     */
+    default <A, B> boolean removeIfInWriteLock(
+        @NotNull A argument,
+        @NotNull NotNullFunction<A, B> converter,
+        @NotNull NotNullBiPredicate<B, ? super E> filter
+    ) {
+
+        var stamp = writeLock();
+        try {
+
+            var array = array();
+            var removed = 0;
+
+            for (int i = 0, length = size(); i < length; i++) {
+
+                var element = array[i];
+
+                if (filter.test(converter.apply(argument), element)) {
+                    remove(i);
+                    i--;
+                    length--;
+                    removed++;
+                }
+            }
+
+            return removed > 0;
+
+        } finally {
+            writeUnlock(stamp);
+        }
     }
 }

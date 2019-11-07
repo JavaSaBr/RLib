@@ -289,7 +289,7 @@ public final class ArrayUtils {
      * @return the new array.
      */
     public static @NotNull byte[] copyOf(@NotNull final byte[] old, final int added) {
-        final byte[] copy = new byte[old.length + added];
+        var copy = new byte[old.length + added];
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
         return copy;
     }
@@ -302,7 +302,7 @@ public final class ArrayUtils {
      * @return the new array.
      */
     public static @NotNull int[] copyOf(@NotNull final int[] old, final int added) {
-        final int[] copy = new int[old.length + added];
+        var copy = new int[old.length + added];
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
         return copy;
     }
@@ -315,7 +315,7 @@ public final class ArrayUtils {
      * @return the new array.
      */
     public static @NotNull long[] copyOf(@NotNull final long[] old, final int added) {
-        final long[] copy = new long[old.length + added];
+        var copy = new long[old.length + added];
         System.arraycopy(old, 0, copy, 0, Math.min(old.length, copy.length));
         return copy;
     }
@@ -369,7 +369,7 @@ public final class ArrayUtils {
      * @param source the source array.
      * @param target the target array.
      */
-    public static void copyTo(@NotNull final int[] source, final int[] target) {
+    public static void copyTo(@NotNull int[] source, int[] target) {
         System.arraycopy(source, 0, target, 0, source.length);
     }
 
@@ -382,8 +382,13 @@ public final class ArrayUtils {
      * @param targetOffset the target offset.
      * @param length       the length of data.
      */
-    public static void copyTo(@NotNull final int[] source, final int[] target, final int sourceOffset,
-                              final int targetOffset, final int length) {
+    public static void copyTo(
+        @NotNull int[] source,
+        @NotNull int[] target,
+        int sourceOffset,
+        int targetOffset,
+        int length
+    ) {
         System.arraycopy(source, sourceOffset, target, targetOffset, length);
     }
 
@@ -395,10 +400,10 @@ public final class ArrayUtils {
      * @param to       the last element.
      * @return the new array.
      */
-    public static @NotNull int[] copyOfRange(@NotNull final int[] original, final int from, final int to) {
+    public static @NotNull int[] copyOfRange(@NotNull int[] original, int from, int to) {
 
-        final int newLength = to - from;
-        final int[] copy = new int[newLength];
+        var newLength = to - from;
+        var copy = new int[newLength];
 
         System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
 
@@ -413,10 +418,10 @@ public final class ArrayUtils {
      * @param to       the last element.
      * @return the new array.
      */
-    public static @NotNull long[] copyOfRange(@NotNull final long[] original, final int from, final int to) {
+    public static @NotNull long[] copyOfRange(@NotNull long[] original, int from, int to) {
 
-        final int newLength = to - from;
-        final long[] copy = new long[newLength];
+        var newLength = to - from;
+        var copy = new long[newLength];
 
         System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
 
@@ -777,330 +782,6 @@ public final class ArrayUtils {
         if (needBrackets) builder.append(']');
 
         return builder.toString();
-    }
-
-    /**
-     * Execute and get a result of the function in write lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <R>      the type parameter
-     * @param array    the array.
-     * @param function the function.
-     * @return the result of the function.
-     */
-    @Deprecated
-    public static <T, R> @Nullable R getInWriteLock(@NotNull final ConcurrentArray<T> array,
-                                                    @NotNull final Function<Array<T>, R> function) {
-        if (array.isEmpty()) return null;
-        final long stamp = array.writeLock();
-        try {
-            return function.apply(array);
-        } finally {
-            array.writeUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute the function in write lock of the array.
-     *
-     * @param <T>      the element's type.
-     * @param array    the array.
-     * @param function the function.
-     */
-    @Deprecated
-    public static <T> void runInWriteLock(@Nullable ConcurrentArray<T> array, @NotNull Consumer<Array<T>> function) {
-
-        if (array == null) {
-            return;
-        }
-
-        long stamp = array.writeLock();
-        try {
-            function.accept(array);
-        } finally {
-            array.writeUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute the function in read lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param array    the array.
-     * @param function the function.
-     */
-    @Deprecated
-    public static <T> void runInReadLock(@NotNull final ConcurrentArray<T> array,
-                                         @NotNull final Consumer<@NotNull Array<T>> function) {
-        if (array.isEmpty()) return;
-        final long stamp = array.readLock();
-        try {
-            function.accept(array);
-        } finally {
-            array.readUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute and get a result of the function in read lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <R>      the type parameter
-     * @param array    the array.
-     * @param function the function.
-     * @return the result of the function.
-     */
-    @Deprecated
-    public static <T, R> @Nullable R getInReadLock(@NotNull final ConcurrentArray<T> array,
-                                                   @NotNull final Function<Array<T>, R> function) {
-        if (array.isEmpty()) return null;
-        final long stamp = array.readLock();
-        try {
-            return function.apply(array);
-        } finally {
-            array.readUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute and sum a result of the function in read lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param array    the array.
-     * @param function the function.
-     * @return the sum.
-     */
-    @Deprecated
-    public static <T> int sumInReadLock(@NotNull final ConcurrentArray<T> array,
-                                        @NotNull final FunctionInt<T> function) {
-        if (array.isEmpty()) return 0;
-        final long stamp = array.readLock();
-        try {
-
-            int sum = 0;
-
-            for (T element : array) {
-                if (element == null) break;
-                sum += function.apply(element);
-            }
-
-            return sum;
-
-        } finally {
-            array.readUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute and get a result of the function in write lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <V>      the type parameter
-     * @param <R>      the type parameter
-     * @param array    the array.
-     * @param argument the argument.
-     * @param function the function.
-     * @return the result of the function.
-     */
-    @Deprecated
-    public static <T, V, R> @Nullable R getInWriteLock(@NotNull final ConcurrentArray<T> array,
-                                                       @Nullable final V argument,
-                                                       @NotNull final BiFunction<Array<T>, V, R> function) {
-        if (array.isEmpty()) return null;
-        final long stamp = array.writeLock();
-        try {
-            return function.apply(array, argument);
-        } finally {
-            array.writeUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute the function in write lock of the array.
-     *
-     * @param <T>      the element's type.
-     * @param <V>      the argument's type.
-     * @param array    the array.
-     * @param argument the argument.
-     * @param function the function.
-     */
-    @Deprecated
-    public static <T, V> void runInWriteLock(
-            @NotNull ConcurrentArray<T> array,
-            @Nullable V argument,
-            @NotNull BiConsumer<@NotNull Array<T>, V> function
-    ) {
-        long stamp = array.writeLock();
-        try {
-            function.accept(array, argument);
-        } finally {
-            array.writeUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute and get a result of the function in read lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <V>      the type parameter
-     * @param <R>      the type parameter
-     * @param array    the array.
-     * @param argument the argument.
-     * @param function the function.
-     * @return the result of the function.
-     */
-    @Deprecated
-    public static <T, V, R> @Nullable R getInReadLock(@NotNull final ConcurrentArray<T> array,
-                                                      @Nullable final V argument,
-                                                      @NotNull final BiFunction<Array<T>, V, R> function) {
-        if (array.isEmpty()) return null;
-        final long stamp = array.readLock();
-        try {
-            return function.apply(array, argument);
-        } finally {
-            array.readUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute and get a result of the function in read lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <R>      the type parameter
-     * @param array    the array.
-     * @param argument the argument.
-     * @param function the function.
-     * @return the result of the function.
-     */
-    @Deprecated
-    public static <T, R> @Nullable R getInReadLock(@NotNull final ConcurrentArray<T> array, final int argument,
-                                                   @NotNull final ObjectIntFunction<Array<T>, R> function) {
-        if (array.isEmpty()) return null;
-        final long stamp = array.readLock();
-        try {
-            return function.apply(array, argument);
-        } finally {
-            array.readUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute and get a result of the function in read lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <R>      the type parameter
-     * @param array    the array.
-     * @param argument the argument.
-     * @param function the function.
-     * @return the result of the function.
-     */
-    @Deprecated
-    public static <T, R> @Nullable R getInReadLockL(@NotNull final ConcurrentArray<T> array, final long argument,
-                                                    @NotNull final ObjectLongFunction<Array<T>, R> function) {
-        if (array.isEmpty()) return null;
-        final long stamp = array.readLock();
-        try {
-            return function.apply(array, argument);
-        } finally {
-            array.readUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute the function in read lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <V>      the type parameter
-     * @param array    the array.
-     * @param argument the argument.
-     * @param function the function.
-     */
-    @Deprecated
-    public static <T, V> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final V argument,
-                                            @NotNull final BiConsumer<@NotNull Array<T>, V> function) {
-        if (array.isEmpty()) return;
-        final long stamp = array.readLock();
-        try {
-            function.accept(array, argument);
-        } finally {
-            array.readUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute the function in write lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <F>      the type parameter
-     * @param <S>      the type parameter
-     * @param array    the array.
-     * @param first    the first argument.
-     * @param second   the second argument.
-     * @param function the function.
-     */
-    @Deprecated
-    public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
-                                                @Nullable S second,
-                                                @NotNull final TripleConsumer<@NotNull Array<T>, F, S> function) {
-        final long stamp = array.writeLock();
-        try {
-            function.accept(array, first, second);
-        } finally {
-            array.writeUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute the function in write lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <F>      the type parameter
-     * @param <S>      the type parameter
-     * @param array    the array.
-     * @param first    the first argument.
-     * @param second   the second argument.
-     * @param filter   the filter.
-     * @param function the function.
-     */
-    @Deprecated
-    public static <T, F, S> void runInWriteLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
-                                                @Nullable final S second,
-                                                @NotNull final TriplePredicate<@NotNull Array<T>, F, S> filter,
-                                                @NotNull final TripleConsumer<@NotNull Array<T>, F, S> function) {
-        final long stamp = array.writeLock();
-        try {
-
-            if (filter.test(array, first, second)) {
-                function.accept(array, first, second);
-            }
-
-        } finally {
-            array.writeUnlock(stamp);
-        }
-    }
-
-    /**
-     * Execute the function in read lock of the array.
-     *
-     * @param <T>      the type parameter
-     * @param <F>      the type parameter
-     * @param <S>      the type parameter
-     * @param array    the array.
-     * @param first    the first argument.
-     * @param second   the second argument.
-     * @param function the function.
-     */
-    @Deprecated
-    public static <T, F, S> void runInReadLock(@NotNull final ConcurrentArray<T> array, @Nullable final F first,
-                                               @Nullable final S second,
-                                               @NotNull final TripleConsumer<@NotNull Array<T>, F, S> function) {
-        if (array.isEmpty()) return;
-        final long stamp = array.readLock();
-        try {
-            function.accept(array, first, second);
-        } finally {
-            array.readUnlock(stamp);
-        }
     }
 
     /**
@@ -1997,7 +1678,7 @@ public final class ArrayUtils {
             return ArrayUtils.EMPTY_INT_ARRAY;
         }
 
-        int[] resultArray = new int[source.length];
+        var resultArray = new int[source.length];
 
         for (int i = 0; i < source.length; i++) {
             resultArray[i] = (int) source[i];

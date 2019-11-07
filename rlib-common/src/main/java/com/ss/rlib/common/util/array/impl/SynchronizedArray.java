@@ -32,29 +32,18 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
      */
     private volatile E[] array;
 
-    /**
-     * Instantiates a new Synchronized array.
-     *
-     * @param type the type
-     */
-    public SynchronizedArray(@NotNull final Class<? super E> type) {
+
+    public SynchronizedArray(@NotNull Class<? super E> type) {
         this(type, 10);
     }
 
-    /**
-     * Instantiates a new Synchronized array.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public SynchronizedArray(@NotNull final Class<? super E> type, final int size) {
+    public SynchronizedArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
-
         this.size = new AtomicInteger();
     }
 
     @Override
-    public synchronized boolean add(@NotNull final E element) {
+    public synchronized boolean add(@NotNull E element) {
 
         if (size() == array.length) {
             array = ArrayUtils.copyOf(array, array.length >> 1);
@@ -65,8 +54,11 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
     }
 
     @Override
-    public synchronized final boolean addAll(@NotNull final Array<? extends E> elements) {
-        if (elements.isEmpty()) return true;
+    public synchronized final boolean addAll(@NotNull Array<? extends E> elements) {
+
+        if (elements.isEmpty()) {
+            return true;
+        }
 
         final int current = array.length;
         final int selfSize = size();
@@ -182,25 +174,23 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         return size.get();
     }
 
-    @NotNull
     @Override
-    public synchronized final E slowRemove(final int index) {
+    public synchronized @NotNull E remove(int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
         }
 
-        final int length = size();
-        final int numMoved = length - index - 1;
+        var length = size();
+        var numMoved = length - index - 1;
 
-        final E old = array[index];
+        var old = array[index];
 
         if (numMoved > 0) {
             System.arraycopy(array, index + 1, array, index, numMoved);
         }
 
         array[size.decrementAndGet()] = null;
-
         return old;
     }
 

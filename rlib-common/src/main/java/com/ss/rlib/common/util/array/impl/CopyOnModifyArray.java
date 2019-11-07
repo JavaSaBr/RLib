@@ -115,12 +115,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public boolean slowRemove(@NotNull Object object) {
-        return remove(object);
-    }
-
-    @Override
-    public final @NotNull E slowRemove(int index) {
+    public @NotNull E remove(int index) {
         throw new UnsupportedOperationException();
     }
 
@@ -281,12 +276,5 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
         var clone = (CopyOnModifyArray<E>) super.clone();
         clone.array = new AtomicReference<>(ArrayUtils.copyOf(array()));
         return clone;
-    }
-
-    @Override
-    public <T> void forEach(@Nullable T argument, @NotNull BiConsumer<E, T> function) {
-        for (E element : array()) {
-            function.accept(element, argument);
-        }
     }
 }

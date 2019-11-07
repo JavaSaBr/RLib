@@ -41,7 +41,7 @@ public class ArrayTest {
         Integer first = array.first();
         Integer last = array.last();
 
-        array.slowRemove(1);
+        array.remove(1);
         array.fastRemove(1);
 
         Integer searched = array.findAny(integer -> integer == 2);
@@ -84,11 +84,11 @@ public class ArrayTest {
             array.readUnlock(readStamp);
         }
 
-        Integer last = ArrayUtils.getInReadLock(array, Array::last);
-        Integer result = ArrayUtils.getInReadLock(array, last,
+        Integer last = array.getInReadLock(Array::last);
+        Integer result = array.getInReadLock(last,
                 (arr, target) -> arr.findAny(target, Integer::equals));
 
-        ArrayUtils.runInWriteLock(array, result + 1, Collection::add);
+        array.runInWriteLock(result + 1, Collection::add);
 
         Assertions.assertEquals(10, (int) array.last());
     }
