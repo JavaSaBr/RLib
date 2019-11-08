@@ -49,14 +49,14 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Wrap a native array to a read only array.
+     * Copy an array to a read only array.
      *
-     * @param elements the elements to wrap.
-     * @param <T> the element's type.
+     * @param another the another array.
+     * @param <T>     the element's type.
      * @return the new read only array.
      */
-    static <T> @NotNull ReadOnlyArray<T> of(@NotNull T[] elements) {
-        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(elements));
+    static <T> @NotNull ReadOnlyArray<T> of(@NotNull Array<T> another) {
+        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(another.array(), 0, another.size()));
     }
 
     /**
@@ -75,12 +75,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     @SafeVarargs
-    static <T> @NotNull ReadOnlyArray<T> of(@NotNull T element, @NotNull T... elements) {
-
-        T[] newArray = ArrayUtils.copyOf(elements, 1, 1);
-        newArray[0] = element;
-
-        return ArrayFactory.newReadOnlyArray(newArray);
+    static <T> @NotNull ReadOnlyArray<T> of(@NotNull T... elements) {
+        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(elements));
     }
 
     @SafeVarargs
@@ -114,7 +110,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <T>  the element's type.
      * @return the supplier.
      */
-    static <T> @NotNull Supplier<Array<T>> supplier(@NotNull Class<? super T> type) {
+    static <T> @NotNull NotNullSupplier<Array<T>> supplier(@NotNull Class<? super T> type) {
         return () -> ArrayFactory.newConcurrentStampedLockArray(type);
     }
 
@@ -125,7 +121,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <T>  the element's type.
      * @return the supplier.
      */
-    static <T> @NotNull Function<Class<? super T>, Array<T>> function(@NotNull Class<? super T> type) {
+    static <T> @NotNull NotNullFunction<Class<? super T>, Array<T>> function(@NotNull Class<? super T> type) {
         return ArrayFactory::newConcurrentStampedLockArray;
     }
 
