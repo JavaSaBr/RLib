@@ -39,7 +39,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <T>  the element's type.
      * @return the supplier.
      */
-    static <T> @NotNull Supplier<ConcurrentArray<T>> supplier(@NotNull Class<? super T> type) {
+    static <T> @NotNull NotNullSupplier<ConcurrentArray<T>> supplier(@NotNull Class<? super T> type) {
         return () -> ArrayFactory.newConcurrentStampedLockArray(type);
     }
 
