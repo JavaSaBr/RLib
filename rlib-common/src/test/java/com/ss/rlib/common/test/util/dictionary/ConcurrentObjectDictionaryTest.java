@@ -59,4 +59,68 @@ public class ConcurrentObjectDictionaryTest extends BaseTest {
             dic.get(arg);
         });
     }
+
+    @Test
+    void getInWriteLockTest() {
+
+        var dictionary = ConcurrentObjectDictionary.ofType(
+            String.class,
+            Integer.class
+        );
+
+        dictionary.runInWriteLock(dic -> {
+            dic.put("1", 1);
+            dic.put("2", 2);
+            dic.put("3", 3);
+        });
+
+        Integer val1 = dictionary.getInWriteLock("1", (dic, arg) -> {
+            assertType(dic, ConcurrentObjectDictionary.class);
+            assertType(arg, String.class);
+            return dic.get(arg);
+        });
+
+        Assertions.assertEquals(1, val1);
+
+        Integer val2 = dictionary.getInWriteLock("2", Type1.EXAMPLE, (dic, arg1, arg2) -> {
+            assertType(dic, ConcurrentObjectDictionary.class);
+            assertType(arg1, String.class);
+            assertType(arg2, Type1.class);
+            return dic.get(arg1);
+        });
+
+        Assertions.assertEquals(2, val2);
+    }
+
+    @Test
+    void getInReadLockTest() {
+
+        var dictionary = ConcurrentObjectDictionary.ofType(
+            String.class,
+            Integer.class
+        );
+
+        dictionary.runInWriteLock(dic -> {
+            dic.put("1", 1);
+            dic.put("2", 2);
+            dic.put("3", 3);
+        });
+
+        Integer val1 = dictionary.getInReadLock("1", (dic, arg) -> {
+            assertType(dic, ConcurrentObjectDictionary.class);
+            assertType(arg, String.class);
+            return dic.get(arg);
+        });
+
+        Assertions.assertEquals(1, val1);
+
+        Integer val2 = dictionary.getInReadLock("2", Type1.EXAMPLE, (dic, arg1, arg2) -> {
+            assertType(dic, ConcurrentObjectDictionary.class);
+            assertType(arg1, String.class);
+            assertType(arg2, Type1.class);
+            return dic.get(arg1);
+        });
+
+        Assertions.assertEquals(2, val2);
+    }
 }
