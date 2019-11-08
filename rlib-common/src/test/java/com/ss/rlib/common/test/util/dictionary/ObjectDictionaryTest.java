@@ -53,4 +53,14 @@ public class ObjectDictionaryTest {
             () -> ObjectDictionary.of("Key1")
         );
     }
+
+    @Test
+    void getOrDefaultTest() {
+
+        var dictionary = ObjectDictionary.<String, Integer>of("Key1", 1, "Key2", 2, "Key3", 3);
+
+        Assertions.assertEquals(1, dictionary.get("Key1"));
+        Assertions.assertNull(dictionary.get("Key10"));
+        Assertions.assertEquals(10, dictionary.getOrDefault("Key10", 10));
+    }
 }

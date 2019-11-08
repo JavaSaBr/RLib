@@ -8,10 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * The interface for implementing a key-value dictionary which using an object key.
@@ -99,6 +95,18 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      */
     default @Nullable V get(@NotNull K key) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Return the value to which the specified key is mapped, or default if this dictionary
+     * contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned.
+     * @return the value to which the specified key is mapped, or default if this dictionary contains no mapping for the key.
+     */
+    default @Nullable V getOrDefault(@NotNull K key, @NotNull V def) {
+        var value = get(key);
+        return value == null ? def : value;
     }
 
     /**
