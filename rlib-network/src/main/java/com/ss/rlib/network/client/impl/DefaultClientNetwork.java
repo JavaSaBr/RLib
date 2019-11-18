@@ -2,24 +2,24 @@ package com.ss.rlib.network.client.impl;
 
 import static com.ss.rlib.common.util.Utils.unchecked;
 import static com.ss.rlib.common.util.Utils.uncheckedGet;
-import com.ss.rlib.common.concurrent.GroupThreadFactory;
-import com.ss.rlib.common.concurrent.atomic.AtomicReference;
+import com.ss.rlib.common.concurrent.util.ThreadUtils;
+import com.ss.rlib.common.util.AsyncUtils;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
 import com.ss.rlib.network.NetworkConfig;
 import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.impl.AbstractNetwork;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.AsynchronousChannelGroup;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 
 /**
@@ -29,58 +29,69 @@ import java.util.function.BiFunction;
  */
 public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNetwork<C> implements ClientNetwork<C> {
 
-    protected final AsynchronousChannelGroup group;
-    protected final AtomicReference<C> currentConnection;
+    protected final AtomicBoolean connecting;
+
+    protected volatile @Nullable CompletableFuture<C> pendingConnection;
+    protected volatile @Getter @Nullable C currentConnection;
 
     public DefaultClientNetwork(
         @NotNull NetworkConfig config,
         @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection
     ) {
         super(config, channelToConnection);
-        this.currentConnection = new AtomicReference<>();
-        this.group = uncheckedGet(
-            Executors.newSingleThreadExecutor(new GroupThreadFactory(config.getGroupName())),
-            AsynchronousChannelGroup::withThreadPool
-        );
+        this.connecting = new AtomicBoolean(false);
     }
 
     @Override
     public @NotNull CompletableFuture<C> connect(@NotNull InetSocketAddress serverAddress) {
 
-        C connection = getCurrentConnection();
+        C currentConnection = getCurrentConnection();
 
-        if (connection != null) {
-            unchecked(connection, C::close);
+        if (currentConnection != null) {
+            unchecked(currentConnection, C::close);
+        }
+
+        // if we are trying connection now
+        if (!connecting.compareAndSet(false, true)) {
+
+            var asyncResult = this.pendingConnection;
+
+            if (asyncResult != null) {
+                return asyncResult;
+            }
+
+            ThreadUtils.sleep(100);
+
+            return connect(serverAddress);
         }
 
         var asyncResult = new CompletableFuture<C>();
-        var channel = uncheckedGet(group, AsynchronousSocketChannel::open);
 
-        var newConnection = channelToConnection.apply(this, channel);
-
-        if (!currentConnection.compareAndSet(connection, newConnection)) {
-            return CompletableFuture.failedFuture(new IllegalStateException());
-        }
-
+        var channel = uncheckedGet(AsynchronousSocketChannel::open);
         channel.connect(serverAddress, null, new CompletionHandler<Void, Void>() {
 
             @Override
-            public void completed(Void result, Void attachment) {
-                asyncResult.complete(newConnection);
+            public void completed(@Nullable Void result, @Nullable Void attachment) {
+                asyncResult.complete(channelToConnection.apply(DefaultClientNetwork.this, channel));
             }
 
             @Override
-            public void failed(Throwable exc, Void attachment) {
+            public void failed(@NotNull Throwable exc, @Nullable Void attachment) {
                 asyncResult.completeExceptionally(exc);
             }
         });
 
-        return asyncResult;
+        pendingConnection = asyncResult;
+
+        return asyncResult.handle((connection, throwable) -> {
+            this.currentConnection = connection;
+            this.connecting.set(false);
+            return AsyncUtils.continueCompletableStage(connection, throwable);
+        });
     }
 
     @Override
     public @NotNull Mono<C> connected(@NotNull InetSocketAddress serverAddress) {
-
         return Mono.create(monoSink -> connect(serverAddress)
             .whenComplete((connection, ex) -> {
                 if(ex != null) {
@@ -92,17 +103,9 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
     }
 
     @Override
-    public @Nullable C getCurrentConnection() {
-        return currentConnection.get();
-    }
-
-    @Override
     public void shutdown() {
         Optional
             .ofNullable(getCurrentConnection())
-            .ifPresent(connection -> {
-                unchecked(connection, C::close);
-                unchecked(group, AsynchronousChannelGroup::shutdown);
-            });
+            .ifPresent(connection -> unchecked(connection, C::close));
     }
 }

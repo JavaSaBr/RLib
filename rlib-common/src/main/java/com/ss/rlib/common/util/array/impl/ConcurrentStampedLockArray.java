@@ -17,8 +17,7 @@ public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
 
     private static final long serialVersionUID = -6291504312637658721L;
 
-    @NotNull
-    private final StampedLock lock;
+    private final @NotNull StampedLock lock;
 
     public ConcurrentStampedLockArray(@NotNull Class<? super E> type) {
         this(type, 10);

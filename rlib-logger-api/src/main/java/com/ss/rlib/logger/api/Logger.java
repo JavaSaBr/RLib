@@ -420,6 +420,7 @@ public interface Logger {
      * @param owner   the owner of the message.
      * @param message the message.
      */
+    @Deprecated(forRemoval = true)
     default void warning(@NotNull Object owner, @NotNull String message) {
         print(LoggerLevel.WARNING, owner, message);
     }
@@ -430,6 +431,7 @@ public interface Logger {
      * @param owner     the owner of the message,
      * @param exception the exception.
      */
+    @Deprecated(forRemoval = true)
     default void warning(@NotNull Object owner, @NotNull Throwable exception) {
         print(LoggerLevel.WARNING, owner, exception);
     }
@@ -450,6 +452,17 @@ public interface Logger {
      */
     default void warning(@NotNull Throwable exception) {
         print(LoggerLevel.WARNING, exception);
+    }
+
+    /**
+     * Print a warning debug message.
+     *
+     * @param arg            the arg for the message factory.
+     * @param messageFactory the message factory.
+     * @param <A>            the argument's type.
+     */
+    default <A> void warning(@NotNull A arg, @NotNull Logger.SinFactory<A> messageFactory) {
+        print(LoggerLevel.WARNING, arg, messageFactory);
     }
 
     /**

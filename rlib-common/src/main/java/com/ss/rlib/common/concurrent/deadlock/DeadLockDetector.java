@@ -6,6 +6,7 @@ import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.ConcurrentArray;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,38 +30,29 @@ public class DeadLockDetector implements Runnable {
     /**
      * The list of listeners.
      */
-    @NotNull
-    private final ConcurrentArray<DeadLockListener> listeners;
+    private final @Getter @NotNull ConcurrentArray<DeadLockListener> listeners;
 
     /**
      * The bean with information about threads.
      */
-    @NotNull
-    private final ThreadMXBean mxThread;
+    private final @NotNull ThreadMXBean mxThread;
 
     /**
      * The scheduler.
      */
-    @NotNull
-    private final ScheduledExecutorService executorService;
+    private final @NotNull ScheduledExecutorService executorService;
 
     /**
      * The reference to a task.
      */
-    @Nullable
-    private volatile ScheduledFuture<?> schedule;
+    private volatile @Getter @Nullable ScheduledFuture<?> schedule;
 
     /**
      * The checking interval.
      */
     private final int interval;
 
-    /**
-     * Instantiates a new Dead lock detector.
-     *
-     * @param interval the checking interval.
-     */
-    public DeadLockDetector(final int interval) {
+    public DeadLockDetector(int interval) {
 
         if (interval < 1) {
             throw new IllegalArgumentException("negative interval.");
@@ -77,54 +69,44 @@ public class DeadLockDetector implements Runnable {
      *
      * @param listener the new listener.
      */
-    public void addListener(@NotNull final DeadLockListener listener) {
-        ArrayUtils.runInWriteLock(listeners, listener, Array::add);
-    }
-
-    /**
-     * Gets listeners.
-     *
-     * @return the list of listeners.
-     */
-    @NotNull
-    public ConcurrentArray<DeadLockListener> getListeners() {
-        return listeners;
+    public void addListener(@NotNull DeadLockListener listener) {
+        listeners.runInWriteLock(listener, Array::add);
     }
 
     @Override
     public void run() {
 
-        final long[] threadIds = mxThread.findDeadlockedThreads();
-        if (threadIds.length < 1) return;
+        var threadIds = mxThread.findDeadlockedThreads();
 
-        final ConcurrentArray<DeadLockListener> listeners = getListeners();
+        if (threadIds.length < 1) {
+            return;
+        }
 
-        for (final long id : threadIds) {
+        var listeners = getListeners();
 
-            final ThreadInfo info = mxThread.getThreadInfo(id);
-            if (listeners.isEmpty()) continue;
+        for (var id : threadIds) {
 
-            ArrayUtils.runInReadLock(listeners, info,
-                    (deadLockListeners, threadInfo) ->
-                            deadLockListeners.forEach(threadInfo, DeadLockListener::onDetected));
+            var info = mxThread.getThreadInfo(id);
+
+            if (listeners.isEmpty()) {
+                continue;
+            }
+
+            listeners.runInReadLock(info, (list, inf) -> list.forEachR(inf, DeadLockListener::onDetected));
 
             LOGGER.warning("DeadLock detected! : " + info);
         }
     }
 
     /**
-     * @return the reference to a task.
-     */
-    @Nullable
-    private ScheduledFuture<?> getSchedule() {
-        return schedule;
-    }
-
-    /**
      * Start.
      */
     public synchronized void start() {
-        if (schedule != null) return;
+
+        if (schedule != null) {
+            return;
+        }
+
         schedule = executorService.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
     }
 
@@ -133,8 +115,12 @@ public class DeadLockDetector implements Runnable {
      */
     public synchronized void stop() {
 
-        final ScheduledFuture<?> schedule = getSchedule();
-        if (schedule == null) return;
+        var schedule = getSchedule();
+
+        if (schedule == null) {
+            return;
+        }
+
         schedule.cancel(false);
 
         this.schedule = null;

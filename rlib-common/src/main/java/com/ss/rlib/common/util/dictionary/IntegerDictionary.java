@@ -4,6 +4,7 @@ import com.ss.rlib.common.function.IntBiObjectConsumer;
 import com.ss.rlib.common.function.IntObjectConsumer;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.IntegerArray;
+import com.ss.rlib.common.util.array.MutableIntegerArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -176,7 +177,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      * @return the array with all keys of this dictionary.
      */
     default @NotNull IntegerArray keyArray() {
-        return keyArray(ArrayFactory.newIntegerArray(size()));
+        return keyArray(ArrayFactory.newMutableIntegerArray(size()));
     }
 
     /**
@@ -184,10 +185,10 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      *
      * @param container the container.
      * @return the container with all keys.
-     * @see #keyArray(IntegerArray)
+     * @see #keyArray(MutableIntegerArray)
      */
     @Deprecated
-    default @NotNull IntegerArray keyIntegerArray(@NotNull IntegerArray container) {
+    default @NotNull IntegerArray keyIntegerArray(@NotNull MutableIntegerArray container) {
         return keyArray(container);
     }
 
@@ -197,7 +198,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      * @param container the container.
      * @return the container with all keys.
      */
-    default @NotNull IntegerArray keyArray(@NotNull IntegerArray container) {
+    default @NotNull IntegerArray keyArray(@NotNull MutableIntegerArray container) {
         throw new UnsupportedOperationException();
     }
 

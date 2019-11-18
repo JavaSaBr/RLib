@@ -39,4 +39,20 @@ class BufferUtilsTest {
         Assertions.assertEquals(2, source.getInt());
         Assertions.assertEquals(3, source.getInt());
     }
+
+    @Test
+    void shouldPrepareBuffer() {
+
+        var result = BufferUtils.prepareBuffer(512, buffer -> {
+            buffer.put((byte) 1);
+            buffer.put((byte) 2);
+            buffer.put((byte) 3);
+        });
+
+        Assertions.assertEquals(3, result.limit());
+        Assertions.assertEquals(0, result.position());
+        Assertions.assertEquals(1, result.get());
+        Assertions.assertEquals(2, result.get());
+        Assertions.assertEquals(3, result.get());
+    }
 }

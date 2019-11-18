@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author JavaSaBr
  */
-public class UtilsTests {
+public class UtilsTest {
 
     @Test
     void shouldSafetyTryGet() {

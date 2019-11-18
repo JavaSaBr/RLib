@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 /**
  * The implementation of the array with synchronization all methods.
  *
- * @param <E> the type parameter
+ * @param <E> the array's element type.
  * @author JavaSaBr
  */
 public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
@@ -32,29 +32,18 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
      */
     private volatile E[] array;
 
-    /**
-     * Instantiates a new Synchronized array.
-     *
-     * @param type the type
-     */
-    public SynchronizedArray(@NotNull final Class<? super E> type) {
+
+    public SynchronizedArray(@NotNull Class<? super E> type) {
         this(type, 10);
     }
 
-    /**
-     * Instantiates a new Synchronized array.
-     *
-     * @param type the type
-     * @param size the size
-     */
-    public SynchronizedArray(@NotNull final Class<? super E> type, final int size) {
+    public SynchronizedArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
-
         this.size = new AtomicInteger();
     }
 
     @Override
-    public synchronized boolean add(@NotNull final E element) {
+    public synchronized boolean add(@NotNull E element) {
 
         if (size() == array.length) {
             array = ArrayUtils.copyOf(array, array.length >> 1);
@@ -65,8 +54,11 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
     }
 
     @Override
-    public synchronized final boolean addAll(@NotNull final Array<? extends E> elements) {
-        if (elements.isEmpty()) return true;
+    public synchronized final boolean addAll(@NotNull Array<? extends E> elements) {
+
+        if (elements.isEmpty()) {
+            return true;
+        }
 
         final int current = array.length;
         final int selfSize = size();
@@ -146,25 +138,19 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         return array[index];
     }
 
-    @NotNull
     @Override
-    public synchronized final ArrayIterator<E> iterator() {
+    public synchronized @NotNull ArrayIterator<E> iterator() {
         return new DefaultArrayIterator<>(this);
     }
 
     @Override
-    public synchronized final void set(final int index, @NotNull final E element) {
+    public void replace(int index, @NotNull E element) {
 
         if (index < 0 || index >= size()) {
             throw new ArrayIndexOutOfBoundsException();
         }
 
-        if (array[index] != null) {
-            size.decrementAndGet();
-        }
-
         array[index] = element;
-        size.incrementAndGet();
     }
 
     @Override
@@ -182,79 +168,46 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         return size.get();
     }
 
-    @NotNull
     @Override
-    public synchronized final E slowRemove(final int index) {
+    public synchronized @NotNull E remove(int index) {
 
         if (index < 0 || index >= size()) {
             throw new NoSuchElementException();
         }
 
-        final int length = size();
-        final int numMoved = length - index - 1;
+        var length = size();
+        var numMoved = length - index - 1;
 
-        final E old = array[index];
+        var old = array[index];
 
         if (numMoved > 0) {
             System.arraycopy(array, index + 1, array, index, numMoved);
         }
 
         array[size.decrementAndGet()] = null;
-
         return old;
     }
 
     @Override
-    public final SynchronizedArray<E> trimToSize() {
+    public synchronized @NotNull SynchronizedArray<E> trimToSize() {
 
-        final int size = size();
-        if (size == array.length) return this;
+        var size = size();
+
+        if (size == array.length) {
+            return this;
+        }
 
         array = ArrayUtils.copyOfRange(array, 0, size);
         return this;
     }
 
-    /**
-     * Process add.
-     *
-     * @param elements   the elements
-     * @param selfSize   the self size
-     * @param targetSize the target size
-     */
     protected void processAdd(@NotNull final Array<? extends E> elements, final int selfSize, final int targetSize) {
-        // если надо срау большой массив добавить, то лучше черзе нативный метод
-        if (targetSize > SIZE_BIG_ARRAY) {
-            System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
-            size.set(selfSize + targetSize);
-        } else {
-            // если добавляемый массив небольшой, можно и обычным способом
-            // внести
-            for (final E element : elements.array()) {
-                if (element == null) break;
-                unsafeAdd(element);
-            }
-        }
+        System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
+        size.set(selfSize + targetSize);
     }
 
-    /**
-     * Process add.
-     *
-     * @param elements   the elements
-     * @param selfSize   the self size
-     * @param targetSize the target size
-     */
     protected void processAdd(@NotNull final E[] elements, final int selfSize, final int targetSize) {
-        // если надо срау большой массив добавить, то лучше черзе нативный метод
-        if (targetSize > SIZE_BIG_ARRAY) {
-            System.arraycopy(elements, 0, array, selfSize, targetSize);
-            size.set(selfSize + targetSize);
-        } else {
-            // если добавляемый массив небольшой, можно и обычным способом
-            // внести
-            for (final E element : elements) {
-                if (element == null) break;
-                unsafeAdd(element);
-            }
-        }
+        System.arraycopy(elements, 0, array, selfSize, targetSize);
+        size.set(selfSize + targetSize);
     }
 }

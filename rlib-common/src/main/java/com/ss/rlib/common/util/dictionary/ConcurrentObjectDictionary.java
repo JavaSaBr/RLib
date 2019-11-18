@@ -1,15 +1,11 @@
 package com.ss.rlib.common.util.dictionary;
 
-import com.ss.rlib.common.function.TripleConsumer;
+import com.ss.rlib.common.function.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-
 /**
- * The interface with methods for supporting threadsafe for the {@link ObjectDictionary}.
+ * The interface with methods for supporting thread-safe for the {@link ObjectDictionary}.
  *
  * @param <K> the key's type.
  * @param <V> the value's type.
@@ -25,7 +21,7 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @return the new concurrent object dictionary.
      */
     static <T> @NotNull ObjectDictionary<T, T> ofType(@NotNull Class<? super T> keyValueType) {
-        return DictionaryFactory.newConcurrentAtomicObjectDictionary();
+        return DictionaryFactory.newConcurrentStampedLockObjectDictionary();
     }
 
     /**
@@ -38,23 +34,46 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      * @return the new concurrent object dictionary.
      */
     static <K, V> @NotNull ConcurrentObjectDictionary<K, V> ofType(
-            @NotNull Class<? super K> keyType,
-            @NotNull Class<? super V> valueType
+        @NotNull Class<? super K> keyType,
+        @NotNull Class<? super V> valueType
     ) {
-        return DictionaryFactory.newConcurrentAtomicObjectDictionary();
+        return DictionaryFactory.newConcurrentStampedLockObjectDictionary();
     }
 
     /**
-     * Execute the function for this dictionary in the block {@link ConcurrentObjectDictionary#writeLock()}.
+     * Execute a function for this dictionary under block {@link ConcurrentObjectDictionary#readLock()}.
+     *
+     * @param argument the argument.
+     * @param consumer the function.
+     * @param <A>      the argument's type.
+     * @return this dictionary.
+     */
+    default <A> @NotNull ConcurrentObjectDictionary<K, V> runInReadLock(
+        @NotNull A argument,
+        @NotNull NotNullBiConsumer<ConcurrentObjectDictionary<K, V>, A> consumer
+    ) {
+
+        var stamp = readLock();
+        try {
+            consumer.accept(this, argument);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Execute a function for this dictionary under block {@link ConcurrentObjectDictionary#writeLock()}.
      *
      * @param consumer the function.
      * @return this dictionary.
      */
     default @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-            @NotNull Consumer<@NotNull ConcurrentObjectDictionary<K, V>> consumer
+        @NotNull NotNullConsumer<ConcurrentObjectDictionary<K, V>> consumer
     ) {
 
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
             consumer.accept(this);
         } finally {
@@ -65,20 +84,21 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
     }
 
     /**
-     * Execute the function for this dictionary in the block {@link ConcurrentObjectDictionary#writeLock()}.
+     * Execute a function for this dictionary under block {@link ConcurrentObjectDictionary#writeLock()}.
      *
-     * @param key      the key value.
+     * @param argument the argument.
      * @param consumer the function.
+     * @param <A>      the argument's type.
      * @return this dictionary.
      */
-    default @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-            @NotNull K key,
-            @NotNull BiConsumer<@NotNull ConcurrentObjectDictionary<K, V>, @NotNull K> consumer
+    default <A> @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
+        @NotNull A argument,
+        @NotNull NotNullBiConsumer<ConcurrentObjectDictionary<K, V>, A> consumer
     ) {
 
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
-            consumer.accept(this, key);
+            consumer.accept(this, argument);
         } finally {
             writeUnlock(stamp);
         }
@@ -87,23 +107,24 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
     }
 
     /**
-     * Execute the function for this dictionary in the block {@link ConcurrentObjectDictionary#writeLock()}.
+     * Execute a function for this dictionary under block {@link ConcurrentObjectDictionary#writeLock()}.
      *
-     * @param key      the key value.
-     * @param argument the additional argument,
+     * @param first    the first argument.
+     * @param second   the second argument.
      * @param consumer the function.
-     * @param <F>      the argument's type.
+     * @param <F>      the first argument's type.
+     * @param <S>      the second argument's type.
      * @return this dictionary.
      */
-    default <F> @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-            @NotNull K key,
-            @NotNull F argument,
-            @NotNull TripleConsumer<@NotNull ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull F> consumer
+    default <F, S> @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullTripleConsumer<ConcurrentObjectDictionary<K, V>, F, S> consumer
     ) {
 
-        long stamp = writeLock();
+        var stamp = writeLock();
         try {
-            consumer.accept(this, key, argument);
+            consumer.accept(this, first, second);
         } finally {
             writeUnlock(stamp);
         }
@@ -112,40 +133,90 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
     }
 
     /**
-     * Get the value using a function from a dictionary in the block {@link
-     * ConcurrentObjectDictionary#readLock()}.
+     * Get the value from a function for this dictionary under block {@link ConcurrentObjectDictionary#readLock()}.
      *
-     * @param key      the key value.
+     * @param argument the argument.
      * @param function the function.
+     * @param <A>      the argument's type.
+     * @param <R>      the result's type.
      * @return the result of the function.
      */
-    default @Nullable V getInReadLock(
-            @NotNull K key,
-            @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull V> function
+    default <A, R> @Nullable R getInReadLock(
+        @NotNull A argument,
+        @NotNull NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, R> function
     ) {
-        long stamp = readLock();
+        var stamp = readLock();
         try {
-            return function.apply(this, key);
+            return function.apply(this, argument);
         } finally {
             readUnlock(stamp);
         }
     }
 
     /**
-     * Get the value using a function from a dictionary in the block {@link
-     * ConcurrentObjectDictionary#writeLock()}.
+     * Get the value from a function for this dictionary under block {@link ConcurrentObjectDictionary#readLock()}.
      *
-     * @param key      the key value.
+     * @param first    the first argument.
+     * @param second   the second argument.
      * @param function the function.
+     * @param <F>      the first argument's type.
+     * @param <S>      the second argument's type.
+     * @param <R>      the result's type.
      * @return the result of the function.
      */
-    default @Nullable V getInWriteLock(
-            @NotNull K key,
-            @NotNull BiFunction<ConcurrentObjectDictionary<K, V>, @NotNull K, @NotNull V> function
+    default <F, S, R> @Nullable R getInReadLock(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullNullableTripleFunction<ConcurrentObjectDictionary<K, V>, F, S, R> function
     ) {
-        long stamp = writeLock();
+        var stamp = readLock();
         try {
-            return function.apply(this, key);
+            return function.apply(this, first, second);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
+     * Get the value from a function for this dictionary under block {@link ConcurrentObjectDictionary#writeLock()}.
+     *
+     * @param argument the argument.
+     * @param function the function.
+     * @param <A>      the argument's type.
+     * @param <R>      the result's type.
+     * @return the result of the function.
+     */
+    default <A, R> @Nullable R getInWriteLock(
+        @NotNull A argument,
+        @NotNull NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, R> function
+    ) {
+        var stamp = writeLock();
+        try {
+            return function.apply(this, argument);
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Get the value from a function for this dictionary under block {@link ConcurrentObjectDictionary#writeLock()}.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     * @param <F>      the first argument's type.
+     * @param <S>      the second argument's type.
+     * @param <R>      the result's type.
+     * @return the result of the function.
+     */
+    default <F, S, R> @Nullable R getInWriteLock(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullNullableTripleFunction<ConcurrentObjectDictionary<K, V>, F, S, R> function
+    ) {
+        var stamp = writeLock();
+        try {
+            return function.apply(this, first, second);
         } finally {
             writeUnlock(stamp);
         }
@@ -156,8 +227,8 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
      *
      * @param consumer the consumer.
      */
-    default void forEachInReadLock(@NotNull BiConsumer<@NotNull ? super K, @NotNull ? super V> consumer) {
-        long stamp = readLock();
+    default void forEachInReadLock(@NotNull NotNullBiConsumer<? super K, ? super V> consumer) {
+        var stamp = readLock();
         try {
             forEach(consumer);
         } finally {

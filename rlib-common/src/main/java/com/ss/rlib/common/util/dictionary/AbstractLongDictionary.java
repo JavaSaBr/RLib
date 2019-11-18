@@ -221,7 +221,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
     }
 
     @Override
-    public final LongEntry<V> removeEntryForKey(long key) {
+    public @Nullable LongEntry<V> removeEntryForKey(long key) {
 
         var entries = entries();
         var hash = hash(key);
@@ -259,22 +259,22 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
         var size = size();
 
         var builder = new StringBuilder(getClass().getSimpleName());
-        builder.append(" size = ")
-                .append(size)
-                .append(" :\n");
+        builder
+            .append(" size = ")
+            .append(size)
+            .append(" :\n");
 
         var entries = entries();
 
         for (var entry : entries) {
             while (entry != null) {
-
-                builder.append("[")
-                        .append(entry.getKey())
-                        .append(" - ")
-                        .append(entry.getValue())
-                        .append("]")
-                        .append("\n");
-
+                builder
+                    .append("[")
+                    .append(entry.getKey())
+                    .append(" - ")
+                    .append(entry.getValue())
+                    .append("]")
+                    .append("\n");
                 entry = entry.getNext();
             }
         }

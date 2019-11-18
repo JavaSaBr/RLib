@@ -1,7 +1,6 @@
 package com.ss.rlib.common.util.dictionary;
 
-import com.ss.rlib.common.function.FourObjectConsumer;
-import com.ss.rlib.common.function.TripleConsumer;
+import com.ss.rlib.common.function.*;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
@@ -9,10 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * The interface for implementing a key-value dictionary which using an object key.
@@ -103,6 +98,18 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     }
 
     /**
+     * Return the value to which the specified key is mapped, or default if this dictionary
+     * contains no mapping for the key.
+     *
+     * @param key the key whose associated value is to be returned.
+     * @return the value to which the specified key is mapped, or default if this dictionary contains no mapping for the key.
+     */
+    default @Nullable V getOrDefault(@NotNull K key, @NotNull V def) {
+        var value = get(key);
+        return value == null ? def : value;
+    }
+
+    /**
      * Return the optional value to which the specified key is mapped, or {@code null} if this dictionary
      * contains no mapping for the key.
      *
@@ -120,10 +127,10 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param key     the key.
      * @param factory the factory.
      * @return the stored value by the key or the new value.
-     * @see #getOrCompute(Object, Supplier)
+     * @see #getOrCompute(Object, NotNullSupplier)
      */
     @Deprecated
-    default @NotNull V get(@NotNull K key, @NotNull Supplier<V> factory) {
+    default @NotNull V get(@NotNull K key, @NotNull NotNullSupplier<V> factory) {
         return getOrCompute(key, factory);
     }
 
@@ -135,7 +142,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param factory the factory.
      * @return the stored value by the key or the new value.
      */
-    default @NotNull V getOrCompute(@NotNull K key, @NotNull Supplier<@NotNull V> factory) {
+    default @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullSupplier<V> factory) {
         throw new UnsupportedOperationException();
     }
 
@@ -146,10 +153,10 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param key     the key.
      * @param factory the factory.
      * @return the stored value by the key or the new value.
-     * @see #getOrCompute(Object, Function)
+     * @see #getOrCompute(Object, NotNullFunction)
      */
     @Deprecated
-    default @NotNull V get(@NotNull K key, @NotNull Function<K, V> factory) {
+    default @NotNull V get(@NotNull K key, @NotNull NotNullFunction<K, V> factory) {
         return getOrCompute(key, factory);
     }
 
@@ -161,7 +168,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param factory the factory.
      * @return the stored value by the key or the new value.
      */
-    default @NotNull V getOrCompute(@NotNull K key, @NotNull Function<@NotNull K, @NotNull V> factory) {
+    default @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullFunction<K, V> factory) {
         throw new UnsupportedOperationException();
     }
 
@@ -174,10 +181,39 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param argument the additional argument.
      * @param factory  the factory.
      * @return the stored value by the key or the new value.
-     * @see #getOrCompute(Object, Object, Function)
+     * @see #getOrCompute(Object, Object, NotNullFunction)
      */
     @Deprecated
-    default <T> @NotNull V get(@NotNull K key, @NotNull T argument, @NotNull Function<T, V> factory) {
+    default <T> @NotNull V get(@NotNull K key, @NotNull T argument, @NotNull NotNullFunction<T, V> factory) {
+        return getOrCompute(key, argument, factory);
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param <T>      the argument's type.
+     * @param key      the key.
+     * @param argument the additional argument.
+     * @param factory  the factory.
+     * @return the stored value by the key or the new value.
+     */
+    default <T> @NotNull V getOrCompute(@NotNull K key, @NotNull T argument, @NotNull NotNullFunction<T, V> factory) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Get the value for the key. If the value doesn't exists, the factory will create new value,
+     * puts this value to this dictionary and return this value.
+     *
+     * @param <T>      the argument's type.
+     * @param key      the key.
+     * @param argument the additional argument.
+     * @param factory  the factory.
+     * @return the stored value by the key or the new value.
+     * @see #getOrCompute(Object, Object, NotNullBiFunction)
+     */
+    default <T> @NotNull V get(@NotNull K key, @NotNull T argument, @NotNull NotNullBiFunction<K, T, V> factory) {
         return getOrCompute(key, argument, factory);
     }
 
@@ -194,40 +230,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
     default <T> @NotNull V getOrCompute(
         @NotNull K key,
         @NotNull T argument,
-        @NotNull Function<@NotNull T, @NotNull V> factory
-    ) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Get the value for the key. If the value doesn't exists, the factory will create new value,
-     * puts this value to this dictionary and return this value.
-     *
-     * @param <T>      the argument's type.
-     * @param key      the key.
-     * @param argument the additional argument.
-     * @param factory  the factory.
-     * @return the stored value by the key or the new value.
-     * @see #getOrCompute(Object, Object, BiFunction)
-     */
-    default <T> @NotNull V get(@NotNull K key, @NotNull T argument, @NotNull BiFunction<K, T, V> factory) {
-        return getOrCompute(key, argument, factory);
-    }
-
-    /**
-     * Get the value for the key. If the value doesn't exists, the factory will create new value,
-     * puts this value to this dictionary and return this value.
-     *
-     * @param <T>      the argument's type.
-     * @param key      the key.
-     * @param argument the additional argument.
-     * @param factory  the factory.
-     * @return the stored value by the key or the new value.
-     */
-    default <T> @NotNull V getOrCompute(
-        @NotNull K key,
-        @NotNull T argument,
-        @NotNull BiFunction<@NotNull K, @NotNull T, @NotNull V> factory
+        @NotNull NotNullBiFunction<K, T, V> factory
     ) {
         throw new UnsupportedOperationException();
     }
@@ -299,7 +302,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      *
      * @param consumer the consumer.
      */
-    default void forEach(@NotNull BiConsumer<@NotNull ? super K, @NotNull ? super V> consumer) {
+    default void forEach(@NotNull NotNullBiConsumer<? super K, ? super V> consumer) {
         throw new UnsupportedOperationException();
     }
 
@@ -312,7 +315,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      */
     default <T> void forEach(
         @NotNull T argument,
-        @NotNull TripleConsumer<@NotNull ? super T, @NotNull ? super K, @NotNull ? super V> consumer
+        @NotNull NotNullTripleConsumer<? super T, ? super K, ? super V> consumer
     ) {
         throw new UnsupportedOperationException();
     }

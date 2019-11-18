@@ -86,10 +86,9 @@ public class ArrayCollectors {
             @NotNull Class<? super T> type,
             @NotNull Function<Class<? super T>, A> arrayFactory
     ) {
-        return new Collector<T, A, A>() {
+        return new Collector<>() {
 
-            @NotNull
-            private final Supplier<A> supplier = () -> arrayFactory.apply(type);
+            private final @NotNull Supplier<A> supplier = () -> arrayFactory.apply(type);
 
             @Override
             public Supplier<A> supplier() {
@@ -104,7 +103,7 @@ public class ArrayCollectors {
             @Override
             public BinaryOperator<A> combiner() {
                 return (source, toAdd) -> {
-                    ArrayUtils.runInWriteLock(source, toAdd, Array::addAll);
+                    source.runInWriteLock(toAdd, Array::addAll);
                     return source;
                 };
             }

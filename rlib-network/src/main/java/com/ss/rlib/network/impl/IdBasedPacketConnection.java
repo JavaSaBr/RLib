@@ -70,6 +70,8 @@ public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W exten
             bufferAllocator,
             this::updateLastActivity,
             this::nextPacketToWrite,
+            this::onWrittenPacket,
+            this::onSentPacket,
             packetLengthHeaderSize,
             packetIdHeaderSize
         );

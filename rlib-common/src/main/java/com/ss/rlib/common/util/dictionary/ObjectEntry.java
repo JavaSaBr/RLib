@@ -1,5 +1,7 @@
 package com.ss.rlib.common.util.dictionary;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,25 +19,22 @@ public class ObjectEntry<K, V> implements Entry<ObjectEntry<K, V>, V> {
     /**
      * The next entry.
      */
-    @Nullable
-    private ObjectEntry<K, V> next;
+    private @Setter @Getter @Nullable ObjectEntry<K, V> next;
 
     /**
      * The key of this entry.
      */
-    @NotNull
-    private K key;
+    private @Getter @Nullable K key;
 
     /**
      * The value of this entry.
      */
-    @NotNull
-    private V value;
+    private @Getter @Nullable V value;
 
     /**
      * The hash of the key.
      */
-    private int hash;
+    private @Getter int hash;
 
     @Override
     public boolean equals(@Nullable Object object) {
@@ -44,17 +43,16 @@ public class ObjectEntry<K, V> implements Entry<ObjectEntry<K, V>, V> {
             return false;
         }
 
-        ObjectEntry<?, ?> entry = (ObjectEntry<?, ?>) object;
-
-        Object firstKey = getKey();
-        Object secondKey = entry.getKey();
+        var entry = (ObjectEntry<?, ?>) object;
+        var firstKey = getKey();
+        var secondKey = entry.getKey();
 
         if (!Objects.equals(firstKey, secondKey)) {
             return false;
         }
 
-        Object firstValue = getValue();
-        Object secondValue = entry.getValue();
+        var firstValue = getValue();
+        var secondValue = entry.getValue();
 
         return Objects.equals(firstValue, secondValue);
     }
@@ -68,42 +66,8 @@ public class ObjectEntry<K, V> implements Entry<ObjectEntry<K, V>, V> {
     }
 
     @Override
-    public int getHash() {
-        return hash;
-    }
-
-    /**
-     * Get the key.
-     *
-     * @return the key.
-     */
-    public @NotNull K getKey() {
-        return key;
-    }
-
-    @Override
-    public @Nullable ObjectEntry<K, V> getNext() {
-        return next;
-    }
-
-    @Override
-    public void setNext(@Nullable ObjectEntry<K, V> next) {
-        this.next = next;
-    }
-
-    @Override
-    public @NotNull V getValue() {
-        return value;
-    }
-
-    @Override
     public final int hashCode() {
-        return key.hashCode() ^ value.hashCode();
-    }
-
-    @Override
-    public void reuse() {
-        hash = 0;
+        return Objects.hashCode(key) ^ Objects.hashCode(value);
     }
 
     /**
@@ -122,8 +86,9 @@ public class ObjectEntry<K, V> implements Entry<ObjectEntry<K, V>, V> {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public @NotNull V setValue(@NotNull V value) {
-        V old = getValue();
+        var old = getValue();
         this.value = value;
         return old;
     }

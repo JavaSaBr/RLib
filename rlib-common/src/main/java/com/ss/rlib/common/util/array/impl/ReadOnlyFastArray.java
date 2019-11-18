@@ -43,7 +43,7 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
     }
 
     @Override
-    public boolean slowRemove(@NotNull Object object) {
+    public @NotNull E remove(int index) {
         throw new IllegalStateException("This array is read only.");
     }
 
@@ -78,7 +78,7 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
     }
 
     @Override
-    public void set(int index, @NotNull E element) {
+    public void replace(int index, @NotNull E element) {
         throw new IllegalStateException("This array is read only.");
     }
 
@@ -118,7 +118,7 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
     }
 
     @Override
-    public boolean removeIf(Predicate<? super E> filter) {
+    public boolean removeIf(@NotNull Predicate<? super E> filter) {
         throw new IllegalStateException("This array is read only.");
     }
 }

@@ -24,20 +24,20 @@ public abstract class AbstractPacket implements Packet {
      * @param exception the exception.
      */
     protected void handleException(@NotNull ByteBuffer buffer, @NotNull Exception exception) {
-        LOGGER.warning(this, exception);
+        LOGGER.warning(exception);
 
         if (buffer.isDirect()) {
             var array = new byte[buffer.limit()];
             buffer.get(array, 0, buffer.limit());
-            LOGGER.warning("buffer: " + buffer + "\n" + hexDump(array, array.length));
+            LOGGER.warning(getName() + " -> buffer: " + buffer + "\n" + hexDump(array, array.length));
         } else {
-            LOGGER.warning("buffer: " + buffer + "\n" + hexDump(buffer.array(), buffer.limit()));
+            LOGGER.warning(getName() + " -> buffer: " + buffer + "\n" + hexDump(buffer.array(), buffer.limit()));
         }
     }
 
     @Override
     public @NotNull String getName() {
-        return getClass().getName();
+        return getClass().getSimpleName();
     }
 
     @Override

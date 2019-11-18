@@ -10,13 +10,13 @@ import java.nio.ByteBuffer;
 /**
  * @author JavaSaBr
  */
-@Getter(onMethod_ = @Nullable)
+@Getter
 public class StringReadablePacket extends AbstractReadablePacket<StringDataConnection> {
 
     /**
      * Read data.
      */
-    private volatile String data;
+    private volatile @Nullable String data;
 
     @Override
     protected void readImpl(@NotNull StringDataConnection connection, @NotNull ByteBuffer buffer) {

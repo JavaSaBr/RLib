@@ -10,18 +10,14 @@ import com.ss.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
  * The concurrent implementation of the array using {@link LockFactory#newReentrantARSWLock()} for {@link
  * ConcurrentArray#readLock()}* and {@link ConcurrentArray#writeLock()}.
  *
- * @param <E> the type parameter
+ * @param <E> the array's element type.
  * @author JavaSaBr
  */
 public class ConcurrentAtomicARSWLockArray<E> extends AbstractConcurrentArray<E> {
 
     private static final long serialVersionUID = -6291504312637658721L;
 
-    /**
-     * The locker.
-     */
-    @NotNull
-    private final AsyncReadSyncWriteLock lock;
+    private final @NotNull AsyncReadSyncWriteLock lock;
 
     public ConcurrentAtomicARSWLockArray(@NotNull Class<? super E> type) {
         this(type, 10);

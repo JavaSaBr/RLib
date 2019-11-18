@@ -18,20 +18,17 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
     /**
      * The dictionary.
      */
-    @NotNull
-    private final UnsafeObjectDictionary<K, V> dictionary;
+    private final @NotNull UnsafeObjectDictionary<K, V> dictionary;
 
     /**
      * The next entry.
      */
-    @Nullable
-    private ObjectEntry<K, V> next;
+    private @Nullable ObjectEntry<K, V> next;
 
     /**
      * The current entry.
      */
-    @Nullable
-    private ObjectEntry<K, V> current;
+    private @Nullable ObjectEntry<K, V> current;
 
     /**
      * The current index.
@@ -42,7 +39,7 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
         this.dictionary = dictionary;
 
         if (dictionary.size() > 0) {
-            ObjectEntry<K, V>[] entries = dictionary.entries();
+            var entries = dictionary.entries();
             while (index < entries.length && (next = entries[index++]) == null);
         }
     }
@@ -53,7 +50,8 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
     }
 
     @Override
-    public V next() {
+    public @NotNull V next() {
+        //noinspection ConstantConditions
         return nextEntry().getValue();
     }
 
@@ -64,8 +62,8 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
      */
     private @NotNull ObjectEntry<K, V> nextEntry() {
 
-        ObjectEntry<K, V>[] entries = dictionary.entries();
-        ObjectEntry<K, V> entry = next;
+        var entries = dictionary.entries();
+        var entry = next;
 
         if (entry == null) {
             throw new NoSuchElementException();
@@ -91,6 +89,7 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
 
         current = null;
 
+        //noinspection ConstantConditions
         dictionary.removeEntryForKey(key);
     }
 }

@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util.dictionary;
 
+import com.ss.rlib.common.util.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,20 +12,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
 
-    /**
-     * The array of entries.
-     */
-    @NotNull
-    private ObjectEntry<K, V>[] entries;
+    private @NotNull ObjectEntry<K, V>[] entries;
 
-    /**
-     * The next size value at which to resize (capacity * load factor).
-     */
     private int threshold;
-
-    /**
-     * The count of values in this {@link Dictionary}.
-     */
     private int size;
 
     protected FastObjectDictionary() {
@@ -41,6 +31,7 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
 
     protected FastObjectDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
+        this.entries = ArrayUtils.create(getEntryType(), initCapacity);
     }
 
     @Override
@@ -54,7 +45,7 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
     }
 
     @Override
-    public @NotNull ObjectEntry<K, V>[] entries() {
+    public ObjectEntry<K, V> @NotNull [] entries() {
         return entries;
     }
 

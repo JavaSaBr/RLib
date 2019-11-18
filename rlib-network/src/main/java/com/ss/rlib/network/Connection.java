@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 /**
@@ -22,9 +23,9 @@ public interface Connection<R extends ReadablePacket, W extends WritablePacket> 
     }
 
     /**
-     * Get a remote address or 'unkonwn'.
+     * Get a remote address of this connection.
      *
-     * @return the remote address or 'unkonwn'.
+     * @return the remote address.
      */
     @NotNull String getRemoteAddress();
 
@@ -53,6 +54,15 @@ public interface Connection<R extends ReadablePacket, W extends WritablePacket> 
      * @param packet the writable packet.
      */
     void send(@NotNull W packet);
+
+    /**
+     * Send a packet to connection's owner with async feedback of this sending.
+     *
+     * @param packet the writable packet.
+     * @return the async result with true if the packet was sent or false if sending was failed.
+     * @since 9.5.0
+     */
+    @NotNull CompletableFuture<Boolean> sendWithFeedback(@NotNull W packet);
 
     /**
      * Register a consumer to handle received packets.

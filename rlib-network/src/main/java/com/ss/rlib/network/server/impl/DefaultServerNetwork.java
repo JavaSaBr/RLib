@@ -1,7 +1,6 @@
 package com.ss.rlib.network.server.impl;
 
 import static com.ss.rlib.common.util.Utils.uncheckedGet;
-import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.concurrent.GroupThreadFactory;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.Utils;
@@ -39,23 +38,30 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
 
     private static final Logger LOGGER = LoggerManager.getLogger(DefaultServerNetwork.class);
 
-    private final CompletionHandler<AsynchronousSocketChannel, DefaultServerNetwork<C>> acceptHandler = new CompletionHandler<>() {
+    private interface ServerCompletionHandler<C extends Connection<?, ?>> extends
+        CompletionHandler<AsynchronousSocketChannel, DefaultServerNetwork<C>> {}
+
+    private final ServerCompletionHandler<C> acceptHandler = new ServerCompletionHandler<>() {
 
         @Override
         public void completed(@NotNull AsynchronousSocketChannel channel, @NotNull DefaultServerNetwork<C> network) {
-            LOGGER.debug(channel, ch -> "Accepted new connection: " + getSocketAddress(ch));
-            network.onAccept(network.channelToConnection.apply(DefaultServerNetwork.this, channel));
+            var connection = network.channelToConnection.apply(DefaultServerNetwork.this, channel);
+            LOGGER.debug(connection, conn -> "Accepted new connection: " + conn.getRemoteAddress());
+            network.onAccept(connection);
             network.acceptNext();
         }
 
         @Override
         public void failed(@NotNull Throwable exc, @NotNull DefaultServerNetwork<C> network) {
+            if (exc instanceof AsynchronousCloseException) {
+                LOGGER.warning("Server network was closed.");
+            } else {
+                LOGGER.error("Got exception during accepting new connection:");
+                LOGGER.error(exc);
 
-            LOGGER.error("Got exception during accepting new connection:");
-            LOGGER.error(exc);
-
-            if (channel.isOpen()) {
-                network.acceptNext();
+                if (channel.isOpen()) {
+                    network.acceptNext();
+                }
             }
         }
     };
@@ -128,7 +134,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     public <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress) {
         Utils.unchecked(channel, serverAddress, AsynchronousServerSocketChannel::bind);
 
-        LOGGER.info(serverAddress, adr -> "Started server on address: " + adr);
+        LOGGER.info(serverAddress, addr -> "Started server on address: " + addr);
 
         if (!subscribers.isEmpty()) {
             acceptNext();
@@ -149,7 +155,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     }
 
     protected void onAccept(@NotNull C connection) {
-        subscribers.forEach(connection, Consumer::accept);
+        subscribers.forEachR(connection, Consumer::accept);
     }
 
     @Override

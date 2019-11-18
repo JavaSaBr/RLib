@@ -10,7 +10,6 @@ import java.util.Arrays;
  * Geometry 3D polygon.
  * 
  * @author zcxv
- * @date 27.09.2018
  */
 public class Polygon {
 

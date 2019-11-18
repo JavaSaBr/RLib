@@ -1,5 +1,6 @@
 package com.ss.rlib.common.util.dictionary;
 
+import com.ss.rlib.common.function.NotNullFunction;
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.pools.PoolFactory;
@@ -82,13 +83,11 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
     protected AbstractDictionary(float loadFactor, int initCapacity) {
         this.loadFactor = loadFactor;
         this.entryPool = PoolFactory.newReusablePool(getEntryType());
-        setEntries(ArrayUtils.create(getEntryType(), initCapacity));
         setThreshold((int) (initCapacity * loadFactor));
-        setSize(0);
     }
 
     @Override
-    public final void apply(@NotNull Function<? super V, V> function) {
+    public final void apply(@NotNull NotNullFunction<? super V, V> function) {
         for (var entry : entries()) {
             while (entry != null) {
                 entry.setValue(function.apply(entry.getValue()));
@@ -227,7 +226,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
      *
      * @return the array of entries.
      */
-    protected abstract @NotNull E[] entries();
+    protected abstract E @NotNull [] entries();
 
     /**
      * Set the next size value at which to resize (capacity * load factor).

@@ -1,5 +1,7 @@
 package com.ss.rlib.common.util.dictionary;
 
+import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
+import com.ss.rlib.common.util.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,24 +10,14 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
-public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDictionary<V>
-        implements ConcurrentLongDictionary<V> {
+public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDictionary<V> implements
+    ConcurrentLongDictionary<V> {
 
-    /**
-     * Тhe array of entries.
-     */
-    @NotNull
-    private volatile LongEntry<V>[] entries;
+    private final @NotNull AtomicInteger size;
 
-    /**
-     * The next size value at which to resize (capacity * load factor).
-     */
+    private volatile @NotNull LongEntry<V>[] entries;
+
     private volatile int threshold;
-
-    /**
-     * The count of values in this {@link Dictionary}.
-     */
-    private volatile int size;
 
     protected AbstractConcurrentLongDictionary() {
         this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
@@ -41,6 +33,8 @@ public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDi
 
     protected AbstractConcurrentLongDictionary(float loadFactor, int initCapacity) {
         super(loadFactor, initCapacity);
+        this.entries = ArrayUtils.create(getEntryType(), initCapacity);
+        this.size = new AtomicInteger(0);
     }
 
     @Override
@@ -49,7 +43,7 @@ public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDi
     }
 
     @Override
-    public @NotNull LongEntry<V>[] entries() {
+    public LongEntry<V> @NotNull [] entries() {
         return entries;
     }
 
@@ -60,7 +54,7 @@ public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDi
 
     @Override
     protected void setSize(int size) {
-        this.size = size;
+        this.size.set(size);
     }
 
     @Override
@@ -70,18 +64,16 @@ public abstract class AbstractConcurrentLongDictionary<V> extends AbstractLongDi
 
     @Override
     protected int decrementSizeAndGet() {
-        size -= 1;
-        return size;
+        return size.decrementAndGet();
     }
 
     @Override
     protected int incrementSizeAndGet() {
-        size += 1;
-        return size;
+        return size.incrementAndGet();
     }
 
     @Override
     public final int size() {
-        return size;
+        return size.get();
     }
 }

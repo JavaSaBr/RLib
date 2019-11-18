@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author JavaSaBr
  */
-public class ArrayUtilsTests {
+public class ArrayUtilsTest {
 
     @Test
     void convertIntegerArrayToIntArrayTest() {
@@ -79,6 +79,45 @@ public class ArrayUtilsTests {
         Assertions.assertArrayEquals(
             ArrayUtils.EMPTY_INT_ARRAY,
             ArrayUtils.longsToInts(ArrayUtils.EMPTY_LONG_ARRAY)
+        );
+    }
+
+    @Test
+    void mapTest() {
+
+        String[] emptyStrings = new String[0];
+        String[] singleStrings = ArrayFactory.toArray("5");
+        String[] strings = ArrayFactory.toArray("8", "1", "6");
+
+        Assertions.assertArrayEquals(
+            new Integer[0], ArrayUtils.map(emptyStrings, Integer::parseInt, Integer.class)
+        );
+        Assertions.assertArrayEquals(
+            ArrayFactory.toArray(5), ArrayUtils.map(singleStrings, Integer::parseInt, Integer.class)
+        );
+        Assertions.assertArrayEquals(
+            ArrayFactory.toArray(8, 1, 6), ArrayUtils.map(strings, Integer::parseInt, Integer.class)
+        );
+    }
+
+    @Test
+    void mapWithDefTest() {
+
+        String[] nullStrings = null;
+        String[] emptyStrings = new String[0];
+        String[] singleStrings = ArrayFactory.toArray("5");
+        String[] strings = ArrayFactory.toArray("8", "1", "6");
+
+        Assertions.assertArrayEquals(new Integer[0], ArrayUtils.map(nullStrings, Integer::parseInt, new Integer[0]));
+
+        Assertions.assertArrayEquals(
+            new Integer[0], ArrayUtils.map(emptyStrings, Integer::parseInt, new Integer[0])
+        );
+        Assertions.assertArrayEquals(
+            ArrayFactory.toArray(5), ArrayUtils.map(singleStrings, Integer::parseInt, new Integer[0])
+        );
+        Assertions.assertArrayEquals(
+            ArrayFactory.toArray(8, 1, 6), ArrayUtils.map(strings, Integer::parseInt, new Integer[0])
         );
     }
 }

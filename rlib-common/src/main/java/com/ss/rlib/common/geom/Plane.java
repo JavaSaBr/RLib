@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
  * Follow to the formula: <pre>Ax + By + Cz + D = 0</pre>
  *
  * @author zcxv
- * @date 25.09.2018
  */
 public class Plane {
 

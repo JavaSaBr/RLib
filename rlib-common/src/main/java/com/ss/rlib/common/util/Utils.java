@@ -121,6 +121,23 @@ public final class Utils {
     }
 
     /**
+     * Try to execute a function with some result.
+     *
+     * @param <R>      the result's type.
+     * @param function the function.
+     * @return the result or null.
+     * @since 9.5.0
+     */
+    public static <R> @Nullable R tryGet(@NotNull SafeSupplier<@NotNull R> function) {
+        try {
+            return function.get();
+        } catch (Exception e) {
+            // can be ignored
+            return null;
+        }
+    }
+
+    /**
      * Execute the function with auto-converting a checked exception to an unchecked.
      *
      * @param <F>      the argument's type.

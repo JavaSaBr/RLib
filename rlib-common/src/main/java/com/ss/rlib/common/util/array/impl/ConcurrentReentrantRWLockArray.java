@@ -12,24 +12,15 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * The concurrent implementation of the array using {@link ReentrantReadWriteLock} for {@link
  * ConcurrentArray#readLock()}* and {@link ConcurrentArray#writeLock()}.
  *
- * @param <E> the type parameter
+ * @param <E> the array's element type.
  * @author JavaSaBr
  */
 public class ConcurrentReentrantRWLockArray<E> extends AbstractConcurrentArray<E> {
 
     private static final long serialVersionUID = -7985171224116955303L;
 
-    /**
-     * The read lock.
-     */
-    @NotNull
-    private final Lock readLock;
-
-    /**
-     * The write lock.
-     */
-    @NotNull
-    private final Lock writeLock;
+    private final @NotNull Lock readLock;
+    private final @NotNull Lock writeLock;
 
     public ConcurrentReentrantRWLockArray(@NotNull Class<? super E> type) {
         this(type, 10);
@@ -37,7 +28,7 @@ public class ConcurrentReentrantRWLockArray<E> extends AbstractConcurrentArray<E
 
     public ConcurrentReentrantRWLockArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
-        ReadWriteLock readWriteLock = LockFactory.newReentrantRWLock();
+        var readWriteLock = LockFactory.newReentrantRWLock();
         this.readLock = readWriteLock.readLock();
         this.writeLock = readWriteLock.writeLock();
     }

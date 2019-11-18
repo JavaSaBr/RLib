@@ -18,17 +18,15 @@ import java.util.function.BiFunction;
  * The implementation of the array which create a new back-end array for each modification.
  * Thread-safe.
  *
- * @param <E> the element's type.
+ * @param <E> the array's element type.
  * @author JavaSaBr
  */
 public class CopyOnModifyArray<E> extends AbstractArray<E> {
 
     private static final long serialVersionUID = -8477384427415127978L;
 
-    /**
-     * The unsafe array.
-     */
-    protected volatile AtomicReference<E[]> array;
+    @SuppressWarnings("NullableProblems")
+    protected volatile @NotNull AtomicReference<E[]> array;
 
     public CopyOnModifyArray(@NotNull Class<? super E> type, int size) {
         super(type, size);
@@ -115,12 +113,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public boolean slowRemove(@NotNull Object object) {
-        return remove(object);
-    }
-
-    @Override
-    public final @NotNull E slowRemove(int index) {
+    public @NotNull E remove(int index) {
         throw new UnsupportedOperationException();
     }
 
@@ -238,13 +231,14 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     }
 
     @Override
-    public void set(int index, @NotNull E element) {
+    public void replace(int index, @NotNull E element) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected final void setArray(@NotNull E[] array) {
+    protected final void setArray(E @NotNull [] array) {
 
+        //noinspection ConstantConditions
         if (this.array == null) {
             this.array = new AtomicReference<>();
         }
@@ -281,12 +275,5 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
         var clone = (CopyOnModifyArray<E>) super.clone();
         clone.array = new AtomicReference<>(ArrayUtils.copyOf(array()));
         return clone;
-    }
-
-    @Override
-    public <T> void forEach(@Nullable T argument, @NotNull BiConsumer<E, T> function) {
-        for (E element : array()) {
-            function.accept(element, argument);
-        }
     }
 }

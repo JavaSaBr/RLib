@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 /**
- * The base implementation of the {@link Array}.
+ * The base implementation of dynamic arrays.
  *
- * @param <E> the type parameter
+ * @param <E> the array's element type.
  * @author JavaSaBr
  */
 public abstract class AbstractArray<E> implements Array<E> {
@@ -56,27 +56,16 @@ public abstract class AbstractArray<E> implements Array<E> {
     }
 
     @Override
-    public final void free() {
+    public void free() {
         clear();
     }
 
     @Override
-    public AbstractArray<E> clone() throws CloneNotSupportedException {
-        return ClassUtils.unsafeCast(super.clone());
+    public @NotNull AbstractArray<E> clone() throws CloneNotSupportedException {
+        return ClassUtils.unsafeNNCast(super.clone());
     }
 
-    /**
-     * Sets array.
-     *
-     * @param array the new array.
-     */
-    protected abstract void setArray(@NotNull E[] array);
-
-    /**
-     * Sets size.
-     *
-     * @param size the new size of the array.
-     */
+    protected abstract void setArray(E @NotNull [] array);
     protected abstract void setSize(int size);
 
     @Override

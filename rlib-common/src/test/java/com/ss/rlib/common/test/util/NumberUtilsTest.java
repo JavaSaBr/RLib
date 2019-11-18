@@ -136,14 +136,6 @@ class NumberUtilsTest {
     }
 
     @Test
-    void shouldByteToUnsignedByteCorrectly() {
-        assertEquals(255, NumberUtils.toUnsignedByte((byte) -1));
-        assertEquals(106, NumberUtils.toUnsignedByte((byte) -150));
-        assertEquals(1, NumberUtils.toUnsignedByte((byte) 1));
-        assertEquals(150, NumberUtils.toUnsignedByte((byte) 150));
-    }
-
-    @Test
     void shouldChangeBitsInByteCorrectly() {
 
         assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 0), 0));
@@ -163,5 +155,63 @@ class NumberUtilsTest {
         assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 5), 5));
         assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 6), 6));
         assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 7), 7));
+    }
+
+    @Test
+    void shouldValidateIntegerCorrectly() {
+
+        // int
+        assertEquals(10, NumberUtils.validate(10, 1, 20));
+        assertEquals(-20, NumberUtils.validate(-20, -21, 10));
+        assertEquals(-1000, NumberUtils.validate(-1000, -1050, -1000));
+
+        assertEquals(10, NumberUtils.validate(10, 1, 20, IllegalArgumentException::new));
+        assertEquals(-20, NumberUtils.validate(-20, -21, 10, IllegalArgumentException::new));
+        assertEquals(-1000, NumberUtils.validate(-1000, -1050, -1000, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(10, 20, 50, IllegalArgumentException::new));
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(-50, -70, -51, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(10, 20, 50));
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(-50, -70, -51));
+
+        // long
+        assertEquals(10, NumberUtils.validate(10L, 1, 20));
+        assertEquals(-20, NumberUtils.validate(-20L, -21, 10));
+        assertEquals(-1000, NumberUtils.validate(-1000L, -1050, -1000));
+
+        assertEquals(10, NumberUtils.validate(10L, 1, 20, IllegalArgumentException::new));
+        assertEquals(-20, NumberUtils.validate(-20L, -21, 10, IllegalArgumentException::new));
+        assertEquals(-1000, NumberUtils.validate(-1000L, -1050, -1000, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(10L, 20, 50, IllegalArgumentException::new));
+        assertThrows(IllegalArgumentException.class, () ->
+            NumberUtils.validate(-50L, -70, -51, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () -> NumberUtils.validate(10L, 20, 50));
+        assertThrows(IllegalArgumentException.class, () -> NumberUtils.validate(-50L, -70, -51));
+    }
+
+    @Test
+    void shouldValidateBooleanCorrectly() {
+
+        assertTrue(NumberUtils.toBoolean(1));
+        assertFalse(NumberUtils.toBoolean(0));
+        assertTrue(NumberUtils.toBoolean(1L));
+        assertFalse(NumberUtils.toBoolean(0L));
+        assertTrue(NumberUtils.toBoolean(1, IllegalArgumentException::new));
+        assertFalse(NumberUtils.toBoolean(0, IllegalArgumentException::new));
+        assertTrue(NumberUtils.toBoolean(1L, IllegalArgumentException::new));
+        assertFalse(NumberUtils.toBoolean(0L, IllegalArgumentException::new));
+
+        assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(2));
+        assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(-1));
+        assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(2L));
+        assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(-1L));
     }
 }
