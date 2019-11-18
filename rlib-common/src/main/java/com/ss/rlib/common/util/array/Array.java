@@ -187,10 +187,10 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Returns <tt>true</tt> if this array contains all of the elements in the specified array.
+     * Returns true if this array contains all of the elements in the specified array.
      *
      * @param array the array to be checked for containment in this array
-     * @return <tt>true</tt> if this array contains all of the elements in the specified array.
+     * @return true if this array contains all of the elements in the specified array.
      */
     default boolean containsAll(@NotNull Array<?> array) {
 
@@ -228,10 +228,10 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Returns <tt>true</tt> if this array contains all of the elements in the specified array.
+     * Returns true if this array contains all of the elements in the specified array.
      *
      * @param array the array to be checked for containment in this array
-     * @return <tt>true</tt> if this array contains all of the elements in the specified array.
+     * @return true if this array contains all of the elements in the specified array.
      */
     default boolean containsAll(@NotNull Object[] array) {
 
@@ -423,7 +423,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * this call returns, this array will contain no elements in common with the specified array.
      *
      * @param target array containing elements to be removed from this array.
-     * @return <tt>true</tt> if this array changed as a result of the call.
+     * @return true if this array changed as a result of the call.
      */
     default boolean removeAll(@NotNull Array<?> target) {
 
@@ -469,7 +469,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * words, removes from this array all of its elements that are not contained in the specified array.
      *
      * @param target array containing elements to be retained in this array.
-     * @return <tt>true</tt> if this array changed as a result of the call.
+     * @return true if this array changed as a result of the call.
      */
     default boolean retainAll(@NotNull Array<?> target) {
 

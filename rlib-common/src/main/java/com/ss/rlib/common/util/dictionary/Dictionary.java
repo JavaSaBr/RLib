@@ -49,9 +49,9 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
     }
 
     /**
-     * Returns <tt>true</tt> if this dictionary contains no key-value mappings.
+     * Returns true if this dictionary contains no key-value mappings.
      *
-     * @return <tt>true</tt> if this dictionary contains no key-value mappings
+     * @return true if this dictionary contains no key-value mappings
      */
     default boolean isEmpty() {
         return size() == 0;

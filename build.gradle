@@ -68,16 +68,16 @@ allprojects {
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         afterEvaluate {
-            archiveClassifier = 'sources'
-            archiveBaseName = jar.getArchiveBaseName()
+            getArchiveClassifier().set("sources")
+            getArchiveBaseName().set(jar.getArchiveBaseName())
             from sourceSets.main.allSource
         }
     }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         afterEvaluate {
-            archiveClassifier = 'javadoc'
-            archiveBaseName = jar.getArchiveBaseName()
+            getArchiveClassifier().set("javadoc")
+            getArchiveBaseName().set(jar.getArchiveBaseName())
             from sourceSets.main.allSource
         }
     }
@@ -125,7 +125,7 @@ allprojects {
     }
 
     task testJar(type: Jar) {
-        archiveClassifier  = "test"
+        getArchiveClassifier().set("test")
         from sourceSets.test.output
     }
 
@@ -139,6 +139,6 @@ allprojects {
 }
 
 wrapper {
-    gradleVersion = '5.5.1'
+    gradleVersion = '6.0'
     distributionType = Wrapper.DistributionType.ALL
 }
