@@ -53,6 +53,16 @@ public class ConcurrentArrayTest extends BaseTest {
         ));
 
         Assertions.assertEquals(2, array.size());
+
+        array = ConcurrentArray.of("10", "5", "2", "1");
+
+        Assertions.assertTrue(array.removeConvertedIfInWriteLock(
+            5,
+            Integer::parseInt,
+            Integer::equals
+        ));
+
+        Assertions.assertEquals(3, array.size());
     }
 
     @Test

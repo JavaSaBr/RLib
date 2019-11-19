@@ -513,4 +513,27 @@ public interface ConcurrentArray<E> extends Array<E> {
             writeUnlock(stamp);
         }
     }
+
+    /**
+     * Removes all of the elements of this collection that satisfy the given predicate.
+     *
+     * @param argument  the additional argument.
+     * @param converter the converter of the elements.
+     * @param filter    the predicate which returns {@code true} for elements to be removed.
+     * @param <A>       the argument's type.
+     * @param <B>       the element converted type.
+     * @return {@code true} if any elements were removed.
+     */
+    default <A, B> boolean removeConvertedIfInWriteLock(
+        @NotNull A argument,
+        @NotNull NotNullFunction<? super E, B> converter,
+        @NotNull NotNullBiPredicate<A, B> filter
+    ) {
+        var stamp = writeLock();
+        try {
+            return removeConvertedIf(argument, converter, filter);
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
 }

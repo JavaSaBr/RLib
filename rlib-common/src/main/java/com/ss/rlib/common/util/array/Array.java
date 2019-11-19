@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -56,7 +55,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the new read only array.
      */
     static <T> @NotNull ReadOnlyArray<T> of(@NotNull Array<T> another) {
-        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(another.array(), 0, another.size()));
+        return ArrayFactory.newReadOnlyArray(Arrays.copyOf(another.array(), another.size()));
     }
 
     /**
@@ -713,6 +712,40 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             var element = array[i];
 
             if (filter.test(converter.apply(argument), element)) {
+                remove(i);
+                i--;
+                length--;
+                removed++;
+            }
+        }
+
+        return removed > 0;
+    }
+
+    /**
+     * Removes all of the elements of this collection that satisfy the given predicate.
+     *
+     * @param argument  the additional argument.
+     * @param converter the converter of the elements.
+     * @param filter    the predicate which returns {@code true} for elements to be removed.
+     * @param <A>       the argument's type.
+     * @param <B>       the element converted type.
+     * @return {@code true} if any elements were removed.
+     */
+    default <A, B> boolean removeConvertedIf(
+        @NotNull A argument,
+        @NotNull NotNullFunction<? super E, B> converter,
+        @NotNull NotNullBiPredicate<A, B> filter
+    ) {
+
+        var array = array();
+        var removed = 0;
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, converter.apply(element))) {
                 remove(i);
                 i--;
                 length--;

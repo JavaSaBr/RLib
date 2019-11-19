@@ -19,6 +19,24 @@ import java.util.stream.IntStream;
 public class ArrayTest extends BaseTest {
 
     @Test
+    void ofTest() {
+
+        var array = ArrayFactory.asArray("First", "Second", "Third", "  ");
+        var copy = Array.of(array);
+
+        Assertions.assertEquals(array, copy);
+
+        var array2 = Array.of("First", "Second", "Third", "  ");
+
+        Assertions.assertEquals(array, array2);
+
+        var single = ArrayFactory.asArray("First");
+        var single2 = Array.of("First");
+
+        Assertions.assertEquals(single, single2);
+    }
+
+    @Test
     void removeIfTest() {
 
         var array = ArrayFactory.asArray("First", "Second", "Third", "  ");
@@ -59,6 +77,16 @@ public class ArrayTest extends BaseTest {
         ));
 
         Assertions.assertEquals(2, array.size());
+
+        array = ArrayFactory.asArray("10", "5", "2", "1");
+
+        Assertions.assertTrue(array.removeConvertedIf(
+            5,
+            Integer::parseInt,
+            Integer::equals
+        ));
+
+        Assertions.assertEquals(3, array.size());
     }
 
     @Test
