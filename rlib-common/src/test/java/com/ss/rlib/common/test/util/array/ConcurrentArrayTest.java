@@ -102,6 +102,12 @@ public class ConcurrentArrayTest extends BaseTest {
 
         Assertions.assertNotNull(array.findAnyInReadLock("Second".hashCode(), (val, string) -> val == string.hashCode()));
         Assertions.assertNull(array.findAnyInReadLock("None".hashCode(), (val, string) -> val == string.hashCode()));
+
+        Assertions.assertNotNull(array.findAnyConvertedToInt(
+            "First".hashCode(),
+            String::hashCode,
+            (first, second) -> first == second
+        ));
     }
 
     @Test

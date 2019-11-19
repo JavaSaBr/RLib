@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * The interface with methods to manage thread-safe access with arrays.
@@ -417,6 +416,31 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
+     * Search an element using the condition under {@link #readLock()} block.
+     *
+     * @param argument the argument.
+     * @param filter   the condition.
+     * @return the found element or null.
+     * @since 9.6.0
+     */
+    default @Nullable E findAnyConvertedToIntInReadLock(
+        int argument,
+        @NotNull NotNullFunctionInt<? super E> converter,
+        @NotNull BiIntPredicate filter
+    ) {
+        if (isEmpty()) {
+            return null;
+        }
+
+        var stamp = readLock();
+        try {
+            return findAnyConvertedToInt(argument, converter, filter);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
      * Search an element by condition under {@link #readLock()} block.
      *
      * @param <T>      the argument's type.
@@ -523,6 +547,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <A>       the argument's type.
      * @param <B>       the element converted type.
      * @return {@code true} if any elements were removed.
+     * @since 9.6.0
      */
     default <A, B> boolean removeConvertedIfInWriteLock(
         @NotNull A argument,

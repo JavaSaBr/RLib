@@ -224,6 +224,12 @@ public class ArrayTest extends BaseTest {
         }));
 
         Assertions.assertNotNull(array.findAnyL("First".hashCode(), (num, element) -> num == element.hashCode()));
+
+        Assertions.assertNotNull(array.findAnyConvertedToInt(
+            "First".hashCode(),
+            String::hashCode,
+            (first, second) -> first == second
+        ));
     }
 
     @Test

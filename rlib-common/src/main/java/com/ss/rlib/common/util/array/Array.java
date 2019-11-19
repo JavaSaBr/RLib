@@ -731,6 +731,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param <A>       the argument's type.
      * @param <B>       the element converted type.
      * @return {@code true} if any elements were removed.
+     * @since 9.6.0
      */
     default <A, B> boolean removeConvertedIf(
         @NotNull A argument,
@@ -955,6 +956,38 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             var element = array[i];
 
             if (filter.test(first, second, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search an element using the condition.
+     *
+     * @param argument  the argument.
+     * @param filter the condition.
+     * @return the found element or null.
+     * @since 9.6.0
+     */
+    default @Nullable E findAnyConvertedToInt(
+        int argument,
+        @NotNull NotNullFunctionInt<? super E> converter,
+        @NotNull BiIntPredicate filter
+    ) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, converter.apply(element))) {
                 return element;
             }
         }
