@@ -424,6 +424,32 @@ public class ArrayTest extends BaseTest {
         Assertions.assertEquals(array.size(), counter.getAndSet(0));
     }
 
+    @Test
+    void fastRemoveAllTest() {
+
+        var array = ArrayFactory.asArray("First", "Second", "Third", "  ", "55", "66", "22", "22", "11");
+        var toRemove = ArrayFactory.asArray("First", "Third", "66", "22");
+        var result = ArrayFactory.asArray("Second", "  ", "55", "11");
+        result.sort(String::compareTo);
+
+        array.fastRemoveAll(toRemove);
+        array.sort(String::compareTo);
+
+        Assertions.assertEquals(result, array);
+    }
+
+    @Test
+    void copyToTest() {
+
+        var toCopy = ArrayFactory.asArray("123", "321", "555");
+        var toCombine = ArrayFactory.asArray("First", "Second");
+        var result = ArrayFactory.asArray("First", "Second", "123", "321", "555");
+
+        toCopy.copyTo(toCombine);
+
+        Assertions.assertEquals(result, toCombine);
+    }
+
     //FIXME OLD TESTS
 
     @Test

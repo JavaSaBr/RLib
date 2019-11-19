@@ -125,6 +125,15 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Copy all elements from this array to a target array.
+     *
+     * @param target the target array.
+     */
+    default void copyTo(@NotNull Array<? super E> target) {
+        target.addAll(this);
+    }
+
+    /**
      * Adds all elements from the array to this array.
      *
      * @param array the array with new elements.
@@ -418,8 +427,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Removes all of this target's elements that are also contained in the specified array (optional operation).  After
-     * this call returns, this array will contain no elements in common with the specified array.
+     * Removes all of this target's elements that are also contained in the specified array (optional operation).
      *
      * @param target array containing elements to be removed from this array.
      * @return true if this array changed as a result of the call.
@@ -432,7 +440,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
 
         int count = 0;
 
-        for (Object element : target.array()) {
+        for (var element : target.array()) {
             if (element == null) {
                 break;
             } else if (slowRemove(element)) {
@@ -440,7 +448,40 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             }
         }
 
-        return count == target.size();
+        return count > 0;
+    }
+
+    /**
+     * Removes all of this target's elements that are also contained in the specified array (optional operation)
+     * with reordering.
+     *
+     * @param target array containing elements to be removed from this array.
+     * @return true if this array changed as a result of the call.
+     */
+    default boolean fastRemoveAll(@NotNull Array<?> target) {
+
+        if (target.isEmpty()) {
+            return false;
+        }
+
+        var count = 0;
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (!target.contains(element)) {
+                continue;
+            }
+
+            fastRemove(i);
+            i--;
+            length--;
+            count++;
+        }
+
+        return count > 0;
     }
 
     @Override
