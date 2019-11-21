@@ -53,6 +53,16 @@ public class ConcurrentArrayTest extends BaseTest {
         ));
 
         Assertions.assertEquals(2, array.size());
+
+        array = ConcurrentArray.of("10", "5", "2", "1");
+
+        Assertions.assertTrue(array.removeConvertedIfInWriteLock(
+            5,
+            Integer::parseInt,
+            Integer::equals
+        ));
+
+        Assertions.assertEquals(3, array.size());
     }
 
     @Test
@@ -92,6 +102,12 @@ public class ConcurrentArrayTest extends BaseTest {
 
         Assertions.assertNotNull(array.findAnyInReadLock("Second".hashCode(), (val, string) -> val == string.hashCode()));
         Assertions.assertNull(array.findAnyInReadLock("None".hashCode(), (val, string) -> val == string.hashCode()));
+
+        Assertions.assertNotNull(array.findAnyConvertedToInt(
+            "First".hashCode(),
+            String::hashCode,
+            (first, second) -> first == second
+        ));
     }
 
     @Test
