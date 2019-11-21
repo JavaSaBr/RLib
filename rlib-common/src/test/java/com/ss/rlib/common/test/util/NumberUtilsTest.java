@@ -214,4 +214,22 @@ class NumberUtilsTest {
         assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(2L));
         assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(-1L));
     }
+
+    @Test
+    void shouldEqualsNumbersCorrectly() {
+
+        assertTrue(NumberUtils.equals((byte) 10, (byte) 10));
+        assertTrue(NumberUtils.equals((short) 10, (short) 10));
+        assertTrue(NumberUtils.equals(10, 10));
+        assertTrue(NumberUtils.equals(10L, 10L));
+        assertTrue(NumberUtils.equals(10F, 10F));
+        assertTrue(NumberUtils.equals(10D, 10D));
+
+        assertFalse(NumberUtils.equals((byte) -10, (byte) 10));
+        assertFalse(NumberUtils.equals((short) -10, (short) 10));
+        assertFalse(NumberUtils.equals(-10, 10));
+        assertFalse(NumberUtils.equals(-10L, 10L));
+        assertFalse(NumberUtils.equals(-10F, 10F));
+        assertFalse(NumberUtils.equals(-10D, 10D));
+    }
 }

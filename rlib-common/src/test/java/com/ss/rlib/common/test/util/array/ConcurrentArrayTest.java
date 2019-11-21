@@ -2,10 +2,13 @@ package com.ss.rlib.common.test.util.array;
 
 import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
 import com.ss.rlib.common.test.BaseTest;
+import com.ss.rlib.common.util.NumberUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ConcurrentArray;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.Objects;
 
 /**
  * @author JavaSaBr
@@ -56,7 +59,7 @@ public class ConcurrentArrayTest extends BaseTest {
 
         array = ConcurrentArray.of("10", "5", "2", "1");
 
-        Assertions.assertTrue(array.removeConvertedIfInWriteLock(
+        Assertions.assertTrue(array.removeIfConvertedInWriteLock(
             5,
             Integer::parseInt,
             Integer::equals
@@ -87,6 +90,18 @@ public class ConcurrentArrayTest extends BaseTest {
 
         Assertions.assertTrue(array.anyMatchInReadLock("Second".hashCode(), (val, string) -> val == string.hashCode()));
         Assertions.assertFalse(array.anyMatchInReadLock("None".hashCode(), (val, string) -> val == string.hashCode()));
+
+        Assertions.assertTrue(array.anyMatchConvertedInReadLock(
+            "Second".hashCode(),
+            String::hashCode,
+            Objects::equals
+        ));
+
+        Assertions.assertFalse(array.anyMatchConvertedInReadLock(
+            "None".hashCode(),
+            String::hashCode,
+            Objects::equals
+        ));
     }
 
     @Test
@@ -106,7 +121,13 @@ public class ConcurrentArrayTest extends BaseTest {
         Assertions.assertNotNull(array.findAnyConvertedToInt(
             "First".hashCode(),
             String::hashCode,
-            (first, second) -> first == second
+            NumberUtils::equals
+        ));
+
+        Assertions.assertNotNull(array.findAnyConverted(
+            "First".hashCode(),
+            String::hashCode,
+            Objects::equals
         ));
     }
 

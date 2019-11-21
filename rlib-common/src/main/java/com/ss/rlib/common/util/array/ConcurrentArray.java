@@ -416,6 +416,34 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
+     * Search an element using the condition by converted value under {@link #readLock()} block.
+     *
+     * @param argument  the argument.
+     * @param converter the converted an element to another type.
+     * @param filter    the condition.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted element's type.
+     * @return the found element or null.
+     * @since 9.7.0
+     */
+    default <T, C> @Nullable E findAnyConvertedInReadLock(
+        @NotNull T argument,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiPredicate<T, C> filter
+    ) {
+        if (isEmpty()) {
+            return null;
+        }
+
+        var stamp = readLock();
+        try {
+            return findAnyConverted(argument, converter, filter);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
      * Search an element using the condition under {@link #readLock()} block.
      *
      * @param argument the argument.
@@ -478,6 +506,34 @@ public interface ConcurrentArray<E> extends Array<E> {
         var stamp = readLock();
         try {
             return anyMatch(argument, filter);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
+     * Return true if there is at least a converted element for the condition under {@link #readLock()} block.
+     *
+     * @param argument  the argument.
+     * @param converter the converter element to another type.
+     * @param filter    the condition.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted element's type.
+     * @return true if there is at least an element for the condition.
+     * @since 9.7.0
+     */
+    default <T, C> boolean anyMatchConvertedInReadLock(
+        @NotNull T argument,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiPredicate<T, C> filter
+    ) {
+        if (isEmpty()) {
+            return false;
+        }
+
+        var stamp = readLock();
+        try {
+            return anyMatchConverted(argument, converter, filter);
         } finally {
             readUnlock(stamp);
         }
@@ -549,14 +605,14 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @return {@code true} if any elements were removed.
      * @since 9.6.0
      */
-    default <A, B> boolean removeConvertedIfInWriteLock(
+    default <A, B> boolean removeIfConvertedInWriteLock(
         @NotNull A argument,
         @NotNull NotNullFunction<? super E, B> converter,
         @NotNull NotNullBiPredicate<A, B> filter
     ) {
         var stamp = writeLock();
         try {
-            return removeConvertedIf(argument, converter, filter);
+            return removeIfConverted(argument, converter, filter);
         } finally {
             writeUnlock(stamp);
         }

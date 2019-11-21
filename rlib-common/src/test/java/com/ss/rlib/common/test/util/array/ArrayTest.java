@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
@@ -80,7 +81,7 @@ public class ArrayTest extends BaseTest {
 
         array = ArrayFactory.asArray("10", "5", "2", "1");
 
-        Assertions.assertTrue(array.removeConvertedIf(
+        Assertions.assertTrue(array.removeIfConverted(
             5,
             Integer::parseInt,
             Integer::equals
@@ -230,6 +231,12 @@ public class ArrayTest extends BaseTest {
             String::hashCode,
             (first, second) -> first == second
         ));
+
+        Assertions.assertNotNull(array.findAnyConverted(
+            "First".hashCode(),
+            String::hashCode,
+            Objects::equals
+        ));
     }
 
     @Test
@@ -263,6 +270,9 @@ public class ArrayTest extends BaseTest {
 
         Assertions.assertTrue(array.anyMatchR("Second".hashCode(), (element, num) -> element.hashCode() == num));
         Assertions.assertFalse(array.anyMatchR("None".hashCode(), (element, num) -> element.hashCode() == num));
+
+        Assertions.assertTrue(array.anyMatchConverted("Second".hashCode(), String::hashCode, Objects::equals));
+        Assertions.assertFalse(array.anyMatchConverted("None".hashCode(), String::hashCode, Objects::equals));
     }
 
     @Test

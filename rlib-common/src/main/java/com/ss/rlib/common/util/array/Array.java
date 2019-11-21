@@ -774,7 +774,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return {@code true} if any elements were removed.
      * @since 9.6.0
      */
-    default <A, B> boolean removeConvertedIf(
+    default <A, B> boolean removeIfConverted(
         @NotNull A argument,
         @NotNull NotNullFunction<? super E, B> converter,
         @NotNull NotNullBiPredicate<A, B> filter
@@ -808,6 +808,25 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      */
     default <T> boolean anyMatch(@NotNull T argument, @NotNull NotNullBiPredicate<T, ? super E> filter) {
         return findAny(argument, filter) != null;
+    }
+
+    /**
+     * Return true if there is at least a converted element for the condition.
+     *
+     * @param argument  the argument.
+     * @param converter the converter element to another type.
+     * @param filter    the condition.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted element's type.
+     * @return true if there is at least an element for the condition.
+     * @since 9.7.0
+     */
+    default <T, C> boolean anyMatchConverted(
+        @NotNull T argument,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiPredicate<T, C> filter
+    ) {
+        return findAnyConverted(argument, converter, filter) != null;
     }
 
     /**
@@ -880,6 +899,41 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             var element = array[i];
 
             if (filter.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search an element using the condition by converted value.
+     *
+     * @param argument  the argument.
+     * @param converter the converted an element to another type.
+     * @param filter    the condition.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted element's type.
+     * @return the found element or null.
+     * @since 9.7.0
+     */
+    default <T, C> @Nullable E findAnyConverted(
+        @NotNull T argument,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiPredicate<T, C> filter
+    ) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, converter.apply(element))) {
                 return element;
             }
         }
