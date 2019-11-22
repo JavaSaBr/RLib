@@ -55,7 +55,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the new read only array.
      */
     static <T> @NotNull ReadOnlyArray<T> of(@NotNull Array<T> another) {
-        return ArrayFactory.newReadOnlyArray(Arrays.copyOf(another.array(), another.size()));
+        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(another.array()));
     }
 
     /**
@@ -292,31 +292,14 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param array the array with elements to remove.
      * @return count of removed elements.
      */
-    default int fastRemove(@NotNull Array<? extends E> array) {
+    default int fastRemoveAll(@NotNull E[] array) {
 
         int count = 0;
 
-        for (E object : array.array()) {
-            if (object == null) break;
-            if (fastRemove(object)) count++;
-        }
-
-        return count;
-    }
-
-    /**
-     * Removes the each element from the array.
-     *
-     * @param array the array with elements to remove.
-     * @return count of removed elements.
-     */
-    default int fastRemove(@NotNull E[] array) {
-
-        int count = 0;
-
-        for (E object : array) {
-            if (object == null) break;
-            if (fastRemove(object)) count++;
+        for (var object : array) {
+            if (fastRemove(object)) {
+                count++;
+            }
         }
 
         return count;
@@ -493,10 +476,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
 
         int count = 0;
 
-        for (Object element : target) {
-            if (element == null) {
-                break;
-            } else if (slowRemove(element)) {
+        for (var element : target) {
+            if (slowRemove(element)) {
                 count++;
             }
         }
@@ -583,7 +564,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     @Override
     default boolean remove(@NotNull Object object) {
 
-        int index = indexOf(object);
+        var index = indexOf(object);
 
         if (index >= 0) {
             remove(index);
@@ -1309,6 +1290,27 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         @NotNull F first,
         @NotNull S second,
         @NotNull NotNullTripleConsumer<F, S, ? super E> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(first, second, array[i]);
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     * @param <A>      the second argument's type.
+     */
+    default <A> void forEach(
+        int first,
+        @NotNull A second,
+        @NotNull NotNullIntBiObjectConsumer<A, ? super E> consumer
     ) {
 
         var array = array();

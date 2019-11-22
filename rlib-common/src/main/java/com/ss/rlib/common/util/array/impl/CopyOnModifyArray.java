@@ -6,13 +6,10 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayComparator;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 /**
  * The implementation of the array which create a new back-end array for each modification.
@@ -36,7 +33,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     public boolean add(@NotNull E object) {
 
         var current = array.get();
-        var newArray = ArrayUtils.copyOf(current, 1);
+        var newArray = ArrayUtils.copyOfAndExtend(current, 1);
         newArray[current.length] = object;
 
         if (!array.compareAndSet(current, newArray)) {
@@ -54,7 +51,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
         }
 
         var current = array.get();
-        var newArray = ArrayUtils.copyOf(current, elements.size());
+        var newArray = ArrayUtils.copyOfAndExtend(current, elements.size());
 
         for (int i = current.length, g = 0; i < newArray.length; i++, g++) {
             newArray[i] = elements.get(g);
@@ -75,7 +72,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
         }
 
         var current = array.get();
-        var newArray = ArrayUtils.copyOf(current, collection.size());
+        var newArray = ArrayUtils.copyOfAndExtend(current, collection.size());
 
         Iterator<? extends E> iterator = collection.iterator();
 
@@ -259,7 +256,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
     public @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
 
         var current = array();
-        var newArray = ArrayUtils.copyOf(current, 0);
+        var newArray = ArrayUtils.copyOfAndExtend(current, 0);
 
         ArrayUtils.sort(newArray, 0, newArray.length, comparator);
 

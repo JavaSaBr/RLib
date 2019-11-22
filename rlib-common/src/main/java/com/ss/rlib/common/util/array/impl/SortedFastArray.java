@@ -27,7 +27,7 @@ public class SortedFastArray<E extends Comparable<E>> extends FastArray<E> {
     public boolean add(@NotNull E element) {
 
         if (size == array.length) {
-            array = ArrayUtils.copyOf(array, array.length * 3 / 2 + 1);
+            array = ArrayUtils.copyOfAndExtend(array, array.length * 3 / 2 + 1);
         }
 
         return unsafeAdd(element);
