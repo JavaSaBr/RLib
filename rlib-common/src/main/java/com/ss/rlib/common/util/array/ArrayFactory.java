@@ -14,25 +14,11 @@ public class ArrayFactory {
 
     public static final Array<?> EMPTY_ARRAY = newReadOnlyArray(ArrayUtils.EMPTY_OBJECT_ARRAY);
 
-    /**
-     * Wrap arguments as an array collection.
-     *
-     * @param args the elements to be wrapped.
-     * @param <E>  the element's type.
-     * @return the new array collection with the wrapped arguments.
-     */
     @SafeVarargs
     public static <E> @NotNull Array<E> asArray(@NotNull E... args) {
         return new FastArray<>(args);
     }
 
-    /**
-     * Create the new mutable array.
-     *
-     * @param type the type of the array.
-     * @param <E>  the element's type.
-     * @return the new mutable array collection.
-     */
     public static <E> @NotNull Array<E> newArray(@NotNull Class<? super E> type) {
         return newUnsafeArray(type);
     }

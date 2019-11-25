@@ -48,7 +48,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     public boolean add(@NotNull E element) {
 
         if (size() == array.length) {
-            array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
+            array = ArrayUtils.copyOfAndExtend(array, Math.max(array.length >> 1, 1));
         }
 
         array[size.getAndIncrement()] = element;
@@ -68,7 +68,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         var diff = selfSize + targetSize - current;
 
         if (diff > 0) {
-            array = copyOf(array, max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
         }
 
         processAdd(elements, selfSize, targetSize);
@@ -86,7 +86,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         var diff = size() + collection.size() - current;
 
         if (diff > 0) {
-            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, Math.max(current >> 1, diff));
         }
 
         for (var element : collection) {
@@ -109,7 +109,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         var diff = selfSize + targetSize - current;
 
         if (diff > 0) {
-            array = copyOf(array, max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
         }
 
         processAdd(elements, selfSize, targetSize);
@@ -129,7 +129,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
         var diff = selfSize + size - current;
 
         if (diff > 0) {
-            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, Math.max(current >> 1, diff));
         }
     }
 
@@ -276,7 +276,7 @@ public abstract class AbstractConcurrentArray<E> extends AbstractArray<E> implem
     @Override
     public @NotNull AbstractConcurrentArray<E> clone() throws CloneNotSupportedException {
         var clone = (AbstractConcurrentArray<E>) super.clone();
-        clone.array = ArrayUtils.copyOf(array, size());
+        clone.array = ArrayUtils.copyOfAndExtend(array, size());
         return clone;
     }
 }

@@ -1,5 +1,6 @@
 package com.ss.rlib.common.test.util;
 
+import static org.junit.jupiter.api.Assertions.*;
 import com.ss.rlib.common.util.ArrayUtils;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import org.junit.jupiter.api.Assertions;
@@ -19,31 +20,31 @@ public class ArrayUtilsTest {
         int[] ints = ArrayUtils.toIntArray(integers);
         int[] empty = ArrayUtils.toIntArray(new Integer[0]);
 
-        Assertions.assertArrayEquals(ints, ArrayFactory.toIntArray(1, 2, 3, 4, 5));
-        Assertions.assertArrayEquals(empty, ArrayFactory.toIntArray());
+        assertArrayEquals(ints, ArrayFactory.toIntArray(1, 2, 3, 4, 5));
+        assertArrayEquals(empty, ArrayFactory.toIntArray());
     }
 
     @Test
     void convertStringToIntArrayTest() {
 
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayUtils.toIntArray("1,2,3,4,5", ","),
             ArrayFactory.toIntArray(1, 2, 3, 4, 5)
         );
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayUtils.toIntArray(" 1 ,2 , 3,4, 5", ","),
             ArrayFactory.toIntArray(1, 2, 3, 4, 5)
         );
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayUtils.toIntArray(" 1 ,2 , 3,4, 5", ","),
             ArrayFactory.toIntArray(1, 2, 3, 4, 5)
         );
 
-        Assertions.assertThrows(NumberFormatException.class,
+        assertThrows(NumberFormatException.class,
             () -> ArrayUtils.toIntArray(" 1 ,,2 , 3,4, 5,", ","));
-        Assertions.assertThrows(NumberFormatException.class,
+        assertThrows(NumberFormatException.class,
             () -> ArrayUtils.toIntArray(" 1 ,qwd , 3,4, 5", ","));
-        Assertions.assertThrows(NumberFormatException.class,
+        assertThrows(NumberFormatException.class,
             () -> ArrayUtils.toIntArray(" 1 ,2.5 , 3,4, 5", ","));
     }
 
@@ -57,13 +58,13 @@ public class ArrayUtilsTest {
 
         Assertions.assertNull(ArrayUtils.mapNullable(nullStrings, Integer::parseInt, Integer.class));
 
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             new Integer[0], ArrayUtils.mapNullable(emptyStrings, Integer::parseInt, Integer.class)
         );
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayFactory.toArray(5), ArrayUtils.mapNullable(singleStrings, Integer::parseInt, Integer.class)
         );
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayFactory.toArray(8, 1, 6), ArrayUtils.mapNullable(strings, Integer::parseInt, Integer.class)
         );
     }
@@ -71,12 +72,12 @@ public class ArrayUtilsTest {
     @Test
     void longsToIntsTest() {
 
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayFactory.toIntArray(1, 5, 3),
             ArrayUtils.longsToInts(ArrayFactory.toLongArray(1, 5, 3))
         );
 
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayUtils.EMPTY_INT_ARRAY,
             ArrayUtils.longsToInts(ArrayUtils.EMPTY_LONG_ARRAY)
         );
@@ -89,13 +90,13 @@ public class ArrayUtilsTest {
         String[] singleStrings = ArrayFactory.toArray("5");
         String[] strings = ArrayFactory.toArray("8", "1", "6");
 
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             new Integer[0], ArrayUtils.map(emptyStrings, Integer::parseInt, Integer.class)
         );
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayFactory.toArray(5), ArrayUtils.map(singleStrings, Integer::parseInt, Integer.class)
         );
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayFactory.toArray(8, 1, 6), ArrayUtils.map(strings, Integer::parseInt, Integer.class)
         );
     }
@@ -108,16 +109,26 @@ public class ArrayUtilsTest {
         String[] singleStrings = ArrayFactory.toArray("5");
         String[] strings = ArrayFactory.toArray("8", "1", "6");
 
-        Assertions.assertArrayEquals(new Integer[0], ArrayUtils.map(nullStrings, Integer::parseInt, new Integer[0]));
+        assertArrayEquals(new Integer[0], ArrayUtils.map(nullStrings, Integer::parseInt, new Integer[0]));
 
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             new Integer[0], ArrayUtils.map(emptyStrings, Integer::parseInt, new Integer[0])
         );
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayFactory.toArray(5), ArrayUtils.map(singleStrings, Integer::parseInt, new Integer[0])
         );
-        Assertions.assertArrayEquals(
+        assertArrayEquals(
             ArrayFactory.toArray(8, 1, 6), ArrayUtils.map(strings, Integer::parseInt, new Integer[0])
         );
+    }
+
+    @Test
+    void copyOfAndExtendTest() {
+
+        var array = ArrayFactory.toArray("First", "Second");
+        var newArray = ArrayUtils.copyOfAndExtend(array, 2);
+
+        assertEquals(4, newArray.length);
+        assertArrayEquals(ArrayFactory.toArray("First", "Second", null, null), newArray);
     }
 }

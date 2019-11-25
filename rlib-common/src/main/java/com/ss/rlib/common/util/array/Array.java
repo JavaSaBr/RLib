@@ -55,7 +55,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the new read only array.
      */
     static <T> @NotNull ReadOnlyArray<T> of(@NotNull Array<T> another) {
-        return ArrayFactory.newReadOnlyArray(Arrays.copyOf(another.array(), another.size()));
+        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOfRange(another.array(), 0, another.size()));
     }
 
     /**
@@ -292,31 +292,14 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param array the array with elements to remove.
      * @return count of removed elements.
      */
-    default int fastRemove(@NotNull Array<? extends E> array) {
+    default int fastRemoveAll(@NotNull E[] array) {
 
         int count = 0;
 
-        for (E object : array.array()) {
-            if (object == null) break;
-            if (fastRemove(object)) count++;
-        }
-
-        return count;
-    }
-
-    /**
-     * Removes the each element from the array.
-     *
-     * @param array the array with elements to remove.
-     * @return count of removed elements.
-     */
-    default int fastRemove(@NotNull E[] array) {
-
-        int count = 0;
-
-        for (E object : array) {
-            if (object == null) break;
-            if (fastRemove(object)) count++;
+        for (var object : array) {
+            if (fastRemove(object)) {
+                count++;
+            }
         }
 
         return count;
@@ -493,10 +476,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
 
         int count = 0;
 
-        for (Object element : target) {
-            if (element == null) {
-                break;
-            } else if (slowRemove(element)) {
+        for (var element : target) {
+            if (slowRemove(element)) {
                 count++;
             }
         }
@@ -583,7 +564,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     @Override
     default boolean remove(@NotNull Object object) {
 
-        int index = indexOf(object);
+        var index = indexOf(object);
 
         if (index >= 0) {
             remove(index);
@@ -774,7 +755,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return {@code true} if any elements were removed.
      * @since 9.6.0
      */
-    default <A, B> boolean removeConvertedIf(
+    default <A, B> boolean removeIfConverted(
         @NotNull A argument,
         @NotNull NotNullFunction<? super E, B> converter,
         @NotNull NotNullBiPredicate<A, B> filter
@@ -808,6 +789,25 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      */
     default <T> boolean anyMatch(@NotNull T argument, @NotNull NotNullBiPredicate<T, ? super E> filter) {
         return findAny(argument, filter) != null;
+    }
+
+    /**
+     * Return true if there is at least a converted element for the condition.
+     *
+     * @param argument  the argument.
+     * @param converter the converter element to another type.
+     * @param filter    the condition.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted element's type.
+     * @return true if there is at least an element for the condition.
+     * @since 9.7.0
+     */
+    default <T, C> boolean anyMatchConverted(
+        @NotNull T argument,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiPredicate<T, C> filter
+    ) {
+        return findAnyConverted(argument, converter, filter) != null;
     }
 
     /**
@@ -880,6 +880,41 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             var element = array[i];
 
             if (filter.test(argument, element)) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search an element using the condition by converted value.
+     *
+     * @param argument  the argument.
+     * @param converter the converted an element to another type.
+     * @param filter    the condition.
+     * @param <T>       the argument's type.
+     * @param <C>       the converted element's type.
+     * @return the found element or null.
+     * @since 9.7.0
+     */
+    default <T, C> @Nullable E findAnyConverted(
+        @NotNull T argument,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullBiPredicate<T, C> filter
+    ) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, converter.apply(element))) {
                 return element;
             }
         }
@@ -1005,10 +1040,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Search an element using the condition.
+     * Search a converted element to int using the condition.
      *
      * @param argument  the argument.
-     * @param filter the condition.
+     * @param converter the converter element to int.
+     * @param filter    the condition.
      * @return the found element or null.
      * @since 9.6.0
      */
@@ -1029,6 +1065,42 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             var element = array[i];
 
             if (filter.test(argument, converter.apply(element))) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search a converted element to int using the condition.
+     *
+     * @param argument        the argument.
+     * @param firstConverter  the converter element to T.
+     * @param secondConverter the converter element to int.
+     * @param filter          the condition.
+     * @param <T>             the first converted type.
+     * @return the found element or null.
+     * @since 9.7.0
+     */
+    default <T> @Nullable E findAnyConvertedToInt(
+        int argument,
+        @NotNull NotNullFunction<? super E, T> firstConverter,
+        @NotNull NotNullFunctionInt<T> secondConverter,
+        @NotNull BiIntPredicate filter
+    ) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, secondConverter.apply(firstConverter.apply(element)))) {
                 return element;
             }
         }
@@ -1255,6 +1327,27 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         @NotNull F first,
         @NotNull S second,
         @NotNull NotNullTripleConsumer<F, S, ? super E> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(first, second, array[i]);
+        }
+    }
+
+    /**
+     * Apply a function to each element.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     * @param <A>      the second argument's type.
+     */
+    default <A> void forEach(
+        int first,
+        @NotNull A second,
+        @NotNull NotNullIntBiObjectConsumer<A, ? super E> consumer
     ) {
 
         var array = array();

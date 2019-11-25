@@ -2,7 +2,6 @@ package com.ss.rlib.common.util;
 
 import com.ss.rlib.common.function.*;
 import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ConcurrentArray;
 import com.ss.rlib.common.util.array.IntegerArray;
 import com.ss.rlib.common.util.array.LongArray;
 import org.jetbrains.annotations.NotNull;
@@ -103,7 +102,7 @@ public final class ArrayUtils {
 
         int length = array.length;
 
-        array = copyOf(array, 1);
+        array = copyOfAndExtend(array, 1);
         array[length] = element;
 
         return array;
@@ -332,15 +331,15 @@ public final class ArrayUtils {
     }
 
     /**
-     * Copy and extend if need a native array.
+     * Copy an array and extend if need.
      *
      * @param <T>      the array component's type.
      * @param original the original array.
-     * @param added    the added size.
-     * @return the new copied native array.
+     * @param added    the additional size.
+     * @return the new copied array.
      */
     @SuppressWarnings("unchecked")
-    public static <T> @NotNull T[] copyOf(@NotNull T[] original, int added) {
+    public static <T> @NotNull T[] copyOfAndExtend(@NotNull T[] original, int added) {
         return Arrays.copyOf(original, original.length + added);
     }
 
@@ -437,16 +436,8 @@ public final class ArrayUtils {
      * @param to       the last element.
      * @return the new array.
      */
-    public static <T> @NotNull T[] copyOfRange(@NotNull final T[] original, final int from, final int to) {
-
-        final Class<? extends Object[]> newType = original.getClass();
-        final int newLength = to - from;
-
-        final T[] copy = ClassUtils.unsafeCast(create(newType.getComponentType(), newLength));
-
-        System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
-
-        return copy;
+    public static <T> @NotNull T[] copyOfRange(@NotNull T[] original, int from, int to) {
+        return Arrays.copyOfRange(original, from, to);
     }
 
     /**

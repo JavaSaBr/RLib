@@ -46,7 +46,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
     public synchronized boolean add(@NotNull E element) {
 
         if (size() == array.length) {
-            array = ArrayUtils.copyOf(array, array.length >> 1);
+            array = ArrayUtils.copyOfAndExtend(array, array.length >> 1);
         }
 
         array[size.getAndIncrement()] = element;
@@ -66,7 +66,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         final int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
-            array = copyOf(array, max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
         }
 
         processAdd(elements, selfSize, targetSize);
@@ -81,7 +81,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         final int diff = size() + collection.size() - current;
 
         if (diff > 0) {
-            array = ArrayUtils.copyOf(array, Math.max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, Math.max(current >> 1, diff));
         }
 
         for (final E element : collection) unsafeAdd(element);
@@ -97,7 +97,7 @@ public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArra
         final int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
-            array = copyOf(array, max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
         }
 
         processAdd(elements, selfSize, targetSize);

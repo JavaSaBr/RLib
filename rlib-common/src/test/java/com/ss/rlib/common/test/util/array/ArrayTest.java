@@ -2,14 +2,12 @@ package com.ss.rlib.common.test.util.array;
 
 import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
 import com.ss.rlib.common.test.BaseTest;
+import com.ss.rlib.common.util.NumberUtils;
 import com.ss.rlib.common.util.array.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.IntStream;
+import java.util.Objects;
 
 /**
  * The list of tests {@link Array}.
@@ -22,6 +20,9 @@ public class ArrayTest extends BaseTest {
     void ofTest() {
 
         var array = ArrayFactory.asArray("First", "Second", "Third", "  ");
+        array.add("Temp");
+        array.remove("Temp");
+
         var copy = Array.of(array);
 
         Assertions.assertEquals(array, copy);
@@ -80,7 +81,7 @@ public class ArrayTest extends BaseTest {
 
         array = ArrayFactory.asArray("10", "5", "2", "1");
 
-        Assertions.assertTrue(array.removeConvertedIf(
+        Assertions.assertTrue(array.removeIfConverted(
             5,
             Integer::parseInt,
             Integer::equals
@@ -228,7 +229,27 @@ public class ArrayTest extends BaseTest {
         Assertions.assertNotNull(array.findAnyConvertedToInt(
             "First".hashCode(),
             String::hashCode,
-            (first, second) -> first == second
+            NumberUtils::equals
+        ));
+
+        Assertions.assertNotNull(array.findAnyConvertedToInt(
+            "MyValue".hashCode(),
+            object -> "MyValue",
+            String::hashCode,
+            NumberUtils::equals
+        ));
+
+        Assertions.assertNull(array.findAnyConvertedToInt(
+            "MyValue".hashCode(),
+            object -> "First",
+            String::hashCode,
+            NumberUtils::equals
+        ));
+
+        Assertions.assertNotNull(array.findAnyConverted(
+            "First".hashCode(),
+            String::hashCode,
+            Objects::equals
         ));
     }
 
@@ -263,6 +284,9 @@ public class ArrayTest extends BaseTest {
 
         Assertions.assertTrue(array.anyMatchR("Second".hashCode(), (element, num) -> element.hashCode() == num));
         Assertions.assertFalse(array.anyMatchR("None".hashCode(), (element, num) -> element.hashCode() == num));
+
+        Assertions.assertTrue(array.anyMatchConverted("Second".hashCode(), String::hashCode, Objects::equals));
+        Assertions.assertFalse(array.anyMatchConverted("None".hashCode(), String::hashCode, Objects::equals));
     }
 
     @Test
@@ -422,6 +446,15 @@ public class ArrayTest extends BaseTest {
         });
 
         Assertions.assertEquals(array.size(), counter.getAndSet(0));
+
+        array.forEach(0, Type2.EXAMPLE, (arg1, arg2, element) -> {
+            assertIntType(arg1);
+            assertType(arg2, Type2.class);
+            assertType(element, String.class);
+            counter.incrementAndGet();
+        });
+
+        Assertions.assertEquals(array.size(), counter.getAndSet(0));
     }
 
     @Test
@@ -448,133 +481,5 @@ public class ArrayTest extends BaseTest {
         toCopy.copyTo(toCombine);
 
         Assertions.assertEquals(result, toCombine);
-    }
-
-    //FIXME OLD TESTS
-
-    @Test
-    public void testFastArray() {
-
-        Array<Integer> array = ArrayFactory.asArray(2, 5, 1, 7, 6, 8, 4);
-
-        // sorting
-        array.sort(Integer::compareTo);
-
-        Assertions.assertArrayEquals(array.toArray(Integer.class),
-                ArrayFactory.toArray(1, 2, 4, 5, 6, 7, 8));
-
-        // performace operations
-        UnsafeArray<Integer> unsafe = array.asUnsafe();
-        unsafe.prepareForSize(10);
-        unsafe.unsafeAdd(3);
-        unsafe.unsafeAdd(9);
-        unsafe.unsafeAdd(10);
-
-        Assertions.assertEquals(10, array.size());
-
-        // additional API
-        Integer first = array.first();
-        Integer last = array.last();
-
-        array.remove(1);
-        array.fastRemove(1);
-
-        Integer searched = array.findAny(integer -> integer == 2);
-        searched = array.findAny(2, (el, arg) -> el == arg);
-
-        array.forEach(5, (el, arg) ->
-                System.out.println(el + arg));
-
-        array.forEach(5, 7, (el, firstArg, secondArg) ->
-                System.out.println(el + firstArg + secondArg));
-    }
-
-    @Test
-    public void testAtomicARSWLockArray() {
-
-        ConcurrentArray<Integer> array = ArrayFactory.newConcurrentAtomicARSWLockArray(Integer.class);
-        long writeStamp = array.writeLock();
-        try {
-
-            array.addAll(ArrayFactory.toArray(9, 8, 7, 6, 5, 4, 3));
-            array.sort(Integer::compareTo);
-
-        } finally {
-            array.writeUnlock(writeStamp);
-        }
-
-        long readStamp = array.readLock();
-        try {
-
-            Assertions.assertArrayEquals(array.toArray(Integer.class),
-                    ArrayFactory.toArray(3, 4, 5, 6, 7, 8, 9));
-
-            final Integer first = array.first();
-            final Integer last = array.last();
-
-            Assertions.assertEquals(3, (int) first);
-            Assertions.assertEquals(9, (int) last);
-
-        } finally {
-            array.readUnlock(readStamp);
-        }
-
-        Integer last = array.getInReadLock(Array::last);
-        Integer result = array.getInReadLock(last,
-                (arr, target) -> arr.findAny(target, Integer::equals));
-
-        array.runInWriteLock(result + 1, Collection::add);
-
-        Assertions.assertEquals(10, (int) array.last());
-    }
-
-    @Test
-    public void testArrayCollector() {
-
-        Array<Integer> result = IntStream.range(0, 1000)
-                .mapToObj(value -> value)
-                .collect(ArrayCollectors.toArray(Integer.class));
-
-        Assertions.assertEquals(1000, result.size());
-
-        ConcurrentArray<Integer> concurrentArray = IntStream.range(0, 1000)
-                .parallel()
-                .mapToObj(value -> value)
-                .collect(ArrayCollectors.toConcurrentArray(Integer.class));
-
-        Assertions.assertEquals(1000, concurrentArray.size());
-
-        Array<Number> numbers = IntStream.range(0, 1000)
-                .mapToObj(value -> value)
-                .collect(ArrayCollectors.toArray(Number.class));
-
-        Assertions.assertEquals(1000, numbers.size());
-
-        Array<Collection<?>> collections = IntStream.range(0, 1000)
-                .mapToObj(value -> new ArrayList<>(1))
-                .collect(ArrayCollectors.toArray(Collection.class));
-
-        Assertions.assertEquals(1000, collections.size());
-    }
-
-    @Test
-    public void testCopyOnModifyArray() {
-
-        Array<Integer> array = ArrayFactory.newCopyOnModifyArray(Integer.class);
-        array.addAll(ArrayFactory.toArray(9, 8, 7, 6, 5, 4, 3));
-        array.add(7);
-        array.addAll(Arrays.asList(5, 6, 7));
-        array.addAll(Array.of(6, 7, 8));
-        array.sort(Integer::compareTo);
-
-        Assertions.assertArrayEquals(array.toArray(Integer.class),
-                ArrayFactory.toArray(3, 4, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 9));
-
-        Integer first = array.first();
-        Integer last = array.last();
-
-        Assertions.assertEquals(14, array.size());
-        Assertions.assertEquals(3, (int) first);
-        Assertions.assertEquals(9, (int) last);
     }
 }

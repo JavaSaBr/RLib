@@ -7,12 +7,9 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayIterator;
 import com.ss.rlib.common.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 /**
  * The fast implementation of the array. This array is not threadsafe.
@@ -51,7 +48,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     public boolean add(@NotNull E object) {
 
         if (size == array.length) {
-            array = copyOf(array, max(array.length >> 1, 1));
+            array = ArrayUtils.copyOfAndExtend(array, max(array.length >> 1, 1));
         }
 
         return unsafeAdd(object);
@@ -70,7 +67,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
-            array = copyOf(array, max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
         }
 
         processAdd(elements, selfSize, targetSize);
@@ -90,7 +87,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
-            array = copyOf(array, max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
         }
 
         for (E element : collection) {
@@ -113,7 +110,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         int diff = selfSize + targetSize - current;
 
         if (diff > 0) {
-            array = copyOf(array, max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
         }
 
         processAdd(elements, selfSize, targetSize);
@@ -133,7 +130,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
         int diff = selfSize + size - current;
 
         if (diff > 0) {
-            array = copyOf(array, max(current >> 1, diff));
+            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
         }
     }
 
@@ -276,27 +273,7 @@ public class FastArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
     @Override
     public @NotNull FastArray<E> clone() throws CloneNotSupportedException {
         var clone = (FastArray<E>) super.clone();
-        clone.array = ArrayUtils.copyOf(array, size());
+        clone.array = ArrayUtils.copyOfAndExtend(array, size());
         return clone;
-    }
-
-    @Override
-    public boolean equals(@Nullable Object another) {
-
-        if (this == another) {
-            return true;
-        } else if (!(another instanceof Array)) {
-            return false;
-        }
-
-        var array = (Array<?>) another;
-        return size == array.size() && Arrays.equals(this.array, 0, size, array.array(), 0, array.size());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(size);
-        result = 31 * result + Arrays.hashCode(array);
-        return result;
     }
 }
