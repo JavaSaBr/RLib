@@ -339,5 +339,14 @@ public class ConcurrentArrayTest extends BaseTest {
         });
 
         assertEquals(array.size(), counter.getAndSet(0));
+
+        array.forEachInReadLock(Type1.EXAMPLE, Type2.EXAMPLE, (arg1, arg2, element) -> {
+            assertType(arg1, Type1.class);
+            assertType(arg2, Type2.class);
+            assertType(element, String.class);
+            counter.incrementAndGet();
+        });
+
+        assertEquals(array.size(), counter.getAndSet(0));
     }
 }

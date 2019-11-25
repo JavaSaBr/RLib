@@ -160,7 +160,7 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Apply a function to each element.
+     * Apply a function to each element under {@link #readLock()} block.
      *
      * @param first    the first argument.
      * @param second   the second argument.
@@ -171,6 +171,31 @@ public interface ConcurrentArray<E> extends Array<E> {
         int first,
         @NotNull A second,
         @NotNull NotNullIntBiObjectConsumer<A, ? super E> consumer
+    ) {
+
+        var stamp = readLock();
+        try {
+            forEach(first, second, consumer);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Apply a function to each element under {@link #readLock()} block.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     * @param <F>      the firs argument's type.
+     * @param <S>      the second argument's type.
+     */
+    default <F, S> @NotNull ConcurrentArray<E> forEachInReadLock(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullTripleConsumer<F, S, ? super E> consumer
     ) {
 
         var stamp = readLock();
