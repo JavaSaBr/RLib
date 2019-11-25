@@ -2,6 +2,7 @@ package com.ss.rlib.common.test.util.array;
 
 import com.ss.rlib.common.concurrent.atomic.AtomicInteger;
 import com.ss.rlib.common.test.BaseTest;
+import com.ss.rlib.common.util.NumberUtils;
 import com.ss.rlib.common.util.array.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -225,7 +226,21 @@ public class ArrayTest extends BaseTest {
         Assertions.assertNotNull(array.findAnyConvertedToInt(
             "First".hashCode(),
             String::hashCode,
-            (first, second) -> first == second
+            NumberUtils::equals
+        ));
+
+        Assertions.assertNotNull(array.findAnyConvertedToInt(
+            "MyValue".hashCode(),
+            object -> "MyValue",
+            String::hashCode,
+            NumberUtils::equals
+        ));
+
+        Assertions.assertNull(array.findAnyConvertedToInt(
+            "MyValue".hashCode(),
+            object -> "First",
+            String::hashCode,
+            NumberUtils::equals
         ));
 
         Assertions.assertNotNull(array.findAnyConverted(

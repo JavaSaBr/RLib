@@ -468,10 +468,11 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Search an element using the condition under {@link #readLock()} block.
+     * Search a converted element to int using the condition under {@link #readLock()} block.
      *
-     * @param argument the argument.
-     * @param filter   the condition.
+     * @param argument  the argument.
+     * @param converter the converter element to int.
+     * @param filter    the condition.
      * @return the found element or null.
      * @since 9.6.0
      */
@@ -487,6 +488,35 @@ public interface ConcurrentArray<E> extends Array<E> {
         var stamp = readLock();
         try {
             return findAnyConvertedToInt(argument, converter, filter);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
+     * Search a converted element to int using the condition under {@link #readLock()} block.
+     *
+     * @param argument        the argument.
+     * @param firstConverter  the converter element to T.
+     * @param secondConverter the converter element to int.
+     * @param filter          the condition.
+     * @param <T>             the first converted type.
+     * @return the found element or null.
+     * @since 9.7.0
+     */
+    default <T> @Nullable E findAnyConvertedToIntInReadLock(
+        int argument,
+        @NotNull NotNullFunction<? super E, T> firstConverter,
+        @NotNull NotNullFunctionInt<T> secondConverter,
+        @NotNull BiIntPredicate filter
+    ) {
+        if (isEmpty()) {
+            return null;
+        }
+
+        var stamp = readLock();
+        try {
+            return findAnyConvertedToInt(argument, firstConverter, secondConverter, filter);
         } finally {
             readUnlock(stamp);
         }

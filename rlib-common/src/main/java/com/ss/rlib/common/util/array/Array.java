@@ -1040,10 +1040,11 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Search an element using the condition.
+     * Search a converted element to int using the condition.
      *
      * @param argument  the argument.
-     * @param filter the condition.
+     * @param converter the converter element to int.
+     * @param filter    the condition.
      * @return the found element or null.
      * @since 9.6.0
      */
@@ -1064,6 +1065,42 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
             var element = array[i];
 
             if (filter.test(argument, converter.apply(element))) {
+                return element;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Search a converted element to int using the condition.
+     *
+     * @param argument        the argument.
+     * @param firstConverter  the converter element to T.
+     * @param secondConverter the converter element to int.
+     * @param filter          the condition.
+     * @param <T>             the first converted type.
+     * @return the found element or null.
+     * @since 9.7.0
+     */
+    default <T> @Nullable E findAnyConvertedToInt(
+        int argument,
+        @NotNull NotNullFunction<? super E, T> firstConverter,
+        @NotNull NotNullFunctionInt<T> secondConverter,
+        @NotNull BiIntPredicate filter
+    ) {
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+
+            var element = array[i];
+
+            if (filter.test(argument, secondConverter.apply(firstConverter.apply(element)))) {
                 return element;
             }
         }

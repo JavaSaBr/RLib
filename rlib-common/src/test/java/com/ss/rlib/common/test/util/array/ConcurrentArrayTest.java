@@ -7,6 +7,7 @@ import com.ss.rlib.common.util.NumberUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.ConcurrentArray;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -208,16 +209,30 @@ public class ConcurrentArrayTest extends BaseTest {
         assertNotNull(array.findAnyInReadLock("Second".hashCode(), (val, string) -> val == string.hashCode()));
         assertNull(array.findAnyInReadLock("None".hashCode(), (val, string) -> val == string.hashCode()));
 
-        assertNotNull(array.findAnyConvertedToInt(
+        assertNotNull(array.findAnyConvertedToIntInReadLock(
             "First".hashCode(),
             String::hashCode,
             NumberUtils::equals
         ));
 
-        assertNotNull(array.findAnyConverted(
+        assertNotNull(array.findAnyConvertedInReadLock(
             "First".hashCode(),
             String::hashCode,
             Objects::equals
+        ));
+
+        Assertions.assertNotNull(array.findAnyConvertedToIntInReadLock(
+            "MyValue".hashCode(),
+            object -> "MyValue",
+            String::hashCode,
+            NumberUtils::equals
+        ));
+
+        Assertions.assertNull(array.findAnyConvertedToIntInReadLock(
+            "MyValue".hashCode(),
+            object -> "First",
+            String::hashCode,
+            NumberUtils::equals
         ));
     }
 
