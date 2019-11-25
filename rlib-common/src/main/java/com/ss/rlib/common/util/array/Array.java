@@ -55,7 +55,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @return the new read only array.
      */
     static <T> @NotNull ReadOnlyArray<T> of(@NotNull Array<T> another) {
-        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(another.array()));
+        return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOfRange(another.array(), 0, another.size()));
     }
 
     /**

@@ -436,16 +436,8 @@ public final class ArrayUtils {
      * @param to       the last element.
      * @return the new array.
      */
-    public static <T> @NotNull T[] copyOfRange(@NotNull final T[] original, final int from, final int to) {
-
-        final Class<? extends Object[]> newType = original.getClass();
-        final int newLength = to - from;
-
-        final T[] copy = ClassUtils.unsafeCast(create(newType.getComponentType(), newLength));
-
-        System.arraycopy(original, from, copy, 0, Math.min(original.length - from, newLength));
-
-        return copy;
+    public static <T> @NotNull T[] copyOfRange(@NotNull T[] original, int from, int to) {
+        return Arrays.copyOfRange(original, from, to);
     }
 
     /**

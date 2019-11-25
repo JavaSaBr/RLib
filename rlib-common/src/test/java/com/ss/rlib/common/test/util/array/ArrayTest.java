@@ -20,6 +20,9 @@ public class ArrayTest extends BaseTest {
     void ofTest() {
 
         var array = ArrayFactory.asArray("First", "Second", "Third", "  ");
+        array.add("Temp");
+        array.remove("Temp");
+
         var copy = Array.of(array);
 
         Assertions.assertEquals(array, copy);
