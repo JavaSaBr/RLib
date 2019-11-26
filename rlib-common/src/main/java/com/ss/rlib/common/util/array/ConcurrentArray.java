@@ -258,6 +258,35 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
+     * Apply a function to each converted element under {@link #readLock()} block.
+     *
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param converter the converter from E to C.
+     * @param function  the function.
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param <C>       the converted type.
+     * @since 9.8.0
+     */
+    default <F, S, C> @NotNull ConcurrentArray<E> forEachConvertedInReadLock(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullTripleConsumer<F, S, C> function
+    ) {
+
+        var stamp = readLock();
+        try {
+            forEachConverted(first, second, converter, function);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
      * Apply a function to each element and converted argument under {@link #readLock()} block.
      *
      * @param argument  the argument.

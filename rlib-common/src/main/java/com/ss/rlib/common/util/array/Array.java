@@ -1248,7 +1248,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * Apply a function to each converted element.
      *
      * @param argument  the argument.
-     * @param converter the converter from T to C.
+     * @param converter the converter from E to C.
      * @param consumer  the function.
      * @param <T>       the argument's type.
      * @param <C>       the converted type.
@@ -1267,6 +1267,31 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Apply a function to each converted element.
+     *
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param converter the converter from E to C.
+     * @param consumer  the function.
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param <C>       the converted type.
+     */
+    default <F, S, C> void forEachConverted(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullTripleConsumer<F, S, C> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(first, second, converter.apply(array[i]));
+        }
+    }
+
+    /**
      * Apply a function to each element and converted argument.
      *
      * @param argument  the argument.
@@ -1274,6 +1299,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param consumer  the function.
      * @param <T>       the argument's type.
      * @param <C>       the converted type.
+     * @since 9.8.0
      */
     default <T, C> void forEach(
         @NotNull T argument,

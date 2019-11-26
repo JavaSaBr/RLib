@@ -331,6 +331,15 @@ public class ConcurrentArrayTest extends BaseTest {
 
         assertEquals(array.size(), counter.getAndSet(0));
 
+        array.forEachConvertedInReadLock(Type1.EXAMPLE, Type2.EXAMPLE, String::hashCode, (arg1, arg2, element) -> {
+            assertType(arg1, Type1.class);
+            assertType(arg2, Type2.class);
+            assertIntType(element);
+            counter.incrementAndGet();
+        });
+
+        assertEquals(array.size(), counter.getAndSet(0));
+
         array.forEachInReadLock(0, Type1.EXAMPLE, (arg1, arg2, element) -> {
             assertIntType(arg1);
             assertType(arg2, Type1.class);

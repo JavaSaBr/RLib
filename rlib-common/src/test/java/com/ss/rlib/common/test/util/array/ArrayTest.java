@@ -369,6 +369,15 @@ public class ArrayTest extends BaseTest {
 
         Assertions.assertEquals(array.size(), counter.getAndSet(0));
 
+        array.forEachConverted(Type1.EXAMPLE, Type2.EXAMPLE, String::getBytes, (arg1, arg2, converted) -> {
+            assertType(arg1, Type1.class);
+            assertType(arg2, Type2.class);
+            assertType(converted, byte[].class);
+            counter.incrementAndGet();
+        });
+
+        Assertions.assertEquals(array.size(), counter.getAndSet(0));
+
         array.forEach("Arg", String::getBytes, (arg, element) -> {
             assertType(arg, byte[].class);
             assertType(element, String.class);
