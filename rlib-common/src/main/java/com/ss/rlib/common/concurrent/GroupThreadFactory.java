@@ -64,7 +64,7 @@ public class GroupThreadFactory implements ThreadFactory {
         this.constructor = new ThreadConstructor() {
 
             Constructor<? extends Thread> constructor =
-                ClassUtils.getConstructor(cs, ThreadGroup.class, Runnable.class, String.class);
+                ClassUtils.tryGetConstructor(cs, ThreadGroup.class, Runnable.class, String.class);
 
             @Override
             public @NotNull Thread create(

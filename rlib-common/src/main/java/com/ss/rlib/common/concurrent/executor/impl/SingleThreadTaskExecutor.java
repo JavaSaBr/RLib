@@ -78,7 +78,7 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
         this.lock = LockFactory.newAtomicLock();
 
         Constructor<Thread> constructor =
-                ClassUtils.getConstructor(threadClass, Runnable.class, String.class);
+                ClassUtils.tryGetConstructor(threadClass, Runnable.class, String.class);
 
         this.thread = ClassUtils.newInstance(requireNonNull(constructor), this, name);
         this.thread.setPriority(priority);

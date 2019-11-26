@@ -48,6 +48,18 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Create a new array for the element's type.
+     *
+     * @param type     the element's type.
+     * @param capacity the start capacity of this array.
+     * @param <T>      the element's type.
+     * @return the new array.
+     */
+    static <T> @NotNull Array<T> ofType(@NotNull Class<? super T> type, int capacity) {
+        return ArrayFactory.newArray(type, capacity);
+    }
+
+    /**
      * Copy an array to a read only array.
      *
      * @param another the another array.
@@ -1389,6 +1401,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param first    the first argument.
      * @param second   the second argument.
      * @param consumer the function.
+     * @param <F>      the first argument type.
+     * @param <S>      the second argument type.
      */
     default <F, S> void forEachR(
         @NotNull F first,

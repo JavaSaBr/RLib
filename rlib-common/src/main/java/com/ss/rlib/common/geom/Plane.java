@@ -348,9 +348,9 @@ public class Plane {
      * @return the intersection point.
      */
     public @NotNull Vector3f rayIntersection(
-            @NotNull Vector3f startPoint,
-            @NotNull Vector3f endPoint,
-            @NotNull Vector3f planePoint
+        @NotNull Vector3f startPoint,
+        @NotNull Vector3f endPoint,
+        @NotNull Vector3f planePoint
     ) {
         return rayIntersection(startPoint, endPoint, planePoint, Vector3fBuffer.NO_REUSE);
     }

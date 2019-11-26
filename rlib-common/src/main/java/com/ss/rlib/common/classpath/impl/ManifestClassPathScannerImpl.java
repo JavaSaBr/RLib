@@ -4,17 +4,9 @@ import com.ss.rlib.common.classpath.ClassPathScanner;
 import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.common.util.Utils;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Enumeration;
-import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -28,17 +20,18 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
     /**
      * The roo class.
      */
-    @NotNull
-    private final Class<?> rootClass;
+    private final @NotNull Class<?> rootClass;
 
     /**
      * The classpath key.
      */
-    @NotNull
-    private final String classPathKey;
+    private final @NotNull String classPathKey;
 
-    public ManifestClassPathScannerImpl(@NotNull final ClassLoader classLoader, @NotNull final Class<?> rootClass,
-                                        @NotNull final String classPathKey) {
+    public ManifestClassPathScannerImpl(
+        @NotNull ClassLoader classLoader,
+        @NotNull Class<?> rootClass,
+        @NotNull String classPathKey
+    ) {
         super(classLoader);
         this.rootClass = rootClass;
         this.classPathKey = classPathKey;
@@ -51,44 +44,47 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
      */
     protected @NotNull String[] getManifestClassPath() {
 
-        final Path root = Utils.getRootFolderFromClass(rootClass);
-        final Array<String> result = ArrayFactory.newArray(String.class);
+        var root = Utils.getRootFolderFromClass(rootClass);
+        var result = Array.ofType(String.class);
 
-        final Thread currentThread = Thread.currentThread();
-        final ClassLoader loader = currentThread.getContextClassLoader();
-        final Enumeration<URL> urls = Utils.uncheckedGet(loader, first -> first.getResources(JarFile.MANIFEST_NAME));
+        var currentThread = Thread.currentThread();
+        var loader = currentThread.getContextClassLoader();
+        var urls = Utils.uncheckedGet(loader, arg -> arg.getResources(JarFile.MANIFEST_NAME));
 
         while (urls.hasMoreElements()) {
 
             try {
 
-                final URL url = urls.nextElement();
-                final InputStream is = url.openStream();
+                var url = urls.nextElement();
+                var is = url.openStream();
 
                 if (is == null) {
-                    LOGGER.warning(this, "not found input stream for the url " + url);
+                    LOGGER.warning(url, arg -> "not found input stream for the url " + arg);
                     continue;
                 }
 
-                final Manifest manifest = new Manifest(is);
-                final Attributes attributes = manifest.getMainAttributes();
+                var manifest = new Manifest(is);
+                var attributes = manifest.getMainAttributes();
 
-                final String value = attributes.getValue(classPathKey);
-                if (value == null) continue;
+                var value = attributes.getValue(classPathKey);
 
-                final String[] classpath = value.split(" ");
+                if (value == null) {
+                    continue;
+                }
 
-                for (final String path : classpath) {
+                var classpath = value.split(" ");
 
-                    final Path file = root.resolve(path);
+                for (var path : classpath) {
+
+                    var file = root.resolve(path);
 
                     if (Files.exists(file)) {
                         result.add(file.toString());
                     }
                 }
 
-            } catch (final Exception e) {
-                LOGGER.warning(this, e);
+            } catch (Exception exc) {
+                LOGGER.warning(exc);
             }
         }
 
@@ -98,7 +94,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
     @Override
     protected @NotNull String[] getPathsToScan() {
 
-        final Array<String> result = ArrayFactory.newArraySet(String.class);
+        var result = ArrayFactory.newArraySet(String.class);
         result.addAll(super.getPathsToScan());
         result.addAll(getManifestClassPath());
 

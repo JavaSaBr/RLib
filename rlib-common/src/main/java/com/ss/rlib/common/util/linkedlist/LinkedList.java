@@ -1,7 +1,5 @@
 package com.ss.rlib.common.util.linkedlist;
 
-import com.ss.rlib.common.function.TripleConsumer;
-import com.ss.rlib.common.function.TriplePredicate;
 import com.ss.rlib.common.function.LongBiObjectConsumer;
 import com.ss.rlib.common.function.TripleConsumer;
 import com.ss.rlib.common.function.TriplePredicate;
@@ -56,6 +54,7 @@ public interface LinkedList<E> extends Deque<E>, Cloneable, Serializable, Reusab
      *
      * @param type     the interested element's type.
      * @param function the function.
+     * @param <T>      the element's type.
      */
     default <T> void applyIfType(@NotNull Class<T> type, @NotNull Consumer<? super T> function) {
         for (var node = getFirstNode(); node != null; node = node.getNext()) {

@@ -8,20 +8,7 @@ import org.jetbrains.annotations.Nullable;
 public final class NullLogger implements Logger {
 
     @Override
-    public void print(
-        @NotNull LoggerLevel level, @NotNull Object owner, @NotNull String message
-    ) {
-    }
-
-    @Override
     public void print(@NotNull LoggerLevel level, @NotNull String message) {
-
-    }
-
-    @Override
-    public void print(
-        @NotNull LoggerLevel level, @NotNull Object owner, @NotNull Throwable exception
-    ) {
 
     }
 

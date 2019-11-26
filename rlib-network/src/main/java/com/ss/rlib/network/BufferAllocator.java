@@ -44,6 +44,7 @@ public interface BufferAllocator {
      * Store an old read buffer if need.
      *
      * @param buffer the old read buffer.
+     * @return this allocator.
      */
     @NotNull BufferAllocator putReadBuffer(@NotNull ByteBuffer buffer);
 
@@ -51,6 +52,7 @@ public interface BufferAllocator {
      * Store an old pending buffer if need.
      *
      * @param buffer the old pending buffer.
+     * @return this allocator.
      */
     @NotNull BufferAllocator putPendingBuffer(@NotNull ByteBuffer buffer);
 
@@ -58,6 +60,7 @@ public interface BufferAllocator {
      * Store an old write buffer if need.
      *
      * @param buffer the old write buffer.
+     * @return this allocator.
      */
     @NotNull BufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer);
 
@@ -65,6 +68,7 @@ public interface BufferAllocator {
      * Store an old byte buffer if need.
      *
      * @param buffer the old byte buffer.
+     * @return this allocator.
      */
 
     @NotNull BufferAllocator putBuffer(@NotNull ByteBuffer buffer);

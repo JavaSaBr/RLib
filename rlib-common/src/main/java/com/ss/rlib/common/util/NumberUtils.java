@@ -133,6 +133,7 @@ public final class NumberUtils {
      * Return true if bit by pos in a byte is 1.
      *
      * @param value the byte.
+     * @param pos   the bit position.
      * @return true if the bit is 1.
      * @since 9.4.0
      */
@@ -144,6 +145,7 @@ public final class NumberUtils {
      * Return true if bit by pos in a byte is 0.
      *
      * @param value the byte.
+     * @param pos   the bit position.
      * @return true if the bit is 0.
      * @since 9.4.0
      */

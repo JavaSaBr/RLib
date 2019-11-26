@@ -166,6 +166,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param second   the second argument.
      * @param consumer the function.
      * @param <A>      the second argument's type.
+     * @return this array.
      */
     default <A> @NotNull ConcurrentArray<E> forEachInReadLock(
         int first,
@@ -191,6 +192,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param consumer the function.
      * @param <F>      the firs argument's type.
      * @param <S>      the second argument's type.
+     * @return this array.
      */
     default <F, S> @NotNull ConcurrentArray<E> forEachInReadLock(
         @NotNull F first,
@@ -267,6 +269,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <F>       the first argument's type.
      * @param <S>       the second argument's type.
      * @param <C>       the converted type.
+     * @return this array.
      * @since 9.8.0
      */
     default <F, S, C> @NotNull ConcurrentArray<E> forEachConvertedInReadLock(

@@ -138,12 +138,14 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> i
      *
      * @param cs      the class.
      * @param factory the instance factory.
+     * @param <P>     the packet's type.
      * @return the reference to this registry.
      * @throws IllegalArgumentException if this class doesn't have {@link PacketDescription},
      *                                  wrong id or some class is already presented with the same id.
      */
     public <P extends R> @NotNull IdBasedReadablePacketRegistry<R> register(
-        @NotNull Class<P> cs, @NotNull Supplier<P> factory
+        @NotNull Class<P> cs,
+        @NotNull Supplier<P> factory
     ) {
 
         var description = cs.getAnnotation(PacketDescription.class);

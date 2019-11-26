@@ -102,6 +102,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * contains no mapping for the key.
      *
      * @param key the key whose associated value is to be returned.
+     * @param def the default value if no value in this dictionary.
      * @return the value to which the specified key is mapped, or default if this dictionary contains no mapping for the key.
      */
     default @Nullable V getOrDefault(@NotNull K key, @NotNull V def) {

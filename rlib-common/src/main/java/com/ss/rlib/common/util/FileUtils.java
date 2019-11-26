@@ -5,6 +5,7 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayComparator;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.array.UnsafeArray;
+import com.ss.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -135,7 +135,7 @@ public class FileUtils {
         }
 
         if (!Files.exists(dir)) {
-            Utils.print(FileUtils.class, "not found folder " + dir);
+            LoggerManager.getDefaultLogger().warning(dir, arg -> "Folder " + arg + " not found");
             return;
         }
 
@@ -383,33 +383,33 @@ public class FileUtils {
      */
     public static @NotNull Path[] getFiles(@NotNull Package pckg, @Nullable String... extensions) {
 
-        ClassLoader classLoader = Thread.currentThread()
-                .getContextClassLoader();
+        ClassLoader classLoader = Thread
+            .currentThread()
+            .getContextClassLoader();
 
         Enumeration<URL> urls = null;
         try {
             urls = classLoader.getResources(pckg.getName().replace('.', '/'));
-        } catch (IOException e) {
-            Utils.print(FileUtils.class, e);
+        } catch (IOException exc) {
+            LoggerManager.getDefaultLogger().warning(exc);
         }
 
         if (urls == null) {
             return EMPTY_PATHS;
         }
 
-        Array<Path> files = ArrayFactory.newArray(Path.class);
+        var files = Array.ofType(Path.class);
 
         while (urls.hasMoreElements()) {
 
-            URL next = urls.nextElement();
-
-            String path = next.getFile();
+            var next = urls.nextElement();
+            var path = next.getFile();
 
             if (path.contains("%20")) {
                 path = path.replaceAll("%20", " ");
             }
 
-            final Path file = Paths.get(path);
+            var file = Paths.get(path);
 
             if (Files.isDirectory(file)) {
                 files.addAll(getFiles(file, extensions));
@@ -553,17 +553,17 @@ public class FileUtils {
      */
     public static @NotNull String getFirstFreeName(@NotNull Path directory, @NotNull Path file) {
 
-        String initFileName = file.getFileName()
-                .toString();
+        var initFileName = file
+            .getFileName()
+            .toString();
 
         if (!Files.exists(directory.resolve(initFileName))) {
             return initFileName;
         }
 
-        String extension = getExtension(initFileName);
-        String nameWithoutExtension = getNameWithoutExtension(initFileName);
-
-        String result = nameWithoutExtension + "_1." + extension;
+        var extension = getExtension(initFileName);
+        var nameWithoutExtension = getNameWithoutExtension(initFileName);
+        var result = nameWithoutExtension + "_1." + extension;
 
         for (int i = 2; Files.exists(directory.resolve(result)); i++) {
             result = nameWithoutExtension + "_" + i + "." + extension;
@@ -584,10 +584,10 @@ public class FileUtils {
             throw new IllegalArgumentException("The folder " + destination + " doesn't exist.");
         }
 
-        try (ZipInputStream zin = new ZipInputStream(Files.newInputStream(zipFile))) {
-            for (ZipEntry entry = zin.getNextEntry(); entry != null; entry = zin.getNextEntry()) {
+        try (var zin = new ZipInputStream(Files.newInputStream(zipFile))) {
+            for (var entry = zin.getNextEntry(); entry != null; entry = zin.getNextEntry()) {
 
-                final Path file = destination.resolve(entry.getName());
+                var file = destination.resolve(entry.getName());
 
                 if (entry.isDirectory()) {
                     Files.createDirectories(file);
@@ -657,6 +657,7 @@ public class FileUtils {
     /**
      * @param file    the file.
      * @param options the link options.
+     * @return the last modified time.
      * @see Files#getLastModifiedTime(Path, LinkOption...)
      */
     public static @NotNull FileTime getLastModifiedTime(@NotNull Path file, @NotNull LinkOption... options) {
@@ -694,6 +695,9 @@ public class FileUtils {
     }
 
     /**
+     * @param base  the base file path.
+     * @param other the other file path.
+     * @return the resulting relative path, or an empty path if both paths are equal.
      * @see Path#relativize(Path)
      */
     public static @NotNull Path relativize(@NotNull Path base, @NotNull Path other) {
@@ -701,6 +705,9 @@ public class FileUtils {
     }
 
     /**
+     * @param base  the base file path.
+     * @param other the other filepath.
+     * @return the resulting relative path, or an empty path if both paths are equal or null.
      * @see Path#relativize(Path)
      */
     public static @Nullable Path safeRelativize(@Nullable Path base, @Nullable Path other) {
@@ -726,6 +733,9 @@ public class FileUtils {
     }
 
     /**
+     * @param start   the start folder.
+     * @param visitor the visitor.
+     * @return the start folder.
      * @see Files#walkFileTree(Path, FileVisitor)
      */
     public static @NotNull Path walkFileTree(@NotNull Path start, @NotNull FileVisitor<? super Path> visitor) {
@@ -737,12 +747,16 @@ public class FileUtils {
     }
 
     /**
+     * @param prefix the prefix of a temp file.
+     * @param suffix the suffix of a temp file.
+     * @param attrs  the additional attributes.
+     * @return the created temp file.
      * @see Files#createTempFile(String, String, FileAttribute[])
      */
     public static @NotNull Path createTempFile(
         @NotNull String prefix,
         @NotNull String suffix,
-        @Nullable FileAttribute<?>... attrs
+        @NotNull FileAttribute<?>... attrs
     ) {
         try {
             return Files.createTempFile(prefix, suffix, attrs);
