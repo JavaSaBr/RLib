@@ -13,28 +13,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Bounding {
 
-    /**
-     * Check this bounding that it contains a point.
-     *
-     * @param x      the x coordinate.
-     * @param y      the y coordinate.
-     * @param z      the z coordinate.
-     * @param buffer the vector buffer.
-     * @return true if this bounding contains the point.
-     */
-    @Deprecated
-    boolean contains(float x, float y, float z, @NotNull Vector3fBuffer buffer);
-
-    /**
-     * Check this bounding that it contains a point
-     *
-     * @param point  the point
-     * @param buffer the vector buffer.
-     * @return true if this bounding contains the point.
-     */
-    @Deprecated
-    boolean contains(@NotNull Vector3f point, @NotNull Vector3fBuffer buffer);
-
 
     /**
      * Return true if this bounding contains the point.

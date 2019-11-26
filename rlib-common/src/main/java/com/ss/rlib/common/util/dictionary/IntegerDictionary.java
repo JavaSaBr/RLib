@@ -81,37 +81,9 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      * @param key     the key.
      * @param factory the factory.
      * @return the stored value by the key or the new value.
-     * @see #getOrCompute(int, Supplier)
-     */
-    @Deprecated
-    default @Nullable V get(int key, @NotNull Supplier<V> factory) {
-        return getOrCompute(key, factory);
-    }
-
-    /**
-     * Get the value for the key. If the value doesn't exists, the factory will create new value,
-     * puts this value to this dictionary and return this value.
-     *
-     * @param key     the key.
-     * @param factory the factory.
-     * @return the stored value by the key or the new value.
      */
     default @NotNull V getOrCompute(int key, @NotNull Supplier<@NotNull V> factory) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Get the value for the key. If the value doesn't exists, the factory will create new value,
-     * puts this value to this dictionary and return this value.
-     *
-     * @param key     the key.
-     * @param factory the factory.
-     * @return the stored value by the key or the new value.
-     * @see #getOrCompute(int, IntFunction)
-     */
-    @Deprecated
-    default @NotNull V get(int key, @NotNull IntFunction<V> factory) {
-        return getOrCompute(key, factory);
     }
 
     /**
@@ -153,22 +125,11 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      * @return the stored value by the key or the new value.
      */
     default <T> @Nullable V getOrCompute(
-            int key,
-            @NotNull T argument,
-            @NotNull Function<@NotNull T, @NotNull V> factory
+        int key,
+        @NotNull T argument,
+        @NotNull Function<@NotNull T, @NotNull V> factory
     ) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Create an array with all keys of this dictionary.
-     *
-     * @return the array with all keys of this dictionary.
-     * @see #keyArray()
-     */
-    @Deprecated
-    default @NotNull IntegerArray keyIntegerArray() {
-        return keyArray();
     }
 
     /**
@@ -178,18 +139,6 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      */
     default @NotNull IntegerArray keyArray() {
         return keyArray(ArrayFactory.newMutableIntegerArray(size()));
-    }
-
-    /**
-     * Put to the array all keys of this dictionary.
-     *
-     * @param container the container.
-     * @return the container with all keys.
-     * @see #keyArray(MutableIntegerArray)
-     */
-    @Deprecated
-    default @NotNull IntegerArray keyIntegerArray(@NotNull MutableIntegerArray container) {
-        return keyArray(container);
     }
 
     /**
@@ -240,8 +189,8 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
      * @param <T>      the argument's type.
      */
     default <T> void forEach(
-            @NotNull T argument,
-            @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer
+        @NotNull T argument,
+        @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer
     ) {
         throw new UnsupportedOperationException();
     }

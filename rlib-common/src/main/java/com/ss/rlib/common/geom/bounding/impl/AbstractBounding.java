@@ -107,16 +107,4 @@ public abstract class AbstractBounding implements Bounding {
     @Override
     public void update(@NotNull Quaternion4f rotation, @NotNull Vector3fBuffer buffer) {
     }
-
-    // deprecated
-
-    @Override
-    public boolean contains(float x, float y, float z, @NotNull Vector3fBuffer buffer) {
-        return contains(x, y, z);
-    }
-
-    @Override
-    public boolean contains(@NotNull Vector3f point, @NotNull Vector3fBuffer buffer) {
-        return contains(point.getX(), point.getY(), point.getZ());
-    }
 }

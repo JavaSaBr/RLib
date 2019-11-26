@@ -37,24 +37,12 @@ public final class Vector3f implements Cloneable {
      *
      * @param vector the vector.
      * @return true if the vector is not null and valid.
-     * @see #isValid(Vector3f)
-     */
-    @Deprecated
-    public static boolean isValidVector(@Nullable Vector3f vector) {
-        return isValid(vector);
-    }
-
-    /**
-     * Return true if the vector is not null and valid.
-     *
-     * @param vector the vector.
-     * @return true if the vector is not null and valid.
      */
     public static boolean isValid(@Nullable Vector3f vector) {
         return vector != null &&
-                isFinite(vector.getX()) &&
-                isFinite(vector.getY()) &&
-                isFinite(vector.getZ());
+            isFinite(vector.getX()) &&
+            isFinite(vector.getY()) &&
+            isFinite(vector.getZ());
     }
 
     /**

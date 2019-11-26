@@ -22,7 +22,7 @@ public class TestThreadPoolTaskExecutor {
 
         System.out.println(header + " start test executor...");
 
-        final GroupThreadFactory factory = new GroupThreadFactory("test_executor", Thread.class, Thread.NORM_PRIORITY);
+        final GroupThreadFactory factory = new GroupThreadFactory("test_executor", Thread::new, Thread.NORM_PRIORITY);
         final TaskExecutor<Object> executor = new ThreadPoolTaskExecutor<Object>(factory, 5, 5) {
 
             @Override

@@ -438,7 +438,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         for (var element : target.array()) {
             if (element == null) {
                 break;
-            } else if (slowRemove(element)) {
+            } else if (remove(element)) {
                 count++;
             }
         }
@@ -489,7 +489,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         int count = 0;
 
         for (var element : target) {
-            if (slowRemove(element)) {
+            if (remove(element)) {
                 count++;
             }
         }
@@ -534,36 +534,12 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Set the element by the index.
-     *
-     * @param index   the element's index.
-     * @param element the new element.
-     * @see Array#replace(int, Object)
-     */
-    @Deprecated(forRemoval = true)
-    default void set(int index, @NotNull E element) {
-        replace(index, element);
-    }
-
-    /**
      * Replace an element by an index.
      *
      * @param index   the element's index.
      * @param element the new element.
      */
     void replace(int index, @NotNull E element);
-
-    /**
-     * Removes the element at index without reordering.
-     *
-     * @param index the index of removing the element.
-     * @return the removed element.
-     * @see Array#remove(int) 
-     */
-    @Deprecated(forRemoval = true)
-    default @NotNull E slowRemove(int index) {
-        return remove(index);
-    }
 
     /**
      * Removes the element at index.
@@ -583,18 +559,6 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         }
 
         return index >= 0;
-    }
-
-    /**
-     * Remove the element without reordering.
-     *
-     * @param object the element.
-     * @return true if the element was removed.
-     * @see Array#remove(Object)
-     */
-    @Deprecated(forRemoval = true)
-    default boolean slowRemove(@NotNull Object object) {
-        return remove(object);
     }
 
     /**

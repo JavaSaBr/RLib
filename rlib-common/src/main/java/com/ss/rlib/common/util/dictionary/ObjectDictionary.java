@@ -128,20 +128,6 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param key     the key.
      * @param factory the factory.
      * @return the stored value by the key or the new value.
-     * @see #getOrCompute(Object, NotNullSupplier)
-     */
-    @Deprecated
-    default @NotNull V get(@NotNull K key, @NotNull NotNullSupplier<V> factory) {
-        return getOrCompute(key, factory);
-    }
-
-    /**
-     * Get the value for the key. If the value doesn't exists, the factory will create new value,
-     * puts this value to this dictionary and return this value.
-     *
-     * @param key     the key.
-     * @param factory the factory.
-     * @return the stored value by the key or the new value.
      */
     default @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullSupplier<V> factory) {
         throw new UnsupportedOperationException();
@@ -154,39 +140,9 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
      * @param key     the key.
      * @param factory the factory.
      * @return the stored value by the key or the new value.
-     * @see #getOrCompute(Object, NotNullFunction)
-     */
-    @Deprecated
-    default @NotNull V get(@NotNull K key, @NotNull NotNullFunction<K, V> factory) {
-        return getOrCompute(key, factory);
-    }
-
-    /**
-     * Get the value for the key. If the value doesn't exists, the factory will create new value,
-     * puts this value to this dictionary and return this value.
-     *
-     * @param key     the key.
-     * @param factory the factory.
-     * @return the stored value by the key or the new value.
      */
     default @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullFunction<K, V> factory) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Get the value for the key. If the value doesn't exists, the factory will create new value,
-     * puts this value to this dictionary and return this value.
-     *
-     * @param <T>      the argument's type.
-     * @param key      the key.
-     * @param argument the additional argument.
-     * @param factory  the factory.
-     * @return the stored value by the key or the new value.
-     * @see #getOrCompute(Object, Object, NotNullFunction)
-     */
-    @Deprecated
-    default <T> @NotNull V get(@NotNull K key, @NotNull T argument, @NotNull NotNullFunction<T, V> factory) {
-        return getOrCompute(key, argument, factory);
     }
 
     /**

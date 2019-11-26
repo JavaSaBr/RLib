@@ -198,18 +198,6 @@ public final class NumberUtils {
     }
 
     /**
-     * Covert a byte to unsigned byte.
-     *
-     * @param value the byte.
-     * @return the unsigned byte.
-     * @see Byte#toUnsignedInt(byte)
-     */
-    @Deprecated(forRemoval = true)
-    public static int toUnsignedByte(byte value) {
-        return Byte.toUnsignedInt(value);
-    }
-
-    /**
      * Validate a number and throw an exception when the number is not valid.
      *
      * @param value the value.
