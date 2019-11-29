@@ -131,4 +131,41 @@ public class ArrayUtilsTest {
         assertEquals(4, newArray.length);
         assertArrayEquals(ArrayFactory.toArray("First", "Second", null, null), newArray);
     }
+
+    @Test
+    void isNotEmptyTest() {
+
+        assertTrue(ArrayUtils.isNotEmpty(new byte[1]));
+        assertFalse(ArrayUtils.isNotEmpty(new byte[0]));
+        assertFalse(ArrayUtils.isNotEmpty((byte[]) null));
+
+        assertTrue(ArrayUtils.isNotEmpty(new short[1]));
+        assertFalse(ArrayUtils.isNotEmpty(new short[0]));
+        assertFalse(ArrayUtils.isNotEmpty((short[]) null));
+
+        assertTrue(ArrayUtils.isNotEmpty(new int[1]));
+        assertFalse(ArrayUtils.isNotEmpty(new int[0]));
+        assertFalse(ArrayUtils.isNotEmpty((int[]) null));
+
+
+        assertTrue(ArrayUtils.isNotEmpty(new char[1]));
+        assertFalse(ArrayUtils.isNotEmpty(new char[0]));
+        assertFalse(ArrayUtils.isNotEmpty((char[]) null));
+
+        assertTrue(ArrayUtils.isNotEmpty(new long[1]));
+        assertFalse(ArrayUtils.isNotEmpty(new long[0]));
+        assertFalse(ArrayUtils.isNotEmpty((long[]) null));
+
+        assertTrue(ArrayUtils.isNotEmpty(new float[1]));
+        assertFalse(ArrayUtils.isNotEmpty(new float[0]));
+        assertFalse(ArrayUtils.isNotEmpty((float[]) null));
+
+        assertTrue(ArrayUtils.isNotEmpty(new double[1]));
+        assertFalse(ArrayUtils.isNotEmpty(new double[0]));
+        assertFalse(ArrayUtils.isNotEmpty((double[]) null));
+
+        assertTrue(ArrayUtils.isNotEmpty(new Object[1]));
+        assertFalse(ArrayUtils.isNotEmpty(new Object[0]));
+        assertFalse(ArrayUtils.isNotEmpty((Object[]) null));
+    }
 }

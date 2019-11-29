@@ -160,17 +160,44 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
-     * Apply a function to each element.
+     * Apply a function to each element under {@link #readLock()} block.
      *
      * @param first    the first argument.
      * @param second   the second argument.
      * @param consumer the function.
      * @param <A>      the second argument's type.
+     * @return this array.
      */
     default <A> @NotNull ConcurrentArray<E> forEachInReadLock(
         int first,
         @NotNull A second,
         @NotNull NotNullIntBiObjectConsumer<A, ? super E> consumer
+    ) {
+
+        var stamp = readLock();
+        try {
+            forEach(first, second, consumer);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Apply a function to each element under {@link #readLock()} block.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param consumer the function.
+     * @param <F>      the firs argument's type.
+     * @param <S>      the second argument's type.
+     * @return this array.
+     */
+    default <F, S> @NotNull ConcurrentArray<E> forEachInReadLock(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullTripleConsumer<F, S, ? super E> consumer
     ) {
 
         var stamp = readLock();
@@ -225,6 +252,36 @@ public interface ConcurrentArray<E> extends Array<E> {
         var stamp = readLock();
         try {
             forEachConverted(argument, converter, function);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Apply a function to each converted element under {@link #readLock()} block.
+     *
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param converter the converter from E to C.
+     * @param function  the function.
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param <C>       the converted type.
+     * @return this array.
+     * @since 9.8.0
+     */
+    default <F, S, C> @NotNull ConcurrentArray<E> forEachConvertedInReadLock(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullTripleConsumer<F, S, C> function
+    ) {
+
+        var stamp = readLock();
+        try {
+            forEachConverted(first, second, converter, function);
         } finally {
             readUnlock(stamp);
         }

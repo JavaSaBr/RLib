@@ -45,6 +45,8 @@ public final class ReferenceFactory {
         ThreadLocal.withInitial(() -> PoolFactory.newReusablePool(TLObjectReference.class));
 
     /**
+     * @param value the init value.
+     * @return the new byte ref.
      * @since 9.2.1
      */
     public static @NotNull ByteReference newByteRef(byte value) {
@@ -52,6 +54,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new byte ref.
      * @since 9.2.1
      */
     public static @NotNull ByteReference newReusableByteRef(byte value) {
@@ -61,6 +65,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new byte ref.
      * @since 9.2.1
      */
     public static @NotNull ByteReference newThreadLocalByteRef(byte value) {
@@ -70,6 +76,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new short ref.
      * @since 9.2.1
      */
     public static @NotNull ShortReference newShortRef(short value) {
@@ -77,6 +85,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new short ref.
      * @since 9.2.1
      */
     public static @NotNull ShortReference newReusableShortRef(short value) {
@@ -86,6 +96,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new short ref.
      * @since 9.2.1
      */
     public static @NotNull ShortReference newThreadLocalShortRef(short value) {
@@ -95,6 +107,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new char ref.
      * @since 9.2.1
      */
     public static @NotNull CharReference newCharRef(char value) {
@@ -102,6 +116,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new char ref.
      * @since 9.2.1
      */
     public static @NotNull CharReference newReusableCharRef(char value) {
@@ -111,6 +127,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new char ref.
      * @since 9.2.1
      */
     public static @NotNull CharReference newThreadLocalCharRef(char value) {
@@ -120,6 +138,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new int ref.
      * @since 9.2.1
      */
     public static @NotNull IntReference newIntRef(int value) {
@@ -127,6 +147,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new int ref.
      * @since 9.2.1
      */
     public static @NotNull IntReference newReusableIntRef(int value) {
@@ -136,6 +158,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new int ref.
      * @since 9.2.1
      */
     public static @NotNull IntReference newThreadLocalIntRef(int value) {
@@ -145,6 +169,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new long ref.
      * @since 9.2.1
      */
     public static @NotNull LongReference newLongRef(long value) {
@@ -152,6 +178,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new long ref.
      * @since 9.2.1
      */
     public static @NotNull LongReference newReusableLongRef(long value) {
@@ -161,6 +189,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new long ref.
      * @since 9.2.1
      */
     public static @NotNull LongReference newThreadLocalLongRef(long value) {
@@ -170,6 +200,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new float ref.
      * @since 9.2.1
      */
     public static @NotNull FloatReference newFloatRef(float value) {
@@ -177,6 +209,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new float ref.
      * @since 9.2.1
      */
     public static @NotNull FloatReference newReusableFloatRef(float value) {
@@ -186,6 +220,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new float ref.
      * @since 9.2.1
      */
     public static @NotNull FloatReference newThreadLocalFloatRef(float value) {
@@ -195,6 +231,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new double ref.
      * @since 9.2.1
      */
     public static @NotNull DoubleReference newDoubleRef(double value) {
@@ -202,6 +240,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new double ref.
      * @since 9.2.1
      */
     public static @NotNull DoubleReference newReusableDoubleRef(double value) {
@@ -211,6 +251,8 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @return the new double ref.
      * @since 9.2.1
      */
     public static @NotNull DoubleReference newThreadLocalDoubleRef(double value) {
@@ -220,6 +262,9 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @param <T>   the object's type.
+     * @return the new object ref.
      * @since 9.2.1
      */
     public static <T> @NotNull ObjectReference<T> newObjRef(@Nullable T value) {
@@ -227,6 +272,9 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @param <T>   the object's type.
+     * @return the new object ref.
      * @since 9.2.1
      */
     public static <T> @NotNull ObjectReference<T> newReusableObjRef(@Nullable T value) {
@@ -236,6 +284,9 @@ public final class ReferenceFactory {
     }
 
     /**
+     * @param value the init value.
+     * @param <T>   the object's type.
+     * @return the new object ref.
      * @since 9.2.1
      */
     public static <T> @NotNull ObjectReference<T> newThreadLocalObjRef(@Nullable T value) {

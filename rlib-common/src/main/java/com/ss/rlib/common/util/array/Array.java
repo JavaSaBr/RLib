@@ -48,6 +48,18 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Create a new array for the element's type.
+     *
+     * @param type     the element's type.
+     * @param capacity the start capacity of this array.
+     * @param <T>      the element's type.
+     * @return the new array.
+     */
+    static <T> @NotNull Array<T> ofType(@NotNull Class<? super T> type, int capacity) {
+        return ArrayFactory.newArray(type, capacity);
+    }
+
+    /**
      * Copy an array to a read only array.
      *
      * @param another the another array.
@@ -426,7 +438,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         for (var element : target.array()) {
             if (element == null) {
                 break;
-            } else if (slowRemove(element)) {
+            } else if (remove(element)) {
                 count++;
             }
         }
@@ -477,7 +489,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         int count = 0;
 
         for (var element : target) {
-            if (slowRemove(element)) {
+            if (remove(element)) {
                 count++;
             }
         }
@@ -522,36 +534,12 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
-     * Set the element by the index.
-     *
-     * @param index   the element's index.
-     * @param element the new element.
-     * @see Array#replace(int, Object)
-     */
-    @Deprecated(forRemoval = true)
-    default void set(int index, @NotNull E element) {
-        replace(index, element);
-    }
-
-    /**
      * Replace an element by an index.
      *
      * @param index   the element's index.
      * @param element the new element.
      */
     void replace(int index, @NotNull E element);
-
-    /**
-     * Removes the element at index without reordering.
-     *
-     * @param index the index of removing the element.
-     * @return the removed element.
-     * @see Array#remove(int) 
-     */
-    @Deprecated(forRemoval = true)
-    default @NotNull E slowRemove(int index) {
-        return remove(index);
-    }
 
     /**
      * Removes the element at index.
@@ -571,18 +559,6 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         }
 
         return index >= 0;
-    }
-
-    /**
-     * Remove the element without reordering.
-     *
-     * @param object the element.
-     * @return true if the element was removed.
-     * @see Array#remove(Object)
-     */
-    @Deprecated(forRemoval = true)
-    default boolean slowRemove(@NotNull Object object) {
-        return remove(object);
     }
 
     /**
@@ -1248,7 +1224,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * Apply a function to each converted element.
      *
      * @param argument  the argument.
-     * @param converter the converter from T to C.
+     * @param converter the converter from E to C.
      * @param consumer  the function.
      * @param <T>       the argument's type.
      * @param <C>       the converted type.
@@ -1267,6 +1243,31 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
     }
 
     /**
+     * Apply a function to each converted element.
+     *
+     * @param first     the first argument.
+     * @param second    the second argument.
+     * @param converter the converter from E to C.
+     * @param consumer  the function.
+     * @param <F>       the first argument's type.
+     * @param <S>       the second argument's type.
+     * @param <C>       the converted type.
+     */
+    default <F, S, C> void forEachConverted(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull NotNullFunction<? super E, C> converter,
+        @NotNull NotNullTripleConsumer<F, S, C> consumer
+    ) {
+
+        var array = array();
+
+        for (int i = 0, length = size(); i < length; i++) {
+            consumer.accept(first, second, converter.apply(array[i]));
+        }
+    }
+
+    /**
      * Apply a function to each element and converted argument.
      *
      * @param argument  the argument.
@@ -1274,6 +1275,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param consumer  the function.
      * @param <T>       the argument's type.
      * @param <C>       the converted type.
+     * @since 9.8.0
      */
     default <T, C> void forEach(
         @NotNull T argument,
@@ -1363,6 +1365,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
      * @param first    the first argument.
      * @param second   the second argument.
      * @param consumer the function.
+     * @param <F>      the first argument type.
+     * @param <S>      the second argument type.
      */
     default <F, S> void forEachR(
         @NotNull F first,

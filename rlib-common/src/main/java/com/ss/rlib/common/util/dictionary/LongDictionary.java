@@ -93,20 +93,6 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
     }
 
     /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
-     * ложится по этому же ключу.
-     *
-     * @param key     ключ.
-     * @param factory фабрика.
-     * @return the v
-     * @see #getOrCompute(long, Supplier)
-     */
-    @Deprecated
-    default @Nullable V get(long key, @NotNull Supplier<V> factory) {
-        return getOrCompute(key, factory);
-    }
-
-    /**
      * Get the value for the key. If the value doesn't exists, the factory will create new value,
      * puts this value to this dictionary and return this value.
      *
@@ -119,20 +105,6 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
     }
 
     /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый и
-     * ложится по этому же ключу.
-     *
-     * @param key     ключ.
-     * @param factory фабрика.
-     * @return the v
-     * @see #getOrCompute(long, LongFunction)
-     */
-    @Deprecated
-    default @Nullable V get(long key, @NotNull LongFunction<V> factory) {
-        return getOrCompute(key, factory);
-    }
-
-    /**
      * Get the value for the key. If the value doesn't exists, the factory will create new value,
      * puts this value to this dictionary and return this value.
      *
@@ -142,22 +114,6 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      */
     default @NotNull V getOrCompute(long key, @NotNull LongFunction<@NotNull V> factory) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Вовзращает значения по указанному ключу, в случае отсутствия объекта, создается новый с
-     * учетом дополнительного аргумента и ложится по этому же ключу.
-     *
-     * @param <T>      the type parameter
-     * @param key      ключ.
-     * @param argument дополнительный аргумент.
-     * @param factory  фабрика.
-     * @return the v
-     * @see #getOrCompute(long, Object, Function)
-     */
-    @Deprecated
-    default <T> @Nullable V get(long key, @Nullable T argument, @NotNull Function<T, V> factory) {
-        return getOrCompute(key, argument, factory);
     }
 
     /**
@@ -182,32 +138,9 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
      * Create an array with all keys of this dictionary.
      *
      * @return the array with all keys of this dictionary.
-     * @see #keyArray()
-     */
-    @Deprecated
-    default @NotNull LongArray keyLongArray() {
-        return keyArray();
-    }
-
-    /**
-     * Create an array with all keys of this dictionary.
-     *
-     * @return the array with all keys of this dictionary.
      */
     default @NotNull LongArray keyArray() {
         return keyArray(ArrayFactory.newLongArray(size()));
-    }
-
-    /**
-     * Put to the array all keys of this dictionary.
-     *
-     * @param container the container.
-     * @return the container with all keys.
-     * @see #keyArray(LongArray)
-     */
-    @Deprecated
-    default @NotNull LongArray keyLongArray(@NotNull LongArray container) {
-        return keyArray(container);
     }
 
     /**

@@ -322,14 +322,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Byte) {
             return (Byte) object;
         } else if (object instanceof String) {
             return Byte.parseByte(object.toString());
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -366,14 +366,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof byte[]) {
             return (byte[]) object;
         } else if (object instanceof String) {
             return parseByteArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     private byte[] parseByteArray(@NotNull final String regex, @NotNull final Object object) {
@@ -409,7 +409,7 @@ public class VarTable {
             return parseByteArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -423,14 +423,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Double) {
             return (Double) object;
         } else if (object instanceof String) {
             return Double.parseDouble(object.toString());
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -467,14 +467,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof double[]) {
             return (double[]) object;
         } else if (object instanceof String) {
             return parseDoubleArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     private double[] parseDoubleArray(@NotNull final String regex, @NotNull final Object object) {
@@ -510,7 +510,7 @@ public class VarTable {
             return parseDoubleArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -526,14 +526,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (type.isInstance(object)) {
             return type.cast(object);
         } else if (object instanceof String) {
             return Enum.valueOf(type, object.toString());
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -576,14 +576,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Enum[]) {
             return notNull(ClassUtils.unsafeCast(object));
         } else if (object instanceof String) {
             return parseEnumArray(type, regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     private <T extends Enum<T>> @NotNull T[] parseEnumArray(@NotNull final Class<T> type, @NotNull final String regex,
@@ -623,7 +623,7 @@ public class VarTable {
             return parseEnumArray(type, regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -637,14 +637,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Float) {
             return (Float) object;
         } else if (object instanceof String) {
             return Float.parseFloat(object.toString());
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -688,7 +688,7 @@ public class VarTable {
             return parseFloatArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     private @NotNull float[] parseFloatArray(@NotNull final String regex, @NotNull final Object object) {
@@ -711,10 +711,13 @@ public class VarTable {
      * @param def   the default array.
      * @return the float array.
      */
-    public @NotNull float[] getFloatArray(@NotNull final String key, @NotNull final String regex,
-                                          @NotNull final float... def) {
+    public @NotNull float[] getFloatArray(
+        @NotNull String key, 
+        @NotNull String regex,
+        @NotNull float... def
+    ) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
             return def;
@@ -724,22 +727,9 @@ public class VarTable {
             return parseFloatArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
-
-    /**
-     * Get an integer value by the key.
-     *
-     * @param key the key.
-     * @return the integer value.
-     * @throws IllegalArgumentException if the value isn't exist.
-     * @throws IllegalStateException if the value can't be presented as int.
-     * @see #getInt(String)
-     */
-    @Deprecated(forRemoval = true)
-    public int getInteger(@NotNull String key) {
-        return getInt(key);
-    }
+    
 
     /**
      * Get an integer value by the key.
@@ -755,27 +745,14 @@ public class VarTable {
         var object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Integer) {
             return (Integer) object;
         } else if (object instanceof String) {
             return Integer.parseInt(object.toString());
         }
 
-        throw new IllegalStateException("the value: " + object + " can't be presented as int, key: " + key);
-    }
-
-    /**
-     * Get an integer value by the key.
-     *
-     * @param key the key.
-     * @param def the default value.
-     * @return the integer value.
-     * @see #getInt(String, int)
-     */
-    @Deprecated(forRemoval = true)
-    public int getInteger(@NotNull String key, int def) {
-        return getInt(key, def);
+        throw new IllegalStateException("Value: " + object + " can't be presented as int, key: " + key);
     }
 
     /**
@@ -799,7 +776,7 @@ public class VarTable {
             return Integer.parseInt(object.toString());
         }
 
-        throw new IllegalStateException("the value: " + object + " can't be presented as int, key: " + key);
+        throw new IllegalStateException("Value: " + object + " can't be presented as int, key: " + key);
     }
 
     /**
@@ -816,29 +793,14 @@ public class VarTable {
         var object = values.get(key);
 
         if(object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof int[]) {
             return (int[]) object;
         } else if (object instanceof Integer[]) {
             return ArrayUtils.toIntArray((Integer[]) object);
         }
 
-        throw new IllegalStateException("the value: " + object + " can't be presented as int array, key: " + key);
-    }
-
-    /**
-     * Get an int array value by the key.
-     *
-     * @param key   the key.
-     * @param regex the regex to split if a value is string.
-     * @return the int array value.
-     * @throws IllegalArgumentException if the value isn't exist.
-     * @throws IllegalStateException if the value can't be presented as int array.
-     * @see #getIntArray(String, String)
-     */
-    @Deprecated(forRemoval = true)
-    public @NotNull int[] getIntegerArray(@NotNull String key, @NotNull String regex) {
-        return getIntArray(key, regex);
+        throw new IllegalStateException("Value: " + object + " can't be presented as int array, key: " + key);
     }
 
     /**
@@ -856,29 +818,14 @@ public class VarTable {
         var object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof int[]) {
             return (int[]) object;
         } else if (object instanceof String) {
             return ArrayUtils.toIntArray((String) object, regex);
         }
 
-        throw new IllegalStateException("the value: " + object + " can't be presented as int array, key: " + key);
-    }
-
-    /**
-     * Get an int array value by the key.
-     *
-     * @param key   the key.
-     * @param regex the regex to split if a value is string.
-     * @param def   the default value.
-     * @return the int array value or the default value if the value isn't exist.
-     * @throws IllegalStateException if the value can't be presented as int array.
-     * @see #getIntArray(String, String, int...)
-     */
-    @Deprecated(forRemoval = true)
-    public @NotNull int[] getIntegerArray(@NotNull String key, @NotNull String regex, @NotNull int... def) {
-        return getIntArray(key, regex, def);
+        throw new IllegalStateException("Value: " + object + " can't be presented as int array, key: " + key);
     }
 
     /**
@@ -903,7 +850,7 @@ public class VarTable {
             return ArrayUtils.toIntArray((String) object, regex);
         }
 
-        throw new IllegalStateException("the value: " + object + " can't be presented as int array, key: " + key);
+        throw new IllegalStateException("Value: " + object + " can't be presented as int array, key: " + key);
     }
 
     /**
@@ -917,14 +864,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Long) {
             return (Long) object;
         } else if (object instanceof String) {
             return Long.parseLong(object.toString());
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -961,14 +908,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof long[]) {
             return (long[]) object;
         } else if (object instanceof String) {
             return parseLongArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     private @NotNull long[] parseLongArray(@NotNull final String regex, @NotNull final Object object) {
@@ -1004,7 +951,7 @@ public class VarTable {
             return parseLongArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -1015,25 +962,30 @@ public class VarTable {
      */
     public @NotNull Quaternion4f getRotation(@NotNull final String key) {
 
-        final Object object = values.get(key);
+        var object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Quaternion4f) {
             return (Quaternion4f) object;
         } else if (object instanceof String) {
             return parseRotation((String) object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
-    private @NotNull Quaternion4f parseRotation(@NotNull final String object) {
+    private @NotNull Quaternion4f parseRotation(@NotNull String object) {
 
-        final String[] values = object.split(",");
+        var values = object.split(",");
 
-        final Quaternion4f rotation = Quaternion4f.newInstance();
-        rotation.setXYZW(parseFloat(values[0]), parseFloat(values[1]), parseFloat(values[2]), parseFloat(values[3]));
+        var rotation = new Quaternion4f();
+        rotation.setXYZW(
+            parseFloat(values[0]),
+            parseFloat(values[1]),
+            parseFloat(values[2]),
+            parseFloat(values[3])
+        );
 
         return rotation;
     }
@@ -1050,7 +1002,7 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Quaternion4f) {
             return (Quaternion4f) object;
         } else if (object instanceof String) {
@@ -1071,14 +1023,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Short) {
             return (Short) object;
         } else if (object instanceof String) {
             return Short.parseShort(object.toString());
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -1115,14 +1067,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof short[]) {
             return (short[]) object;
         } else if (object instanceof String) {
             return parseShortArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     private @NotNull short[] parseShortArray(@NotNull final String regex, @NotNull final Object object) {
@@ -1158,7 +1110,7 @@ public class VarTable {
             return parseShortArray(regex, object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -1173,12 +1125,12 @@ public class VarTable {
         var object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof String) {
             return object.toString();
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -1233,14 +1185,14 @@ public class VarTable {
         final Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof String[]) {
             return (String[]) object;
         } else if (object instanceof String) {
             return object.toString().split(regex);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     /**
@@ -1287,14 +1239,14 @@ public class VarTable {
         Object object = values.get(key);
 
         if (object == null) {
-            throw new IllegalArgumentException("not found " + key);
+            throw new IllegalArgumentException("Not found " + key);
         } else if (object instanceof Vector3f) {
             return (Vector3f) object;
         } else if (object instanceof String) {
             return parseVector((String) object);
         }
 
-        throw new IllegalArgumentException("not found " + key);
+        throw new IllegalArgumentException("Not found " + key);
     }
 
     private @NotNull Vector3f parseVector(@NotNull String object) {
@@ -1325,18 +1277,6 @@ public class VarTable {
     }
 
     /**
-     * Store the value by the key.
-     *
-     * @param key   the key.
-     * @param value the value.
-     * @see #put(String, Object)
-     */
-    @Deprecated(forRemoval = true)
-    public void set(@NotNull String key, @NotNull Object value) {
-        put(key, value);
-    }
-
-    /**
      * Put the value by the key to this vars table.
      *
      * @param key   the key.
@@ -1354,19 +1294,6 @@ public class VarTable {
      */
     public void clear(@NotNull String key) {
         values.remove(key);
-    }
-
-    /**
-     * Copy all values from the another vars table.
-     *
-     * @param vars the another vars table.
-     * @return this vars table.
-     * @throws IllegalArgumentException is the vars table is the same as this vars table.
-     * @see #put(VarTable)
-     */
-    @Deprecated(forRemoval = true)
-    public @NotNull VarTable set(@NotNull VarTable vars) {
-        return put(vars);
     }
 
     /**

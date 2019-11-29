@@ -54,29 +54,6 @@ public class GroupThreadFactory implements ThreadFactory {
         this.daemon = daemon;
     }
 
-    @Deprecated
-    public GroupThreadFactory(@NotNull String name, @NotNull Class<? extends Thread> cs, int priority) {
-        this.priority = priority;
-        this.name = name;
-        this.group = new ThreadGroup(name);
-        this.ordinal = new AtomicInteger();
-        this.daemon = false;
-        this.constructor = new ThreadConstructor() {
-
-            Constructor<? extends Thread> constructor =
-                ClassUtils.getConstructor(cs, ThreadGroup.class, Runnable.class, String.class);
-
-            @Override
-            public @NotNull Thread create(
-                @NotNull ThreadGroup group,
-                @NotNull Runnable runnable,
-                @NotNull String name
-            ) {
-                return ClassUtils.newInstance(constructor, group, runnable, name);
-            }
-        };
-    }
-
     @Override
     public @NotNull Thread newThread(@NotNull Runnable runnable) {
         var thread = constructor.create(group, runnable, name + "-" + ordinal.incrementAndGet());

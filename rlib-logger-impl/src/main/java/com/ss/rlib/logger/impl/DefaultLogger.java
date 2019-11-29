@@ -69,18 +69,4 @@ public final class DefaultLogger implements Logger {
             loggerFactory.write(level, name, StringUtils.toString(exception));
         }
     }
-
-    @Override
-    public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull String message) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, owner.getClass().getSimpleName(), message);
-        }
-    }
-
-    @Override
-    public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull Throwable exception) {
-        if (isEnabled(level)) {
-            loggerFactory.write(level, owner.getClass().getSimpleName(), StringUtils.toString(exception));
-        }
-    }
 }

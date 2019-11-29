@@ -29,6 +29,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket<R>> {
      * Create a new empty readable packet registry.
      *
      * @param type the packet's type.
+     * @param <T>  the packet's type.
      * @return the new packet registry.
      */
     static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> empty(@NotNull Class<T> type) {
@@ -88,6 +89,7 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket<R>> {
      *
      * @param type    the base packet's type.
      * @param classes the classes array.
+     * @param <T>     the packet's type.
      * @return the new packet registry.
      */
     @SafeVarargs
@@ -105,10 +107,12 @@ public interface ReadablePacketRegistry<R extends IdBasedReadablePacket<R>> {
      *
      * @param type    the base packet's type.
      * @param classes the classes array.
+     * @param <T>     the packet's type.
      * @return the new packet registry.
      */
     static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> of(
-        @NotNull Class<T> type, @NotNull Array<Class<? extends T>> classes
+        @NotNull Class<T> type,
+        @NotNull Array<Class<? extends T>> classes
     ) {
 
         var registry = new IdBasedReadablePacketRegistry<>(type);

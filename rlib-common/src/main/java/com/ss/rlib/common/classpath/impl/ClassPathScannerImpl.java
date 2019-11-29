@@ -1,17 +1,19 @@
 package com.ss.rlib.common.classpath.impl;
 
+import static com.ss.rlib.common.util.ClassUtils.unsafeNNCast;
 import static java.lang.reflect.Modifier.isAbstract;
 import com.ss.rlib.common.classpath.ClassPathScanner;
 import com.ss.rlib.common.compiler.Compiler;
 import com.ss.rlib.common.io.impl.ReuseBytesInputStream;
 import com.ss.rlib.common.io.impl.ReuseBytesOutputStream;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.util.ArrayUtils;
-import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.IOUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,12 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Predicate;
-import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipException;
 
@@ -34,6 +34,7 @@ import java.util.zip.ZipException;
  *
  * @author JavaSaBr
  */
+@Getter(AccessLevel.PRIVATE)
 public class ClassPathScannerImpl implements ClassPathScanner {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(ClassPathScanner.class);
@@ -45,26 +46,22 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     /**
      * The list of additional paths to scan.
      */
-    @NotNull
-    private final Array<String> additionalPaths;
+    private final @NotNull Array<String> additionalPaths;
 
     /**
      * The class loader.
      */
-    @NotNull
-    private final ClassLoader loader;
+    private final @NotNull ClassLoader loader;
 
     /**
      * The found classes.
      */
-    @NotNull
-    private Class<?>[] classes;
+    private @NotNull Class<?>[] classes;
 
     /**
      * The found resources.
      */
-    @NotNull
-    private String[] resources;
+    private @NotNull String[] resources;
 
     /**
      * The flag of using system classpath.
@@ -80,30 +77,36 @@ public class ClassPathScannerImpl implements ClassPathScanner {
 
     @Override
     public void addClasses(@NotNull Array<Class<?>> classes) {
-        this.classes = ArrayUtils.combine(this.classes,
-                classes.toArray(new Class[classes.size()]), Class.class);
+        this.classes = ArrayUtils.combine(
+            this.classes,
+            classes.toArray(ArrayUtils.EMPTY_CLASS_ARRAY),
+            Class.class
+        );
     }
 
     @Override
     public void addResources(@NotNull Array<String> resources) {
-        this.resources = ArrayUtils.combine(this.resources,
-                resources.toArray(new String[resources.size()]), String.class);
+        this.resources = ArrayUtils.combine(
+            this.resources,
+            resources.toArray(ArrayUtils.EMPTY_STRING_ARRAY),
+            String.class
+        );
     }
 
     @Override
     public <T> void findImplements(@NotNull Array<Class<T>> container, @NotNull Class<T> interfaceClass) {
 
         if (!interfaceClass.isInterface()) {
-            throw new IllegalArgumentException("The class " + interfaceClass + " is not interface.");
+            throw new IllegalArgumentException("Class " + interfaceClass + " is not interface.");
         }
 
-        for (Class<?> cs : getClasses()) {
+        for (var cs : getClasses()) {
 
             if (cs.isInterface() || !interfaceClass.isAssignableFrom(cs) || isAbstract(cs.getModifiers())) {
                 continue;
             }
 
-            container.add(ClassUtils.unsafeCast(cs));
+            container.add(unsafeNNCast(cs));
         }
     }
 
@@ -111,26 +114,26 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     public <T> void findInherited(@NotNull Array<Class<T>> container, @NotNull Class<T> parentClass) {
 
         if (Modifier.isFinal(parentClass.getModifiers())) {
-            throw new IllegalArgumentException("The class " + parentClass + " is final class.");
+            throw new IllegalArgumentException("Class " + parentClass + " is final class.");
         }
 
-        for (Class<?> cs : getClasses()) {
+        for (var cs : getClasses()) {
 
             if (cs.isInterface() || cs == parentClass || !parentClass.isAssignableFrom(cs) ||
-                    isAbstract(cs.getModifiers())) {
+                isAbstract(cs.getModifiers())) {
                 continue;
             }
 
-            container.add(ClassUtils.unsafeCast(cs));
+            container.add(unsafeNNCast(cs));
         }
     }
 
     @Override
     public void findAnnotated(@NotNull Array<Class<?>> container, @NotNull Class<? extends Annotation> annotationClass) {
-        for (Class<?> cs : getClasses()) {
+        for (var cs : getClasses()) {
 
             if (cs.isInterface() || isAbstract(cs.getModifiers()) || cs.isAnnotation() ||
-                    !cs.isAnnotationPresent(annotationClass)) {
+                !cs.isAnnotationPresent(annotationClass)) {
                 continue;
             }
             
@@ -159,43 +162,16 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     }
 
     /**
-     * Get the found classes.
-     *
-     * @return the found classes.
-     */
-    private @NotNull Class<?>[] getClasses() {
-        return classes;
-    }
-
-    /**
-     * Get the found resources.
-     *
-     * @return the found resources.
-     */
-    private @NotNull String[] getResources() {
-        return resources;
-    }
-
-    /**
-     * Get the class loader.
-     *
-     * @return the class loader.
-     */
-    private @NotNull ClassLoader getLoader() {
-        return loader;
-    }
-
-    /**
      * Get a list of paths to scan.
      *
      * @return the list of paths.
      */
     protected @NotNull String[] getPathsToScan() {
 
-        String[] systemClasspath = useSystemClasspath() ? getClasspathPaths() : ArrayUtils.EMPTY_STRING_ARRAY;
-        int capacity = additionalPaths.size() + systemClasspath.length;
+        var systemClasspath = useSystemClasspath() ? getClasspathPaths() : ArrayUtils.EMPTY_STRING_ARRAY;
+        var capacity = additionalPaths.size() + systemClasspath.length;
 
-        Array<String> result = ArrayFactory.newArray(String.class, capacity);
+        var result = Array.ofType(String.class, capacity);
         result.addAll(systemClasspath);
         result.addAll(additionalPaths);
 
@@ -234,10 +210,10 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      * @param container the container.
      */
     private void loadClass(
-            @Nullable Path rootPath,
-            @Nullable Path file,
-            @NotNull String name,
-            @NotNull Array<Class<?>> container
+        @Nullable Path rootPath,
+        @Nullable Path file,
+        @NotNull String name,
+        @NotNull Array<Class<?>> container
     ) {
 
         if (!name.endsWith(CLASS_EXTENSION)) {
@@ -252,6 +228,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             for (int i = 0, length = name.length() - CLASS_EXTENSION.length(); i < length; i++) {
 
                 char ch = name.charAt(i);
+
                 if (ch == '/' || ch == '\\') {
                     ch = '.';
                 }
@@ -262,24 +239,19 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             className = result.toString();
 
         } catch (Exception e) {
-            LOGGER.warning(this, "Incorrect replaced " + name +
-                    " to java path, used separator " + File.separator);
+            LOGGER.warning(name, arg ->
+                "Incorrect replaced " + arg + " to java path, used separator " + File.separator);
             return;
         }
 
         try {
             container.add(getLoader().loadClass(className));
         } catch (NoClassDefFoundError error) {
-
-            LOGGER.warning(this, "Can't load class: " + className + "\n" +
-                    "Original name:" + name +"\n" +
-                    "Root folder: " + rootPath + "\n" +
-                    "Class file: " + file);
-
-            LOGGER.warning(this, error);
-
+            LOGGER.warning("Can't load class: " + className + "\n" + "Original name:" + name +
+                "\n" + "Root folder: " + rootPath + "\n" + "Class file: " + file);
+            LOGGER.warning(error);
         } catch (Throwable e) {
-            LOGGER.warning(this, e);
+            LOGGER.warning(e);
         }
     }
 
@@ -291,15 +263,14 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      * @param directory the directory.
      */
     private void scanDirectory(
-            @NotNull Path rootPath,
-            @NotNull Array<Class<?>> classes,
-            @NotNull Array<String> resources,
-            @NotNull Path directory
+        @NotNull Path rootPath,
+        @NotNull Array<Class<?>> classes,
+        @NotNull Array<String> resources,
+        @NotNull Path directory
     ) {
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-
-            for (Path file : stream) {
+        try (var stream = Files.newDirectoryStream(directory)) {
+            for (var file : stream) {
 
                 if (Files.isDirectory(file)) {
                     scanDirectory(rootPath, classes, resources, file);
@@ -347,33 +318,34 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     private void scanJar(@NotNull Array<Class<?>> classes, @NotNull Array<String> resources, @NotNull Path jarFile) {
 
         if (!Files.exists(jarFile)) {
-            LOGGER.warning(this, "not exists " + jarFile);
+            LOGGER.warning(jarFile, arg -> "Not exists " + arg);
             return;
         }
 
-        ReuseBytesOutputStream rout = new ReuseBytesOutputStream();
-        ReuseBytesInputStream rin = new ReuseBytesInputStream();
+        var rout = new ReuseBytesOutputStream();
+        var rin = new ReuseBytesInputStream();
 
-        byte[] buffer = new byte[128];
+        var buffer = new byte[128];
 
-        try (JarInputStream jin = new JarInputStream(Files.newInputStream(jarFile))) {
+        try (var jin = new JarInputStream(Files.newInputStream(jarFile))) {
             scanJarInputStream(classes, resources, rout, rin, buffer, jin);
         } catch (ZipException e) {
-            LOGGER.warning(this, "Can't open zip file " + jarFile);
-            LOGGER.warning(this, e);
+            LOGGER.warning(jarFile, arg -> "Can't open zip file " + arg);
+            LOGGER.warning(e);
         } catch (IOException e) {
-            LOGGER.warning(this, e);
+            LOGGER.warning(e);
         }
     }
 
     private void scanJarInputStream(
-            @NotNull Array<Class<?>> classes,
-            @NotNull Array<String> resources,
-            @NotNull ReuseBytesOutputStream rout,
-            @NotNull ReuseBytesInputStream rin, @NotNull byte[] buffer,
-            @NotNull JarInputStream jin) throws IOException {
+        @NotNull Array<Class<?>> classes,
+        @NotNull Array<String> resources,
+        @NotNull ReuseBytesOutputStream rout,
+        @NotNull ReuseBytesInputStream rin, @NotNull byte[] buffer,
+        @NotNull JarInputStream jin
+    ) throws IOException {
 
-        for (JarEntry entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
+        for (var entry = jin.getNextJarEntry(); entry != null; entry = jin.getNextJarEntry()) {
 
             if (entry.isDirectory()) {
                 continue;
@@ -402,45 +374,45 @@ public class ClassPathScannerImpl implements ClassPathScanner {
      * @param jarFile   the input stream of a .jar.
      */
     private void scanJar(
-            @NotNull Array<Class<?>> classes,
-            @NotNull Array<String> resources,
-            @NotNull InputStream jarFile
+        @NotNull Array<Class<?>> classes,
+        @NotNull Array<String> resources,
+        @NotNull InputStream jarFile
     ) {
 
-        ReuseBytesOutputStream rout = new ReuseBytesOutputStream();
-        ReuseBytesInputStream rin = new ReuseBytesInputStream();
+        var rout = new ReuseBytesOutputStream();
+        var rin = new ReuseBytesInputStream();
 
-        byte[] buffer = new byte[128];
+        var buffer = new byte[128];
 
-        try (JarInputStream jin = new JarInputStream(jarFile)) {
+        try (var jin = new JarInputStream(jarFile)) {
             scanJarInputStream(classes, resources, rout, rin, buffer, jin);
         } catch (final ZipException e) {
-            LOGGER.warning(this, "can't open zip file " + jarFile);
-            LOGGER.warning(this, e);
+            LOGGER.warning(jarFile, arg -> "Can't open zip file " + arg);
+            LOGGER.warning(e);
         } catch (final IOException e) {
-            LOGGER.warning(this, e);
+            LOGGER.warning(e);
         }
     }
 
     @Override
     public void scan(@Nullable Predicate<String> filter) {
 
-        String[] paths = getPathsToScan();
+        var paths = getPathsToScan();
 
-        Array<Class<?>> classes = ArrayFactory.newArray(Class.class);
-        Array<String> resources = ArrayFactory.newArray(String.class);
+        Array<Class<?>> classes = Array.ofType(Class.class);
+        Array<String> resources = Array.ofType(String.class);
 
-        for (String path : paths) {
+        for (var path : paths) {
 
-            Path file = Paths.get(path);
+            var file = Paths.get(path);
 
             if (!Files.exists(file) || (filter != null && !filter.test(path))) {
                 continue;
             }
 
-            LOGGER.debug(file, toScan -> "scan " + toScan);
+            LOGGER.debug(file, arg -> "Scan " + arg);
 
-            String filename = file.getFileName().toString();
+            var filename = file.getFileName().toString();
 
             if (Files.isDirectory(file)) {
                 scanDirectory(file, classes, resources, file);
@@ -449,11 +421,11 @@ public class ClassPathScannerImpl implements ClassPathScanner {
             }
         }
 
-        this.classes = classes.toArray(new Class[classes.size()]);
-        this.resources = resources.toArray(new String[resources.size()]);
+        this.classes = classes.toArray(ArrayUtils.EMPTY_CLASS_ARRAY);
+        this.resources = resources.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
 
-        LOGGER.debug(getClasses(), getResources(),
-                (cses, rses) -> "scanned for " + cses.length + " classes and " + rses.length + " resources.");
+        LOGGER.debug(getClasses(), getResources(), (arg1, arg2) ->
+            "Scanned " + arg1.length + " classes and " + arg2.length + " resources.");
     }
 
     @Override

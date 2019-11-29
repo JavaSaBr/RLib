@@ -37,6 +37,8 @@ public interface ConfigurablePluginSystem extends PluginSystem {
 
     /**
      * Preload all plugins.
+     *
+     * @return the async result of pre-loaded plugin system.
      */
     @NotNull CompletableFuture<ConfigurablePluginSystem> preLoad();
 
@@ -44,12 +46,14 @@ public interface ConfigurablePluginSystem extends PluginSystem {
      * Preload all plugins.
      *
      * @param executor the executor.
-     * @return the future.
+     * @return the async result of pre-loaded plugin system.
      */
     @NotNull CompletableFuture<ConfigurablePluginSystem> preLoad(@NotNull Executor executor);
 
     /**
      * Initialize all plugins.
+     *
+     * @return the async result of initialized plugin system.
      */
     @NotNull CompletableFuture<ConfigurablePluginSystem> initialize();
 
@@ -57,7 +61,7 @@ public interface ConfigurablePluginSystem extends PluginSystem {
      * Initialize all plugins.
      *
      * @param executor the executor.
-     * @return the future.
+     * @return the async result of initialized plugin system.
      */
     @NotNull CompletableFuture<ConfigurablePluginSystem> initialize(@NotNull Executor executor);
 

@@ -26,27 +26,27 @@ public class DefaultLoggerFactory implements LoggerFactory {
     /**
      * The dictionary of all created loggers.
      */
-    private final ConcurrentMap<String, Logger> loggers;
+    private final @NotNull ConcurrentMap<String, Logger> loggers;
 
     /**
      * The main logger.
      */
-    private final Logger logger;
+    private final @NotNull Logger logger;
 
     /**
      * The list of listeners.
      */
-    private final ConcurrentArray<LoggerListener> listeners;
+    private final @NotNull ConcurrentArray<LoggerListener> listeners;
 
     /**
      * The list of writers.
      */
-    private final ConcurrentArray<Writer> writers;
+    private final @NotNull ConcurrentArray<Writer> writers;
 
     /**
      * The date time formatter.
      */
-    private final DateTimeFormatter timeFormatter;
+    private final @NotNull DateTimeFormatter timeFormatter;
 
     public DefaultLoggerFactory() {
         this.loggers = new ConcurrentHashMap<>();
@@ -83,12 +83,12 @@ public class DefaultLoggerFactory implements LoggerFactory {
 
     @Override
     public void removeListener(@NotNull LoggerListener listener) {
-        listeners.runInWriteLock(listener, Array::slowRemove);
+        listeners.runInWriteLock(listener, Array::remove);
     }
 
     @Override
     public void removeWriter(@NotNull Writer writer) {
-        writers.runInWriteLock(writer, Array::slowRemove);
+        writers.runInWriteLock(writer, Array::remove);
     }
 
     /**

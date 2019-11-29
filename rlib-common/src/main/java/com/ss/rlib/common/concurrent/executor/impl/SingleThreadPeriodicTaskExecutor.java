@@ -7,11 +7,13 @@ import com.ss.rlib.common.concurrent.lock.Lockable;
 import com.ss.rlib.common.concurrent.task.PeriodicTask;
 import com.ss.rlib.common.concurrent.util.ConcurrentUtils;
 import com.ss.rlib.common.concurrent.util.ThreadUtils;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,62 +25,53 @@ import java.util.function.Consumer;
 /**
  * The implementation of single thread periodic executor.
  *
- * @param <T> the type parameter
- * @param <L> the type parameter
  * @author JavaSaBr
  */
-public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> implements PeriodicTaskExecutor<T, L>, Runnable, Lockable {
+@Getter(AccessLevel.PROTECTED)
+public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> implements PeriodicTaskExecutor<T, L>,
+    Runnable, Lockable {
 
     protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadPeriodicTaskExecutor.class);
 
     /**
      * The list of waiting tasks.
      */
-    @NotNull
-    private final Array<T> waitTasks;
+    private final @NotNull Array<T> waitTasks;
 
     /**
      * The list of executing tasks.
      */
-    @NotNull
-    private final Array<T> executeTasks;
+    private final @NotNull Array<T> executeTasks;
 
     /**
      * The list of finished tasks.
      */
-    @NotNull
-    private final Array<T> finishedTasks;
+    private final @NotNull Array<T> finishedTasks;
 
     /**
      * The executor thread.
      */
-    @NotNull
-    private final Thread thread;
+    private final @NotNull Thread thread;
 
     /**
      * The thread local objects.
      */
-    @NotNull
-    private final L localObjects;
+    private final @NotNull L localObjects;
 
     /**
      * The finishing function.
      */
-    @NotNull
-    private final Consumer<T> finishFunction =
-            task -> task.onFinish(getLocalObjects());
+    private final @NotNull Consumer<T> finishFunction = task -> task.onFinish(getLocalObjects());
 
     /**
      * The waiting flag.
      */
-    @NotNull
-    private final AtomicBoolean wait;
+    private final @NotNull AtomicBoolean wait;
 
     /**
      * The synchronizator.
      */
-    @NotNull
-    private final Lock lock;
+    private final @NotNull Lock lock;
 
     /**
      * The update interval.
@@ -86,12 +79,12 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     private final int interval;
 
     public SingleThreadPeriodicTaskExecutor(
-            @NotNull Class<? extends Thread> threadClass,
-            int priority,
-            int interval,
-            @NotNull String name,
-            @NotNull Class<? super T> taskClass,
-            @Nullable L localObjects
+        @NotNull Class<? extends Thread> threadClass,
+        int priority,
+        int interval,
+        @NotNull String name,
+        @NotNull Class<? super T> taskClass,
+        @Nullable L localObjects
     ) {
         this.waitTasks = ArrayFactory.newArray(taskClass);
         this.executeTasks = ArrayFactory.newArray(taskClass);
@@ -130,13 +123,6 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
         }
     }
 
-    /**
-     * Check l.
-     *
-     * @param localObjects the local objects
-     * @param thread       the thread
-     * @return the l
-     */
     protected @NotNull L check(@Nullable L localObjects, @NotNull Thread thread) {
         return requireNonNull(localObjects);
     }
@@ -149,10 +135,18 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
      * @param local            the thread local objects.
      * @param startExecuteTime the start time.
      */
-    protected void executeImpl(@NotNull final Array<T> executeTasks, @NotNull final Array<T> finishedTasks,
-                               @NotNull final L local, final long startExecuteTime) {
-        for (final T task : executeTasks.array()) {
-            if (task == null) break;
+    protected void executeImpl(
+        @NotNull Array<T> executeTasks,
+        @NotNull Array<T> finishedTasks,
+        @NotNull L local,
+        long startExecuteTime
+    ) {
+        for (var task : executeTasks.array()) {
+
+            if (task == null) {
+                break;
+            }
+
             if (task.call(local, startExecuteTime) == Boolean.TRUE) {
                 finishedTasks.add(task);
             }
@@ -160,62 +154,10 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     }
 
     /**
-     * Gets execute tasks.
-     *
-     * @return the list of executing tasks.
-     */
-    @NotNull
-    protected Array<T> getExecuteTasks() {
-        return executeTasks;
-    }
-
-    /**
-     * Gets finished tasks.
-     *
-     * @return the list of finished tasks.
-     */
-    @NotNull
-    protected Array<T> getFinishedTasks() {
-        return finishedTasks;
-    }
-
-    /**
-     * Gets interval.
-     *
      * @return the update interval.
      */
     public int getInterval() {
         return interval;
-    }
-
-    /**
-     * Gets local objects.
-     *
-     * @return the thread local objects.
-     */
-    @NotNull
-    protected L getLocalObjects() {
-        return localObjects;
-    }
-
-    /**
-     * Gets wait.
-     *
-     * @return the waiting flag.
-     */
-    @NotNull
-    public AtomicBoolean getWait() {
-        return wait;
-    }
-
-    /**
-     * Gets wait tasks.
-     *
-     * @return the list of waiting tasks.
-     */
-    @NotNull
-    protected Array<T> getWaitTasks() {
-        return waitTasks;
     }
 
     @Override
@@ -230,7 +172,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
      * @param local            the thread local objects.
      * @param startExecuteTime the start executing time.
      */
-    protected void postExecute(@NotNull final Array<T> executedTasks, @NotNull final L local, final long startExecuteTime) {
+    protected void postExecute(@NotNull Array<T> executedTasks, @NotNull L local, long startExecuteTime) {
     }
 
     /**
@@ -240,7 +182,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
      * @param local            the thread local objects.
      * @param startExecuteTime the start executing time.
      */
-    protected void preExecute(@NotNull final Array<T> executeTasks, @NotNull final L local, final long startExecuteTime) {
+    protected void preExecute(@NotNull Array<T> executeTasks, @NotNull L local, long startExecuteTime) {
     }
 
     @Override
@@ -256,13 +198,12 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
     @Override
     public void run() {
 
-        final Array<T> waitTasks = getWaitTasks();
-        final Array<T> executeTasks = getExecuteTasks();
-        final Array<T> finishedTasks = getFinishedTasks();
+        var waitTasks = getWaitTasks();
+        var executeTasks = getExecuteTasks();
+        var finishedTasks = getFinishedTasks();
 
-        final L local = getLocalObjects();
-
-        final int interval = getInterval();
+        var local = getLocalObjects();
+        var interval = getInterval();
 
         while (true) {
 
@@ -290,15 +231,17 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
                 }
             }
 
-            if (executeTasks.isEmpty()) continue;
+            if (executeTasks.isEmpty()) {
+                continue;
+            }
 
-            final long startExecuteTime = System.currentTimeMillis();
+            var startExecuteTime = System.currentTimeMillis();
 
             preExecute(executeTasks, local, startExecuteTime);
             try {
                 executeImpl(executeTasks, finishedTasks, local, startExecuteTime);
-            } catch (final Exception e) {
-                LOGGER.warning(getClass(), e);
+            } catch (Exception exc) {
+                LOGGER.warning(exc);
             } finally {
                 postExecute(executeTasks, local, startExecuteTime);
             }
@@ -316,13 +259,19 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
                     finishedTasks.forEach(finishFunction);
                 }
 
-            } catch (final Exception e) {
-                LOGGER.warning(getClass(), e);
+            } catch (Exception exc) {
+                LOGGER.warning(exc);
             }
 
-            if (interval < 1) continue;
-            final int result = interval - (int) (System.currentTimeMillis() - startExecuteTime);
-            if (result < 1) continue;
+            if (interval < 1) {
+                continue;
+            }
+
+            var result = interval - (int) (System.currentTimeMillis() - startExecuteTime);
+
+            if (result < 1) {
+                continue;
+            }
 
             ThreadUtils.sleep(result);
         }

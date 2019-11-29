@@ -123,12 +123,12 @@ public final class Utils {
     /**
      * Try to execute a function with some result.
      *
-     * @param <R>      the result's type.
      * @param function the function.
+     * @param <R>      the result's type.
      * @return the result or null.
      * @since 9.5.0
      */
-    public static <R> @Nullable R tryGet(@NotNull SafeSupplier<@NotNull R> function) {
+    public static <R> @Nullable R tryGet(@NotNull NotNullSafeSupplier<R> function) {
         try {
             return function.get();
         } catch (Exception e) {
@@ -140,11 +140,11 @@ public final class Utils {
     /**
      * Execute the function with auto-converting a checked exception to an unchecked.
      *
-     * @param <F>      the argument's type.
      * @param first    the argument.
      * @param function the function.
+     * @param <F>      the argument's type.
      */
-    public static <F> void unchecked(@NotNull F first, @NotNull SafeConsumer<@NotNull F> function) {
+    public static <F> void unchecked(@NotNull F first, @NotNull NotNullSafeConsumer<F> function) {
         try {
             function.accept(first);
         } catch (IOException e) {
@@ -157,16 +157,16 @@ public final class Utils {
     /**
      * Execute the function with auto-converting a checked exception to an unchecked.
      *
-     * @param <F>      the first argument's type.
-     * @param <S>      the second argument's type.
      * @param first    the first argument.
      * @param second   the second argument.
      * @param consumer the function.
+     * @param <F>      the first argument's type.
+     * @param <S>      the second argument's type.
      */
     public static <F, S> void unchecked(
         @NotNull F first,
         @NotNull S second,
-        @NotNull SafeBiConsumer<@NotNull F, @NotNull S> consumer
+        @NotNull NotNullSafeBiConsumer<F, S> consumer
     ) {
         try {
             consumer.accept(first, second);
@@ -180,11 +180,11 @@ public final class Utils {
     /**
      * Execute the function with auto-converting a checked exception to an unchecked.
      *
-     * @param <R>      the result type.
      * @param function the function.
+     * @param <R>      the result type.
      * @return the result.
      */
-    public static <R> @NotNull R uncheckedGet(@NotNull SafeFactory<@NotNull R> function) {
+    public static <R> @NotNull R uncheckedGet(@NotNull NotNullSafeFactory<R> function) {
         try {
             return function.get();
         } catch (IOException e) {
@@ -197,15 +197,15 @@ public final class Utils {
     /**
      * Execute the function with auto-converting a checked exception to an unchecked.
      *
-     * @param <F>      the argument's type.
-     * @param <R>      the result's type.
      * @param argument the argument.
      * @param function the function.
+     * @param <F>      the argument's type.
+     * @param <R>      the result's type.
      * @return the result.
      */
     public static <F, R> @NotNull R uncheckedGet(
         @NotNull F argument,
-        @NotNull SafeFunction<F, R> function
+        @NotNull NotNullSafeFunction<F, R> function
     ) {
         try {
             return function.apply(argument);
@@ -219,16 +219,16 @@ public final class Utils {
     /**
      * Execute the function with returning default value if got an exception.
      *
-     * @param <F>      the argument's type.
-     * @param <R>      the result's type.
      * @param argument the argument.
      * @param function the function.
      * @param def      the default value.
+     * @param <F>      the argument's type.
+     * @param <R>      the result's type.
      * @return the result.
      */
     public static <F, R> @NotNull R uncheckedGet(
         @NotNull F argument,
-        @NotNull SafeFunction<F, R> function,
+        @NotNull NotNullSafeFunction<F, R> function,
         @NotNull R def
     ) {
         try {
@@ -241,19 +241,19 @@ public final class Utils {
     /**
      * Execute the function with auto-converting a checked exception to an unchecked.
      *
-     * @param <F>      the first's type.
-     * @param <S>      the second's type.
-     * @param <R>      the result's type.
      * @param first    the first argument.
      * @param second   the second argument.
      * @param function the function.
+     * @param <F>      the first's type.
+     * @param <S>      the second's type.
+     * @param <R>      the result's type.
      * @return the result.
      * @since 9.2.1
      */
     public static <F, S, R> @NotNull R uncheckedGet(
         @NotNull F first,
         @NotNull S second,
-        @NotNull SafeBiFunction<F, S, R> function
+        @NotNull NotNullSafeBiFunction<F, S, R> function
     ) {
         try {
             return function.apply(first, second);
@@ -267,16 +267,16 @@ public final class Utils {
     /**
      * Try to execute a function with some result.
      *
-     * @param <F>      the argument's type.
-     * @param <R>      the result's type.
      * @param argument the argument.
      * @param function the function.
+     * @param <F>      the argument's type.
+     * @param <R>      the result's type.
      * @return the result or null.
      * @since 9.3.0
      */
     public static <F, R> @Nullable R tryGet(
         @NotNull F argument,
-        @NotNull SafeFunction<@NotNull F, @NotNull R> function
+        @NotNull NotNullSafeFunction<F, R> function
     ) {
         try {
             return function.apply(argument);
@@ -289,17 +289,17 @@ public final class Utils {
     /**
      * Try to execute a function with some result.
      *
-     * @param <F>      the argument's type.
-     * @param <R>      the result's type.
      * @param argument the argument.
      * @param function the function.
      * @param def      the default value.
+     * @param <F>      the argument's type.
+     * @param <R>      the result's type.
      * @return the result or null.
      * @since 9.3.0
      */
     public static <F, R> @NotNull R tryGet(
         @NotNull F argument,
-        @NotNull SafeFunction<@NotNull F, @NotNull R> function,
+        @NotNull NotNullSafeFunction<F, R> function,
         @NotNull R def
     ) {
         try {
@@ -313,19 +313,19 @@ public final class Utils {
     /**
      * Try to execute a function with some result and convert this result to another.
      *
-     * @param <F>             the argument's type.
-     * @param <R>             the function result's type.
-     * @param <FR>            the converter result's type.
      * @param argument        the argument.
      * @param function        the function.
      * @param resultConverter the result converter.
+     * @param <F>             the argument's type.
+     * @param <R>             the function result's type.
+     * @param <FR>            the converter result's type.
      * @return the final result or null.
      * @since 9.3.0
      */
     public static <F, R, FR> @Nullable FR tryGetAndConvert(
         @NotNull F argument,
-        @NotNull SafeFunction<@NotNull F, @NotNull R> function,
-        @NotNull SafeFunction<@NotNull R, @NotNull FR> resultConverter
+        @NotNull NotNullSafeFunction<F, R> function,
+        @NotNull NotNullSafeFunction<R, FR> resultConverter
     ) {
         try {
             return resultConverter.apply(function.apply(argument));
@@ -338,21 +338,21 @@ public final class Utils {
     /**
      * Print an exception to log.
      *
-     * @param owner     the owner.
      * @param exception the exception.
+     * @since 9.8.0
      */
-    public static void print(@NotNull Class<?> owner, @NotNull Exception exception) {
-        LoggerManager.getDefaultLogger().warning(owner, exception);
+    public static void print(@NotNull Exception exception) {
+        LoggerManager.getDefaultLogger().warning(exception);
     }
 
     /**
      * Print a message to log.
      *
-     * @param owner   the owner.
      * @param message the message.
+     * @since 9.8.0
      */
-    public static void print(@NotNull Class<?> owner, @NotNull String message) {
-        LoggerManager.getDefaultLogger().warning(owner, message);
+    public static void print(@NotNull String message) {
+        LoggerManager.getDefaultLogger().warning(message);
     }
 
     private Utils() {

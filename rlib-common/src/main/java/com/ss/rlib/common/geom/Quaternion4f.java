@@ -20,7 +20,7 @@ public class Quaternion4f {
             ThreadLocal.withInitial(RandomFactory::newFastRandom);
 
     private static final ThreadLocal<Quaternion4f> ROTATION_LOCAL =
-            ThreadLocal.withInitial(Quaternion4f::newInstance);
+            ThreadLocal.withInitial(Quaternion4f::new);
 
     /**
      * Get the thread local instance.
@@ -29,26 +29,6 @@ public class Quaternion4f {
      */
     public static Quaternion4f get() {
         return ROTATION_LOCAL.get();
-    }
-
-    @Deprecated
-    public static Quaternion4f newInstance() {
-        return new Quaternion4f();
-    }
-
-    @Deprecated
-    public static Quaternion4f newInstance(float angleX, float angleY, float angleZ) {
-        return newInstance().fromAngles(angleX, angleY, angleZ);
-    }
-
-    @Deprecated
-    public static Quaternion4f newInstance(float x, float y, float z, float w) {
-        return new Quaternion4f(x, y, z, w);
-    }
-
-    @Deprecated
-    public static Quaternion4f newInstance(float[] vals) {
-        return new Quaternion4f(vals[0], vals[1], vals[2], vals[3]);
     }
 
     /**
@@ -260,20 +240,6 @@ public class Quaternion4f {
         }
 
         return this;
-    }
-
-
-    /**
-     * Calculate a vector by a direction type.
-     *
-     * @param type  the direction type.
-     * @param store the result container.
-     * @return the calculated vector.
-     * @see #getDirection(DirectionType, Vector3f)
-     */
-    @Deprecated
-    public @NotNull Vector3f getVector(@NotNull DirectionType type, @Nullable Vector3f store) {
-        return getDirection(type, store);
     }
 
     /**

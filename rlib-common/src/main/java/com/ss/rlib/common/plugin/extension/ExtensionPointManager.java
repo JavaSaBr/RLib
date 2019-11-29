@@ -1,11 +1,11 @@
 package com.ss.rlib.common.plugin.extension;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.dictionary.ConcurrentObjectDictionary;
 import com.ss.rlib.common.util.dictionary.DictionaryFactory;
 import com.ss.rlib.common.util.dictionary.ObjectDictionary;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,7 +20,8 @@ public class ExtensionPointManager {
     /**
      * Register a new extension point.
      *
-     * @param id the extension id.
+     * @param id  the extension id.
+     * @param <T> the extension's type.
      * @return the new extension point.
      * @throws IllegalArgumentException if an extension with the id is already exists.
      */
@@ -37,8 +38,7 @@ public class ExtensionPointManager {
     /**
      * All created extension points.
      */
-    @NotNull
-    private final ConcurrentObjectDictionary<String, ExtensionPoint<?>> extensionPoints;
+    private final @NotNull ConcurrentObjectDictionary<String, ExtensionPoint<?>> extensionPoints;
 
     private ExtensionPointManager() {
         this.extensionPoints = DictionaryFactory.newConcurrentAtomicObjectDictionary();
@@ -49,14 +49,14 @@ public class ExtensionPointManager {
         long stamp = extensionPoints.writeLock();
         try {
 
-            ExtensionPoint<?> exists = extensionPoints.get(id);
+            var exists = extensionPoints.get(id);
 
             if (exists != null) {
                 LOGGER.warning("The extension point with the id " + id + " is already registered.");
                 return ClassUtils.unsafeNNCast(exists);
             }
 
-            ExtensionPoint<T> extensionPoint = new ExtensionPoint<>();
+            var extensionPoint = new ExtensionPoint<T>();
 
             extensionPoints.put(id, extensionPoint);
 
@@ -77,9 +77,9 @@ public class ExtensionPointManager {
      * @return this manager.
      */
     public <T> @NotNull ExtensionPointManager addExtension(
-            @NotNull String id,
-            @NotNull Class<T> type,
-            @NotNull T extension
+        @NotNull String id,
+        @NotNull Class<T> type,
+        @NotNull T extension
     ) {
         getExtensionPoint(id).register(extension);
         return this;
@@ -90,6 +90,7 @@ public class ExtensionPointManager {
      *
      * @param id        the extension point's id.
      * @param extension the new extension.
+     * @param <T>       the extension's type.
      * @return this manager.
      */
     public <T> @NotNull ExtensionPointManager addExtension(@NotNull String id, @NotNull T extension) {
@@ -102,6 +103,7 @@ public class ExtensionPointManager {
      *
      * @param id         the extension point's id.
      * @param extensions the new extensions.
+     * @param <T>        the extension's type.
      * @return this manager.
      */
     public <T> @NotNull ExtensionPointManager addExtension(@NotNull String id, @NotNull T... extensions) {
@@ -124,12 +126,13 @@ public class ExtensionPointManager {
     /**
      * Get or create an extension point.
      *
-     * @param id the id.
+     * @param id  the id.
+     * @param <T> the extension's type.
      * @return the extension point.
      */
     public <T> @NotNull ExtensionPoint<T> getExtensionPoint(@NotNull String id) {
 
-        ExtensionPoint<?> extensionPoint = extensionPoints.getInReadLock(id, ObjectDictionary::get);
+        var extensionPoint = extensionPoints.getInReadLock(id, ObjectDictionary::get);
 
         if (extensionPoint != null) {
             return ClassUtils.unsafeNNCast(extensionPoint);

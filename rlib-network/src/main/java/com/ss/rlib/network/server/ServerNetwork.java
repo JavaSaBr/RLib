@@ -26,6 +26,7 @@ public interface ServerNetwork<C extends Connection<?, ?>> extends Network<C> {
      * Start a server by the address.
      *
      * @param serverAddress the sever address.
+     * @param <S>           the server network's type.
      * @return this network.
      */
     <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress);

@@ -4,6 +4,8 @@ import static java.lang.ThreadLocal.withInitial;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.common.util.IOUtils;
+import lombok.AccessLevel;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
@@ -20,21 +22,14 @@ import java.io.InputStream;
 /**
  * The base implementation of the parser of xml documents.
  *
- * @param <C> the type parameter
  * @author JavaSaBr
  */
 public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
 
-    /**
-     * The constant LOGGER.
-     */
     protected static final Logger LOGGER = LoggerManager.getLogger(DocumentXML.class);
 
-    /**
-     * The constant LOCAL_FACTORY.
-     */
     protected static final ThreadLocal<DocumentBuilderFactory> LOCAL_FACTORY = withInitial(() -> {
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        var factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringComments(true);
         return factory;
@@ -43,31 +38,29 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     /**
      * The stream of xml document.
      */
-    @Nullable
-    protected InputStream stream;
+    @Setter(AccessLevel.PROTECTED)
+    protected @Nullable InputStream stream;
 
     /**
      * the DOM model of this document.
      */
-    @Nullable
-    protected Document document;
+    protected @Nullable Document document;
 
     /**
      * The result of parsing.
      */
-    @Nullable
-    protected C result;
+    protected @Nullable C result;
 
     public AbstractStreamDocument() {
         super();
     }
 
-    public AbstractStreamDocument(@NotNull final InputStream stream) {
+    public AbstractStreamDocument(@NotNull InputStream stream) {
         this.stream = stream;
     }
 
     /**
-     * Creates the container of the result.
+     * Create a container of the result.
      *
      * @return the container of the result.
      */
@@ -76,13 +69,13 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
     @Override
     public @NotNull C parse() {
 
-        final DocumentBuilderFactory factory = LOCAL_FACTORY.get();
+        var factory = LOCAL_FACTORY.get();
         try {
-            final DocumentBuilder builder = factory.newDocumentBuilder();
+            var builder = factory.newDocumentBuilder();
             document = builder.parse(stream);
-        } catch (SAXException | IOException | ParserConfigurationException e) {
-            LOGGER.warning(this, e);
-            throw new RuntimeException(e);
+        } catch (SAXException | IOException | ParserConfigurationException exc) {
+            LOGGER.warning(exc);
+            throw new RuntimeException(exc);
         } finally {
             IOUtils.close(stream);
         }
@@ -90,9 +83,9 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
         result = create();
         try {
             parse(document);
-        } catch (final Exception e) {
-            LOGGER.warning(this, e);
-            throw new RuntimeException(e);
+        } catch (Exception exc) {
+            LOGGER.warning(exc);
+            throw new RuntimeException(exc);
         }
 
         return result;
@@ -103,9 +96,13 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
      *
      * @param document the DOM model of this document.
      */
-    protected void parse(@NotNull final Document document) {
-        for (Node node = document.getFirstChild(); node != null; node = node.getNextSibling()) {
-            if (node.getNodeType() != Node.ELEMENT_NODE) continue;
+    protected void parse(@NotNull Document document) {
+        for (var node = document.getFirstChild(); node != null; node = node.getNextSibling()) {
+
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+
             parse(null, (Element) node);
         }
     }
@@ -116,11 +113,15 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
      * @param parent  the parent element.
      * @param element the current element.
      */
-    protected void parse(@Nullable final Element parent, @NotNull final Element element) {
+    protected void parse(@Nullable Element parent, @NotNull Element element) {
         handle(parent, element);
 
-        for (Node node = element.getFirstChild(); node != null; node = node.getNextSibling()) {
-            if (node.getNodeType() != Node.ELEMENT_NODE) continue;
+        for (var node = element.getFirstChild(); node != null; node = node.getNextSibling()) {
+
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+
             parse(element, (Element) node);
         }
     }
@@ -131,15 +132,6 @@ public abstract class AbstractStreamDocument<C> implements DocumentXML<C> {
      * @param parent  the parent element.
      * @param element the current element.
      */
-    protected void handle(@Nullable final Element parent, @NotNull final Element element) {
-    }
-
-    /**
-     * Sets stream.
-     *
-     * @param stream the stream to parsing.
-     */
-    protected void setStream(@NotNull final InputStream stream) {
-        this.stream = stream;
+    protected void handle(@Nullable Element parent, @NotNull Element element) {
     }
 }

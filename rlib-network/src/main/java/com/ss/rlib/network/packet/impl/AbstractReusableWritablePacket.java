@@ -22,15 +22,14 @@ import java.util.Map;
 public abstract class AbstractReusableWritablePacket extends AbstractWritablePacket implements ReusableWritablePacket {
 
     protected static final ThreadLocal<Map<Class<? super ReusableWritablePacket>, Pool<ReusableWritablePacket>>>
-            LOCAL_POOLS = ThreadLocal.withInitial(HashMap::new);
+        LOCAL_POOLS = ThreadLocal.withInitial(HashMap::new);
 
     protected final AtomicInteger counter;
 
     /**
      * The pool to store this packet after using.
      */
-    @Nullable
-    protected volatile Pool<ReusableWritablePacket> pool;
+    protected volatile @Nullable Pool<ReusableWritablePacket> pool;
     protected volatile int barrier;
 
     protected int barrierSink;
@@ -43,7 +42,10 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
     public boolean write(@NotNull ByteBuffer buffer) {
 
         if (counter.get() < 1) {
-            LOGGER.warning(this, "write finished packet " + this + " on thread " + Thread.currentThread().getName());
+            LOGGER.warning(
+                this,
+                arg -> "Attempt to write is already finished packet " + arg + " on thread " + Thread.currentThread().getName()
+            );
             return false;
         }
 

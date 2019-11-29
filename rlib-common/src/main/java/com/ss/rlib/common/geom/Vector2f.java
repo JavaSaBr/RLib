@@ -35,18 +35,6 @@ public class Vector2f implements Cloneable {
      *
      * @param vector the vector.
      * @return true if the vector is not null and valid.
-     * @see #isValid(Vector2f)
-     */
-    @Deprecated
-    public static boolean isValidVector(@Nullable Vector2f vector) {
-        return vector != null && isFinite(vector.getX()) && isFinite(vector.getY());
-    }
-
-    /**
-     * Return true if the vector is not null and valid.
-     *
-     * @param vector the vector.
-     * @return true if the vector is not null and valid.
      */
     public static boolean isValid(@Nullable Vector2f vector) {
         return vector != null && isFinite(vector.getX()) && isFinite(vector.getY());

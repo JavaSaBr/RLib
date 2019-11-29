@@ -4,7 +4,6 @@ import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @RequiredArgsConstructor
 public class Slf4jLogger implements Logger {
@@ -29,11 +28,6 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull String message) {
-        print(level, message);
-    }
-
-    @Override
     public void print(@NotNull LoggerLevel level, @NotNull String message) {
 
         switch (level) {
@@ -49,11 +43,6 @@ public class Slf4jLogger implements Logger {
             case WARNING:
                 logger.warn(message);
         }
-    }
-
-    @Override
-    public void print(@NotNull LoggerLevel level, @NotNull Object owner, @NotNull Throwable exception) {
-        print(level, exception);
     }
 
     @Override

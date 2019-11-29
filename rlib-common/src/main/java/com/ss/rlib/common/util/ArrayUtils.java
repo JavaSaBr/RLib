@@ -586,8 +586,8 @@ public final class ArrayUtils {
         }
 
         var className = array.array()
-                .getClass()
-                .getSimpleName();
+            .getClass()
+            .getSimpleName();
 
         var builder = new StringBuilder(className.substring(0, className.length() - 1));
 
@@ -1491,6 +1491,16 @@ public final class ArrayUtils {
     }
 
     /**
+     * Return true if the array is not null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is not null or empty.
+     */
+    public static boolean isNotEmpty(@Nullable byte[] array) {
+        return array != null && array.length > 0;
+    }
+
+    /**
      * Return true if the array is null or empty.
      *
      * @param array the array.
@@ -1498,6 +1508,16 @@ public final class ArrayUtils {
      */
     public static boolean isEmpty(@Nullable byte[] array) {
         return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is not null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is not null or empty.
+     */
+    public static boolean isNotEmpty(@Nullable short[] array) {
+        return array != null && array.length > 0;
     }
 
     /**
@@ -1511,6 +1531,16 @@ public final class ArrayUtils {
     }
 
     /**
+     * Return true if the array is not null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is not null or empty.
+     */
+    public static boolean isNotEmpty(@Nullable char[] array) {
+        return array != null && array.length > 0;
+    }
+
+    /**
      * Return true if the array is null or empty.
      *
      * @param array the array.
@@ -1518,6 +1548,16 @@ public final class ArrayUtils {
      */
     public static boolean isEmpty(@Nullable char[] array) {
         return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is not null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is not null or empty.
+     */
+    public static boolean isNotEmpty(@Nullable int[] array) {
+        return array != null && array.length > 0;
     }
 
     /**
@@ -1530,6 +1570,15 @@ public final class ArrayUtils {
         return array == null || array.length == 0;
     }
 
+    /**
+     * Return true if the array is not null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is not null or empty.
+     */
+    public static boolean isNotEmpty(@Nullable long[] array) {
+        return array != null && array.length > 0;
+    }
 
     /**
      * Return true if the array is null or empty.
@@ -1539,6 +1588,16 @@ public final class ArrayUtils {
      */
     public static boolean isEmpty(@Nullable long[] array) {
         return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is not null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is not null or empty.
+     */
+    public static boolean isNotEmpty(@Nullable float[] array) {
+        return array != null && array.length > 0;
     }
 
     /**
@@ -1552,12 +1611,42 @@ public final class ArrayUtils {
     }
 
     /**
+     * Return true if the array is not null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is not null or empty.
+     */
+    public static boolean isNotEmpty(@Nullable double[] array) {
+        return array != null && array.length > 0;
+    }
+
+    /**
      * Return true if the array is null or empty.
      *
      * @param array the array.
      * @return true if the array is null or empty.
      */
     public static boolean isEmpty(@Nullable double[] array) {
+        return array == null || array.length == 0;
+    }
+
+    /**
+     * Return true if the array is not null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is not null or empty.
+     */
+    public static boolean isNotEmpty(@Nullable Object[] array) {
+        return array != null && array.length > 0;
+    }
+
+    /**
+     * Return true if the array is null or empty.
+     *
+     * @param array the array.
+     * @return true if the array is null or empty.
+     */
+    public static boolean isEmpty(@Nullable Object[] array) {
         return array == null || array.length == 0;
     }
 
