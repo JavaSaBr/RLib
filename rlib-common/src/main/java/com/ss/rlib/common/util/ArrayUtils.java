@@ -586,8 +586,8 @@ public final class ArrayUtils {
         }
 
         var className = array.array()
-                .getClass()
-                .getSimpleName();
+            .getClass()
+            .getSimpleName();
 
         var builder = new StringBuilder(className.substring(0, className.length() - 1));
 
