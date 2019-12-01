@@ -19,7 +19,7 @@ public interface ServerNetworkConfig extends NetworkConfig {
     class SimpleServerNetworkConfig implements ServerNetworkConfig {
 
         @Builder.Default
-        private String groupName = "ServerNetworkThread";
+        private String threadGroupName = "ServerNetworkThread";
         @Builder.Default
         private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
         @Builder.Default
@@ -32,7 +32,7 @@ public interface ServerNetworkConfig extends NetworkConfig {
         @Builder.Default
         private int writeBufferSize = 2048;
         @Builder.Default
-        private int groupSize = 1;
+        private int threadGroupSize = 1;
         @Builder.Default
         private int threadPriority = Thread.NORM_PRIORITY;
     }
@@ -40,12 +40,12 @@ public interface ServerNetworkConfig extends NetworkConfig {
     @NotNull ServerNetworkConfig DEFAULT_SERVER = new ServerNetworkConfig() {
 
         @Override
-        public int getGroupSize() {
-            return 2;
+        public int getThreadGroupMinSize() {
+            return 1;
         }
 
         @Override
-        public @NotNull String getGroupName() {
+        public @NotNull String getThreadGroupName() {
             return "ServerNetworkThread";
         }
     };
@@ -55,7 +55,7 @@ public interface ServerNetworkConfig extends NetworkConfig {
      *
      * @return the minimal executor size.
      */
-    default int getGroupSize() {
+    default int getThreadGroupMinSize() {
         return 1;
     }
 
@@ -64,8 +64,8 @@ public interface ServerNetworkConfig extends NetworkConfig {
      *
      * @return the maximum executor size.
      */
-    default int getGroupMaxSize() {
-        return getGroupSize();
+    default int getThreadGroupMaxSize() {
+        return getThreadGroupMinSize();
     }
 
     /**

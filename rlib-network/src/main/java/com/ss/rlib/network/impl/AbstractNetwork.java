@@ -17,7 +17,7 @@ import java.util.function.BiFunction;
  */
 public abstract class AbstractNetwork<C extends Connection<?, ?>> implements Network<C> {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(AbstractNetwork.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(AbstractNetwork.class);
 
     protected final NetworkConfig config;
     protected final BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection;

@@ -212,7 +212,7 @@ public class StringNetworkTest extends BaseNetworkTest {
     void testServerWithMultiplyClients() {
 
         var serverConfig = SimpleServerNetworkConfig.builder()
-            .groupSize(10)
+            .threadGroupSize(10)
             .build();
 
         var serverAllocator = new ReuseBufferAllocator(serverConfig);
@@ -266,7 +266,7 @@ public class StringNetworkTest extends BaseNetworkTest {
     void testServerWithMultiplyClientsUsingOldApi() {
 
         var serverNetwork = newStringDataServerNetwork(SimpleServerNetworkConfig.builder()
-            .groupSize(10)
+            .threadGroupSize(10)
             .build());
 
         var serverAddress = serverNetwork.start();

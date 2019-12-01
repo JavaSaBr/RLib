@@ -1,7 +1,7 @@
 package com.ss.rlib.common.util;
 
+import static com.ss.rlib.common.util.ArrayUtils.contains;
 import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,24 +20,24 @@ public final class ReflectionUtils {
      * Get all fields of the class.
      *
      * @param container  the field container.
-     * @param cs         the class.
-     * @param last       the last class.
-     * @param declared   the flag of getting private fields.
+     * @param startClass the class.
+     * @param lastClass  the last class.
+     * @param declared   the flag to get private fields as well.
      * @param exceptions exception fields.
      */
     public static void addAllFields(
-            @NotNull Array<Field> container,
-            @NotNull Class<?> cs,
-            @NotNull Class<?> last,
-            boolean declared,
-            @Nullable String... exceptions
+        @NotNull Array<Field> container,
+        @NotNull Class<?> startClass,
+        @NotNull Class<?> lastClass,
+        boolean declared,
+        @NotNull String... exceptions
     ) {
 
-        Class<?> next = cs;
+        var next = startClass;
 
-        while (next != null && next != last) {
+        while (next != null && next != lastClass) {
 
-            Field[] fields = declared ? next.getDeclaredFields() : next.getFields();
+            var fields = declared ? next.getDeclaredFields() : next.getFields();
 
             next = next.getSuperclass();
 
@@ -45,14 +45,26 @@ public final class ReflectionUtils {
                 continue;
             }
 
-            if (exceptions == null || exceptions.length < 1) {
+            if (exceptions.length < 1) {
                 container.addAll(fields);
             } else {
-                ArrayUtils.forEach(fields, toCheck ->
-                        !ArrayUtils.contains(exceptions, toCheck.getName()),
-                        container::add);
+                ArrayUtils.forEach(fields, toCheck -> !contains(exceptions, toCheck.getName()), container::add);
             }
         }
+    }
+
+    /**
+     * Get all fields of a class.
+     *
+     * @param cs         the class.
+     * @param exceptions exception fields.
+     * @return the all declared fields.
+     * @since 9.9.0
+     */
+    public static @NotNull Array<Field> getAllDeclaredFields(@NotNull Class<?> cs, @NotNull String... exceptions) {
+        var container = Array.ofType(Field.class);
+        addAllFields(container, cs, Object.class, true, exceptions);
+        return container;
     }
 
     /**
@@ -65,12 +77,12 @@ public final class ReflectionUtils {
      * @return the all fields
      */
     public static @NotNull Array<Field> getAllFields(
-            @NotNull Class<?> cs,
-            @NotNull Class<?> last,
-            boolean declared,
-            @Nullable String... exceptions
+        @NotNull Class<?> cs,
+        @NotNull Class<?> last,
+        boolean declared,
+        @NotNull String... exceptions
     ) {
-        Array<Field> container = ArrayFactory.newArray(Field.class);
+        var container = Array.ofType(Field.class);
         addAllFields(container, cs, last, declared, exceptions);
         return container;
     }

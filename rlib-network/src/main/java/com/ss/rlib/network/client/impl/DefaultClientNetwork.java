@@ -4,11 +4,13 @@ import static com.ss.rlib.common.util.Utils.unchecked;
 import static com.ss.rlib.common.util.Utils.uncheckedGet;
 import com.ss.rlib.common.concurrent.util.ThreadUtils;
 import com.ss.rlib.common.util.AsyncUtils;
+import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
 import com.ss.rlib.network.NetworkConfig;
 import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.impl.AbstractNetwork;
+import com.ss.rlib.network.util.NetworkUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,6 +74,7 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
 
             @Override
             public void completed(@Nullable Void result, @Nullable Void attachment) {
+                LOGGER.info(channel, ch -> "Connected to server: " + NetworkUtils.getSocketAddress(ch));
                 asyncResult.complete(channelToConnection.apply(DefaultClientNetwork.this, channel));
             }
 
