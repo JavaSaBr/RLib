@@ -210,7 +210,8 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
 
         switch (result.getStatus()) {
             case OK:
-                sslNetworkBuffer.clear();
+                sslDataBuffer.flip();
+                LOGGER.debug(sslDataBuffer, buf -> "Decrypted data:\n" + hexDump(buf));
                 return readPackets(sslDataBuffer, pendingBuffer);
             case BUFFER_OVERFLOW:
                 increaseDataBuffer();

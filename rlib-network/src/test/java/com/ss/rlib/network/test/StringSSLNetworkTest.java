@@ -9,10 +9,7 @@ import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.ServerNetworkConfig;
 import com.ss.rlib.network.impl.DefaultBufferAllocator;
-import com.ss.rlib.network.packet.impl.AbstractPacketWriter;
-import com.ss.rlib.network.packet.impl.AbstractSSLPacketReader;
-import com.ss.rlib.network.packet.impl.AbstractSSLPacketWriter;
-import com.ss.rlib.network.packet.impl.StringWritablePacket;
+import com.ss.rlib.network.packet.impl.*;
 import com.ss.rlib.network.util.NetworkUtils;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +23,7 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -106,17 +104,31 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
         var sslSocketFactory = clientSslContext.getSocketFactory();
         var sslSocket = (SSLSocket) sslSocketFactory.createSocket(serverAddress.getHostName(), serverAddress.getPort());
 
-        var out = new PrintWriter(sslSocket.getOutputStream());
-        out.println("Hello SSL");
+        var buffer = ByteBuffer.allocate(1024);
+        buffer.position(2);
+
+        new StringWritablePacket("Hello SSL").write(buffer);
+        buffer.putShort(0, (short) buffer.position());
+        buffer.flip();
+
+        LOGGER.info("Send hello message:\n" + NetworkUtils.hexDump(buffer));
+
+        var out = sslSocket.getOutputStream();
+        out.write(buffer.array(), 0, buffer.limit());
         out.flush();
 
-       // var in = new Scanner(sslSocket.getInputStream());
-        //String next = in.next();
+        buffer.clear();
 
-        Assertions.assertTrue(
-            counter.await(1000000, TimeUnit.MILLISECONDS),
-            "Still wait for " + counter.getCount() + " packets..."
-        );
+        var in = sslSocket.getInputStream();
+        var readBytes = in.read(buffer.array());
+
+        buffer.position(readBytes).flip();
+        var packetLength = buffer.getShort();
+
+        var response = new StringReadablePacket();
+        response.read(null, buffer, packetLength - 2);
+
+        LOGGER.info("Response: " + response.getData());
 
         serverNetwork.shutdown();
 

@@ -82,7 +82,7 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
                     // peerAppData = enlargeApplicationBuffer(engine, peerAppData);
                     break;
                 case OK:
-                    break;
+                    return sslNetworkBuffer.flip();
                 case CLOSED:
                     closeConnection();
                     return EMPTY_BUFFER;
