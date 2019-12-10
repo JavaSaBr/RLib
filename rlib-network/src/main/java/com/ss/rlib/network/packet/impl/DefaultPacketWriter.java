@@ -1,5 +1,8 @@
 package com.ss.rlib.network.packet.impl;
 
+import com.ss.rlib.common.function.NotNullBiConsumer;
+import com.ss.rlib.common.function.NotNullConsumer;
+import com.ss.rlib.common.function.NullableSupplier;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.WritablePacket;
@@ -25,9 +28,9 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
         @NotNull Runnable updateActivityFunction,
-        @NotNull Supplier<@Nullable WritablePacket> nextWritePacketSupplier,
-        @NotNull Consumer<@NotNull WritablePacket> writtenPacketHandler,
-        @NotNull BiConsumer<@NotNull WritablePacket, Boolean> sentPacketHandler,
+        @NotNull NullableSupplier<WritablePacket> nextWritePacketSupplier,
+        @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler,
+        @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
         int packetLengthHeaderSize
     ) {
         super(

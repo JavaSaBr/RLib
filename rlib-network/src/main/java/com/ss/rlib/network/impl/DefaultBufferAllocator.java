@@ -21,11 +21,11 @@ public class DefaultBufferAllocator implements BufferAllocator {
 
     private static final Logger LOGGER = LoggerManager.getLogger(DefaultBufferAllocator.class);
 
-    protected final Pool<ByteBuffer> readBufferPool;
-    protected final Pool<ByteBuffer> pendingBufferPool;
-    protected final Pool<ByteBuffer> writeBufferPool;
+    protected final @NotNull Pool<ByteBuffer> readBufferPool;
+    protected final @NotNull Pool<ByteBuffer> pendingBufferPool;
+    protected final @NotNull Pool<ByteBuffer> writeBufferPool;
 
-    protected final NetworkConfig config;
+    protected final @NotNull NetworkConfig config;
 
     public DefaultBufferAllocator(@NotNull NetworkConfig config) {
         this.config = config;

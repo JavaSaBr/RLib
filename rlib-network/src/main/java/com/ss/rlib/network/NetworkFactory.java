@@ -5,12 +5,14 @@ import com.ss.rlib.network.client.impl.DefaultClientNetwork;
 import com.ss.rlib.network.impl.DefaultBufferAllocator;
 import com.ss.rlib.network.impl.DefaultConnection;
 import com.ss.rlib.network.impl.StringDataConnection;
+import com.ss.rlib.network.impl.StringDataSSLConnection;
 import com.ss.rlib.network.packet.impl.DefaultReadablePacket;
 import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.server.impl.DefaultServerNetwork;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.SSLContext;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.function.BiFunction;
 
@@ -21,14 +23,14 @@ import java.util.function.BiFunction;
  */
 public final class NetworkFactory {
 
-    public static <C extends Connection<?, ?>> @NotNull ClientNetwork<C> newClientNetwork(
+    public static <C extends UnsafeConnection<?, ?>> @NotNull ClientNetwork<C> newClientNetwork(
         @NotNull NetworkConfig networkConfig,
         @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection
     ) {
         return new DefaultClientNetwork<>(networkConfig, channelToConnection);
     }
 
-    public static <C extends Connection<?, ?>> @NotNull ServerNetwork<C> newServerNetwork(
+    public static <C extends UnsafeConnection<?, ?>> @NotNull ServerNetwork<C> newServerNetwork(
         @NotNull ServerNetworkConfig networkConfig,
         @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection
     ) {
@@ -107,9 +109,9 @@ public final class NetworkFactory {
     ) {
         return newClientNetwork(
             networkConfig,
-            (network, channel) -> new DefaultConnection(network,
+            (network, channel) -> new DefaultConnection(
+                network,
                 channel,
-                NetworkCryptor.NULL,
                 bufferAllocator,
                 packetRegistry
             )
@@ -158,6 +160,25 @@ public final class NetworkFactory {
     }
 
     /**
+     * Create string packet based asynchronous secure server network.
+     *
+     * @param networkConfig   the network config.
+     * @param bufferAllocator the buffer allocator.
+     * @param sslContext      the ssl context.
+     * @return the server network.
+     */
+    public static @NotNull ServerNetwork<StringDataSSLConnection> newStringDataSSLServerNetwork(
+        @NotNull ServerNetworkConfig networkConfig,
+        @NotNull BufferAllocator bufferAllocator,
+        @NotNull SSLContext sslContext
+    ) {
+        return newServerNetwork(
+            networkConfig,
+            (network, channel) -> new StringDataSSLConnection(network, channel, bufferAllocator, sslContext, false)
+        );
+    }
+
+    /**
      * Create id based packet default asynchronous server network.
      *
      * @param packetRegistry the readable packet registry.
@@ -188,9 +209,9 @@ public final class NetworkFactory {
     ) {
         return newServerNetwork(
             networkConfig,
-            (network, channel) -> new DefaultConnection(network,
+            (network, channel) -> new DefaultConnection(
+                network,
                 channel,
-                NetworkCryptor.NULL,
                 bufferAllocator,
                 packetRegistry
             )

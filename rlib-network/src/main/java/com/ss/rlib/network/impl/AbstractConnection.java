@@ -2,6 +2,7 @@ package com.ss.rlib.network.impl;
 
 import static com.ss.rlib.common.util.Utils.unchecked;
 import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
+import com.ss.rlib.common.function.NotNullBiConsumer;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.common.util.linkedlist.LinkedList;
@@ -11,7 +12,7 @@ import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
-import com.ss.rlib.network.NetworkCryptor;
+import com.ss.rlib.network.UnsafeConnection;
 import com.ss.rlib.network.packet.PacketReader;
 import com.ss.rlib.network.packet.PacketWriter;
 import com.ss.rlib.network.packet.ReadablePacket;
@@ -37,7 +38,7 @@ import java.util.function.BiConsumer;
  * @author JavaSaBr
  */
 public abstract class AbstractConnection<R extends ReadablePacket, W extends WritablePacket> implements
-    Connection<R, W> {
+    UnsafeConnection<R, W> {
 
     private static final Logger LOGGER = LoggerManager.getLogger(AbstractConnection.class);
 
@@ -49,19 +50,18 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         }
     }
 
-    protected final @Getter NetworkCryptor crypt;
-    protected final @Getter String remoteAddress;
+    protected final @Getter @NotNull String remoteAddress;
 
-    protected final Network<? extends Connection<R, W>> network;
-    protected final BufferAllocator bufferAllocator;
-    protected final AsynchronousSocketChannel channel;
-    protected final LinkedList<WritablePacket> pendingPackets;
-    protected final StampedLock lock;
+    protected final @NotNull Network<? extends Connection<R, W>> network;
+    protected final @NotNull BufferAllocator bufferAllocator;
+    protected final @NotNull AsynchronousSocketChannel channel;
+    protected final @NotNull LinkedList<WritablePacket> pendingPackets;
+    protected final @NotNull StampedLock lock;
 
-    protected final AtomicBoolean isWriting;
-    protected final AtomicBoolean closed;
+    protected final @NotNull AtomicBoolean isWriting;
+    protected final @NotNull AtomicBoolean closed;
 
-    protected final Array<BiConsumer<? super Connection<R, W>, ? super R>> subscribers;
+    protected final @NotNull Array<NotNullBiConsumer<? super Connection<R, W>, ? super R>> subscribers;
 
     protected final int maxPacketsByRead;
 
@@ -70,22 +70,23 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     public AbstractConnection(
         @NotNull Network<? extends Connection<R, W>> network,
         @NotNull AsynchronousSocketChannel channel,
-        @NotNull NetworkCryptor crypt,
         @NotNull BufferAllocator bufferAllocator,
         int maxPacketsByRead
     ) {
         this.bufferAllocator = bufferAllocator;
         this.maxPacketsByRead = maxPacketsByRead;
         this.lock = new StampedLock();
-        this.crypt = crypt;
         this.channel = channel;
         this.pendingPackets = LinkedListFactory.newLinkedList(WritablePacket.class);
         this.network = network;
         this.isWriting = new AtomicBoolean(false);
         this.closed = new AtomicBoolean(false);
-        this.subscribers = ArrayFactory.newCopyOnModifyArray(BiConsumer.class);
+        this.subscribers = ArrayFactory.newCopyOnModifyArray(NotNullBiConsumer.class);
         this.remoteAddress = String.valueOf(NetworkUtils.getSocketAddress(channel));
     }
+
+    @Override
+    public void onConnected() {}
 
     protected abstract @NotNull PacketReader getPacketReader();
 
@@ -97,7 +98,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     }
 
     @Override
-    public void onReceive(@NotNull BiConsumer<? super Connection<R, W>, ? super R> consumer) {
+    public void onReceive(@NotNull NotNullBiConsumer<? super Connection<R, W>, ? super R> consumer) {
         subscribers.add(consumer);
         getPacketReader().startRead();
     }
@@ -116,7 +117,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         @NotNull FluxSink<ReceivedPacketEvent<? extends Connection<R, W>, ? extends R>> sink
     ) {
 
-        BiConsumer<Connection<R, W>, R> listener =
+        NotNullBiConsumer<Connection<R, W>, R> listener =
             (connection, packet) -> sink.next(new ReceivedPacketEvent<>(connection, packet));
 
         onReceive(listener);
@@ -126,7 +127,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     protected void registerFluxOnReceivedPackets(@NotNull FluxSink<? super R> sink) {
 
-        BiConsumer<Connection<R, W>, R> listener = (connection, packet) -> sink.next(packet);
+        NotNullBiConsumer<Connection<R, W>, R> listener = (connection, packet) -> sink.next(packet);
 
         onReceive(listener);
 

@@ -117,7 +117,11 @@ public class DefaultLoggerFactory implements LoggerFactory {
         listeners.forEachInReadLockR(resultMessage, LoggerListener::println);
         writers.forEachInReadLockR(resultMessage, DefaultLoggerFactory::append);
 
-        System.err.println(resultMessage);
+        try {
+            System.err.write((resultMessage + "\n").getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         if (!level.isForceFlush()) {
             return;

@@ -6,11 +6,9 @@ import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
-import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
 import com.ss.rlib.network.ServerNetworkConfig;
+import com.ss.rlib.network.UnsafeConnection;
 import com.ss.rlib.network.impl.AbstractNetwork;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.util.NetworkUtils;
@@ -33,10 +31,10 @@ import java.util.function.Consumer;
  *
  * @author JavaSaBr
  */
-public final class DefaultServerNetwork<C extends Connection<?, ?>> extends AbstractNetwork<C> implements
+public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extends AbstractNetwork<C> implements
     ServerNetwork<C> {
 
-    private interface ServerCompletionHandler<C extends Connection<?, ?>> extends
+    private interface ServerCompletionHandler<C extends UnsafeConnection<?, ?>> extends
         CompletionHandler<AsynchronousSocketChannel, DefaultServerNetwork<C>> {}
 
     private final ServerCompletionHandler<C> acceptHandler = new ServerCompletionHandler<>() {
@@ -157,6 +155,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     }
 
     protected void onAccept(@NotNull C connection) {
+        connection.onConnected();
         subscribers.forEachR(connection, Consumer::accept);
     }
 

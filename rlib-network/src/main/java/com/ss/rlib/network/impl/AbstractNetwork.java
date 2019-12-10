@@ -19,8 +19,8 @@ public abstract class AbstractNetwork<C extends Connection<?, ?>> implements Net
 
     protected static final Logger LOGGER = LoggerManager.getLogger(AbstractNetwork.class);
 
-    protected final NetworkConfig config;
-    protected final BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection;
+    protected final @NotNull NetworkConfig config;
+    protected final @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection;
 
     protected AbstractNetwork(
         @NotNull NetworkConfig config,

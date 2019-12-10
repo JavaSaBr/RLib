@@ -1,5 +1,9 @@
 package com.ss.rlib.network.packet.impl;
 
+import static com.ss.rlib.network.util.NetworkUtils.*;
+import com.ss.rlib.common.function.NotNullBiConsumer;
+import com.ss.rlib.common.function.NotNullConsumer;
+import com.ss.rlib.common.function.NullableSupplier;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.BufferAllocator;
@@ -14,9 +18,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * @author JavaSaBr
@@ -40,30 +41,32 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         }
     };
 
-    protected final AtomicBoolean isWriting = new AtomicBoolean();
+    protected final @NotNull AtomicBoolean isWriting = new AtomicBoolean();
 
-    protected final C connection;
-    protected final AsynchronousSocketChannel channel;
-    protected final BufferAllocator bufferAllocator;
-    protected final ByteBuffer firstWriteBuffer;
-    protected final ByteBuffer secondWriteBuffer;
+    protected final @NotNull C connection;
+    protected final @NotNull AsynchronousSocketChannel channel;
+    protected final @NotNull BufferAllocator bufferAllocator;
+    protected final @NotNull ByteBuffer firstWriteBuffer;
+    protected final @NotNull ByteBuffer secondWriteBuffer;
 
-    protected volatile ByteBuffer firstWriteTempBuffer;
-    protected volatile ByteBuffer secondWriteTempBuffer;
+    protected volatile @Nullable ByteBuffer firstWriteTempBuffer;
+    protected volatile @Nullable ByteBuffer secondWriteTempBuffer;
+
+    protected volatile @NotNull ByteBuffer writingBuffer = EMPTY_BUFFER;
 
     protected final @NotNull Runnable updateActivityFunction;
-    protected final @NotNull Supplier<@Nullable WritablePacket> nextWritePacketSupplier;
-    protected final @NotNull Consumer<@NotNull WritablePacket> writtenPacketHandler;
-    protected final @NotNull BiConsumer<@NotNull WritablePacket, Boolean> sentPacketHandler;
+    protected final @NotNull NullableSupplier<WritablePacket> nextWritePacketSupplier;
+    protected final @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler;
+    protected final @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler;
 
     public AbstractPacketWriter(
         @NotNull C connection,
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
         @NotNull Runnable updateActivityFunction,
-        @NotNull Supplier<@Nullable WritablePacket> packetProvider,
-        @NotNull Consumer<@NotNull WritablePacket> writtenPacketHandler,
-        @NotNull BiConsumer<@NotNull WritablePacket, Boolean> sentPacketHandler
+        @NotNull NullableSupplier<WritablePacket> packetProvider,
+        @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler,
+        @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler
     ) {
         this.connection = connection;
         this.channel = channel;
@@ -90,10 +93,17 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
             return;
         }
 
-        var byteBuffer = serialize(waitPacket);
+        var resultBuffer = serialize(waitPacket);
 
-        if (byteBuffer.limit() != 0) {
-            channel.write(byteBuffer, waitPacket, writeHandler);
+        if (resultBuffer.limit() != 0) {
+            writingBuffer = resultBuffer;
+
+            LOGGER.debug(channel,
+                resultBuffer,
+                (ch, buf) -> "Write to channel " + getSocketAddress(ch) + " byte buffer:\n" + hexDump(buf)
+            );
+
+            channel.write(resultBuffer, waitPacket, writeHandler);
         } else {
             isWriting.set(false);
         }
@@ -104,7 +114,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
     protected @NotNull ByteBuffer serialize(@NotNull WritablePacket packet) {
 
         if (packet instanceof WritablePacketWrapper) {
-            packet = ((WritablePacketWrapper) packet).getPacket();
+            packet = ((WritablePacketWrapper<?, ?>) packet).getPacket();
         }
 
         W resultPacket = (W) packet;
@@ -156,20 +166,6 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         } else if(!onAfterWrite(packet, expectedLength, totalSize, firstBuffer, secondBuffer)) {
             return firstBuffer.clear().limit(0);
         }
-
-        // FIXME need to rewrite in more flexible style
-        /*var crypt = connection.getCrypt();
-        var encrypted = crypt.encrypt(buffer, buffer.limit() - packetLengthHeaderSize, encryptedBuffer.clear());
-
-        // nothing to encrypt
-        if (encrypted == null) {
-            return onResult(packet, buffer);
-        }
-
-        buffer.clear();
-        buffer.position(packetLengthHeaderSize);
-        buffer.put(encrypted);
-        buffer.flip();*/
 
         return onResult(packet, expectedLength, totalSize, firstBuffer, secondBuffer);
     }
@@ -310,29 +306,26 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         }
 
         var writeTempBuffer = this.firstWriteTempBuffer;
+        var writingBuffer = this.writingBuffer;
 
-        // if we have data in temp write buffer we need to use it
-        if (writeTempBuffer != null) {
-
-            if (writeTempBuffer.remaining() > 0) {
-                channel.write(writeTempBuffer, packet, writeHandler);
-                return;
-            }
-            // if all data from temp buffers was written then we can remove it
-            else {
-                clearTempBuffers();
-            }
-
-        } else {
-            if (firstWriteBuffer.remaining() > 0) {
-                channel.write(firstWriteBuffer, packet, writeHandler);
-                return;
-            }
+        if (writingBuffer.remaining() > 0) {
+            LOGGER.debug(
+                writeTempBuffer,
+                buf -> "Buffer was not consumed fully, try to write not consumed bytes again: " + buf.remaining()
+            );
+            channel.write(writingBuffer, packet, writeHandler);
+            return;
         }
 
         sentPacketHandler.accept(packet, Boolean.TRUE);
 
         if (isWriting.compareAndSet(true, false)) {
+
+            // if we have temp buffers, we can remove it after finishing writing a packet
+            if (writeTempBuffer != null) {
+                clearTempBuffers();
+            }
+
             writeNextPacket();
         }
     }
@@ -361,6 +354,8 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
             .putWriteBuffer(secondWriteBuffer);
 
         clearTempBuffers();
+
+        writingBuffer = EMPTY_BUFFER;
     }
 
     protected void clearTempBuffers() {

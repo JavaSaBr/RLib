@@ -1,6 +1,7 @@
 package com.ss.rlib.logger.api;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The interface to implement a logger.
@@ -31,6 +32,12 @@ public interface Logger {
     interface BiFactory<F, S> {
 
         @NotNull String make(@NotNull F first, @NotNull S second);
+    }
+
+    @FunctionalInterface
+    interface NullableBiFactory<F, S> {
+
+        @NotNull String make(@Nullable F first, @Nullable S second);
     }
 
     @FunctionalInterface
@@ -94,6 +101,23 @@ public interface Logger {
         @NotNull F first,
         @NotNull S second,
         @NotNull Logger.BiFactory<F, S> messageFactory
+    ) {
+        print(LoggerLevel.DEBUG, first, second, messageFactory);
+    }
+
+    /**
+     * Print a build debug message.
+     *
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     */
+    default <F, S> void debugNullable(
+        @Nullable F first,
+        @Nullable S second,
+        @NotNull Logger.NullableBiFactory<F, S> messageFactory
     ) {
         print(LoggerLevel.DEBUG, first, second, messageFactory);
     }
@@ -360,6 +384,27 @@ public interface Logger {
         @NotNull F first,
         @NotNull S second,
         @NotNull Logger.BiFactory<F, S> messageFactory
+    ) {
+        if (isEnabled(level)) {
+            print(level, messageFactory.make(first, second));
+        }
+    }
+
+    /**
+     * Print a build message.
+     *
+     * @param level          the level of the message.
+     * @param first          the first arg for the message factory.
+     * @param second         the second arg for the message factory.
+     * @param messageFactory the message factory.
+     * @param <F>            the first argument's type.
+     * @param <S>            the second argument's type.
+     */
+    default <F, S> void print(
+        @NotNull LoggerLevel level,
+        @Nullable F first,
+        @Nullable S second,
+        @NotNull Logger.NullableBiFactory<F, S> messageFactory
     ) {
         if (isEnabled(level)) {
             print(level, messageFactory.make(first, second));
