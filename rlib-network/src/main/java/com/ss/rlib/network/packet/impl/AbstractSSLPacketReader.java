@@ -16,6 +16,7 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -32,7 +33,6 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
         NetworkUtils.EMPTY_BUFFER
     };
 
-    private static final int MINIMAL_SSL_BUFFER = 512;
     private static final int SKIP_READ_PACKETS = -1;
 
     protected final @NotNull SSLEngine sslEngine;
@@ -61,11 +61,6 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
     @Override
     protected @NotNull ByteBuffer getBufferToReadFromChannel() {
         return sslNetworkBuffer;
-    }
-
-    @Override
-    public void startRead() {
-        super.startRead();
     }
 
     @Override
@@ -241,12 +236,11 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
     }
 
     protected void closeConnection() {
-       /* try {
+       try {
             sslEngine.closeOutbound();
-            //doHandshake(readBuffer.clear(), 0);
             channel.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
+        }
     }
 }

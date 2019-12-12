@@ -18,6 +18,7 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 
@@ -76,11 +77,10 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
 
             switch (result.getStatus()) {
                 case BUFFER_UNDERFLOW:
-                    // peerNetData = handleBufferUnderflow(engine, peerNetData);
+                    increaseNetworkBuffer();
                     break;
                 case BUFFER_OVERFLOW:
-                    // peerAppData = enlargeApplicationBuffer(engine, peerAppData);
-                    break;
+                    throw new IllegalStateException("Unexpected state");
                 case OK:
                     return sslNetworkBuffer.flip();
                 case CLOSED:
@@ -187,13 +187,20 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
         return null;
     }
 
+    private void increaseNetworkBuffer() {
+        sslNetworkBuffer = NetworkUtils.increasePacketBuffer(
+            sslNetworkBuffer,
+            bufferAllocator,
+            sslEngine
+        );
+    }
+
     protected void closeConnection() {
-        /**try {
+        try {
             sslEngine.closeOutbound();
-            doHandshake(NULL_PACKET);
             channel.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
+        }
     }
 }
