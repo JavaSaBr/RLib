@@ -112,8 +112,6 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
                         }
 
                         sslEngine.closeOutbound();
-                        // After closeOutbound the engine will be set to WRAP state,
-                        // in order to try to send a close message to the client.
                         handshakeStatus = sslEngine.getHandshakeStatus();
                         break;
 
@@ -129,7 +127,6 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
                     } catch (SSLException sslException) {
                         LOGGER.error("A problem was encountered while processing the data that caused the " +
                             "SSLEngine to abort. Will try to properly close connection...");
-                        LOGGER.error(sslException);
                         sslEngine.closeOutbound();
                         handshakeStatus = sslEngine.getHandshakeStatus();
                         break;
@@ -139,7 +136,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
                         case OK:
                             break;
                         case BUFFER_OVERFLOW:
-                            throw new IllegalStateException("Unexpected state");
+                            throw new IllegalStateException("Unexpected ssl engine result");
                         case BUFFER_UNDERFLOW:
                             LOGGER.debug("Increase ssl network buffer");
                             increaseNetworkBuffer();
@@ -194,6 +191,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
 
         SSLEngineResult result;
         try {
+            LOGGER.debug(receivedBuffer, buf -> "Try to decrypt data:\n" + hexDump(buf));
             result = sslEngine.unwrap(receivedBuffer, sslDataBuffer.clear());
         } catch (SSLException e) {
             if (e.getCause() instanceof BadPaddingException) {

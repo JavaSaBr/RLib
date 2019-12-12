@@ -80,7 +80,7 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
                     increaseNetworkBuffer();
                     break;
                 case BUFFER_OVERFLOW:
-                    throw new IllegalStateException("Unexpected state");
+                    throw new IllegalStateException("Unexpected ssl engine result");
                 case OK:
                     return sslNetworkBuffer.flip();
                 case CLOSED:
@@ -149,14 +149,10 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
                             sslNetworkBuffer = NetworkUtils.enlargePacketBuffer(bufferAllocator, sslEngine);
                             break;
                         case BUFFER_UNDERFLOW:
-                            throw new SSLException(
-                                "Buffer underflow occured after a wrap. I don't think we should ever get here."
-                            );
+                            throw new IllegalStateException("Unexpected ssl engine result");
                         case CLOSED:
                             try {
                                 return EMPTY_BUFFER;
-                                // At this point the handshake status will probably be NEED_UNWRAP so we make sure that peerNetData is clear to read.
-                                //peerNetData.clear();
                             } catch (Exception e) {
                                 LOGGER.error("Failed to send server's CLOSE message due to socket channel's failure.");
                                 handshakeStatus = sslEngine.getHandshakeStatus();
@@ -169,6 +165,7 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
                 case NEED_TASK:
                     Runnable task;
                     while ((task = sslEngine.getDelegatedTask()) != null) {
+                        LOGGER.debug(task, t -> "Execute SSL Engine's task: " + t.getClass());
                         task.run();
                     }
                     handshakeStatus = sslEngine.getHandshakeStatus();
