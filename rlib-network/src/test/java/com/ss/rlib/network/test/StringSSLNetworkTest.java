@@ -43,8 +43,6 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
     @SneakyThrows
     void certificatesTest() {
 
-        //System.setProperty("javax.net.debug", "all");
-
         var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
         var sslContext = NetworkUtils.createSslContext(keystoreFile, "test");
         var clientSSLContext = NetworkUtils.createAllTrustedClientSslContext();
@@ -74,12 +72,6 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
     @Test
     @SneakyThrows
     void serverSSLNetworkTest() {
-
-        //System.setProperty("javax.net.debug", "all");
-
-        //LoggerManager.getLogger(AbstractPacketWriter.class).setEnabled(LoggerLevel.DEBUG, true);
-        //LoggerManager.getLogger(AbstractSSLPacketWriter.class).setEnabled(LoggerLevel.DEBUG, true);
-        //LoggerManager.getLogger(AbstractSSLPacketReader.class).setEnabled(LoggerLevel.DEBUG, true);
 
         var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
         var sslContext = NetworkUtils.createSslContext(keystoreFile, "test");
@@ -130,21 +122,11 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
         LOGGER.info("Response: " + response.getData());
 
         serverNetwork.shutdown();
-
-        //LoggerManager.getLogger(AbstractSSLPacketWriter.class).setEnabled(LoggerLevel.DEBUG, false);
-        //LoggerManager.getLogger(AbstractSSLPacketReader.class).setEnabled(LoggerLevel.DEBUG, false);
-        //LoggerManager.getLogger(AbstractPacketWriter.class).setEnabled(LoggerLevel.DEBUG, false);
     }
 
     @Test
     @SneakyThrows
     void clientSSLNetworkTest() {
-
-        //System.setProperty("javax.net.debug", "all");
-
-        //LoggerManager.getLogger(AbstractPacketWriter.class).setEnabled(LoggerLevel.DEBUG, true);
-        //LoggerManager.getLogger(AbstractSSLPacketWriter.class).setEnabled(LoggerLevel.DEBUG, true);
-        //LoggerManager.getLogger(AbstractSSLPacketReader.class).setEnabled(LoggerLevel.DEBUG, true);
 
         var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
         var sslContext = NetworkUtils.createSslContext(keystoreFile, "test");
@@ -210,10 +192,6 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
 
         clientNetwork.shutdown();
         serverSocket.close();
-
-        //LoggerManager.getLogger(AbstractSSLPacketWriter.class).setEnabled(LoggerLevel.DEBUG, false);
-        //LoggerManager.getLogger(AbstractSSLPacketReader.class).setEnabled(LoggerLevel.DEBUG, false);
-        //LoggerManager.getLogger(AbstractPacketWriter.class).setEnabled(LoggerLevel.DEBUG, false);
     }
 
     @Test
@@ -221,10 +199,9 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
     void echoNetworkTest() {
 
         //System.setProperty("javax.net.debug", "all");
-
-        //LoggerManager.getLogger(AbstractPacketWriter.class).setEnabled(LoggerLevel.DEBUG, true);
-        LoggerManager.getLogger(AbstractSSLPacketWriter.class).setEnabled(LoggerLevel.DEBUG, true);
-        LoggerManager.getLogger(AbstractSSLPacketReader.class).setEnabled(LoggerLevel.DEBUG, true);
+        //LoggerManager.enable(AbstractPacketWriter.class, LoggerLevel.DEBUG);
+        //LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
+        //LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
 
         var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
         var sslContext = NetworkUtils.createSslContext(keystoreFile, "test");
@@ -235,8 +212,9 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
             sslContext
         );
 
+        var expectedReceivedPackets = 90;
         var serverAddress = serverNetwork.start();
-        var counter = new CountDownLatch(90);
+        var counter = new CountDownLatch(expectedReceivedPackets);
 
         serverNetwork.accepted()
             .flatMap(Connection::receivedEvents)
@@ -254,7 +232,7 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
         );
 
         clientNetwork.connected(serverAddress)
-            .doOnNext(connection -> IntStream.range(0, 1)
+            .doOnNext(connection -> IntStream.range(10, expectedReceivedPackets + 10)
                 .forEach(length -> connection.send(new StringWritablePacket(StringUtils.generate(length)))))
             .doOnError(Throwable::printStackTrace)
             .flatMapMany(Connection::receivedEvents)
@@ -264,16 +242,16 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
             });
 
         Assertions.assertTrue(
-            counter.await(10000000, TimeUnit.MILLISECONDS),
+            counter.await(1000, TimeUnit.MILLISECONDS),
             "Still wait for " + counter.getCount() + " packets..."
         );
 
         serverNetwork.shutdown();
         clientNetwork.shutdown();
 
-        LoggerManager.getLogger(AbstractSSLPacketWriter.class).setEnabled(LoggerLevel.DEBUG, false);
-        LoggerManager.getLogger(AbstractSSLPacketReader.class).setEnabled(LoggerLevel.DEBUG, false);
-        //LoggerManager.getLogger(AbstractPacketWriter.class).setEnabled(LoggerLevel.DEBUG, false);
+        //LoggerManager.disable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
+        //LoggerManager.disable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
+        //LoggerManager.disable(AbstractPacketWriter.class, LoggerLevel.DEBUG);
     }
 
     private static @NotNull StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {

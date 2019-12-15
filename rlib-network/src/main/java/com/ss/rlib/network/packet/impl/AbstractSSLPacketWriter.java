@@ -89,9 +89,13 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
                 return EMPTY_BUFFER;
             }
 
+            var dataBuffer = super.serialize(packet);
+
+            LOGGER.debug(dataBuffer, buff -> "Try to encrypt data:\n" + hexDump(buff));
+
             SSLEngineResult result;
             try {
-                result = sslEngine.wrap(super.serialize(packet), sslNetworkBuffer.clear());
+                result = sslEngine.wrap(dataBuffer, sslNetworkBuffer.clear());
             } catch (SSLException e) {
                 throw new RuntimeException(e);
             }

@@ -200,32 +200,40 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
 
     protected int decryptAndRead(@NotNull ByteBuffer receivedBuffer) {
 
-        SSLEngineResult result;
-        try {
-            LOGGER.debug(receivedBuffer, buf -> "Try to decrypt data:\n" + hexDump(buf));
-            result = sslEngine.unwrap(receivedBuffer, sslDataBuffer.clear());
-        } catch (SSLException e) {
-            if (e.getCause() instanceof BadPaddingException) {
-                increaseNetworkBuffer();
-                return SKIP_READ_PACKETS;
+        int total = 0;
+
+        while (receivedBuffer.hasRemaining()) {
+
+            SSLEngineResult result;
+            try {
+                LOGGER.debug(receivedBuffer, buf -> "Try to decrypt data:\n" + hexDump(buf));
+                result = sslEngine.unwrap(receivedBuffer, sslDataBuffer.clear());
+            } catch (SSLException e) {
+                if (e.getCause() instanceof BadPaddingException) {
+                    increaseNetworkBuffer();
+                    return SKIP_READ_PACKETS;
+                }
+                throw new IllegalStateException(e);
             }
-            throw new IllegalStateException(e);
+
+            switch (result.getStatus()) {
+                case OK:
+                    sslDataBuffer.flip();
+                    LOGGER.debug(sslDataBuffer, buf -> "Decrypted data:\n" + hexDump(buf));
+                    total += readPackets(sslDataBuffer, pendingBuffer);
+                    break;
+                case BUFFER_OVERFLOW:
+                    increaseDataBuffer();
+                    return decryptAndRead(receivedBuffer);
+                case CLOSED:
+                    closeConnection();
+                    return SKIP_READ_PACKETS;
+                default:
+                    throw new IllegalStateException("Invalid SSL status: " + result.getStatus());
+            }
         }
 
-        switch (result.getStatus()) {
-            case OK:
-                sslDataBuffer.flip();
-                LOGGER.debug(sslDataBuffer, buf -> "Decrypted data:\n" + hexDump(buf));
-                return readPackets(sslDataBuffer, pendingBuffer);
-            case BUFFER_OVERFLOW:
-                increaseDataBuffer();
-                return decryptAndRead(receivedBuffer);
-            case CLOSED:
-                closeConnection();
-                return SKIP_READ_PACKETS;
-            default:
-                throw new IllegalStateException("Invalid SSL status: " + result.getStatus());
-        }
+        return total;
     }
 
     private void increaseNetworkBuffer() {
