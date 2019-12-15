@@ -30,6 +30,7 @@ public class DefaultSSLPacketWriter<W extends WritablePacket, C extends Connecti
         @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
         @NotNull SSLEngine sslEngine,
         @NotNull NotNullConsumer<WritablePacket> packetWriter,
+        @NotNull NotNullConsumer<WritablePacket> queueAtFirst,
         int packetLengthHeaderSize
     ) {
         super(
@@ -41,7 +42,8 @@ public class DefaultSSLPacketWriter<W extends WritablePacket, C extends Connecti
             writtenPacketHandler,
             sentPacketHandler,
             sslEngine,
-            packetWriter
+            packetWriter,
+            queueAtFirst
         );
         this.packetLengthHeaderSize = packetLengthHeaderSize;
     }

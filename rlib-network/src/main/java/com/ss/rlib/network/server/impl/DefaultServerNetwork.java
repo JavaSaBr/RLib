@@ -6,6 +6,8 @@ import com.ss.rlib.common.util.ClassUtils;
 import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
+import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.Network;
 import com.ss.rlib.network.ServerNetworkConfig;
 import com.ss.rlib.network.UnsafeConnection;
@@ -33,6 +35,8 @@ import java.util.function.Consumer;
  */
 public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extends AbstractNetwork<C> implements
     ServerNetwork<C> {
+
+    protected static final Logger LOGGER = LoggerManager.getLogger(DefaultServerNetwork.class);
 
     private interface ServerCompletionHandler<C extends UnsafeConnection<?, ?>> extends
         CompletionHandler<AsynchronousSocketChannel, DefaultServerNetwork<C>> {}

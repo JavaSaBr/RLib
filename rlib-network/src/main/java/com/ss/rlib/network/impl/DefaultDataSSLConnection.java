@@ -69,6 +69,7 @@ public abstract class DefaultDataSSLConnection<R extends ReadablePacket, W exten
             this::onSentPacket,
             sslEngine,
             this::sendImpl,
+            this::queueAtFirst,
             packetLengthHeaderSize
         );
     }

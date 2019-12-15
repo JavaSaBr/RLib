@@ -119,6 +119,25 @@ public final class NetworkFactory {
     }
 
     /**
+     * Create string packet based asynchronous secure client network.
+     *
+     * @param networkConfig   the network config.
+     * @param bufferAllocator the buffer allocator.
+     * @param sslContext      the ssl context.
+     * @return the client network.
+     */
+    public static @NotNull ClientNetwork<StringDataSSLConnection> newStringDataSSLClientNetwork(
+        @NotNull NetworkConfig networkConfig,
+        @NotNull BufferAllocator bufferAllocator,
+        @NotNull SSLContext sslContext
+    ) {
+        return newClientNetwork(
+            networkConfig,
+            (network, channel) -> new StringDataSSLConnection(network, channel, bufferAllocator, sslContext, true)
+        );
+    }
+
+    /**
      * Create string packet based asynchronous server network.
      *
      * @return the server network.

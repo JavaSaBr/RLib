@@ -92,6 +92,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
         var handshakeStatus = sslEngine.getHandshakeStatus();
 
         while (handshakeStatus != HandshakeStatus.FINISHED && handshakeStatus != HandshakeStatus.NOT_HANDSHAKING) {
+            LOGGER.debug(handshakeStatus, status -> "Do handshake with status: " + status);
 
             SSLEngineResult result;
 
@@ -124,6 +125,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
                         LOGGER.debug(receivedBuffer, buff -> "Try to unwrap data:\n" + hexDump(buff));
                         result = sslEngine.unwrap(receivedBuffer, EMPTY_BUFFERS);
                         handshakeStatus = result.getHandshakeStatus();
+                        LOGGER.debug(handshakeStatus, status -> "Handshake status: " + status + " after unwrapping");
                     } catch (SSLException sslException) {
                         LOGGER.error("A problem was encountered while processing the data that caused the " +
                             "SSLEngine to abort. Will try to properly close connection...");
@@ -170,18 +172,27 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
 
                     handshakeStatus = sslEngine.getHandshakeStatus();
 
+                    LOGGER.debug(handshakeStatus, status -> "Handshake status: " + status + " after engine tasks");
+
                     if (handshakeStatus == HandshakeStatus.NEED_UNWRAP && !receivedBuffer.hasRemaining()) {
                         sslNetworkBuffer.clear();
                         return SKIP_READ_PACKETS;
                     }
 
                     break;
-                case FINISHED:
-                case NOT_HANDSHAKING:
-                    break;
                 default:
                     throw new IllegalStateException("Invalid SSL status: " + handshakeStatus);
             }
+        }
+
+        if (!receivedBuffer.hasRemaining()) {
+
+            // if buffer is empty and status is FINISHED then we can notify writer
+            if (handshakeStatus == HandshakeStatus.FINISHED) {
+                packetWriter.accept(SSLWritablePacket.getInstance());
+            }
+
+            return SKIP_READ_PACKETS;
         }
 
         return decryptAndRead(receivedBuffer);

@@ -6,6 +6,7 @@ import com.ss.rlib.common.function.NotNullBiConsumer;
 import com.ss.rlib.common.function.NotNullConsumer;
 import com.ss.rlib.common.function.NullableSupplier;
 import com.ss.rlib.logger.api.Logger;
+import com.ss.rlib.logger.api.LoggerLevel;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
@@ -33,6 +34,7 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
 
     protected final @NotNull SSLEngine sslEngine;
     protected final @NotNull NotNullConsumer<WritablePacket> packetWriter;
+    protected final @NotNull NotNullConsumer<WritablePacket> queueAtFirst;
 
     protected volatile @NotNull ByteBuffer sslNetworkBuffer;
 
@@ -45,7 +47,8 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
         @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler,
         @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
         @NotNull SSLEngine sslEngine,
-        @NotNull NotNullConsumer<WritablePacket> packetWriter
+        @NotNull NotNullConsumer<WritablePacket> packetWriter,
+        @NotNull NotNullConsumer<WritablePacket> queueAtFirst
     ) {
         super(
             connection,
@@ -58,7 +61,21 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
         );
         this.sslEngine = sslEngine;
         this.packetWriter = packetWriter;
+        this.queueAtFirst = queueAtFirst;
         this.sslNetworkBuffer = bufferAllocator.takeBuffer(sslEngine.getSession().getPacketBufferSize());
+    }
+
+    @Override
+    public void writeNextPacket() {
+
+        var status = sslEngine.getHandshakeStatus();
+
+        switch (status) {
+            case NEED_UNWRAP:
+                return;
+        }
+
+        super.writeNextPacket();
     }
 
     @Override
@@ -67,6 +84,10 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
         var status = sslEngine.getHandshakeStatus();
 
         if (status == HandshakeStatus.FINISHED || status == HandshakeStatus.NOT_HANDSHAKING) {
+
+            if (packet instanceof SSLWritablePacket) {
+                return EMPTY_BUFFER;
+            }
 
             SSLEngineResult result;
             try {
@@ -106,7 +127,8 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
     protected @Nullable ByteBuffer doHandshake(@NotNull WritablePacket packet) throws SSLException {
 
         if (!(packet instanceof SSLWritablePacket)) {
-            throw new IllegalStateException();
+            LOGGER.debug(packet, pck -> "Return packet " + pck + " to queue as first");
+            queueAtFirst.accept(packet);
         }
 
         var handshakeStatus = sslEngine.getHandshakeStatus();
@@ -136,10 +158,11 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
 
                             if (handshakeStatus == HandshakeStatus.NEED_WRAP) {
                                 LOGGER.debug("Send command to wrap data again");
-                                packetWriter.accept(SSLWritablePacket.getInstance());
+                                queueAtFirst.accept(SSLWritablePacket.getInstance());
                             }
 
-                            LOGGER.debug(sslNetworkBuffer,
+                            LOGGER.debug(
+                                sslNetworkBuffer,
                                 result,
                                 (buf, res) -> "Send wrapped data:\n" + hexDump(buf, res)
                             );
@@ -170,18 +193,14 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
                     }
                     handshakeStatus = sslEngine.getHandshakeStatus();
                     break;
-                case FINISHED:
-                    break;
-                case NOT_HANDSHAKING:
-                    break;
                 case NEED_UNWRAP:
-                    return EMPTY_BUFFER;
+                    break;
                 default:
                     throw new IllegalStateException("Invalid SSL status: " + handshakeStatus);
             }
         }
 
-        return null;
+        return EMPTY_BUFFER;
     }
 
     private void increaseNetworkBuffer() {

@@ -206,6 +206,15 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         getPacketWriter().writeNextPacket();
     }
 
+    protected void queueAtFirst(@NotNull WritablePacket packet) {
+        long stamp = lock.writeLock();
+        try {
+            pendingPackets.addFirst(packet);
+        } finally {
+            lock.unlockWrite(stamp);
+        }
+    }
+
     @Override
     public @NotNull CompletableFuture<Boolean> sendWithFeedback(@NotNull W packet) {
 
