@@ -1,7 +1,6 @@
 package com.ss.rlib.network.impl;
 
 import static com.ss.rlib.common.util.Utils.unchecked;
-import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
 import com.ss.rlib.common.function.NotNullBiConsumer;
 import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
@@ -82,7 +81,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
         this.isWriting = new AtomicBoolean(false);
         this.closed = new AtomicBoolean(false);
         this.subscribers = ArrayFactory.newCopyOnModifyArray(NotNullBiConsumer.class);
-        this.remoteAddress = String.valueOf(NetworkUtils.getSocketAddress(channel));
+        this.remoteAddress = String.valueOf(NetworkUtils.getRemoteAddress(channel));
     }
 
     @Override
@@ -92,8 +91,12 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
 
     protected abstract @NotNull PacketWriter getPacketWriter();
 
-    protected void handleReadPacket(@NotNull R packet) {
-        LOGGER.debug(channel, packet, (ch, pck) -> "Handle read packet: " + pck + " from: " + getSocketAddress(ch));
+    protected void handleReceivedPacket(@NotNull R packet) {
+        LOGGER.debug(
+            channel,
+            packet,
+            (ch, pck) -> "Handle received packet: " + pck + " from: " + NetworkUtils.getRemoteAddress(ch)
+        );
         subscribers.forEachR(this, packet, BiConsumer::accept);
     }
 

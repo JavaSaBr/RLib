@@ -34,4 +34,10 @@ public abstract class AbstractSSLConnection<R extends ReadablePacket, W extends 
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    protected void sendImpl(@NotNull WritablePacket packet) {
+        super.sendImpl(packet);
+        getPacketReader().startRead();
+    }
 }

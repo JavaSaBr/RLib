@@ -1,6 +1,8 @@
 package com.ss.rlib.network.test;
 
 import static com.ss.rlib.network.NetworkFactory.*;
+import static java.util.stream.Collectors.toList;
+import com.ss.rlib.common.util.ObjectUtils;
 import com.ss.rlib.common.util.StringUtils;
 import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.logger.api.Logger;
@@ -25,8 +27,10 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.time.Duration;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -200,16 +204,16 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
 
         //System.setProperty("javax.net.debug", "all");
         //LoggerManager.enable(AbstractPacketWriter.class, LoggerLevel.DEBUG);
-        //LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
-        //LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
+        LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
+        LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
 
         var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
-        var sslContext = NetworkUtils.createSslContext(keystoreFile, "test");
+        var serverSSLContext = NetworkUtils.createSslContext(keystoreFile, "test");
 
         var serverNetwork = newStringDataSSLServerNetwork(
             ServerNetworkConfig.DEFAULT_SERVER,
             new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_CLIENT),
-            sslContext
+            serverSSLContext
         );
 
         var expectedReceivedPackets = 90;
@@ -233,7 +237,7 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
 
         clientNetwork.connected(serverAddress)
             .doOnNext(connection -> IntStream.range(10, expectedReceivedPackets + 10)
-                .forEach(length -> connection.send(new StringWritablePacket(StringUtils.generate(length)))))
+                .forEach(length -> connection.send(newMessage(9, length))))
             .doOnError(Throwable::printStackTrace)
             .flatMapMany(Connection::receivedEvents)
             .subscribe(event -> {
@@ -252,6 +256,57 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
         //LoggerManager.disable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
         //LoggerManager.disable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
         //LoggerManager.disable(AbstractPacketWriter.class, LoggerLevel.DEBUG);
+    }
+
+    @Test
+    void shouldReceiveManyPacketsFromSmallToBigSize() {
+
+        //System.setProperty("javax.net.debug", "all");
+        //LoggerManager.enable(AbstractPacketReader.class, LoggerLevel.DEBUG);
+        //LoggerManager.enable(AbstractPacketWriter.class, LoggerLevel.DEBUG);
+        //LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
+        //LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
+
+        var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
+        var serverSSLContext = NetworkUtils.createSslContext(keystoreFile, "test");
+        var clientSSLContext = NetworkUtils.createAllTrustedClientSslContext();
+
+        int packetCount = 3;
+
+        try(var testNetwork = buildStringSSLNetwork(serverSSLContext, clientSSLContext)) {
+
+            var bufferSize = testNetwork.serverNetworkConfig
+                .getReadBufferSize();
+
+            var random = ThreadLocalRandom.current();
+
+            var clientToServer = testNetwork.clientToServer;
+            var serverToClient = testNetwork.serverToClient;
+
+            var pendingPacketsOnServer = serverToClient.receivedPackets()
+                .doOnNext(packet -> LOGGER.info("Received from client: " + packet.getData()))
+                .buffer(packetCount);
+
+            var messages = IntStream.range(0, packetCount)
+                .mapToObj(value -> {
+                    var length = value % 3 == 0 ? bufferSize : random.nextInt(0, bufferSize / 2 - 1);
+                    return StringUtils.generate(length);
+                })
+                .peek(message -> clientToServer.send(new StringWritablePacket(message)))
+                .collect(toList());
+
+            var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofSeconds(5000)));
+
+            Assertions.assertEquals(receivedPackets.size(), packetCount, "Didn't receive all packets");
+
+            var wrongPacket = receivedPackets.stream()
+                .filter(packet -> messages.stream()
+                    .noneMatch(message -> message.equals(packet.getData())))
+                .findFirst()
+                .orElse(null);
+
+            Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
+        }
     }
 
     private static @NotNull StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {

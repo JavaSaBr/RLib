@@ -4,7 +4,6 @@ import static com.ss.rlib.common.util.Utils.unchecked;
 import static com.ss.rlib.common.util.Utils.uncheckedGet;
 import com.ss.rlib.common.concurrent.util.ThreadUtils;
 import com.ss.rlib.common.util.AsyncUtils;
-import com.ss.rlib.common.util.Utils;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.Connection;
@@ -85,7 +84,7 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
 
             @Override
             public void completed(@Nullable Void result, @Nullable Void attachment) {
-                LOGGER.info(channel, ch -> "Connected to server: " + NetworkUtils.getSocketAddress(ch));
+                LOGGER.info(channel, ch -> "Connected to server: " + NetworkUtils.getRemoteAddress(ch));
                 asyncResult.complete(channelToConnection.apply(DefaultClientNetwork.this, channel));
             }
 

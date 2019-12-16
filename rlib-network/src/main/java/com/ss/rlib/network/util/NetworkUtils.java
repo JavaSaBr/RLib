@@ -38,7 +38,7 @@ public class NetworkUtils {
         public void checkServerTrusted(@NotNull X509Certificate[] certificates, @NotNull String arg1) { }
     }
 
-    public static @NotNull SocketAddress getSocketAddress(@NotNull AsynchronousSocketChannel socketChannel) {
+    public static @NotNull SocketAddress getRemoteAddress(@NotNull AsynchronousSocketChannel socketChannel) {
         return Utils.uncheckedGet(socketChannel, AsynchronousSocketChannel::getRemoteAddress);
     }
 

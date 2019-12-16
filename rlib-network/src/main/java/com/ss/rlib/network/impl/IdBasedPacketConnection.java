@@ -53,7 +53,7 @@ public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W exten
             channel,
             bufferAllocator,
             this::updateLastActivity,
-            this::handleReadPacket,
+            this::handleReceivedPacket,
             packetLengthHeaderSize,
             maxPacketsByRead,
             packetIdHeaderSize,

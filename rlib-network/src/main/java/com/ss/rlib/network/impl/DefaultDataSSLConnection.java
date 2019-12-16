@@ -49,7 +49,7 @@ public abstract class DefaultDataSSLConnection<R extends ReadablePacket, W exten
             channel,
             bufferAllocator,
             this::updateLastActivity,
-            this::handleReadPacket,
+            this::handleReceivedPacket,
             value -> createReadablePacket(),
             sslEngine,
             this::sendImpl,

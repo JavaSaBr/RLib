@@ -10,6 +10,7 @@ import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.PacketWriter;
 import com.ss.rlib.network.packet.WritablePacket;
+import com.ss.rlib.network.util.NetworkUtils;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,7 +101,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
 
             LOGGER.debug(channel,
                 resultBuffer,
-                (ch, buf) -> "Write to channel " + getSocketAddress(ch) + " byte buffer:\n" + hexDump(buf)
+                (ch, buf) -> "Write to channel \"" + getRemoteAddress(ch) + "\" data:\n" + hexDump(buf)
             );
 
             channel.write(resultBuffer, waitPacket, writeHandler);
@@ -305,16 +306,19 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
             return;
         }
 
-        var writeTempBuffer = this.firstWriteTempBuffer;
         var writingBuffer = this.writingBuffer;
 
         if (writingBuffer.remaining() > 0) {
             LOGGER.debug(
-                writeTempBuffer,
-                buf -> "Buffer was not consumed fully, try to write not consumed bytes again: " + buf.remaining()
+                writingBuffer,
+                channel,
+                (buf, ch) -> "Buffer was not consumed fully, " +
+                    "try to write else " + buf.remaining() + " bytes to channel " + NetworkUtils.getRemoteAddress(ch)
             );
             channel.write(writingBuffer, packet, writeHandler);
             return;
+        } else {
+            LOGGER.debug(result, bytes -> "Done writing " + bytes + " bytes");
         }
 
         sentPacketHandler.accept(packet, Boolean.TRUE);
@@ -322,7 +326,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         if (isWriting.compareAndSet(true, false)) {
 
             // if we have temp buffers, we can remove it after finishing writing a packet
-            if (writeTempBuffer != null) {
+            if (firstWriteTempBuffer != null) {
                 clearTempBuffers();
             }
 

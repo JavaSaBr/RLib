@@ -46,7 +46,7 @@ public abstract class DefaultDataConnection<R extends ReadablePacket, W extends 
             channel,
             bufferAllocator,
             this::updateLastActivity,
-            this::handleReadPacket,
+            this::handleReceivedPacket,
             value -> createReadablePacket(),
             packetLengthHeaderSize,
             maxPacketsByRead
