@@ -241,6 +241,8 @@ public class ConcurrentArrayTest extends BaseTest {
 
         var array = ConcurrentArray.of("First", "Second", "Third", "  ");
 
+        array.runInWriteLock(1, "Second", (arr, first, second) -> assertEquals(second, arr.get(first)));
+
         array.runInWriteLock(object -> object.remove("Second"));
 
         assertEquals(3, array.size());
