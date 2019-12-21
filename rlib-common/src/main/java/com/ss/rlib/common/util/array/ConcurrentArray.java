@@ -363,7 +363,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <T>      the second argument's type.
      * @param <R>      the result's type.
      * @return the result from the function.
-     * @since 9.10.0
+     * @since 9.9.0
      */
     default <A, T, R> @Nullable R getInReadLock(
         @NotNull A first,
@@ -426,7 +426,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param <T>      the second argument's type.
      * @param <R>      the result's type.
      * @return the result from the function.
-     * @since 9.10.0
+     * @since 9.9.0
      */
     default <A, T, R> @Nullable R getInWriteLock(
         @NotNull A first,
@@ -492,7 +492,7 @@ public interface ConcurrentArray<E> extends Array<E> {
      * @param second   the second argument.
      * @param function the function.
      * @return this array.
-     * @since 9.10.0
+     * @since 9.9.0
      */
     default <A, T> @NotNull ConcurrentArray<E> runInReadLock(
         @NotNull A first,
