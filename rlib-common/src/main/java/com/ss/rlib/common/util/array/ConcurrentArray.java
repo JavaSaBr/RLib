@@ -552,6 +552,31 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
+     * Execute a function under {@link #writeLock()} block.
+     *
+     * @param first    the first argument for the function.
+     * @param second   the second argument for the function.
+     * @param function the function.
+     * @param <A>      the first argument's type.
+     * @param <T>      the second argument's type.
+     * @return this array.
+     * @since 9.9.0
+     */
+    default <A, T> @NotNull ConcurrentArray<E> runInWriteLock(
+        @NotNull A first,
+        @NotNull T second,
+        @NotNull NotNullTripleConsumer<ConcurrentArray<E>, A, T> function
+    ) {
+        var stamp = writeLock();
+        try {
+            function.accept(this, first, second);
+        } finally {
+            writeUnlock(stamp);
+        }
+        return this;
+    }
+
+    /**
      * Search an element using the condition under {@link #readLock()} block.
      *
      * @param argument the argument.
