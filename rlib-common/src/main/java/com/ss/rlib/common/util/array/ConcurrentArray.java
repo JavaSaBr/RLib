@@ -354,6 +354,31 @@ public interface ConcurrentArray<E> extends Array<E> {
     }
 
     /**
+     * Execute a function to get some result under {@link #readLock()} block.
+     *
+     * @param first    the first argument for the function.
+     * @param second   the second argument for the function.
+     * @param function the function.
+     * @param <A>      the first argument's type.
+     * @param <T>      the second argument's type.
+     * @param <R>      the result's type.
+     * @return the result from the function.
+     * @since 9.10.0
+     */
+    default <A, T, R> @Nullable R getInReadLock(
+        @NotNull A first,
+        @NotNull T second,
+        @NotNull NotNullNullableTripleFunction<ConcurrentArray<E>, A, T, R> function
+    ) {
+        var stamp = readLock();
+        try {
+            return function.apply(this, first, second);
+        } finally {
+            readUnlock(stamp);
+        }
+    }
+
+    /**
      * Execute a function to get some result under {@link #writeLock()} block.
      *
      * @param function the function.
@@ -386,6 +411,31 @@ public interface ConcurrentArray<E> extends Array<E> {
         var stamp = writeLock();
         try {
             return function.apply(this, argument);
+        } finally {
+            writeUnlock(stamp);
+        }
+    }
+
+    /**
+     * Execute a function to get some result under {@link #writeLock()} block.
+     *
+     * @param first    the first argument for the function.
+     * @param second   the second argument for the function.
+     * @param function the function.
+     * @param <A>      the first argument's type.
+     * @param <T>      the second argument's type.
+     * @param <R>      the result's type.
+     * @return the result from the function.
+     * @since 9.10.0
+     */
+    default <A, T, R> @Nullable R getInWriteLock(
+        @NotNull A first,
+        @NotNull T second,
+        @NotNull NotNullNullableTripleFunction<ConcurrentArray<E>, A, T, R> function
+    ) {
+        var stamp = writeLock();
+        try {
+            return function.apply(this, first, second);
         } finally {
             writeUnlock(stamp);
         }
@@ -426,6 +476,33 @@ public interface ConcurrentArray<E> extends Array<E> {
         var stamp = readLock();
         try {
             function.accept(this, argument);
+        } finally {
+            readUnlock(stamp);
+        }
+
+        return this;
+    }
+
+    /**
+     * Execute a function under {@link #readLock()} block.
+     *
+     * @param <A>      the first argument's type.
+     * @param <T>      the second argument's type.
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     * @return this array.
+     * @since 9.10.0
+     */
+    default <A, T> @NotNull ConcurrentArray<E> runInReadLock(
+        @NotNull A first,
+        @NotNull T second,
+        @NotNull NotNullTripleConsumer<ConcurrentArray<E>, A, T> function
+    ) {
+
+        var stamp = readLock();
+        try {
+            function.accept(this, first, second);
         } finally {
             readUnlock(stamp);
         }

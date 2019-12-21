@@ -270,6 +270,13 @@ public class ConcurrentArrayTest extends BaseTest {
 
         array.runInReadLock("Third", (arr, arg) ->
             assertEquals(2, arr.count(arg, String::equals)));
+
+        array.runInReadLock(2, "Third",  (arr, first, second) -> {
+            assertType(arr, Array.class);
+            assertIntType(first);
+            assertType(second, String.class);
+            assertEquals(first, arr.count(second, String::equals));
+        });
     }
 
     @Test
@@ -279,6 +286,10 @@ public class ConcurrentArrayTest extends BaseTest {
 
         assertEquals("Third", array.getInWriteLock(arr -> arr.get(2)));
         assertEquals("Second", array.getInWriteLock(1, Array::get));
+        assertEquals(
+            "FirstSecond",
+            array.getInWriteLock(0, 1, (arr, first, second) -> arr.get(first) + arr.get(second))
+        );
     }
 
     @Test
@@ -288,6 +299,10 @@ public class ConcurrentArrayTest extends BaseTest {
 
         assertEquals("Third", array.getInReadLock(arr -> arr.get(2)));
         assertEquals("Second", array.getInReadLock(1, Array::get));
+        assertEquals(
+            "FirstSecond",
+            array.getInReadLock(0, 1, (arr, first, second) -> arr.get(first) + arr.get(second))
+        );
     }
 
     @Test
