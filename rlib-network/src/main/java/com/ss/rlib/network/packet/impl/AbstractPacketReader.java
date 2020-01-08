@@ -34,16 +34,16 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
     private static final Logger LOGGER = LoggerManager.getLogger(AbstractPacketReader.class);
 
-    private final CompletionHandler<Integer, Void> readHandler = new CompletionHandler<>() {
+    private final CompletionHandler<Integer, ByteBuffer> readHandler = new CompletionHandler<>() {
 
         @Override
-        public void completed(@NotNull Integer result, @Nullable Void attachment) {
-            handleReadData(result);
+        public void completed(@NotNull Integer receivedBytes, @NotNull ByteBuffer readingBuffer) {
+            handleReceivedData(receivedBytes, readingBuffer);
         }
 
         @Override
-        public void failed(@NotNull Throwable exc, @Nullable Void attachment) {
-            handleFailedRead(exc);
+        public void failed(@NotNull Throwable exc, @NotNull ByteBuffer readingBuffer) {
+            handleFailedReceiving(exc, readingBuffer);
         }
     };
 
@@ -96,7 +96,9 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
         LOGGER.debug(channel, ch -> "Start waiting for new data from channel \"" + getRemoteAddress(ch) + "\"");
 
-        channel.read(getBufferToReadFromChannel(), null, readHandler);
+        var buffer = getBufferToReadFromChannel();
+
+        channel.read(buffer, buffer, readHandler);
     }
 
     /**
@@ -118,13 +120,13 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
      */
     protected int readPackets(@NotNull ByteBuffer receivedBuffer, @NotNull ByteBuffer pendingBuffer) {
 
-        LOGGER.debug(receivedBuffer, buf -> "Start reading packets from received buffer: " + buf);
+        LOGGER.debug(receivedBuffer, buf -> "Start reading packets from received buffer " + buf);
 
         var waitedBytes = pendingBuffer.position();
         var bufferToRead = receivedBuffer;
         var tempPendingBuffer = getTempPendingBuffer();
 
-        // if we have read mapped buffer it means that we are reading a really big packet now
+        // if we have a temp buffer it means that we are reading a really big packet now
         if (tempPendingBuffer != null) {
 
             if (tempPendingBuffer.remaining() < receivedBuffer.remaining()) {
@@ -132,10 +134,10 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                 tempPendingBuffer = notNull(getTempPendingBuffer());
             }
 
-            LOGGER.debugNullable(
+            LOGGER.debug(
                 receivedBuffer,
                 tempPendingBuffer,
-                (buf, mappedBuf) -> "Put received buffer: " + buf + " to read mapped buffer: " + mappedBuf
+                (buf, mappedBuf) -> "Put received buffer " + buf + " to read mapped buffer " + mappedBuf
             );
 
             bufferToRead = BufferUtils.putToAndFlip(tempPendingBuffer, receivedBuffer);
@@ -149,8 +151,8 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                 LOGGER.debug(
                     pendingBuffer,
                     receivedBuffer,
-                    (penBuf, buf) -> "Pending buffer: " + penBuf + " is too small to append received buffer: " +
-                        buf + ", allocate mapped buffer for this"
+                    (penBuf, buf) -> "Pending buffer " + penBuf + " is too small to append received buffer " +
+                        buf + ", will allocate new temp buffer for this"
                 );
 
                 allocTempBuffers(pendingBuffer.flip(), pendingBuffer.capacity());
@@ -264,10 +266,11 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                 LOGGER.debug(
                     channel,
                     readPackets,
-                    (ch, count) -> "Read " + count + " packet(s) from buffered data of " + getRemoteAddress(ch) + ", " +
+                    (ch, count) -> "Read " + count + " packets from received buffer of " + getRemoteAddress(ch) + ", " +
                         "but 1 packet is still waiting for receiving additional data."
                 );
 
+                receivedBuffer.clear();
                 return readPackets;
             }
 
@@ -275,12 +278,17 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
             if (packet != null) {
                 LOGGER.debug(packet, pck -> "Created instance of packet to read data: " + pck);
-                packet.read(connection, bufferToRead, dataLength);
-                readPacketHandler.accept(packet);
-                LOGGER.debug(packet, pck -> "Read data of packet: " + pck);
+
+                if (packet.read(connection, bufferToRead, dataLength)) {
+                    readPacketHandler.accept(packet);
+                } else {
+                    LOGGER.error("Packet " + packet + " was read incorrectly");
+                }
+
+                LOGGER.debug(packet, pck -> "Finished reading data of packet: " + pck);
                 readPackets++;
             } else {
-                LOGGER.warning("Cannot create any instance of packet to read data.");
+                LOGGER.warning("Cannot create any instance of packet to read data");
             }
 
             bufferToRead.position(endPosition);
@@ -301,9 +309,13 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             freeTempBuffers();
         }
 
-        LOGGER.debug(channel, readPackets,
-            (ch, count) -> "Read " + count + " packet(s) from buffered data of " + getRemoteAddress(ch) + ".");
+        LOGGER.debug(
+            channel,
+            readPackets,
+            (ch, count) -> "Read " + count + " packets from received buffer of " + getRemoteAddress(ch) + "."
+        );
 
+        receivedBuffer.clear();
         return readPackets;
     }
 
@@ -393,32 +405,30 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     }
 
     /**
-     * Handle read data.
+     * Handle received data.
      *
-     * @param result the count of read bytes.
+     * @param receivedBytes the count of received bytes.
+     * @param readingBuffer the currently reading buffer.
      */
-    protected void handleReadData(@NotNull Integer result) {
+    protected void handleReceivedData(@NotNull Integer receivedBytes, @NotNull ByteBuffer readingBuffer) {
         updateActivityFunction.run();
 
-        if (result == -1) {
+        if (receivedBytes == -1) {
             connection.close();
             return;
         }
 
         LOGGER.debug(
-            result,
+            receivedBytes,
             channel,
             (bytes, ch) -> "Received " + bytes + " bytes from channel \"" + NetworkUtils.getRemoteAddress(ch) + "\""
         );
 
-        var readBuffer = getBufferToReadFromChannel();
-        readBuffer.flip();
+        readingBuffer.flip();
         try {
-            readPackets(readBuffer);
+            readPackets(readingBuffer);
         } catch (Exception e) {
             LOGGER.error(e);
-        } finally {
-            readBuffer.clear();
         }
 
         if (isReading.compareAndSet(true, false)) {
@@ -427,13 +437,14 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     }
 
     /**
-     * Handle the exception during reading data.
+     * Handle the exception during receiving data.
      *
-     * @param exception the exception.
+     * @param exception     the exception.
+     * @param readingBuffer the currently reading buffer.
      */
-    protected void handleFailedRead(@NotNull Throwable exception) {
+    protected void handleFailedReceiving(@NotNull Throwable exception, @NotNull ByteBuffer readingBuffer) {
         if (exception instanceof AsynchronousCloseException) {
-            LOGGER.warning(connection, cn -> "Connection " + cn.getRemoteAddress() + " was closed.");
+            LOGGER.info(connection, cn -> "Connection " + cn.getRemoteAddress() + " was closed.");
         } else {
             LOGGER.error(exception);
             connection.close();

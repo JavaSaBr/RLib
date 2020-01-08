@@ -99,7 +99,8 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         if (resultBuffer.limit() != 0) {
             writingBuffer = resultBuffer;
 
-            LOGGER.debug(channel,
+            LOGGER.debug(
+                channel,
                 resultBuffer,
                 (ch, buf) -> "Write to channel \"" + getRemoteAddress(ch) + "\" data:\n" + hexDump(buf)
             );
@@ -121,13 +122,15 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
         W resultPacket = (W) packet;
 
         var expectedLength = packet.getExpectedLength();
-        var totalSize = getTotalSize(packet, expectedLength);
+        var totalSize = expectedLength == -1 ? -1 : getTotalSize(packet, expectedLength);
 
         // if the packet is too big to use a write buffer
         if (expectedLength != -1 && totalSize > firstWriteBuffer.capacity()) {
-            firstWriteTempBuffer = bufferAllocator.takeBuffer(totalSize);
-            secondWriteTempBuffer = bufferAllocator.takeBuffer(totalSize);
-            return serialize(resultPacket, expectedLength, totalSize, firstWriteTempBuffer, secondWriteTempBuffer);
+            var first = bufferAllocator.takeBuffer(totalSize);
+            var second = bufferAllocator.takeBuffer(totalSize);
+            firstWriteTempBuffer = first;
+            secondWriteTempBuffer = second;
+            return serialize(resultPacket, expectedLength, totalSize, first, second);
         } else {
             return serialize(resultPacket, expectedLength, totalSize, firstWriteBuffer, secondWriteBuffer);
         }
@@ -254,22 +257,29 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
     }
 
     protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int position, int value, int headerSize) {
+        try {
 
-        switch (headerSize) {
-            case 1:
-                buffer.put(position, (byte) value);
-                break;
-            case 2:
-                buffer.putShort(position, (short) value);
-                break;
-            case 4:
-                buffer.putInt(position, value);
-                break;
-            default:
-                throw new IllegalStateException("Wrong packet's header size: " + headerSize);
+            switch (headerSize) {
+                case 1:
+                    buffer.put(position, (byte) value);
+                    break;
+                case 2:
+                    buffer.putShort(position, (short) value);
+                    break;
+                case 4:
+                    buffer.putInt(position, value);
+                    break;
+                default:
+                    throw new IllegalStateException("Wrong packet's header size: " + headerSize);
+            }
+
+            return buffer;
+
+        } catch (IndexOutOfBoundsException ex) {
+            LOGGER.error("Cannot write header by position " + position + " with header size " + headerSize +
+                " to buffer " + buffer);
+            throw ex;
         }
-
-        return buffer;
     }
 
     protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int value, int headerSize) {

@@ -6,7 +6,6 @@ import com.ss.rlib.common.function.NotNullBiConsumer;
 import com.ss.rlib.common.function.NotNullConsumer;
 import com.ss.rlib.common.function.NullableSupplier;
 import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerLevel;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
@@ -114,12 +113,7 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
             }
         }
 
-        ByteBuffer bufferToWrite;
-        try {
-            bufferToWrite = doHandshake(packet);
-        } catch (SSLException e) {
-            throw new RuntimeException(e);
-        }
+        var bufferToWrite = doHandshake(packet);
 
         if (bufferToWrite != null) {
             return bufferToWrite;
@@ -128,7 +122,7 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
         throw new IllegalStateException();
     }
 
-    protected @Nullable ByteBuffer doHandshake(@NotNull WritablePacket packet) throws SSLException {
+    protected @Nullable ByteBuffer doHandshake(@NotNull WritablePacket packet) {
 
         if (!(packet instanceof SSLWritablePacket)) {
             LOGGER.debug(packet, pck -> "Return packet " + pck + " to queue as first");

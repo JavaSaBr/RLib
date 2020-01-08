@@ -64,14 +64,14 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
     }
 
     @Override
-    protected void handleReadData(@NotNull Integer result) {
+    protected void handleReceivedData(@NotNull Integer receivedBytes, @NotNull ByteBuffer readingBuffer) {
 
-        if (result == -1) {
-            doHandshake(getBufferToReadFromChannel(), -1);
+        if (receivedBytes == -1) {
+            doHandshake(readingBuffer, -1);
             return;
         }
 
-        super.handleReadData(result);
+        super.handleReceivedData(receivedBytes, readingBuffer);
     }
 
     @Override
@@ -209,10 +209,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
                 LOGGER.debug(receivedBuffer, buf -> "Try to decrypt data:\n" + hexDump(buf));
                 result = sslEngine.unwrap(receivedBuffer, sslDataBuffer.clear());
             } catch (SSLException e) {
-                if (e.getCause() instanceof BadPaddingException) {
-                    increaseNetworkBuffer();
-                    return SKIP_READ_PACKETS;
-                }
+                var handshakeStatus = sslEngine.getHandshakeStatus();
                 throw new IllegalStateException(e);
             }
 
@@ -229,9 +226,17 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
                     closeConnection();
                     return SKIP_READ_PACKETS;
                 default:
+
+                    if (receivedBuffer.position() > 0) {
+                        receivedBuffer.compact();
+                        return total;
+                    }
+
                     throw new IllegalStateException("Invalid SSL status: " + result.getStatus());
             }
         }
+
+        receivedBuffer.clear();
 
         return total;
     }

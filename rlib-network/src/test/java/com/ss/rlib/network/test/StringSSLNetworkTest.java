@@ -132,6 +132,10 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
     @SneakyThrows
     void clientSSLNetworkTest() {
 
+        System.setProperty("javax.net.debug", "all");
+        //LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
+        //LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
+
         var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
         var sslContext = NetworkUtils.createSslContext(keystoreFile, "test");
 
@@ -190,7 +194,7 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
         buffer.clear();
 
         Assertions.assertTrue(
-            counter.await(1000, TimeUnit.MILLISECONDS),
+            counter.await(100_000, TimeUnit.MILLISECONDS),
             "Still wait for " + counter.getCount() + " packets..."
         );
 
@@ -204,8 +208,8 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
 
         //System.setProperty("javax.net.debug", "all");
         //LoggerManager.enable(AbstractPacketWriter.class, LoggerLevel.DEBUG);
-        LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
-        LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
+        //LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
+        //LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
 
         var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
         var serverSSLContext = NetworkUtils.createSslContext(keystoreFile, "test");
@@ -264,14 +268,14 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
         //System.setProperty("javax.net.debug", "all");
         //LoggerManager.enable(AbstractPacketReader.class, LoggerLevel.DEBUG);
         //LoggerManager.enable(AbstractPacketWriter.class, LoggerLevel.DEBUG);
-        //LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
-        //LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
+        LoggerManager.enable(AbstractSSLPacketWriter.class, LoggerLevel.DEBUG);
+        LoggerManager.enable(AbstractSSLPacketReader.class, LoggerLevel.DEBUG);
 
         var keystoreFile = StringSSLNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
         var serverSSLContext = NetworkUtils.createSslContext(keystoreFile, "test");
         var clientSSLContext = NetworkUtils.createAllTrustedClientSslContext();
 
-        int packetCount = 3;
+        int packetCount = 10;
 
         try(var testNetwork = buildStringSSLNetwork(serverSSLContext, clientSSLContext)) {
 

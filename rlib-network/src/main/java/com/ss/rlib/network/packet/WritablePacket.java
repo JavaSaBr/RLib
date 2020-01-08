@@ -1,7 +1,9 @@
 package com.ss.rlib.network.packet;
 
+import com.ss.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 
 /**
@@ -105,10 +107,19 @@ public interface WritablePacket extends Packet {
      * @param string the string for writing.
      */
     default void writeString(@NotNull ByteBuffer buffer, @NotNull String string) {
-        writeInt(buffer, string.length());
+        try {
 
-        for (int i = 0, length = string.length(); i < length; i++) {
-            buffer.putChar(string.charAt(i));
+            writeInt(buffer, string.length());
+
+            for (int i = 0, length = string.length(); i < length; i++) {
+                buffer.putChar(string.charAt(i));
+            }
+
+        } catch (BufferOverflowException ex) {
+            LoggerManager.getLogger(WritablePacket.class)
+                .error("Cannot write a string to buffer because the string is too long." +
+                    " String length: " + string.length() + ", buffer: " + buffer);
+            throw ex;
         }
     }
 

@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 /**
@@ -133,12 +134,29 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
     protected @NotNull String readString(@NotNull ByteBuffer buffer) {
 
         var length = readInt(buffer);
-        var array = new char[length];
+        try {
 
-        for (int i = 0; i < length; i++) {
-            array[i] = buffer.getChar();
+            var requiredRemainingBytes = length * 2;
+
+            if (requiredRemainingBytes > buffer.remaining()) {
+                throw new IllegalStateException("Found too long string " + length + " from buffer " + buffer);
+            }
+
+            var array = new char[length];
+
+            for (int i = 0; i < length; i++) {
+                array[i] = buffer.getChar();
+            }
+
+            return new String(array);
+
+        } catch (OutOfMemoryError ex) {
+            LOGGER.error("Cannot read too long \"" + length + "\" string by memory reason");
+            throw ex;
+        } catch (BufferUnderflowException ex) {
+            LOGGER.error("Cannot read string because buffer doesn't contains enough data. " +
+                "Expected string length " + length + ", buffer " + buffer);
+            throw ex;
         }
-
-        return new String(array);
     }
 }
