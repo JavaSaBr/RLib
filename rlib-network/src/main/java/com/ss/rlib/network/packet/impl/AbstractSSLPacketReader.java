@@ -117,7 +117,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
                         break;
 
                     } else if (!receivedBuffer.hasRemaining()) {
-                        sslNetworkBuffer.clear();
+                        receivedBuffer.clear();
                         return SKIP_READ_PACKETS;
                     }
 
@@ -191,6 +191,8 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
             if (handshakeStatus == HandshakeStatus.FINISHED) {
                 packetWriter.accept(SSLWritablePacket.getInstance());
             }
+
+            receivedBuffer.clear();
 
             return SKIP_READ_PACKETS;
         }
