@@ -384,7 +384,7 @@ public class StringNetworkTest extends BaseNetworkTest {
             Assertions.assertNull(notSentPacket, "Found not sent packets...");
 
             // so all packets are already sent, we should not wait for long time to get result
-            var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofMillis(10)));
+            var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofMillis(100)));
 
             Assertions.assertEquals(receivedPackets.size(), packetCount, "Didn't receive all packets");
         }
