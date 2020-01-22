@@ -3,66 +3,63 @@ package com.ss.rlib.network.impl;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
-import com.ss.rlib.network.packet.IdBasedReadablePacket;
-import com.ss.rlib.network.packet.IdBasedWritablePacket;
 import com.ss.rlib.network.packet.PacketReader;
 import com.ss.rlib.network.packet.PacketWriter;
-import com.ss.rlib.network.packet.impl.IdBasedPacketReader;
-import com.ss.rlib.network.packet.impl.IdBasedPacketWriter;
-import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.ReadablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
+import com.ss.rlib.network.packet.impl.DefaultSSLPacketReader;
+import com.ss.rlib.network.packet.impl.DefaultSSLPacketWriter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.SSLContext;
 import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * @author JavaSaBr
  */
 @Getter(AccessLevel.PROTECTED)
-public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W extends IdBasedWritablePacket> extends
-    AbstractConnection<R, W> {
+public abstract class DefaultDataSSLConnection<R extends ReadablePacket, W extends WritablePacket> extends
+    AbstractSSLConnection<R, W> {
 
     private final @NotNull PacketReader packetReader;
     private final @NotNull PacketWriter packetWriter;
-    private final @NotNull ReadablePacketRegistry<R> packetRegistry;
 
     private final int packetLengthHeaderSize;
-    private final int packetIdHeaderSize;
 
-    public IdBasedPacketConnection(
+    public DefaultDataSSLConnection(
         @NotNull Network<? extends Connection<R, W>> network,
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
-        @NotNull ReadablePacketRegistry<R> packetRegistry,
+        @NotNull SSLContext sslContext,
         int maxPacketsByRead,
         int packetLengthHeaderSize,
-        int packetIdHeaderSize
+        boolean clientMode
     ) {
-        super(network, channel, bufferAllocator, maxPacketsByRead);
-        this.packetRegistry = packetRegistry;
+        super(network, channel, bufferAllocator, sslContext, maxPacketsByRead, clientMode);
         this.packetLengthHeaderSize = packetLengthHeaderSize;
-        this.packetIdHeaderSize = packetIdHeaderSize;
         this.packetReader = createPacketReader();
         this.packetWriter = createPacketWriter();
     }
 
     protected @NotNull PacketReader createPacketReader() {
-        return new IdBasedPacketReader<>(
+        return new DefaultSSLPacketReader<>(
             this,
             channel,
             bufferAllocator,
             this::updateLastActivity,
             this::handleReceivedPacket,
+            value -> createReadablePacket(),
+            sslEngine,
+            this::sendImpl,
             packetLengthHeaderSize,
-            maxPacketsByRead,
-            packetIdHeaderSize,
-            packetRegistry
+            maxPacketsByRead
         );
     }
 
     protected @NotNull PacketWriter createPacketWriter() {
-        return new IdBasedPacketWriter<>(
+        return new DefaultSSLPacketWriter<W, Connection<R, W>>(
             this,
             channel,
             bufferAllocator,
@@ -70,8 +67,12 @@ public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W exten
             this::nextPacketToWrite,
             this::onWrittenPacket,
             this::onSentPacket,
-            packetLengthHeaderSize,
-            packetIdHeaderSize
+            sslEngine,
+            this::sendImpl,
+            this::queueAtFirst,
+            packetLengthHeaderSize
         );
     }
+
+    protected abstract @NotNull R createReadablePacket();
 }

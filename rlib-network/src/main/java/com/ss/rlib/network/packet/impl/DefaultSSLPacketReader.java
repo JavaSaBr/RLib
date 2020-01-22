@@ -3,36 +3,38 @@ package com.ss.rlib.network.packet.impl;
 import com.ss.rlib.common.function.NotNullConsumer;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
-import com.ss.rlib.network.packet.IdBasedReadablePacket;
-import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
+import com.ss.rlib.network.packet.ReadablePacket;
+import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.net.ssl.SSLEngine;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.function.IntFunction;
 
 /**
  * @param <R> the readable packet's type.
- * @param <C> the connection's type.
- * @author JavaSaBr
+ * @param <C> the connections' type.
+ * @author JavaSaBR
  */
-public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends Connection<R, ?>> extends
-    AbstractPacketReader<R, C> {
+public class DefaultSSLPacketReader<R extends ReadablePacket, C extends Connection<R, ?>> extends
+    AbstractSSLPacketReader<R, C> {
 
-    private final ReadablePacketRegistry<R> packetRegistry;
+    private final IntFunction<R> readPacketFactory;
     private final int packetLengthHeaderSize;
-    private final int packetIdHeaderSize;
 
-    public IdBasedPacketReader(
+    public DefaultSSLPacketReader(
         @NotNull C connection,
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
         @NotNull Runnable updateActivityFunction,
         @NotNull NotNullConsumer<R> readPacketHandler,
+        @NotNull IntFunction<R> readPacketFactory,
+        @NotNull SSLEngine sslEngine,
+        @NotNull NotNullConsumer<WritablePacket> packetWriter,
         int packetLengthHeaderSize,
-        int maxPacketsByRead,
-        int packetIdHeaderSize,
-        @NotNull ReadablePacketRegistry<R> packetRegistry
+        int maxPacketsByRead
     ) {
         super(
             connection,
@@ -40,16 +42,17 @@ public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends C
             bufferAllocator,
             updateActivityFunction,
             readPacketHandler,
+            sslEngine,
+            packetWriter,
             maxPacketsByRead
         );
+        this.readPacketFactory = readPacketFactory;
         this.packetLengthHeaderSize = packetLengthHeaderSize;
-        this.packetIdHeaderSize = packetIdHeaderSize;
-        this.packetRegistry = packetRegistry;
     }
 
     @Override
     protected boolean canStartReadPacket(@NotNull ByteBuffer buffer) {
-        return buffer.remaining() > packetLengthHeaderSize;
+        return buffer.remaining() >= packetLengthHeaderSize;
     }
 
     @Override
@@ -64,7 +67,6 @@ public class IdBasedPacketReader<R extends IdBasedReadablePacket<R>, C extends C
         int packetLength,
         int dataLength
     ) {
-        return packetRegistry.findById(readHeader(buffer, packetIdHeaderSize))
-            .newInstance();
+        return readPacketFactory.apply(dataLength);
     }
 }

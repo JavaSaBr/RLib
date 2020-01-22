@@ -5,12 +5,14 @@ import com.ss.rlib.network.client.ClientNetwork;
 import com.ss.rlib.network.impl.DefaultBufferAllocator;
 import com.ss.rlib.network.impl.DefaultConnection;
 import com.ss.rlib.network.impl.StringDataConnection;
+import com.ss.rlib.network.impl.StringDataSSLConnection;
 import com.ss.rlib.network.packet.impl.DefaultReadablePacket;
 import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
 import com.ss.rlib.network.server.ServerNetwork;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.SSLContext;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -47,6 +49,20 @@ public class BaseNetworkTest {
             new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
             NetworkConfig.DEFAULT_CLIENT,
             new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT)
+        );
+    }
+
+    protected @NotNull TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
+        @NotNull SSLContext serverSSLContext,
+        @NotNull SSLContext clientSSLContext
+    ) {
+        return buildStringSSLNetwork(
+            ServerNetworkConfig.DEFAULT_SERVER,
+            new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
+            serverSSLContext,
+            NetworkConfig.DEFAULT_CLIENT,
+            new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
+            clientSSLContext
         );
     }
 
@@ -90,6 +106,46 @@ public class BaseNetworkTest {
         serverNetwork.onAccept(asyncServerToClient::complete);
 
         var clientNetwork = NetworkFactory.newStringDataClientNetwork(clientNetworkConfig, clientBufferAllocator);
+        clientNetwork.connect(serverAddress)
+            .thenApply(asyncClientToServer::complete);
+
+        return new TestNetwork<>(
+            serverNetworkConfig,
+            clientNetworkConfig,
+            asyncClientToServer.join(),
+            asyncServerToClient.join(),
+            serverNetwork,
+            clientNetwork
+        );
+    }
+
+    protected @NotNull TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
+        @NotNull ServerNetworkConfig serverNetworkConfig,
+        @NotNull BufferAllocator serverBufferAllocator,
+        @NotNull SSLContext serverSSLContext,
+        @NotNull NetworkConfig clientNetworkConfig,
+        @NotNull BufferAllocator clientBufferAllocator,
+        @NotNull SSLContext clientSSLContext
+    ) {
+
+        var asyncClientToServer = new CompletableFuture<StringDataSSLConnection>();
+        var asyncServerToClient = new CompletableFuture<StringDataSSLConnection>();
+
+        var serverNetwork = NetworkFactory.newStringDataSSLServerNetwork(
+            serverNetworkConfig,
+            serverBufferAllocator,
+            serverSSLContext
+        );
+
+        var serverAddress = serverNetwork.start();
+        serverNetwork.onAccept(asyncServerToClient::complete);
+
+        var clientNetwork = NetworkFactory.newStringDataSSLClientNetwork(
+            clientNetworkConfig,
+            clientBufferAllocator,
+            clientSSLContext
+        );
+
         clientNetwork.connect(serverAddress)
             .thenApply(asyncClientToServer::complete);
 

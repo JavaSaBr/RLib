@@ -7,23 +7,20 @@ import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.WritablePacket;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.net.ssl.SSLEngine;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * @author JavaSaBr
  */
-public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<?, W>> extends
-    AbstractPacketWriter<W, C> {
+public class DefaultSSLPacketWriter<W extends WritablePacket, C extends Connection<?, W>> extends
+    AbstractSSLPacketWriter<W, C> {
 
     protected final int packetLengthHeaderSize;
 
-    public DefaultPacketWriter(
+    public DefaultSSLPacketWriter(
         @NotNull C connection,
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
@@ -31,6 +28,9 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
         @NotNull NullableSupplier<WritablePacket> nextWritePacketSupplier,
         @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler,
         @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
+        @NotNull SSLEngine sslEngine,
+        @NotNull NotNullConsumer<WritablePacket> packetWriter,
+        @NotNull NotNullConsumer<WritablePacket> queueAtFirst,
         int packetLengthHeaderSize
     ) {
         super(
@@ -40,7 +40,10 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
             updateActivityFunction,
             nextWritePacketSupplier,
             writtenPacketHandler,
-            sentPacketHandler
+            sentPacketHandler,
+            sslEngine,
+            packetWriter,
+            queueAtFirst
         );
         this.packetLengthHeaderSize = packetLengthHeaderSize;
     }

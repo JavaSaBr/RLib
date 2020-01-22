@@ -1,5 +1,6 @@
 package com.ss.rlib.network;
 
+import com.ss.rlib.common.function.NotNullBiConsumer;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
 import lombok.AllArgsConstructor;
@@ -7,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 
 /**
  * The interface to implement an async connection.
@@ -69,7 +69,7 @@ public interface Connection<R extends ReadablePacket, W extends WritablePacket> 
      *
      * @param consumer the consumer.
      */
-    void onReceive(@NotNull BiConsumer<? super Connection<R, W>, ? super R> consumer);
+    void onReceive(@NotNull NotNullBiConsumer<? super Connection<R, W>, ? super R> consumer);
 
     /**
      * Get a stream of received packet events.
@@ -84,11 +84,4 @@ public interface Connection<R extends ReadablePacket, W extends WritablePacket> 
      * @return the stream of received packets.
      */
     @NotNull Flux<? extends R> receivedPackets();
-
-    /**
-     * Get a used implementation of a data crypt.
-     *
-     * @return the used implementation of a data crypt.
-     */
-    @NotNull NetworkCryptor getCrypt();
 }

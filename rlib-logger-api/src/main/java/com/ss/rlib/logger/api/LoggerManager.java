@@ -116,4 +116,24 @@ public class LoggerManager {
     public static void removeWriter(@NotNull Writer writer) {
         LOGGER_FACTORY.removeWriter(writer);
     }
+
+    /**
+     * Enable passed logger level for some logger.
+     *
+     * @param cs    the class which use its own logger.
+     * @param level the logger level to enable.
+     */
+    public static void enable(@NotNull Class<?> cs, @NotNull LoggerLevel level) {
+        getLogger(cs).setEnabled(level, true);
+    }
+
+    /**
+     * Disable passed logger level for some logger.
+     *
+     * @param cs    the class which use its own logger.
+     * @param level the logger level to disable.
+     */
+    public static void disable(@NotNull Class<?> cs, @NotNull LoggerLevel level) {
+        getLogger(cs).setEnabled(level, false);
+    }
 }

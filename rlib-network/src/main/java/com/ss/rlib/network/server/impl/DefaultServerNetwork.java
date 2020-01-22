@@ -8,9 +8,9 @@ import com.ss.rlib.common.util.array.Array;
 import com.ss.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
-import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
 import com.ss.rlib.network.ServerNetworkConfig;
+import com.ss.rlib.network.UnsafeConnection;
 import com.ss.rlib.network.impl.AbstractNetwork;
 import com.ss.rlib.network.server.ServerNetwork;
 import com.ss.rlib.network.util.NetworkUtils;
@@ -33,12 +33,12 @@ import java.util.function.Consumer;
  *
  * @author JavaSaBr
  */
-public final class DefaultServerNetwork<C extends Connection<?, ?>> extends AbstractNetwork<C> implements
+public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extends AbstractNetwork<C> implements
     ServerNetwork<C> {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(DefaultServerNetwork.class);
+    protected static final Logger LOGGER = LoggerManager.getLogger(DefaultServerNetwork.class);
 
-    private interface ServerCompletionHandler<C extends Connection<?, ?>> extends
+    private interface ServerCompletionHandler<C extends UnsafeConnection<?, ?>> extends
         CompletionHandler<AsynchronousSocketChannel, DefaultServerNetwork<C>> {}
 
     private final ServerCompletionHandler<C> acceptHandler = new ServerCompletionHandler<>() {
@@ -54,7 +54,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
         @Override
         public void failed(@NotNull Throwable exc, @NotNull DefaultServerNetwork<C> network) {
             if (exc instanceof AsynchronousCloseException) {
-                LOGGER.warning("Server network was closed.");
+                LOGGER.warning("Server network was closed");
             } else {
                 LOGGER.error("Got exception during accepting new connection:");
                 LOGGER.error(exc);
@@ -78,28 +78,34 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
         super(config, channelToConnection);
 
         var threadFactory = new GroupThreadFactory(
-            config.getGroupName(),
+            config.getThreadGroupName(),
             config.getThreadConstructor(),
             config.getThreadPriority(),
-            true
+            false
         );
 
-        var executor = config.getGroupSize() < config.getGroupMaxSize() ? new ThreadPoolExecutor(
-            config.getGroupSize(),
-            config.getGroupMaxSize(),
+        var executor = config.getThreadGroupMinSize() < config.getThreadGroupMaxSize() ? new ThreadPoolExecutor(
+            config.getThreadGroupMinSize(),
+            config.getThreadGroupMaxSize(),
             120,
             TimeUnit.SECONDS,
             new SynchronousQueue<>(),
             threadFactory,
             new ThreadPoolExecutor.CallerRunsPolicy()
-        ) : Executors.newFixedThreadPool(config.getGroupSize(), threadFactory);
+        ) : Executors.newFixedThreadPool(config.getThreadGroupMinSize(), threadFactory);
 
         // activate the executor
         executor.submit(() -> {});
 
-        LOGGER.info("Executor configuration:");
-        LOGGER.info(config, conf -> "Min threads: " + conf.getGroupSize());
-        LOGGER.info(config, conf -> "Max threads: " + conf.getGroupMaxSize());
+        LOGGER.info(config, conf -> "Server network configuration: {\n" +
+            "  minThreads: " + conf.getThreadGroupMinSize() + ",\n" +
+            "  maxThreads: " + conf.getThreadGroupMaxSize() + ",\n" +
+            "  priority: " + conf.getThreadPriority() + ",\n" +
+            "  groupName: \"" + conf.getThreadGroupName() + "\",\n" +
+            "  readBufferSize: " + conf.getReadBufferSize() + ",\n" +
+            "  pendingBufferSize: " + conf.getPendingBufferSize() + ",\n" +
+            "  writeBufferSize: " + conf.getWriteBufferSize() + "\n" +
+            "}");
 
         this.group = uncheckedGet(executor, AsynchronousChannelGroup::withThreadPool);
         this.channel = uncheckedGet(group, AsynchronousServerSocketChannel::open);
@@ -121,7 +127,7 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
             }
         }
 
-        LOGGER.info(address, adr -> "Started server on address: " + adr);
+        LOGGER.info(address, adr -> "Started server socket on address: " + adr);
 
         if (!subscribers.isEmpty()) {
             acceptNext();
@@ -134,27 +140,26 @@ public final class DefaultServerNetwork<C extends Connection<?, ?>> extends Abst
     public <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress) {
         Utils.unchecked(channel, serverAddress, AsynchronousServerSocketChannel::bind);
 
-        LOGGER.info(serverAddress, addr -> "Started server on address: " + addr);
+        LOGGER.info(serverAddress, addr -> "Started server socket on address: " + addr);
 
         if (!subscribers.isEmpty()) {
             acceptNext();
         }
 
-        return ClassUtils.unsafeCast(this);
+        return ClassUtils.unsafeNNCast(this);
     }
 
     protected void acceptNext() {
         if (channel.isOpen()) {
-            try {
-                channel.accept(this, acceptHandler);
-            } catch (AcceptPendingException ignored) {
-            }
+            try { channel.accept(this, acceptHandler); }
+            catch (AcceptPendingException ignored) {}
         } else {
-            LOGGER.warning("Cannot accept a next connection because server channel is already closed.");
+            LOGGER.warning("Cannot accept a next connection because server channel is already closed");
         }
     }
 
     protected void onAccept(@NotNull C connection) {
+        connection.onConnected();
         subscribers.forEachR(connection, Consumer::accept);
     }
 

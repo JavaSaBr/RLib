@@ -3,7 +3,6 @@ package com.ss.rlib.network.impl;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
-import com.ss.rlib.network.NetworkCryptor;
 import com.ss.rlib.network.packet.impl.DefaultReadablePacket;
 import com.ss.rlib.network.packet.impl.DefaultWritablePacket;
 import com.ss.rlib.network.packet.registry.ReadablePacketRegistry;
@@ -19,10 +18,9 @@ public class DefaultConnection extends IdBasedPacketConnection<DefaultReadablePa
     public DefaultConnection(
         @NotNull Network<? extends Connection<DefaultReadablePacket, DefaultWritablePacket>> network,
         @NotNull AsynchronousSocketChannel channel,
-        @NotNull NetworkCryptor crypt,
         @NotNull BufferAllocator bufferAllocator,
         @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry
     ) {
-        super(network, channel, crypt, bufferAllocator, packetRegistry, 100, 2, 2);
+        super(network, channel, bufferAllocator, packetRegistry, 100, 2, 2);
     }
 }

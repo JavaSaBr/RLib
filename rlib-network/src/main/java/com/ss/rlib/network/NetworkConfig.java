@@ -33,7 +33,7 @@ public interface NetworkConfig {
     @NotNull NetworkConfig DEFAULT_CLIENT = new NetworkConfig() {
 
         @Override
-        public @NotNull String getGroupName() {
+        public @NotNull String getThreadGroupName() {
             return "ClientNetworkThread";
         }
     };
@@ -43,7 +43,7 @@ public interface NetworkConfig {
      *
      * @return the group name.
      */
-    default @NotNull String getGroupName() {
+    default @NotNull String getThreadGroupName() {
         return "NetworkThread";
     }
 
