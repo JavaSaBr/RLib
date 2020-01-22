@@ -7,19 +7,22 @@ import com.ss.rlib.network.packet.impl.StringReadablePacket;
 import com.ss.rlib.network.packet.impl.StringWritablePacket;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.SSLContext;
 import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * @author JavaSaBr
  */
-public class StringDataConnection extends DefaultDataConnection<StringReadablePacket, StringWritablePacket> {
+public class StringDataSSLConnection extends DefaultDataSSLConnection<StringReadablePacket, StringWritablePacket> {
 
-    public StringDataConnection(
+    public StringDataSSLConnection(
         @NotNull Network<? extends Connection<StringReadablePacket, StringWritablePacket>> network,
         @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator
+        @NotNull BufferAllocator bufferAllocator,
+        @NotNull SSLContext sslContext,
+        boolean clientMode
     ) {
-        super(network, channel, bufferAllocator, 100, 2);
+        super(network, channel, bufferAllocator, sslContext, 100, 2, clientMode);
     }
 
     @Override

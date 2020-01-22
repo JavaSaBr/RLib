@@ -1,6 +1,8 @@
 package com.ss.rlib.network.packet.impl;
 
-import static com.ss.rlib.network.util.NetworkUtils.getSocketAddress;
+import static com.ss.rlib.common.util.ObjectUtils.notNull;
+import static com.ss.rlib.network.util.NetworkUtils.getRemoteAddress;
+import com.ss.rlib.common.function.NotNullConsumer;
 import com.ss.rlib.common.util.BufferUtils;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
@@ -8,6 +10,7 @@ import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.PacketReader;
 import com.ss.rlib.network.packet.ReadablePacket;
+import com.ss.rlib.network.util.NetworkUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,39 +34,34 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
     private static final Logger LOGGER = LoggerManager.getLogger(AbstractPacketReader.class);
 
-    private final CompletionHandler<Integer, Void> readHandler = new CompletionHandler<>() {
+    private final CompletionHandler<Integer, ByteBuffer> readHandler = new CompletionHandler<>() {
 
         @Override
-        public void completed(@NotNull Integer result, @Nullable Void attachment) {
-            handleReadData(result);
+        public void completed(@NotNull Integer receivedBytes, @NotNull ByteBuffer readingBuffer) {
+            handleReceivedData(receivedBytes, readingBuffer);
         }
 
         @Override
-        public void failed(@NotNull Throwable exc, @Nullable Void attachment) {
-            handleFailedRead(exc);
+        public void failed(@NotNull Throwable exc, @NotNull ByteBuffer readingBuffer) {
+            handleFailedReceiving(exc, readingBuffer);
         }
     };
 
-    protected final AtomicBoolean isReading = new AtomicBoolean(false);
+    protected final @NotNull AtomicBoolean isReading = new AtomicBoolean(false);
 
-    protected final C connection;
-    protected final AsynchronousSocketChannel channel;
-    protected final BufferAllocator bufferAllocator;
+    protected final @NotNull C connection;
+    protected final @NotNull AsynchronousSocketChannel channel;
+    protected final @NotNull BufferAllocator bufferAllocator;
 
-    protected final ByteBuffer readBuffer;
-    protected final ByteBuffer pendingBuffer;
-    protected final ByteBuffer decryptedBuffer;
+    protected final @NotNull ByteBuffer readBuffer;
+    protected final @NotNull ByteBuffer pendingBuffer;
 
-    protected final Runnable updateActivityFunction;
-    protected final Consumer<? super R> readPacketHandler;
-
-    @Getter(AccessLevel.PROTECTED)
-    @Setter(AccessLevel.PROTECTED)
-    protected volatile ByteBuffer readTempBuffer;
+    protected final @NotNull Runnable updateActivityFunction;
+    protected final @NotNull Consumer<? super R> readPacketHandler;
 
     @Getter(AccessLevel.PROTECTED)
     @Setter(AccessLevel.PROTECTED)
-    protected volatile ByteBuffer decryptedTempBuffer;
+    protected volatile @Nullable ByteBuffer tempPendingBuffer;
 
     protected final int maxPacketsByRead;
 
@@ -72,7 +70,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
         @NotNull Runnable updateActivityFunction,
-        @NotNull Consumer<? super R> readPacketHandler,
+        @NotNull NotNullConsumer<? super R> readPacketHandler,
         int maxPacketsByRead
     ) {
         this.connection = connection;
@@ -80,17 +78,37 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         this.bufferAllocator = bufferAllocator;
         this.readBuffer = bufferAllocator.takeReadBuffer();
         this.pendingBuffer = bufferAllocator.takePendingBuffer();
-        this.decryptedBuffer = bufferAllocator.takePendingBuffer();
         this.updateActivityFunction = updateActivityFunction;
         this.readPacketHandler = readPacketHandler;
         this.maxPacketsByRead = maxPacketsByRead;
     }
 
+    protected @NotNull ByteBuffer getBufferToReadFromChannel() {
+        return readBuffer;
+    }
+
     @Override
     public void startRead() {
-        if (isReading.compareAndSet(false, true)) {
-            channel.read(readBuffer, null, readHandler);
+
+        if (!isReading.compareAndSet(false, true)) {
+            return;
         }
+
+        LOGGER.debug(channel, ch -> "Start waiting for new data from channel \"" + getRemoteAddress(ch) + "\"");
+
+        var buffer = getBufferToReadFromChannel();
+
+        channel.read(buffer, buffer, readHandler);
+    }
+
+    /**
+     * Read packets from the buffer with received data.
+     *
+     * @param receivedBuffer the buffer with received data.
+     * @return count of read packets.
+     */
+    protected int readPackets(@NotNull ByteBuffer receivedBuffer) {
+        return readPackets(receivedBuffer, pendingBuffer);
     }
 
     /**
@@ -102,28 +120,27 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
      */
     protected int readPackets(@NotNull ByteBuffer receivedBuffer, @NotNull ByteBuffer pendingBuffer) {
 
-        LOGGER.debug(receivedBuffer, buf -> "Start reading packets from received buffer: " + buf);
-
-        var crypt = connection.getCrypt();
+        LOGGER.debug(receivedBuffer, buf -> "Start reading packets from received buffer " + buf);
 
         var waitedBytes = pendingBuffer.position();
         var bufferToRead = receivedBuffer;
-        var bufferToDecrypt = decryptedBuffer;
-        var readTempBuffer = getReadTempBuffer();
+        var tempPendingBuffer = getTempPendingBuffer();
 
-        // if we have read mapped buffer it means that we are reading a really big packet now
-        if (readTempBuffer != null) {
+        // if we have a temp buffer it means that we are reading a really big packet now
+        if (tempPendingBuffer != null) {
 
-            if (readTempBuffer.remaining() < receivedBuffer.remaining()) {
-                reAllocTempBuffers(readTempBuffer.flip(), readTempBuffer.capacity());
-                readTempBuffer = this.readTempBuffer;
+            if (tempPendingBuffer.remaining() < receivedBuffer.remaining()) {
+                reAllocTempBuffers(tempPendingBuffer.flip(), tempPendingBuffer.capacity());
+                tempPendingBuffer = notNull(getTempPendingBuffer());
             }
 
-            LOGGER.debug(receivedBuffer, readTempBuffer,
-                (buf, mappedBuf) -> "Put received buffer: " + buf + " to read mapped buffer: " + mappedBuf);
+            LOGGER.debug(
+                receivedBuffer,
+                tempPendingBuffer,
+                (buf, mappedBuf) -> "Put received buffer " + buf + " to read mapped buffer " + mappedBuf
+            );
 
-            bufferToRead = BufferUtils.putToAndFlip(readTempBuffer, receivedBuffer);
-            bufferToDecrypt = decryptedTempBuffer;
+            bufferToRead = BufferUtils.putToAndFlip(tempPendingBuffer, receivedBuffer);
         }
         // if we have some pending data we need to append the received buffer to the pending buffer
         // and start to read pending buffer with result received data
@@ -131,9 +148,12 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
             if (pendingBuffer.remaining() < receivedBuffer.remaining()) {
 
-                LOGGER.debug(pendingBuffer, receivedBuffer,
-                    (penBuf, buf) -> "Pending buffer: " + penBuf + " is too small to append received buffer: " +
-                        buf + ", allocate mapped buffer for this");
+                LOGGER.debug(
+                    pendingBuffer,
+                    receivedBuffer,
+                    (penBuf, buf) -> "Pending buffer " + penBuf + " is too small to append received buffer " +
+                        buf + ", will allocate new temp buffer for this"
+                );
 
                 allocTempBuffers(pendingBuffer.flip(), pendingBuffer.capacity());
 
@@ -141,18 +161,23 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
                 pendingBuffer.clear();
 
-                readTempBuffer = this.readTempBuffer;
-                bufferToDecrypt = decryptedTempBuffer;
+                tempPendingBuffer = notNull(getTempPendingBuffer());
 
-                LOGGER.debug(receivedBuffer, readTempBuffer,
-                    (buf, mappedBuf) -> "Put received buffer: " + buf + " to mapped buffer: " + mappedBuf);
+                LOGGER.debugNullable(
+                    receivedBuffer,
+                    tempPendingBuffer,
+                    (buf, mappedBuf) -> "Put received buffer: " + buf + " to mapped buffer: " + mappedBuf
+                );
 
-                bufferToRead = BufferUtils.putToAndFlip(readTempBuffer, receivedBuffer);
+                bufferToRead = BufferUtils.putToAndFlip(tempPendingBuffer, receivedBuffer);
 
             } else {
 
-                LOGGER.debug(receivedBuffer, pendingBuffer,
-                    (buf, penBuf) -> "Put received buffer: " + buf + " to pending buffer: " + penBuf);
+                LOGGER.debug(
+                    receivedBuffer,
+                    pendingBuffer,
+                    (buf, penBuf) -> "Put received buffer: " + buf + " to pending buffer: " + penBuf
+                );
 
                 bufferToRead = BufferUtils.putToAndFlip(pendingBuffer, receivedBuffer);
             }
@@ -172,8 +197,11 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
             var packetLength = readPacketLength(bufferToRead);
             var dataLength = getDataLength(packetLength, bufferToRead.position() - endPosition, bufferToRead);
 
-            LOGGER.debug(packetLength, positionBeforeRead,
-                (length, pos) -> "Find next packet from position: " + pos + " with length: " + length);
+            LOGGER.debug(
+                packetLength,
+                positionBeforeRead,
+                (length, pos) -> "Find next packet from position: " + pos + " with length: " + length
+            );
 
             // calculate position of end the next packet
             endPosition += packetLength;
@@ -188,8 +216,10 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                 if (bufferToRead == receivedBuffer) {
                     if (packetLength <= pendingBuffer.capacity()) {
                         pendingBuffer.put(receivedBuffer);
-                        LOGGER.debug(pendingBuffer,
-                            buf -> "Put pending data form received buffer to pending buffer: " + buf);
+                        LOGGER.debug(
+                            pendingBuffer,
+                            buf -> "Put pending data form received buffer to pending buffer: " + buf
+                        );
                     } else {
                         allocTempBuffers(receivedBuffer, packetLength);
                     }
@@ -206,59 +236,59 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
                         pendingBuffer.clear();
                     }
 
-                } else if (bufferToRead == readTempBuffer) {
+                } else if (bufferToRead == tempPendingBuffer) {
 
                     // if not read data is less than pending buffer then we can switch to use the pending buffer
-                    if (Math.max(packetLength, readTempBuffer.remaining()) <= pendingBuffer.capacity()) {
+                    if (Math.max(packetLength, tempPendingBuffer.remaining()) <= pendingBuffer.capacity()) {
 
-                        pendingBuffer.clear()
-                            .put(readTempBuffer);
+                        pendingBuffer
+                            .clear()
+                            .put(tempPendingBuffer);
 
-                        LOGGER.debug(pendingBuffer,
-                            buf -> "Moved pending data from mapped buffer to pending buffer: " + buf);
+                        LOGGER.debug(
+                            pendingBuffer,
+                            buf -> "Moved pending data from mapped buffer to pending buffer: " + buf
+                        );
 
                         freeTempBuffers();
                     }
                     // if a new packet is bigger than current read mapped buffer
-                    else if (packetLength > readTempBuffer.capacity()) {
-                        reAllocTempBuffers(readTempBuffer, packetLength);
+                    else if (packetLength > tempPendingBuffer.capacity()) {
+                        reAllocTempBuffers(tempPendingBuffer, packetLength);
                     }
                     // or just compact this current mapped buffer
                     else {
-                        readTempBuffer.compact();
-                        LOGGER.debug(readTempBuffer, buf -> "Compact mapped buffer: " + buf);
+                        tempPendingBuffer.compact();
+                        LOGGER.debug(tempPendingBuffer, buf -> "Compact mapped buffer: " + buf);
                     }
                 }
 
-                LOGGER.debug(channel, readPackets,
-                    (ch, count) -> "Read " + count + " packet(s) from buffered data of " + getSocketAddress(ch) + ", " +
-                        "but 1 packet is still waiting for receiving additional data.");
+                LOGGER.debug(
+                    channel,
+                    readPackets,
+                    (ch, count) -> "Read " + count + " packets from received buffer of " + getRemoteAddress(ch) + ", " +
+                        "but 1 packet is still waiting for receiving additional data."
+                );
 
+                receivedBuffer.clear();
                 return readPackets;
             }
 
-            var decryptedData = crypt.decrypt(
-                bufferToRead,
-                dataLength,
-                bufferToDecrypt.clear()
-            );
-
-            R packet;
-
-            if (decryptedData != null) {
-                packet = createPacketFor(decryptedData, positionBeforeRead, packetLength, dataLength);
-            } else {
-                packet = createPacketFor(bufferToRead, positionBeforeRead, packetLength, dataLength);
-            }
+            R packet = createPacketFor(bufferToRead, positionBeforeRead, packetLength, dataLength);
 
             if (packet != null) {
                 LOGGER.debug(packet, pck -> "Created instance of packet to read data: " + pck);
-                packet.read(connection, bufferToRead, dataLength);
-                readPacketHandler.accept(packet);
-                LOGGER.debug(packet, pck -> "Read data of packet: " + pck);
+
+                if (packet.read(connection, bufferToRead, dataLength)) {
+                    readPacketHandler.accept(packet);
+                } else {
+                    LOGGER.error("Packet " + packet + " was read incorrectly");
+                }
+
+                LOGGER.debug(packet, pck -> "Finished reading data of packet: " + pck);
                 readPackets++;
             } else {
-                LOGGER.warning("Cannot create any instance of packet to read data.");
+                LOGGER.warning("Cannot create any instance of packet to read data");
             }
 
             bufferToRead.position(endPosition);
@@ -275,13 +305,17 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
         } else if (bufferToRead == pendingBuffer) {
             pendingBuffer.clear();
-        } else if (readTempBuffer != null) {
+        } else if (tempPendingBuffer != null) {
             freeTempBuffers();
         }
 
-        LOGGER.debug(channel, readPackets,
-            (ch, count) -> "Read " + count + " packet(s) from buffered data of " + getSocketAddress(ch) + ".");
+        LOGGER.debug(
+            channel,
+            readPackets,
+            (ch, count) -> "Read " + count + " packets from received buffer of " + getRemoteAddress(ch) + "."
+        );
 
+        receivedBuffer.clear();
         return readPackets;
     }
 
@@ -318,74 +352,83 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
         int packetLength
     ) {
 
-        LOGGER.debug(sourceBuffer.capacity(), packetLength, (currentSize, newSize) ->
-            "Resize read temp buffer from: " + currentSize + " to: " + newSize);
+        LOGGER.debug(
+            sourceBuffer.capacity(),
+            packetLength,
+            (currentSize, newSize) -> "Resize read temp buffer from " + currentSize + " to " + newSize
+        );
 
         var newReadTempBuffer = bufferAllocator.takeBuffer(packetLength + readBuffer.capacity());
 
-        LOGGER.debug(sourceBuffer, newReadTempBuffer,
-            (old, buf) -> "Moved pending data from old temp buffer: " + old + " to new temp buffer: " + buf);
+        LOGGER.debug(
+            sourceBuffer,
+            newReadTempBuffer,
+            (old, buf) -> "Moved pending data from old temp buffer " + old + " to new temp buffer " + buf
+        );
 
         newReadTempBuffer.put(sourceBuffer);
 
         freeTempBuffers();
 
-        this.readTempBuffer = newReadTempBuffer;
-        this.decryptedTempBuffer = bufferAllocator.takeBuffer(newReadTempBuffer.capacity());
+        this.tempPendingBuffer = newReadTempBuffer;
     }
 
     protected void allocTempBuffers(@NotNull ByteBuffer sourceBuffer, int packetLength) {
 
-        LOGGER.debug(packetLength, sourceBuffer.remaining(), (length, part) ->
-            "Request temp buffer to store a part: " + part + " of big packet with length: " + length);
+        LOGGER.debug(
+            packetLength,
+            sourceBuffer.remaining(),
+            (length, part) -> "Request temp buffer to store a part: " + part + " of big packet with length: " + length
+        );
 
         var readTempBuffer = bufferAllocator.takeBuffer(packetLength + readBuffer.capacity());
 
-        LOGGER.debug(sourceBuffer, readTempBuffer,
-            (recBuf, buf) -> "Put the part of packet: " + recBuf + " to mapped buffer: " + buf);
+        LOGGER.debug(
+            sourceBuffer,
+            readTempBuffer,
+            (recBuf, buf) -> "Put the part of packet: " + recBuf + " to mapped buffer: " + buf
+        );
 
         readTempBuffer.put(sourceBuffer);
 
-        this.readTempBuffer = readTempBuffer;
-        this.decryptedTempBuffer = bufferAllocator.takeBuffer(readTempBuffer.capacity());
+        this.tempPendingBuffer = readTempBuffer;
     }
 
     protected void freeTempBuffers() {
 
-        var readTempBuffer = getReadTempBuffer();
-        var decryptedTempBuffer = getDecryptedTempBuffer();
+        var readTempBuffer = getTempPendingBuffer();
 
         if (readTempBuffer != null) {
-            setReadTempBuffer(null);
+            setTempPendingBuffer(null);
             bufferAllocator.putBuffer(readTempBuffer);
-        }
-
-        if (decryptedTempBuffer != null) {
-            setDecryptedTempBuffer(null);
-            bufferAllocator.putBuffer(decryptedTempBuffer);
         }
     }
 
     /**
-     * Handle read data.
+     * Handle received data.
      *
-     * @param result the count of read bytes.
+     * @param receivedBytes the count of received bytes.
+     * @param readingBuffer the currently reading buffer.
      */
-    protected void handleReadData(@NotNull Integer result) {
+    protected void handleReceivedData(@NotNull Integer receivedBytes, @NotNull ByteBuffer readingBuffer) {
         updateActivityFunction.run();
 
-        if (result == -1) {
+        if (receivedBytes == -1) {
             connection.close();
             return;
         }
 
-        readBuffer.flip();
+        LOGGER.debug(
+            receivedBytes,
+            channel,
+            (bytes, ch) -> "Received " + bytes + " bytes from channel \"" + NetworkUtils.getRemoteAddress(ch) + "\""
+        );
+
+        readingBuffer.flip();
         try {
-            readPackets(readBuffer, pendingBuffer);
+            readPackets(readingBuffer);
         } catch (Exception e) {
             LOGGER.error(e);
-        } finally {
-            readBuffer.clear();
         }
 
         if (isReading.compareAndSet(true, false)) {
@@ -394,13 +437,14 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     }
 
     /**
-     * Handle the exception during reading data.
+     * Handle the exception during receiving data.
      *
-     * @param exception the exception.
+     * @param exception     the exception.
+     * @param readingBuffer the currently reading buffer.
      */
-    protected void handleFailedRead(@NotNull Throwable exception) {
+    protected void handleFailedReceiving(@NotNull Throwable exception, @NotNull ByteBuffer readingBuffer) {
         if (exception instanceof AsynchronousCloseException) {
-            LOGGER.warning(connection, cn -> "Connection " + cn.getRemoteAddress() + " was closed.");
+            LOGGER.info(connection, cn -> "Connection " + cn.getRemoteAddress() + " was closed.");
         } else {
             LOGGER.error(exception);
             connection.close();

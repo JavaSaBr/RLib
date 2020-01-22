@@ -265,6 +265,34 @@ public final class Utils {
     }
 
     /**
+     * Execute the function with auto-converting a checked exception to an unchecked.
+     *
+     * @param first    the first argument.
+     * @param second   the second argument.
+     * @param function the function.
+     * @param <F>      the first's type.
+     * @param <S>      the second's type.
+     * @param <T>      the third's type.
+     * @param <R>      the result's type.
+     * @return the result.
+     * @since 9.9.0
+     */
+    public static <F, S, T, R> @NotNull R uncheckedGet(
+        @NotNull F first,
+        @NotNull S second,
+        @NotNull T third,
+        @NotNull NotNullSafeTriFunction<F, S, T, R> function
+    ) {
+        try {
+            return function.apply(first, second, third);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Try to execute a function with some result.
      *
      * @param argument the argument.

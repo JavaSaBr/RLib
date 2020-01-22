@@ -1,5 +1,6 @@
 package com.ss.rlib.network.packet.impl;
 
+import com.ss.rlib.common.function.NotNullConsumer;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.ReadablePacket;
@@ -8,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
 /**
@@ -27,7 +27,7 @@ public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<
         @NotNull AsynchronousSocketChannel channel,
         @NotNull BufferAllocator bufferAllocator,
         @NotNull Runnable updateActivityFunction,
-        @NotNull Consumer<R> readPacketHandler,
+        @NotNull NotNullConsumer<R> readPacketHandler,
         @NotNull IntFunction<R> readPacketFactory,
         int packetLengthHeaderSize,
         int maxPacketsByRead

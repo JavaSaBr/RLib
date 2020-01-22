@@ -11,8 +11,7 @@ import java.nio.ByteBuffer;
 @RequiredArgsConstructor
 public class StringWritablePacket extends AbstractWritablePacket {
 
-    @NotNull
-    private final String data;
+    private final @NotNull String data;
 
     @Override
     protected void writeImpl(@NotNull ByteBuffer buffer) {
@@ -23,5 +22,10 @@ public class StringWritablePacket extends AbstractWritablePacket {
     @Override
     public int getExpectedLength() {
         return 4 + data.length() * 2;
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "StringWritablePacket {\n" + "\"\tdataLength\":" + data.length() + "\n}";
     }
 }
