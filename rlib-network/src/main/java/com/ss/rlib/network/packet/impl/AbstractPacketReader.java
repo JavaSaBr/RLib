@@ -278,13 +278,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
             if (packet != null) {
                 LOGGER.debug(packet, pck -> "Created instance of packet to read data: " + pck);
-
-                if (packet.read(connection, bufferToRead, dataLength)) {
-                    readPacketHandler.accept(packet);
-                } else {
-                    LOGGER.error("Packet " + packet + " was read incorrectly");
-                }
-
+                readAndHandlePacket(bufferToRead, dataLength, packet);
                 LOGGER.debug(packet, pck -> "Finished reading data of packet: " + pck);
                 readPackets++;
             } else {
@@ -317,6 +311,14 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
 
         receivedBuffer.clear();
         return readPackets;
+    }
+
+    protected void readAndHandlePacket(@NotNull ByteBuffer bufferToRead, int dataLength, @NotNull R packet) {
+        if (packet.read(connection, bufferToRead, dataLength)) {
+            readPacketHandler.accept(packet);
+        } else {
+            LOGGER.error("Packet " + packet + " was read incorrectly");
+        }
     }
 
     /**
