@@ -1,25 +1,13 @@
-buildscript {
-    repositories {
-        maven { url 'https://plugins.gradle.org/m2/' }
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.21'
-    }
-}
-
-rootProject.version = '9.9.0'
+rootProject.version = '9.9.0-alpha2'
 group = 'com.spaceshift'
 
 allprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
     }
 
-    apply plugin: 'java'
-    apply plugin: 'com.jfrog.bintray'
+    apply plugin: "java-library"
     apply plugin: 'maven-publish'
 
     sourceCompatibility = JavaVersion.VERSION_11
@@ -49,7 +37,7 @@ allprojects {
         compileOnly "org.projectlombok:lombok:$lombokVersion"
         annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     
-        testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
         testCompileOnly "org.projectlombok:lombok:$lombokVersion"
         testCompileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
@@ -65,6 +53,10 @@ allprojects {
             classpath = files()
         }
     }*/
+
+    compileJava {
+        options.encoding = "UTF-8"
+    }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         afterEvaluate {
@@ -83,6 +75,17 @@ allprojects {
     }
 
     publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/javasabr/maven-repo")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                    password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+
         publications {
             mavenJava(MavenPublication) {
                 from components.java
@@ -92,29 +95,6 @@ allprojects {
                 afterEvaluate {
                     artifactId = jar.baseName
                     groupId = rootProject.group
-                }
-            }
-        }
-    }
-
-    bintray {
-        afterEvaluate {
-            user = project.hasProperty("bintrayUser") ? project.property("bintrayUser") : ""
-            key = project.hasProperty("bintrayKey") ?  project.property("bintrayKey") : ""
-            publications = ['mavenJava']
-            pkg {
-                repo = 'maven'
-                name = 'com.spaceshift.' + jar.baseName
-                licenses = ['Apache-2.0']
-                websiteUrl = 'https://github.com/JavaSaBr/Rlib'
-                vcsUrl = 'https://github.com/JavaSaBr/RLib.git'
-                issueTrackerUrl = 'https://github.com/JavaSaBr/RLib/issues'
-                githubRepo = 'JavaSaBr/RLib'
-                githubReleaseNotesFile = 'README.md'
-                version {
-                    name = rootProject.version
-                    desc = rootProject.version
-                    released = new Date()
                 }
             }
         }
@@ -139,6 +119,6 @@ allprojects {
 }
 
 wrapper {
-    gradleVersion = '6.0'
+    gradleVersion = '7.4.2'
     distributionType = Wrapper.DistributionType.ALL
 }

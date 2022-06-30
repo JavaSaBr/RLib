@@ -1,5 +1,5 @@
 dependencies {
-    compile project(":rlib-logger-api")
+    api project(":rlib-logger-api")
 }
 
 jar {

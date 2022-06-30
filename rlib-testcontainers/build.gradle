@@ -1,12 +1,12 @@
 dependencies {
-    compile project(":rlib-common")
-    compile "org.testcontainers:testcontainers:$testcontainersVersion"
-    compile "org.slf4j:slf4j-api:$sl4jVersion"
-    compile "org.slf4j:slf4j-ext:$sl4jVersion"
+    api project(":rlib-common")
+    api "org.testcontainers:testcontainers:$testcontainersVersion"
+    api "org.slf4j:slf4j-api:$sl4jVersion"
+    api "org.slf4j:slf4j-ext:$sl4jVersion"
     // FIXME
-    compile "com.kohlschutter.junixsocket:junixsocket-common:2.1.1"
-    compile "com.kohlschutter.junixsocket:junixsocket-native-common:2.1.1"
-    runtime "org.slf4j:slf4j-simple:$sl4jVersion"
+    api "com.kohlschutter.junixsocket:junixsocket-common:2.1.1"
+    api "com.kohlschutter.junixsocket:junixsocket-native-common:2.1.1"
+    implementation "org.slf4j:slf4j-simple:$sl4jVersion"
 
     testImplementation project(":rlib-mail")
 }
