@@ -1,7 +1,7 @@
-rootProject.version = '9.9.0-alpha2'
+rootProject.version = '9.9.1-alpha3'
 group = 'com.spaceshift'
 
-allprojects {
+subprojects {
 
     repositories {
         mavenCentral()
