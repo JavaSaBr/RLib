@@ -3,7 +3,7 @@ jar {
 }
 
 dependencies {
-    api project(":rlib-common")
-    api "io.projectreactor:reactor-core:$projectreactorVersion"
-    testRuntimeOnly project(":rlib-logger-impl")
+    api projects.rlibCommon
+    api libs.project.reactor.core
+    testRuntimeOnly projects.rlibLoggerImpl
 }
