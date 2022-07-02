@@ -7,9 +7,7 @@ import com.ss.rlib.common.util.array.LongArray;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.*;
 
 /**
@@ -242,6 +240,48 @@ public final class ArrayUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Combine two arrays to one single array with uniq elements.
+     *
+     * @param <T>   the base array's component type.
+     * @param <E>   the added array's component type.
+     * @param base  the base array.
+     * @param added the additional array.
+     * @return the combined array with uniq elements.
+     */
+    public static <T, E extends T> @NotNull T[] combineUniq(@NotNull T[] base, @Nullable E[] added) {
+        return combineUniq(base, added, getComponentType(base));
+    }
+
+    /**
+     * Combine two arrays to one single array with uniq elements.
+     *
+     * @param <T>   the base array's component type.
+     * @param <E>   the added array's component type.
+     * @param base  the base array.
+     * @param added the additional array.
+     * @param type  the base array's component type.
+     * @return the combined array with uniq elements.
+     */
+    public static <T, E extends T> @NotNull T[] combineUniq(
+        @Nullable T[] base,
+        @Nullable E[] added,
+        @NotNull Class<T> type
+    ) {
+
+        if (base == null) {
+            return added == null ? create(type, 0) : added;
+        } else if (added == null || added.length < 1) {
+            return base;
+        }
+
+        var result = new HashSet<T>(base.length + added.length);
+        result.addAll(Arrays.asList(base));
+        result.addAll(Arrays.asList(added));
+
+        return result.toArray(create(type, result.size()));
     }
 
     /**
