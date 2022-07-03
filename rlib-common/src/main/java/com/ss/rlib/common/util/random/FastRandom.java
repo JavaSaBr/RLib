@@ -3,8 +3,6 @@ package com.ss.rlib.common.util.random;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Реализация быстрого рандоминайзера на основе псевдорандом генератора.
- *
  * @author JavaSaBr
  */
 public final class FastRandom implements Random {

@@ -1,9 +1,9 @@
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 dependencies {
-    compile project(":rlib-common")
+    api projects.rlibCommon
 }
 
 jar {

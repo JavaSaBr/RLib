@@ -1,0 +1,30 @@
+[versions]
+# https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+slf4j = "1.7.36"
+# https://mvnrepository.com/artifact/io.projectreactor/reactor-core
+project-reactor = "3.4.19"
+# https://mvnrepository.com/artifact/javax.mail/mail
+javax-mail = "1.5.0-b01"
+# https://mvnrepository.com/artifact/org.testcontainers/testcontainers
+testcontainers = "1.17.3"
+# https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+junit-jupiter = "5.8.2"
+# https://mvnrepository.com/artifact/org.jetbrains/annotations
+jetbrains-annotations = "23.0.0"
+# https://mvnrepository.com/artifact/org.projectlombok/lombok
+lombok = "1.18.24"
+
+[libraries]
+project-reactor-core = { module = "io.projectreactor:reactor-core", version.ref = "project-reactor" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
+slf4j-api =  { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-simple =  { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+slf4j-ext =  { module = "org.slf4j:slf4j-ext", version.ref = "slf4j" }
+javax-mail =  { module = "javax.mail:mail", version.ref = "javax-mail" }
+testcontainers =  { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+
+[bundles]
+junit = ["junit-engine", "junit-api"]
