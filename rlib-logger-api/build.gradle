@@ -1,6 +1,3 @@
-dependencies {
-}
-
 jar {
-    baseName "rlib.logger.api"
+  archiveBaseName.set('rlib.logger.api')
 }

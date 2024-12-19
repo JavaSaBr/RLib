@@ -1,16 +1,16 @@
 dependencies {
-    api projects.rlibCommon
-    api libs.testcontainers
-    api libs.slf4j.api
-    api libs.slf4j.ext
-    // FIXME
-    api "com.kohlschutter.junixsocket:junixsocket-common:2.1.1"
-    api "com.kohlschutter.junixsocket:junixsocket-native-common:2.1.1"
-    implementation libs.slf4j.simple
+  api projects.rlibCommon
+  api libs.testcontainers
+  api libs.slf4j.api
+  api libs.slf4j.ext
+  // FIXME
+  api "com.kohlschutter.junixsocket:junixsocket-common:2.1.1"
+  api "com.kohlschutter.junixsocket:junixsocket-native-common:2.1.1"
+  implementation libs.slf4j.simple
 
-    testImplementation projects.rlibMail
+  testImplementation projects.rlibMail
 }
 
 jar {
-    baseName "rlib.testcontainers"
+  archiveBaseName.set('rlib.testcontainers')
 }

@@ -1,9 +1,10 @@
-jar {
-    baseName "rlib.network"
+dependencies {
+  api projects.rlibCommon
+  api libs.project.reactor.core
+  testRuntimeOnly projects.rlibLoggerImpl
 }
 
-dependencies {
-    api projects.rlibCommon
-    api libs.project.reactor.core
-    testRuntimeOnly projects.rlibLoggerImpl
+jar {
+  archiveBaseName.set('rlib.network')
 }
+

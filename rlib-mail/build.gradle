@@ -1,10 +1,10 @@
 dependencies {
-    api projects.rlibCommon
-    api libs.javax.mail
+  api projects.rlibCommon
+  api libs.javax.mail
 
-    testImplementation projects.rlibTestcontainers
+  testImplementation projects.rlibTestcontainers
 }
 
 jar {
-    baseName "rlib.mail"
+  archiveBaseName.set('rlib.mail')
 }

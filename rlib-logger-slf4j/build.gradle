@@ -1,10 +1,10 @@
 dependencies {
-    api projects.rlibLoggerApi
-    api libs.slf4j.api
+  api projects.rlibLoggerApi
+  api libs.slf4j.api
 
-    testRuntime libs.slf4j.simple
+  testRuntime libs.slf4j.simple
 }
 
 jar {
-    baseName "rlib.logger.slf4j"
+  archiveBaseName.set('rlib.logger.slf4j')
 }

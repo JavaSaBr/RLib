@@ -1,125 +1,127 @@
-rootProject.version = '9.9.1'
-group = 'com.spaceshift'
+rootProject.version = '9.9.2'
+group = 'javasabr'
 
 allprojects {
 
+  repositories {
+    mavenCentral()
+  }
+
+  apply plugin: "java-library"
+  apply plugin: "java-test-fixtures"
+  apply plugin: 'maven-publish'
+
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
+
+  javadoc {
+    failOnError = false
+  }
+
+  test {
+    useJUnitPlatform()
+  }
+
+  dependencies {
+    compileOnly libs.jetbrains.annotations
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+
+    testImplementation libs.junit.api
+    testCompileOnly libs.lombok
+    testCompileOnly libs.jetbrains.annotations
+    testRuntimeOnly libs.junit.engine
+    testAnnotationProcessor libs.lombok
+  }
+
+  /*compileJava {
+      inputs.property("moduleName", jar.baseName)
+      doFirst {
+          options.compilerArgs = [
+              '--module-path', classpath.asPath,
+          ]
+          classpath = files()
+      }
+  }*/
+
+  compileJava {
+    options.encoding = "UTF-8"
+  }
+
+  compileTestJava {
+    options.encoding = "UTF-8"
+  }
+
+  tasks.withType(Javadoc).configureEach {
+    options.encoding = "UTF-8"
+  }
+
+  task sourcesJar(type: Jar, dependsOn: classes) {
+    afterEvaluate {
+      getArchiveClassifier().set("sources")
+      getArchiveBaseName().set(jar.getArchiveBaseName())
+      from sourceSets.main.allSource
+    }
+  }
+
+  task javadocJar(type: Jar, dependsOn: javadoc) {
+    afterEvaluate {
+      getArchiveClassifier().set("javadoc")
+      getArchiveBaseName().set(jar.getArchiveBaseName())
+      from sourceSets.main.allSource
+    }
+  }
+
+  publishing {
     repositories {
-        mavenCentral()
-    }
-
-    apply plugin: "java-library"
-    apply plugin: "java-test-fixtures"
-    apply plugin: 'maven-publish'
-
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-
-    javadoc {
-        failOnError = false
-    }
-
-    test {
-        useJUnitPlatform()
-    }
-
-    dependencies {
-        compileOnly libs.jetbrains.annotations
-        compileOnly libs.lombok
-        annotationProcessor libs.lombok
-
-        testImplementation libs.junit.api
-        testCompileOnly libs.lombok
-        testCompileOnly libs.jetbrains.annotations
-        testRuntimeOnly libs.junit.engine
-        testAnnotationProcessor libs.lombok
-    }
-
-    /*compileJava {
-        inputs.property("moduleName", jar.baseName)
-        doFirst {
-            options.compilerArgs = [
-                '--module-path', classpath.asPath,
-            ]
-            classpath = files()
+      maven {
+        name = "GitlabPackages"
+        url = uri("https://gitlab.com/api/v4/projects/37512056/packages/maven")
+        credentials(HttpHeaderCredentials) {
+          name = "Private-Token"
+          value = project.findProperty("gitlab.token") ?: System.getenv("GITLAB_TOKEN")
         }
-    }*/
-
-    compileJava {
-        options.encoding = "UTF-8"
+        authentication {
+          header(HttpHeaderAuthentication)
+        }
+      }
     }
 
-    compileTestJava {
-        options.encoding = "UTF-8"
-    }
-
-    tasks.withType(Javadoc) {
-        options.encoding = "UTF-8"
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
+    publications {
+      mavenJava(MavenPublication) {
+        from components.java
+        version = rootProject.version
         afterEvaluate {
-            getArchiveClassifier().set("sources")
-            getArchiveBaseName().set(jar.getArchiveBaseName())
-            from sourceSets.main.allSource
+          artifactId = jar.archiveBaseName.get()
+          groupId = rootProject.group
         }
+        artifact sourcesJar
+        artifact javadocJar
+      }
     }
+  }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        afterEvaluate {
-            getArchiveClassifier().set("javadoc")
-            getArchiveBaseName().set(jar.getArchiveBaseName())
-            from sourceSets.main.allSource
-        }
+  configurations {
+    testArtifacts.extendsFrom testRuntime
+  }
+
+  tasks.register('testJar', Jar) {
+    getArchiveClassifier().set("test")
+    from sourceSets.test.output
+  }
+
+  artifacts {
+    testArtifacts testJar
+  }
+
+  tasks.withType(Test).tap {
+    configureEach {
+      maxParallelForks = Runtime.runtime.availableProcessors()
     }
-
-    publishing {
-        repositories {
-            maven {
-                name = "GitlabPackages"
-                url = uri("https://gitlab.com/api/v4/projects/37512056/packages/maven")
-                credentials(HttpHeaderCredentials) {
-                    name = "Private-Token"
-                    value = project.findProperty("gitlab.token") ?: System.getenv("GITLAB_TOKEN")
-                }
-                authentication {
-                    header(HttpHeaderAuthentication)
-                }
-            }
-        }
-
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-                artifact sourcesJar
-                artifact javadocJar
-                version = rootProject.version
-                afterEvaluate {
-                    artifactId = jar.baseName
-                    groupId = rootProject.group
-                }
-            }
-        }
-    }
-
-    configurations {
-        testArtifacts.extendsFrom testRuntime
-    }
-
-    task testJar(type: Jar) {
-        getArchiveClassifier().set("test")
-        from sourceSets.test.output
-    }
-
-    artifacts {
-        testArtifacts testJar
-    }
-
-    tasks.withType(Test) {
-        maxParallelForks = Runtime.runtime.availableProcessors()
-    }
+  }
 }
 
 wrapper {
-    gradleVersion = '7.4.2'
-    distributionType = Wrapper.DistributionType.ALL
+  gradleVersion = '8.11.1'
+  distributionType = Wrapper.DistributionType.ALL
 }
