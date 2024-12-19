@@ -1,6 +1,6 @@
 dependencies {
   api projects.rlibCommon
-  api libs.javax.mail
+  api libs.bundles.mail
 
   testImplementation projects.rlibTestcontainers
 }
