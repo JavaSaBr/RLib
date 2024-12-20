@@ -1,0 +1,8 @@
+
+dependencies {
+    api projects.rlibFunctions
+}
+
+jar {
+  archiveBaseName.set('rlib.collections')
+}
