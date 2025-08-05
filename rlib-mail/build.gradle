@@ -4,7 +4,3 @@ dependencies {
 
   testImplementation projects.rlibTestcontainers
 }
-
-jar {
-  archiveBaseName.set('rlib.mail')
-}

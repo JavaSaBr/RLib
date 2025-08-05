@@ -4,7 +4,3 @@ dependencies {
 
   testRuntime libs.slf4j.simple
 }
-
-jar {
-  archiveBaseName.set('rlib.logger.slf4j')
-}

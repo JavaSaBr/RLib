@@ -1,3 +1,0 @@
-jar {
-  archiveBaseName.set('rlib.logger.api')
-}
