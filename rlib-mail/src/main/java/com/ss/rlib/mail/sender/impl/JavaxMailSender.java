@@ -6,13 +6,20 @@ import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.mail.sender.MailSender;
 import com.ss.rlib.mail.sender.MailSenderConfig;
 import com.ss.rlib.mail.sender.exception.UncheckedMessagingException;
+import jakarta.mail.Authenticator;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import lombok.Builder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.mail.*;
-import javax.mail.Message.RecipientType;
-import javax.mail.internet.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.*;
@@ -103,7 +110,7 @@ public class JavaxMailSender implements MailSender {
 
             var message = new MimeMessage(session);
             message.setFrom(from);
-            message.setRecipients(RecipientType.TO, InternetAddress.parse(email));
+            message.setRecipients(MimeMessage.RecipientType.TO, InternetAddress.parse(email));
             message.setSubject(subject, StandardCharsets.UTF_8.name());
 
             var mimeBodyPart = new MimeBodyPart();

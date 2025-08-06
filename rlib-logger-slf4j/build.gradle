@@ -1,10 +1,6 @@
 dependencies {
-    compile project(":rlib-logger-api")
-    compile "org.slf4j:slf4j-api:$sl4jVersion"
+  api projects.rlibLoggerApi
+  api libs.slf4j.api
 
-    testRuntime "org.slf4j:slf4j-simple:$sl4jVersion"
-}
-
-jar {
-    baseName "rlib.logger.slf4j"
+  testRuntime libs.slf4j.simple
 }

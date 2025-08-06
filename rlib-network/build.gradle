@@ -1,9 +1,5 @@
-jar {
-    baseName "rlib.network"
-}
-
 dependencies {
-    compile project(":rlib-common")
-    compile "io.projectreactor:reactor-core:$projectreactorVersion"
-    testRuntimeOnly project(":rlib-logger-impl")
+  api projects.rlibCommon
+  api libs.project.reactor.core
+  testRuntimeOnly projects.rlibLoggerImpl
 }

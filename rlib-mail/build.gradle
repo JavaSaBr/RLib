@@ -1,10 +1,6 @@
 dependencies {
-    compile project(":rlib-common")
-    compile "javax.mail:mail:$javaxMailVersion"
+  api projects.rlibCommon
+  api libs.bundles.mail
 
-    testImplementation project(":rlib-testcontainers")
-}
-
-jar {
-    baseName "rlib.mail"
+  testImplementation projects.rlibTestcontainers
 }

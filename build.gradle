@@ -1,144 +1,128 @@
-buildscript {
+rootProject.version = "9.10.0"
+group = 'javasabr'
+
+subprojects {
+
+  repositories {
+    mavenCentral()
+  }
+
+  apply plugin: "java-library"
+  apply plugin: "java-test-fixtures"
+  apply plugin: 'maven-publish'
+
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(21)
+    }
+  }
+
+  javadoc {
+    failOnError = false
+  }
+
+  test {
+    useJUnitPlatform()
+    failOnNoDiscoveredTests = false
+  }
+
+  dependencies {
+    compileOnly libs.jetbrains.annotations
+    compileOnly libs.jspecify
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+
+    testImplementation libs.junit.api
+    testCompileOnly libs.lombok
+    testCompileOnly libs.jetbrains.annotations
+    testCompileOnly libs.jspecify
+    testRuntimeOnly libs.junit.engine
+    testRuntimeOnly libs.junit.platform.launcher
+    testAnnotationProcessor libs.lombok
+  }
+
+  /*compileJava {
+      inputs.property("moduleName", jar.baseName)
+      doFirst {
+          options.compilerArgs = [
+              '--module-path', classpath.asPath,
+          ]
+          classpath = files()
+      }
+  }*/
+
+  tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+  }
+
+  tasks.withType(Javadoc).configureEach {
+    options.encoding = "UTF-8"
+  }
+
+  tasks.register("sourcesJar", Jar) {
+    dependsOn "classes"
+    group "build"
+    archiveClassifier = "sources"
+    archiveBaseName = jar.archiveBaseName
+    from sourceSets.main.allSource
+  }
+
+  tasks.register("javadocJar", Jar) {
+    dependsOn "javadoc"
+    group "build"
+    archiveClassifier = "javadoc"
+    archiveBaseName = jar.archiveBaseName
+    from sourceSets.main.allSource
+  }
+
+  publishing {
     repositories {
-        maven { url 'https://plugins.gradle.org/m2/' }
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.21'
-    }
-}
-
-rootProject.version = '9.9.0'
-group = 'com.spaceshift'
-
-allprojects {
-
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
-
-    apply plugin: 'java'
-    apply plugin: 'com.jfrog.bintray'
-    apply plugin: 'maven-publish'
-
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-
-    ext {
-        projectreactorVersion = '3.2.9.RELEASE'
-        sl4jVersion = '1.7.26'
-        javaxMailVersion = "1.5.0-b01"
-        testcontainersVersion = '1.11.1'
-        lombokVersion = '1.18.6'
-        junitJupiterVersion = "5.4.2"
-        jetbrainsAnnotation = '17.0.0'
-        bintrayVersion = version
-    }
-
-    javadoc {
-        failOnError = false
-    }
-
-    test {
-        useJUnitPlatform()
-    }
-
-    dependencies {
-        compileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
-        compileOnly "org.projectlombok:lombok:$lombokVersion"
-        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-    
-        testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
-        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-        testCompileOnly "org.jetbrains:annotations:$jetbrainsAnnotation"
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
-        testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
-    }
-
-    /*compileJava {
-        inputs.property("moduleName", jar.baseName)
-        doFirst {
-            options.compilerArgs = [
-                '--module-path', classpath.asPath,
-            ]
-            classpath = files()
+      maven {
+        name = "GitlabPackages"
+        url = uri("https://gitlab.com/api/v4/projects/37512056/packages/maven")
+        credentials(HttpHeaderCredentials) {
+          name = "Private-Token"
+          value = project.findProperty("gitlab.token") ?: System.getenv("GITLAB_TOKEN")
         }
-    }*/
+        authentication {
+          header(HttpHeaderAuthentication)
+        }
+      }
+    }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
+    publications {
+      mavenJava(MavenPublication) {
+        from components.java
+        version = rootProject.version
         afterEvaluate {
-            getArchiveClassifier().set("sources")
-            getArchiveBaseName().set(jar.getArchiveBaseName())
-            from sourceSets.main.allSource
+          artifactId = jar.archiveBaseName.get()
+          groupId = rootProject.group
         }
+        artifact sourcesJar
+        artifact javadocJar
+      }
     }
+  }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        afterEvaluate {
-            getArchiveClassifier().set("javadoc")
-            getArchiveBaseName().set(jar.getArchiveBaseName())
-            from sourceSets.main.allSource
-        }
-    }
+  configurations {
+    testArtifacts.extendsFrom testRuntime
+  }
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-                artifact sourcesJar
-                artifact javadocJar
-                version = rootProject.version
-                afterEvaluate {
-                    artifactId = jar.baseName
-                    groupId = rootProject.group
-                }
-            }
-        }
-    }
+  tasks.register('testJar', Jar) {
+    archiveClassifier = "test"
+    from sourceSets.test.output
+  }
 
-    bintray {
-        afterEvaluate {
-            user = project.hasProperty("bintrayUser") ? project.property("bintrayUser") : ""
-            key = project.hasProperty("bintrayKey") ?  project.property("bintrayKey") : ""
-            publications = ['mavenJava']
-            pkg {
-                repo = 'maven'
-                name = 'com.spaceshift.' + jar.baseName
-                licenses = ['Apache-2.0']
-                websiteUrl = 'https://github.com/JavaSaBr/Rlib'
-                vcsUrl = 'https://github.com/JavaSaBr/RLib.git'
-                issueTrackerUrl = 'https://github.com/JavaSaBr/RLib/issues'
-                githubRepo = 'JavaSaBr/RLib'
-                githubReleaseNotesFile = 'README.md'
-                version {
-                    name = rootProject.version
-                    desc = rootProject.version
-                    released = new Date()
-                }
-            }
-        }
-    }
+  artifacts {
+    testArtifacts testJar
+  }
 
-    configurations {
-        testArtifacts.extendsFrom testRuntime
-    }
-
-    task testJar(type: Jar) {
-        getArchiveClassifier().set("test")
-        from sourceSets.test.output
-    }
-
-    artifacts {
-        testArtifacts testJar
-    }
-
-    tasks.withType(Test) {
-        maxParallelForks = Runtime.runtime.availableProcessors()
-    }
+  tasks.withType(Test).configureEach {
+    maxParallelForks = Runtime.runtime.availableProcessors()
+  }
 }
 
 wrapper {
-    gradleVersion = '6.0'
-    distributionType = Wrapper.DistributionType.ALL
+  gradleVersion = '9.0.0'
+  distributionType = Wrapper.DistributionType.ALL
 }

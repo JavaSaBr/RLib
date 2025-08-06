@@ -1,16 +1,12 @@
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.8'
+  id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 dependencies {
-    compile project(":rlib-common")
-}
-
-jar {
-    baseName "rlib.fx"
+  api projects.rlibCommon
 }
 
 javafx {
-    modules = ['javafx.controls']
-    version = "11.0.1"
+  modules = ['javafx.controls']
+  version = '17'
 }
