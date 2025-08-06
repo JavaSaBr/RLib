@@ -1,4 +1,4 @@
-name: Compile modules and review dependencies
+name: Minimal branch verification
 
 on:
   push:
