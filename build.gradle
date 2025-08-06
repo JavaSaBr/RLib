@@ -1,7 +1,7 @@
-rootProject.version = '9.9.2'
+rootProject.version = "9.10.0"
 group = 'javasabr'
 
-allprojects {
+subprojects {
 
   repositories {
     mavenCentral()
@@ -11,8 +11,11 @@ allprojects {
   apply plugin: "java-test-fixtures"
   apply plugin: 'maven-publish'
 
-  sourceCompatibility = JavaVersion.VERSION_17
-  targetCompatibility = JavaVersion.VERSION_17
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(21)
+    }
+  }
 
   javadoc {
     failOnError = false
@@ -20,17 +23,21 @@ allprojects {
 
   test {
     useJUnitPlatform()
+    failOnNoDiscoveredTests = false
   }
 
   dependencies {
     compileOnly libs.jetbrains.annotations
+    compileOnly libs.jspecify
     compileOnly libs.lombok
     annotationProcessor libs.lombok
 
     testImplementation libs.junit.api
     testCompileOnly libs.lombok
     testCompileOnly libs.jetbrains.annotations
+    testCompileOnly libs.jspecify
     testRuntimeOnly libs.junit.engine
+    testRuntimeOnly libs.junit.platform.launcher
     testAnnotationProcessor libs.lombok
   }
 
@@ -44,11 +51,7 @@ allprojects {
       }
   }*/
 
-  compileJava {
-    options.encoding = "UTF-8"
-  }
-
-  compileTestJava {
+  tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
   }
 
@@ -56,20 +59,20 @@ allprojects {
     options.encoding = "UTF-8"
   }
 
-  task sourcesJar(type: Jar, dependsOn: classes) {
-    afterEvaluate {
-      getArchiveClassifier().set("sources")
-      getArchiveBaseName().set(jar.getArchiveBaseName())
-      from sourceSets.main.allSource
-    }
+  tasks.register("sourcesJar", Jar) {
+    dependsOn "classes"
+    group "build"
+    archiveClassifier = "sources"
+    archiveBaseName = jar.archiveBaseName
+    from sourceSets.main.allSource
   }
 
-  task javadocJar(type: Jar, dependsOn: javadoc) {
-    afterEvaluate {
-      getArchiveClassifier().set("javadoc")
-      getArchiveBaseName().set(jar.getArchiveBaseName())
-      from sourceSets.main.allSource
-    }
+  tasks.register("javadocJar", Jar) {
+    dependsOn "javadoc"
+    group "build"
+    archiveClassifier = "javadoc"
+    archiveBaseName = jar.archiveBaseName
+    from sourceSets.main.allSource
   }
 
   publishing {
@@ -106,7 +109,7 @@ allprojects {
   }
 
   tasks.register('testJar', Jar) {
-    getArchiveClassifier().set("test")
+    archiveClassifier = "test"
     from sourceSets.test.output
   }
 
@@ -114,14 +117,12 @@ allprojects {
     testArtifacts testJar
   }
 
-  tasks.withType(Test).tap {
-    configureEach {
-      maxParallelForks = Runtime.runtime.availableProcessors()
-    }
+  tasks.withType(Test).configureEach {
+    maxParallelForks = Runtime.runtime.availableProcessors()
   }
 }
 
 wrapper {
-  gradleVersion = '8.11.1'
+  gradleVersion = '9.0.0'
   distributionType = Wrapper.DistributionType.ALL
 }

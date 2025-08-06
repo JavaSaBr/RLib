@@ -6,10 +6,6 @@ dependencies {
   api projects.rlibCommon
 }
 
-jar {
-  archiveBaseName.set('rlib.fx')
-}
-
 javafx {
   modules = ['javafx.controls']
   version = '17'

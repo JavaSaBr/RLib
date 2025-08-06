@@ -1,7 +1,3 @@
 dependencies {
   api projects.rlibCommon
 }
-
-jar {
-  archiveBaseName.set('rlib.logger.impl')
-}

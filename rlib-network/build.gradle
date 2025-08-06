@@ -3,8 +3,3 @@ dependencies {
   api libs.project.reactor.core
   testRuntimeOnly projects.rlibLoggerImpl
 }
-
-jar {
-  archiveBaseName.set('rlib.network')
-}
-
