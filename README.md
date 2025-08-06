@@ -4,23 +4,23 @@ Please see the file called LICENSE.
  [ ![Download](https://api.bintray.com/packages/javasabr/maven/com.spaceshift.rlib.common/images/download.svg) ](https://bintray.com/javasabr/maven/com.spaceshift.rlib.common/_latestVersion)
 
 
-## How to use for java 11+
+## How to use for java 21+
 
 #### Gradle
 
 ```groovy
 repositories {
     maven {
-        url  "https://dl.bintray.com/javasabr/maven" 
+        url  "https://gitlab.com/api/v4/projects/37512056/packages/maven" 
     }
 }
 
 dependencies {
-    compile 'com.spaceshift:rlib.common:9.9.0'
-    compile 'com.spaceshift:rlib.fx:9.9.0'
-    compile 'com.spaceshift:rlib.network:9.9.0'
-    compile 'com.spaceshift:rlib.mail:9.9.0'
-    compile 'com.spaceshift:rlib.testcontainers:9.9.0'
+  implementation 'javasabr:rlib-common:9.10.0'
+  implementation 'javasabr:rlib-fx:9.10.0'
+  implementation 'javasabr:rlib-network:9.10.0'
+  implementation 'javasabr:rlib-mail:9.10.0'
+  implementation 'javasabr:rlib-testcontainers:9.10.0'
 }
 ```
     
@@ -28,78 +28,36 @@ dependencies {
 
 ```xml
 <repositories>
-    <repository>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <id>bintray-javasabr-maven</id>
-        <name>bintray</name>
-        <url>https://dl.bintray.com/javasabr/maven</url>
-    </repository>
+  <repository>
+    <id>gitlab-maven</id>
+    <url>https://gitlab.com/api/v4/projects/37512056/packages/maven</url>
+  </repository>
 </repositories>
 
 <dependency>
-    <groupId>com.spaceshift</groupId>
-    <artifactId>rlib.common</artifactId>
-    <version>9.9.0</version>
+    <groupId>javasabr</groupId>
+    <artifactId>rlib-common</artifactId>
+    <version>9.10.0</version>
 </dependency>
 <dependency>
-    <groupId>com.spaceshift</groupId>
-    <artifactId>rlib.fx</artifactId>
-    <version>9.9.0</version>
+    <groupId>javasabr</groupId>
+    <artifactId>rlib-fx</artifactId>
+    <version>9.10.0</version>
 </dependency>
 <dependency>
-    <groupId>com.spaceshift</groupId>
-    <artifactId>rlib.network</artifactId>
-    <version>9.9.0</version>
+    <groupId>javasabr</groupId>
+    <artifactId>rlib-network</artifactId>
+    <version>9.10.0</version>
 </dependency>
 <dependency>
-    <groupId>com.spaceshift</groupId>
-    <artifactId>rlib.mail</artifactId>
-    <version>9.9.0</version>
+    <groupId>javasabr</groupId>
+    <artifactId>rlib-mail</artifactId>
+    <version>9.10.0</version>
 </dependency>
 <dependency>
-    <groupId>com.spaceshift</groupId>
-    <artifactId>rlib.testcontainers</artifactId>
-    <version>9.9.0</version>
-</dependency>
-
-```
-
-## How to use for java 8+
-
-#### Gradle
-
-```groovy
-repositories {
-    maven {
-        url  "https://dl.bintray.com/javasabr/maven" 
-    }
-}
-
-dependencies {
-    compile 'com.spaceshift:rlib.common:7.3.3'
-}
-```
-    
-#### Maven
-
-```xml
-<repositories>
-    <repository>
-        <snapshots>;
-            <enabled>false</enabled>
-        </snapshots>
-        <id>bintray-javasabr-maven</id>
-        <name>bintray</name>
-        <url>https://dl.bintray.com/javasabr/maven</url>
-    </repository>
-</repositories>
-
-<dependency>
-    <groupId>com.spaceshift</groupId>
-    <artifactId>rlib.common</artifactId>
-    <version>7.3.3</version>
+    <groupId>javasabr</groupId>
+    <artifactId>rlib-testcontainers</artifactId>
+    <version>9.10.0</version>
 </dependency>
 ```
 
