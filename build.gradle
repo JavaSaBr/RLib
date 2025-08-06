@@ -1,4 +1,4 @@
-rootProject.version = "9.10.0-test2"
+rootProject.version = "9.10.0"
 group = 'javasabr'
 
 subprojects {
