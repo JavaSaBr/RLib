@@ -1,5 +1,6 @@
 package javasabr.rlib.network.impl;
 
+import java.nio.ByteBuffer;
 import javasabr.rlib.common.util.pools.Pool;
 import javasabr.rlib.common.util.pools.PoolFactory;
 import javasabr.rlib.logger.api.Logger;
@@ -8,8 +9,6 @@ import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.NetworkConfig;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteBuffer;
 
 /**
  * The default byte buffer allocator.

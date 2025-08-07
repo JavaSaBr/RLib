@@ -1,10 +1,9 @@
 package javasabr.rlib.network;
 
+import java.nio.ByteOrder;
 import lombok.Builder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteOrder;
 
 /**
  * The interface to implement a network config.

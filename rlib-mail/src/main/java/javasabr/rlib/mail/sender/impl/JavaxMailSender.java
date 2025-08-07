@@ -1,11 +1,7 @@
 package javasabr.rlib.mail.sender.impl;
 
 import static java.util.concurrent.CompletableFuture.runAsync;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
-import javasabr.rlib.mail.sender.MailSender;
-import javasabr.rlib.mail.sender.MailSenderConfig;
-import javasabr.rlib.mail.sender.exception.UncheckedMessagingException;
+
 import jakarta.mail.Authenticator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
@@ -16,13 +12,22 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
+import javasabr.rlib.mail.sender.MailSender;
+import javasabr.rlib.mail.sender.MailSenderConfig;
+import javasabr.rlib.mail.sender.exception.UncheckedMessagingException;
 import lombok.Builder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-import java.util.concurrent.*;
 
 public class JavaxMailSender implements MailSender {
 

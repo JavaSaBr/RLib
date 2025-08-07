@@ -1,5 +1,6 @@
 package javasabr.rlib.network;
 
+import java.util.concurrent.CompletableFuture;
 import javasabr.rlib.network.client.ClientNetwork;
 import javasabr.rlib.network.impl.DefaultBufferAllocator;
 import javasabr.rlib.network.impl.DefaultConnection;
@@ -8,11 +9,9 @@ import javasabr.rlib.network.impl.StringDataSSLConnection;
 import javasabr.rlib.network.packet.impl.DefaultReadablePacket;
 import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
 import javasabr.rlib.network.server.ServerNetwork;
+import javax.net.ssl.SSLContext;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-
-import javax.net.ssl.SSLContext;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author JavaSaBr

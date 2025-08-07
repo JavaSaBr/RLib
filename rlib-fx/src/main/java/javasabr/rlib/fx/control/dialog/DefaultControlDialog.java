@@ -1,10 +1,10 @@
 package javasabr.rlib.fx.control.dialog;
 
-import javasabr.rlib.fx.CssClasses;
-import javasabr.rlib.fx.util.FxUtils;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javasabr.rlib.fx.CssClasses;
+import javasabr.rlib.fx.util.FxUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**

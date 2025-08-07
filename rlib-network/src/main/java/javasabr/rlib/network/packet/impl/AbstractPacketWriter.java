@@ -1,6 +1,13 @@
 package javasabr.rlib.network.packet.impl;
 
-import static javasabr.rlib.network.util.NetworkUtils.*;
+import static javasabr.rlib.network.util.NetworkUtils.EMPTY_BUFFER;
+import static javasabr.rlib.network.util.NetworkUtils.getRemoteAddress;
+import static javasabr.rlib.network.util.NetworkUtils.hexDump;
+
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javasabr.rlib.common.function.NotNullBiConsumer;
 import javasabr.rlib.common.function.NotNullConsumer;
 import javasabr.rlib.common.function.NullableSupplier;
@@ -14,11 +21,6 @@ import javasabr.rlib.network.util.NetworkUtils;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author JavaSaBr

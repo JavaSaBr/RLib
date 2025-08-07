@@ -1,15 +1,24 @@
 package javasabr.rlib.fx.util;
 
-import javasabr.rlib.fx.control.input.TypedTextField;
-import javasabr.rlib.fx.util.ObservableUtils.ChangeEventAppender;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.paint.Color;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+import javafx.scene.control.ButtonBase;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.paint.Color;
+import javasabr.rlib.fx.control.input.TypedTextField;
+import javasabr.rlib.fx.util.ObservableUtils.ChangeEventAppender;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The utility class.

@@ -2,6 +2,14 @@ package javasabr.rlib.network.client.impl;
 
 import static javasabr.rlib.common.util.Utils.unchecked;
 import static javasabr.rlib.common.util.Utils.uncheckedGet;
+
+import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
 import javasabr.rlib.common.concurrent.util.ThreadUtils;
 import javasabr.rlib.common.util.AsyncUtils;
 import javasabr.rlib.logger.api.Logger;
@@ -16,14 +24,6 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
-
-import java.net.InetSocketAddress;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiFunction;
 
 /**
  * The default implementation of a client network.

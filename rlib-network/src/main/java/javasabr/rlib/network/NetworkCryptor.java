@@ -1,9 +1,8 @@
 package javasabr.rlib.network;
 
+import java.nio.ByteBuffer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
 
 /**
  * The interface to implement a network cryptor.

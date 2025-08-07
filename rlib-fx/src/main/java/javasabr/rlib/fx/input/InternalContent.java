@@ -1,11 +1,11 @@
 package javasabr.rlib.fx.input;
 
 import static javasabr.rlib.common.util.ClassUtils.unsafeCast;
-import javasabr.rlib.common.util.ref.Reference;
-import javafx.scene.input.DataFormat;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import javafx.scene.input.DataFormat;
+import javasabr.rlib.common.util.ref.Reference;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The implementation of a clipboard/dragboard content for internal using.

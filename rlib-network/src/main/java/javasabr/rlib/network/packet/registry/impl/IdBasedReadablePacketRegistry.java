@@ -1,5 +1,7 @@
 package javasabr.rlib.network.packet.registry.impl;
 
+import java.util.Arrays;
+import java.util.function.Supplier;
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.Array;
@@ -12,9 +14,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.function.Supplier;
 
 /**
  * The id based implementation of readable packets registry.

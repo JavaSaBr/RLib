@@ -1,11 +1,10 @@
 package javasabr.rlib.logger.api;
 
-import javasabr.rlib.logger.api.impl.NullLoggerFactory;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ServiceLoader;
+import javasabr.rlib.logger.api.impl.NullLoggerFactory;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The class to manage loggers.

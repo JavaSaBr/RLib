@@ -6,8 +6,6 @@ import static javasabr.rlib.common.util.ObjectUtils.notNull;
 import static javasabr.rlib.common.util.array.ArrayCollectors.toArray;
 import static javasabr.rlib.common.util.dictionary.DictionaryCollectors.toObjectDictionary;
 
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -35,6 +33,8 @@ import javasabr.rlib.common.util.Utils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayFactory;
 import javasabr.rlib.common.util.dictionary.ObjectDictionary;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

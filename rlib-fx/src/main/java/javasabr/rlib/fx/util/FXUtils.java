@@ -1,5 +1,8 @@
 package javasabr.rlib.fx.util;
 
+import java.awt.Point;
+import java.util.Random;
+import java.util.function.Consumer;
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -9,10 +12,6 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.Random;
-import java.util.function.Consumer;
 
 /**
  * The utility class.

@@ -3,8 +3,6 @@ package javasabr.rlib.common.classpath.impl;
 import static java.lang.reflect.Modifier.isAbstract;
 import static javasabr.rlib.common.util.ClassUtils.unsafeNNCast;
 
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +22,8 @@ import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.IOUtils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayFactory;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

@@ -1,14 +1,13 @@
 package javasabr.rlib.network.impl;
 
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.function.BiFunction;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.Network;
 import javasabr.rlib.network.NetworkConfig;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.channels.AsynchronousSocketChannel;
-import java.util.function.BiFunction;
 
 /**
  * The base implementation of {@link Network}.

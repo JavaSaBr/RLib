@@ -1,12 +1,12 @@
 package javasabr.rlib.network.packet.impl;
 
 import static javasabr.rlib.network.util.NetworkUtils.hexDump;
+
+import java.nio.ByteBuffer;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.network.packet.Packet;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteBuffer;
 
 /**
  * The base implementation of {@link Packet}.

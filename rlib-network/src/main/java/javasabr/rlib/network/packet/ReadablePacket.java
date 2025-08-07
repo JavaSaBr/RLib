@@ -1,9 +1,8 @@
 package javasabr.rlib.network.packet;
 
+import java.nio.ByteBuffer;
 import javasabr.rlib.network.Connection;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteBuffer;
 
 /**
  * The interface to implement a readable network packet.

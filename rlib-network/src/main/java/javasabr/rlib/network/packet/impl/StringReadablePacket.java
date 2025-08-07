@@ -1,11 +1,10 @@
 package javasabr.rlib.network.packet.impl;
 
+import java.nio.ByteBuffer;
 import javasabr.rlib.network.Connection;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
 
 /**
  * @author JavaSaBr

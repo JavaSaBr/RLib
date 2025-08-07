@@ -2,6 +2,13 @@ package javasabr.rlib.network.packet.impl;
 
 import static javasabr.rlib.common.util.ObjectUtils.notNull;
 import static javasabr.rlib.network.util.NetworkUtils.getRemoteAddress;
+
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousCloseException;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import javasabr.rlib.common.function.NotNullConsumer;
 import javasabr.rlib.common.util.BufferUtils;
 import javasabr.rlib.logger.api.Logger;
@@ -16,13 +23,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousCloseException;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 /**
  * @param <R> the readable packet's type.

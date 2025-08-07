@@ -1,16 +1,15 @@
 package javasabr.rlib.network.impl;
 
+import java.nio.channels.AsynchronousSocketChannel;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.Network;
 import javasabr.rlib.network.packet.ReadablePacket;
 import javasabr.rlib.network.packet.WritablePacket;
-import org.jetbrains.annotations.NotNull;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
-import java.nio.channels.AsynchronousSocketChannel;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractSSLConnection<R extends ReadablePacket, W extends WritablePacket> extends
     AbstractConnection<R, W> {

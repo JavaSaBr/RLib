@@ -1,6 +1,10 @@
 package javasabr.rlib.network.packet.impl;
 
 import static javasabr.rlib.network.util.NetworkUtils.hexDump;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 import javasabr.rlib.common.function.NotNullConsumer;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
@@ -9,15 +13,11 @@ import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.packet.ReadablePacket;
 import javasabr.rlib.network.packet.WritablePacket;
 import javasabr.rlib.network.util.NetworkUtils;
-import org.jetbrains.annotations.NotNull;
-
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @param <R> the readable packet's type.

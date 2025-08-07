@@ -1,5 +1,7 @@
 package javasabr.rlib.network;
 
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.function.BiFunction;
 import javasabr.rlib.network.client.ClientNetwork;
 import javasabr.rlib.network.client.impl.DefaultClientNetwork;
 import javasabr.rlib.network.impl.DefaultBufferAllocator;
@@ -10,11 +12,8 @@ import javasabr.rlib.network.packet.impl.DefaultReadablePacket;
 import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
 import javasabr.rlib.network.server.ServerNetwork;
 import javasabr.rlib.network.server.impl.DefaultServerNetwork;
-import org.jetbrains.annotations.NotNull;
-
 import javax.net.ssl.SSLContext;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.util.function.BiFunction;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class with factory methods to build client/server networks.

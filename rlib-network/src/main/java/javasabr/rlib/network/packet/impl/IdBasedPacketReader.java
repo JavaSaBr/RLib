@@ -1,5 +1,7 @@
 package javasabr.rlib.network.packet.impl;
 
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 import javasabr.rlib.common.function.NotNullConsumer;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.Connection;
@@ -7,9 +9,6 @@ import javasabr.rlib.network.packet.IdBasedReadablePacket;
 import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * @param <R> the readable packet's type.

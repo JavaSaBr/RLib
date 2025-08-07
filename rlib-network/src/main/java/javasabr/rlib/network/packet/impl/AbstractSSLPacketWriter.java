@@ -2,6 +2,10 @@ package javasabr.rlib.network.packet.impl;
 
 import static javasabr.rlib.network.util.NetworkUtils.EMPTY_BUFFER;
 import static javasabr.rlib.network.util.NetworkUtils.hexDump;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
 import javasabr.rlib.common.function.NotNullBiConsumer;
 import javasabr.rlib.common.function.NotNullConsumer;
 import javasabr.rlib.common.function.NullableSupplier;
@@ -11,16 +15,12 @@ import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.packet.WritablePacket;
 import javasabr.rlib.network.util.NetworkUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extends Connection<?, W>> extends
     AbstractPacketWriter<W, C> {

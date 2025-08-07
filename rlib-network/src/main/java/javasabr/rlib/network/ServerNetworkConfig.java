@@ -1,11 +1,10 @@
 package javasabr.rlib.network;
 
+import java.nio.ByteOrder;
 import javasabr.rlib.common.concurrent.GroupThreadFactory;
 import lombok.Builder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteOrder;
 
 /**
  * The interface to implement a server network config.

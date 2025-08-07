@@ -1,11 +1,11 @@
 package javasabr.rlib.common.concurrent.util;
 
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import java.util.function.Function;
 import javasabr.rlib.common.concurrent.lock.Lockable;
 import javasabr.rlib.common.function.ObjectIntFunction;
 import javasabr.rlib.common.function.ObjectLongFunction;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

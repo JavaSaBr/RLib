@@ -1,7 +1,7 @@
 package javasabr.rlib.fx.util.converter;
 
-import javasabr.rlib.common.util.StringUtils;
 import javafx.util.StringConverter;
+import javasabr.rlib.common.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

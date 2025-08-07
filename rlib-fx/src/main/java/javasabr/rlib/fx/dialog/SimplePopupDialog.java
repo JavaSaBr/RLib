@@ -1,14 +1,14 @@
 package javasabr.rlib.fx.dialog;
 
-import javasabr.rlib.fx.CssClasses;
-import javasabr.rlib.fx.handler.WindowDragHandler;
-import javasabr.rlib.fx.util.FxUtils;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javasabr.rlib.fx.CssClasses;
+import javasabr.rlib.fx.handler.WindowDragHandler;
+import javasabr.rlib.fx.util.FxUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**

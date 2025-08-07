@@ -1,6 +1,10 @@
 package javasabr.rlib.network.packet.impl;
 
 import static javasabr.rlib.common.util.ObjectUtils.notNull;
+
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import javasabr.rlib.common.concurrent.atomic.AtomicInteger;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.pools.Pool;
@@ -8,10 +12,6 @@ import javasabr.rlib.common.util.pools.PoolFactory;
 import javasabr.rlib.network.packet.ReusableWritablePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The reusable implementation of {@link AbstractWritablePacket} using the counter to control the life cycle of

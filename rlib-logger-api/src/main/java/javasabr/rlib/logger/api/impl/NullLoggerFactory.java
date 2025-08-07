@@ -1,11 +1,10 @@
 package javasabr.rlib.logger.api.impl;
 
+import java.io.Writer;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerListener;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.Writer;
 
 public class NullLoggerFactory implements LoggerFactory {
 

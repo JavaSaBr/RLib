@@ -1,8 +1,5 @@
 package javasabr.rlib.fx;
 
-import javasabr.rlib.fx.control.dialog.ControlDialogSupport;
-import javasabr.rlib.fx.control.dialog.DefaultControlDialog;
-import javasabr.rlib.fx.util.FxUtils;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,6 +10,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javasabr.rlib.fx.control.dialog.ControlDialogSupport;
+import javasabr.rlib.fx.control.dialog.DefaultControlDialog;
+import javasabr.rlib.fx.util.FxUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleControlDialogTest extends Application {

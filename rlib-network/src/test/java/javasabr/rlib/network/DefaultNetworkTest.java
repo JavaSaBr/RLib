@@ -1,8 +1,19 @@
 package javasabr.rlib.network;
 
-import static javasabr.rlib.network.NetworkFactory.*;
-import static javasabr.rlib.network.ServerNetworkConfig.DEFAULT_SERVER;
 import static java.util.stream.Collectors.toList;
+import static javasabr.rlib.network.NetworkFactory.newDefaultClientNetwork;
+import static javasabr.rlib.network.NetworkFactory.newDefaultServerNetwork;
+import static javasabr.rlib.network.ServerNetworkConfig.DEFAULT_SERVER;
+
+import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import javasabr.rlib.common.util.ObjectUtils;
 import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.logger.api.Logger;
@@ -20,13 +31,6 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.nio.ByteBuffer;
-import java.time.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 /**
  * The tests of default network.

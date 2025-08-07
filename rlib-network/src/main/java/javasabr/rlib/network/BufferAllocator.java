@@ -1,8 +1,7 @@
 package javasabr.rlib.network;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.ByteBuffer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The interface to implement a buffer allocator for network things.

@@ -2,7 +2,6 @@ package javasabr.rlib.common.util;
 
 import static javasabr.rlib.common.util.ObjectUtils.notNull;
 
-import javasabr.rlib.logger.api.LoggerManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +36,7 @@ import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayComparator;
 import javasabr.rlib.common.util.array.ArrayFactory;
 import javasabr.rlib.common.util.array.UnsafeArray;
+import javasabr.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

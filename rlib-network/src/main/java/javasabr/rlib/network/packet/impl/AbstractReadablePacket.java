@@ -1,14 +1,13 @@
 package javasabr.rlib.network.packet.impl;
 
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.packet.ReadablePacket;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
 
 /**
  * The base implementation of {@link ReadablePacket}.

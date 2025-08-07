@@ -1,22 +1,9 @@
 package javasabr.rlib.network;
 
-import static javasabr.rlib.network.NetworkFactory.*;
 import static java.util.stream.Collectors.toList;
-import javasabr.rlib.common.util.ObjectUtils;
-import javasabr.rlib.common.util.StringUtils;
-import javasabr.rlib.common.util.Utils;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.api.LoggerManager;
-import javasabr.rlib.network.impl.DefaultBufferAllocator;
-import javasabr.rlib.network.packet.impl.*;
-import javasabr.rlib.network.util.NetworkUtils;
-import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import static javasabr.rlib.network.NetworkFactory.newStringDataSSLClientNetwork;
+import static javasabr.rlib.network.NetworkFactory.newStringDataSSLServerNetwork;
 
-import javax.net.ssl.*;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -26,6 +13,23 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
+import javasabr.rlib.common.util.ObjectUtils;
+import javasabr.rlib.common.util.StringUtils;
+import javasabr.rlib.common.util.Utils;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerLevel;
+import javasabr.rlib.logger.api.LoggerManager;
+import javasabr.rlib.network.impl.DefaultBufferAllocator;
+import javasabr.rlib.network.packet.impl.AbstractSSLPacketReader;
+import javasabr.rlib.network.packet.impl.AbstractSSLPacketWriter;
+import javasabr.rlib.network.packet.impl.StringReadablePacket;
+import javasabr.rlib.network.packet.impl.StringWritablePacket;
+import javasabr.rlib.network.util.NetworkUtils;
+import javax.net.ssl.SSLSocket;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * The tests of string based network.

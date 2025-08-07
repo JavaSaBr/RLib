@@ -1,13 +1,12 @@
 package javasabr.rlib.network.client;
 
+import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.Network;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Mono;
-
-import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Interface to implement a client network.

@@ -1,5 +1,6 @@
 package javasabr.rlib.network.impl;
 
+import java.nio.channels.AsynchronousSocketChannel;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.Network;
@@ -9,12 +10,10 @@ import javasabr.rlib.network.packet.ReadablePacket;
 import javasabr.rlib.network.packet.WritablePacket;
 import javasabr.rlib.network.packet.impl.DefaultSSLPacketReader;
 import javasabr.rlib.network.packet.impl.DefaultSSLPacketWriter;
+import javax.net.ssl.SSLContext;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import javax.net.ssl.SSLContext;
-import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * @author JavaSaBr

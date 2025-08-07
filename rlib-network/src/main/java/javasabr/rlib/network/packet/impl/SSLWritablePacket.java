@@ -1,8 +1,7 @@
 package javasabr.rlib.network.packet.impl;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.ByteBuffer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Packet marker.

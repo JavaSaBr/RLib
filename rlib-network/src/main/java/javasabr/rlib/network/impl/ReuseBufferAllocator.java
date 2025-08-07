@@ -1,5 +1,8 @@
 package javasabr.rlib.network.impl;
 
+import java.nio.ByteBuffer;
+import java.util.Collection;
+import java.util.function.Function;
 import javasabr.rlib.common.util.array.ArrayFactory;
 import javasabr.rlib.common.util.array.ConcurrentArray;
 import javasabr.rlib.common.util.pools.Pool;
@@ -10,10 +13,6 @@ import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.NetworkConfig;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.function.Function;
 
 /**
  * @author JavaSaBr

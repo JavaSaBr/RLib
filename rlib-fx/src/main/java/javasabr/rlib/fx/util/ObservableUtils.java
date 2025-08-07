@@ -1,13 +1,13 @@
 package javasabr.rlib.fx.util;
 
 import static javasabr.rlib.common.util.ClassUtils.unsafeCast;
-import javafx.beans.value.ObservableValue;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import javafx.beans.value.ObservableValue;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The utility class.

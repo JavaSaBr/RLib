@@ -1,8 +1,7 @@
 package javasabr.rlib.logger.api;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.Writer;
+import org.jetbrains.annotations.NotNull;
 
 public interface LoggerFactory {
 

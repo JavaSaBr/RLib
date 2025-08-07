@@ -1,8 +1,8 @@
 package javasabr.rlib.fx.control.input;
 
+import javafx.scene.input.ScrollEvent;
 import javasabr.rlib.fx.util.converter.LimitedIntegerStringConverter;
 import javasabr.rlib.fx.util.converter.LimitedNumberStringConverter;
-import javafx.scene.input.ScrollEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**

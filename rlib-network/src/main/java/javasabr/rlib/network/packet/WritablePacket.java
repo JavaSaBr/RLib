@@ -1,10 +1,9 @@
 package javasabr.rlib.network.packet;
 
-import javasabr.rlib.logger.api.LoggerManager;
-import org.jetbrains.annotations.NotNull;
-
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import javasabr.rlib.logger.api.LoggerManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface to implement a writable packet.

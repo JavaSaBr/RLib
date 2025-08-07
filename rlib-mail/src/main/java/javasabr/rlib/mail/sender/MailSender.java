@@ -1,10 +1,9 @@
 package javasabr.rlib.mail.sender;
 
-import javasabr.rlib.mail.sender.exception.UncheckedMessagingException;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import javasabr.rlib.mail.sender.exception.UncheckedMessagingException;
+import org.jetbrains.annotations.NotNull;
 
 public interface MailSender {
 

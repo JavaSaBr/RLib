@@ -1,7 +1,5 @@
 package javasabr.rlib.common.concurrent.executor.impl;
 
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,6 +15,8 @@ import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayFactory;
 import javasabr.rlib.common.util.linkedlist.LinkedList;
 import javasabr.rlib.common.util.linkedlist.LinkedListFactory;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
 /**

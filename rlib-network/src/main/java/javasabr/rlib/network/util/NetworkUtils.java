@@ -1,12 +1,5 @@
 package javasabr.rlib.network.util;
 
-import javasabr.rlib.common.util.Utils;
-import javasabr.rlib.common.util.array.ArrayFactory;
-import javasabr.rlib.network.BufferAllocator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -18,6 +11,18 @@ import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.stream.IntStream;
+import javasabr.rlib.common.util.Utils;
+import javasabr.rlib.common.util.array.ArrayFactory;
+import javasabr.rlib.network.BufferAllocator;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLEngineResult;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author JavaSaBr

@@ -1,12 +1,11 @@
 package javasabr.rlib.network.server;
 
+import java.net.InetSocketAddress;
+import java.util.function.Consumer;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.Network;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
-
-import java.net.InetSocketAddress;
-import java.util.function.Consumer;
 
 /**
  * The interface to implement a server network.

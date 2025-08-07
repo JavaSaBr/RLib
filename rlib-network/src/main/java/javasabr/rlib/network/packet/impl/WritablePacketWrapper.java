@@ -1,11 +1,10 @@
 package javasabr.rlib.network.packet.impl;
 
+import java.nio.ByteBuffer;
 import javasabr.rlib.network.packet.WritablePacket;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.ByteBuffer;
 
 /**
  * The writable packet wrapper with additional attachment.

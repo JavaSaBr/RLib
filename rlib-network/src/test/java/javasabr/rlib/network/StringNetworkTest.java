@@ -1,9 +1,18 @@
 package javasabr.rlib.network;
 
+import static java.util.stream.Collectors.toList;
 import static javasabr.rlib.network.NetworkFactory.newStringDataClientNetwork;
 import static javasabr.rlib.network.NetworkFactory.newStringDataServerNetwork;
 import static javasabr.rlib.network.ServerNetworkConfig.DEFAULT_SERVER;
-import static java.util.stream.Collectors.toList;
+
+import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import javasabr.rlib.common.concurrent.atomic.AtomicInteger;
 import javasabr.rlib.common.util.ObjectUtils;
 import javasabr.rlib.common.util.StringUtils;
@@ -18,15 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
-
-import java.nio.ByteBuffer;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 /**
  * The tests of string based network.

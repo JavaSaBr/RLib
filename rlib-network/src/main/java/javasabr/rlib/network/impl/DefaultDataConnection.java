@@ -1,5 +1,6 @@
 package javasabr.rlib.network.impl;
 
+import java.nio.channels.AsynchronousSocketChannel;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.Network;
@@ -12,8 +13,6 @@ import javasabr.rlib.network.packet.impl.DefaultPacketWriter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.channels.AsynchronousSocketChannel;
 
 /**
  * @author JavaSaBr

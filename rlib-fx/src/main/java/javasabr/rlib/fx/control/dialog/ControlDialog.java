@@ -1,9 +1,7 @@
 package javasabr.rlib.fx.control.dialog;
 
 import static java.lang.Math.max;
-import javasabr.rlib.fx.handler.ControlDragHandler;
-import javasabr.rlib.fx.handler.ControlResizeHandler;
-import javasabr.rlib.fx.util.FxUtils;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
@@ -12,6 +10,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javasabr.rlib.fx.handler.ControlDragHandler;
+import javasabr.rlib.fx.handler.ControlResizeHandler;
+import javasabr.rlib.fx.util.FxUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

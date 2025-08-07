@@ -1,6 +1,5 @@
 package javasabr.rlib.common.util;
 
-import javasabr.rlib.logger.api.LoggerManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -16,6 +15,7 @@ import javasabr.rlib.common.function.NotNullSafeFunction;
 import javasabr.rlib.common.function.NotNullSafeSupplier;
 import javasabr.rlib.common.function.NotNullSafeTriFunction;
 import javasabr.rlib.common.function.SafeRunnable;
+import javasabr.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

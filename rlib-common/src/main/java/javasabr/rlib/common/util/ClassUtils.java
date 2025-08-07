@@ -2,10 +2,10 @@ package javasabr.rlib.common.util;
 
 import static java.lang.Class.forName;
 
-import javasabr.rlib.logger.api.LoggerManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import javasabr.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,11 +1,11 @@
 package javasabr.rlib.fx.handler;
 
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+import javasabr.rlib.fx.LoggerClass;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerManager;
-import javasabr.rlib.fx.LoggerClass;
-import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**

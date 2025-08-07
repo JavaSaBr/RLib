@@ -1,5 +1,7 @@
 package javasabr.rlib.fx.util;
 
+import java.awt.Point;
+import java.util.concurrent.ThreadLocalRandom;
 import javafx.beans.value.ObservableValue;
 import javafx.css.Styleable;
 import javafx.geometry.Point2D;
@@ -8,9 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * The utility class.

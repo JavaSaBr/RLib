@@ -1,6 +1,13 @@
 package javasabr.rlib.network.impl;
 
 import static javasabr.rlib.common.util.Utils.unchecked;
+
+import java.nio.channels.AsynchronousChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.StampedLock;
+import java.util.function.BiConsumer;
 import javasabr.rlib.common.function.NotNullBiConsumer;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayFactory;
@@ -23,13 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
-
-import java.nio.channels.AsynchronousChannel;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.StampedLock;
-import java.util.function.BiConsumer;
 
 /**
  * The base implementation of {@link Connection}.

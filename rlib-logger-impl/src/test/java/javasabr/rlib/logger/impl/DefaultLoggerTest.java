@@ -1,12 +1,15 @@
 package javasabr.rlib.logger.impl;
 
+import java.util.Collection;
 import javasabr.rlib.common.util.array.ConcurrentArray;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerListener;
 import javasabr.rlib.logger.api.LoggerManager;
-import org.junit.jupiter.api.*;
-
-import java.util.Collection;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DefaultLoggerTest {
 

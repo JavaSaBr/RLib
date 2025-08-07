@@ -1,11 +1,10 @@
 package javasabr.rlib.logger.impl;
 
+import java.util.Objects;
 import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 /**
  * The base implementation of the logger.

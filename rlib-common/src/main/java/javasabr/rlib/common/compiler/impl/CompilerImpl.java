@@ -1,7 +1,5 @@
 package javasabr.rlib.common.compiler.impl;
 
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -13,6 +11,8 @@ import javasabr.rlib.common.compiler.Compiler;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayCollectors;
 import javasabr.rlib.common.util.array.ArrayFactory;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import javax.tools.Diagnostic;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;

@@ -1,13 +1,6 @@
 package javasabr.rlib.logger.impl;
 
 import static javasabr.rlib.common.util.ObjectUtils.notNull;
-import javasabr.rlib.common.util.array.Array;
-import javasabr.rlib.common.util.array.ConcurrentArray;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerFactory;
-import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.api.LoggerListener;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -15,6 +8,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import javasabr.rlib.common.util.array.Array;
+import javasabr.rlib.common.util.array.ConcurrentArray;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerFactory;
+import javasabr.rlib.logger.api.LoggerLevel;
+import javasabr.rlib.logger.api.LoggerListener;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The class for managing loggers.

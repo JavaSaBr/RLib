@@ -1,11 +1,11 @@
 package javasabr.rlib.common.plugin.extension;
 
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.dictionary.ConcurrentObjectDictionary;
 import javasabr.rlib.common.util.dictionary.DictionaryFactory;
 import javasabr.rlib.common.util.dictionary.ObjectDictionary;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
 /**

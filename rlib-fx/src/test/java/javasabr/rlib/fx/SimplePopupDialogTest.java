@@ -1,12 +1,12 @@
 package javasabr.rlib.fx;
 
-import javasabr.rlib.fx.util.FxUtils;
-import javasabr.rlib.fx.dialog.SimplePopupDialog;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javasabr.rlib.fx.dialog.SimplePopupDialog;
+import javasabr.rlib.fx.util.FxUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class SimplePopupDialogTest extends Application {

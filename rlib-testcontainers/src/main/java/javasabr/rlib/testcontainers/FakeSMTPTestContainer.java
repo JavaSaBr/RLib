@@ -1,15 +1,14 @@
 package javasabr.rlib.testcontainers;
 
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.testcontainers.containers.GenericContainer;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodySubscribers;
 import java.nio.charset.StandardCharsets;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.testcontainers.containers.GenericContainer;
 
 public class FakeSMTPTestContainer extends GenericContainer<FakeSMTPTestContainer> {
 

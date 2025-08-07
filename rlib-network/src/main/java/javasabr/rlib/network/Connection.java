@@ -1,13 +1,12 @@
 package javasabr.rlib.network;
 
+import java.util.concurrent.CompletableFuture;
 import javasabr.rlib.common.function.NotNullBiConsumer;
 import javasabr.rlib.network.packet.ReadablePacket;
 import javasabr.rlib.network.packet.WritablePacket;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
-
-import java.util.concurrent.CompletableFuture;
 
 /**
  * The interface to implement an async connection.
