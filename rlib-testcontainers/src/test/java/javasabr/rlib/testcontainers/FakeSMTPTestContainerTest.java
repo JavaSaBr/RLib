@@ -1,8 +1,7 @@
-package com.ss.rlib.testcontainers.test;
+package javasabr.rlib.testcontainers;
 
 import javasabr.rlib.mail.sender.MailSenderConfig;
 import javasabr.rlib.mail.sender.impl.JavaxMailSender;
-import com.ss.rlib.testcontainers.FakeSMTPTestContainer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

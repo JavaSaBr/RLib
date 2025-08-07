@@ -1,4 +1,4 @@
-package com.ss.rlib.testcontainers;
+package javasabr.rlib.testcontainers;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
