@@ -1,11 +1,11 @@
-package com.ss.rlib.mail.sender.impl;
+package javasabr.rlib.mail.sender.impl;
 
 import static java.util.concurrent.CompletableFuture.runAsync;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
-import com.ss.rlib.mail.sender.MailSender;
-import com.ss.rlib.mail.sender.MailSenderConfig;
-import com.ss.rlib.mail.sender.exception.UncheckedMessagingException;
+import javasabr.rlib.mail.sender.MailSender;
+import javasabr.rlib.mail.sender.MailSenderConfig;
+import javasabr.rlib.mail.sender.exception.UncheckedMessagingException;
 import jakarta.mail.Authenticator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;

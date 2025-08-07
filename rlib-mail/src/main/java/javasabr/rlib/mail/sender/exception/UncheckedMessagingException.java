@@ -1,4 +1,4 @@
-package com.ss.rlib.mail.sender.exception;
+package javasabr.rlib.mail.sender.exception;
 
 import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;

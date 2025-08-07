@@ -1,4 +1,4 @@
-package com.ss.rlib.mail.sender;
+package javasabr.rlib.mail.sender;
 
 import lombok.Builder;
 import lombok.Getter;

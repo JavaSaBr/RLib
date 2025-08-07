@@ -1,8 +1,7 @@
-package com.ss.rlib.mail.test.sender;
+package javasabr.rlib.mail.sender;
 
-import com.ss.rlib.mail.sender.MailSenderConfig;
-import com.ss.rlib.mail.sender.impl.JavaxMailSender;
-import com.ss.rlib.mail.test.BaseMailTest;
+import javasabr.rlib.mail.sender.impl.JavaxMailSender;
+import javasabr.rlib.mail.BaseMailTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
