@@ -11,39 +11,39 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface NetworkCryptor {
 
-    /**
-     * Default NULL implementation of the network crypt.
-     */
-    @NotNull NetworkCryptor NULL = new NetworkCryptor() {
+  /**
+   * Default NULL implementation of the network crypt.
+   */
+  @NotNull NetworkCryptor NULL = new NetworkCryptor() {
 
-        @Override
-        public @Nullable ByteBuffer decrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore) {
-            return null;
-        }
+    @Override
+    public @Nullable ByteBuffer decrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore) {
+      return null;
+    }
 
-        @Override
-        public @Nullable ByteBuffer encrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore) {
-            return null;
-        }
-    };
+    @Override
+    public @Nullable ByteBuffer encrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore) {
+      return null;
+    }
+  };
 
-    /**
-     * Decrypt data.
-     *
-     * @param data    the buffer with data to decrypt.
-     * @param length  the data length.
-     * @param toStore the buffer to store decrypted data.
-     * @return the buffer with decrypted data or null if don't need to decrypt anything.
-     */
-    @Nullable ByteBuffer decrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore);
+  /**
+   * Decrypt data.
+   *
+   * @param data the buffer with data to decrypt.
+   * @param length the data length.
+   * @param toStore the buffer to store decrypted data.
+   * @return the buffer with decrypted data or null if don't need to decrypt anything.
+   */
+  @Nullable ByteBuffer decrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore);
 
-    /**
-     * Encrypt data.
-     *
-     * @param data    the buffer with data to encrypt.
-     * @param length  the data length.
-     * @param toStore the buffer to store encrypted data.
-     * @return the buffer with encrypted data or null if don't need to decrypt encrypt.
-     */
-    @Nullable ByteBuffer encrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore);
+  /**
+   * Encrypt data.
+   *
+   * @param data the buffer with data to encrypt.
+   * @param length the data length.
+   * @param toStore the buffer to store encrypted data.
+   * @return the buffer with encrypted data or null if don't need to decrypt encrypt.
+   */
+  @Nullable ByteBuffer encrypt(@NotNull ByteBuffer data, int length, @NotNull ByteBuffer toStore);
 }

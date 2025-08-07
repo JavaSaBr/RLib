@@ -7,8 +7,8 @@ package javasabr.rlib.common.util.ref;
  */
 final class TLObjectReference<T> extends ObjectReference<T> {
 
-    @Override
-    public void release() {
-        ReferenceFactory.release(this);
-    }
+  @Override
+  public void release() {
+    ReferenceFactory.release(this);
+  }
 }

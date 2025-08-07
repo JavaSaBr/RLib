@@ -5,5 +5,4 @@ package javasabr.rlib.common.util.ref;
  *
  * @author JavaSaBr
  */
-public abstract class AbstractReference implements Reference {
-}
+public abstract class AbstractReference implements Reference {}

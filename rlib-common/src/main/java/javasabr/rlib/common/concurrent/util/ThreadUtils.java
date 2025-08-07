@@ -10,18 +10,18 @@ import javasabr.rlib.logger.api.LoggerManager;
  */
 public class ThreadUtils {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(ThreadUtils.class);
+  private static final Logger LOGGER = LoggerManager.getLogger(ThreadUtils.class);
 
-    /**
-     * Sleep the current thread.
-     *
-     * @param time the time in ms.
-     */
-    public static void sleep(final long time) {
-        try {
-            Thread.sleep(time);
-        } catch (final InterruptedException e) {
-            LOGGER.warning(e);
-        }
+  /**
+   * Sleep the current thread.
+   *
+   * @param time the time in ms.
+   */
+  public static void sleep(long time) {
+    try {
+      Thread.sleep(time);
+    } catch (InterruptedException e) {
+      LOGGER.warning(e);
     }
+  }
 }

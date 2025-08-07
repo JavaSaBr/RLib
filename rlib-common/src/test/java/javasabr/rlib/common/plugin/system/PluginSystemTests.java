@@ -11,15 +11,16 @@ import org.junit.jupiter.api.Test;
  */
 public class PluginSystemTests {
 
-    @Test
-    public void test() {
+  @Test
+  public void test() {
 
-        var pluginSystem = PluginSystemFactory.newBasePluginSystem();
-        pluginSystem.setAppVersion(new Version("0.0.1"));
-        pluginSystem.configureEmbeddedPluginPath(Paths.get("../gradle/"));
+    var pluginSystem = PluginSystemFactory.newBasePluginSystem();
+    pluginSystem.setAppVersion(new Version("0.0.1"));
+    pluginSystem.configureEmbeddedPluginPath(Paths.get("../gradle/"));
 
-        pluginSystem.preLoad(ForkJoinPool.commonPool())
-                .thenApply(system -> system.initialize(ForkJoinPool.commonPool()))
-                .join();
-    }
+    pluginSystem
+        .preLoad(ForkJoinPool.commonPool())
+        .thenApply(system -> system.initialize(ForkJoinPool.commonPool()))
+        .join();
+  }
 }

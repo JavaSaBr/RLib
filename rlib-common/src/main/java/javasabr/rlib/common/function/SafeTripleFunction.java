@@ -14,15 +14,14 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface SafeTripleFunction<F, S, T, R> {
 
-    /**
-     * Apply r.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     * @return the r
-     * @throws Exception the exception
-     */
-    @Nullable
-    R apply(@Nullable F first, @Nullable S second, @Nullable T third) throws Exception;
+  /**
+   * Apply r.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   * @return the r
+   * @throws Exception the exception
+   */
+  @Nullable R apply(@Nullable F first, @Nullable S second, @Nullable T third) throws Exception;
 }

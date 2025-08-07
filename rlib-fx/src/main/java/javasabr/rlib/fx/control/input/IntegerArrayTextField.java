@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class IntegerArrayTextField extends TypedTextField<int[]> {
 
-    @Override
-    protected @NotNull IntegerArrayStringConverter createValueConverter() {
-        return new IntegerArrayStringConverter();
-    }
+  @Override
+  protected @NotNull IntegerArrayStringConverter createValueConverter() {
+    return new IntegerArrayStringConverter();
+  }
 }

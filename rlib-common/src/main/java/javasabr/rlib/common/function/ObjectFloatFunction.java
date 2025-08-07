@@ -12,13 +12,12 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface ObjectFloatFunction<T, R> {
 
-    /**
-     * Apply r.
-     *
-     * @param first  the first
-     * @param second the second
-     * @return the r
-     */
-    @Nullable
-    R apply(@Nullable T first, float second);
+  /**
+   * Apply r.
+   *
+   * @param first the first
+   * @param second the second
+   * @return the r
+   */
+  @Nullable R apply(@Nullable T first, float second);
 }

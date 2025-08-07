@@ -7,6 +7,6 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface NotNullNullableBiFunction<T, U, R> extends BiFunction<T, U, R> {
 
-    @Override
-    @Nullable R apply(@NotNull T first, @NotNull U second);
+  @Override
+  @Nullable R apply(@NotNull T first, @NotNull U second);
 }

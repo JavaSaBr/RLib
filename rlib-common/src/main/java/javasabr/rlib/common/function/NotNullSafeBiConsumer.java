@@ -8,6 +8,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface NotNullSafeBiConsumer<F, S> extends SafeBiConsumer<F, S> {
 
-    @Override
-    void accept(@NotNull F first, @NotNull S second) throws Exception;
+  @Override
+  void accept(@NotNull F first, @NotNull S second) throws Exception;
 }

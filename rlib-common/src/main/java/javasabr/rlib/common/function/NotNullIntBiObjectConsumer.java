@@ -8,6 +8,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface NotNullIntBiObjectConsumer<S, T> extends IntBiObjectConsumer<S, T> {
 
-    @Override
-    void accept(int first, @NotNull S second, @NotNull T third);
+  @Override
+  void accept(int first, @NotNull S second, @NotNull T third);
 }

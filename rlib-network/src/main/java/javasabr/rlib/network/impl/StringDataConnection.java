@@ -13,16 +13,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StringDataConnection extends DefaultDataConnection<StringReadablePacket, StringWritablePacket> {
 
-    public StringDataConnection(
-        @NotNull Network<? extends Connection<StringReadablePacket, StringWritablePacket>> network,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator
-    ) {
-        super(network, channel, bufferAllocator, 100, 2);
-    }
+  public StringDataConnection(
+      @NotNull Network<? extends Connection<StringReadablePacket, StringWritablePacket>> network,
+      @NotNull AsynchronousSocketChannel channel,
+      @NotNull BufferAllocator bufferAllocator) {
+    super(network, channel, bufferAllocator, 100, 2);
+  }
 
-    @Override
-    protected @NotNull StringReadablePacket createReadablePacket() {
-        return new StringReadablePacket();
-    }
+  @Override
+  protected @NotNull StringReadablePacket createReadablePacket() {
+    return new StringReadablePacket();
+  }
 }

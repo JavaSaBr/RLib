@@ -8,5 +8,5 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface FloatBiObjectConsumer<S, T> {
 
-    void accept(float first, @Nullable S second, @Nullable T third);
+  void accept(float first, @Nullable S second, @Nullable T third);
 }

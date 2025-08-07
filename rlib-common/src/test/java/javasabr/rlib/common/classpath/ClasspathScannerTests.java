@@ -10,19 +10,19 @@ import org.junit.jupiter.api.Test;
  */
 public class ClasspathScannerTests {
 
-    @Test
-    void testSystemClasspathScanner() {
+  @Test
+  void testSystemClasspathScanner() {
 
-        var scanner = ClassPathScannerFactory.newDefaultScanner();
-        scanner.setUseSystemClasspath(true);
-        scanner.scan();
+    var scanner = ClassPathScannerFactory.newDefaultScanner();
+    scanner.setUseSystemClasspath(true);
+    scanner.scan();
 
-        var implementations = scanner.findImplements(Collection.class);
+    var implementations = scanner.findImplements(Collection.class);
 
-        Assertions.assertFalse(implementations.isEmpty());
+    Assertions.assertFalse(implementations.isEmpty());
 
-        var inherited = scanner.findInherited(AbstractArray.class);
+    var inherited = scanner.findInherited(AbstractArray.class);
 
-        Assertions.assertFalse(inherited.isEmpty());
-    }
+    Assertions.assertFalse(inherited.isEmpty());
+  }
 }

@@ -4,160 +4,160 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MutableIntegerArray extends IntegerArray {
 
-    /**
-     * Add a new number to this array.
-     *
-     * @param number the new integer.
-     * @return this array.
-     */
-    @NotNull IntegerArray add(int number);
+  /**
+   * Add a new number to this array.
+   *
+   * @param number the new integer.
+   * @return this array.
+   */
+  @NotNull IntegerArray add(int number);
 
-    /**
-     * Add new numbers to this array.
-     *
-     * @param numbers the new numbers.
-     * @return this array.
-     */
-    @NotNull IntegerArray addAll(int @NotNull [] numbers);
+  /**
+   * Add new numbers to this array.
+   *
+   * @param numbers the new numbers.
+   * @return this array.
+   */
+  @NotNull IntegerArray addAll(int @NotNull [] numbers);
 
-    /**
-     * Add new numbers to this array.
-     *
-     * @param numbers the new numbers.
-     * @return this array.
-     */
-    @NotNull IntegerArray addAll(@NotNull IntegerArray numbers);
+  /**
+   * Add new numbers to this array.
+   *
+   * @param numbers the new numbers.
+   * @return this array.
+   */
+  @NotNull IntegerArray addAll(@NotNull IntegerArray numbers);
 
-    /**
-     * Clear this array.
-     *
-     * @return this array.
-     */
-    @NotNull IntegerArray clear();
+  /**
+   * Clear this array.
+   *
+   * @return this array.
+   */
+  @NotNull IntegerArray clear();
 
-    /**
-     * Remove the first equal number in array with putting last number to position of removed number.
-     *
-     * @param number the number to remove.
-     * @return true if the number was removed.
-     */
-    default boolean fastRemove(int number) {
+  /**
+   * Remove the first equal number in array with putting last number to position of removed number.
+   *
+   * @param number the number to remove.
+   * @return true if the number was removed.
+   */
+  default boolean fastRemove(int number) {
 
-        var index = indexOf(number);
+    var index = indexOf(number);
 
-        if (index > -1){
-            fastRemoveByIndex(index);
-        }
-
-        return index > -1;
+    if (index > -1) {
+      fastRemoveByIndex(index);
     }
 
-    /**
-     * Remove a number by the index from this array with putting last number to position of removed number.
-     *
-     * @param index the index of number to remove.
-     * @return true if the number was removed.
-     */
-    boolean fastRemoveByIndex(int index);
+    return index > -1;
+  }
 
-    /**
-     * Get and remove the first number from this array.
-     *
-     * @return the first number.
-     * @throws IllegalStateException if this array is empty.
-     */
-    int poll();
+  /**
+   * Remove a number by the index from this array with putting last number to position of removed number.
+   *
+   * @param index the index of number to remove.
+   * @return true if the number was removed.
+   */
+  boolean fastRemoveByIndex(int index);
 
-    /**
-     * Get and remove the last number from this array.
-     *
-     * @return the last number.
-     * @throws IllegalStateException if this array is empty.
-     */
-    int pop();
+  /**
+   * Get and remove the first number from this array.
+   *
+   * @return the first number.
+   * @throws IllegalStateException if this array is empty.
+   */
+  int poll();
 
-    /**
-     * Remove the numbers from this array.
-     *
-     * @param numbers the array of numbers to remove.
-     * @return true if at least one number was removed from this array.
-     */
-    default boolean removeAll(@NotNull IntegerArray numbers) {
+  /**
+   * Get and remove the last number from this array.
+   *
+   * @return the last number.
+   * @throws IllegalStateException if this array is empty.
+   */
+  int pop();
 
-        if (numbers.isEmpty()) {
-            return false;
-        }
+  /**
+   * Remove the numbers from this array.
+   *
+   * @param numbers the array of numbers to remove.
+   * @return true if at least one number was removed from this array.
+   */
+  default boolean removeAll(@NotNull IntegerArray numbers) {
 
-        var array = numbers.array();
-        var count = 0;
-
-        for (int i = 0, length = numbers.size(); i < length; i++) {
-            if(fastRemove(array[i])) {
-                count++;
-            }
-        }
-
-        return count > 0;
+    if (numbers.isEmpty()) {
+      return false;
     }
 
-    /**
-     * Remove numbers from this array which is not exist in the target array.
-     *
-     * @param numbers the array of numbers.
-     * @return true if at least one number was removed from this array.
-     */
-    default boolean retainAll(@NotNull IntegerArray numbers) {
+    var array = numbers.array();
+    var count = 0;
 
-        var array = array();
-        var count = 0;
-
-        for (int i = 0, length = size(); i < length; i++) {
-            if (!numbers.contains(array[i])) {
-                removeByIndex(i--);
-                length--;
-                count++;
-            }
-        }
-
-        return count > 0;
+    for (int i = 0, length = numbers.size(); i < length; i++) {
+      if (fastRemove(array[i])) {
+        count++;
+      }
     }
 
-    /**
-     * Remove the first equal number in array.
-     *
-     * @param number the number to remove.
-     * @return true if the number was removed.
-     */
-    default boolean remove(int number) {
+    return count > 0;
+  }
 
-        var index = indexOf(number);
+  /**
+   * Remove numbers from this array which is not exist in the target array.
+   *
+   * @param numbers the array of numbers.
+   * @return true if at least one number was removed from this array.
+   */
+  default boolean retainAll(@NotNull IntegerArray numbers) {
 
-        if (index > -1) {
-            removeByIndex(index);
-        }
+    var array = array();
+    var count = 0;
 
-        return index > -1;
+    for (int i = 0, length = size(); i < length; i++) {
+      if (!numbers.contains(array[i])) {
+        removeByIndex(i--);
+        length--;
+        count++;
+      }
     }
 
-    /**
-     * Remove a number by the index from this array.
-     *
-     * @param index the index.
-     * @return true if the number was removed.
-     */
-    boolean removeByIndex(int index);
+    return count > 0;
+  }
 
-    /**
-     * Sort this array.
-     *
-     * @return this array.
-     */
-    @NotNull IntegerArray sort();
+  /**
+   * Remove the first equal number in array.
+   *
+   * @param number the number to remove.
+   * @return true if the number was removed.
+   */
+  default boolean remove(int number) {
 
-    /**
-     * Resize wrapped array to the relevant size.
-     *
-     * @return this array.
-     */
-    @NotNull IntegerArray trimToSize();
+    var index = indexOf(number);
+
+    if (index > -1) {
+      removeByIndex(index);
+    }
+
+    return index > -1;
+  }
+
+  /**
+   * Remove a number by the index from this array.
+   *
+   * @param index the index.
+   * @return true if the number was removed.
+   */
+  boolean removeByIndex(int index);
+
+  /**
+   * Sort this array.
+   *
+   * @return this array.
+   */
+  @NotNull IntegerArray sort();
+
+  /**
+   * Resize wrapped array to the relevant size.
+   *
+   * @return this array.
+   */
+  @NotNull IntegerArray trimToSize();
 }

@@ -16,21 +16,21 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 public class WritablePacketWrapper<A, W extends WritablePacket> implements WritablePacket {
 
-    private final A attachment;
-    private final W packet;
+  private final A attachment;
+  private final W packet;
 
-    @Override
-    public boolean write(@NotNull ByteBuffer buffer) {
-        return packet.write(buffer);
-    }
+  @Override
+  public boolean write(@NotNull ByteBuffer buffer) {
+    return packet.write(buffer);
+  }
 
-    @Override
-    public int getExpectedLength() {
-        return packet.getExpectedLength();
-    }
+  @Override
+  public int getExpectedLength() {
+    return packet.getExpectedLength();
+  }
 
-    @Override
-    public @NotNull String getName() {
-        return "WritablePacketWrapper";
-    }
+  @Override
+  public @NotNull String getName() {
+    return "WritablePacketWrapper";
+  }
 }

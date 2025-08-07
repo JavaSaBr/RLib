@@ -1,18 +1,19 @@
 package javasabr.rlib.common.compiler;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface to implement byte code container.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public interface ByteCode {
 
-    /**
-     * Get the byte code.
-     *
-     * @return the byte code.
-     */
-    @NotNull byte[] getByteCode();
+  /**
+   * Get the byte code.
+   *
+   * @return the byte code.
+   */
+  byte[] getByteCode();
 }

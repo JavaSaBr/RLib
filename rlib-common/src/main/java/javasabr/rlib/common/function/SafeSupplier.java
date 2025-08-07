@@ -8,5 +8,5 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface SafeSupplier<T> {
 
-    @Nullable T get() throws Exception;
+  @Nullable T get() throws Exception;
 }

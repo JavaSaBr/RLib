@@ -14,18 +14,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StringDataSSLConnection extends DefaultDataSSLConnection<StringReadablePacket, StringWritablePacket> {
 
-    public StringDataSSLConnection(
-        @NotNull Network<? extends Connection<StringReadablePacket, StringWritablePacket>> network,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator,
-        @NotNull SSLContext sslContext,
-        boolean clientMode
-    ) {
-        super(network, channel, bufferAllocator, sslContext, 100, 2, clientMode);
-    }
+  public StringDataSSLConnection(
+      @NotNull Network<? extends Connection<StringReadablePacket, StringWritablePacket>> network,
+      @NotNull AsynchronousSocketChannel channel,
+      @NotNull BufferAllocator bufferAllocator,
+      @NotNull SSLContext sslContext,
+      boolean clientMode) {
+    super(network, channel, bufferAllocator, sslContext, 100, 2, clientMode);
+  }
 
-    @Override
-    protected @NotNull StringReadablePacket createReadablePacket() {
-        return new StringReadablePacket();
-    }
+  @Override
+  protected @NotNull StringReadablePacket createReadablePacket() {
+    return new StringReadablePacket();
+  }
 }

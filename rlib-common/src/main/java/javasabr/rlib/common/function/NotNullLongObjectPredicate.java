@@ -8,5 +8,5 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface NotNullLongObjectPredicate<T> extends LongObjectPredicate<T> {
 
-    boolean test(long first, @NotNull T second);
+  boolean test(long first, @NotNull T second);
 }

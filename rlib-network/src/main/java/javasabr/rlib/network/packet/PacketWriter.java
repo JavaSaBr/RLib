@@ -5,10 +5,10 @@ package javasabr.rlib.network.packet;
  */
 public interface PacketWriter {
 
-    void writeNextPacket();
+  void writeNextPacket();
 
-    /**
-     * Close all used resources.
-     */
-    void close();
+  /**
+   * Close all used resources.
+   */
+  void close();
 }

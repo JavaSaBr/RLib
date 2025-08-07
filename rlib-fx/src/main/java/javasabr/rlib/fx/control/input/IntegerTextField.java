@@ -12,49 +12,48 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class IntegerTextField extends NumberTextField<Integer> {
 
-    public IntegerTextField() {
-        setValue(0);
+  public IntegerTextField() {
+    setValue(0);
+  }
+
+  @Override
+  protected @NotNull LimitedNumberStringConverter<Integer> createValueConverter() {
+    return new LimitedIntegerStringConverter();
+  }
+
+  @Override
+  protected void scrollValueImpl(@NotNull ScrollEvent event) {
+    super.scrollValueImpl(event);
+
+    var value = getValue();
+
+    var longValue = (long) (value * 1000);
+    longValue += event.getDeltaY() * (getScrollPower() * (event.isShiftDown() ? 0.5F : 1F));
+
+    var resultValue = (int) (longValue / 1000F);
+    var stringValue = String.valueOf(resultValue);
+
+    var textFormatter = getTextFormatter();
+    var valueConverter = textFormatter.getValueConverter();
+    try {
+      valueConverter.fromString(stringValue);
+    } catch (final RuntimeException e) {
+      return;
     }
 
-    @Override
-    protected @NotNull LimitedNumberStringConverter<Integer> createValueConverter() {
-        return new LimitedIntegerStringConverter();
-    }
+    setText(stringValue);
+    positionCaret(stringValue.length());
+  }
 
-    @Override
-    protected void scrollValueImpl(@NotNull ScrollEvent event) {
-        super.scrollValueImpl(event);
+  /**
+   * Get the current primitive value.
+   *
+   * @return the current value or 0.
+   */
+  public int getPrimitiveValue() {
 
-        var value = getValue();
+    var value = getTypedTextFormatter().getValue();
 
-        var longValue = (long) (value * 1000);
-        longValue += event.getDeltaY() * (getScrollPower() * (event.isShiftDown() ? 0.5F : 1F));
-
-        var resultValue = (int) (longValue / 1000F);
-        var stringValue = String.valueOf(resultValue);
-
-        var textFormatter = getTextFormatter();
-        var valueConverter = textFormatter.getValueConverter();
-        try {
-            valueConverter.fromString(stringValue);
-        } catch (final RuntimeException e) {
-            return;
-        }
-
-        setText(stringValue);
-        positionCaret(stringValue.length());
-    }
-
-    /**
-     * Get the current primitive value.
-     *
-     * @return the current value or 0.
-     */
-    public int getPrimitiveValue() {
-
-        var value = getTypedTextFormatter()
-                .getValue();
-
-        return value == null ? 0 : value;
-    }
+    return value == null ? 0 : value;
+  }
 }

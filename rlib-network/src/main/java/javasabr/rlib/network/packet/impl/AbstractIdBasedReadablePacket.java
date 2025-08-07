@@ -10,20 +10,21 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author JavaSaBr
  */
-public abstract class AbstractIdBasedReadablePacket<C extends Connection<?, ?>, S extends AbstractIdBasedReadablePacket<C, S>> extends
+public abstract class AbstractIdBasedReadablePacket<C extends Connection<?, ?>,
+    S extends AbstractIdBasedReadablePacket<C, S>> extends
     AbstractReadablePacket<C> implements IdBasedReadablePacket<S> {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(AbstractIdBasedReadablePacket.class);
+  private static final Logger LOGGER = LoggerManager.getLogger(AbstractIdBasedReadablePacket.class);
 
-    @Override
-    public void execute(@NotNull Connection<?, ?> connection) {
-        try {
-            executeImpl(ClassUtils.unsafeNNCast(connection));
-        } catch (Exception e) {
-            LOGGER.error(e);
-        }
+  @Override
+  public void execute(@NotNull Connection<?, ?> connection) {
+    try {
+      executeImpl(ClassUtils.unsafeNNCast(connection));
+    } catch (Exception e) {
+      LOGGER.error(e);
     }
+  }
 
-    protected void executeImpl(@NotNull C connection) {
-    }
+  protected void executeImpl(@NotNull C connection) {
+  }
 }

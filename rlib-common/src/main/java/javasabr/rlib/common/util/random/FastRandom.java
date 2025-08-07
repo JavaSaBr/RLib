@@ -1,80 +1,80 @@
 package javasabr.rlib.common.util.random;
 
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * @author JavaSaBr
  */
+@NullMarked
 public final class FastRandom implements Random {
 
-    /**
-     * Генератор чисел.
-     */
-    private final java.util.Random random;
+  /**
+   * Генератор чисел.
+   */
+  private final java.util.Random random;
 
-    /**
-     * Instantiates a new Fast random.
-     */
-    public FastRandom() {
-        this.random = new java.util.Random();
+  /**
+   * Instantiates a new Fast random.
+   */
+  public FastRandom() {
+    this.random = new java.util.Random();
+  }
+
+  @Override
+  public void byteArray(byte @NotNull [] array, int offset, int length) {
+    length += offset;
+    for (int i = offset; i < length; i++) {
+      array[i] = (byte) nextInt(256);
+    }
+  }
+
+  @Override
+  public boolean chance(float chance) {
+
+    if (chance < 0F) {
+      return false;
+    } else if (chance > 99.999999F) {
+      return true;
     }
 
-    @Override
-    public void byteArray(@NotNull final byte[] array, final int offset, int length) {
+    return nextFloat() * nextInt(100) <= chance;
+  }
 
-        length += offset;
+  @Override
+  public boolean chance(int chance) {
 
-        for (int i = offset; i < length; i++) {
-            array[i] = (byte) nextInt(256);
-        }
+    if (chance < 1) {
+      return false;
+    } else if (chance > 99) {
+      return true;
     }
 
-    @Override
-    public boolean chance(final float chance) {
+    return nextInt(99) <= chance;
+  }
 
-        if (chance < 0F) {
-            return false;
-        } else if (chance > 99.999999F) {
-            return true;
-        }
+  @Override
+  public float nextFloat() {
+    return random.nextFloat();
+  }
 
-        return nextFloat() * nextInt(100) <= chance;
-    }
+  @Override
+  public int nextInt() {
+    return random.nextInt();
+  }
 
-    @Override
-    public boolean chance(final int chance) {
+  @Override
+  public int nextInt(int max) {
+    return random.nextInt(max);
+  }
 
-        if (chance < 1) {
-            return false;
-        } else if (chance > 99) {
-            return true;
-        }
+  @Override
+  public int nextInt(int min, int max) {
+    return min + nextInt(Math.abs(max - min) + 1);
+  }
 
-        return nextInt(99) <= chance;
-    }
-
-    @Override
-    public float nextFloat() {
-        return random.nextFloat();
-    }
-
-    @Override
-    public int nextInt() {
-        return random.nextInt();
-    }
-
-    @Override
-    public int nextInt(final int max) {
-        return random.nextInt(max);
-    }
-
-    @Override
-    public int nextInt(final int min, final int max) {
-        return min + nextInt(Math.abs(max - min) + 1);
-    }
-
-    @Override
-    public long nextLong(final long min, final long max) {
-        return min + Math.round(nextFloat() * Math.abs(max - min) + 1);
-    }
+  @Override
+  public long nextLong(long min, long max) {
+    return min + Math.round(nextFloat() * Math.abs(max - min) + 1);
+  }
 }

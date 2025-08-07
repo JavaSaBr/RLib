@@ -17,68 +17,68 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TypedTextField<T> extends TextField {
 
-    public TypedTextField() {
-        setTextFormatter(new TextFormatter<>(createValueConverter()));
-    }
+  public TypedTextField() {
+    setTextFormatter(new TextFormatter<>(createValueConverter()));
+  }
 
-    public TypedTextField(@NotNull String text) {
-        super(text);
-        setTextFormatter(new TextFormatter<>(createValueConverter()));
-    }
+  public TypedTextField(@NotNull String text) {
+    super(text);
+    setTextFormatter(new TextFormatter<>(createValueConverter()));
+  }
 
-    /**
-     * Create a new value converter.
-     *
-     * @return the new value converter.
-     */
-    protected @NotNull StringConverter<T> createValueConverter() {
-        throw new UnsupportedOperationException();
-    }
+  /**
+   * Create a new value converter.
+   *
+   * @return the new value converter.
+   */
+  protected @NotNull StringConverter<T> createValueConverter() {
+    throw new UnsupportedOperationException();
+  }
 
-    /**
-     * Add a new change listener.
-     *
-     * @param listener the change listener.
-     */
-    public void addChangeListener(@NotNull ChangeListener<T> listener) {
-        getTypedTextFormatter()
-                .valueProperty()
-                .addListener(listener);
-    }
+  /**
+   * Add a new change listener.
+   *
+   * @param listener the change listener.
+   */
+  public void addChangeListener(@NotNull ChangeListener<T> listener) {
+    getTypedTextFormatter()
+        .valueProperty()
+        .addListener(listener);
+  }
 
-    /**
-     * Get the typed text formatter.
-     *
-     * @return the typed text formatter.
-     */
-    protected @NotNull TextFormatter<T> getTypedTextFormatter() {
-        return unsafeCast(getTextFormatter());
-    }
+  /**
+   * Get the typed text formatter.
+   *
+   * @return the typed text formatter.
+   */
+  protected @NotNull TextFormatter<T> getTypedTextFormatter() {
+    return unsafeCast(getTextFormatter());
+  }
 
-    /**
-     * Get the value property.
-     *
-     * @return the value property.
-     */
-    public @NotNull ReadOnlyObjectProperty<T> valueProperty() {
-        return getTypedTextFormatter().valueProperty();
-    }
+  /**
+   * Get the value property.
+   *
+   * @return the value property.
+   */
+  public @NotNull ReadOnlyObjectProperty<T> valueProperty() {
+    return getTypedTextFormatter().valueProperty();
+  }
 
-    /**
-     * Get a current value.
-     *
-     * @return the current value.
-     */
-    public @Nullable T getValue() {
-        return getTypedTextFormatter().getValue();
-    }
+  /**
+   * Get a current value.
+   *
+   * @return the current value.
+   */
+  public @Nullable T getValue() {
+    return getTypedTextFormatter().getValue();
+  }
 
-    /**
-     * Set a new value.
-     *
-     * @param value the new value.
-     */
-    public void setValue(@Nullable T value) {
-        getTypedTextFormatter().setValue(value);
-    }
+  /**
+   * Set a new value.
+   *
+   * @param value the new value.
+   */
+  public void setValue(@Nullable T value) {
+    getTypedTextFormatter().setValue(value);
+  }
 }

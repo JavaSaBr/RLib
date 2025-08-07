@@ -13,12 +13,12 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface TripleConsumer<F, S, T> {
 
-    /**
-     * Accept.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     */
-    void accept(@Nullable F first, @Nullable S second, @Nullable T third);
+  /**
+   * Accept.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   */
+  void accept(@Nullable F first, @Nullable S second, @Nullable T third);
 }

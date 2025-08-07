@@ -16,50 +16,54 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
 
-    /**
-     * The list of names of loaded classes.
-     */
-    @NotNull
-    private final Array<String> classNames;
+  /**
+   * The list of names of loaded classes.
+   */
+  @NotNull
+  private final Array<String> classNames;
 
-    /**
-     * The loaded of compiled classes.
-     */
-    @NotNull
-    private final CompileClassLoader loader;
+  /**
+   * The loaded of compiled classes.
+   */
+  @NotNull
+  private final CompileClassLoader loader;
 
-    public CompileJavaFileManager(@NotNull final StandardJavaFileManager fileManager,
-                                  @NotNull final CompileClassLoader loader) {
-        super(fileManager);
-        this.loader = loader;
-        this.classNames = ArrayFactory.newArray(String.class);
-    }
+  public CompileJavaFileManager(
+      @NotNull final StandardJavaFileManager fileManager,
+      @NotNull final CompileClassLoader loader) {
+    super(fileManager);
+    this.loader = loader;
+    this.classNames = ArrayFactory.newArray(String.class);
+  }
 
-    /**
-     * Clear the list of names of loaded classes.
-     */
-    public void clear() {
-        classNames.clear();
-    }
+  /**
+   * Clear the list of names of loaded classes.
+   */
+  public void clear() {
+    classNames.clear();
+  }
 
-    /**
-     * Get class names.
-     *
-     * @return the list of names of loaded classes.
-     */
-    public @NotNull String[] getClassNames() {
-        return classNames.toArray(new String[classNames.size()]);
-    }
+  /**
+   * Get class names.
+   *
+   * @return the list of names of loaded classes.
+   */
+  public @NotNull String[] getClassNames() {
+    return classNames.toArray(new String[classNames.size()]);
+  }
 
-    @Override
-    public JavaFileObject getJavaFileForOutput(@NotNull final Location location, @NotNull final String name,
-                                               @NotNull final Kind kind, @NotNull final FileObject sibling) {
+  @Override
+  public JavaFileObject getJavaFileForOutput(
+      @NotNull final Location location,
+      @NotNull final String name,
+      @NotNull final Kind kind,
+      @NotNull final FileObject sibling) {
 
-        final CompileByteCode byteCode = new CompileByteCode(name);
+    final CompileByteCode byteCode = new CompileByteCode(name);
 
-        loader.addByteCode(byteCode);
-        classNames.add(name);
+    loader.addByteCode(byteCode);
+    classNames.add(name);
 
-        return byteCode;
-    }
+    return byteCode;
+  }
 }

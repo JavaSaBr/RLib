@@ -6,5 +6,5 @@ package javasabr.rlib.common.function;
 @FunctionalInterface
 public interface ByteFunction<R> {
 
-    R apply(byte value);
+  R apply(byte value);
 }

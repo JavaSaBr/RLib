@@ -8,103 +8,103 @@ import javasabr.rlib.common.geom.bounding.Bounding;
 import javasabr.rlib.common.geom.bounding.BoundingType;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The base implementation of a bounding.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractBounding implements Bounding {
 
-    protected static final Logger LOGGER = LoggerManager.getLogger(Bounding.class);
+  protected static final Logger LOGGER = LoggerManager.getLogger(Bounding.class);
 
-    /**
-     * The center.
-     */
-    protected Vector3f center;
+  /**
+   * The center.
+   */
+  protected Vector3f center;
 
-    /**
-     * The offset.
-     */
-    protected Vector3f offset;
+  /**
+   * The offset.
+   */
+  protected Vector3f offset;
 
-    protected AbstractBounding(@NotNull Vector3f center, @NotNull Vector3f offset) {
-        this.center = center;
-        this.offset = offset;
-    }
+  protected AbstractBounding(Vector3f center, Vector3f offset) {
+    this.center = center;
+    this.offset = offset;
+  }
 
-    @Override
-    public boolean contains(float x, float y, float z) {
-        return false;
-    }
+  @Override
+  public boolean contains(float x, float y, float z) {
+    return false;
+  }
 
-    @Override
-    public boolean contains(@NotNull Vector3f point) {
-        return contains(point.getX(), point.getY(), point.getZ());
-    }
+  @Override
+  public boolean contains(Vector3f point) {
+    return contains(point.getX(), point.getY(), point.getZ());
+  }
 
-    @Override
-    public final float distanceTo(@NotNull Vector3f point) {
-        return center.distance(point);
-    }
+  @Override
+  public final float distanceTo(Vector3f point) {
+    return center.distance(point);
+  }
 
-    @Override
-    public @NotNull BoundingType getBoundingType() {
-        return BoundingType.EMPTY;
-    }
+  @Override
+  public BoundingType getBoundingType() {
+    return BoundingType.EMPTY;
+  }
 
-    @Override
-    public final@NotNull Vector3f getCenter() {
-        return center;
-    }
+  @Override
+  public final Vector3f getCenter() {
+    return center;
+  }
 
-    @Override
-    public void setCenter(@NotNull Vector3f center) {
-        this.center = center;
-    }
+  @Override
+  public void setCenter(Vector3f center) {
+    this.center = center;
+  }
 
-    @Override
-    public @NotNull Vector3f getOffset() {
-        return offset;
-    }
+  @Override
+  public Vector3f getOffset() {
+    return offset;
+  }
 
-    @Override
-    public @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer) {
-        return getCenter();
-    }
+  @Override
+  public Vector3f getResultCenter(Vector3fBuffer buffer) {
+    return getCenter();
+  }
 
-    @Override
-    public float getResultCenterX() {
-        return getCenter().getX();
-    }
+  @Override
+  public float getResultCenterX() {
+    return getCenter().getX();
+  }
 
-    @Override
-    public float getResultCenterY() {
-        return getCenter().getY();
-    }
+  @Override
+  public float getResultCenterY() {
+    return getCenter().getY();
+  }
 
-    @Override
-    public float getResultCenterZ() {
-        return getCenter().getZ();
-    }
+  @Override
+  public float getResultCenterZ() {
+    return getCenter().getZ();
+  }
 
-    @Override
-    public boolean intersects(@NotNull Bounding bounding, @NotNull Vector3fBuffer buffer) {
-        return false;
-    }
+  @Override
+  public boolean intersects(Bounding bounding, Vector3fBuffer buffer) {
+    return false;
+  }
 
-    @Override
-    public final boolean intersects(@NotNull Ray3f ray, @NotNull Vector3fBuffer buffer) {
-        return intersects(ray.getStart(), ray.getDirection(), buffer);
-    }
+  @Override
+  public final boolean intersects(Ray3f ray, Vector3fBuffer buffer) {
+    return intersects(ray.getStart(), ray.getDirection(), buffer);
+  }
 
-    @Override
-    public boolean intersects(@NotNull Vector3f start, @NotNull Vector3f direction, @NotNull Vector3fBuffer buffer) {
-        return false;
-    }
+  @Override
+  public boolean intersects(Vector3f start, Vector3f direction, Vector3fBuffer buffer) {
+    return false;
+  }
 
-    @Override
-    public void update(@NotNull Quaternion4f rotation, @NotNull Vector3fBuffer buffer) {
-    }
+  @Override
+  public void update(Quaternion4f rotation, Vector3fBuffer buffer) {}
 }

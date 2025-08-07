@@ -11,32 +11,32 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SortedLinkedList<E extends Comparable<E>> extends FastLinkedList<E> {
 
-    private static final long serialVersionUID = -8115760928469233254L;
+  private static final long serialVersionUID = -8115760928469233254L;
 
-    /**
-     * Instantiates a new Sorted linked list.
-     *
-     * @param type the type
-     */
-    public SortedLinkedList(final Class<?> type) {
-        super(type);
-    }
+  /**
+   * Instantiates a new Sorted linked list.
+   *
+   * @param type the type
+   */
+  public SortedLinkedList(final Class<?> type) {
+    super(type);
+  }
 
-    @Override
-    public boolean add(@NotNull final E element) {
-        Objects.requireNonNull(element);
+  @Override
+  public boolean add(@NotNull final E element) {
+    Objects.requireNonNull(element);
 
-        for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
+    for (Node<E> node = getFirstNode(); node != null; node = node.getNext()) {
 
-            final E item = node.getItem();
+      final E item = node.getItem();
 
-            if (element.compareTo(item) < 0) {
-                insertBefore(node, element);
-                return true;
-            }
-        }
-
-        linkLast(element);
+      if (element.compareTo(item) < 0) {
+        insertBefore(node, element);
         return true;
+      }
     }
+
+    linkLast(element);
+    return true;
+  }
 }

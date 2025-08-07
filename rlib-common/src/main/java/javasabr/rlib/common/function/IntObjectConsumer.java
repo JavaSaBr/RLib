@@ -11,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface IntObjectConsumer<T> {
 
-    /**
-     * Accept.
-     *
-     * @param first  the first
-     * @param second the second
-     */
-    void accept(int first, @Nullable T second);
+  /**
+   * Accept.
+   *
+   * @param first the first
+   * @param second the second
+   */
+  void accept(int first, @Nullable T second);
 }

@@ -4,6 +4,7 @@ import java.util.concurrent.Future;
 import javasabr.rlib.common.concurrent.task.CallableTask;
 import javasabr.rlib.common.concurrent.task.SimpleTask;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface to implement a task executor.
@@ -11,22 +12,22 @@ import org.jetbrains.annotations.NotNull;
  * @param <L> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public interface TaskExecutor<L> {
 
-    /**
-     * Execute a simple task.
-     *
-     * @param task the simple task.
-     */
-    void execute(@NotNull SimpleTask<L> task);
+  /**
+   * Execute a simple task.
+   *
+   * @param task the simple task.
+   */
+  void execute(SimpleTask<L> task);
 
-    /**
-     * Submit a callable task.
-     *
-     * @param <R>  the type parameter
-     * @param task the callable task.
-     * @return the reference to the task.
-     */
-    @NotNull
-    <R> Future<R> submit(@NotNull CallableTask<R, L> task);
+  /**
+   * Submit a callable task.
+   *
+   * @param <R> the type parameter
+   * @param task the callable task.
+   * @return the reference to the task.
+   */
+  <R> Future<R> submit(CallableTask<R, L> task);
 }

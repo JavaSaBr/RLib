@@ -1,7 +1,7 @@
 package javasabr.rlib.common.concurrent.task;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface to implement a callable tasks.
@@ -13,13 +13,13 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface CallableTask<R, L> {
 
-    /**
-     * Execute this task.
-     *
-     * @param local       the thread local container.
-     * @param currentTime the current time.
-     * @return the result.
-     */
-    @Nullable
-    R call(@NotNull L local, long currentTime);
+  /**
+   * Execute this task.
+   *
+   * @param local the thread local container.
+   * @param currentTime the current time.
+   * @return the result.
+   */
+  @Nullable
+  R call(@NonNull L local, long currentTime);
 }

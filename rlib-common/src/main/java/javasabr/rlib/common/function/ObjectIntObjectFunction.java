@@ -13,14 +13,13 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface ObjectIntObjectFunction<F, T, R> {
 
-    /**
-     * Apply r.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     * @return the r
-     */
-    @Nullable
-    R apply(@Nullable F first, int second, @Nullable T third);
+  /**
+   * Apply r.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   * @return the r
+   */
+  @Nullable R apply(@Nullable F first, int second, @Nullable T third);
 }

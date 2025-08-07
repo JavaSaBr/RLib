@@ -11,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface FunctionInt<T> {
 
-    /**
-     * Apply int.
-     *
-     * @param first the first
-     * @return the int
-     */
-    int apply(@Nullable T first);
+  /**
+   * Apply int.
+   *
+   * @param first the first
+   * @return the int
+   */
+  int apply(@Nullable T first);
 }

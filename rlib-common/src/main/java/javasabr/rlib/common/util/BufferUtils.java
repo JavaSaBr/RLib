@@ -10,90 +10,90 @@ import java.nio.file.StandardOpenOption;
 import java.util.EnumSet;
 import java.util.function.Consumer;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The utility class.
  *
  * @author JavaSaBr
  */
+@NullMarked
 @UtilityClass
 public class BufferUtils {
 
-    private static final EnumSet<StandardOpenOption> FILE_CHANNEL_OPTS = EnumSet.of(
-        StandardOpenOption.READ,
-        StandardOpenOption.WRITE,
-        StandardOpenOption.TRUNCATE_EXISTING,
-        StandardOpenOption.DELETE_ON_CLOSE
-    );
+  private static final EnumSet<StandardOpenOption> FILE_CHANNEL_OPTS = EnumSet.of(
+      StandardOpenOption.READ,
+      StandardOpenOption.WRITE,
+      StandardOpenOption.TRUNCATE_EXISTING,
+      StandardOpenOption.DELETE_ON_CLOSE);
 
-    /**
-     * Load a part of data from a source buffer to a target buffer which can be to get into the target buffer's size.
-     *
-     * @param target the target buffer.
-     * @param source the source buffer
-     * @return the target buffer.
-     */
-    public @NotNull ByteBuffer loadFrom(@NotNull ByteBuffer source, @NotNull ByteBuffer target) {
+  /**
+   * Load a part of data from a source buffer to a target buffer which can be to get into the target buffer's size.
+   *
+   * @param target the target buffer.
+   * @param source the source buffer
+   * @return the target buffer.
+   */
+  public ByteBuffer loadFrom(ByteBuffer source, ByteBuffer target) {
 
-        var prevLimit = source.limit();
-        try {
+    var prevLimit = source.limit();
+    try {
 
-            target.clear();
+      target.clear();
 
-            var skip = source.remaining() - target.remaining();
+      var skip = source.remaining() - target.remaining();
 
-            if (skip > 0) {
-                source.limit(prevLimit - skip);
-            }
+      if (skip > 0) {
+        source.limit(prevLimit - skip);
+      }
 
-            target.put(source);
-            target.flip();
+      target.put(source);
+      target.flip();
 
-        } finally {
-            source.limit(prevLimit);
-        }
-
-        return target;
+    } finally {
+      source.limit(prevLimit);
     }
 
-    /**
-     * Allocate a new read/write mapped byte buffer.
-     *
-     * @param size the byte buffer's size.
-     * @return the new mapped byte buffer.
-     */
-    public @NotNull MappedByteBuffer allocateRWMappedByteBuffer(int size) {
-        try {
+    return target;
+  }
 
-            var tempFile = Files.createTempFile("rlib_common_util_", "_buffer_utils.bin");
+  /**
+   * Allocate a new read/write mapped byte buffer.
+   *
+   * @param size the byte buffer's size.
+   * @return the new mapped byte buffer.
+   */
+  public MappedByteBuffer allocateRWMappedByteBuffer(int size) {
+    try {
 
-            try (var fileChannel = (FileChannel) Files.newByteChannel(tempFile, FILE_CHANNEL_OPTS)) {
-                return fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, size);
-            }
+      var tempFile = Files.createTempFile("rlib_common_util_", "_buffer_utils.bin");
 
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+      try (var fileChannel = (FileChannel) Files.newByteChannel(tempFile, FILE_CHANNEL_OPTS)) {
+        return fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, size);
+      }
+
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
+  }
 
-    public @NotNull ByteBuffer putToAndFlip(@NotNull ByteBuffer buffer, @NotNull ByteBuffer additional) {
-        return buffer
-            .limit(buffer.capacity())
-            .put(additional)
-            .flip();
-    }
+  public ByteBuffer putToAndFlip(ByteBuffer buffer, ByteBuffer additional) {
+    return buffer
+        .limit(buffer.capacity())
+        .put(additional)
+        .flip();
+  }
 
-    /**
-     * Create a new byte buffer with with writing some data inside the consumer and to flip in the result.
-     *
-     * @param size     the buffer's size.
-     * @param consumer the consumer to write data.
-     * @return the flipped buffer.
-     */
-    public @NotNull ByteBuffer prepareBuffer(int size, @NotNull Consumer<@NotNull ByteBuffer> consumer) {
-        var buffer = ByteBuffer.allocate(size);
-        consumer.accept(buffer);
-        return buffer.flip();
-    }
+  /**
+   * Create a new byte buffer with with writing some data inside the consumer and to flip in the result.
+   *
+   * @param size the buffer's size.
+   * @param consumer the consumer to write data.
+   * @return the flipped buffer.
+   */
+  public ByteBuffer prepareBuffer(int size, Consumer<ByteBuffer> consumer) {
+    var buffer = ByteBuffer.allocate(size);
+    consumer.accept(buffer);
+    return buffer.flip();
+  }
 }

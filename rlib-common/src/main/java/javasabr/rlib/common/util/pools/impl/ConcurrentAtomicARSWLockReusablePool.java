@@ -6,22 +6,24 @@ import javasabr.rlib.common.util.array.impl.ConcurrentAtomicARSWLockArray;
 import javasabr.rlib.common.util.pools.Reusable;
 import javasabr.rlib.common.util.pools.ReusablePool;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
- * The threadsafe implementation of the {@link ReusablePool} using like a storage the {@link
- * ConcurrentAtomicARSWLockArray}*.
+ * The threadsafe implementation of the {@link ReusablePool} using like a storage the
+ * {@link ConcurrentAtomicARSWLockArray}*.
  *
  * @param <E> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public class ConcurrentAtomicARSWLockReusablePool<E extends Reusable> extends ConcurrentReusablePool<E> {
 
-    public ConcurrentAtomicARSWLockReusablePool(@NotNull Class<? super E> type) {
-        super(type);
-    }
+  public ConcurrentAtomicARSWLockReusablePool(Class<? super E> type) {
+    super(type);
+  }
 
-    @Override
-    protected @NotNull ConcurrentArray<E> createPool(@NotNull Class<? super E> type) {
-        return ArrayFactory.newConcurrentAtomicARSWLockArray(type);
-    }
+  @Override
+  protected ConcurrentArray<E> createPool(Class<? super E> type) {
+    return ArrayFactory.newConcurrentAtomicARSWLockArray(type);
+  }
 }

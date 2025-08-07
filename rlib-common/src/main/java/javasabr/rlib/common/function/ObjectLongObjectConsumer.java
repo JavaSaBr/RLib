@@ -12,12 +12,12 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface ObjectLongObjectConsumer<F, T> {
 
-    /**
-     * Accept.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     */
-    void accept(@Nullable F first, long second, @Nullable T third);
+  /**
+   * Accept.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   */
+  void accept(@Nullable F first, long second, @Nullable T third);
 }

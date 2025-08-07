@@ -8,6 +8,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface NotNullSafeConsumer<T> extends SafeConsumer<T> {
 
-    @Override
-    void accept(@NotNull T argument) throws Exception;
+  @Override
+  void accept(@NotNull T argument) throws Exception;
 }

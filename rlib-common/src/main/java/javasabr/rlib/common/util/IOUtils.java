@@ -12,140 +12,137 @@ import java.io.UncheckedIOException;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import javasabr.rlib.common.function.SafeSupplier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The class with utility methods.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public final class IOUtils {
 
-    private static final ThreadLocal<char[]> LOCAL_CHAR_BUFFER = withInitial(() -> new char[1024]);
+  private static final ThreadLocal<char[]> LOCAL_CHAR_BUFFER = withInitial(() -> new char[1024]);
 
-    /**
-     * Close a closeable object.
-     *
-     * @param closeable the closeable object.
-     */
-    public static void close(@Nullable Closeable closeable) {
+  /**
+   * Close a closeable object.
+   *
+   * @param closeable the closeable object.
+   */
+  public static void close(@Nullable Closeable closeable) {
 
-        if (closeable == null) {
-            return;
-        }
-
-        try {
-            closeable.close();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    if (closeable == null) {
+      return;
     }
 
-    /**
-     * Convert the input stream to a string using UTF-8 encoding.
-     *
-     * @param in the input stream.
-     * @return the result string.
-     * @throws UncheckedIOException if input stream thrown an io exception.
-     */
-    public static @NotNull String toString(@NotNull InputStream in) {
+    try {
+      closeable.close();
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
 
-        var result = new StringBuilder();
+  /**
+   * Convert the input stream to a string using UTF-8 encoding.
+   *
+   * @param in the input stream.
+   * @return the result string.
+   * @throws UncheckedIOException if input stream thrown an io exception.
+   */
+  public static String toString(InputStream in) {
 
-        try (var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-            toString(result, reader);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    var result = new StringBuilder();
 
-        return result.toString();
+    try (var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+      toString(result, reader);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
 
-    /**
-     * Convert the input stream to a string using UTF-8 encoding.
-     *
-     * @param inFactory the input stream.
-     * @return the result string.
-     * @throws UncheckedIOException if input stream thrown an io exception.
-     * @throws RuntimeException     if happened something wrong with the supplier.
-     */
-    public static @NotNull String toString(@NotNull SafeSupplier<InputStream> inFactory) {
+    return result.toString();
+  }
 
-        var result = new StringBuilder();
+  /**
+   * Convert the input stream to a string using UTF-8 encoding.
+   *
+   * @param inFactory the input stream.
+   * @return the result string.
+   * @throws UncheckedIOException if input stream thrown an io exception.
+   * @throws RuntimeException if happened something wrong with the supplier.
+   */
+  public static String toString(SafeSupplier<InputStream> inFactory) {
 
-        try (var reader = new InputStreamReader(inFactory.get(), StandardCharsets.UTF_8)) {
-            toString(result, reader);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    var result = new StringBuilder();
 
-        return result.toString();
+    try (var reader = new InputStreamReader(inFactory.get(), StandardCharsets.UTF_8)) {
+      toString(result, reader);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
 
-    private static void toString(@NotNull StringBuilder result, @NotNull InputStreamReader reader) throws IOException {
-        for (var buffer = CharBuffer.allocate(100); reader.read(buffer) != -1; ) {
-            buffer.flip();
-            result.append(buffer.array(), 0, buffer.limit());
-        }
+    return result.toString();
+  }
+
+  private static void toString(StringBuilder result, InputStreamReader reader) throws IOException {
+    for (var buffer = CharBuffer.allocate(100); reader.read(buffer) != -1; ) {
+      buffer.flip();
+      result.append(buffer.array(), 0, buffer.limit());
+    }
+  }
+
+  /**
+   * Copy data from a source stream to a destination stream.
+   *
+   * @param in the source stream.
+   * @param out the destination stream.
+   * @param buffer the buffer.
+   * @param needClose true if need to close streams.
+   * @throws IOException the io exception
+   */
+  public static void copy(InputStream in, OutputStream out, byte[] buffer, boolean needClose)
+      throws IOException {
+
+    for (int i = in.read(buffer); i != -1; i = in.read(buffer)) {
+      out.write(buffer, 0, i);
     }
 
-    /**
-     * Copy data from a source stream to a destination stream.
-     *
-     * @param in        the source stream.
-     * @param out       the destination stream.
-     * @param buffer    the buffer.
-     * @param needClose true if need to close streams.
-     * @throws IOException the io exception
-     */
-    public static void copy(
-        @NotNull InputStream in,
-        @NotNull OutputStream out,
-        @NotNull byte[] buffer,
-        boolean needClose
-    ) throws IOException {
+    if (needClose) {
+      close(in);
+      close(out);
+    }
+  }
 
-        for (int i = in.read(buffer); i != -1; i = in.read(buffer)) {
-            out.write(buffer, 0, i);
-        }
+  /**
+   * Read the reader to the result string.
+   *
+   * @param reader the reader.
+   * @return the result string.
+   * @throws UncheckedIOException if reader thrown an io exception.
+   */
+  public static String toStringUsingTLB(Reader reader) {
+    return toString(reader, LOCAL_CHAR_BUFFER.get());
+  }
 
-        if (needClose) {
-            close(in);
-            close(out);
-        }
+  private static String toString(Reader reader, char[] buffer) {
+
+    var builder = new StringBuilder();
+    try {
+
+      for (int read = reader.read(buffer); read != -1; read = reader.read(buffer)) {
+        builder.append(buffer, 0, read);
+      }
+
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
 
-    /**
-     * Read the reader to the result string.
-     *
-     * @param reader the reader.
-     * @return the result string.
-     * @throws UncheckedIOException if reader thrown an io exception.
-     */
-    public static @NotNull String toStringUsingTLB(@NotNull Reader reader) {
-        return toString(reader, LOCAL_CHAR_BUFFER.get());
-    }
+    return builder.toString();
+  }
 
-    private static @NotNull String toString(@NotNull Reader reader, @NotNull char[] buffer) {
-
-        var builder = new StringBuilder();
-        try {
-
-            for (int read = reader.read(buffer); read != -1; read = reader.read(buffer)) {
-                builder.append(buffer, 0, read);
-            }
-
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-
-        return builder.toString();
-    }
-
-    private IOUtils() {
-        throw new RuntimeException();
-    }
+  private IOUtils() {
+    throw new RuntimeException();
+  }
 }

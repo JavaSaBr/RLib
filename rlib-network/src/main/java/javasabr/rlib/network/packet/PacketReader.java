@@ -5,13 +5,13 @@ package javasabr.rlib.network.packet;
  */
 public interface PacketReader {
 
-    /**
-     * Activate a process of receiving packets.
-     */
-    void startRead();
+  /**
+   * Activate a process of receiving packets.
+   */
+  void startRead();
 
-    /**
-     * Close all used resources.
-     */
-    void close();
+  /**
+   * Close all used resources.
+   */
+  void close();
 }

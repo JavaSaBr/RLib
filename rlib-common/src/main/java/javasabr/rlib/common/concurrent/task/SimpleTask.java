@@ -10,17 +10,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface SimpleTask<L> extends CallableTask<Void, L> {
 
-    @Override
-    default Void call(@NotNull final L local, final long currentTime) {
-        execute(local, currentTime);
-        return null;
-    }
+  @Override
+  default Void call(@NotNull final L local, final long currentTime) {
+    execute(local, currentTime);
+    return null;
+  }
 
-    /**
-     * Execute this task.
-     *
-     * @param local       the thread local container.
-     * @param currentTime the current time.
-     */
-    void execute(@NotNull L local, long currentTime);
+  /**
+   * Execute this task.
+   *
+   * @param local the thread local container.
+   * @param currentTime the current time.
+   */
+  void execute(@NotNull L local, long currentTime);
 }

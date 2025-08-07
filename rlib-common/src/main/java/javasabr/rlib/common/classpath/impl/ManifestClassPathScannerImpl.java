@@ -7,96 +7,96 @@ import javasabr.rlib.common.classpath.ClassPathScanner;
 import javasabr.rlib.common.util.Utils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayFactory;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The implementation of the {@link ClassPathScanner} with parsing manifest file.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
 
-    /**
-     * The roo class.
-     */
-    private final @NotNull Class<?> rootClass;
+  /**
+   * The roo class.
+   */
+  private final Class<?> rootClass;
 
-    /**
-     * The classpath key.
-     */
-    private final @NotNull String classPathKey;
+  /**
+   * The classpath key.
+   */
+  private final String classPathKey;
 
-    public ManifestClassPathScannerImpl(
-        @NotNull ClassLoader classLoader,
-        @NotNull Class<?> rootClass,
-        @NotNull String classPathKey
-    ) {
-        super(classLoader);
-        this.rootClass = rootClass;
-        this.classPathKey = classPathKey;
-    }
+  public ManifestClassPathScannerImpl(
+      ClassLoader classLoader,
+      Class<?> rootClass,
+      String classPathKey) {
+    super(classLoader);
+    this.rootClass = rootClass;
+    this.classPathKey = classPathKey;
+  }
 
-    /**
-     * Get manifest class path.
-     *
-     * @return the class paths.
-     */
-    protected @NotNull String[] getManifestClassPath() {
+  /**
+   * Get manifest class path.
+   *
+   * @return the class paths.
+   */
+  protected String[] getManifestClassPath() {
 
-        var root = Utils.getRootFolderFromClass(rootClass);
-        var result = Array.ofType(String.class);
+    var root = Utils.getRootFolderFromClass(rootClass);
+    var result = Array.ofType(String.class);
 
-        var currentThread = Thread.currentThread();
-        var loader = currentThread.getContextClassLoader();
-        var urls = Utils.uncheckedGet(loader, arg -> arg.getResources(JarFile.MANIFEST_NAME));
+    var currentThread = Thread.currentThread();
+    var loader = currentThread.getContextClassLoader();
+    var urls = Utils.uncheckedGet(loader, arg -> arg.getResources(JarFile.MANIFEST_NAME));
 
-        while (urls.hasMoreElements()) {
+    while (urls.hasMoreElements()) {
 
-            try {
+      try {
 
-                var url = urls.nextElement();
-                var is = url.openStream();
+        var url = urls.nextElement();
+        var is = url.openStream();
 
-                if (is == null) {
-                    LOGGER.warning(url, arg -> "not found input stream for the url " + arg);
-                    continue;
-                }
-
-                var manifest = new Manifest(is);
-                var attributes = manifest.getMainAttributes();
-
-                var value = attributes.getValue(classPathKey);
-
-                if (value == null) {
-                    continue;
-                }
-
-                var classpath = value.split(" ");
-
-                for (var path : classpath) {
-
-                    var file = root.resolve(path);
-
-                    if (Files.exists(file)) {
-                        result.add(file.toString());
-                    }
-                }
-
-            } catch (Exception exc) {
-                LOGGER.warning(exc);
-            }
+        if (is == null) {
+          LOGGER.warning(url, arg -> "not found input stream for the url " + arg);
+          continue;
         }
 
-        return result.toArray(String.class);
+        var manifest = new Manifest(is);
+        var attributes = manifest.getMainAttributes();
+
+        var value = attributes.getValue(classPathKey);
+
+        if (value == null) {
+          continue;
+        }
+
+        var classpath = value.split(" ");
+
+        for (var path : classpath) {
+
+          var file = root.resolve(path);
+
+          if (Files.exists(file)) {
+            result.add(file.toString());
+          }
+        }
+
+      } catch (Exception exc) {
+        LOGGER.warning(exc);
+      }
     }
 
-    @Override
-    protected @NotNull String[] getPathsToScan() {
+    return result.toArray(String.class);
+  }
 
-        var result = ArrayFactory.newArraySet(String.class);
-        result.addAll(super.getPathsToScan());
-        result.addAll(getManifestClassPath());
+  @Override
+  protected String[] getPathsToScan() {
 
-        return result.toArray(String.class);
-    }
+    var result = ArrayFactory.newArraySet(String.class);
+    result.addAll(super.getPathsToScan());
+    result.addAll(getManifestClassPath());
+
+    return result.toArray(String.class);
+  }
 }

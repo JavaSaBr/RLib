@@ -16,16 +16,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractNetwork<C extends Connection<?, ?>> implements Network<C> {
 
-    protected static final Logger LOGGER = LoggerManager.getLogger(AbstractNetwork.class);
+  protected static final Logger LOGGER = LoggerManager.getLogger(AbstractNetwork.class);
 
-    protected final @NotNull NetworkConfig config;
-    protected final @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection;
+  protected final @NotNull NetworkConfig config;
+  protected final @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection;
 
-    protected AbstractNetwork(
-        @NotNull NetworkConfig config,
-        @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection
-    ) {
-        this.config = config;
-        this.channelToConnection = channelToConnection;
-    }
+  protected AbstractNetwork(
+      @NotNull NetworkConfig config,
+      @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
+    this.config = config;
+    this.channelToConnection = channelToConnection;
+  }
 }

@@ -15,24 +15,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CompileByteCode extends SimpleJavaFileObject implements ByteCode {
 
-    /**
-     * The stream with byte code.
-     */
-    @NotNull
-    private final ByteArrayOutputStream outputStream;
+  /**
+   * The stream with byte code.
+   */
+  @NotNull
+  private final ByteArrayOutputStream outputStream;
 
-    public CompileByteCode(@NotNull final String name) {
-        super(URI.create("byte:///" + name.replace('/', '.') + Compiler.CLASS_EXTENSION), Kind.CLASS);
-        this.outputStream = new ByteArrayOutputStream();
-    }
+  public CompileByteCode(@NotNull final String name) {
+    super(URI.create("byte:///" + name.replace('/', '.') + Compiler.CLASS_EXTENSION), Kind.CLASS);
+    this.outputStream = new ByteArrayOutputStream();
+  }
 
-    @Override
-    public @NotNull byte[] getByteCode() {
-        return outputStream.toByteArray();
-    }
+  @Override
+  public @NotNull byte[] getByteCode() {
+    return outputStream.toByteArray();
+  }
 
-    @Override
-    public @NotNull OutputStream openOutputStream() {
-        return outputStream;
-    }
+  @Override
+  public @NotNull OutputStream openOutputStream() {
+    return outputStream;
+  }
 }

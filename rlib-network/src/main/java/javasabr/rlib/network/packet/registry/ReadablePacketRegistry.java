@@ -16,117 +16,116 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ReadablePacketRegistry<R extends IdBasedReadablePacket<R>> {
 
-    /**
-     * Create a new empty readable packet registry.
-     *
-     * @return the new packet registry.
-     */
-    static @NotNull ReadablePacketRegistry<?> empty() {
-        return new IdBasedReadablePacketRegistry<>(IdBasedReadablePacket.class);
-    }
+  /**
+   * Create a new empty readable packet registry.
+   *
+   * @return the new packet registry.
+   */
+  static @NotNull ReadablePacketRegistry<?> empty() {
+    return new IdBasedReadablePacketRegistry<>(IdBasedReadablePacket.class);
+  }
 
-    /**
-     * Create a new empty readable packet registry.
-     *
-     * @param type the packet's type.
-     * @param <T>  the packet's type.
-     * @return the new packet registry.
-     */
-    static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> empty(@NotNull Class<T> type) {
-        return new IdBasedReadablePacketRegistry<>(type);
-    }
+  /**
+   * Create a new empty readable packet registry.
+   *
+   * @param type the packet's type.
+   * @param <T> the packet's type.
+   * @return the new packet registry.
+   */
+  static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> empty(@NotNull Class<T> type) {
+    return new IdBasedReadablePacketRegistry<>(type);
+  }
 
-    /**
-     * Create a new default readable packet registry.
-     *
-     * @return the new packet registry.
-     */
-    static @NotNull ReadablePacketRegistry<?> newDefault() {
+  /**
+   * Create a new default readable packet registry.
+   *
+   * @return the new packet registry.
+   */
+  static @NotNull ReadablePacketRegistry<?> newDefault() {
 
-        var scanner = ClassPathScannerFactory.newDefaultScanner();
-        scanner.setUseSystemClasspath(true);
-        scanner.scan();
+    var scanner = ClassPathScannerFactory.newDefaultScanner();
+    scanner.setUseSystemClasspath(true);
+    scanner.scan();
 
-        return of(scanner);
-    }
+    return of(scanner);
+  }
 
-    /**
-     * Create a new default readable packet registry by the result of scanning classpath of the main class.
-     *
-     * @param mainClass the main class of application.
-     * @return the new packet registry.
-     */
-    static @NotNull ReadablePacketRegistry<?> newDefault(@NotNull Class<?> mainClass) {
+  /**
+   * Create a new default readable packet registry by the result of scanning classpath of the main class.
+   *
+   * @param mainClass the main class of application.
+   * @return the new packet registry.
+   */
+  static @NotNull ReadablePacketRegistry<?> newDefault(@NotNull Class<?> mainClass) {
 
-        var scanner = ClassPathScannerFactory.newManifestScanner(mainClass);
-        scanner.setUseSystemClasspath(false);
-        scanner.scan();
+    var scanner = ClassPathScannerFactory.newManifestScanner(mainClass);
+    scanner.setUseSystemClasspath(false);
+    scanner.scan();
 
-        return of(scanner);
-    }
+    return of(scanner);
+  }
 
-    /**
-     * Creates a new default readable packet registry by the classpath scanner.
-     *
-     * @param scanner the classpath scanner.
-     * @return the new packet registry.
-     */
-    static @NotNull ReadablePacketRegistry<?> of(@NotNull ClassPathScanner scanner) {
+  /**
+   * Creates a new default readable packet registry by the classpath scanner.
+   *
+   * @param scanner the classpath scanner.
+   * @return the new packet registry.
+   */
+  static @NotNull ReadablePacketRegistry<?> of(@NotNull ClassPathScanner scanner) {
 
-        var result = scanner.findImplements(IdBasedReadablePacket.class)
-            .stream()
-            .filter(type -> type.getAnnotation(PacketDescription.class) != null)
-            .collect(ArrayCollectors.<Class<? extends IdBasedReadablePacket>>toArray(Class.class));
+    var result = scanner
+        .findImplements(IdBasedReadablePacket.class)
+        .stream()
+        .filter(type -> type.getAnnotation(PacketDescription.class) != null)
+        .collect(ArrayCollectors.<Class<? extends IdBasedReadablePacket>>toArray(Class.class));
 
-        var registry = new IdBasedReadablePacketRegistry<>(IdBasedReadablePacket.class);
-        registry.register(result);
+    var registry = new IdBasedReadablePacketRegistry<>(IdBasedReadablePacket.class);
+    registry.register(result);
 
-        return registry;
-    }
+    return registry;
+  }
 
-    /**
-     * Create a new readable packet registry by array of classes.
-     *
-     * @param type    the base packet's type.
-     * @param classes the classes array.
-     * @param <T>     the packet's type.
-     * @return the new packet registry.
-     */
-    @SafeVarargs
-    static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> of(
-        @NotNull Class<T> type,
-        @NotNull Class<? extends T>... classes
-    ) {
-        var registry = new IdBasedReadablePacketRegistry<>(type);
-        registry.register(classes, classes.length);
-        return registry;
-    }
+  /**
+   * Create a new readable packet registry by array of classes.
+   *
+   * @param type the base packet's type.
+   * @param classes the classes array.
+   * @param <T> the packet's type.
+   * @return the new packet registry.
+   */
+  @SafeVarargs
+  static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> of(
+      @NotNull Class<T> type,
+      @NotNull Class<? extends T>... classes) {
+    var registry = new IdBasedReadablePacketRegistry<>(type);
+    registry.register(classes, classes.length);
+    return registry;
+  }
 
-    /**
-     * Create a new readable packet registry by array of classes.
-     *
-     * @param type    the base packet's type.
-     * @param classes the classes array.
-     * @param <T>     the packet's type.
-     * @return the new packet registry.
-     */
-    static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> of(
-        @NotNull Class<T> type,
-        @NotNull Array<Class<? extends T>> classes
-    ) {
+  /**
+   * Create a new readable packet registry by array of classes.
+   *
+   * @param type the base packet's type.
+   * @param classes the classes array.
+   * @param <T> the packet's type.
+   * @return the new packet registry.
+   */
+  static <T extends IdBasedReadablePacket<T>> @NotNull ReadablePacketRegistry<T> of(
+      @NotNull Class<T> type,
+      @NotNull Array<Class<? extends T>> classes) {
 
-        var registry = new IdBasedReadablePacketRegistry<>(type);
-        registry.register(classes);
+    var registry = new IdBasedReadablePacketRegistry<>(type);
+    registry.register(classes);
 
-        return registry;
-    }
+    return registry;
+  }
 
-    /**
-     * Find a packet by the id.
-     *
-     * @param id the packet id.
-     * @return the packet.
-     * @throws IllegalArgumentException if can't find a packet by the id.
-     */
-    @NotNull R findById(int id);
+  /**
+   * Find a packet by the id.
+   *
+   * @param id the packet id.
+   * @return the packet.
+   * @throws IllegalArgumentException if can't find a packet by the id.
+   */
+  @NotNull R findById(int id);
 }

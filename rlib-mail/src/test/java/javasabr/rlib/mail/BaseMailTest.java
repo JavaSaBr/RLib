@@ -6,16 +6,16 @@ import org.junit.jupiter.api.BeforeAll;
 
 public abstract class BaseMailTest {
 
-    protected static final FakeSMTPTestContainer FAKE_SMTP_TEST_CONTAINER = new FakeSMTPTestContainer();
+  protected static final FakeSMTPTestContainer FAKE_SMTP_TEST_CONTAINER = new FakeSMTPTestContainer();
 
-    @BeforeAll
-    static void runContainers() {
-        FAKE_SMTP_TEST_CONTAINER.start();
-        FAKE_SMTP_TEST_CONTAINER.waitForReadyState();
-    }
+  @BeforeAll
+  static void runContainers() {
+    FAKE_SMTP_TEST_CONTAINER.start();
+    FAKE_SMTP_TEST_CONTAINER.waitForReadyState();
+  }
 
-    @AfterAll
-    static void stopContainers() {
-        FAKE_SMTP_TEST_CONTAINER.stop();
-    }
+  @AfterAll
+  static void stopContainers() {
+    FAKE_SMTP_TEST_CONTAINER.stop();
+  }
 }

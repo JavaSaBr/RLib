@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface PacketDescription {
 
-    int id();
+  int id();
 }

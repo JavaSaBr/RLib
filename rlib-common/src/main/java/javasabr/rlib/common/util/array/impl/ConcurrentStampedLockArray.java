@@ -14,46 +14,46 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
 
-    private static final long serialVersionUID = -6291504312637658721L;
+  private static final long serialVersionUID = -6291504312637658721L;
 
-    private final @NotNull StampedLock lock;
+  private final @NotNull StampedLock lock;
 
-    public ConcurrentStampedLockArray(@NotNull Class<? super E> type) {
-        this(type, 10);
-    }
+  public ConcurrentStampedLockArray(@NotNull Class<? super E> type) {
+    this(type, 10);
+  }
 
-    public ConcurrentStampedLockArray(@NotNull Class<? super E> type, int size) {
-        super(type, size);
-        this.lock = LockFactory.newStampedLock();
-    }
+  public ConcurrentStampedLockArray(@NotNull Class<? super E> type, int size) {
+    super(type, size);
+    this.lock = LockFactory.newStampedLock();
+  }
 
-    @Override
-    public final long readLock() {
-        return lock.readLock();
-    }
+  @Override
+  public final long readLock() {
+    return lock.readLock();
+  }
 
-    @Override
-    public final long tryOptimisticRead() {
-        return lock.tryOptimisticRead();
-    }
+  @Override
+  public final long tryOptimisticRead() {
+    return lock.tryOptimisticRead();
+  }
 
-    @Override
-    public final boolean validate(long stamp) {
-        return lock.validate(stamp);
-    }
+  @Override
+  public final boolean validate(long stamp) {
+    return lock.validate(stamp);
+  }
 
-    @Override
-    public final void readUnlock(long stamp) {
-        lock.unlockRead(stamp);
-    }
+  @Override
+  public final void readUnlock(long stamp) {
+    lock.unlockRead(stamp);
+  }
 
-    @Override
-    public final long writeLock() {
-        return lock.writeLock();
-    }
+  @Override
+  public final long writeLock() {
+    return lock.writeLock();
+  }
 
-    @Override
-    public final void writeUnlock(long stamp) {
-        lock.unlockWrite(stamp);
-    }
+  @Override
+  public final void writeUnlock(long stamp) {
+    lock.unlockWrite(stamp);
+  }
 }

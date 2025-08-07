@@ -13,202 +13,201 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface IntegerArray extends Iterable<Integer> {
 
-    @NotNull IntegerArray EMPTY = new ReadOnlyIntegerArray(ArrayUtils.EMPTY_INT_ARRAY);
+  @NotNull IntegerArray EMPTY = new ReadOnlyIntegerArray(ArrayUtils.EMPTY_INT_ARRAY);
 
-    static @NotNull IntegerArray of(int value) {
-        return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(value));
+  static @NotNull IntegerArray of(int value) {
+    return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(value));
+  }
+
+  static @NotNull IntegerArray of(int v1, int v2) {
+    return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(v1, v2));
+  }
+
+  static @NotNull IntegerArray of(int v1, int v2, int v3) {
+    return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(v1, v2, v3));
+  }
+
+  static @NotNull IntegerArray of(int... values) {
+    return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(values));
+  }
+
+  /**
+   * Return the wrapped int array. Don't change this array, please.
+   *
+   * @return the wrapped int array.
+   */
+  int @NotNull [] array();
+
+  default boolean contains(int element) {
+
+    var array = array();
+
+    for (int i = 0, length = size(); i < length; i++) {
+      if (array[i] == element) {
+        return true;
+      }
     }
 
-    static @NotNull IntegerArray of(int v1, int v2) {
-        return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(v1, v2));
-    }
+    return false;
+  }
 
-    static @NotNull IntegerArray of(int v1, int v2, int v3) {
-        return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(v1, v2, v3));
-    }
+  default boolean containsAll(int @NotNull [] array) {
 
-    static @NotNull IntegerArray of(int... values) {
-        return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(values));
-    }
-
-    /**
-     * Return the wrapped int array.
-     * Don't change this array, please.
-     *
-     * @return the wrapped int array.
-     */
-    int @NotNull [] array();
-
-    default boolean contains(int element) {
-
-        var array = array();
-
-        for (int i = 0, length = size(); i < length; i++) {
-            if (array[i] == element) {
-                return true;
-            }
-        }
-
+    for (int val : array) {
+      if (!contains(val)) {
         return false;
+      }
     }
 
-    default boolean containsAll(int @NotNull [] array) {
+    return true;
+  }
 
-        for (int val : array) {
-            if (!contains(val)) {
-                return false;
-            }
-        }
+  default boolean containsAll(@NotNull IntegerArray array) {
 
-        return true;
+    var elements = array.array();
+
+    for (int i = 0, length = array.size(); i < length; i++) {
+      if (!contains(elements[i])) {
+        return false;
+      }
     }
 
-    default boolean containsAll(@NotNull IntegerArray array) {
+    return true;
+  }
 
-        var elements = array.array();
+  /**
+   * Get the first number.
+   *
+   * @return the first number.
+   * @throws IllegalStateException if this array is empty.
+   */
+  int first();
 
-        for (int i = 0, length = array.size(); i < length; i++) {
-            if (!contains(elements[i])) {
-                return false;
-            }
-        }
+  /**
+   * Get a number by the index.
+   *
+   * @param index the index.
+   * @return the number.
+   */
+  int get(int index);
 
-        return true;
+  /**
+   * Find index of the first equal number in this array.
+   *
+   * @param element the checked number.
+   * @return the found index or -1.
+   */
+  default int indexOf(int element) {
+
+    var array = array();
+
+    for (int i = 0, length = size(); i < length; i++) {
+      if (element == array[i]) {
+        return i;
+      }
     }
 
-    /**
-     * Get the first number.
-     *
-     * @return the first number.
-     * @throws IllegalStateException if this array is empty.
-     */
-    int first();
+    return -1;
+  }
 
-    /**
-     * Get a number by the index.
-     *
-     * @param index the index.
-     * @return the number.
-     */
-    int get(int index);
+  /**
+   * Return true if this array is empty.
+   *
+   * @return true if this array is empty.
+   */
+  default boolean isEmpty() {
+    return size() < 1;
+  }
 
-    /**
-     * Find index of the first equal number in this array.
-     *
-     * @param element the checked number.
-     * @return the found index or -1.
-     */
-    default int indexOf(int element) {
+  @Override
+  @NotNull ArrayIterator<Integer> iterator();
 
-        var array = array();
+  @Override
+  default void forEach(@NotNull Consumer<? super Integer> consumer) {
 
-        for (int i = 0, length = size(); i < length; i++) {
-            if (element == array[i]) {
-                return i;
-            }
-        }
+    var array = array();
 
-        return -1;
+    for (int i = 0, length = size(); i < length; i++) {
+      consumer.accept(array[i]);
+    }
+  }
+
+  default void forEachInt(@NotNull IntConsumer consumer) {
+
+    var array = array();
+
+    for (int i = 0, length = size(); i < length; i++) {
+      consumer.accept(array[i]);
+    }
+  }
+
+  /**
+   * Get the last number in this array.
+   *
+   * @return the last number.
+   * @throws IllegalStateException if this array is empty.
+   */
+  int last();
+
+  /**
+   * Find index of the last equal number in this array.
+   *
+   * @param element the checked number.
+   * @return the found index or -1.
+   */
+  default int lastIndexOf(int element) {
+
+    var array = array();
+    var last = -1;
+
+    for (int i = 0, length = size(); i < length; i++) {
+      if (element == array[i]) {
+        last = i;
+      }
     }
 
-    /**
-     * Return true if this array is empty.
-     *
-     * @return true if this array is empty.
-     */
-    default boolean isEmpty() {
-        return size() < 1;
+    return last;
+  }
+
+  /**
+   * Get the current count of numbers in this array.
+   *
+   * @return the current count of numbers in this array.
+   */
+  int size();
+
+  /**
+   * Create new array from this array.
+   *
+   * @return the array with data from this array.
+   */
+  default int @NotNull [] toArray() {
+    return ArrayUtils.copyOfRange(array(), 0, size());
+  }
+
+  /**
+   * Copy or create new array from this array.
+   *
+   * @param newArray the new array.
+   * @return the array with data from this array.
+   */
+  default int @NotNull [] toArray(int @NotNull [] newArray) {
+
+    var array = array();
+
+    if (newArray.length >= size()) {
+
+      for (int i = 0, j = 0, length = array.length, newLength = newArray.length; i < length && j < newLength; i++) {
+        newArray[j++] = array[i];
+      }
+
+      return newArray;
     }
 
-    @Override
-    @NotNull ArrayIterator<Integer> iterator();
+    return ArrayUtils.copyOfRange(array(), 0, size());
+  }
 
-    @Override
-    default void forEach(@NotNull Consumer<? super Integer> consumer) {
-
-        var array = array();
-
-        for (int i = 0, length = size(); i < length; i++) {
-            consumer.accept(array[i]);
-        }
-    }
-
-    default void forEachInt(@NotNull IntConsumer consumer) {
-
-        var array = array();
-
-        for (int i = 0, length = size(); i < length; i++) {
-            consumer.accept(array[i]);
-        }
-    }
-
-    /**
-     * Get the last number in this array.
-     *
-     * @return the last number.
-     * @throws IllegalStateException if this array is empty.
-     */
-    int last();
-
-    /**
-     * Find index of the last equal number in this array.
-     *
-     * @param element the checked number.
-     * @return the found index or -1.
-     */
-    default int lastIndexOf(int element) {
-
-        var array = array();
-        var last = -1;
-
-        for (int i = 0, length = size(); i < length; i++) {
-            if (element == array[i]) {
-                last = i;
-            }
-        }
-
-        return last;
-    }
-
-    /**
-     * Get the current count of numbers in this array.
-     *
-     * @return the current count of numbers in this array.
-     */
-    int size();
-
-    /**
-     * Create new array from this array.
-     *
-     * @return the array with data from this array.
-     */
-    default int @NotNull [] toArray() {
-        return ArrayUtils.copyOfRange(array(), 0, size());
-    }
-
-    /**
-     * Copy or create new array from this array.
-     *
-     * @param newArray the new array.
-     * @return the array with data from this array.
-     */
-    default int @NotNull [] toArray(int @NotNull [] newArray) {
-
-        var array = array();
-
-        if (newArray.length >= size()) {
-
-            for (int i = 0, j = 0, length = array.length, newLength = newArray.length; i < length && j < newLength; i++) {
-                newArray[j++] = array[i];
-            }
-
-            return newArray;
-        }
-
-        return ArrayUtils.copyOfRange(array(), 0, size());
-    }
-
-    default @NotNull IntStream stream() {
-        return Arrays.stream(array(), 0, size());
-    }
+  default @NotNull IntStream stream() {
+    return Arrays.stream(array(), 0, size());
+  }
 }

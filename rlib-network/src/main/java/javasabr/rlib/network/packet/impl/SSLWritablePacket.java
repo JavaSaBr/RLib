@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SSLWritablePacket extends AbstractWritablePacket {
 
-    private static final SSLWritablePacket INSTANCE = new SSLWritablePacket();
+  private static final SSLWritablePacket INSTANCE = new SSLWritablePacket();
 
-    public static SSLWritablePacket getInstance() {
-        return INSTANCE;
-    }
+  public static SSLWritablePacket getInstance() {
+    return INSTANCE;
+  }
 
-    @Override
-    public boolean write(@NotNull ByteBuffer buffer) {
-        return true;
-    }
+  @Override
+  public boolean write(@NotNull ByteBuffer buffer) {
+    return true;
+  }
 }

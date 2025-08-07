@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class FloatArrayTextField extends TypedTextField<float[]> {
 
-    @Override
-    protected @NotNull FloatArrayStringConverter createValueConverter() {
-        return new FloatArrayStringConverter();
-    }
+  @Override
+  protected @NotNull FloatArrayStringConverter createValueConverter() {
+    return new FloatArrayStringConverter();
+  }
 }

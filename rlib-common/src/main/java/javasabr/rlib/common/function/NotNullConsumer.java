@@ -6,6 +6,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface NotNullConsumer<T> extends Consumer<T> {
 
-    @Override
-    void accept(@NotNull T object);
+  @Override
+  void accept(@NotNull T object);
 }

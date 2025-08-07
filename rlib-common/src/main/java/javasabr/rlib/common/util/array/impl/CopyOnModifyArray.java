@@ -3,7 +3,7 @@ package javasabr.rlib.common.util.array.impl;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import javasabr.rlib.common.concurrent.atomic.AtomicReference;
+import javasabr.rlib.common.concurrent.atomic.ReusableAtomicReference;
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayComparator;
@@ -11,265 +11,264 @@ import javasabr.rlib.common.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The implementation of the array which create a new back-end array for each modification.
- * Thread-safe.
+ * The implementation of the array which create a new back-end array for each modification. Thread-safe.
  *
  * @param <E> the array's element type.
  * @author JavaSaBr
  */
 public class CopyOnModifyArray<E> extends AbstractArray<E> {
 
-    private static final long serialVersionUID = -8477384427415127978L;
+  private static final long serialVersionUID = -8477384427415127978L;
 
-    @SuppressWarnings("NullableProblems")
-    protected volatile @NotNull AtomicReference<E[]> array;
+  @SuppressWarnings("NullableProblems")
+  protected volatile @NotNull ReusableAtomicReference<E[]> array;
 
-    public CopyOnModifyArray(@NotNull Class<? super E> type, int size) {
-        super(type, size);
+  public CopyOnModifyArray(@NotNull Class<? super E> type, int size) {
+    super(type, size);
+  }
+
+  @Override
+  public boolean add(@NotNull E object) {
+
+    var current = array.get();
+    var newArray = ArrayUtils.copyOfAndExtend(current, 1);
+    newArray[current.length] = object;
+
+    if (!array.compareAndSet(current, newArray)) {
+      return add(object);
     }
 
-    @Override
-    public boolean add(@NotNull E object) {
+    return true;
+  }
 
-        var current = array.get();
-        var newArray = ArrayUtils.copyOfAndExtend(current, 1);
-        newArray[current.length] = object;
+  @Override
+  public boolean addAll(@NotNull Array<? extends E> elements) {
 
-        if (!array.compareAndSet(current, newArray)) {
-            return add(object);
-        }
-
-        return true;
+    if (elements.isEmpty()) {
+      return false;
     }
 
-    @Override
-    public boolean addAll(@NotNull Array<? extends E> elements) {
+    var current = array.get();
+    var newArray = ArrayUtils.copyOfAndExtend(current, elements.size());
 
-        if (elements.isEmpty()) {
-            return false;
-        }
-
-        var current = array.get();
-        var newArray = ArrayUtils.copyOfAndExtend(current, elements.size());
-
-        for (int i = current.length, g = 0; i < newArray.length; i++, g++) {
-            newArray[i] = elements.get(g);
-        }
-
-        if (!array.compareAndSet(current, newArray)) {
-            return addAll(elements);
-        }
-
-        return true;
+    for (int i = current.length, g = 0; i < newArray.length; i++, g++) {
+      newArray[i] = elements.get(g);
     }
 
-    @Override
-    public boolean addAll(@NotNull Collection<? extends E> collection) {
-
-        if (collection.isEmpty()) {
-            return false;
-        }
-
-        var current = array.get();
-        var newArray = ArrayUtils.copyOfAndExtend(current, collection.size());
-
-        Iterator<? extends E> iterator = collection.iterator();
-
-        for (int i = current.length; i < newArray.length; i++) {
-            newArray[i] = iterator.next();
-        }
-
-        if (!array.compareAndSet(current, newArray)) {
-            return addAll(collection);
-        }
-
-        return true;
+    if (!array.compareAndSet(current, newArray)) {
+      return addAll(elements);
     }
 
-    @Override
-    public boolean addAll(@NotNull E[] elements) {
+    return true;
+  }
 
-        if (elements.length < 1) {
-            return false;
-        }
+  @Override
+  public boolean addAll(@NotNull Collection<? extends E> collection) {
 
-        var current = array.get();
-        var newArray = ArrayUtils.combine(current, elements);
-
-        if (!array.compareAndSet(current, newArray)) {
-            return addAll(elements);
-        }
-
-        return true;
+    if (collection.isEmpty()) {
+      return false;
     }
 
-    @Override
-    public final @NotNull E[] array() {
-        return array.get();
+    var current = array.get();
+    var newArray = ArrayUtils.copyOfAndExtend(current, collection.size());
+
+    Iterator<? extends E> iterator = collection.iterator();
+
+    for (int i = current.length; i < newArray.length; i++) {
+      newArray[i] = iterator.next();
     }
 
-    @Override
-    public @NotNull E remove(int index) {
-        throw new UnsupportedOperationException();
+    if (!array.compareAndSet(current, newArray)) {
+      return addAll(collection);
     }
 
-    @Override
-    public boolean removeAll(@NotNull Array<?> target) {
+    return true;
+  }
 
-        if (target.isEmpty()) {
-            return false;
+  @Override
+  public boolean addAll(@NotNull E[] elements) {
+
+    if (elements.length < 1) {
+      return false;
+    }
+
+    var current = array.get();
+    var newArray = ArrayUtils.combine(current, elements);
+
+    if (!array.compareAndSet(current, newArray)) {
+      return addAll(elements);
+    }
+
+    return true;
+  }
+
+  @Override
+  public final @NotNull E[] array() {
+    return array.get();
+  }
+
+  @Override
+  public @NotNull E remove(int index) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean removeAll(@NotNull Array<?> target) {
+
+    if (target.isEmpty()) {
+      return false;
+    }
+
+    var current = array();
+    var modifiable = ArrayFactory.asArray(current);
+
+    if (!modifiable.removeAll(target)) {
+      return false;
+    }
+
+    var newArray = modifiable.toArray();
+
+    if (!array.compareAndSet(current, newArray)) {
+      return removeAll(target);
+    }
+
+    return true;
+  }
+
+  @Override
+  public boolean removeAll(@NotNull Collection<?> target) {
+
+    if (target.isEmpty()) {
+      return false;
+    }
+
+    var current = array();
+    var modifiable = ArrayFactory.asArray(current);
+
+    if (!modifiable.removeAll(target)) {
+      return false;
+    }
+
+    var newArray = modifiable.toArray();
+
+    if (!array.compareAndSet(current, newArray)) {
+      return removeAll(target);
+    }
+
+    return true;
+  }
+
+  @Override
+  public boolean remove(@NotNull Object object) {
+
+    var current = array.get();
+    var index = ArrayUtils.indexOf(current, object);
+
+    if (index == -1) {
+      return false;
+    }
+
+    var newArray = ArrayUtils.create(current, current.length - 1);
+
+    for (int i = 0, j = 0; i < current.length; i++, j++) {
+
+      if (i == index) {
+        i++;
+        if (i >= current.length) {
+          break;
         }
+      }
 
-        var current = array();
-        var modifiable = ArrayFactory.asArray(current);
-
-        if(!modifiable.removeAll(target)) {
-            return false;
-        }
-
-        var newArray = modifiable.toArray();
-
-        if (!array.compareAndSet(current, newArray)) {
-            return removeAll(target);
-        }
-
-        return true;
+      newArray[j] = current[i];
     }
 
-    @Override
-    public boolean removeAll(@NotNull Collection<?> target) {
-
-        if (target.isEmpty()) {
-            return false;
-        }
-
-        var current = array();
-        var modifiable = ArrayFactory.asArray(current);
-
-        if(!modifiable.removeAll(target)) {
-            return false;
-        }
-
-        var newArray = modifiable.toArray();
-
-        if (!array.compareAndSet(current, newArray)) {
-            return removeAll(target);
-        }
-
-        return true;
+    if (!array.compareAndSet(current, newArray)) {
+      return fastRemove(object);
     }
 
-    @Override
-    public boolean remove(@NotNull Object object) {
+    return true;
+  }
 
-        var current = array.get();
-        var index = ArrayUtils.indexOf(current, object);
+  @Override
+  public boolean fastRemove(@NotNull Object object) {
+    return remove(object);
+  }
 
-        if (index == -1) {
-            return false;
-        }
+  @Override
+  public @NotNull E fastRemove(int index) {
+    throw new UnsupportedOperationException();
+  }
 
-        var newArray = ArrayUtils.create(current, current.length - 1);
+  @Override
+  public void clear() {
 
-        for (int i = 0, j = 0; i < current.length; i++, j++) {
+    var current = array.get();
 
-            if (i == index) {
-                i++;
-                if (i >= current.length) {
-                    break;
-                }
-            }
-
-            newArray[j] = current[i];
-        }
-
-        if (!array.compareAndSet(current, newArray)) {
-            return fastRemove(object);
-        }
-
-        return true;
+    if (current.length < 1) {
+      return;
     }
 
-    @Override
-    public boolean fastRemove(@NotNull Object object) {
-        return remove(object);
+    var newArray = ArrayUtils.create(current, 0);
+
+    if (!array.compareAndSet(current, newArray)) {
+      clear();
+    }
+  }
+
+  @Override
+  public final @NotNull E get(int index) {
+
+    if (index < 0 || index >= size()) {
+      throw new NoSuchElementException();
     }
 
-    @Override
-    public @NotNull E fastRemove(int index) {
-        throw new UnsupportedOperationException();
+    return array.get()[index];
+  }
+
+  @Override
+  public void replace(int index, @NotNull E element) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  protected final void setArray(E @NotNull [] array) {
+
+    //noinspection ConstantConditions
+    if (this.array == null) {
+      this.array = new ReusableAtomicReference<>();
     }
 
-    @Override
-    public void clear() {
+    this.array.set(array);
+  }
 
-        var current = array.get();
+  @Override
+  protected final void setSize(int size) {
+  }
 
-        if (current.length < 1) {
-            return;
-        }
+  @Override
+  public final int size() {
+    return array().length;
+  }
 
-        var newArray = ArrayUtils.create(current, 0);
+  @Override
+  public @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
 
-        if (!array.compareAndSet(current, newArray)) {
-            clear();
-        }
+    var current = array();
+    var newArray = ArrayUtils.copyOfAndExtend(current, 0);
+
+    ArrayUtils.sort(newArray, 0, newArray.length, comparator);
+
+    if (!array.compareAndSet(current, newArray)) {
+      return sort(comparator);
     }
 
-    @Override
-    public final @NotNull E get(int index) {
+    return this;
+  }
 
-        if (index < 0 || index >= size()) {
-            throw new NoSuchElementException();
-        }
-
-        return array.get()[index];
-    }
-
-    @Override
-    public void replace(int index, @NotNull E element) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected final void setArray(E @NotNull [] array) {
-
-        //noinspection ConstantConditions
-        if (this.array == null) {
-            this.array = new AtomicReference<>();
-        }
-
-        this.array.set(array);
-    }
-
-    @Override
-    protected final void setSize(int size) {
-    }
-
-    @Override
-    public final int size() {
-        return array().length;
-    }
-
-    @Override
-    public @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
-
-        var current = array();
-        var newArray = ArrayUtils.copyOfAndExtend(current, 0);
-
-        ArrayUtils.sort(newArray, 0, newArray.length, comparator);
-
-        if (!array.compareAndSet(current, newArray)) {
-            return sort(comparator);
-        }
-
-        return this;
-    }
-
-    @Override
-    public @NotNull CopyOnModifyArray<E> clone() throws CloneNotSupportedException {
-        var clone = (CopyOnModifyArray<E>) super.clone();
-        clone.array = new AtomicReference<>(ArrayUtils.copyOf(array()));
-        return clone;
-    }
+  @Override
+  public @NotNull CopyOnModifyArray<E> clone() throws CloneNotSupportedException {
+    var clone = (CopyOnModifyArray<E>) super.clone();
+    clone.array = new ReusableAtomicReference<>(ArrayUtils.copyOf(array()));
+    return clone;
+  }
 }

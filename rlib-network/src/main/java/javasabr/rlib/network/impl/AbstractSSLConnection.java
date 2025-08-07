@@ -14,29 +14,28 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractSSLConnection<R extends ReadablePacket, W extends WritablePacket> extends
     AbstractConnection<R, W> {
 
-    protected final @NotNull SSLEngine sslEngine;
+  protected final @NotNull SSLEngine sslEngine;
 
-    public AbstractSSLConnection(
-        @NotNull Network<? extends Connection<R, W>> network,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator,
-        @NotNull SSLContext sslContext,
-        int maxPacketsByRead,
-        boolean clientMode
-    ) {
-        super(network, channel, bufferAllocator, maxPacketsByRead);
-        this.sslEngine = sslContext.createSSLEngine();
-        this.sslEngine.setUseClientMode(clientMode);
-        try {
-            this.sslEngine.beginHandshake();
-        } catch (SSLException e) {
-            throw new RuntimeException(e);
-        }
+  public AbstractSSLConnection(
+      @NotNull Network<? extends Connection<R, W>> network,
+      @NotNull AsynchronousSocketChannel channel,
+      @NotNull BufferAllocator bufferAllocator,
+      @NotNull SSLContext sslContext,
+      int maxPacketsByRead,
+      boolean clientMode) {
+    super(network, channel, bufferAllocator, maxPacketsByRead);
+    this.sslEngine = sslContext.createSSLEngine();
+    this.sslEngine.setUseClientMode(clientMode);
+    try {
+      this.sslEngine.beginHandshake();
+    } catch (SSLException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    @Override
-    protected void sendImpl(@NotNull WritablePacket packet) {
-        super.sendImpl(packet);
-        getPacketReader().startRead();
-    }
+  @Override
+  protected void sendImpl(@NotNull WritablePacket packet) {
+    super.sendImpl(packet);
+    getPacketReader().startRead();
+  }
 }

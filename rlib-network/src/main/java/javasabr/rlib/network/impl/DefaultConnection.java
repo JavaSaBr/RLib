@@ -14,12 +14,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DefaultConnection extends IdBasedPacketConnection<DefaultReadablePacket, DefaultWritablePacket> {
 
-    public DefaultConnection(
-        @NotNull Network<? extends Connection<DefaultReadablePacket, DefaultWritablePacket>> network,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator,
-        @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry
-    ) {
-        super(network, channel, bufferAllocator, packetRegistry, 100, 2, 2);
-    }
+  public DefaultConnection(
+      @NotNull Network<? extends Connection<DefaultReadablePacket, DefaultWritablePacket>> network,
+      @NotNull AsynchronousSocketChannel channel,
+      @NotNull BufferAllocator bufferAllocator,
+      @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
+    super(network, channel, bufferAllocator, packetRegistry, 100, 2, 2);
+  }
 }

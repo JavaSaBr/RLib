@@ -6,6 +6,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface NotNullBiConsumer<T, U> extends BiConsumer<T, U> {
 
-    @Override
-    void accept(@NotNull T first, @NotNull U second);
+  @Override
+  void accept(@NotNull T first, @NotNull U second);
 }

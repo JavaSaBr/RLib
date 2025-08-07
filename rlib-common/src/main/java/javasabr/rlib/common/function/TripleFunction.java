@@ -14,14 +14,13 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface TripleFunction<F, S, T, R> {
 
-    /**
-     * Apply r.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     * @return the r
-     */
-    @Nullable
-    R apply(@Nullable F first, @Nullable S second, @Nullable T third);
+  /**
+   * Apply r.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   * @return the r
+   */
+  @Nullable R apply(@Nullable F first, @Nullable S second, @Nullable T third);
 }

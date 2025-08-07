@@ -11,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface FloatObjectConsumer<T> {
 
-    /**
-     * Accept the two parameters.
-     *
-     * @param first  the first.
-     * @param second the second.
-     */
-    void accept(float first, @Nullable T second);
+  /**
+   * Accept the two parameters.
+   *
+   * @param first the first.
+   * @param second the second.
+   */
+  void accept(float first, @Nullable T second);
 }

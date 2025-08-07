@@ -9,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Packet {
 
-    /**
-     * Get packet's name.
-     *
-     * @return the packet's name.
-     */
-    @NotNull String getName();
+  /**
+   * Get packet's name.
+   *
+   * @return the packet's name.
+   */
+  @NotNull String getName();
 }

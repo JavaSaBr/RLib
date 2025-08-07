@@ -6,5 +6,5 @@ package javasabr.rlib.common.function;
 @FunctionalInterface
 public interface BiIntPredicate {
 
-    boolean test(int first, int second);
+  boolean test(int first, int second);
 }

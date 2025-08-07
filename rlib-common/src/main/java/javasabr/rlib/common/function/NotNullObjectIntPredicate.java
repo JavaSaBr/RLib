@@ -8,6 +8,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface NotNullObjectIntPredicate<T> extends ObjectIntPredicate<T> {
 
-    @Override
-    boolean test(@NotNull T first, int second);
+  @Override
+  boolean test(@NotNull T first, int second);
 }

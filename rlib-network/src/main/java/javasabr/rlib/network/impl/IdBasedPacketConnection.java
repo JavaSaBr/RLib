@@ -22,55 +22,52 @@ import org.jetbrains.annotations.NotNull;
 public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W extends IdBasedWritablePacket> extends
     AbstractConnection<R, W> {
 
-    private final @NotNull PacketReader packetReader;
-    private final @NotNull PacketWriter packetWriter;
-    private final @NotNull ReadablePacketRegistry<R> packetRegistry;
+  private final @NotNull PacketReader packetReader;
+  private final @NotNull PacketWriter packetWriter;
+  private final @NotNull ReadablePacketRegistry<R> packetRegistry;
 
-    private final int packetLengthHeaderSize;
-    private final int packetIdHeaderSize;
+  private final int packetLengthHeaderSize;
+  private final int packetIdHeaderSize;
 
-    public IdBasedPacketConnection(
-        @NotNull Network<? extends Connection<R, W>> network,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator,
-        @NotNull ReadablePacketRegistry<R> packetRegistry,
-        int maxPacketsByRead,
-        int packetLengthHeaderSize,
-        int packetIdHeaderSize
-    ) {
-        super(network, channel, bufferAllocator, maxPacketsByRead);
-        this.packetRegistry = packetRegistry;
-        this.packetLengthHeaderSize = packetLengthHeaderSize;
-        this.packetIdHeaderSize = packetIdHeaderSize;
-        this.packetReader = createPacketReader();
-        this.packetWriter = createPacketWriter();
-    }
+  public IdBasedPacketConnection(
+      @NotNull Network<? extends Connection<R, W>> network,
+      @NotNull AsynchronousSocketChannel channel,
+      @NotNull BufferAllocator bufferAllocator,
+      @NotNull ReadablePacketRegistry<R> packetRegistry,
+      int maxPacketsByRead,
+      int packetLengthHeaderSize,
+      int packetIdHeaderSize) {
+    super(network, channel, bufferAllocator, maxPacketsByRead);
+    this.packetRegistry = packetRegistry;
+    this.packetLengthHeaderSize = packetLengthHeaderSize;
+    this.packetIdHeaderSize = packetIdHeaderSize;
+    this.packetReader = createPacketReader();
+    this.packetWriter = createPacketWriter();
+  }
 
-    protected @NotNull PacketReader createPacketReader() {
-        return new IdBasedPacketReader<>(
-            this,
-            channel,
-            bufferAllocator,
-            this::updateLastActivity,
-            this::handleReceivedPacket,
-            packetLengthHeaderSize,
-            maxPacketsByRead,
-            packetIdHeaderSize,
-            packetRegistry
-        );
-    }
+  protected @NotNull PacketReader createPacketReader() {
+    return new IdBasedPacketReader<>(
+        this,
+        channel,
+        bufferAllocator,
+        this::updateLastActivity,
+        this::handleReceivedPacket,
+        packetLengthHeaderSize,
+        maxPacketsByRead,
+        packetIdHeaderSize,
+        packetRegistry);
+  }
 
-    protected @NotNull PacketWriter createPacketWriter() {
-        return new IdBasedPacketWriter<>(
-            this,
-            channel,
-            bufferAllocator,
-            this::updateLastActivity,
-            this::nextPacketToWrite,
-            this::onWrittenPacket,
-            this::onSentPacket,
-            packetLengthHeaderSize,
-            packetIdHeaderSize
-        );
-    }
+  protected @NotNull PacketWriter createPacketWriter() {
+    return new IdBasedPacketWriter<>(
+        this,
+        channel,
+        bufferAllocator,
+        this::updateLastActivity,
+        this::nextPacketToWrite,
+        this::onWrittenPacket,
+        this::onSentPacket,
+        packetLengthHeaderSize,
+        packetIdHeaderSize);
+  }
 }

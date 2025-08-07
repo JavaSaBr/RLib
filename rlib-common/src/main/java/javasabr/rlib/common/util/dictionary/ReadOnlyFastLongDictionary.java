@@ -13,28 +13,28 @@ import org.jetbrains.annotations.Nullable;
 @NoArgsConstructor
 public class ReadOnlyFastLongDictionary<V> extends FastLongDictionary<V> {
 
-    @Override
-    public void put(@NotNull Dictionary<LongKey, V> dictionary) {
-        throw new IllegalStateException("Dictionary is only read.");
-    }
+  @Override
+  public void put(@NotNull Dictionary<LongKey, V> dictionary) {
+    throw new IllegalStateException("Dictionary is only read.");
+  }
 
-    @Override
-    public @Nullable V put(long key, @Nullable V value) {
-        throw new IllegalStateException("Dictionary is only read.");
-    }
+  @Override
+  public @Nullable V put(long key, @Nullable V value) {
+    throw new IllegalStateException("Dictionary is only read.");
+  }
 
-    @Override
-    public @Nullable V remove(long key) {
-        throw new IllegalStateException("Dictionary is only read.");
-    }
+  @Override
+  public @Nullable V remove(long key) {
+    throw new IllegalStateException("Dictionary is only read.");
+  }
 
-    @Override
-    public @Nullable LongEntry<V> removeEntryForKey(long key) {
-        throw new IllegalStateException("Dictionary is only read.");
-    }
+  @Override
+  public @Nullable LongEntry<V> removeEntryForKey(long key) {
+    throw new IllegalStateException("Dictionary is only read.");
+  }
 
-    @Override
-    public void clear() {
-        throw new IllegalStateException("Dictionary is only read.");
-    }
+  @Override
+  public void clear() {
+    throw new IllegalStateException("Dictionary is only read.");
+  }
 }

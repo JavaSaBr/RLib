@@ -12,114 +12,116 @@ import javasabr.rlib.common.util.array.ConcurrentArray;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of a deadlock detector.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class DeadLockDetector implements Runnable {
 
-    private static final Logger LOGGER = LoggerManager.getLogger(DeadLockDetector.class);
+  private static final Logger LOGGER = LoggerManager.getLogger(DeadLockDetector.class);
 
-    /**
-     * The list of listeners.
-     */
-    private final @Getter @NotNull ConcurrentArray<DeadLockListener> listeners;
+  /**
+   * The list of listeners.
+   */
+  @Getter
+  private final ConcurrentArray<DeadLockListener> listeners;
 
-    /**
-     * The bean with information about threads.
-     */
-    private final @NotNull ThreadMXBean mxThread;
+  /**
+   * The bean with information about threads.
+   */
+  private final ThreadMXBean mxThread;
 
-    /**
-     * The scheduler.
-     */
-    private final @NotNull ScheduledExecutorService executorService;
+  /**
+   * The scheduler.
+   */
+  private final ScheduledExecutorService executorService;
 
-    /**
-     * The reference to a task.
-     */
-    private volatile @Getter @Nullable ScheduledFuture<?> schedule;
+  /**
+   * The reference to a task.
+   */
+  @Getter
+  private volatile @Nullable ScheduledFuture<?> schedule;
 
-    /**
-     * The checking interval.
-     */
-    private final int interval;
+  /**
+   * The checking interval.
+   */
+  private final int interval;
 
-    public DeadLockDetector(int interval) {
+  public DeadLockDetector(int interval) {
 
-        if (interval < 1) {
-            throw new IllegalArgumentException("negative interval.");
-        }
-
-        this.listeners = ArrayFactory.newConcurrentReentrantRWLockArray(DeadLockListener.class);
-        this.mxThread = ManagementFactory.getThreadMXBean();
-        this.executorService = Executors.newSingleThreadScheduledExecutor();
-        this.interval = interval;
+    if (interval < 1) {
+      throw new IllegalArgumentException("negative interval.");
     }
 
-    /**
-     * Add a new listener.
-     *
-     * @param listener the new listener.
-     */
-    public void addListener(@NotNull DeadLockListener listener) {
-        listeners.runInWriteLock(listener, Array::add);
+    this.listeners = ArrayFactory.newConcurrentReentrantRWLockArray(DeadLockListener.class);
+    this.mxThread = ManagementFactory.getThreadMXBean();
+    this.executorService = Executors.newSingleThreadScheduledExecutor();
+    this.interval = interval;
+  }
+
+  /**
+   * Add a new listener.
+   *
+   * @param listener the new listener.
+   */
+  public void addListener(DeadLockListener listener) {
+    listeners.runInWriteLock(listener, Array::add);
+  }
+
+  @Override
+  public void run() {
+
+    var threadIds = mxThread.findDeadlockedThreads();
+
+    if (threadIds.length < 1) {
+      return;
     }
 
-    @Override
-    public void run() {
+    var listeners = getListeners();
 
-        var threadIds = mxThread.findDeadlockedThreads();
+    for (var id : threadIds) {
 
-        if (threadIds.length < 1) {
-            return;
-        }
+      var info = mxThread.getThreadInfo(id);
 
-        var listeners = getListeners();
+      if (listeners.isEmpty()) {
+        continue;
+      }
 
-        for (var id : threadIds) {
+      listeners.runInReadLock(info, (list, inf) -> list.forEachR(inf, DeadLockListener::onDetected));
 
-            var info = mxThread.getThreadInfo(id);
+      LOGGER.warning("DeadLock detected! : " + info);
+    }
+  }
 
-            if (listeners.isEmpty()) {
-                continue;
-            }
+  /**
+   * Start.
+   */
+  public synchronized void start() {
 
-            listeners.runInReadLock(info, (list, inf) -> list.forEachR(inf, DeadLockListener::onDetected));
-
-            LOGGER.warning("DeadLock detected! : " + info);
-        }
+    if (schedule != null) {
+      return;
     }
 
-    /**
-     * Start.
-     */
-    public synchronized void start() {
+    schedule = executorService.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
+  }
 
-        if (schedule != null) {
-            return;
-        }
+  /**
+   * Stop.
+   */
+  public synchronized void stop() {
 
-        schedule = executorService.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
+    var schedule = getSchedule();
+    if (schedule == null) {
+      return;
     }
 
-    /**
-     * Stop.
-     */
-    public synchronized void stop() {
+    schedule.cancel(false);
 
-        var schedule = getSchedule();
-
-        if (schedule == null) {
-            return;
-        }
-
-        schedule.cancel(false);
-
-        this.schedule = null;
-    }
+    this.schedule = null;
+  }
 }

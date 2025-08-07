@@ -6,5 +6,4 @@ package javasabr.rlib.common.util.pools;
  * @param <E> the type parameter
  * @author JavaSaBr
  */
-public interface ReusablePool<E extends Reusable> extends Pool<E> {
-}
+public interface ReusablePool<E extends Reusable> extends Pool<E> {}

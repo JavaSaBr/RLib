@@ -1,6 +1,6 @@
 package javasabr.rlib.common.util;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface for implementing the method for reloading the object to new version of the object.
@@ -8,12 +8,13 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public interface Reloadable<E> {
 
-    /**
-     * Reload this object to version of the object.
-     *
-     * @param updated the updated object.
-     */
-    void reload(@NotNull E updated);
+  /**
+   * Reload this object to version of the object.
+   *
+   * @param updated the updated object.
+   */
+  void reload(E updated);
 }

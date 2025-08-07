@@ -8,6 +8,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface NotNullTripleConsumer<F, S, T> extends TripleConsumer<F, S, T> {
 
-    @Override
-    void accept(@NotNull F first, @NotNull S second, @NotNull T third);
+  @Override
+  void accept(@NotNull F first, @NotNull S second, @NotNull T third);
 }

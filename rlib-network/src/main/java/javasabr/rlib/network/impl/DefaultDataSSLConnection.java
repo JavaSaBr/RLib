@@ -22,56 +22,53 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DefaultDataSSLConnection<R extends ReadablePacket, W extends WritablePacket> extends
     AbstractSSLConnection<R, W> {
 
-    private final @NotNull PacketReader packetReader;
-    private final @NotNull PacketWriter packetWriter;
+  private final @NotNull PacketReader packetReader;
+  private final @NotNull PacketWriter packetWriter;
 
-    private final int packetLengthHeaderSize;
+  private final int packetLengthHeaderSize;
 
-    public DefaultDataSSLConnection(
-        @NotNull Network<? extends Connection<R, W>> network,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator,
-        @NotNull SSLContext sslContext,
-        int maxPacketsByRead,
-        int packetLengthHeaderSize,
-        boolean clientMode
-    ) {
-        super(network, channel, bufferAllocator, sslContext, maxPacketsByRead, clientMode);
-        this.packetLengthHeaderSize = packetLengthHeaderSize;
-        this.packetReader = createPacketReader();
-        this.packetWriter = createPacketWriter();
-    }
+  public DefaultDataSSLConnection(
+      @NotNull Network<? extends Connection<R, W>> network,
+      @NotNull AsynchronousSocketChannel channel,
+      @NotNull BufferAllocator bufferAllocator,
+      @NotNull SSLContext sslContext,
+      int maxPacketsByRead,
+      int packetLengthHeaderSize,
+      boolean clientMode) {
+    super(network, channel, bufferAllocator, sslContext, maxPacketsByRead, clientMode);
+    this.packetLengthHeaderSize = packetLengthHeaderSize;
+    this.packetReader = createPacketReader();
+    this.packetWriter = createPacketWriter();
+  }
 
-    protected @NotNull PacketReader createPacketReader() {
-        return new DefaultSSLPacketReader<>(
-            this,
-            channel,
-            bufferAllocator,
-            this::updateLastActivity,
-            this::handleReceivedPacket,
-            value -> createReadablePacket(),
-            sslEngine,
-            this::sendImpl,
-            packetLengthHeaderSize,
-            maxPacketsByRead
-        );
-    }
+  protected @NotNull PacketReader createPacketReader() {
+    return new DefaultSSLPacketReader<>(
+        this,
+        channel,
+        bufferAllocator,
+        this::updateLastActivity,
+        this::handleReceivedPacket,
+        value -> createReadablePacket(),
+        sslEngine,
+        this::sendImpl,
+        packetLengthHeaderSize,
+        maxPacketsByRead);
+  }
 
-    protected @NotNull PacketWriter createPacketWriter() {
-        return new DefaultSSLPacketWriter<W, Connection<R, W>>(
-            this,
-            channel,
-            bufferAllocator,
-            this::updateLastActivity,
-            this::nextPacketToWrite,
-            this::onWrittenPacket,
-            this::onSentPacket,
-            sslEngine,
-            this::sendImpl,
-            this::queueAtFirst,
-            packetLengthHeaderSize
-        );
-    }
+  protected @NotNull PacketWriter createPacketWriter() {
+    return new DefaultSSLPacketWriter<W, Connection<R, W>>(
+        this,
+        channel,
+        bufferAllocator,
+        this::updateLastActivity,
+        this::nextPacketToWrite,
+        this::onWrittenPacket,
+        this::onSentPacket,
+        sslEngine,
+        this::sendImpl,
+        this::queueAtFirst,
+        packetLengthHeaderSize);
+  }
 
-    protected abstract @NotNull R createReadablePacket();
+  protected abstract @NotNull R createReadablePacket();
 }

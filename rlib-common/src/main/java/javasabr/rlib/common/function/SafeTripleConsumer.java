@@ -13,13 +13,13 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface SafeTripleConsumer<F, S, T> {
 
-    /**
-     * Accept.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     * @throws Exception the exception
-     */
-    void accept(@Nullable F first, @Nullable S second, @Nullable T third) throws Exception;
+  /**
+   * Accept.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   * @throws Exception the exception
+   */
+  void accept(@Nullable F first, @Nullable S second, @Nullable T third) throws Exception;
 }

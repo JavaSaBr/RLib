@@ -12,12 +12,12 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface IntBiObjectConsumer<S, T> {
 
-    /**
-     * Accept.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     */
-    void accept(int first, @Nullable S second, @Nullable T third);
+  /**
+   * Accept.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   */
+  void accept(int first, @Nullable S second, @Nullable T third);
 }

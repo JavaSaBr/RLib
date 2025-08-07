@@ -8,5 +8,5 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface SafeFactory<R> {
 
-    @Nullable R get() throws Exception;
+  @Nullable R get() throws Exception;
 }
