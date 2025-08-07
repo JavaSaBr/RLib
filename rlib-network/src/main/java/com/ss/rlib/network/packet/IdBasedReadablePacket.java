@@ -1,6 +1,6 @@
 package com.ss.rlib.network.packet;
 
-import com.ss.rlib.common.util.ClassUtils;
+import javasabr.rlib.common.util.ClassUtils;
 import com.ss.rlib.network.Connection;
 import org.jetbrains.annotations.NotNull;
 

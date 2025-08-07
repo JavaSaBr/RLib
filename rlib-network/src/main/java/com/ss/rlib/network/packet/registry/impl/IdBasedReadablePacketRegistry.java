@@ -1,8 +1,8 @@
 package com.ss.rlib.network.packet.registry.impl;
 
-import com.ss.rlib.common.util.ArrayUtils;
-import com.ss.rlib.common.util.ClassUtils;
-import com.ss.rlib.common.util.array.Array;
+import javasabr.rlib.common.util.ArrayUtils;
+import javasabr.rlib.common.util.ClassUtils;
+import javasabr.rlib.common.util.array.Array;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.annotation.PacketDescription;

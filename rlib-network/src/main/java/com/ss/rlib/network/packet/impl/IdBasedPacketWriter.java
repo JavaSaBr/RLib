@@ -1,8 +1,8 @@
 package com.ss.rlib.network.packet.impl;
 
-import com.ss.rlib.common.function.NotNullBiConsumer;
-import com.ss.rlib.common.function.NotNullConsumer;
-import com.ss.rlib.common.function.NullableSupplier;
+import javasabr.rlib.common.function.NotNullBiConsumer;
+import javasabr.rlib.common.function.NotNullConsumer;
+import javasabr.rlib.common.function.NullableSupplier;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.IdBasedWritablePacket;

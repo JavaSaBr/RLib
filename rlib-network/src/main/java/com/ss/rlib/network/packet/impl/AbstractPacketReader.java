@@ -1,9 +1,9 @@
 package com.ss.rlib.network.packet.impl;
 
-import static com.ss.rlib.common.util.ObjectUtils.notNull;
+import static javasabr.rlib.common.util.ObjectUtils.notNull;
 import static com.ss.rlib.network.util.NetworkUtils.getRemoteAddress;
-import com.ss.rlib.common.function.NotNullConsumer;
-import com.ss.rlib.common.util.BufferUtils;
+import javasabr.rlib.common.function.NotNullConsumer;
+import javasabr.rlib.common.util.BufferUtils;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.BufferAllocator;

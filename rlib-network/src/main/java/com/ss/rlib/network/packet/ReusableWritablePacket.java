@@ -1,7 +1,7 @@
 package com.ss.rlib.network.packet;
 
-import com.ss.rlib.common.util.pools.Pool;
-import com.ss.rlib.common.util.pools.Reusable;
+import javasabr.rlib.common.util.pools.Pool;
+import javasabr.rlib.common.util.pools.Reusable;
 import org.jetbrains.annotations.NotNull;
 
 /**

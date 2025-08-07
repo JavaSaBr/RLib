@@ -1,7 +1,7 @@
 package com.ss.rlib.fx.scene.input;
 
-import static com.ss.rlib.common.util.ClassUtils.unsafeCast;
-import com.ss.rlib.common.util.ref.Reference;
+import static javasabr.rlib.common.util.ClassUtils.unsafeCast;
+import javasabr.rlib.common.util.ref.Reference;
 import javafx.scene.input.DataFormat;
 import org.jetbrains.annotations.Nullable;
 

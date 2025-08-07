@@ -1,6 +1,6 @@
 package com.ss.rlib.network;
 
-import com.ss.rlib.common.function.NotNullBiConsumer;
+import javasabr.rlib.common.function.NotNullBiConsumer;
 import com.ss.rlib.network.packet.ReadablePacket;
 import com.ss.rlib.network.packet.WritablePacket;
 import lombok.AllArgsConstructor;

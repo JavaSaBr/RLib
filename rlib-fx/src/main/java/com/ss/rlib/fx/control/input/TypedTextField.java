@@ -1,6 +1,6 @@
 package com.ss.rlib.fx.control.input;
 
-import static com.ss.rlib.common.util.ClassUtils.unsafeCast;
+import static javasabr.rlib.common.util.ClassUtils.unsafeCast;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextField;

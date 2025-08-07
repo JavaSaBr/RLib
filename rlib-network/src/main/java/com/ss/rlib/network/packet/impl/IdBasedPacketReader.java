@@ -1,6 +1,6 @@
 package com.ss.rlib.network.packet.impl;
 
-import com.ss.rlib.common.function.NotNullConsumer;
+import javasabr.rlib.common.function.NotNullConsumer;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.IdBasedReadablePacket;

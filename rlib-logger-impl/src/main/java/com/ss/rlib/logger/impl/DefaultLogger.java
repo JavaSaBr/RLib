@@ -1,10 +1,9 @@
 package com.ss.rlib.logger.impl;
 
-import com.ss.rlib.common.util.StringUtils;
+import javasabr.rlib.common.util.StringUtils;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerLevel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 

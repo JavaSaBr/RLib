@@ -1,9 +1,9 @@
 package com.ss.rlib.network.client.impl;
 
-import static com.ss.rlib.common.util.Utils.unchecked;
-import static com.ss.rlib.common.util.Utils.uncheckedGet;
-import com.ss.rlib.common.concurrent.util.ThreadUtils;
-import com.ss.rlib.common.util.AsyncUtils;
+import static javasabr.rlib.common.util.Utils.unchecked;
+import static javasabr.rlib.common.util.Utils.uncheckedGet;
+import javasabr.rlib.common.concurrent.util.ThreadUtils;
+import javasabr.rlib.common.util.AsyncUtils;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.Connection;

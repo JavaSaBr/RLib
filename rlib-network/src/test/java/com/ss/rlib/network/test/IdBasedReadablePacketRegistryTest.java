@@ -1,8 +1,8 @@
 package com.ss.rlib.network.test;
 
-import com.ss.rlib.common.util.ClassUtils;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayFactory;
+import javasabr.rlib.common.util.ClassUtils;
+import javasabr.rlib.common.util.array.Array;
+import javasabr.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.impl.DefaultConnection;
 import com.ss.rlib.network.packet.IdBasedReadablePacket;

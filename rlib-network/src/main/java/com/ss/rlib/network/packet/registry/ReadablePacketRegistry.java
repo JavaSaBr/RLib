@@ -1,9 +1,9 @@
 package com.ss.rlib.network.packet.registry;
 
-import com.ss.rlib.common.classpath.ClassPathScanner;
-import com.ss.rlib.common.classpath.ClassPathScannerFactory;
-import com.ss.rlib.common.util.array.Array;
-import com.ss.rlib.common.util.array.ArrayCollectors;
+import javasabr.rlib.common.classpath.ClassPathScanner;
+import javasabr.rlib.common.classpath.ClassPathScannerFactory;
+import javasabr.rlib.common.util.array.Array;
+import javasabr.rlib.common.util.array.ArrayCollectors;
 import com.ss.rlib.network.annotation.PacketDescription;
 import com.ss.rlib.network.packet.IdBasedReadablePacket;
 import com.ss.rlib.network.packet.registry.impl.IdBasedReadablePacketRegistry;

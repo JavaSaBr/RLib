@@ -1,7 +1,7 @@
 package com.ss.rlib.network.util;
 
-import com.ss.rlib.common.util.Utils;
-import com.ss.rlib.common.util.array.ArrayFactory;
+import javasabr.rlib.common.util.Utils;
+import javasabr.rlib.common.util.array.ArrayFactory;
 import com.ss.rlib.network.BufferAllocator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

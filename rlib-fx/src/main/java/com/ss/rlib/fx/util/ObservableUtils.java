@@ -1,6 +1,6 @@
 package com.ss.rlib.fx.util;
 
-import static com.ss.rlib.common.util.ClassUtils.unsafeCast;
+import static javasabr.rlib.common.util.ClassUtils.unsafeCast;
 import javafx.beans.value.ObservableValue;
 import org.jetbrains.annotations.NotNull;
 

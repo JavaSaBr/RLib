@@ -1,9 +1,9 @@
 package com.ss.rlib.network.packet.impl;
 
 import static com.ss.rlib.network.util.NetworkUtils.*;
-import com.ss.rlib.common.function.NotNullBiConsumer;
-import com.ss.rlib.common.function.NotNullConsumer;
-import com.ss.rlib.common.function.NullableSupplier;
+import javasabr.rlib.common.function.NotNullBiConsumer;
+import javasabr.rlib.common.function.NotNullConsumer;
+import javasabr.rlib.common.function.NullableSupplier;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.BufferAllocator;

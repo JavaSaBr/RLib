@@ -1,6 +1,6 @@
 package com.ss.rlib.network;
 
-import com.ss.rlib.common.concurrent.GroupThreadFactory;
+import javasabr.rlib.common.concurrent.GroupThreadFactory;
 import lombok.Builder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

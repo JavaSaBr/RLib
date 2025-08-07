@@ -1,6 +1,6 @@
 package com.ss.rlib.logger.impl.test;
 
-import com.ss.rlib.common.util.array.ConcurrentArray;
+import javasabr.rlib.common.util.array.ConcurrentArray;
 import com.ss.rlib.logger.api.LoggerLevel;
 import com.ss.rlib.logger.api.LoggerListener;
 import com.ss.rlib.logger.api.LoggerManager;

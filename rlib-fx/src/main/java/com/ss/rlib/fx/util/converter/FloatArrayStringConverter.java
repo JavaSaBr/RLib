@@ -1,7 +1,7 @@
 package com.ss.rlib.fx.util.converter;
 
-import com.ss.rlib.common.util.ArrayUtils;
-import com.ss.rlib.common.util.StringUtils;
+import javasabr.rlib.common.util.ArrayUtils;
+import javasabr.rlib.common.util.StringUtils;
 import javafx.util.StringConverter;
 import org.jetbrains.annotations.Nullable;
 

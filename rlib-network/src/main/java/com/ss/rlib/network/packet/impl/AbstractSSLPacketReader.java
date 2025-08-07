@@ -1,7 +1,7 @@
 package com.ss.rlib.network.packet.impl;
 
 import static com.ss.rlib.network.util.NetworkUtils.hexDump;
-import com.ss.rlib.common.function.NotNullConsumer;
+import javasabr.rlib.common.function.NotNullConsumer;
 import com.ss.rlib.logger.api.Logger;
 import com.ss.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.BufferAllocator;
@@ -11,7 +11,6 @@ import com.ss.rlib.network.packet.WritablePacket;
 import com.ss.rlib.network.util.NetworkUtils;
 import org.jetbrains.annotations.NotNull;
 
-import javax.crypto.BadPaddingException;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
