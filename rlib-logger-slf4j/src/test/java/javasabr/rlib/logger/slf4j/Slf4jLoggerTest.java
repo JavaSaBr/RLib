@@ -1,7 +1,6 @@
-package com.ss.rlib.logger.slf4j.test;
+package javasabr.rlib.logger.slf4j;
 
 import javasabr.rlib.logger.api.LoggerManager;
-import com.ss.rlib.logger.slf4j.Slf4jLogger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

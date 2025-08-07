@@ -1,4 +1,4 @@
-package com.ss.rlib.logger.slf4j;
+package javasabr.rlib.logger.slf4j;
 
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
