@@ -2,8 +2,8 @@ package com.ss.rlib.network.impl;
 
 import javasabr.rlib.common.util.pools.Pool;
 import javasabr.rlib.common.util.pools.PoolFactory;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.BufferAllocator;
 import com.ss.rlib.network.NetworkConfig;
 import lombok.ToString;

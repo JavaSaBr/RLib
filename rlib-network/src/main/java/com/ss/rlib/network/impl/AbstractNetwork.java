@@ -1,7 +1,7 @@
 package com.ss.rlib.network.impl;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.Network;
 import com.ss.rlib.network.NetworkConfig;

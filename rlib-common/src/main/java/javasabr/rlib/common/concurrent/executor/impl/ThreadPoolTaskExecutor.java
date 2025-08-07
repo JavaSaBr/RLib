@@ -1,7 +1,7 @@
 package javasabr.rlib.common.concurrent.executor.impl;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;

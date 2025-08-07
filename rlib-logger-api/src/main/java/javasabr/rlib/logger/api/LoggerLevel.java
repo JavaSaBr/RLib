@@ -1,4 +1,4 @@
-package com.ss.rlib.logger.api;
+package javasabr.rlib.logger.api;
 
 import lombok.Getter;
 import lombok.Setter;

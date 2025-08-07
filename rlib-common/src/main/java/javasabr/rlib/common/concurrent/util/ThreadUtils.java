@@ -1,7 +1,7 @@
 package javasabr.rlib.common.concurrent.util;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 
 /**
  * The class with utilities methods to work with threads.

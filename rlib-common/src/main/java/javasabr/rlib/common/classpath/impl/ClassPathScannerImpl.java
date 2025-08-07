@@ -3,8 +3,8 @@ package javasabr.rlib.common.classpath.impl;
 import static java.lang.reflect.Modifier.isAbstract;
 import static javasabr.rlib.common.util.ClassUtils.unsafeNNCast;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

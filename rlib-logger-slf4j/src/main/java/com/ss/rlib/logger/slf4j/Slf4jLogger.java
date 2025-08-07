@@ -1,7 +1,7 @@
 package com.ss.rlib.logger.slf4j;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerLevel;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerLevel;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 

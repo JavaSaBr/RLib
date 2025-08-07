@@ -1,6 +1,6 @@
-package com.ss.rlib.logger.api;
+package javasabr.rlib.logger.api;
 
-import com.ss.rlib.logger.api.impl.NullLoggerFactory;
+import javasabr.rlib.logger.api.impl.NullLoggerFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Writer;

@@ -1,7 +1,7 @@
 package javasabr.rlib.common.geom.util;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.util.concurrent.ThreadLocalRandom;
 import javasabr.rlib.common.geom.Vector3f;
 import javasabr.rlib.common.util.ExtMath;

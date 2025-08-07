@@ -2,8 +2,8 @@ package javasabr.rlib.common.data;
 
 import static java.lang.ThreadLocal.withInitial;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.io.IOException;
 import java.io.InputStream;
 import javasabr.rlib.common.util.IOUtils;

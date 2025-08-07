@@ -1,6 +1,6 @@
 package javasabr.rlib.common.util;
 
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;

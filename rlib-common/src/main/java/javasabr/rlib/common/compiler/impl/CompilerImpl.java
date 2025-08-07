@@ -1,7 +1,7 @@
 package javasabr.rlib.common.compiler.impl;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;

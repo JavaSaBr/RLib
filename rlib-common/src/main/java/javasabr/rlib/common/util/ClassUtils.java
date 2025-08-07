@@ -2,7 +2,7 @@ package javasabr.rlib.common.util;
 
 import static java.lang.Class.forName;
 
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;

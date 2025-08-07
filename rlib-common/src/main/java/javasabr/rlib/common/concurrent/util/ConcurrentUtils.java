@@ -1,7 +1,7 @@
 package javasabr.rlib.common.concurrent.util;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.util.function.Function;
 import javasabr.rlib.common.concurrent.lock.Lockable;
 import javasabr.rlib.common.function.ObjectIntFunction;

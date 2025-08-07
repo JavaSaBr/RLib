@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.ss.rlib.logger.api.LoggerListener;
+import javasabr.rlib.logger.api.LoggerListener;
 import org.jetbrains.annotations.NotNull;
 
 /**

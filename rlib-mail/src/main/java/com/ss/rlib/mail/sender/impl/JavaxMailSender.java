@@ -1,8 +1,8 @@
 package com.ss.rlib.mail.sender.impl;
 
 import static java.util.concurrent.CompletableFuture.runAsync;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import com.ss.rlib.mail.sender.MailSender;
 import com.ss.rlib.mail.sender.MailSenderConfig;
 import com.ss.rlib.mail.sender.exception.UncheckedMessagingException;

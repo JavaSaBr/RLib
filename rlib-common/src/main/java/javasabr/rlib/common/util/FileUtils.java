@@ -2,7 +2,7 @@ package javasabr.rlib.common.util;
 
 import static javasabr.rlib.common.util.ObjectUtils.notNull;
 
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

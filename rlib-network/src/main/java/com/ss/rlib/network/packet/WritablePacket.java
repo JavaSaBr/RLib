@@ -1,6 +1,6 @@
 package com.ss.rlib.network.packet;
 
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.LoggerManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.BufferOverflowException;

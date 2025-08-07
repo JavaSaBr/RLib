@@ -2,8 +2,8 @@ package javasabr.rlib.common.concurrent.executor.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.lang.reflect.Constructor;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;

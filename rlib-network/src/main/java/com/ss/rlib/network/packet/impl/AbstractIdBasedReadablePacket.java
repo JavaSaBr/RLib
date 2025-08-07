@@ -1,8 +1,8 @@
 package com.ss.rlib.network.packet.impl;
 
 import javasabr.rlib.common.util.ClassUtils;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.Connection;
 import com.ss.rlib.network.packet.IdBasedReadablePacket;
 import org.jetbrains.annotations.NotNull;

@@ -6,8 +6,8 @@ import static javasabr.rlib.common.util.ObjectUtils.notNull;
 import static javasabr.rlib.common.util.array.ArrayCollectors.toArray;
 import static javasabr.rlib.common.util.dictionary.DictionaryCollectors.toObjectDictionary;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;

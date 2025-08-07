@@ -1,8 +1,8 @@
 package com.ss.rlib.network.packet.impl;
 
 import static com.ss.rlib.network.util.NetworkUtils.hexDump;
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import com.ss.rlib.network.packet.Packet;
 import org.jetbrains.annotations.NotNull;
 

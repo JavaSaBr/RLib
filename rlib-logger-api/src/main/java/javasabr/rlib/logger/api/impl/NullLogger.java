@@ -1,9 +1,8 @@
-package com.ss.rlib.logger.api.impl;
+package javasabr.rlib.logger.api.impl;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerLevel;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerLevel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class NullLogger implements Logger {
 

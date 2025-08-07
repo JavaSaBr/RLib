@@ -1,7 +1,7 @@
 package javasabr.rlib.common.geom.bounding.impl;
 
-import com.ss.rlib.logger.api.Logger;
-import com.ss.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.common.geom.Quaternion4f;
 import javasabr.rlib.common.geom.Ray3f;
 import javasabr.rlib.common.geom.Vector3f;
