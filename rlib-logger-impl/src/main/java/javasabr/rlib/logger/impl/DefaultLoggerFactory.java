@@ -1,4 +1,4 @@
-package com.ss.rlib.logger.impl;
+package javasabr.rlib.logger.impl;
 
 import static javasabr.rlib.common.util.ObjectUtils.notNull;
 import javasabr.rlib.common.util.array.Array;

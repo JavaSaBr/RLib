@@ -1,4 +1,4 @@
-package com.ss.rlib.logger.impl;
+package javasabr.rlib.logger.impl;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

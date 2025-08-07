@@ -1,4 +1,4 @@
-package com.ss.rlib.logger.impl;
+package javasabr.rlib.logger.impl;
 
 import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.logger.api.Logger;

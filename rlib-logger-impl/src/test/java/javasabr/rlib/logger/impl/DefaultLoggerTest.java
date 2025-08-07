@@ -1,10 +1,9 @@
-package com.ss.rlib.logger.impl.test;
+package javasabr.rlib.logger.impl;
 
 import javasabr.rlib.common.util.array.ConcurrentArray;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerListener;
 import javasabr.rlib.logger.api.LoggerManager;
-import com.ss.rlib.logger.impl.DefaultLogger;
 import org.junit.jupiter.api.*;
 
 import java.util.Collection;
