@@ -1,0 +1,81 @@
+package javasabr.rlib.network.packet.impl;
+
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import javasabr.rlib.common.function.NotNullBiConsumer;
+import javasabr.rlib.common.function.NotNullConsumer;
+import javasabr.rlib.common.function.NullableSupplier;
+import javasabr.rlib.network.BufferAllocator;
+import javasabr.rlib.network.Connection;
+import javasabr.rlib.network.packet.WritablePacket;
+import javax.net.ssl.SSLEngine;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * @author JavaSaBr
+ */
+public class DefaultSSLPacketWriter<W extends WritablePacket, C extends Connection<?, W>> extends
+    AbstractSSLPacketWriter<W, C> {
+
+    protected final int packetLengthHeaderSize;
+
+    public DefaultSSLPacketWriter(
+        @NotNull C connection,
+        @NotNull AsynchronousSocketChannel channel,
+        @NotNull BufferAllocator bufferAllocator,
+        @NotNull Runnable updateActivityFunction,
+        @NotNull NullableSupplier<WritablePacket> nextWritePacketSupplier,
+        @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler,
+        @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
+        @NotNull SSLEngine sslEngine,
+        @NotNull NotNullConsumer<WritablePacket> packetWriter,
+        @NotNull NotNullConsumer<WritablePacket> queueAtFirst,
+        int packetLengthHeaderSize
+    ) {
+        super(
+            connection,
+            channel,
+            bufferAllocator,
+            updateActivityFunction,
+            nextWritePacketSupplier,
+            writtenPacketHandler,
+            sentPacketHandler,
+            sslEngine,
+            packetWriter,
+            queueAtFirst
+        );
+        this.packetLengthHeaderSize = packetLengthHeaderSize;
+    }
+
+    @Override
+    protected int getTotalSize(@NotNull WritablePacket packet, int expectedLength) {
+        return expectedLength + packetLengthHeaderSize;
+    }
+
+    @Override
+    protected boolean onBeforeWrite(
+        @NotNull W packet,
+        int expectedLength,
+        int totalSize,
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
+    ) {
+        firstBuffer.clear().position(packetLengthHeaderSize);
+        return true;
+    }
+
+    @Override
+    protected @NotNull ByteBuffer onResult(
+        @NotNull W packet,
+        int expectedLength,
+        int totalSize,
+        @NotNull ByteBuffer firstBuffer,
+        @NotNull ByteBuffer secondBuffer
+    ) {
+        return writePacketLength(firstBuffer, firstBuffer.limit()).position(0);
+    }
+
+    protected @NotNull ByteBuffer writePacketLength(@NotNull ByteBuffer buffer, int packetLength) {
+        return writeHeader(buffer, 0, packetLength, packetLengthHeaderSize);
+    }
+}
