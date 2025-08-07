@@ -1,5 +1,9 @@
 package javasabr.rlib.common.util;
 
+import static javasabr.rlib.common.util.array.ArrayFactory.toArray;
+import static javasabr.rlib.common.util.array.ArrayFactory.toBooleanArray;
+import static javasabr.rlib.common.util.array.ArrayFactory.toIntArray;
+
 import javasabr.rlib.common.util.array.ArrayFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -140,7 +144,7 @@ public class VarTableTest {
 
         var vars = new VarTable();
         vars.put("string", "Hello");
-        vars.put("intArray", ArrayFactory.toIntArray(1, 2, 3, 5));
+        vars.put("intArray", toIntArray(1, 2, 3, 5));
         vars.put("floatStringArray", "1.5,4.2,5.5");
         vars.put("stringEnum", "THIRD");
         vars.put("enum", SimpleEnum.SECOND);
@@ -153,7 +157,7 @@ public class VarTableTest {
         var unsafeGet = vars.get("enum");
 
         Assertions.assertEquals("Hello", string);
-        Assertions.assertArrayEquals(array, ArrayFactory.toIntArray(1, 2, 3, 5));
+        Assertions.assertArrayEquals(array, toIntArray(1, 2, 3, 5));
         Assertions.assertArrayEquals(floatStringArray, ArrayFactory.toFloatArray(1.5F, 4.2F, 5.5F));
         Assertions.assertEquals(SimpleEnum.THIRD, stringEnum);
         Assertions.assertEquals(SimpleEnum.SECOND, anEnum);
