@@ -13,14 +13,13 @@ import javafx.stage.Stage;
 import javasabr.rlib.fx.control.dialog.ControlDialogSupport;
 import javasabr.rlib.fx.control.dialog.DefaultControlDialog;
 import javasabr.rlib.fx.util.FxUtils;
-import org.jetbrains.annotations.NotNull;
 
 public class SimpleControlDialogTest extends Application {
 
   private static class TestDialog extends DefaultControlDialog {
 
     @Override
-    protected void fillContent(@NotNull GridPane content) {
+    protected void fillContent(GridPane content) {
       super.fillContent(content);
 
       var textArea = new TextArea("This is a text area.");
@@ -35,7 +34,7 @@ public class SimpleControlDialogTest extends Application {
     }
 
     @Override
-    protected void fillActions(@NotNull GridPane actions) {
+    protected void fillActions(GridPane actions) {
       super.fillActions(actions);
 
       var okButton = new Button("Ok");
@@ -51,7 +50,7 @@ public class SimpleControlDialogTest extends Application {
   }
 
   @Override
-  public void start(@NotNull Stage stage) {
+  public void start(Stage stage) {
 
     var root = new VBox();
     root.setAlignment(Pos.CENTER);
@@ -80,13 +79,13 @@ public class SimpleControlDialogTest extends Application {
     stage.show();
   }
 
-  private void openInCenterDialog(@NotNull Scene scene) {
+  private void openInCenterDialog(Scene scene) {
     var dialog = new TestDialog();
     dialog.applySize(200, 200);
     dialog.show(scene);
   }
 
-  private void openOverNode(@NotNull Node node) {
+  private void openOverNode(Node node) {
     var dialog = new TestDialog();
     dialog.applySize(200, 200);
     dialog.show(node);

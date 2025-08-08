@@ -7,7 +7,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -84,7 +83,7 @@ class IOUtilsTest {
     Assertions.assertThrows(
         UncheckedIOException.class, () -> IOUtils.toStringUsingTLB(new Reader() {
           @Override
-          public int read(@NotNull char[] cbuf, int off, int len) throws IOException {
+          public int read(char[] cbuf, int off, int len) throws IOException {
             throw new IOException("test");
           }
 

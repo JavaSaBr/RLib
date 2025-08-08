@@ -1,7 +1,5 @@
 package javasabr.rlib.common;
 
-import org.jetbrains.annotations.NotNull;
-
 public class BaseTest {
 
   protected static class Type1 {
@@ -12,18 +10,18 @@ public class BaseTest {
     public static final Type2 EXAMPLE = new Type2();
   }
 
-  public <T> void assertType(@NotNull T object, @NotNull Class<T> type) {
+  public <T> void assertType(T object, Class<T> type) {
     if (!type.isInstance(object)) {
       throw new ClassCastException();
     }
   }
 
-  public void assertIntType(@NotNull Integer val) {
+  public void assertIntType(Integer val) {
   }
 
-  public void assertLongType(@NotNull Long val) {
+  public void assertLongType(Long val) {
   }
 
-  public void assertFloatType(@NotNull Float val) {
+  public void assertFloatType(Float val) {
   }
 }

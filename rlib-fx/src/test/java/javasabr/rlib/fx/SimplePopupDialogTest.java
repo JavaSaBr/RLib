@@ -7,12 +7,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javasabr.rlib.fx.dialog.SimplePopupDialog;
 import javasabr.rlib.fx.util.FxUtils;
-import org.jetbrains.annotations.NotNull;
 
 public class SimplePopupDialogTest extends Application {
 
   @Override
-  public void start(@NotNull Stage stage) throws Exception {
+  public void start(Stage stage) throws Exception {
 
     var root = new StackPane();
     var scene = new Scene(root);
@@ -31,7 +30,7 @@ public class SimplePopupDialogTest extends Application {
     stage.show();
   }
 
-  private void openDialog(@NotNull Stage window) {
+  private void openDialog(Stage window) {
     SimplePopupDialog dialog = new SimplePopupDialog();
     dialog.show(window);
   }

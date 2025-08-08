@@ -23,7 +23,6 @@ import javasabr.rlib.network.client.ClientNetwork;
 import javasabr.rlib.network.impl.DefaultBufferAllocator;
 import javasabr.rlib.network.packet.impl.StringWritablePacket;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
@@ -80,7 +79,7 @@ public class StringNetworkTest extends BaseNetworkTest {
     var serverAllocator = new DefaultBufferAllocator(DEFAULT_SERVER) {
 
       @Override
-      public @NotNull ByteBuffer takeBuffer(int bufferSize) {
+      public ByteBuffer takeBuffer(int bufferSize) {
         throw new RuntimeException();
       }
     };
@@ -88,7 +87,7 @@ public class StringNetworkTest extends BaseNetworkTest {
     var clientAllocator = new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT) {
 
       @Override
-      public @NotNull ByteBuffer takeBuffer(int bufferSize) {
+      public ByteBuffer takeBuffer(int bufferSize) {
         throw new RuntimeException();
       }
     };
@@ -399,7 +398,7 @@ public class StringNetworkTest extends BaseNetworkTest {
     }
   }
 
-  private static @NotNull StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {
+  private static StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {
     return new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength));
   }
 }

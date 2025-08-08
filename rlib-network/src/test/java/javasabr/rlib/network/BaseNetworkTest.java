@@ -11,7 +11,6 @@ import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
 import javasabr.rlib.network.server.ServerNetwork;
 import javax.net.ssl.SSLContext;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
@@ -41,7 +40,7 @@ public class BaseNetworkTest {
     }
   }
 
-  protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork() {
+  protected TestNetwork<StringDataConnection> buildStringNetwork() {
     return buildStringNetwork(
         ServerNetworkConfig.DEFAULT_SERVER,
         new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
@@ -49,9 +48,9 @@ public class BaseNetworkTest {
         new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT));
   }
 
-  protected @NotNull TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
-      @NotNull SSLContext serverSSLContext,
-      @NotNull SSLContext clientSSLContext) {
+  protected TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
+      SSLContext serverSSLContext,
+      SSLContext clientSSLContext) {
     return buildStringSSLNetwork(
         ServerNetworkConfig.DEFAULT_SERVER,
         new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
@@ -61,9 +60,9 @@ public class BaseNetworkTest {
         clientSSLContext);
   }
 
-  protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork(
-      @NotNull BufferAllocator serverBufferAllocator,
-      @NotNull BufferAllocator clientBufferAllocator) {
+  protected TestNetwork<StringDataConnection> buildStringNetwork(
+      BufferAllocator serverBufferAllocator,
+      BufferAllocator clientBufferAllocator) {
     return buildStringNetwork(
         ServerNetworkConfig.DEFAULT_SERVER,
         serverBufferAllocator,
@@ -71,9 +70,9 @@ public class BaseNetworkTest {
         clientBufferAllocator);
   }
 
-  protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork(
-      @NotNull ServerNetworkConfig serverNetworkConfig,
-      @NotNull BufferAllocator serverBufferAllocator) {
+  protected TestNetwork<StringDataConnection> buildStringNetwork(
+      ServerNetworkConfig serverNetworkConfig,
+      BufferAllocator serverBufferAllocator) {
     return buildStringNetwork(
         serverNetworkConfig,
         serverBufferAllocator,
@@ -81,11 +80,11 @@ public class BaseNetworkTest {
         new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT));
   }
 
-  protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork(
-      @NotNull ServerNetworkConfig serverNetworkConfig,
-      @NotNull BufferAllocator serverBufferAllocator,
-      @NotNull NetworkConfig clientNetworkConfig,
-      @NotNull BufferAllocator clientBufferAllocator) {
+  protected TestNetwork<StringDataConnection> buildStringNetwork(
+      ServerNetworkConfig serverNetworkConfig,
+      BufferAllocator serverBufferAllocator,
+      NetworkConfig clientNetworkConfig,
+      BufferAllocator clientBufferAllocator) {
 
     var asyncClientToServer = new CompletableFuture<StringDataConnection>();
     var asyncServerToClient = new CompletableFuture<StringDataConnection>();
@@ -109,13 +108,13 @@ public class BaseNetworkTest {
         clientNetwork);
   }
 
-  protected @NotNull TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
-      @NotNull ServerNetworkConfig serverNetworkConfig,
-      @NotNull BufferAllocator serverBufferAllocator,
-      @NotNull SSLContext serverSSLContext,
-      @NotNull NetworkConfig clientNetworkConfig,
-      @NotNull BufferAllocator clientBufferAllocator,
-      @NotNull SSLContext clientSSLContext) {
+  protected TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
+      ServerNetworkConfig serverNetworkConfig,
+      BufferAllocator serverBufferAllocator,
+      SSLContext serverSSLContext,
+      NetworkConfig clientNetworkConfig,
+      BufferAllocator clientBufferAllocator,
+      SSLContext clientSSLContext) {
 
     var asyncClientToServer = new CompletableFuture<StringDataSSLConnection>();
     var asyncServerToClient = new CompletableFuture<StringDataSSLConnection>();
@@ -146,9 +145,9 @@ public class BaseNetworkTest {
         clientNetwork);
   }
 
-  protected @NotNull TestNetwork<DefaultConnection> buildDefaultNetwork(
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
+  protected TestNetwork<DefaultConnection> buildDefaultNetwork(
+      ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
+      ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
     return buildDefaultNetwork(
         ServerNetworkConfig.DEFAULT_SERVER,
         new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
@@ -158,11 +157,11 @@ public class BaseNetworkTest {
         clientPacketRegistry);
   }
 
-  protected @NotNull TestNetwork<DefaultConnection> buildDefaultNetwork(
-      @NotNull BufferAllocator serverBufferAllocator,
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
-      @NotNull BufferAllocator clientBufferAllocator,
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
+  protected TestNetwork<DefaultConnection> buildDefaultNetwork(
+      BufferAllocator serverBufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
+      BufferAllocator clientBufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
     return buildDefaultNetwork(
         ServerNetworkConfig.DEFAULT_SERVER,
         serverBufferAllocator,
@@ -172,13 +171,13 @@ public class BaseNetworkTest {
         clientPacketRegistry);
   }
 
-  protected @NotNull TestNetwork<DefaultConnection> buildDefaultNetwork(
-      @NotNull ServerNetworkConfig serverNetworkConfig,
-      @NotNull BufferAllocator serverBufferAllocator,
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
-      @NotNull NetworkConfig clientNetworkConfig,
-      @NotNull BufferAllocator clientBufferAllocator,
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
+  protected TestNetwork<DefaultConnection> buildDefaultNetwork(
+      ServerNetworkConfig serverNetworkConfig,
+      BufferAllocator serverBufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
+      NetworkConfig clientNetworkConfig,
+      BufferAllocator clientBufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
 
     var asyncClientToServer = new CompletableFuture<DefaultConnection>();
     var asyncServerToClient = new CompletableFuture<DefaultConnection>();

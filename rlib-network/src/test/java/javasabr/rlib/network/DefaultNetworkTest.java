@@ -28,7 +28,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +50,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
       private final String message;
 
       @Override
-      protected void writeImpl(@NotNull ByteBuffer buffer) {
+      protected void writeImpl(ByteBuffer buffer) {
         super.writeImpl(buffer);
         writeString(buffer, message);
       }
@@ -69,7 +68,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
       private volatile String message;
 
       @Override
-      protected void readImpl(@NotNull DefaultConnection connection, @NotNull ByteBuffer buffer) {
+      protected void readImpl(DefaultConnection connection, ByteBuffer buffer) {
         super.readImpl(connection, buffer);
         message = readString(buffer);
       }
@@ -83,7 +82,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
       private volatile LocalDateTime localDateTime;
 
       @Override
-      protected void readImpl(@NotNull DefaultConnection connection, @NotNull ByteBuffer buffer) {
+      protected void readImpl(DefaultConnection connection, ByteBuffer buffer) {
         super.readImpl(connection, buffer);
         localDateTime = LocalDateTime.ofEpochSecond(readLong(buffer), 0, ZoneOffset.ofTotalSeconds(readInt(buffer)));
       }
@@ -100,13 +99,13 @@ public class DefaultNetworkTest extends BaseNetworkTest {
       private volatile String message;
 
       @Override
-      protected void readImpl(@NotNull DefaultConnection connection, @NotNull ByteBuffer buffer) {
+      protected void readImpl(DefaultConnection connection, ByteBuffer buffer) {
         super.readImpl(connection, buffer);
         message = readString(buffer);
       }
 
       @Override
-      protected void executeImpl(@NotNull DefaultConnection connection) {
+      protected void executeImpl(DefaultConnection connection) {
         super.executeImpl(connection);
         connection.send(new ResponseEchoMessage(message));
       }
@@ -117,12 +116,12 @@ public class DefaultNetworkTest extends BaseNetworkTest {
     class RequestServerTime extends DefaultReadablePacket {
 
       @Override
-      protected void readImpl(@NotNull DefaultConnection connection, @NotNull ByteBuffer buffer) {
+      protected void readImpl(DefaultConnection connection, ByteBuffer buffer) {
         super.readImpl(connection, buffer);
       }
 
       @Override
-      protected void executeImpl(@NotNull DefaultConnection connection) {
+      protected void executeImpl(DefaultConnection connection) {
         super.executeImpl(connection);
         connection.send(new ResponseServerTime());
       }
@@ -135,7 +134,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
       private final String message;
 
       @Override
-      protected void writeImpl(@NotNull ByteBuffer buffer) {
+      protected void writeImpl(ByteBuffer buffer) {
         super.writeImpl(buffer);
         writeString(buffer, "Echo: " + message);
       }
@@ -145,7 +144,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
     class ResponseServerTime extends DefaultWritablePacket {
 
       @Override
-      protected void writeImpl(@NotNull ByteBuffer buffer) {
+      protected void writeImpl(ByteBuffer buffer) {
         super.writeImpl(buffer);
         var dateTime = ZonedDateTime.now();
         writeLong(buffer, dateTime.toEpochSecond());
@@ -219,7 +218,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
     var serverAllocator = new DefaultBufferAllocator(DEFAULT_SERVER) {
 
       @Override
-      public @NotNull ByteBuffer takeBuffer(int bufferSize) {
+      public ByteBuffer takeBuffer(int bufferSize) {
         throw new RuntimeException();
       }
     };
@@ -227,7 +226,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
     var clientAllocator = new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT) {
 
       @Override
-      public @NotNull ByteBuffer takeBuffer(int bufferSize) {
+      public ByteBuffer takeBuffer(int bufferSize) {
         throw new RuntimeException();
       }
     };

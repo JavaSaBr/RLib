@@ -27,7 +27,6 @@ import javasabr.rlib.network.packet.impl.StringWritablePacket;
 import javasabr.rlib.network.util.NetworkUtils;
 import javax.net.ssl.SSLSocket;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -316,7 +315,7 @@ public class StringSSLNetworkTest extends BaseNetworkTest {
     }
   }
 
-  private static @NotNull StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {
+  private static StringWritablePacket newMessage(int minMessageLength, int maxMessageLength) {
     return new StringWritablePacket(StringUtils.generate(minMessageLength, maxMessageLength));
   }
 }
