@@ -1,7 +1,5 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author JavaSaBr
  */
@@ -9,5 +7,5 @@ import org.jetbrains.annotations.NotNull;
 public interface NotNullSafeSupplier<T> extends SafeSupplier<T> {
 
   @Override
-  @NotNull T get() throws Exception;
+  T get() throws Exception;
 }

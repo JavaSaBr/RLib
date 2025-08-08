@@ -1,6 +1,5 @@
 package javasabr.rlib.common.util.random;
 
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -22,7 +21,7 @@ public final class FastRandom implements Random {
   }
 
   @Override
-  public void byteArray(byte @NotNull [] array, int offset, int length) {
+  public void byteArray(byte [] array, int offset, int length) {
     length += offset;
     for (int i = offset; i < length; i++) {
       array[i] = (byte) nextInt(256);

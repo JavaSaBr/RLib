@@ -7,7 +7,6 @@ import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The manager to load byte code of classes.
@@ -19,18 +18,16 @@ public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJa
   /**
    * The list of names of loaded classes.
    */
-  @NotNull
   private final Array<String> classNames;
 
   /**
    * The loaded of compiled classes.
    */
-  @NotNull
   private final CompileClassLoader loader;
 
   public CompileJavaFileManager(
-      @NotNull final StandardJavaFileManager fileManager,
-      @NotNull final CompileClassLoader loader) {
+      final StandardJavaFileManager fileManager,
+      final CompileClassLoader loader) {
     super(fileManager);
     this.loader = loader;
     this.classNames = ArrayFactory.newArray(String.class);
@@ -48,16 +45,16 @@ public class CompileJavaFileManager extends ForwardingJavaFileManager<StandardJa
    *
    * @return the list of names of loaded classes.
    */
-  public @NotNull String[] getClassNames() {
+  public String[] getClassNames() {
     return classNames.toArray(new String[classNames.size()]);
   }
 
   @Override
   public JavaFileObject getJavaFileForOutput(
-      @NotNull final Location location,
-      @NotNull final String name,
-      @NotNull final Kind kind,
-      @NotNull final FileObject sibling) {
+      final Location location,
+      final String name,
+      final Kind kind,
+      final FileObject sibling) {
 
     final CompileByteCode byteCode = new CompileByteCode(name);
 

@@ -7,7 +7,6 @@ import org.jspecify.annotations.NullMarked;
  *
  * @author JavaSaBr
  */
-@NullMarked
 public interface Random {
 
   /**

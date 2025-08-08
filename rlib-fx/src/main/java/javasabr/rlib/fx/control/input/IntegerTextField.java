@@ -3,7 +3,6 @@ package javasabr.rlib.fx.control.input;
 import javafx.scene.input.ScrollEvent;
 import javasabr.rlib.fx.util.converter.LimitedIntegerStringConverter;
 import javasabr.rlib.fx.util.converter.LimitedNumberStringConverter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of a text field control to edit integer values.
@@ -17,12 +16,12 @@ public final class IntegerTextField extends NumberTextField<Integer> {
   }
 
   @Override
-  protected @NotNull LimitedNumberStringConverter<Integer> createValueConverter() {
+  protected LimitedNumberStringConverter<Integer> createValueConverter() {
     return new LimitedIntegerStringConverter();
   }
 
   @Override
-  protected void scrollValueImpl(@NotNull ScrollEvent event) {
+  protected void scrollValueImpl(ScrollEvent event) {
     super.scrollValueImpl(event);
 
     var value = getValue();

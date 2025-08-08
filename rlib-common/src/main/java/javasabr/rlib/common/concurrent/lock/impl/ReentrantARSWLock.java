@@ -5,7 +5,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javasabr.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
 import javasabr.rlib.common.concurrent.lock.LockFactory;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
 /**

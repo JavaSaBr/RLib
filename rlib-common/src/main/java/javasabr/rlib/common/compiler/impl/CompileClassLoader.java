@@ -4,8 +4,7 @@ import javasabr.rlib.common.compiler.ByteCode;
 import javasabr.rlib.common.util.Utils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of a class loader of compiled classes.
@@ -17,7 +16,6 @@ public class CompileClassLoader extends ClassLoader {
   /**
    * The list of byte codes of loaded classes.
    */
-  @NotNull
   private final Array<ByteCode> byteCode;
 
   public CompileClassLoader() {
@@ -29,12 +27,12 @@ public class CompileClassLoader extends ClassLoader {
    *
    * @param byteCode the byte code
    */
-  public synchronized void addByteCode(@NotNull ByteCode byteCode) {
+  public synchronized void addByteCode(ByteCode byteCode) {
     this.byteCode.add(byteCode);
   }
 
   @Override
-  protected synchronized @Nullable Class<?> findClass(@NotNull String name) {
+  protected synchronized @Nullable Class<?> findClass(String name) {
 
     if (byteCode.isEmpty()) {
       return null;

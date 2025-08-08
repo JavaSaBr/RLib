@@ -5,7 +5,7 @@ import static javasabr.rlib.common.util.ClassUtils.unsafeCast;
 import java.util.HashMap;
 import javafx.scene.input.DataFormat;
 import javasabr.rlib.common.util.ref.Reference;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of a clipboard/dragboard content for internal using.

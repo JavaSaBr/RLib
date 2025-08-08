@@ -2,18 +2,17 @@ package javasabr.rlib.common.function;
 
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
 
 public class Functions {
 
   public static class Predicates {
 
-    public static @NotNull Predicate<Boolean> isTrue() {
+    public static Predicate<Boolean> isTrue() {
 
       return bool -> bool;
     }
 
-    public static @NotNull Predicate<Boolean> ifTrue(@NotNull Runnable task) {
+    public static Predicate<Boolean> ifTrue(Runnable task) {
 
       return bool -> {
 
@@ -25,7 +24,7 @@ public class Functions {
       };
     }
 
-    public static @NotNull Predicate<Boolean> throwIfTrue(@NotNull Supplier<? extends RuntimeException> factory) {
+    public static Predicate<Boolean> throwIfTrue(Supplier<? extends RuntimeException> factory) {
 
       return bool -> {
 
@@ -37,12 +36,12 @@ public class Functions {
       };
     }
 
-    public static @NotNull Predicate<Boolean> isFalse() {
+    public static Predicate<Boolean> isFalse() {
 
       return bool -> !bool;
     }
 
-    public static @NotNull Predicate<Boolean> ifFalse(@NotNull Runnable task) {
+    public static Predicate<Boolean> ifFalse(Runnable task) {
 
       return bool -> {
 
@@ -54,7 +53,7 @@ public class Functions {
       };
     }
 
-    public static @NotNull Predicate<Boolean> throwIfFalse(@NotNull Supplier<? extends RuntimeException> factory) {
+    public static Predicate<Boolean> throwIfFalse(Supplier<? extends RuntimeException> factory) {
 
       return bool -> {
 

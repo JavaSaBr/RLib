@@ -1,8 +1,7 @@
 package javasabr.rlib.fx.control.input;
 
 import javasabr.rlib.fx.util.converter.LimitedNumberStringConverter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of a text field control to edit float values.
@@ -16,13 +15,13 @@ public abstract class NumberTextField<T extends Number> extends ScrollableTypedT
     setScrollPower(30);
   }
 
-  public NumberTextField(@NotNull String text) {
+  public NumberTextField(String text) {
     super(text);
     setScrollPower(30);
   }
 
   @Override
-  protected @NotNull LimitedNumberStringConverter<T> createValueConverter() {
+  protected LimitedNumberStringConverter<T> createValueConverter() {
     throw new UnsupportedOperationException();
   }
 

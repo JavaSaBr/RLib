@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * The consumer with 4 arguments.
@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <FO> the type parameter
  * @author JavaSaBr
  */
+@NullUnmarked
 @FunctionalInterface
 public interface FourObjectConsumer<F, S, T, FO> {
 
@@ -22,5 +23,5 @@ public interface FourObjectConsumer<F, S, T, FO> {
    * @param third the third
    * @param fourth the fourth
    */
-  void accept(@Nullable F first, @Nullable S second, @Nullable T third, @Nullable FO fourth);
+  void accept(F first, S second, T third, FO fourth);
 }

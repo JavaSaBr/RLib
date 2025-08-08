@@ -1,7 +1,6 @@
 package javasabr.rlib.common.plugin.exception;
 
 import java.nio.file.Path;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
 /**

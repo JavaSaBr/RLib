@@ -11,7 +11,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of a windows resize handler.
@@ -26,7 +25,7 @@ public class WindowResizeHandler implements EventHandler<MouseEvent> {
    * @param stage the stage.
    * @param nodes the nodes.
    */
-  public static void install(@NotNull Stage stage, @NotNull Node... nodes) {
+  public static void install(Stage stage, Node... nodes) {
 
     var handler = new WindowResizeHandler(stage);
     var scene = stage.getScene();
@@ -43,7 +42,7 @@ public class WindowResizeHandler implements EventHandler<MouseEvent> {
     }
   }
 
-  private static void addHandler(@NotNull Node node, @NotNull EventHandler<MouseEvent> listener) {
+  private static void addHandler(Node node, EventHandler<MouseEvent> listener) {
     node.addEventHandler(MOUSE_MOVED, listener);
     node.addEventHandler(MOUSE_PRESSED, listener);
     node.addEventHandler(MOUSE_DRAGGED, listener);
@@ -51,10 +50,8 @@ public class WindowResizeHandler implements EventHandler<MouseEvent> {
     node.addEventHandler(MOUSE_EXITED_TARGET, listener);
   }
 
-  @NotNull
   private final Stage stage;
 
-  @NotNull
   private Cursor cursorEvent;
 
   private double startX;
@@ -62,7 +59,7 @@ public class WindowResizeHandler implements EventHandler<MouseEvent> {
 
   private int border;
 
-  public WindowResizeHandler(@NotNull Stage stage) {
+  public WindowResizeHandler(Stage stage) {
     this.stage = stage;
     this.border = 4;
     this.startX = 0;
@@ -71,7 +68,7 @@ public class WindowResizeHandler implements EventHandler<MouseEvent> {
   }
 
   @Override
-  public void handle(@NotNull MouseEvent mouseEvent) {
+  public void handle(MouseEvent mouseEvent) {
 
     var mouseEventType = mouseEvent.getEventType();
     var scene = stage.getScene();

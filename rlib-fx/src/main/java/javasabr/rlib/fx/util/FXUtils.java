@@ -11,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The utility class.
@@ -29,9 +28,9 @@ public class FXUtils {
    * @param className the css class.
    */
   public static void addClassTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final String className) {
+      final Styleable first,
+      final Styleable second,
+      final String className) {
     first
         .getStyleClass()
         .add(className);
@@ -48,9 +47,9 @@ public class FXUtils {
    * @param classNames the css classes.
    */
   public static void addClassesTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final String... classNames) {
+      final Styleable first,
+      final Styleable second,
+      final String... classNames) {
     first
         .getStyleClass()
         .addAll(classNames);
@@ -68,10 +67,10 @@ public class FXUtils {
    * @param className the css class.
    */
   public static void addClassTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final Styleable third,
-      @NotNull final String className) {
+      final Styleable first,
+      final Styleable second,
+      final Styleable third,
+      final String className) {
     first
         .getStyleClass()
         .add(className);
@@ -92,10 +91,10 @@ public class FXUtils {
    * @param classNames the css classes.
    */
   public static void addClassesTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final Styleable third,
-      @NotNull final String... classNames) {
+      final Styleable first,
+      final Styleable second,
+      final Styleable third,
+      final String... classNames) {
     first
         .getStyleClass()
         .addAll(classNames);
@@ -117,11 +116,11 @@ public class FXUtils {
    * @param className the css class.
    */
   public static void addClassTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final Styleable third,
-      @NotNull final Styleable fourth,
-      @NotNull final String className) {
+      final Styleable first,
+      final Styleable second,
+      final Styleable third,
+      final Styleable fourth,
+      final String className) {
     first
         .getStyleClass()
         .add(className);
@@ -146,11 +145,11 @@ public class FXUtils {
    * @param classNames the css classes.
    */
   public static void addClassesTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final Styleable third,
-      @NotNull final Styleable fourth,
-      @NotNull final String... classNames) {
+      final Styleable first,
+      final Styleable second,
+      final Styleable third,
+      final Styleable fourth,
+      final String... classNames) {
     first
         .getStyleClass()
         .addAll(classNames);
@@ -176,12 +175,12 @@ public class FXUtils {
    * @param className the css class.
    */
   public static void addClassTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final Styleable third,
-      @NotNull final Styleable fourth,
-      @NotNull final Styleable fifth,
-      @NotNull final String className) {
+      final Styleable first,
+      final Styleable second,
+      final Styleable third,
+      final Styleable fourth,
+      final Styleable fifth,
+      final String className) {
     first
         .getStyleClass()
         .add(className);
@@ -210,12 +209,12 @@ public class FXUtils {
    * @param classNames the css classes.
    */
   public static void addClassesTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final Styleable third,
-      @NotNull final Styleable fourth,
-      @NotNull final Styleable fifth,
-      @NotNull final String... classNames) {
+      final Styleable first,
+      final Styleable second,
+      final Styleable third,
+      final Styleable fourth,
+      final Styleable fifth,
+      final String... classNames) {
     first
         .getStyleClass()
         .addAll(classNames);
@@ -245,13 +244,13 @@ public class FXUtils {
    * @param className the css class.
    */
   public static void addClassTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final Styleable third,
-      @NotNull final Styleable fourth,
-      @NotNull final Styleable fifth,
-      @NotNull final Styleable sixth,
-      @NotNull final String className) {
+      final Styleable first,
+      final Styleable second,
+      final Styleable third,
+      final Styleable fourth,
+      final Styleable fifth,
+      final Styleable sixth,
+      final String className) {
     first
         .getStyleClass()
         .add(className);
@@ -284,13 +283,13 @@ public class FXUtils {
    * @param classNames the css classes.
    */
   public static void addClassesTo(
-      @NotNull final Styleable first,
-      @NotNull final Styleable second,
-      @NotNull final Styleable third,
-      @NotNull final Styleable fourth,
-      @NotNull final Styleable fifth,
-      @NotNull final Styleable sixth,
-      @NotNull final String... classNames) {
+      final Styleable first,
+      final Styleable second,
+      final Styleable third,
+      final Styleable fourth,
+      final Styleable fifth,
+      final Styleable sixth,
+      final String... classNames) {
     first
         .getStyleClass()
         .addAll(classNames);
@@ -317,7 +316,7 @@ public class FXUtils {
    * @param styleable the styleable.
    * @param className the css class.
    */
-  public static void addClassTo(@NotNull final Styleable styleable, @NotNull final String className) {
+  public static void addClassTo(final Styleable styleable, final String className) {
     styleable
         .getStyleClass()
         .add(className);
@@ -329,7 +328,7 @@ public class FXUtils {
    * @param styleable the styleable.
    * @param classNames the css classes.
    */
-  public static void addClassesTo(@NotNull final Styleable styleable, @NotNull final String... classNames) {
+  public static void addClassesTo(final Styleable styleable, final String... classNames) {
     styleable
         .getStyleClass()
         .addAll(classNames);
@@ -340,7 +339,7 @@ public class FXUtils {
    *
    * @param args the list of styleables and class names.
    */
-  public static void addClassesTo(@NotNull final Object... args) {
+  public static void addClassesTo(final Object... args) {
     for (final Object object : args) {
 
       if (!(object instanceof Styleable)) {
@@ -362,7 +361,7 @@ public class FXUtils {
    *
    * @param node the node.
    */
-  public static void addDebugBackgroundColor(@NotNull final Node node) {
+  public static void addDebugBackgroundColor(final Node node) {
 
     final Random random = new Random();
     final String color = "rgb(" + random.nextInt(255) + "," + random.nextInt(255) + ", " + random.nextInt(255) + ")";
@@ -375,7 +374,7 @@ public class FXUtils {
    *
    * @param node the node.
    */
-  public static void addDebugBorderTo(@NotNull final Node node) {
+  public static void addDebugBorderTo(final Node node) {
     node.setStyle("-fx-border-color: red; -fx-border-width: 3px;");
   }
 
@@ -385,7 +384,7 @@ public class FXUtils {
    * @param node the node.
    * @param parent the parent.
    */
-  public static void addToPane(@NotNull final Node node, @NotNull final Pane parent) {
+  public static void addToPane(final Node node, final Pane parent) {
     final ObservableList<Node> children = parent.getChildren();
     children.add(node);
   }
@@ -397,7 +396,7 @@ public class FXUtils {
    * @param second the second node.
    * @param parent the parent.
    */
-  public static void addToPane(@NotNull final Node first, @NotNull final Node second, @NotNull final Pane parent) {
+  public static void addToPane(final Node first, final Node second, final Pane parent) {
     final ObservableList<Node> children = parent.getChildren();
     children.add(first);
     children.add(second);
@@ -412,10 +411,10 @@ public class FXUtils {
    * @param parent the parent.
    */
   public static void addToPane(
-      @NotNull final Node first,
-      @NotNull final Node second,
-      @NotNull final Node third,
-      @NotNull final Pane parent) {
+      final Node first,
+      final Node second,
+      final Node third,
+      final Pane parent) {
     final ObservableList<Node> children = parent.getChildren();
     children.add(first);
     children.add(second);
@@ -432,11 +431,11 @@ public class FXUtils {
    * @param parent the parent.
    */
   public static void addToPane(
-      @NotNull final Node first,
-      @NotNull final Node second,
-      @NotNull final Node third,
-      @NotNull final Node fourth,
-      @NotNull final Pane parent) {
+      final Node first,
+      final Node second,
+      final Node third,
+      final Node fourth,
+      final Pane parent) {
     final ObservableList<Node> children = parent.getChildren();
     children.add(first);
     children.add(second);
@@ -451,8 +450,8 @@ public class FXUtils {
    * @param heightProperty the height property.
    */
   public static void bindFixedHeight(
-      @NotNull final Region region,
-      @NotNull final ReadOnlyProperty<Double> heightProperty) {
+      final Region region,
+      final ReadOnlyProperty<Double> heightProperty) {
     region
         .minHeightProperty()
         .bind(heightProperty);
@@ -468,8 +467,8 @@ public class FXUtils {
    * @param height the height value.
    */
   public static void bindFixedHeight(
-      @NotNull final Region region,
-      @NotNull final ObservableValue<? extends Number> height) {
+      final Region region,
+      final ObservableValue<? extends Number> height) {
     region
         .minHeightProperty()
         .bind(height);
@@ -486,9 +485,9 @@ public class FXUtils {
    * @param heightProperty the height property.
    */
   public static void bindFixedSize(
-      @NotNull final Region region,
-      @NotNull final ReadOnlyProperty<Double> widthProperty,
-      @NotNull final ReadOnlyProperty<Double> heightProperty) {
+      final Region region,
+      final ReadOnlyProperty<Double> widthProperty,
+      final ReadOnlyProperty<Double> heightProperty) {
     region
         .minWidthProperty()
         .bind(widthProperty);
@@ -511,9 +510,9 @@ public class FXUtils {
    * @param height the height value.
    */
   public static void bindFixedSize(
-      @NotNull final Region region,
-      @NotNull final ObservableValue<? extends Number> width,
-      @NotNull final ObservableValue<? extends Number> height) {
+      final Region region,
+      final ObservableValue<? extends Number> width,
+      final ObservableValue<? extends Number> height) {
     region
         .minWidthProperty()
         .bind(width);
@@ -535,8 +534,8 @@ public class FXUtils {
    * @param widthProperty the height property.
    */
   public static void bindFixedWidth(
-      @NotNull final Region region,
-      @NotNull final ReadOnlyProperty<Double> widthProperty) {
+      final Region region,
+      final ReadOnlyProperty<Double> widthProperty) {
     region
         .minWidthProperty()
         .bind(widthProperty);
@@ -552,8 +551,8 @@ public class FXUtils {
    * @param width the height value.
    */
   public static void bindFixedWidth(
-      @NotNull final Region region,
-      @NotNull final ObservableValue<? extends Number> width) {
+      final Region region,
+      final ObservableValue<? extends Number> width) {
     region
         .minWidthProperty()
         .bind(width);
@@ -568,7 +567,7 @@ public class FXUtils {
    * @param node the node.
    * @param parent the parent.
    */
-  public static void removeFromParent(@NotNull final Node node, @NotNull final Pane parent) {
+  public static void removeFromParent(final Node node, final Pane parent) {
     final ObservableList<Node> children = parent.getChildren();
     children.remove(node);
   }
@@ -579,7 +578,7 @@ public class FXUtils {
    * @param region the region.
    * @param height the height.
    */
-  public static void setFixedHeight(@NotNull final Region region, final double height) {
+  public static void setFixedHeight(final Region region, final double height) {
     region.setMaxHeight(height);
     region.setMinHeight(height);
   }
@@ -591,7 +590,7 @@ public class FXUtils {
    * @param width the width.
    * @param height the height.
    */
-  public static void setFixedSize(@NotNull final Region region, final double width, final double height) {
+  public static void setFixedSize(final Region region, final double width, final double height) {
     region.setMaxHeight(height);
     region.setMinHeight(height);
     region.setMaxWidth(width);
@@ -604,7 +603,7 @@ public class FXUtils {
    * @param region the region.
    * @param size the size.
    */
-  public static void setFixedSize(@NotNull final Region region, @NotNull final Point size) {
+  public static void setFixedSize(final Region region, final Point size) {
     region.setMaxHeight(size.getY());
     region.setMinHeight(size.getY());
     region.setMaxWidth(size.getX());
@@ -617,7 +616,7 @@ public class FXUtils {
    * @param region the region.
    * @param width the width.
    */
-  public static void setFixedWidth(@NotNull final Region region, final double width) {
+  public static void setFixedWidth(final Region region, final double width) {
     region.setMaxWidth(width);
     region.setMinWidth(width);
   }
@@ -628,7 +627,7 @@ public class FXUtils {
    * @param node the node.
    * @param handler the handler.
    */
-  public static void applyToChildren(@NotNull final Parent node, @NotNull final Consumer<Node> handler) {
+  public static void applyToChildren(final Parent node, final Consumer<Node> handler) {
     node
         .getChildrenUnmodifiable()
         .forEach(handler);

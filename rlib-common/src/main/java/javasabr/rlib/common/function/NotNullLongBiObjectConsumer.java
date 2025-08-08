@@ -1,7 +1,5 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author JavaSaBr
  */
@@ -9,5 +7,5 @@ import org.jetbrains.annotations.NotNull;
 public interface NotNullLongBiObjectConsumer<S, T> extends LongBiObjectConsumer<S, T> {
 
   @Override
-  void accept(long first, @NotNull S second, @NotNull T third);
+  void accept(long first, S second, T third);
 }

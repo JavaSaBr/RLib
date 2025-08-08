@@ -5,7 +5,6 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.util.List;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -13,7 +12,6 @@ import org.jspecify.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-@NullMarked
 public class MemoryMonitoring {
 
   /**

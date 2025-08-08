@@ -19,8 +19,7 @@ import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base implementation of a compiler using a compiler from JDK.
@@ -29,37 +28,31 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CompilerImpl implements Compiler {
 
-  @NotNull
   private static final Logger LOGGER = LoggerManager.getLogger(Compiler.class);
 
   /**
    * The constant EMPTY_CLASSES.
    */
-  @NotNull
   private static final Class<?>[] EMPTY_CLASSES = new Class[0];
 
   /**
    * The compile listener.
    */
-  @NotNull
   private final CompileListener listener;
 
   /**
    * The java compiler.
    */
-  @NotNull
   private final JavaCompiler compiler;
 
   /**
    * The class loader.
    */
-  @NotNull
   private final CompileClassLoader loader;
 
   /**
    * The java files manager.
    */
-  @NotNull
   private final CompileJavaFileManager fileManager;
 
   /**
@@ -79,7 +72,7 @@ public class CompilerImpl implements Compiler {
   }
 
   @Override
-  public @NotNull Class<?>[] compile(@NotNull final File... files) {
+  public Class<?>[] compile(final File... files) {
     if (files.length < 1) {
       return EMPTY_CLASSES;
     }
@@ -93,7 +86,7 @@ public class CompilerImpl implements Compiler {
   }
 
   @Override
-  public @NotNull Class<?>[] compile(@NotNull final Path... paths) {
+  public Class<?>[] compile(final Path... paths) {
     if (paths.length < 1) {
       return EMPTY_CLASSES;
     }
@@ -107,7 +100,7 @@ public class CompilerImpl implements Compiler {
   }
 
   @Override
-  public @NotNull Class<?>[] compile(@NotNull final URI... uris) {
+  public Class<?>[] compile(final URI... uris) {
 
     final Array<JavaFileObject> javaSource = Arrays
         .stream(uris)
@@ -124,9 +117,9 @@ public class CompilerImpl implements Compiler {
    * @param source the list of sources.
    * @return the list of compiled classes.
    */
-  protected synchronized @NotNull Class<?>[] compile(
+  protected synchronized Class<?>[] compile(
       @Nullable final Iterable<String> options,
-      @NotNull final Iterable<? extends JavaFileObject> source) {
+      final Iterable<? extends JavaFileObject> source) {
 
     final JavaCompiler compiler = getCompiler();
 
@@ -176,7 +169,7 @@ public class CompilerImpl implements Compiler {
    * @param container the container.
    * @param directory the directory.
    */
-  private void compileDirectory(@NotNull final Array<Class<?>> container, @NotNull final File directory) {
+  private void compileDirectory(final Array<Class<?>> container, final File directory) {
 
     final File[] files = directory.listFiles();
     if (files == null || files.length < 1) {
@@ -195,7 +188,7 @@ public class CompilerImpl implements Compiler {
   }
 
   @Override
-  public @NotNull Class<?>[] compileDirectory(@NotNull final File... files) {
+  public Class<?>[] compileDirectory(final File... files) {
 
     final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
@@ -217,7 +210,7 @@ public class CompilerImpl implements Compiler {
    * @param container the container.
    * @param directory the directory.
    */
-  private void compileDirectory(@NotNull final Array<Class<?>> container, @NotNull final Path directory) {
+  private void compileDirectory(final Array<Class<?>> container, final Path directory) {
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
 
       for (final Path path : stream) {
@@ -236,7 +229,7 @@ public class CompilerImpl implements Compiler {
   }
 
   @Override
-  public @NotNull Class<?>[] compileDirectory(@NotNull Path... paths) {
+  public Class<?>[] compileDirectory(Path... paths) {
 
     final Array<Class<?>> container = ArrayFactory.newArray(Class.class);
 
@@ -258,7 +251,7 @@ public class CompilerImpl implements Compiler {
    *
    * @return the java compiler.
    */
-  protected @NotNull JavaCompiler getCompiler() {
+  protected JavaCompiler getCompiler() {
     return compiler;
   }
 
@@ -267,7 +260,7 @@ public class CompilerImpl implements Compiler {
    *
    * @return the java files manager.
    */
-  protected @NotNull CompileJavaFileManager getFileManager() {
+  protected CompileJavaFileManager getFileManager() {
     return fileManager;
   }
 
@@ -276,7 +269,7 @@ public class CompilerImpl implements Compiler {
    *
    * @return the compile listener.
    */
-  protected @NotNull CompileListener getListener() {
+  protected CompileListener getListener() {
     return listener;
   }
 
@@ -285,7 +278,7 @@ public class CompilerImpl implements Compiler {
    *
    * @return the class loader.
    */
-  protected @NotNull CompileClassLoader getLoader() {
+  protected CompileClassLoader getLoader() {
     return loader;
   }
 

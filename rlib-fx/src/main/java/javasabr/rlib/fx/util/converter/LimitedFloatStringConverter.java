@@ -1,7 +1,7 @@
 package javasabr.rlib.fx.util.converter;
 
 import javasabr.rlib.common.util.StringUtils;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of limited float string converter.

@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.network.packet.Packet;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The base implementation of {@link Packet}.

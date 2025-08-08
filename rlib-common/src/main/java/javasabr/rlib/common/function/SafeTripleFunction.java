@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * The function.
@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <R> the type parameter
  * @author JavaSaBr
  */
+@NullUnmarked
 @FunctionalInterface
 public interface SafeTripleFunction<F, S, T, R> {
 
@@ -23,5 +24,5 @@ public interface SafeTripleFunction<F, S, T, R> {
    * @return the r
    * @throws Exception the exception
    */
-  @Nullable R apply(@Nullable F first, @Nullable S second, @Nullable T third) throws Exception;
+  R apply(F first, S second, T third) throws Exception;
 }

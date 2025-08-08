@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * The consumer with 5 arguments.
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <SX> the type parameter
  * @author JavaSaBr
  */
+@NullUnmarked
 @FunctionalInterface
 public interface SixObjectConsumer<F, S, T, FO, FI, SX> {
 
@@ -26,11 +27,5 @@ public interface SixObjectConsumer<F, S, T, FO, FI, SX> {
    * @param five the five
    * @param six the six
    */
-  void accept(
-      @Nullable F first,
-      @Nullable S second,
-      @Nullable T third,
-      @Nullable FO fourth,
-      @Nullable FI five,
-      @Nullable SX six);
+  void accept(F first, S second, T third, FO fourth, FI five, SX six);
 }

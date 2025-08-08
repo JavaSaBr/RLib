@@ -9,7 +9,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The utility class.
@@ -27,7 +26,7 @@ public class FxUtils {
      * @param className the css class.
      * @return the css class appender.
      */
-    public CssClassAppender addClass(@NotNull Styleable styleable, @NotNull String className) {
+    public CssClassAppender addClass(Styleable styleable, String className) {
       styleable
           .getStyleClass()
           .add(className);
@@ -42,10 +41,10 @@ public class FxUtils {
      * @param className the css class.
      * @return the css class appender.
      */
-    public @NotNull CssClassAppender addClass(
-        @NotNull Styleable first,
-        @NotNull Styleable second,
-        @NotNull String className) {
+    public CssClassAppender addClass(
+        Styleable first,
+        Styleable second,
+        String className) {
       first
           .getStyleClass()
           .add(className);
@@ -64,11 +63,11 @@ public class FxUtils {
      * @param className the css class.
      * @return the css class appender.
      */
-    public @NotNull CssClassAppender addClass(
-        @NotNull Styleable first,
-        @NotNull Styleable second,
-        @NotNull Styleable third,
-        @NotNull String className) {
+    public CssClassAppender addClass(
+        Styleable first,
+        Styleable second,
+        Styleable third,
+        String className) {
       first
           .getStyleClass()
           .add(className);
@@ -88,7 +87,7 @@ public class FxUtils {
      * @param classNames the css classes.
      * @return the css class appender.
      */
-    public @NotNull CssClassAppender addClass(@NotNull Styleable styleable, @NotNull String... classNames) {
+    public CssClassAppender addClass(Styleable styleable, String... classNames) {
       styleable
           .getStyleClass()
           .addAll(classNames);
@@ -103,10 +102,10 @@ public class FxUtils {
      * @param classNames the css classes.
      * @return the css class appender.
      */
-    public @NotNull CssClassAppender addClass(
-        @NotNull Styleable first,
-        @NotNull Styleable second,
-        @NotNull String... classNames) {
+    public CssClassAppender addClass(
+        Styleable first,
+        Styleable second,
+        String... classNames) {
       first
           .getStyleClass()
           .addAll(classNames);
@@ -125,11 +124,11 @@ public class FxUtils {
      * @param classNames the css classes.
      * @return the css class appender.
      */
-    public @NotNull CssClassAppender addClass(
-        @NotNull Styleable first,
-        @NotNull Styleable second,
-        @NotNull Styleable third,
-        @NotNull String... classNames) {
+    public CssClassAppender addClass(
+        Styleable first,
+        Styleable second,
+        Styleable third,
+        String... classNames) {
       first
           .getStyleClass()
           .addAll(classNames);
@@ -152,7 +151,7 @@ public class FxUtils {
      * @param node the node.
      * @return the child appender.
      */
-    public @NotNull ChildrenAppender addChild(@NotNull Pane parent, @NotNull Node node) {
+    public ChildrenAppender addChild(Pane parent, Node node) {
       parent
           .getChildren()
           .add(node);
@@ -166,7 +165,7 @@ public class FxUtils {
      * @param node the node.
      * @return the child appender.
      */
-    public @NotNull ChildrenAppender addChild(@NotNull Group parent, @NotNull Node node) {
+    public ChildrenAppender addChild(Group parent, Node node) {
       parent
           .getChildren()
           .add(node);
@@ -180,7 +179,7 @@ public class FxUtils {
      * @param nodes the nodes.
      * @return the child appender.
      */
-    public @NotNull ChildrenAppender addChild(@NotNull Pane parent, @NotNull Node... nodes) {
+    public ChildrenAppender addChild(Pane parent, Node... nodes) {
       parent
           .getChildren()
           .addAll(nodes);
@@ -194,7 +193,7 @@ public class FxUtils {
      * @param nodes the nodes.
      * @return the child appender.
      */
-    public @NotNull ChildrenAppender addChild(@NotNull Group parent, @NotNull Node... nodes) {
+    public ChildrenAppender addChild(Group parent, Node... nodes) {
       parent
           .getChildren()
           .addAll(nodes);
@@ -211,7 +210,7 @@ public class FxUtils {
      * @param node the node.
      * @return the child appender.
      */
-    public @NotNull ChildrenRemover removeChild(@NotNull Pane parent, @NotNull Node node) {
+    public ChildrenRemover removeChild(Pane parent, Node node) {
       parent
           .getChildren()
           .remove(node);
@@ -225,7 +224,7 @@ public class FxUtils {
      * @param node the node.
      * @return the child appender.
      */
-    public @NotNull ChildrenRemover removeChild(@NotNull Group parent, @NotNull Node node) {
+    public ChildrenRemover removeChild(Group parent, Node node) {
       parent
           .getChildren()
           .remove(node);
@@ -239,7 +238,7 @@ public class FxUtils {
      * @param nodes the nodes.
      * @return the child appender.
      */
-    public @NotNull ChildrenRemover removeChild(@NotNull Pane parent, @NotNull Node... nodes) {
+    public ChildrenRemover removeChild(Pane parent, Node... nodes) {
       parent
           .getChildren()
           .removeAll(nodes);
@@ -253,7 +252,7 @@ public class FxUtils {
      * @param nodes the nodes.
      * @return the child appender.
      */
-    public @NotNull ChildrenRemover removeChild(@NotNull Group parent, @NotNull Node... nodes) {
+    public ChildrenRemover removeChild(Group parent, Node... nodes) {
       parent
           .getChildren()
           .removeAll(nodes);
@@ -272,7 +271,7 @@ public class FxUtils {
    * @param className the css class.
    * @return the css class appender.
    */
-  public static @NotNull CssClassAppender addClass(@NotNull Styleable styleable, @NotNull String className) {
+  public static CssClassAppender addClass(Styleable styleable, String className) {
     styleable
         .getStyleClass()
         .add(className);
@@ -287,10 +286,10 @@ public class FxUtils {
    * @param className the css class.
    * @return the css class appender.
    */
-  public static @NotNull CssClassAppender addClass(
-      @NotNull Styleable first,
-      @NotNull Styleable second,
-      @NotNull String className) {
+  public static CssClassAppender addClass(
+      Styleable first,
+      Styleable second,
+      String className) {
     first
         .getStyleClass()
         .add(className);
@@ -309,11 +308,11 @@ public class FxUtils {
    * @param className the css class.
    * @return the css class appender.
    */
-  public static @NotNull CssClassAppender addClass(
-      @NotNull Styleable first,
-      @NotNull Styleable second,
-      @NotNull Styleable third,
-      @NotNull String className) {
+  public static CssClassAppender addClass(
+      Styleable first,
+      Styleable second,
+      Styleable third,
+      String className) {
     first
         .getStyleClass()
         .add(className);
@@ -333,7 +332,7 @@ public class FxUtils {
    * @param classNames the css classes.
    * @return the css class appender.
    */
-  public static @NotNull CssClassAppender addClass(@NotNull Styleable styleable, @NotNull String... classNames) {
+  public static CssClassAppender addClass(Styleable styleable, String... classNames) {
     styleable
         .getStyleClass()
         .addAll(classNames);
@@ -348,10 +347,10 @@ public class FxUtils {
    * @param classNames the css classes.
    * @return the css class appender.
    */
-  public static @NotNull CssClassAppender addClass(
-      @NotNull Styleable first,
-      @NotNull Styleable second,
-      @NotNull String... classNames) {
+  public static CssClassAppender addClass(
+      Styleable first,
+      Styleable second,
+      String... classNames) {
     first
         .getStyleClass()
         .addAll(classNames);
@@ -370,11 +369,11 @@ public class FxUtils {
    * @param classNames the css classes.
    * @return the css class appender.
    */
-  public static @NotNull CssClassAppender addClass(
-      @NotNull Styleable first,
-      @NotNull Styleable second,
-      @NotNull Styleable third,
-      @NotNull String... classNames) {
+  public static CssClassAppender addClass(
+      Styleable first,
+      Styleable second,
+      Styleable third,
+      String... classNames) {
     first
         .getStyleClass()
         .addAll(classNames);
@@ -394,7 +393,7 @@ public class FxUtils {
    * @param node the node.
    * @return the child appender.
    */
-  public static @NotNull ChildrenAppender addChild(@NotNull Pane parent, @NotNull Node node) {
+  public static ChildrenAppender addChild(Pane parent, Node node) {
     parent
         .getChildren()
         .add(node);
@@ -408,7 +407,7 @@ public class FxUtils {
    * @param node the node.
    * @return the child appender.
    */
-  public static @NotNull ChildrenAppender addChild(@NotNull Group parent, @NotNull Node node) {
+  public static ChildrenAppender addChild(Group parent, Node node) {
     parent
         .getChildren()
         .add(node);
@@ -422,7 +421,7 @@ public class FxUtils {
    * @param nodes the nodes.
    * @return the child appender.
    */
-  public static @NotNull ChildrenAppender addChild(@NotNull Pane parent, @NotNull Node... nodes) {
+  public static ChildrenAppender addChild(Pane parent, Node... nodes) {
     parent
         .getChildren()
         .addAll(nodes);
@@ -436,7 +435,7 @@ public class FxUtils {
    * @param nodes the nodes.
    * @return the child appender.
    */
-  public static @NotNull ChildrenAppender addChild(@NotNull Group parent, @NotNull Node... nodes) {
+  public static ChildrenAppender addChild(Group parent, Node... nodes) {
     parent
         .getChildren()
         .addAll(nodes);
@@ -450,7 +449,7 @@ public class FxUtils {
    * @param node the node.
    * @return the child appender.
    */
-  public static @NotNull ChildrenRemover removeChild(@NotNull Pane parent, @NotNull Node node) {
+  public static ChildrenRemover removeChild(Pane parent, Node node) {
     parent
         .getChildren()
         .remove(node);
@@ -464,7 +463,7 @@ public class FxUtils {
    * @param node the node.
    * @return the child appender.
    */
-  public static @NotNull ChildrenRemover removeChild(@NotNull Group parent, @NotNull Node node) {
+  public static ChildrenRemover removeChild(Group parent, Node node) {
     parent
         .getChildren()
         .remove(node);
@@ -478,7 +477,7 @@ public class FxUtils {
    * @param nodes the nodes.
    * @return the child appender.
    */
-  public static @NotNull ChildrenRemover removeChild(@NotNull Pane parent, @NotNull Node... nodes) {
+  public static ChildrenRemover removeChild(Pane parent, Node... nodes) {
     parent
         .getChildren()
         .removeAll(nodes);
@@ -492,7 +491,7 @@ public class FxUtils {
    * @param nodes the nodes.
    * @return the child appender.
    */
-  public static @NotNull ChildrenRemover removeChild(@NotNull Group parent, @NotNull Node... nodes) {
+  public static ChildrenRemover removeChild(Group parent, Node... nodes) {
     parent
         .getChildren()
         .removeAll(nodes);
@@ -506,7 +505,7 @@ public class FxUtils {
    * @param <T> the region's type.
    * @return the region.
    */
-  public static <T extends Region> T resetPrefWidth(@NotNull T region) {
+  public static <T extends Region> T resetPrefWidth(T region) {
     region
         .prefWidthProperty()
         .unbind();
@@ -521,7 +520,7 @@ public class FxUtils {
    * @param region the region.
    * @return the region.
    */
-  public static <T extends Region> T resetMinMaxWidth(@NotNull T region) {
+  public static <T extends Region> T resetMinMaxWidth(T region) {
     region
         .maxWidthProperty()
         .unbind();
@@ -542,8 +541,8 @@ public class FxUtils {
    * @return the region.
    */
   public static <T extends Region> T rebindPrefWidth(
-      @NotNull T region,
-      @NotNull ObservableValue<? extends Number> value) {
+      T region,
+      ObservableValue<? extends Number> value) {
 
     var width = region.prefWidthProperty();
 
@@ -561,7 +560,7 @@ public class FxUtils {
    *
    * @param node the node.
    */
-  public static void addDebugBackgroundColor(@NotNull Node node) {
+  public static void addDebugBackgroundColor(Node node) {
 
     var random = ThreadLocalRandom.current();
     var color = "rgb(" + random.nextInt(255) + "," + random.nextInt(255) + ", " + random.nextInt(255) + ")";
@@ -574,7 +573,7 @@ public class FxUtils {
    *
    * @param node the node.
    */
-  public static void addDebugBorderTo(@NotNull Node node) {
+  public static void addDebugBorderTo(Node node) {
     node.setStyle("-fx-border-color: red; -fx-border-width: 3px;");
   }
 
@@ -585,7 +584,7 @@ public class FxUtils {
    * @param width the width.
    * @param height the height.
    */
-  public static void setFixedSize(@NotNull Region region, double width, double height) {
+  public static void setFixedSize(Region region, double width, double height) {
     region.setMaxHeight(height);
     region.setMinHeight(height);
     region.setMaxWidth(width);
@@ -598,7 +597,7 @@ public class FxUtils {
    * @param region the region.
    * @param size the size.
    */
-  public static void setFixedSize(@NotNull Region region, @NotNull Point size) {
+  public static void setFixedSize(Region region, Point size) {
     setFixedSize(region, size.getX(), size.getY());
   }
 
@@ -608,7 +607,7 @@ public class FxUtils {
    * @param region the region.
    * @param size the size.
    */
-  public static void setFixedSize(@NotNull Region region, @NotNull Point2D size) {
+  public static void setFixedSize(Region region, Point2D size) {
     setFixedSize(region, size.getX(), size.getY());
   }
 }

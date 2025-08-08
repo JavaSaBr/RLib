@@ -7,7 +7,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodySubscribers;
 import java.nio.charset.StandardCharsets;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 import org.testcontainers.containers.GenericContainer;
 
 public class FakeSMTPTestContainer extends GenericContainer<FakeSMTPTestContainer> {
@@ -44,12 +43,12 @@ public class FakeSMTPTestContainer extends GenericContainer<FakeSMTPTestContaine
     return getMappedPort(SMTP_PORT);
   }
 
-  public @NotNull FakeSMTPTestContainer withSmtpUser(@NotNull String username) {
+  public FakeSMTPTestContainer withSmtpUser(String username) {
     this.smtpUser = username;
     return this;
   }
 
-  public @NotNull FakeSMTPTestContainer withSmtpPassword(@NotNull String password) {
+  public FakeSMTPTestContainer withSmtpPassword(String password) {
     this.smtpPassword = password;
     return this;
   }
@@ -60,7 +59,7 @@ public class FakeSMTPTestContainer extends GenericContainer<FakeSMTPTestContaine
    * @param email the sender's email.
    * @return the emails count or -1 if the request was failed.
    */
-  public long getEmailCountFrom(@NotNull String email) {
+  public long getEmailCountFrom(String email) {
 
     var request = HttpRequest
         .newBuilder(URI.create(getBaseUrl() + "/count/email/from/" + email))
@@ -105,7 +104,7 @@ public class FakeSMTPTestContainer extends GenericContainer<FakeSMTPTestContaine
     }
   }
 
-  private @NotNull String getBaseUrl() {
+  private String getBaseUrl() {
     return "http://localhost:" + getMappedPort(HTTP_PORT);
   }
 

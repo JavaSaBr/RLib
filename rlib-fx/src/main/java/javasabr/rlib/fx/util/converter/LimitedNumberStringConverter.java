@@ -2,8 +2,7 @@ package javasabr.rlib.fx.util.converter;
 
 import javafx.util.StringConverter;
 import javasabr.rlib.common.util.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of limited float string converter.
@@ -29,7 +28,7 @@ public abstract class LimitedNumberStringConverter<T extends Number> extends Str
     this.minValue = null;
   }
 
-  public LimitedNumberStringConverter(@NotNull T minValue, @NotNull T maxValue) {
+  public LimitedNumberStringConverter(T minValue, T maxValue) {
     this.maxValue = minValue;
     this.minValue = maxValue;
   }

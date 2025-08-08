@@ -2,7 +2,6 @@ package javasabr.rlib.common.compiler;
 
 import javasabr.rlib.common.compiler.impl.CompilerImpl;
 import javax.tools.ToolProvider;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -10,7 +9,6 @@ import org.jspecify.annotations.NullMarked;
  *
  * @author JavaSaBr
  */
-@NullMarked
 public class CompilerFactory {
 
   /**

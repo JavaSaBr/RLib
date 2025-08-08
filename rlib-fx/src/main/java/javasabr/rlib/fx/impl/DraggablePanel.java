@@ -3,8 +3,7 @@ package javasabr.rlib.fx.impl;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of a draggable panel.
@@ -94,7 +93,7 @@ public class DraggablePanel extends VBox {
    *
    * @param event the mouse event.
    */
-  protected void processMove(@NotNull final MouseEvent event) {
+  protected void processMove(final MouseEvent event) {
 
     final Point2D dragOffset = getDragOffset();
     if (dragOffset == null) {
@@ -116,7 +115,7 @@ public class DraggablePanel extends VBox {
    *
    * @param event the mouse event.
    */
-  protected void processStartDrag(@NotNull final MouseEvent event) {
+  protected void processStartDrag(final MouseEvent event) {
     setStartX(getTranslateX());
     setStartY(getTranslateY());
     setDragOffset(new Point2D(event.getSceneX(), event.getSceneY()));
@@ -128,7 +127,7 @@ public class DraggablePanel extends VBox {
    *
    * @param event the mouse event.
    */
-  protected void processStopDrag(@NotNull final MouseEvent event) {
+  protected void processStopDrag(final MouseEvent event) {
     setStartX(0);
     setStartY(0);
     setDragOffset(null);

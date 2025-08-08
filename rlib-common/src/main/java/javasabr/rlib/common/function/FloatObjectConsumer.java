@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The function to consume float and object.

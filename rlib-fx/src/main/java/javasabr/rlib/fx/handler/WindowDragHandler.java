@@ -7,8 +7,7 @@ import javasabr.rlib.fx.LoggerClass;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of a handler to process windows dragging.
@@ -24,14 +23,13 @@ public class WindowDragHandler {
    *
    * @param node the node.
    */
-  public static void install(@NotNull Node node) {
+  public static void install(Node node) {
     new WindowDragHandler(node);
   }
 
   /**
    * The node.
    */
-  @NotNull
   private final Node node;
 
   /**
@@ -50,7 +48,7 @@ public class WindowDragHandler {
    */
   private double startY;
 
-  public WindowDragHandler(@NotNull Node node) {
+  public WindowDragHandler(Node node) {
     this.node = node;
     this.node.setOnMousePressed(this::processStartDrag);
     this.node.setOnMouseDragged(this::processMove);
@@ -116,7 +114,7 @@ public class WindowDragHandler {
    *
    * @return the handled node.
    */
-  public @NotNull Node getNode() {
+  public Node getNode() {
     return node;
   }
 
@@ -125,7 +123,7 @@ public class WindowDragHandler {
    *
    * @param event the event
    */
-  protected void processMove(@NotNull MouseEvent event) {
+  protected void processMove(MouseEvent event) {
 
     LOGGER.debug(event, ev -> "processMove -> " + ev);
 
@@ -166,7 +164,7 @@ public class WindowDragHandler {
    *
    * @param event the event.
    */
-  protected void processStartDrag(@NotNull MouseEvent event) {
+  protected void processStartDrag(MouseEvent event) {
 
     LOGGER.debug(event, ev -> "processStartDrag -> " + ev);
 
@@ -191,7 +189,7 @@ public class WindowDragHandler {
    *
    * @param event the event
    */
-  protected void processStopDrag(@NotNull MouseEvent event) {
+  protected void processStopDrag(MouseEvent event) {
     LOGGER.debug(event, ev -> "processStopDrag -> " + ev);
     setStartX(0);
     setStartY(0);

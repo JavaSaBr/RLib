@@ -7,8 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.StringConverter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of a typed text field control.
@@ -21,7 +20,7 @@ public class TypedTextField<T> extends TextField {
     setTextFormatter(new TextFormatter<>(createValueConverter()));
   }
 
-  public TypedTextField(@NotNull String text) {
+  public TypedTextField(String text) {
     super(text);
     setTextFormatter(new TextFormatter<>(createValueConverter()));
   }
@@ -31,7 +30,7 @@ public class TypedTextField<T> extends TextField {
    *
    * @return the new value converter.
    */
-  protected @NotNull StringConverter<T> createValueConverter() {
+  protected StringConverter<T> createValueConverter() {
     throw new UnsupportedOperationException();
   }
 
@@ -40,7 +39,7 @@ public class TypedTextField<T> extends TextField {
    *
    * @param listener the change listener.
    */
-  public void addChangeListener(@NotNull ChangeListener<T> listener) {
+  public void addChangeListener(ChangeListener<T> listener) {
     getTypedTextFormatter()
         .valueProperty()
         .addListener(listener);
@@ -51,7 +50,7 @@ public class TypedTextField<T> extends TextField {
    *
    * @return the typed text formatter.
    */
-  protected @NotNull TextFormatter<T> getTypedTextFormatter() {
+  protected TextFormatter<T> getTypedTextFormatter() {
     return unsafeCast(getTextFormatter());
   }
 
@@ -60,7 +59,7 @@ public class TypedTextField<T> extends TextField {
    *
    * @return the value property.
    */
-  public @NotNull ReadOnlyObjectProperty<T> valueProperty() {
+  public ReadOnlyObjectProperty<T> valueProperty() {
     return getTypedTextFormatter().valueProperty();
   }
 

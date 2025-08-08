@@ -1,13 +1,10 @@
 package javasabr.rlib.common.monitoring;
 
-import org.jspecify.annotations.NullMarked;
-
 /**
  * The class to monitor a state a Java process.
  *
  * @author JavaSaBr
  */
-@NullMarked
 public final class MonitoringManager {
 
   private static final MonitoringManager INSTANCE = new MonitoringManager();

@@ -3,7 +3,7 @@ package javasabr.rlib.fx.util.converter;
 import javafx.util.StringConverter;
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.StringUtils;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of limited float string converter.

@@ -1,7 +1,5 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author JavaSaBr
  */
@@ -9,5 +7,5 @@ import org.jetbrains.annotations.NotNull;
 public interface NotNullFloatBiObjectConsumer<S, T> extends FloatBiObjectConsumer<S, T> {
 
   @Override
-  void accept(float first, @NotNull S second, @NotNull T third);
+  void accept(float first, S second, T third);
 }

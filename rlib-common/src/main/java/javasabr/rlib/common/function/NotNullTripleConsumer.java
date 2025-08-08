@@ -1,7 +1,5 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author JavaSaBr
  */
@@ -9,5 +7,5 @@ import org.jetbrains.annotations.NotNull;
 public interface NotNullTripleConsumer<F, S, T> extends TripleConsumer<F, S, T> {
 
   @Override
-  void accept(@NotNull F first, @NotNull S second, @NotNull T third);
+  void accept(F first, S second, T third);
 }

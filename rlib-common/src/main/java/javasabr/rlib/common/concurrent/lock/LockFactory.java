@@ -2,8 +2,13 @@ package javasabr.rlib.common.concurrent.lock;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.StampedLock;
+import javasabr.rlib.common.concurrent.lock.impl.AtomicLock;
+import javasabr.rlib.common.concurrent.lock.impl.AtomicReadWriteLock;
 import javasabr.rlib.common.concurrent.lock.impl.ReentrantARSWLock;
+import javasabr.rlib.common.concurrent.lock.impl.ReentrantAtomicLock;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -29,7 +34,7 @@ public class LockFactory {
    * @return the new lock.
    */
   public static StampedLock newStampedLock() {
-    return new FinalStampedLock();
+    return new StampedLock();
   }
 
   /**
@@ -38,7 +43,7 @@ public class LockFactory {
    * @return the new lock.
    */
   public static Lock newReentrantLock() {
-    return new FinalReentrantLock();
+    return new ReentrantLock();
   }
 
   /**
@@ -47,7 +52,7 @@ public class LockFactory {
    * @return the new lock.
    */
   public static AsyncReadSyncWriteLock newAtomicARSWLock() {
-    return new FinalAtomicReadWriteLock();
+    return new AtomicReadWriteLock();
   }
 
   /**
@@ -56,7 +61,7 @@ public class LockFactory {
    * @return the new lock.
    */
   public static Lock newAtomicLock() {
-    return new FinalAtomicLock();
+    return new AtomicLock();
   }
 
   /**
@@ -65,7 +70,7 @@ public class LockFactory {
    * @return the new lock.
    */
   public static ReadWriteLock newReentrantRWLock() {
-    return new FinalReentrantReadWriteLock();
+    return new ReentrantReadWriteLock();
   }
 
   /**
@@ -74,6 +79,6 @@ public class LockFactory {
    * @return the new lock.
    */
   public static Lock newReentrantAtomicLock() {
-    return new FinalReentrantAtomicLock();
+    return new ReentrantAtomicLock();
   }
 }

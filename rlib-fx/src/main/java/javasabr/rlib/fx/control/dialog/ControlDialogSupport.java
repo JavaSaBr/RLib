@@ -3,7 +3,6 @@ package javasabr.rlib.fx.control.dialog;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The list of methods to support control dialogs on a scene.
@@ -19,7 +18,7 @@ public class ControlDialogSupport {
    *
    * @param scene the scene.
    */
-  public static void addSupport(@NotNull Scene scene) {
+  public static void addSupport(Scene scene) {
 
     var dialogsLayer = new Pane();
     dialogsLayer.setPickOnBounds(false);
@@ -45,7 +44,7 @@ public class ControlDialogSupport {
    * @param scene the scene.
    * @return the dialogs layer.
    */
-  static @NotNull Pane getDialogsLayer(@NotNull Scene scene) {
+  static Pane getDialogsLayer(Scene scene) {
 
     var layer = (Pane) scene
         .getProperties()

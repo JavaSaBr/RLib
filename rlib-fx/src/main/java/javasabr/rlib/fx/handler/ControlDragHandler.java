@@ -6,7 +6,6 @@ import javasabr.rlib.fx.LoggerClass;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerManager;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of a handler to process windows dragging.
@@ -23,20 +22,18 @@ public class ControlDragHandler {
    * @param draggableNode the node which should be moved.
    * @param draggableControl the node which should be like a handle.
    */
-  public static void install(@NotNull Node draggableNode, @NotNull Node draggableControl) {
+  public static void install(Node draggableNode, Node draggableControl) {
     new ControlDragHandler(draggableNode, draggableControl);
   }
 
   /**
    * The draggable node.
    */
-  @NotNull
   private final Node draggableNode;
 
   /**
    * The draggable control.
    */
-  @NotNull
   private final Node draggableControl;
 
   /**
@@ -59,7 +56,7 @@ public class ControlDragHandler {
    */
   private double startY;
 
-  public ControlDragHandler(@NotNull Node draggableNode, @NotNull Node draggableControl) {
+  public ControlDragHandler(Node draggableNode, Node draggableControl) {
     this.draggableNode = draggableNode;
     this.draggableControl = draggableControl;
     this.draggableControl.setOnMousePressed(this::processStartDrag);
@@ -72,7 +69,7 @@ public class ControlDragHandler {
    *
    * @param event the mouse event
    */
-  protected void processMove(@NotNull MouseEvent event) {
+  protected void processMove(MouseEvent event) {
 
     LOGGER.debug(event, ev -> "processMove -> " + ev);
 
@@ -107,7 +104,7 @@ public class ControlDragHandler {
    *
    * @param event the mouse event.
    */
-  protected void processStartDrag(@NotNull MouseEvent event) {
+  protected void processStartDrag(MouseEvent event) {
 
     LOGGER.debug(event, ev -> "processStartDrag -> " + ev);
 
@@ -131,7 +128,7 @@ public class ControlDragHandler {
    *
    * @param event the event
    */
-  protected void processStopDrag(@NotNull MouseEvent event) {
+  protected void processStopDrag(MouseEvent event) {
 
     startX = 0;
     startY = 0;

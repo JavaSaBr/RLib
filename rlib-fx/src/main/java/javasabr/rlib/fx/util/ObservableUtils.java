@@ -7,7 +7,6 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import javafx.beans.value.ObservableValue;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The utility class.
@@ -30,7 +29,7 @@ public class ObservableUtils {
      * @param action the action on changes.
      * @return the change event appender.
      */
-    public ChangeEventAppender<T> onChange(@NotNull Runnable action) {
+    public ChangeEventAppender<T> onChange(Runnable action) {
       value.addListener((observable, oldValue, newValue) -> action.run());
       return this;
     }
@@ -42,7 +41,7 @@ public class ObservableUtils {
      * @param action the action on changes.
      * @return the change event appender.
      */
-    public ChangeEventAppender<T> onChangeIf(@NotNull Predicate<T> predicate, @NotNull Runnable action) {
+    public ChangeEventAppender<T> onChangeIf(Predicate<T> predicate, Runnable action) {
 
       value.addListener((observable, oldValue, newValue) -> {
         if (predicate.test(newValue)) {
@@ -59,7 +58,7 @@ public class ObservableUtils {
      * @param consumer the consumer to handle new values.
      * @return the change event appender.
      */
-    public ChangeEventAppender<T> onChange(@NotNull Consumer<T> consumer) {
+    public ChangeEventAppender<T> onChange(Consumer<T> consumer) {
       value.addListener((observable, oldValue, newValue) -> consumer.accept(newValue));
       return this;
     }
@@ -71,7 +70,7 @@ public class ObservableUtils {
      * @param consumer the consumer to handle new values.
      * @return the change event appender.
      */
-    public ChangeEventAppender<T> onChangeIf(@NotNull Predicate<T> predicate, @NotNull Consumer<T> consumer) {
+    public ChangeEventAppender<T> onChangeIf(Predicate<T> predicate, Consumer<T> consumer) {
 
       value.addListener((observable, oldValue, newValue) -> {
         if (predicate.test(newValue)) {
@@ -88,7 +87,7 @@ public class ObservableUtils {
      * @param consumer the consumer to handle new values.
      * @return the change event appender.
      */
-    public ChangeEventAppender<T> onChange(@NotNull BiConsumer<T, T> consumer) {
+    public ChangeEventAppender<T> onChange(BiConsumer<T, T> consumer) {
       value.addListener((observable, oldValue, newValue) -> consumer.accept(oldValue, newValue));
       return this;
     }
@@ -100,7 +99,7 @@ public class ObservableUtils {
      * @param consumer the consumer to handle new values.
      * @return the change event appender.
      */
-    public ChangeEventAppender<T> onChangeIf(@NotNull BiPredicate<T, T> predicate, @NotNull BiConsumer<T, T> consumer) {
+    public ChangeEventAppender<T> onChangeIf(BiPredicate<T, T> predicate, BiConsumer<T, T> consumer) {
 
       value.addListener((observable, oldValue, newValue) -> {
         if (predicate.test(oldValue, newValue)) {
@@ -120,7 +119,7 @@ public class ObservableUtils {
   private static final ThreadLocal<ChangeEventAppender> CHANGE_EVENT_APPENDER = ThreadLocal.withInitial(
       ChangeEventAppender::new);
 
-  private static <T> @NotNull ChangeEventAppender getAppender(@NotNull ObservableValue<T> value) {
+  private static <T> ChangeEventAppender getAppender(ObservableValue<T> value) {
 
     ChangeEventAppender<T> appender = unsafeCast(CHANGE_EVENT_APPENDER.get());
     appender.value = value;
@@ -136,9 +135,9 @@ public class ObservableUtils {
    * @param <T> the value type.
    * @return the change event appender.
    */
-  public static <T> @NotNull ChangeEventAppender<T> onChange(
-      @NotNull ObservableValue<T> value,
-      @NotNull Runnable action) {
+  public static <T> ChangeEventAppender<T> onChange(
+      ObservableValue<T> value,
+      Runnable action) {
     value.addListener((observable, oldValue, newValue) -> action.run());
     return getAppender(value);
   }
@@ -153,9 +152,9 @@ public class ObservableUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onChangeIf(
-      @NotNull ObservableValue<T> value,
-      @NotNull Predicate<T> predicate,
-      @NotNull Runnable action) {
+      ObservableValue<T> value,
+      Predicate<T> predicate,
+      Runnable action) {
 
     value.addListener((observable, oldValue, newValue) -> {
       if (predicate.test(newValue)) {
@@ -174,7 +173,7 @@ public class ObservableUtils {
    * @param <T> the value type.
    * @return the change event appender.
    */
-  public static <T> ChangeEventAppender<T> onChange(@NotNull ObservableValue<T> value, @NotNull Consumer<T> consumer) {
+  public static <T> ChangeEventAppender<T> onChange(ObservableValue<T> value, Consumer<T> consumer) {
     value.addListener((observable, oldValue, newValue) -> consumer.accept(newValue));
     return getAppender(value);
   }
@@ -189,9 +188,9 @@ public class ObservableUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onChangeIf(
-      @NotNull ObservableValue<T> value,
-      @NotNull Predicate<T> predicate,
-      @NotNull Consumer<T> consumer) {
+      ObservableValue<T> value,
+      Predicate<T> predicate,
+      Consumer<T> consumer) {
 
     value.addListener((observable, oldValue, newValue) -> {
       if (predicate.test(newValue)) {
@@ -209,7 +208,7 @@ public class ObservableUtils {
    * @param <T> the value type.
    * @return the change event appender.
    */
-  public static <T> ChangeEventAppender<T> onChanges(@NotNull ObservableValue<T> value) {
+  public static <T> ChangeEventAppender<T> onChanges(ObservableValue<T> value) {
     return getAppender(value);
   }
 
@@ -222,8 +221,8 @@ public class ObservableUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onChange(
-      @NotNull ObservableValue<T> value,
-      @NotNull BiConsumer<T, T> consumer) {
+      ObservableValue<T> value,
+      BiConsumer<T, T> consumer) {
     value.addListener((observable, oldValue, newValue) -> consumer.accept(oldValue, newValue));
     return getAppender(value);
   }
@@ -238,9 +237,9 @@ public class ObservableUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onChangeIf(
-      @NotNull ObservableValue<T> value,
-      @NotNull BiPredicate<T, T> predicate,
-      @NotNull BiConsumer<T, T> consumer) {
+      ObservableValue<T> value,
+      BiPredicate<T, T> predicate,
+      BiConsumer<T, T> consumer) {
 
     value.addListener((observable, oldValue, newValue) -> {
       if (predicate.test(oldValue, newValue)) {

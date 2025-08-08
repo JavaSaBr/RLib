@@ -2,7 +2,6 @@ package javasabr.rlib.network.packet.impl;
 
 import java.nio.ByteBuffer;
 import javasabr.rlib.network.packet.WritablePacket;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The base implementation of the {@link WritablePacket}.

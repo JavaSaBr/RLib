@@ -3,15 +3,12 @@ package javasabr.rlib.common.compiler;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
-import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface to implement a compiler.
  *
  * @author JavaSaBr
  */
-@NullMarked
 public interface Compiler {
 
   /**
@@ -30,7 +27,7 @@ public interface Compiler {
    * @param files the file list.
    * @return the classes list.
    */
-  Class<?>[] compile(@NotNull File... files);
+  Class<?>[] compile(File... files);
 
   /**
    * Compile files.
@@ -38,7 +35,7 @@ public interface Compiler {
    * @param paths the file list.
    * @return the classes list.
    */
-  Class<?>[] compile(@NotNull Path... paths);
+  Class<?>[] compile(Path... paths);
 
   /**
    * Compile resources.
@@ -46,7 +43,7 @@ public interface Compiler {
    * @param uris the resource list.
    * @return the classes list.
    */
-  Class<?>[] compile(@NotNull URI... uris);
+  Class<?>[] compile(URI... uris);
 
   /**
    * Compile all classes from directories.
@@ -54,7 +51,7 @@ public interface Compiler {
    * @param files the directory list.
    * @return the classes list.
    */
-  Class<?>[] compileDirectory(@NotNull File... files);
+  Class<?>[] compileDirectory(File... files);
 
   /**
    * Compile all classes from directories.
@@ -62,5 +59,5 @@ public interface Compiler {
    * @param paths the directory list.
    * @return the classes list.
    */
-  Class<?>[] compileDirectory(@NotNull Path... paths);
+  Class<?>[] compileDirectory(Path... paths);
 }

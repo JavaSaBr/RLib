@@ -5,7 +5,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The simple implementation of a draggable element.
@@ -24,7 +23,7 @@ public class SimpleDraggableElement extends VBox {
    *
    * @return transfer modes.
    */
-  protected @NotNull TransferMode[] getTransferMode() {
+  protected TransferMode[] getTransferMode() {
     return TransferMode.COPY_OR_MOVE;
   }
 
@@ -33,7 +32,7 @@ public class SimpleDraggableElement extends VBox {
    *
    * @param dragboard the dragboard.
    */
-  protected void prepareData(@NotNull final Dragboard dragboard) {
+  protected void prepareData(final Dragboard dragboard) {
   }
 
   /**
@@ -41,7 +40,7 @@ public class SimpleDraggableElement extends VBox {
    *
    * @param event the mouse event.
    */
-  protected void processFinishDragAndDrop(@NotNull final DragEvent event) {
+  protected void processFinishDragAndDrop(final DragEvent event) {
     event.consume();
   }
 
@@ -50,7 +49,7 @@ public class SimpleDraggableElement extends VBox {
    *
    * @param event the mouse event.
    */
-  protected void processStartDragAndDrop(@NotNull final MouseEvent event) {
+  protected void processStartDragAndDrop(final MouseEvent event) {
     prepareData(startDragAndDrop(getTransferMode()));
     event.consume();
   }

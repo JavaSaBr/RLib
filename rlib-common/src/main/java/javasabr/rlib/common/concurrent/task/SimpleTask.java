@@ -1,7 +1,5 @@
 package javasabr.rlib.common.concurrent.task;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * The interface to implement a simple task.
  *
@@ -11,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public interface SimpleTask<L> extends CallableTask<Void, L> {
 
   @Override
-  default Void call(@NotNull final L local, final long currentTime) {
+  default Void call(final L local, final long currentTime) {
     execute(local, currentTime);
     return null;
   }
@@ -22,5 +20,5 @@ public interface SimpleTask<L> extends CallableTask<Void, L> {
    * @param local the thread local container.
    * @param currentTime the current time.
    */
-  void execute(@NotNull L local, long currentTime);
+  void execute(L local, long currentTime);
 }

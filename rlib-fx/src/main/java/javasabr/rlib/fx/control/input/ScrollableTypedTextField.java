@@ -1,7 +1,6 @@
 package javasabr.rlib.fx.control.input;
 
 import javafx.scene.input.ScrollEvent;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of a typed text field control.
@@ -19,7 +18,7 @@ public class ScrollableTypedTextField<T> extends TypedTextField<T> {
     setOnScroll(this::scrollValue);
   }
 
-  public ScrollableTypedTextField(@NotNull String text) {
+  public ScrollableTypedTextField(String text) {
     super(text);
     setOnScroll(this::scrollValue);
   }
@@ -47,7 +46,7 @@ public class ScrollableTypedTextField<T> extends TypedTextField<T> {
    *
    * @param event the scroll event.
    */
-  protected void scrollValue(@NotNull ScrollEvent event) {
+  protected void scrollValue(ScrollEvent event) {
     if (event.isControlDown()) {
       event.consume();
       scrollValueImpl(event);
@@ -59,6 +58,6 @@ public class ScrollableTypedTextField<T> extends TypedTextField<T> {
    *
    * @param event the scroll event.
    */
-  protected void scrollValueImpl(@NotNull ScrollEvent event) {
+  protected void scrollValueImpl(ScrollEvent event) {
   }
 }

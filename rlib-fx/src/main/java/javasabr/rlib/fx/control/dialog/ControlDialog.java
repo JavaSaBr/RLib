@@ -13,8 +13,7 @@ import javafx.scene.layout.VBox;
 import javasabr.rlib.fx.handler.ControlDragHandler;
 import javasabr.rlib.fx.handler.ControlResizeHandler;
 import javasabr.rlib.fx.util.FxUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementing a dialog like a control to be inside a main window.
@@ -26,19 +25,16 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
   /**
    * The dialog's header.
    */
-  @NotNull
   protected final H header;
 
   /**
    * The dialog's content container.
    */
-  @NotNull
   protected final C container;
 
   /**
    * The dialog's actions container.
    */
-  @NotNull
   protected final A actions;
 
   /**
@@ -66,7 +62,7 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    *
    * @return the showing property.
    */
-  public @NotNull BooleanProperty showingProperty() {
+  public BooleanProperty showingProperty() {
     return showing;
   }
 
@@ -75,21 +71,21 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    *
    * @return the header container.
    */
-  protected abstract @NotNull H createHeader();
+  protected abstract H createHeader();
 
   /**
    * Create a content container.
    *
    * @return the content container.
    */
-  protected abstract @NotNull C createContainer();
+  protected abstract C createContainer();
 
   /**
    * Create an actions container.
    *
    * @return the actions container.
    */
-  protected abstract @NotNull A createActions();
+  protected abstract A createActions();
 
   /**
    * Construct content of this dialog after constructor.
@@ -113,7 +109,7 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    *
    * @param size the new size.
    */
-  public void applySize(@NotNull Point2D size) {
+  public void applySize(Point2D size) {
     applySize(size.getX(), size.getY());
   }
 
@@ -177,7 +173,7 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    *
    * @param header the header container.
    */
-  protected void fillHeader(@NotNull H header) {
+  protected void fillHeader(H header) {
 
   }
 
@@ -186,7 +182,7 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    *
    * @param content the content's container.
    */
-  protected void fillContent(@NotNull C content) {
+  protected void fillContent(C content) {
 
   }
 
@@ -195,7 +191,7 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    *
    * @param actions the actions.
    */
-  protected void fillActions(@NotNull A actions) {
+  protected void fillActions(A actions) {
 
   }
 
@@ -204,7 +200,7 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    *
    * @param node the node.
    */
-  public void show(@NotNull Node node) {
+  public void show(Node node) {
 
     var parent = node.getParent();
     var bounds = node.getBoundsInParent();
@@ -224,7 +220,7 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    *
    * @param scene the scene.
    */
-  public void show(@NotNull Scene scene) {
+  public void show(Scene scene) {
 
     var prefHeight = max(max(getWidth(), getMinWidth()), getPrefHeight()) / 2;
     var prefWidth = max(max(getHeight(), getMinHeight()), getPrefWidth()) / 2;
@@ -239,7 +235,7 @@ public abstract class ControlDialog<H extends Parent, C extends Parent, A extend
    * @param x the X coord.
    * @param y the Y coord.
    */
-  public void show(@NotNull Scene scene, double x, double y) {
+  public void show(Scene scene, double x, double y) {
 
     if (showing.get()) {
       return;

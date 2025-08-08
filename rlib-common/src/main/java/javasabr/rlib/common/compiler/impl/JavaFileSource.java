@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import javax.tools.SimpleJavaFileObject;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of java class source.
@@ -16,15 +15,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class JavaFileSource extends SimpleJavaFileObject {
 
-  protected JavaFileSource(@NotNull final File file) {
+  protected JavaFileSource(final File file) {
     super(file.toURI(), Kind.SOURCE);
   }
 
-  protected JavaFileSource(@NotNull final Path path) {
+  protected JavaFileSource(final Path path) {
     super(path.toUri(), Kind.SOURCE);
   }
 
-  protected JavaFileSource(@NotNull final URI uri) {
+  protected JavaFileSource(final URI uri) {
     super(uri, Kind.SOURCE);
   }
 

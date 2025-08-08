@@ -3,8 +3,7 @@ package javasabr.rlib.fx.dialog;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.stage.Popup;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The implementation of a dialog which is based on a popup.
@@ -18,7 +17,6 @@ public abstract class AbstractPopupDialog<C extends Node> extends Popup {
   /**
    * The dialog's root container.
    */
-  @NotNull
   private final C container;
 
   /**
@@ -42,7 +40,7 @@ public abstract class AbstractPopupDialog<C extends Node> extends Popup {
    *
    * @return the root container of this dialog.
    */
-  protected abstract @NotNull C createRoot();
+  protected abstract C createRoot();
 
   /**
    * Construct content of this dialog after constructor.
@@ -65,7 +63,7 @@ public abstract class AbstractPopupDialog<C extends Node> extends Popup {
    * @param container the root container.
    * @param size the size.
    */
-  protected void configureSize(@NotNull C container, @NotNull Point2D size) {
+  protected void configureSize(C container, Point2D size) {
   }
 
   /**
@@ -73,7 +71,7 @@ public abstract class AbstractPopupDialog<C extends Node> extends Popup {
    *
    * @param root the root.
    */
-  protected void createControls(@NotNull C root) {
+  protected void createControls(C root) {
   }
 
   /**
@@ -81,7 +79,7 @@ public abstract class AbstractPopupDialog<C extends Node> extends Popup {
    *
    * @return the content container.
    */
-  protected @NotNull C getContainer() {
+  protected C getContainer() {
     return container;
   }
 
@@ -108,7 +106,7 @@ public abstract class AbstractPopupDialog<C extends Node> extends Popup {
    *
    * @return the dialog size.
    */
-  protected @NotNull Point2D getSize() {
+  protected Point2D getSize() {
     return DEFAULT_DIALOG_SIZE;
   }
 

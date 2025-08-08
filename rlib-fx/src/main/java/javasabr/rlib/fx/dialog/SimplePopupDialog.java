@@ -9,17 +9,14 @@ import javafx.scene.layout.VBox;
 import javasabr.rlib.fx.CssClasses;
 import javasabr.rlib.fx.handler.WindowDragHandler;
 import javasabr.rlib.fx.util.FxUtils;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
  */
 public class SimplePopupDialog extends AbstractPopupDialog<VBox> {
 
-  @NotNull
   private final Label titleLabel;
 
-  @NotNull
   private final Button closeButton;
 
   public SimplePopupDialog() {
@@ -32,20 +29,20 @@ public class SimplePopupDialog extends AbstractPopupDialog<VBox> {
   }
 
   @Override
-  protected @NotNull VBox createRoot() {
+  protected VBox createRoot() {
     var root = new VBox();
     FxUtils.addClass(root, CssClasses.SIMPLE_POPUP_DIALOG);
     return root;
   }
 
   @Override
-  protected void configureSize(@NotNull VBox container, @NotNull Point2D size) {
+  protected void configureSize(VBox container, Point2D size) {
     super.configureSize(container, size);
     FxUtils.setFixedSize(container, size);
   }
 
   @Override
-  protected void createControls(@NotNull VBox root) {
+  protected void createControls(VBox root) {
     super.createControls(root);
 
     var header = new GridPane();
@@ -66,11 +63,11 @@ public class SimplePopupDialog extends AbstractPopupDialog<VBox> {
     FxUtils.addChild(root, header, content, actions);
   }
 
-  public void setTitle(@NotNull String title) {
+  public void setTitle(String title) {
     this.titleLabel.setText(title);
   }
 
-  protected void fillHeader(@NotNull GridPane container) {
+  protected void fillHeader(GridPane container) {
 
     titleLabel
         .prefWidthProperty()
@@ -85,14 +82,14 @@ public class SimplePopupDialog extends AbstractPopupDialog<VBox> {
     container.add(closeButton, 1, 0);
   }
 
-  protected void fillContent(@NotNull GridPane container) {
+  protected void fillContent(GridPane container) {
 
     var textArea = new TextArea();
 
     container.add(textArea, 0, 0);
   }
 
-  protected void fillActions(@NotNull GridPane container) {
+  protected void fillActions(GridPane container) {
 
     var buttonYes = new Button("Yes");
     var buttonNo = new Button("No");

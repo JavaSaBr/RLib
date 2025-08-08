@@ -1,7 +1,5 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author JavaSaBr
  */
@@ -9,5 +7,5 @@ import org.jetbrains.annotations.NotNull;
 public interface NotNullObjectIntPredicate<T> extends ObjectIntPredicate<T> {
 
   @Override
-  boolean test(@NotNull T first, int second);
+  boolean test(T first, int second);
 }

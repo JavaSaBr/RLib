@@ -27,14 +27,12 @@ subprojects {
   }
 
   dependencies {
-    compileOnly libs.jetbrains.annotations
     compileOnly libs.jspecify
     compileOnly libs.lombok
     annotationProcessor libs.lombok
 
     testImplementation libs.junit.api
     testCompileOnly libs.lombok
-    testCompileOnly libs.jetbrains.annotations
     testCompileOnly libs.jspecify
     testRuntimeOnly libs.junit.engine
     testRuntimeOnly libs.junit.platform.launcher

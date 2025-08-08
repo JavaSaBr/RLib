@@ -5,7 +5,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javasabr.rlib.fx.CssClasses;
 import javasabr.rlib.fx.util.FxUtils;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The default implementation of {@link ControlDialog}
@@ -14,10 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DefaultControlDialog extends ControlDialog<GridPane, GridPane, GridPane> {
 
-  @NotNull
   protected final Label titleLabel;
 
-  @NotNull
   protected final Button closeButton;
 
   public DefaultControlDialog() {
@@ -25,22 +22,22 @@ public class DefaultControlDialog extends ControlDialog<GridPane, GridPane, Grid
     this.closeButton = createCloseButton();
   }
 
-  protected @NotNull Button createCloseButton() {
+  protected Button createCloseButton() {
     return new Button("X");
   }
 
   @Override
-  protected @NotNull GridPane createHeader() {
+  protected GridPane createHeader() {
     return new GridPane();
   }
 
   @Override
-  protected @NotNull GridPane createContainer() {
+  protected GridPane createContainer() {
     return new GridPane();
   }
 
   @Override
-  protected @NotNull GridPane createActions() {
+  protected GridPane createActions() {
     return new GridPane();
   }
 
@@ -62,7 +59,7 @@ public class DefaultControlDialog extends ControlDialog<GridPane, GridPane, Grid
   }
 
   @Override
-  protected void fillHeader(@NotNull GridPane header) {
+  protected void fillHeader(GridPane header) {
     super.fillHeader(header);
 
     titleLabel
@@ -78,13 +75,13 @@ public class DefaultControlDialog extends ControlDialog<GridPane, GridPane, Grid
   }
 
   @Override
-  protected void fillContent(@NotNull GridPane content) {
+  protected void fillContent(GridPane content) {
 
     super.fillContent(content);
   }
 
   @Override
-  protected void fillActions(@NotNull GridPane actions) {
+  protected void fillActions(GridPane actions) {
 
     super.fillActions(actions);
   }

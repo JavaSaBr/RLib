@@ -3,7 +3,6 @@ package javasabr.rlib.common.concurrent.executor;
 import java.util.concurrent.Future;
 import javasabr.rlib.common.concurrent.task.CallableTask;
 import javasabr.rlib.common.concurrent.task.SimpleTask;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
 /**

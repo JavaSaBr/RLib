@@ -7,15 +7,12 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * The class to monitor a runtime state of a java process.
  *
  * @author JavaSaBr
  */
-@NullMarked
 public class RuntimeMonitoring {
 
   private static final ThreadLocal<SimpleDateFormat> LOCAL_DATE_FORMAT = withInitial(SimpleDateFormat::new);

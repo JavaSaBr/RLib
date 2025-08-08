@@ -3,7 +3,6 @@ package javasabr.rlib.fx.control.input;
 import javafx.scene.input.ScrollEvent;
 import javasabr.rlib.fx.util.converter.LimitedFloatStringConverter;
 import javasabr.rlib.fx.util.converter.LimitedNumberStringConverter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of a text field control to edit float values.
@@ -17,12 +16,12 @@ public final class FloatTextField extends NumberTextField<Float> {
   }
 
   @Override
-  protected @NotNull LimitedNumberStringConverter<Float> createValueConverter() {
+  protected LimitedNumberStringConverter<Float> createValueConverter() {
     return new LimitedFloatStringConverter();
   }
 
   @Override
-  protected void scrollValueImpl(@NotNull ScrollEvent event) {
+  protected void scrollValueImpl(ScrollEvent event) {
     super.scrollValueImpl(event);
 
     var value = getValue();

@@ -2,7 +2,6 @@ package javasabr.rlib.common.classpath;
 
 import javasabr.rlib.common.classpath.impl.ClassPathScannerImpl;
 import javasabr.rlib.common.classpath.impl.ManifestClassPathScannerImpl;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
 /**

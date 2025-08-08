@@ -10,7 +10,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of a control resize handler.
@@ -24,7 +23,7 @@ public class ControlResizeHandler implements EventHandler<MouseEvent> {
    *
    * @param node the region.
    */
-  public static void install(@NotNull Region node) {
+  public static void install(Region node) {
     install(node, 4);
   }
 
@@ -34,7 +33,7 @@ public class ControlResizeHandler implements EventHandler<MouseEvent> {
    * @param node the region.
    * @param borderWidth the border width.
    */
-  public static void install(@NotNull Region node, int borderWidth) {
+  public static void install(Region node, int borderWidth) {
 
     var handler = new ControlResizeHandler(node, borderWidth);
 
@@ -45,10 +44,8 @@ public class ControlResizeHandler implements EventHandler<MouseEvent> {
     node.addEventHandler(MOUSE_EXITED_TARGET, handler);
   }
 
-  @NotNull
   private final Region node;
 
-  @NotNull
   private Cursor cursor;
 
   private double startX;
@@ -56,7 +53,7 @@ public class ControlResizeHandler implements EventHandler<MouseEvent> {
 
   private int border;
 
-  public ControlResizeHandler(@NotNull Region node, int borderWidth) {
+  public ControlResizeHandler(Region node, int borderWidth) {
     this.node = node;
     this.border = borderWidth;
     this.startX = 0;
@@ -65,7 +62,7 @@ public class ControlResizeHandler implements EventHandler<MouseEvent> {
   }
 
   @Override
-  public void handle(@NotNull MouseEvent mouseEvent) {
+  public void handle(MouseEvent mouseEvent) {
 
     var eventType = mouseEvent.getEventType();
     var eventX = mouseEvent.getX();

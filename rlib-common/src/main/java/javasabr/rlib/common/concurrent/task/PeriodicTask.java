@@ -1,7 +1,5 @@
 package javasabr.rlib.common.concurrent.task;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * The interface to implement a periodic tasks.
  *
@@ -11,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public interface PeriodicTask<L> extends CallableTask<Boolean, L> {
 
   @Override
-  default Boolean call(@NotNull final L local, final long currentTime) {
+  default Boolean call(final L local, final long currentTime) {
     if (update(local, currentTime)) {
       return Boolean.TRUE;
     }
@@ -23,7 +21,7 @@ public interface PeriodicTask<L> extends CallableTask<Boolean, L> {
    *
    * @param local the thread local container.
    */
-  default void onFinish(@NotNull final L local) {
+  default void onFinish(final L local) {
   }
 
   /**
@@ -33,5 +31,5 @@ public interface PeriodicTask<L> extends CallableTask<Boolean, L> {
    * @param currentTime the current time.
    * @return true if this task is finished.
    */
-  boolean update(@NotNull L local, long currentTime);
+  boolean update(L local, long currentTime);
 }

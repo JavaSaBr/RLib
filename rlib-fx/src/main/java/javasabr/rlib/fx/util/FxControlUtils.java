@@ -18,7 +18,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.paint.Color;
 import javasabr.rlib.fx.control.input.TypedTextField;
 import javasabr.rlib.fx.util.ObservableUtils.ChangeEventAppender;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The utility class.
@@ -34,7 +33,7 @@ public class FxControlUtils {
    * @param handler the handler.
    * @return the change event appender.
    */
-  public static ChangeEventAppender<String> onTextChange(@NotNull TextInputControl control, @NotNull Runnable handler) {
+  public static ChangeEventAppender<String> onTextChange(TextInputControl control, Runnable handler) {
     return ObservableUtils.onChange(control.textProperty(), handler);
   }
 
@@ -46,8 +45,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static ChangeEventAppender<String> onTextChange(
-      @NotNull TextInputControl control,
-      @NotNull Consumer<String> handler) {
+      TextInputControl control,
+      Consumer<String> handler) {
     return ObservableUtils.onChange(control.textProperty(), handler);
   }
 
@@ -58,7 +57,7 @@ public class FxControlUtils {
    * @param handler the handler.
    * @return the change event appender.
    */
-  public static ChangeEventAppender<Boolean> onSelectedChange(@NotNull CheckBox control, @NotNull Runnable handler) {
+  public static ChangeEventAppender<Boolean> onSelectedChange(CheckBox control, Runnable handler) {
     return ObservableUtils.onChange(control.selectedProperty(), handler);
   }
 
@@ -70,8 +69,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static ChangeEventAppender<Boolean> onSelectedChange(
-      @NotNull CheckBox control,
-      @NotNull Consumer<Boolean> handler) {
+      CheckBox control,
+      Consumer<Boolean> handler) {
     return ObservableUtils.onChange(control.selectedProperty(), handler);
   }
 
@@ -83,8 +82,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static ChangeEventAppender<Boolean> onSelectedChange(
-      @NotNull ToggleButton control,
-      @NotNull Runnable handler) {
+      ToggleButton control,
+      Runnable handler) {
     return ObservableUtils.onChange(control.selectedProperty(), handler);
   }
 
@@ -96,8 +95,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static ChangeEventAppender<Boolean> onSelectedChange(
-      @NotNull ToggleButton control,
-      @NotNull Consumer<Boolean> handler) {
+      ToggleButton control,
+      Consumer<Boolean> handler) {
     return ObservableUtils.onChange(control.selectedProperty(), handler);
   }
 
@@ -109,8 +108,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static ChangeEventAppender<Color> onColorChange(
-      @NotNull ColorPicker control,
-      @NotNull Consumer<Color> handler) {
+      ColorPicker control,
+      Consumer<Color> handler) {
     return ObservableUtils.onChange(control.valueProperty(), handler);
   }
 
@@ -121,7 +120,7 @@ public class FxControlUtils {
    * @param handler the handler.
    * @return the change event appender.
    */
-  public static ChangeEventAppender<Color> onColorChange(@NotNull ColorPicker control, @NotNull Runnable handler) {
+  public static ChangeEventAppender<Color> onColorChange(ColorPicker control, Runnable handler) {
     return ObservableUtils.onChange(control.valueProperty(), handler);
   }
 
@@ -134,8 +133,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onValueChange(
-      @NotNull TypedTextField<T> control,
-      @NotNull Consumer<T> handler) {
+      TypedTextField<T> control,
+      Consumer<T> handler) {
     return ObservableUtils.onChange(control.valueProperty(), handler);
   }
 
@@ -148,8 +147,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onValueChange(
-      @NotNull TypedTextField<T> control,
-      @NotNull Runnable handler) {
+      TypedTextField<T> control,
+      Runnable handler) {
     return ObservableUtils.onChange(control.valueProperty(), handler);
   }
 
@@ -160,7 +159,7 @@ public class FxControlUtils {
    * @param handler the handler.
    * @return the change event appender.
    */
-  public static ChangeEventAppender<Boolean> onFocusChange(@NotNull Node control, @NotNull Consumer<Boolean> handler) {
+  public static ChangeEventAppender<Boolean> onFocusChange(Node control, Consumer<Boolean> handler) {
     return ObservableUtils.onChange(control.focusedProperty(), handler);
   }
 
@@ -173,8 +172,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onSelectedItemChange(
-      @NotNull ComboBox<T> control,
-      @NotNull Runnable handler) {
+      ComboBox<T> control,
+      Runnable handler) {
     return ObservableUtils.onChange(control.valueProperty(), handler);
   }
 
@@ -187,8 +186,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onSelectedItemChange(
-      @NotNull ComboBox<T> control,
-      @NotNull Consumer<T> handler) {
+      ComboBox<T> control,
+      Consumer<T> handler) {
     return ObservableUtils.onChange(control.valueProperty(), handler);
   }
 
@@ -201,8 +200,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<T> onSelectedItemChange(
-      @NotNull ListView<T> control,
-      @NotNull Consumer<T> handler) {
+      ListView<T> control,
+      Consumer<T> handler) {
     var selectionModel = control.getSelectionModel();
     return ObservableUtils.onChange(selectionModel.selectedItemProperty(), handler);
   }
@@ -216,8 +215,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<TreeItem<T>> onSelectedItemChange(
-      @NotNull TreeView<T> control,
-      @NotNull Runnable handler) {
+      TreeView<T> control,
+      Runnable handler) {
     var selectionModel = control.getSelectionModel();
     return ObservableUtils.onChange(selectionModel.selectedItemProperty(), handler);
   }
@@ -231,8 +230,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static <T> ChangeEventAppender<TreeItem<T>> onSelectedItemChange(
-      @NotNull TreeView<T> control,
-      @NotNull Consumer<TreeItem<T>> handler) {
+      TreeView<T> control,
+      Consumer<TreeItem<T>> handler) {
     var selectionModel = control.getSelectionModel();
     return ObservableUtils.onChange(selectionModel.selectedItemProperty(), handler);
   }
@@ -243,7 +242,7 @@ public class FxControlUtils {
    * @param control the button control.
    * @param handler the handler.
    */
-  public static void onAction(@NotNull ButtonBase control, @NotNull Runnable handler) {
+  public static void onAction(ButtonBase control, Runnable handler) {
     control.addEventHandler(ActionEvent.ACTION, event -> handler.run());
   }
 
@@ -254,7 +253,7 @@ public class FxControlUtils {
    * @param handler the handler.
    * @return the change event appender.
    */
-  public static ChangeEventAppender<Tab> onSelectedTabChange(@NotNull TabPane control, @NotNull Consumer<Tab> handler) {
+  public static ChangeEventAppender<Tab> onSelectedTabChange(TabPane control, Consumer<Tab> handler) {
     var selectionModel = control.getSelectionModel();
     return ObservableUtils.onChange(selectionModel.selectedItemProperty(), handler);
   }
@@ -267,8 +266,8 @@ public class FxControlUtils {
    * @return the change event appender.
    */
   public static ChangeEventAppender<Tab> onSelectedTabChange(
-      @NotNull TabPane control,
-      @NotNull BiConsumer<Tab, Tab> handler) {
+      TabPane control,
+      BiConsumer<Tab, Tab> handler) {
     var selectionModel = control.getSelectionModel();
     return ObservableUtils.onChange(selectionModel.selectedItemProperty(), handler);
   }

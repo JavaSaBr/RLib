@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * The function.
@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> the type parameter
  * @author JavaSaBr
  */
+@NullUnmarked
 @FunctionalInterface
 public interface IntBiObjectConsumer<S, T> {
 
@@ -19,5 +20,5 @@ public interface IntBiObjectConsumer<S, T> {
    * @param second the second
    * @param third the third
    */
-  void accept(int first, @Nullable S second, @Nullable T third);
+  void accept(int first, S second, T third);
 }
