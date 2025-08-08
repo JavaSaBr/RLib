@@ -1,7 +1,7 @@
 package javasabr.rlib.common.util.array;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface with unsafe methods for the Array.
@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface UnsafeArray<E> extends Array<E> {
 
   /**
@@ -26,7 +27,7 @@ public interface UnsafeArray<E> extends Array<E> {
    * @param object the new element.
    * @return true if this array was changed.
    */
-  default boolean unsafeAdd(@NotNull E object) {
+  default boolean unsafeAdd(E object) {
     throw new UnsupportedOperationException();
   }
 
@@ -46,7 +47,7 @@ public interface UnsafeArray<E> extends Array<E> {
    * @param index the index.
    * @param element the element.
    */
-  default void unsafeSet(int index, @NotNull E element) {
+  default void unsafeSet(int index, E element) {
     throw new UnsupportedOperationException();
   }
 
@@ -55,5 +56,5 @@ public interface UnsafeArray<E> extends Array<E> {
    *
    * @return the array
    */
-  @NotNull Array<E> trimToSize();
+  Array<E> trimToSize();
 }

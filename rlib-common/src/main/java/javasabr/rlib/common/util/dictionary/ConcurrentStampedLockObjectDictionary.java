@@ -2,7 +2,7 @@ package javasabr.rlib.common.util.dictionary;
 
 import java.util.concurrent.locks.StampedLock;
 import javasabr.rlib.common.concurrent.lock.LockFactory;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The implementation of the {@link ConcurrentObjectDictionary} using {@link LockFactory#newAtomicARSWLock()}*.
@@ -11,9 +11,10 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class ConcurrentStampedLockObjectDictionary<K, V> extends AbstractConcurrentObjectDictionary<K, V> {
 
-  private final @NotNull StampedLock lock;
+  private final StampedLock lock;
 
   public ConcurrentStampedLockObjectDictionary() {
     this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);

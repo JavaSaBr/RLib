@@ -1,7 +1,7 @@
 package javasabr.rlib.common.util.dictionary;
 
 import javasabr.rlib.common.util.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The fast implementation of {@link IntegerDictionary} without threadsafe supporting.
@@ -9,9 +9,10 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements UnsafeIntegerDictionary<V> {
 
-  private @NotNull IntegerEntry<V>[] entries;
+  private IntegerEntry<V>[] entries;
 
   private int threshold;
   private int size;
@@ -39,12 +40,12 @@ public class FastIntegerDictionary<V> extends AbstractIntegerDictionary<V> imple
   }
 
   @Override
-  public void setEntries(@NotNull IntegerEntry<V>[] entries) {
+  public void setEntries(IntegerEntry<V>[] entries) {
     this.entries = entries;
   }
 
   @Override
-  public IntegerEntry<V> @NotNull [] entries() {
+  public IntegerEntry<V> [] entries() {
     return entries;
   }
 

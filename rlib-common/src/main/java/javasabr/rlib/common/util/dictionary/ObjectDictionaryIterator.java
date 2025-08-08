@@ -2,8 +2,8 @@ package javasabr.rlib.common.util.dictionary;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The iterator to iterate {@link ObjectDictionary}.
@@ -12,12 +12,13 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
 
   /**
    * The dictionary.
    */
-  private final @NotNull UnsafeObjectDictionary<K, V> dictionary;
+  private final UnsafeObjectDictionary<K, V> dictionary;
 
   /**
    * The next entry.
@@ -34,13 +35,12 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
    */
   private int index;
 
-  public ObjectDictionaryIterator(@NotNull UnsafeObjectDictionary<K, V> dictionary) {
+  public ObjectDictionaryIterator(UnsafeObjectDictionary<K, V> dictionary) {
     this.dictionary = dictionary;
 
-    if (dictionary.size() > 0) {
+    if (!dictionary.isEmpty()) {
       var entries = dictionary.entries();
-      while (index < entries.length && (next = entries[index++]) == null)
-        ;
+      while (index < entries.length && (next = entries[index++]) == null);
     }
   }
 
@@ -50,7 +50,7 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
   }
 
   @Override
-  public @NotNull V next() {
+  public V next() {
     //noinspection ConstantConditions
     return nextEntry().getValue();
   }
@@ -60,7 +60,7 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
    *
    * @return the next entry.
    */
-  private @NotNull ObjectEntry<K, V> nextEntry() {
+  private ObjectEntry<K, V> nextEntry() {
 
     var entries = dictionary.entries();
     var entry = next;
@@ -70,8 +70,7 @@ public class ObjectDictionaryIterator<K, V> implements Iterator<V> {
     }
 
     if ((next = entry.getNext()) == null) {
-      while (index < entries.length && (next = entries[index++]) == null)
-        ;
+      while (index < entries.length && (next = entries[index++]) == null);
     }
 
     current = entry;

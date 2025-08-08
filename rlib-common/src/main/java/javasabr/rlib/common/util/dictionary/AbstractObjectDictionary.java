@@ -9,8 +9,8 @@ import javasabr.rlib.common.function.NotNullSupplier;
 import javasabr.rlib.common.function.NotNullTripleConsumer;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.Array;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base implementation of the {@link ObjectDictionary}.
@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<K, V, ObjectEntry<K, V>> implements
     UnsafeObjectDictionary<K, V> {
 
@@ -39,7 +40,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  protected @NotNull Class<? super ObjectEntry<K, V>> getEntryType() {
+  protected Class<? super ObjectEntry<K, V>> getEntryType() {
     return ObjectEntry.class;
   }
 
@@ -67,18 +68,18 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public final boolean containsKey(@NotNull K key) {
+  public final boolean containsKey(K key) {
     return getEntry(key) != null;
   }
 
   @Override
-  public @Nullable V get(@NotNull K key) {
+  public @Nullable V get(K key) {
     var entry = getEntry(key);
     return entry == null ? null : entry.getValue();
   }
 
   @Override
-  public @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullSupplier<V> factory) {
+  public V getOrCompute(K key, NotNullSupplier<V> factory) {
 
     var entry = getEntry(key);
 
@@ -96,7 +97,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullFunction<K, V> factory) {
+  public V getOrCompute(K key, NotNullFunction<K, V> factory) {
 
     var entry = getEntry(key);
 
@@ -114,7 +115,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public <T> @NotNull V getOrCompute(@NotNull K key, @NotNull T argument, @NotNull NotNullFunction<T, V> factory) {
+  public <T> V getOrCompute(K key, T argument, NotNullFunction<T, V> factory) {
 
     var entry = getEntry(key);
 
@@ -132,7 +133,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public <T> @NotNull V getOrCompute(@NotNull K key, @NotNull T argument, @NotNull NotNullBiFunction<K, T, V> factory) {
+  public <T> V getOrCompute(K key, T argument, NotNullBiFunction<K, T, V> factory) {
 
     var entry = getEntry(key);
 
@@ -177,7 +178,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public final @NotNull Array<K> keyArray(@NotNull Array<K> container) {
+  public final Array<K> keyArray(Array<K> container) {
 
     var unsafeArray = container.asUnsafe();
     unsafeArray.prepareForSize(container.size() + size());
@@ -194,7 +195,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public void copyTo(@NotNull Dictionary<? super K, ? super V> dictionary) {
+  public void copyTo(Dictionary<? super K, ? super V> dictionary) {
 
     if (isEmpty() || !(dictionary instanceof ObjectDictionary)) {
       return;
@@ -212,7 +213,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public @Nullable V put(@NotNull K key, @NotNull V value) {
+  public @Nullable V put(K key, V value) {
 
     var entries = entries();
 
@@ -230,7 +231,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public @Nullable V remove(@NotNull K key) {
+  public @Nullable V remove(K key) {
 
     var old = removeEntryForKey(key);
 
@@ -246,7 +247,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public @Nullable ObjectEntry<K, V> removeEntryForKey(@NotNull K key) {
+  public @Nullable ObjectEntry<K, V> removeEntryForKey(K key) {
 
     var entries = entries();
 
@@ -311,7 +312,7 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
   }
 
   @Override
-  public void forEach(@NotNull NotNullBiConsumer<? super K, ? super V> consumer) {
+  public void forEach(NotNullBiConsumer<? super K, ? super V> consumer) {
     for (var entry : entries()) {
       while (entry != null) {
         consumer.accept(entry.getKey(), entry.getValue());
@@ -322,8 +323,8 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
   @Override
   public <T> void forEach(
-      @NotNull T argument,
-      @NotNull NotNullTripleConsumer<? super T, ? super K, ? super V> consumer) {
+      T argument,
+      NotNullTripleConsumer<? super T, ? super K, ? super V> consumer) {
     for (var entry : entries()) {
       while (entry != null) {
         consumer.accept(argument, entry.getKey(), entry.getValue());
@@ -334,9 +335,9 @@ public abstract class AbstractObjectDictionary<K, V> extends AbstractDictionary<
 
   @Override
   public <F, S> void forEach(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull FourObjectConsumer<@NotNull ? super F, @NotNull ? super S, @NotNull ? super K, @NotNull ? super V> consumer) {
+      F first,
+      S second,
+      FourObjectConsumer<? super F, ? super S, ? super K, ? super V> consumer) {
     for (var entry : entries()) {
       while (entry != null) {
         consumer.accept(first, second, entry.getKey(), entry.getValue());

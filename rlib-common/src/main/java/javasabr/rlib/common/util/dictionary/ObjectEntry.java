@@ -3,8 +3,8 @@ package javasabr.rlib.common.util.dictionary;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The entry of {@link ObjectDictionary}.
@@ -13,31 +13,33 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class ObjectEntry<K, V> implements Entry<ObjectEntry<K, V>, V> {
 
   /**
    * The next entry.
    */
-  private @Setter
+  @Setter
   @Getter
-  @Nullable ObjectEntry<K, V> next;
+  private @Nullable ObjectEntry<K, V> next;
 
   /**
    * The key of this entry.
    */
-  private @Getter
-  @Nullable K key;
+  @Getter
+  private @Nullable K key;
 
   /**
    * The value of this entry.
    */
-  private @Getter
-  @Nullable V value;
+  @Getter
+  private @Nullable V value;
 
   /**
    * The hash of the key.
    */
-  private @Getter int hash;
+  @Getter
+  private int hash;
 
   @Override
   public boolean equals(@Nullable Object object) {
@@ -81,7 +83,7 @@ public class ObjectEntry<K, V> implements Entry<ObjectEntry<K, V>, V> {
    * @param value the value.
    * @param next the next entry.
    */
-  public void set(int hash, @NotNull K key, @NotNull V value, @Nullable ObjectEntry<K, V> next) {
+  public void set(int hash, K key, V value, @Nullable ObjectEntry<K, V> next) {
     this.value = value;
     this.next = next;
     this.key = key;
@@ -90,7 +92,7 @@ public class ObjectEntry<K, V> implements Entry<ObjectEntry<K, V>, V> {
 
   @Override
   @SuppressWarnings("ConstantConditions")
-  public @NotNull V setValue(@NotNull V value) {
+  public V setValue(V value) {
     var old = getValue();
     this.value = value;
     return old;

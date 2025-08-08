@@ -10,8 +10,8 @@ import javasabr.rlib.common.function.NotNullTripleConsumer;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface for implementing a key-value dictionary which using an object key.
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
 
   /**
@@ -29,7 +30,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param <T> the key's and value's type.
    * @return the new object dictionary.
    */
-  static <T> @NotNull ObjectDictionary<T, T> ofType(@NotNull Class<? super T> keyValueType) {
+  static <T> ObjectDictionary<T, T> ofType(Class<? super T> keyValueType) {
     return DictionaryFactory.newObjectDictionary();
   }
 
@@ -42,9 +43,9 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param <V> the value's type.
    * @return the new object dictionary.
    */
-  static <K, V> @NotNull ObjectDictionary<K, V> ofType(
-      @NotNull Class<? super K> keyType,
-      @NotNull Class<? super V> valueType) {
+  static <K, V> ObjectDictionary<K, V> ofType(
+      Class<? super K> keyType,
+      Class<? super V> valueType) {
     return DictionaryFactory.newObjectDictionary();
   }
 
@@ -56,7 +57,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param <V> the value's type.
    * @return the new object dictionary.
    */
-  static <K, V> @NotNull ObjectDictionary<K, V> of(@NotNull Object... values) {
+  static <K, V> ObjectDictionary<K, V> of(Object... values) {
     return new ReadOnlyFastObjectDictionary<>(values);
   }
 
@@ -67,11 +68,11 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param <V> the value's type.
    * @return the read-only empty dictionary.
    */
-  static <K, V> @NotNull ObjectDictionary<K, V> empty() {
+  static <K, V> ObjectDictionary<K, V> empty() {
     return ClassUtils.unsafeNNCast(DictionaryFactory.EMPTY_OD);
   }
 
-  static <K, V, M extends ObjectDictionary<K, V>> @NotNull M append(@NotNull M first, @NotNull M second) {
+  static <K, V, M extends ObjectDictionary<K, V>> M append(M first, M second) {
     second.copyTo(first);
     return first;
   }
@@ -82,7 +83,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param key key whose presence in this dictionary is to be tested.
    * @return true if this dictionary contains a mapping for the specified key.
    */
-  default boolean containsKey(@NotNull K key) {
+  default boolean containsKey(K key) {
     throw new UnsupportedOperationException();
   }
 
@@ -94,7 +95,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @return the value to which the specified key is mapped, or {@code null} if this dictionary contains no mapping for
    * the key.
    */
-  default @Nullable V get(@NotNull K key) {
+  default @Nullable V get(K key) {
     throw new UnsupportedOperationException();
   }
 
@@ -107,7 +108,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @return the value to which the specified key is mapped, or default if this dictionary contains no mapping for the
    * key.
    */
-  default @Nullable V getOrDefault(@NotNull K key, @NotNull V def) {
+  default @Nullable V getOrDefault(K key, V def) {
     var value = get(key);
     return value == null ? def : value;
   }
@@ -119,7 +120,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param key the key whose associated value is to be returned.
    * @return the optional value to which the specified key is mapped.
    */
-  default @NotNull Optional<V> getOptional(@NotNull K key) {
+  default Optional<V> getOptional(K key) {
     return Optional.ofNullable(get(key));
   }
 
@@ -131,7 +132,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param factory the factory.
    * @return the stored value by the key or the new value.
    */
-  default @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullSupplier<V> factory) {
+  default V getOrCompute(K key, NotNullSupplier<V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -143,7 +144,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param factory the factory.
    * @return the stored value by the key or the new value.
    */
-  default @NotNull V getOrCompute(@NotNull K key, @NotNull NotNullFunction<K, V> factory) {
+  default V getOrCompute(K key, NotNullFunction<K, V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -157,7 +158,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param factory the factory.
    * @return the stored value by the key or the new value.
    */
-  default <T> @NotNull V getOrCompute(@NotNull K key, @NotNull T argument, @NotNull NotNullFunction<T, V> factory) {
+  default <T> V getOrCompute(K key, T argument, NotNullFunction<T, V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -172,7 +173,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @return the stored value by the key or the new value.
    * @see #getOrCompute(Object, Object, NotNullBiFunction)
    */
-  default <T> @NotNull V get(@NotNull K key, @NotNull T argument, @NotNull NotNullBiFunction<K, T, V> factory) {
+  default <T> V get(K key, T argument, NotNullBiFunction<K, T, V> factory) {
     return getOrCompute(key, argument, factory);
   }
 
@@ -186,10 +187,10 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param factory the factory.
    * @return the stored value by the key or the new value.
    */
-  default <T> @NotNull V getOrCompute(
-      @NotNull K key,
-      @NotNull T argument,
-      @NotNull NotNullBiFunction<K, T, V> factory) {
+  default <T> V getOrCompute(
+      K key,
+      T argument,
+      NotNullBiFunction<K, T, V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -199,7 +200,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param container the container.
    * @return the array with all keys.
    */
-  default @NotNull Array<K> keyArray(@NotNull Array<K> container) {
+  default Array<K> keyArray(Array<K> container) {
     throw new UnsupportedOperationException();
   }
 
@@ -209,7 +210,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param type the key's type.
    * @return the array with all keys of this dictionary.
    */
-  default @NotNull Array<K> keyArray(@NotNull Class<K> type) {
+  default Array<K> keyArray(Class<K> type) {
     return keyArray(ArrayFactory.newArray(type, size()));
   }
 
@@ -220,7 +221,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param value the value.
    * @return the previous value for the key or null.
    */
-  default @Nullable V put(@NotNull K key, @NotNull V value) {
+  default @Nullable V put(K key, V value) {
     throw new UnsupportedOperationException();
   }
 
@@ -231,7 +232,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param value the value.
    * @return the optional value of the previous value for the key.
    */
-  default @NotNull Optional<V> putOptional(@NotNull K key, @NotNull V value) {
+  default Optional<V> putOptional(K key, V value) {
     return Optional.ofNullable(put(key, value));
   }
 
@@ -241,7 +242,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param key the key.
    * @return the previous value for the key or null.
    */
-  default @Nullable V remove(@NotNull K key) {
+  default @Nullable V remove(K key) {
     throw new UnsupportedOperationException();
   }
 
@@ -251,7 +252,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param key the key.
    * @return the optional value of the previous value for the key.
    */
-  default @NotNull Optional<V> removeOptional(@NotNull K key) {
+  default Optional<V> removeOptional(K key) {
     return Optional.ofNullable(remove(key));
   }
 
@@ -260,7 +261,7 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    *
    * @param consumer the consumer.
    */
-  default void forEach(@NotNull NotNullBiConsumer<? super K, ? super V> consumer) {
+  default void forEach(NotNullBiConsumer<? super K, ? super V> consumer) {
     throw new UnsupportedOperationException();
   }
 
@@ -272,8 +273,8 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param <T> the argument's type.
    */
   default <T> void forEach(
-      @NotNull T argument,
-      @NotNull NotNullTripleConsumer<? super T, ? super K, ? super V> consumer) {
+      T argument,
+      NotNullTripleConsumer<? super T, ? super K, ? super V> consumer) {
     throw new UnsupportedOperationException();
   }
 
@@ -287,9 +288,9 @@ public interface ObjectDictionary<K, V> extends Dictionary<K, V> {
    * @param <S> the second argument's type.
    */
   default <F, S> void forEach(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull FourObjectConsumer<@NotNull ? super F, @NotNull ? super S, @NotNull ? super K, @NotNull ? super V> consumer) {
+      F first,
+      S second,
+      FourObjectConsumer<? super F, ? super S, ? super K, ? super V> consumer) {
     throw new UnsupportedOperationException();
   }
 }

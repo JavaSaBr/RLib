@@ -8,8 +8,8 @@ import javasabr.rlib.common.function.LongObjectConsumer;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.ArrayFactory;
 import javasabr.rlib.common.util.array.LongArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface to implement a dictionary which uses long as key.
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface LongDictionary<V> extends Dictionary<LongKey, V> {
 
   /**
@@ -25,7 +26,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    * @param <V> the value's type.
    * @return the read-only empty dictionary.
    */
-  static <V> @NotNull LongDictionary<V> empty() {
+  static <V> LongDictionary<V> empty() {
     return ClassUtils.unsafeNNCast(DictionaryFactory.EMPTY_LD);
   }
 
@@ -36,7 +37,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    * @param <V> the value's type.
    * @return the new long dictionary.
    */
-  static <V> @NotNull LongDictionary<V> ofType(@NotNull Class<? super V> valueType) {
+  static <V> LongDictionary<V> ofType(Class<? super V> valueType) {
     return DictionaryFactory.newLongDictionary();
   }
 
@@ -47,7 +48,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    * @param <V> the value's type.
    * @return the new long dictionary.
    */
-  static <V> @NotNull LongDictionary<V> of(@NotNull Object... values) {
+  static <V> LongDictionary<V> of(Object... values) {
 
     if (values.length < 2 || values.length % 2 != 0) {
       throw new IllegalArgumentException("Incorrect argument's count.");
@@ -62,7 +63,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
     return dictionary;
   }
 
-  static <V, M extends LongDictionary<V>> @NotNull M append(@NotNull M first, @NotNull M second) {
+  static <V, M extends LongDictionary<V>> M append(M first, M second) {
     second.copyTo(first);
     return first;
   }
@@ -97,7 +98,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    * @param factory the factory.
    * @return the stored value by the key or the new value.
    */
-  default @NotNull V getOrCompute(long key, @NotNull Supplier<@NotNull V> factory) {
+  default V getOrCompute(long key, Supplier<V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -109,7 +110,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    * @param factory the factory.
    * @return the stored value by the key or the new value.
    */
-  default @NotNull V getOrCompute(long key, @NotNull LongFunction<@NotNull V> factory) {
+  default V getOrCompute(long key, LongFunction<V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -125,8 +126,8 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    */
   default <T> @Nullable V getOrCompute(
       long key,
-      @NotNull T argument,
-      @NotNull Function<@NotNull T, @NotNull V> factory) {
+      T argument,
+      Function<T, V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -135,7 +136,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    *
    * @return the array with all keys of this dictionary.
    */
-  default @NotNull LongArray keyArray() {
+  default LongArray keyArray() {
     return keyArray(ArrayFactory.newLongArray(size()));
   }
 
@@ -145,7 +146,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    * @param container the container.
    * @return the container with all keys.
    */
-  default @NotNull LongArray keyArray(@NotNull LongArray container) {
+  default LongArray keyArray(LongArray container) {
     throw new UnsupportedOperationException();
   }
 
@@ -156,7 +157,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    * @param value the value.
    * @return the previous value for the key or null.
    */
-  default @Nullable V put(long key, @NotNull V value) {
+  default @Nullable V put(long key, V value) {
     throw new UnsupportedOperationException();
   }
 
@@ -175,7 +176,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    *
    * @param consumer the consumer.
    */
-  default void forEach(@NotNull LongObjectConsumer<@NotNull V> consumer) {
+  default void forEach(LongObjectConsumer<V> consumer) {
     throw new UnsupportedOperationException();
   }
 
@@ -186,7 +187,7 @@ public interface LongDictionary<V> extends Dictionary<LongKey, V> {
    * @param consumer the consumer.
    * @param <T> the argument's type.
    */
-  default <T> void forEach(@NotNull T argument, @NotNull LongBiObjectConsumer<@NotNull V, @NotNull T> consumer) {
+  default <T> void forEach(T argument, LongBiObjectConsumer<V, T> consumer) {
     throw new UnsupportedOperationException();
   }
 }

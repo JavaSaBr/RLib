@@ -5,24 +5,20 @@ public interface ConcurrentIntegerArray {
   /**
    * Write lock.
    */
-  default void writeLock() {
-  }
+  default void writeLock() {}
 
   /**
    * Write unlock.
    */
-  default void writeUnlock() {
-  }
+  default void writeUnlock() {}
 
   /**
    * Read lock.
    */
-  default void readLock() {
-  }
+  default void readLock() {}
 
   /**
    * Read unlock.
    */
-  default void readUnlock() {
-  }
+  default void readUnlock() {}
 }

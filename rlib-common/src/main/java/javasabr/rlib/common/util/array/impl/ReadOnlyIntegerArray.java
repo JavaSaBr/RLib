@@ -4,24 +4,25 @@ import java.util.Arrays;
 import java.util.Objects;
 import javasabr.rlib.common.util.array.ArrayIterator;
 import javasabr.rlib.common.util.array.IntegerArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Simple implementation of read only integer array.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class ReadOnlyIntegerArray implements IntegerArray {
 
   protected final int[] array;
 
-  public ReadOnlyIntegerArray(int @NotNull [] array) {
+  public ReadOnlyIntegerArray(int [] array) {
     this.array = array;
   }
 
   @Override
-  public final @NotNull int[] array() {
+  public final int[] array() {
     return array;
   }
 
@@ -40,7 +41,7 @@ public class ReadOnlyIntegerArray implements IntegerArray {
   }
 
   @Override
-  public final @NotNull ArrayIterator<Integer> iterator() {
+  public final ArrayIterator<Integer> iterator() {
     return new ReadOnlyIterator();
   }
 
@@ -100,7 +101,7 @@ public class ReadOnlyIntegerArray implements IntegerArray {
     }
 
     @Override
-    public @NotNull Integer next() {
+    public Integer next() {
       return array[ordinal++];
     }
 

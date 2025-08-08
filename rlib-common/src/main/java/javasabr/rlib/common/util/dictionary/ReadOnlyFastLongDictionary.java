@@ -1,8 +1,8 @@
 package javasabr.rlib.common.util.dictionary;
 
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The fast read-only implementation of {@link LongDictionary} without threadsafe supporting.
@@ -10,11 +10,12 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 @NoArgsConstructor
 public class ReadOnlyFastLongDictionary<V> extends FastLongDictionary<V> {
 
   @Override
-  public void put(@NotNull Dictionary<LongKey, V> dictionary) {
+  public void put(Dictionary<LongKey, V> dictionary) {
     throw new IllegalStateException("Dictionary is only read.");
   }
 

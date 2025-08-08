@@ -10,19 +10,20 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The array collectors factory.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class ArrayCollectors {
 
-  private static @NotNull Set<Collector.Characteristics> CH_ID =
+  private static Set<Collector.Characteristics> CH_ID =
       unmodifiableSet(EnumSet.of(Collector.Characteristics.IDENTITY_FINISH));
 
-  private static @NotNull Set<Collector.Characteristics> CH_ID_CONC = unmodifiableSet(EnumSet.of(
+  private static Set<Collector.Characteristics> CH_ID_CONC = unmodifiableSet(EnumSet.of(
       Collector.Characteristics.IDENTITY_FINISH,
       Collector.Characteristics.CONCURRENT));
 
@@ -35,12 +36,12 @@ public class ArrayCollectors {
    * @param <A> the array's type.
    * @return the collector.
    */
-  public static <T, A extends Array<T>> @NotNull Collector<T, A, A> collector(
-      @NotNull Class<? super T> type,
-      @NotNull Function<Class<? super T>, A> arrayFactory) {
+  public static <T, A extends Array<T>> Collector<T, A, A> collector(
+      Class<? super T> type,
+      Function<Class<? super T>, A> arrayFactory) {
     return new Collector<>() {
 
-      private final @NotNull Supplier<A> supplier = () -> arrayFactory.apply(type);
+      private final Supplier<A> supplier = () -> arrayFactory.apply(type);
 
       @Override
       public Supplier<A> supplier() {
@@ -81,12 +82,12 @@ public class ArrayCollectors {
    * @param <A> the array's type.
    * @return the collector.
    */
-  public static <T, A extends ConcurrentArray<T>> @NotNull Collector<T, A, A> concurrentCollector(
-      @NotNull Class<? super T> type,
-      @NotNull Function<Class<? super T>, A> arrayFactory) {
+  public static <T, A extends ConcurrentArray<T>> Collector<T, A, A> concurrentCollector(
+      Class<? super T> type,
+      Function<Class<? super T>, A> arrayFactory) {
     return new Collector<>() {
 
-      private final @NotNull Supplier<A> supplier = () -> arrayFactory.apply(type);
+      private final Supplier<A> supplier = () -> arrayFactory.apply(type);
 
       @Override
       public Supplier<A> supplier() {
@@ -125,7 +126,7 @@ public class ArrayCollectors {
    * @param <T> the array element's type.
    * @return the collector.
    */
-  public static <T> @NotNull Collector<T, Array<T>, Array<T>> toArray(@NotNull Class<? super T> type) {
+  public static <T> Collector<T, Array<T>, Array<T>> toArray(Class<? super T> type) {
     return collector(type, ArrayFactory::newArray);
   }
 
@@ -136,8 +137,8 @@ public class ArrayCollectors {
    * @param <T> the array element's type.
    * @return the collector.
    */
-  public static <T> @NotNull Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(
-      @NotNull Class<? super T> type) {
+  public static <T> Collector<T, ConcurrentArray<T>, ConcurrentArray<T>> toConcurrentArray(
+      Class<? super T> type) {
     return concurrentCollector(type, ArrayFactory::newConcurrentStampedLockArray);
   }
 }

@@ -32,8 +32,8 @@ import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.impl.DefaultArrayIterator;
 import javasabr.rlib.common.util.pools.Reusable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to implement dynamic arrays.
@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneable, RandomAccess {
 
   /**
@@ -50,7 +51,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the result element's type.
    * @return the empty array.
    */
-  static <T> @NotNull ReadOnlyArray<T> empty() {
+  static <T> ReadOnlyArray<T> empty() {
     return unsafeNNCast(ArrayFactory.EMPTY_ARRAY);
   }
 
@@ -61,7 +62,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the element's type.
    * @return the new array.
    */
-  static <T> @NotNull Array<T> ofType(@NotNull Class<? super T> type) {
+  static <T> Array<T> ofType(Class<? super T> type) {
     return ArrayFactory.newArray(type);
   }
 
@@ -73,7 +74,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the element's type.
    * @return the new array.
    */
-  static <T> @NotNull Array<T> ofType(@NotNull Class<? super T> type, int capacity) {
+  static <T> Array<T> ofType(Class<? super T> type, int capacity) {
     return ArrayFactory.newArray(type, capacity);
   }
 
@@ -84,7 +85,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the element's type.
    * @return the new read only array.
    */
-  static <T> @NotNull ReadOnlyArray<T> of(@NotNull Array<T> another) {
+  static <T> ReadOnlyArray<T> of(Array<T> another) {
     return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOfRange(another.array(), 0, another.size()));
   }
 
@@ -95,7 +96,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the element's type.
    * @return the read only array.
    */
-  static <T> @NotNull ReadOnlyArray<T> of(@NotNull T element) {
+  static <T> ReadOnlyArray<T> of(T element) {
 
     T[] newArray = ArrayUtils.create(element.getClass(), 1);
     newArray[0] = element;
@@ -104,12 +105,12 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
   }
 
   @SafeVarargs
-  static <T> @NotNull ReadOnlyArray<T> of(@NotNull T... elements) {
+  static <T> ReadOnlyArray<T> of(T... elements) {
     return ArrayFactory.newReadOnlyArray(ArrayUtils.copyOf(elements));
   }
 
   @SafeVarargs
-  static <T> @NotNull ReadOnlyArray<T> optionals(@NotNull Class<? super T> type, @NotNull Optional<T>... elements) {
+  static <T> ReadOnlyArray<T> optionals(Class<? super T> type, Optional<T>... elements) {
     return ArrayFactory.newReadOnlyArray(Arrays
         .stream(elements)
         .filter(Optional::isPresent)
@@ -117,12 +118,12 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
         .toArray(value -> ArrayUtils.create(type, value)));
   }
 
-  static <T, A extends Array<T>> @NotNull A append(@NotNull A first, @NotNull A second) {
+  static <T, A extends Array<T>> A append(A first, A second) {
     first.addAll(second);
     return first;
   }
 
-  static <T> @NotNull ReadOnlyArray<T> combine(@NotNull Array<T> first, @NotNull Array<T> second) {
+  static <T> ReadOnlyArray<T> combine(Array<T> first, Array<T> second) {
 
     var componentType = ClassUtils.<Class<T>>unsafeNNCast(first
         .array()
@@ -141,7 +142,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the element's type.
    * @return the supplier.
    */
-  static <T> @NotNull NotNullSupplier<Array<T>> supplier(@NotNull Class<? super T> type) {
+  static <T> NotNullSupplier<Array<T>> supplier(Class<? super T> type) {
     return () -> ArrayFactory.newConcurrentStampedLockArray(type);
   }
 
@@ -152,7 +153,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the element's type.
    * @return the supplier.
    */
-  static <T> @NotNull NotNullFunction<Class<? super T>, Array<T>> function(@NotNull Class<? super T> type) {
+  static <T> NotNullFunction<Class<? super T>, Array<T>> function(Class<? super T> type) {
     return ArrayFactory::newConcurrentStampedLockArray;
   }
 
@@ -161,7 +162,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    *
    * @param target the target array.
    */
-  default void copyTo(@NotNull Array<? super E> target) {
+  default void copyTo(Array<? super E> target) {
     target.addAll(this);
   }
 
@@ -171,7 +172,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param array the array with new elements.
    * @return true if this array was changed.
    */
-  boolean addAll(@NotNull Array<? extends E> array);
+  boolean addAll(Array<? extends E> array);
 
   /**
    * Adds all elements from the array to this array.
@@ -179,14 +180,14 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param array the array with new elements.
    * @return true if this array was changed.
    */
-  boolean addAll(@NotNull E[] array);
+  boolean addAll(E[] array);
 
   /**
    * Applies this function to each element of this array with replacing to result element from thia function.
    *
    * @param function the function.
    */
-  default void apply(@NotNull Function<? super E, ? extends E> function) {
+  default void apply(Function<? super E, ? extends E> function) {
 
     E[] array = array();
 
@@ -200,20 +201,20 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    *
    * @return the wrapped array.
    */
-  E @NotNull [] array();
+  E [] array();
 
   @Override
-  default @NotNull Stream<E> stream() {
+  default Stream<E> stream() {
     return Arrays.stream(array(), 0, size());
   }
 
   @Override
-  default @NotNull Stream<E> parallelStream() {
+  default Stream<E> parallelStream() {
     return stream().parallel();
   }
 
   @Override
-  default boolean contains(@NotNull Object object) {
+  default boolean contains(Object object) {
 
     for (E element : array()) {
       if (element == null) {
@@ -232,7 +233,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param array the array to be checked for containment in this array
    * @return true if this array contains all of the elements in the specified array.
    */
-  default boolean containsAll(@NotNull Array<?> array) {
+  default boolean containsAll(Array<?> array) {
 
     if (array.isEmpty()) {
       return false;
@@ -250,7 +251,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
   }
 
   @Override
-  default boolean containsAll(@NotNull Collection<?> array) {
+  default boolean containsAll(Collection<?> array) {
 
     if (array.isEmpty()) {
       return false;
@@ -273,7 +274,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param array the array to be checked for containment in this array
    * @return true if this array contains all of the elements in the specified array.
    */
-  default boolean containsAll(@NotNull Object[] array) {
+  default boolean containsAll(Object[] array) {
 
     if (array.length < 1) {
       return false;
@@ -299,7 +300,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param index the index of removing the element.
    * @return the removed element.
    */
-  @NotNull E fastRemove(int index);
+  E fastRemove(int index);
 
   /**
    * Removes an element without saving original ordering of other elements.
@@ -307,7 +308,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param object the element to remove.
    * @return <code>true</code> if the element was removed.
    */
-  default boolean fastRemove(@NotNull Object object) {
+  default boolean fastRemove(Object object) {
 
     int index = indexOf(object);
 
@@ -324,7 +325,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param array the array with elements to remove.
    * @return count of removed elements.
    */
-  default int fastRemoveAll(@NotNull E[] array) {
+  default int fastRemoveAll(E[] array) {
 
     int count = 0;
 
@@ -352,7 +353,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param index the index of the element.
    * @return the element.
    */
-  @NotNull E get(int index);
+  E get(int index);
 
   /**
    * Find an index of the object in this array.
@@ -360,7 +361,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param object the object to find.
    * @return the index of the object or -1.
    */
-  default int indexOf(@NotNull Object object) {
+  default int indexOf(Object object) {
 
     int index = 0;
 
@@ -379,7 +380,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
   }
 
   @Override
-  default @NotNull ArrayIterator<E> iterator() {
+  default ArrayIterator<E> iterator() {
     return new DefaultArrayIterator<>(this);
   }
 
@@ -405,7 +406,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param object the object.
    * @return the last index or -1.
    */
-  default int lastIndexOf(@NotNull Object object) {
+  default int lastIndexOf(Object object) {
 
     E[] array = array();
 
@@ -447,7 +448,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param target array containing elements to be removed from this array.
    * @return true if this array changed as a result of the call.
    */
-  default boolean removeAll(@NotNull Array<?> target) {
+  default boolean removeAll(Array<?> target) {
 
     if (target.isEmpty()) {
       return false;
@@ -473,7 +474,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param target array containing elements to be removed from this array.
    * @return true if this array changed as a result of the call.
    */
-  default boolean fastRemoveAll(@NotNull Array<?> target) {
+  default boolean fastRemoveAll(Array<?> target) {
 
     if (target.isEmpty()) {
       return false;
@@ -500,7 +501,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
   }
 
   @Override
-  default boolean removeAll(@NotNull Collection<?> target) {
+  default boolean removeAll(Collection<?> target) {
 
     if (target.isEmpty()) {
       return false;
@@ -524,7 +525,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param target array containing elements to be retained in this array.
    * @return true if this array changed as a result of the call.
    */
-  default boolean retainAll(@NotNull Array<?> target) {
+  default boolean retainAll(Array<?> target) {
 
     E[] array = array();
 
@@ -539,7 +540,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
   }
 
   @Override
-  default boolean retainAll(@NotNull Collection<?> target) {
+  default boolean retainAll(Collection<?> target) {
 
     E[] array = array();
 
@@ -559,7 +560,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param index the element's index.
    * @param element the new element.
    */
-  void replace(int index, @NotNull E element);
+  void replace(int index, E element);
 
   /**
    * Removes the element at index.
@@ -567,10 +568,10 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param index the index of removing the element.
    * @return the removed element.
    */
-  @NotNull E remove(int index);
+  E remove(int index);
 
   @Override
-  default boolean remove(@NotNull Object object) {
+  default boolean remove(Object object) {
 
     var index = indexOf(object);
 
@@ -587,13 +588,13 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param comparator the comparator.
    * @return the array
    */
-  default @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
+  default Array<E> sort(ArrayComparator<E> comparator) {
     ArrayUtils.sort(array(), 0, size(), comparator);
     return this;
   }
 
   @Override
-  default <T> @NotNull T[] toArray(@NotNull T[] newArray) {
+  default <T> T[] toArray(T[] newArray) {
 
     E[] array = array();
 
@@ -622,7 +623,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param componentType the type of the new array.
    * @return the copied array.
    */
-  default <T> @NotNull T[] toArray(@NotNull Class<T> componentType) {
+  default <T> T[] toArray(Class<T> componentType) {
 
     T[] newArray = ArrayUtils.create(componentType, size());
     E[] array = array();
@@ -637,7 +638,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    *
    * @return the unsafe interface of this array.
    */
-  default @NotNull UnsafeArray<E> asUnsafe() {
+  default UnsafeArray<E> asUnsafe() {
     if (this instanceof UnsafeArray) {
       return (UnsafeArray<E>) this;
     } else {
@@ -651,15 +652,15 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
   }
 
   @Override
-  default @NotNull E[] toArray() {
+  default E[] toArray() {
     var array = array();
     return Arrays.copyOf(array, size(), (Class<E[]>) array.getClass());
   }
 
-  @NotNull String toString(@NotNull Function<E, @NotNull String> toString);
+  String toString(Function<E, String> toString);
 
   @Override
-  default boolean removeIf(@NotNull Predicate<@NotNull ? super E> filter) {
+  default boolean removeIf(Predicate<? super E> filter) {
 
     var array = array();
     var removed = 0;
@@ -687,7 +688,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <A> the argument's type.
    * @return {@code true} if any elements were removed.
    */
-  default <A> boolean removeIf(@NotNull A argument, @NotNull NotNullBiPredicate<A, ? super E> filter) {
+  default <A> boolean removeIf(A argument, NotNullBiPredicate<A, ? super E> filter) {
 
     var array = array();
     var removed = 0;
@@ -718,9 +719,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @return {@code true} if any elements were removed.
    */
   default <A, B> boolean removeIf(
-      @NotNull A argument,
-      @NotNull NotNullFunction<A, B> converter,
-      @NotNull NotNullBiPredicate<B, ? super E> filter) {
+      A argument,
+      NotNullFunction<A, B> converter,
+      NotNullBiPredicate<B, ? super E> filter) {
 
     var array = array();
     var removed = 0;
@@ -752,9 +753,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @since 9.6.0
    */
   default <A, B> boolean removeIfConverted(
-      @NotNull A argument,
-      @NotNull NotNullFunction<? super E, B> converter,
-      @NotNull NotNullBiPredicate<A, B> filter) {
+      A argument,
+      NotNullFunction<? super E, B> converter,
+      NotNullBiPredicate<A, B> filter) {
 
     var array = array();
     var removed = 0;
@@ -782,7 +783,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the argument's type.
    * @return true if there is at least an element for the condition.
    */
-  default <T> boolean anyMatch(@NotNull T argument, @NotNull NotNullBiPredicate<T, ? super E> filter) {
+  default <T> boolean anyMatch(T argument, NotNullBiPredicate<T, ? super E> filter) {
     return findAny(argument, filter) != null;
   }
 
@@ -798,9 +799,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @since 9.7.0
    */
   default <T, C> boolean anyMatchConverted(
-      @NotNull T argument,
-      @NotNull NotNullFunction<? super E, C> converter,
-      @NotNull NotNullBiPredicate<T, C> filter) {
+      T argument,
+      NotNullFunction<? super E, C> converter,
+      NotNullBiPredicate<T, C> filter) {
     return findAnyConverted(argument, converter, filter) != null;
   }
 
@@ -811,7 +812,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param filter the condition.
    * @return true if there is at least an element for the condition.
    */
-  default boolean anyMatch(int argument, @NotNull NotNullIntObjectPredicate<? super E> filter) {
+  default boolean anyMatch(int argument, NotNullIntObjectPredicate<? super E> filter) {
     return findAny(argument, filter) != null;
   }
 
@@ -823,7 +824,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param filter the condition.
    * @return true if there is at least an element for the condition.
    */
-  default <T> boolean anyMatchR(@NotNull T argument, @NotNull NotNullBiPredicate<? super E, T> filter) {
+  default <T> boolean anyMatchR(T argument, NotNullBiPredicate<? super E, T> filter) {
     return findAnyR(argument, filter) != null;
   }
 
@@ -833,7 +834,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param filter the condition.
    * @return the found element or null.
    */
-  default @Nullable E findAny(@NotNull NotNullPredicate<E> filter) {
+  default @Nullable E findAny(NotNullPredicate<E> filter) {
 
     if (isEmpty()) {
       return null;
@@ -861,7 +862,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <T> the argument's type.
    * @return the found element or null.
    */
-  default <T> @Nullable E findAny(@NotNull T argument, @NotNull NotNullBiPredicate<T, ? super E> filter) {
+  default <T> @Nullable E findAny(T argument, NotNullBiPredicate<T, ? super E> filter) {
 
     if (isEmpty()) {
       return null;
@@ -893,9 +894,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @since 9.7.0
    */
   default <T, C> @Nullable E findAnyConverted(
-      @NotNull T argument,
-      @NotNull NotNullFunction<? super E, C> converter,
-      @NotNull NotNullBiPredicate<T, C> filter) {
+      T argument,
+      NotNullFunction<? super E, C> converter,
+      NotNullBiPredicate<T, C> filter) {
 
     if (isEmpty()) {
       return null;
@@ -923,7 +924,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param filter the condition.
    * @return the found element or null.
    */
-  default <T> @Nullable E findAnyR(@NotNull T argument, @NotNull NotNullBiPredicate<? super E, T> filter) {
+  default <T> @Nullable E findAnyR(T argument, NotNullBiPredicate<? super E, T> filter) {
 
     if (isEmpty()) {
       return null;
@@ -950,7 +951,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param filter the condition.
    * @return the found element or null.
    */
-  default @Nullable E findAny(int argument, @NotNull NotNullIntObjectPredicate<? super E> filter) {
+  default @Nullable E findAny(int argument, NotNullIntObjectPredicate<? super E> filter) {
 
     if (isEmpty()) {
       return null;
@@ -977,7 +978,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param filter the condition.
    * @return the found element or null.
    */
-  default @Nullable E findAnyL(long argument, @NotNull NotNullLongObjectPredicate<E> filter) {
+  default @Nullable E findAnyL(long argument, NotNullLongObjectPredicate<E> filter) {
 
     if (isEmpty()) {
       return null;
@@ -1008,9 +1009,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @return the found element or null.
    */
   default <F, S> @Nullable E findAny(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullTriplePredicate<F, S, E> filter) {
+      F first,
+      S second,
+      NotNullTriplePredicate<F, S, E> filter) {
 
     if (isEmpty()) {
       return null;
@@ -1041,8 +1042,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    */
   default @Nullable E findAnyConvertedToInt(
       int argument,
-      @NotNull NotNullFunctionInt<? super E> converter,
-      @NotNull BiIntPredicate filter) {
+      NotNullFunctionInt<? super E> converter,
+      BiIntPredicate filter) {
 
     if (isEmpty()) {
       return null;
@@ -1075,9 +1076,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    */
   default <T> @Nullable E findAnyConvertedToInt(
       int argument,
-      @NotNull NotNullFunction<? super E, T> firstConverter,
-      @NotNull NotNullFunctionInt<T> secondConverter,
-      @NotNull BiIntPredicate filter) {
+      NotNullFunction<? super E, T> firstConverter,
+      NotNullFunctionInt<T> secondConverter,
+      BiIntPredicate filter) {
 
     if (isEmpty()) {
       return null;
@@ -1104,7 +1105,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @return the count of matched elements.
    * @since 9.5.0
    */
-  default int count(@NotNull NotNullPredicate<E> filter) {
+  default int count(NotNullPredicate<E> filter) {
 
     var array = array();
     var count = 0;
@@ -1129,7 +1130,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <F> the argument's type.
    * @return the count of matched elements.
    */
-  default <F> int count(@NotNull F arg, @NotNull NotNullBiPredicate<F, E> filter) {
+  default <F> int count(F arg, NotNullBiPredicate<F, E> filter) {
 
     var array = array();
     var count = 0;
@@ -1154,7 +1155,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param filter the condition.
    * @return the count of matched elements.
    */
-  default <F> int countR(@NotNull F arg, @NotNull NotNullBiPredicate<E, F> filter) {
+  default <F> int countR(F arg, NotNullBiPredicate<E, F> filter) {
 
     var array = array();
     var count = 0;
@@ -1172,7 +1173,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
   }
 
   @Override
-  default void forEach(@NotNull Consumer<? super E> consumer) {
+  default void forEach(Consumer<? super E> consumer) {
 
     var array = array();
 
@@ -1187,7 +1188,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param filter the condition.
    * @param consumer the function.
    */
-  default void forEachFiltered(@NotNull NotNullPredicate<E> filter, @NotNull NotNullConsumer<? super E> consumer) {
+  default void forEachFiltered(NotNullPredicate<E> filter, NotNullConsumer<? super E> consumer) {
 
     var array = array();
 
@@ -1208,7 +1209,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param consumer the function.
    * @param <T> the type of an argument.
    */
-  default <T> void forEach(@NotNull T argument, @NotNull NotNullBiConsumer<T, ? super E> consumer) {
+  default <T> void forEach(T argument, NotNullBiConsumer<T, ? super E> consumer) {
 
     var array = array();
 
@@ -1224,7 +1225,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param consumer the function.
    * @param <T> the argument's type.
    */
-  default <T> void forEachR(@NotNull T argument, @NotNull NotNullBiConsumer<? super E, T> consumer) {
+  default <T> void forEachR(T argument, NotNullBiConsumer<? super E, T> consumer) {
 
     var array = array();
 
@@ -1243,9 +1244,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <C> the converted type.
    */
   default <T, C> void forEachConverted(
-      @NotNull T argument,
-      @NotNull NotNullFunction<? super E, C> converter,
-      @NotNull NotNullBiConsumer<T, C> consumer) {
+      T argument,
+      NotNullFunction<? super E, C> converter,
+      NotNullBiConsumer<T, C> consumer) {
 
     var array = array();
 
@@ -1266,10 +1267,10 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <C> the converted type.
    */
   default <F, S, C> void forEachConverted(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullFunction<? super E, C> converter,
-      @NotNull NotNullTripleConsumer<F, S, C> consumer) {
+      F first,
+      S second,
+      NotNullFunction<? super E, C> converter,
+      NotNullTripleConsumer<F, S, C> consumer) {
 
     var array = array();
 
@@ -1289,9 +1290,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @since 9.8.0
    */
   default <T, C> void forEach(
-      @NotNull T argument,
-      @NotNull NotNullFunction<T, C> converter,
-      @NotNull NotNullBiConsumer<C, E> consumer) {
+      T argument,
+      NotNullFunction<T, C> converter,
+      NotNullBiConsumer<C, E> consumer) {
 
     var array = array();
 
@@ -1309,9 +1310,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param consumer the function.
    */
   default <T> void forEachFiltered(
-      @NotNull T argument,
-      @NotNull NotNullBiPredicate<T, ? super E> filter,
-      @NotNull NotNullBiConsumer<T, ? super E> consumer) {
+      T argument,
+      NotNullBiPredicate<T, ? super E> filter,
+      NotNullBiConsumer<T, ? super E> consumer) {
 
     var array = array();
 
@@ -1335,9 +1336,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <S> the second argument's type.
    */
   default <F, S> void forEach(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullTripleConsumer<F, S, ? super E> consumer) {
+      F first,
+      S second,
+      NotNullTripleConsumer<F, S, ? super E> consumer) {
 
     var array = array();
 
@@ -1354,7 +1355,7 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param consumer the function.
    * @param <A> the second argument's type.
    */
-  default <A> void forEach(int first, @NotNull A second, @NotNull NotNullIntBiObjectConsumer<A, ? super E> consumer) {
+  default <A> void forEach(int first, A second, NotNullIntBiObjectConsumer<A, ? super E> consumer) {
 
     var array = array();
 
@@ -1373,9 +1374,9 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <S> the second argument type.
    */
   default <F, S> void forEachR(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullTripleConsumer<? super E, F, S> consumer) {
+      F first,
+      S second,
+      NotNullTripleConsumer<? super E, F, S> consumer) {
 
     var array = array();
 
@@ -1395,10 +1396,10 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    * @param <S> the second argument's type.
    */
   default <F, S> void forEachFiltered(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullTriplePredicate<F, S, ? super E> filter,
-      @NotNull NotNullTripleConsumer<F, S, ? super E> consumer) {
+      F first,
+      S second,
+      NotNullTriplePredicate<F, S, ? super E> filter,
+      NotNullTripleConsumer<F, S, ? super E> consumer) {
 
     var array = array();
 
@@ -1422,8 +1423,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    */
   default <F> void forEachL(
       long first,
-      @NotNull F second,
-      @NotNull NotNullLongBiObjectConsumer<F, ? super E> consumer) {
+      F second,
+      NotNullLongBiObjectConsumer<F, ? super E> consumer) {
 
     var array = array();
 
@@ -1442,8 +1443,8 @@ public interface Array<E> extends Collection<E>, Serializable, Reusable, Cloneab
    */
   default <F> void forEachF(
       float first,
-      @NotNull F second,
-      @NotNull NotNullFloatBiObjectConsumer<F, ? super E> consumer) {
+      F second,
+      NotNullFloatBiObjectConsumer<F, ? super E> consumer) {
 
     var array = array();
 

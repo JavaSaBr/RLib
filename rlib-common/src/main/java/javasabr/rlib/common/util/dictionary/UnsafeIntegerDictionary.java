@@ -1,7 +1,7 @@
 package javasabr.rlib.common.util.dictionary;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface for implementing Unsafe part of {@link IntegerDictionary} API.
@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public interface UnsafeIntegerDictionary<V> extends IntegerDictionary<V> {
 
   /**
@@ -16,7 +17,7 @@ public interface UnsafeIntegerDictionary<V> extends IntegerDictionary<V> {
    *
    * @return the array of entries.
    */
-  @NotNull IntegerEntry<V>[] entries();
+  IntegerEntry<V>[] entries();
 
   /**
    * Remove an entry for the key.
@@ -24,5 +25,6 @@ public interface UnsafeIntegerDictionary<V> extends IntegerDictionary<V> {
    * @param key the key of the entry.
    * @return removed entry.
    */
-  @Nullable IntegerEntry<V> removeEntryForKey(final int key);
+  @Nullable
+  IntegerEntry<V> removeEntryForKey(final int key);
 }

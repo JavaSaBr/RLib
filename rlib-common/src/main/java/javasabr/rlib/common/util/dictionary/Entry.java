@@ -1,9 +1,10 @@
 package javasabr.rlib.common.util.dictionary;
 
 import javasabr.rlib.common.util.pools.Reusable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public interface Entry<T, V> extends Reusable {
 
   /**
@@ -11,7 +12,8 @@ public interface Entry<T, V> extends Reusable {
    *
    * @return the next entry.
    */
-  @Nullable T getNext();
+  @Nullable
+  T getNext();
 
   /**
    * Set the next entry.
@@ -25,7 +27,7 @@ public interface Entry<T, V> extends Reusable {
    *
    * @return the value.
    */
-  @NotNull V getValue();
+  V getValue();
 
   /**
    * Set the value.
@@ -33,7 +35,7 @@ public interface Entry<T, V> extends Reusable {
    * @param value the new value of this entry.
    * @return the old value of null.
    */
-  @NotNull V setValue(@NotNull V value);
+  V setValue(V value);
 
   /**
    * Get the hash.

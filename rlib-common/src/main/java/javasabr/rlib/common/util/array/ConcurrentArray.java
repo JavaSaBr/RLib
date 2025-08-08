@@ -16,8 +16,8 @@ import javasabr.rlib.common.function.NotNullPredicate;
 import javasabr.rlib.common.function.NotNullSupplier;
 import javasabr.rlib.common.function.NotNullTripleConsumer;
 import javasabr.rlib.common.util.ClassUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface with methods to manage thread-safe access with arrays.
@@ -25,10 +25,11 @@ import org.jetbrains.annotations.Nullable;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface ConcurrentArray<E> extends Array<E> {
 
   @SafeVarargs
-  static <T> @NotNull ConcurrentArray<T> of(@NotNull T... elements) {
+  static <T> ConcurrentArray<T> of(T... elements) {
     return ArrayFactory.newConcurrentStampedLockArray(elements);
   }
 
@@ -39,7 +40,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <T> the element's type.
    * @return the new concurrent array.
    */
-  static <T> @NotNull ConcurrentArray<T> ofType(@NotNull Class<? super T> type) {
+  static <T> ConcurrentArray<T> ofType(Class<? super T> type) {
     return ArrayFactory.newConcurrentStampedLockArray(type);
   }
 
@@ -50,7 +51,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <T> the element's type.
    * @return the supplier.
    */
-  static <T> @NotNull NotNullSupplier<ConcurrentArray<T>> supplier(@NotNull Class<? super T> type) {
+  static <T> NotNullSupplier<ConcurrentArray<T>> supplier(Class<? super T> type) {
     return () -> ArrayFactory.newConcurrentStampedLockArray(type);
   }
 
@@ -60,7 +61,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <T> the element's type.
    * @return the supplier.
    */
-  static <T> @NotNull Function<Class<? super T>, ConcurrentArray<T>> function() {
+  static <T> Function<Class<? super T>, ConcurrentArray<T>> function() {
     return ArrayFactory::newConcurrentStampedLockArray;
   }
 
@@ -71,7 +72,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <T> the element's type.
    * @return the supplier.
    */
-  static <T> @NotNull Function<Class<? super T>, ConcurrentArray<T>> function(@NotNull Class<?> type) {
+  static <T> Function<Class<? super T>, ConcurrentArray<T>> function(Class<?> type) {
     return aClass -> ArrayFactory.newConcurrentStampedLockArray(ClassUtils.<Class<T>>unsafeNNCast(type));
   }
 
@@ -136,7 +137,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param consumer the consumer.
    * @return this array.
    */
-  default @NotNull ConcurrentArray<E> forEachInReadLock(@NotNull NotNullConsumer<? super E> consumer) {
+  default ConcurrentArray<E> forEachInReadLock(NotNullConsumer<? super E> consumer) {
 
     var stamp = readLock();
     try {
@@ -156,9 +157,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <T> the argument's type.
    * @return this array.
    */
-  default <T> @NotNull ConcurrentArray<E> forEachInReadLock(
-      @NotNull T argument,
-      @NotNull NotNullBiConsumer<T, ? super E> function) {
+  default <T> ConcurrentArray<E> forEachInReadLock(
+      T argument,
+      NotNullBiConsumer<T, ? super E> function) {
 
     var stamp = readLock();
     try {
@@ -179,10 +180,10 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <A> the second argument's type.
    * @return this array.
    */
-  default <A> @NotNull ConcurrentArray<E> forEachInReadLock(
+  default <A> ConcurrentArray<E> forEachInReadLock(
       int first,
-      @NotNull A second,
-      @NotNull NotNullIntBiObjectConsumer<A, ? super E> consumer) {
+      A second,
+      NotNullIntBiObjectConsumer<A, ? super E> consumer) {
 
     var stamp = readLock();
     try {
@@ -204,10 +205,10 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <S> the second argument's type.
    * @return this array.
    */
-  default <F, S> @NotNull ConcurrentArray<E> forEachInReadLock(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullTripleConsumer<F, S, ? super E> consumer) {
+  default <F, S> ConcurrentArray<E> forEachInReadLock(
+      F first,
+      S second,
+      NotNullTripleConsumer<F, S, ? super E> consumer) {
 
     var stamp = readLock();
     try {
@@ -227,9 +228,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <T> the argument's type.
    * @return this array.
    */
-  default <T> @NotNull ConcurrentArray<E> forEachInReadLockR(
-      @NotNull T argument,
-      @NotNull NotNullBiConsumer<? super E, T> function) {
+  default <T> ConcurrentArray<E> forEachInReadLockR(
+      T argument,
+      NotNullBiConsumer<? super E, T> function) {
 
     var stamp = readLock();
     try {
@@ -251,10 +252,10 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <C> the converted type.
    * @return this array.
    */
-  default <T, C> @NotNull ConcurrentArray<E> forEachConvertedInReadLock(
-      @NotNull T argument,
-      @NotNull NotNullFunction<? super E, C> converter,
-      @NotNull NotNullBiConsumer<T, C> function) {
+  default <T, C> ConcurrentArray<E> forEachConvertedInReadLock(
+      T argument,
+      NotNullFunction<? super E, C> converter,
+      NotNullBiConsumer<T, C> function) {
 
     var stamp = readLock();
     try {
@@ -279,11 +280,11 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @return this array.
    * @since 9.8.0
    */
-  default <F, S, C> @NotNull ConcurrentArray<E> forEachConvertedInReadLock(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullFunction<? super E, C> converter,
-      @NotNull NotNullTripleConsumer<F, S, C> function) {
+  default <F, S, C> ConcurrentArray<E> forEachConvertedInReadLock(
+      F first,
+      S second,
+      NotNullFunction<? super E, C> converter,
+      NotNullTripleConsumer<F, S, C> function) {
 
     var stamp = readLock();
     try {
@@ -305,10 +306,10 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <C> the converted type.
    * @return this array.
    */
-  default <T, C> @NotNull ConcurrentArray<E> forEachInReadLock(
-      @NotNull T argument,
-      @NotNull NotNullFunction<T, C> converter,
-      @NotNull NotNullBiConsumer<C, E> function) {
+  default <T, C> ConcurrentArray<E> forEachInReadLock(
+      T argument,
+      NotNullFunction<T, C> converter,
+      NotNullBiConsumer<C, E> function) {
 
     var stamp = readLock();
     try {
@@ -327,7 +328,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <R> the result's type.
    * @return the result from the function.
    */
-  default <R> @Nullable R getInReadLock(@NotNull NotNullNullableFunction<ConcurrentArray<E>, R> function) {
+  default <R> @Nullable R getInReadLock(NotNullNullableFunction<ConcurrentArray<E>, R> function) {
     var stamp = readLock();
     try {
       return function.apply(this);
@@ -347,8 +348,8 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @since 9.5.0
    */
   default <A, R> @Nullable R getInReadLock(
-      @NotNull A arg,
-      @NotNull NotNullNullableBiFunction<ConcurrentArray<E>, A, R> function) {
+      A arg,
+      NotNullNullableBiFunction<ConcurrentArray<E>, A, R> function) {
     var stamp = readLock();
     try {
       return function.apply(this, arg);
@@ -370,9 +371,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @since 9.9.0
    */
   default <A, T, R> @Nullable R getInReadLock(
-      @NotNull A first,
-      @NotNull T second,
-      @NotNull NotNullNullableTripleFunction<ConcurrentArray<E>, A, T, R> function) {
+      A first,
+      T second,
+      NotNullNullableTripleFunction<ConcurrentArray<E>, A, T, R> function) {
     var stamp = readLock();
     try {
       return function.apply(this, first, second);
@@ -388,7 +389,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <R> the result's type.
    * @return the result from the function.
    */
-  default <R> @Nullable R getInWriteLock(@NotNull NotNullNullableFunction<ConcurrentArray<E>, R> function) {
+  default <R> @Nullable R getInWriteLock(NotNullNullableFunction<ConcurrentArray<E>, R> function) {
     var stamp = writeLock();
     try {
       return function.apply(this);
@@ -408,8 +409,8 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @since 9.5.0
    */
   default <A, R> @Nullable R getInWriteLock(
-      @NotNull A argument,
-      @NotNull NotNullNullableBiFunction<ConcurrentArray<E>, A, R> function) {
+      A argument,
+      NotNullNullableBiFunction<ConcurrentArray<E>, A, R> function) {
     var stamp = writeLock();
     try {
       return function.apply(this, argument);
@@ -431,9 +432,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @since 9.9.0
    */
   default <A, T, R> @Nullable R getInWriteLock(
-      @NotNull A first,
-      @NotNull T second,
-      @NotNull NotNullNullableTripleFunction<ConcurrentArray<E>, A, T, R> function) {
+      A first,
+      T second,
+      NotNullNullableTripleFunction<ConcurrentArray<E>, A, T, R> function) {
     var stamp = writeLock();
     try {
       return function.apply(this, first, second);
@@ -448,7 +449,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param function the function.
    * @return this array.
    */
-  default @NotNull ConcurrentArray<E> runInReadLock(@NotNull NotNullConsumer<ConcurrentArray<E>> function) {
+  default ConcurrentArray<E> runInReadLock(NotNullConsumer<ConcurrentArray<E>> function) {
 
     var stamp = readLock();
     try {
@@ -468,9 +469,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param function the function.
    * @return this array.
    */
-  default <F> @NotNull ConcurrentArray<E> runInReadLock(
-      @NotNull F argument,
-      @NotNull NotNullBiConsumer<ConcurrentArray<E>, F> function) {
+  default <F> ConcurrentArray<E> runInReadLock(
+      F argument,
+      NotNullBiConsumer<ConcurrentArray<E>, F> function) {
 
     var stamp = readLock();
     try {
@@ -493,10 +494,10 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @return this array.
    * @since 9.9.0
    */
-  default <A, T> @NotNull ConcurrentArray<E> runInReadLock(
-      @NotNull A first,
-      @NotNull T second,
-      @NotNull NotNullTripleConsumer<ConcurrentArray<E>, A, T> function) {
+  default <A, T> ConcurrentArray<E> runInReadLock(
+      A first,
+      T second,
+      NotNullTripleConsumer<ConcurrentArray<E>, A, T> function) {
 
     var stamp = readLock();
     try {
@@ -514,7 +515,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param function the function.
    * @return this array.
    */
-  default @NotNull ConcurrentArray<E> runInWriteLock(@NotNull NotNullConsumer<ConcurrentArray<E>> function) {
+  default ConcurrentArray<E> runInWriteLock(NotNullConsumer<ConcurrentArray<E>> function) {
 
     var stamp = writeLock();
     try {
@@ -534,9 +535,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param function the function.
    * @return this array.
    */
-  default <F> @NotNull ConcurrentArray<E> runInWriteLock(
-      @NotNull F argument,
-      @NotNull NotNullBiConsumer<ConcurrentArray<E>, F> function) {
+  default <F> ConcurrentArray<E> runInWriteLock(
+      F argument,
+      NotNullBiConsumer<ConcurrentArray<E>, F> function) {
 
     var stamp = writeLock();
     try {
@@ -559,10 +560,10 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @return this array.
    * @since 9.9.0
    */
-  default <A, T> @NotNull ConcurrentArray<E> runInWriteLock(
-      @NotNull A first,
-      @NotNull T second,
-      @NotNull NotNullTripleConsumer<ConcurrentArray<E>, A, T> function) {
+  default <A, T> ConcurrentArray<E> runInWriteLock(
+      A first,
+      T second,
+      NotNullTripleConsumer<ConcurrentArray<E>, A, T> function) {
     var stamp = writeLock();
     try {
       function.accept(this, first, second);
@@ -580,7 +581,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @return the found element or null.
    * @since 9.5.0
    */
-  default @Nullable E findAnyInReadLock(int argument, @NotNull NotNullIntObjectPredicate<? super E> filter) {
+  default @Nullable E findAnyInReadLock(int argument, NotNullIntObjectPredicate<? super E> filter) {
 
     if (isEmpty()) {
       return null;
@@ -606,9 +607,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @since 9.7.0
    */
   default <T, C> @Nullable E findAnyConvertedInReadLock(
-      @NotNull T argument,
-      @NotNull NotNullFunction<? super E, C> converter,
-      @NotNull NotNullBiPredicate<T, C> filter) {
+      T argument,
+      NotNullFunction<? super E, C> converter,
+      NotNullBiPredicate<T, C> filter) {
     if (isEmpty()) {
       return null;
     }
@@ -632,8 +633,8 @@ public interface ConcurrentArray<E> extends Array<E> {
    */
   default @Nullable E findAnyConvertedToIntInReadLock(
       int argument,
-      @NotNull NotNullFunctionInt<? super E> converter,
-      @NotNull BiIntPredicate filter) {
+      NotNullFunctionInt<? super E> converter,
+      BiIntPredicate filter) {
     if (isEmpty()) {
       return null;
     }
@@ -659,9 +660,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    */
   default <T> @Nullable E findAnyConvertedToIntInReadLock(
       int argument,
-      @NotNull NotNullFunction<? super E, T> firstConverter,
-      @NotNull NotNullFunctionInt<T> secondConverter,
-      @NotNull BiIntPredicate filter) {
+      NotNullFunction<? super E, T> firstConverter,
+      NotNullFunctionInt<T> secondConverter,
+      BiIntPredicate filter) {
     if (isEmpty()) {
       return null;
     }
@@ -682,7 +683,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param filter the condition.
    * @return true if there is at least an element for the condition.
    */
-  default <T> boolean anyMatchInReadLock(@NotNull T argument, @NotNull NotNullBiPredicate<T, ? super E> filter) {
+  default <T> boolean anyMatchInReadLock(T argument, NotNullBiPredicate<T, ? super E> filter) {
 
     if (isEmpty()) {
       return false;
@@ -703,7 +704,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param filter the condition.
    * @return true if there is at least an element for the condition.
    */
-  default boolean anyMatchInReadLock(int argument, @NotNull NotNullIntObjectPredicate<E> filter) {
+  default boolean anyMatchInReadLock(int argument, NotNullIntObjectPredicate<E> filter) {
 
     if (isEmpty()) {
       return false;
@@ -729,9 +730,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @since 9.7.0
    */
   default <T, C> boolean anyMatchConvertedInReadLock(
-      @NotNull T argument,
-      @NotNull NotNullFunction<? super E, C> converter,
-      @NotNull NotNullBiPredicate<T, C> filter) {
+      T argument,
+      NotNullFunction<? super E, C> converter,
+      NotNullBiPredicate<T, C> filter) {
     if (isEmpty()) {
       return false;
     }
@@ -750,7 +751,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param filter the predicate which returns {@code true} for elements to be removed.
    * @return {@code true} if any elements were removed.
    */
-  default boolean removeIfInWriteLock(@NotNull NotNullPredicate<? super E> filter) {
+  default boolean removeIfInWriteLock(NotNullPredicate<? super E> filter) {
     var stamp = writeLock();
     try {
       return removeIf(filter);
@@ -767,7 +768,7 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @param <A> the argument's type.
    * @return {@code true} if any elements were removed.
    */
-  default <A> boolean removeIfInWriteLock(@NotNull A argument, @NotNull NotNullBiPredicate<A, ? super E> filter) {
+  default <A> boolean removeIfInWriteLock(A argument, NotNullBiPredicate<A, ? super E> filter) {
     var stamp = writeLock();
     try {
       return removeIf(argument, filter);
@@ -787,9 +788,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @return {@code true} if any elements were removed.
    */
   default <A, B> boolean removeIfInWriteLock(
-      @NotNull A argument,
-      @NotNull NotNullFunction<A, B> converter,
-      @NotNull NotNullBiPredicate<B, ? super E> filter) {
+      A argument,
+      NotNullFunction<A, B> converter,
+      NotNullBiPredicate<B, ? super E> filter) {
     var stamp = writeLock();
     try {
       return removeIf(argument, converter, filter);
@@ -810,9 +811,9 @@ public interface ConcurrentArray<E> extends Array<E> {
    * @since 9.6.0
    */
   default <A, B> boolean removeIfConvertedInWriteLock(
-      @NotNull A argument,
-      @NotNull NotNullFunction<? super E, B> converter,
-      @NotNull NotNullBiPredicate<A, B> filter) {
+      A argument,
+      NotNullFunction<? super E, B> converter,
+      NotNullBiPredicate<A, B> filter) {
     var stamp = writeLock();
     try {
       return removeIfConverted(argument, converter, filter);

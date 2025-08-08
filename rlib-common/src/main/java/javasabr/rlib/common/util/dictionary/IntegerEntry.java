@@ -1,8 +1,8 @@
 package javasabr.rlib.common.util.dictionary;
 
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The entry of {@link IntegerDictionary}.
@@ -10,18 +10,17 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class IntegerEntry<V> implements Entry<IntegerEntry<V>, V> {
 
   /**
    * The next entry.
    */
-  @Nullable
-  private IntegerEntry<V> next;
+  private @Nullable IntegerEntry<V> next;
 
   /**
    * The value of this entry.
    */
-  @NotNull
   private V value;
 
   /**
@@ -87,7 +86,7 @@ public class IntegerEntry<V> implements Entry<IntegerEntry<V>, V> {
   }
 
   @Override
-  public @NotNull V getValue() {
+  public V getValue() {
     return value;
   }
 
@@ -104,7 +103,7 @@ public class IntegerEntry<V> implements Entry<IntegerEntry<V>, V> {
    * @param value the value.
    * @param next the next.
    */
-  public void set(int hash, int key, @NotNull V value, @Nullable IntegerEntry<V> next) {
+  public void set(int hash, int key, V value, @Nullable IntegerEntry<V> next) {
     this.value = value;
     this.next = next;
     this.key = key;
@@ -112,7 +111,7 @@ public class IntegerEntry<V> implements Entry<IntegerEntry<V>, V> {
   }
 
   @Override
-  public @NotNull V setValue(@NotNull V value) {
+  public V setValue(V value) {
     V old = getValue();
     this.value = value;
     return old;

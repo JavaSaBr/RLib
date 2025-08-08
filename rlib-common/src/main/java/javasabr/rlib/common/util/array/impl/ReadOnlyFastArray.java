@@ -6,8 +6,8 @@ import java.util.function.Predicate;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayComparator;
 import javasabr.rlib.common.util.array.ReadOnlyArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The read only version of the {@link FastArray}.
@@ -15,54 +15,55 @@ import org.jetbrains.annotations.Nullable;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
+@NullMarked
 public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnlyArray<E> {
 
-  public ReadOnlyFastArray(@NotNull E[] array) {
+  public ReadOnlyFastArray(E[] array) {
     super(array);
   }
 
   @Override
-  public void apply(@NotNull Function<? super E, ? extends E> function) {
+  public void apply(Function<? super E, ? extends E> function) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean add(@NotNull E object) {
+  public boolean add(E object) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean addAll(@NotNull Collection<? extends E> collection) {
+  public boolean addAll(Collection<? extends E> collection) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean fastRemove(@NotNull Object object) {
+  public boolean fastRemove(Object object) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public @NotNull E remove(int index) {
+  public E remove(int index) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean addAll(@NotNull Array<? extends E> elements) {
+  public boolean addAll(Array<? extends E> elements) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean addAll(@NotNull E[] elements) {
+  public boolean addAll(E[] elements) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public @NotNull E fastRemove(int index) {
+  public E fastRemove(int index) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean unsafeAdd(@NotNull E object) {
+  public boolean unsafeAdd(E object) {
     throw new IllegalStateException("This array is read only.");
   }
 
@@ -72,12 +73,12 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
   }
 
   @Override
-  public void unsafeSet(int index, @NotNull E element) {
+  public void unsafeSet(int index, E element) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public void replace(int index, @NotNull E element) {
+  public void replace(int index, E element) {
     throw new IllegalStateException("This array is read only.");
   }
 
@@ -87,7 +88,7 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
   }
 
   @Override
-  public @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
+  public Array<E> sort(ArrayComparator<E> comparator) {
     throw new IllegalStateException("This array is read only.");
   }
 
@@ -97,27 +98,27 @@ public final class ReadOnlyFastArray<E> extends FastArray<E> implements ReadOnly
   }
 
   @Override
-  public boolean removeAll(@NotNull Array<?> target) {
+  public boolean removeAll(Array<?> target) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean removeAll(@NotNull Collection<?> target) {
+  public boolean removeAll(Collection<?> target) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean retainAll(@NotNull Array<?> target) {
+  public boolean retainAll(Array<?> target) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean retainAll(@NotNull Collection<?> target) {
+  public boolean retainAll(Collection<?> target) {
     throw new IllegalStateException("This array is read only.");
   }
 
   @Override
-  public boolean removeIf(@NotNull Predicate<? super E> filter) {
+  public boolean removeIf(Predicate<? super E> filter) {
     throw new IllegalStateException("This array is read only.");
   }
 }

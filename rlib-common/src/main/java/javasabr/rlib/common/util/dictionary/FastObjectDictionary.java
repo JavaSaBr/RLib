@@ -1,7 +1,7 @@
 package javasabr.rlib.common.util.dictionary;
 
 import javasabr.rlib.common.util.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The fast implementation of {@link ObjectDictionary} without threadsafe supporting.
@@ -10,9 +10,10 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
 
-  private @NotNull ObjectEntry<K, V>[] entries;
+  private ObjectEntry<K, V>[] entries;
 
   private int threshold;
   private int size;
@@ -40,12 +41,12 @@ public class FastObjectDictionary<K, V> extends AbstractObjectDictionary<K, V> {
   }
 
   @Override
-  public void setEntries(@NotNull ObjectEntry<K, V>[] entries) {
+  public void setEntries(ObjectEntry<K, V>[] entries) {
     this.entries = entries;
   }
 
   @Override
-  public ObjectEntry<K, V> @NotNull [] entries() {
+  public ObjectEntry<K, V> [] entries() {
     return entries;
   }
 

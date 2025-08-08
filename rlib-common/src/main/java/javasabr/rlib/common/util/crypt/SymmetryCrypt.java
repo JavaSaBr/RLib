@@ -9,31 +9,29 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The symmetry crypt based on RC4.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class SymmetryCrypt {
 
   /**
    * The crypter.
    */
-  @NotNull
   private final Cipher ecipher;
 
   /**
    * The encrypter.
    */
-  @NotNull
   private final Cipher dcipher;
 
   /**
    * THe secret key.
    */
-  @NotNull
   private final SecretKey secretKey;
 
   /**
@@ -45,7 +43,7 @@ public class SymmetryCrypt {
    * @throws UnsupportedEncodingException the unsupported encoding exception
    * @throws InvalidKeyException the invalid key exception
    */
-  public SymmetryCrypt(@NotNull final String key)
+  public SymmetryCrypt(final String key)
       throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException {
 
     final Cipher ecipher = Cipher.getInstance("RC4");
@@ -91,7 +89,7 @@ public class SymmetryCrypt {
    * @throws IllegalBlockSizeException the illegal block size exception
    * @throws BadPaddingException the bad padding exception
    */
-  public void decrypt(@NotNull final byte[] in, final int offset, final int length, @NotNull final byte[] out)
+  public void decrypt(final byte[] in, final int offset, final int length, final byte[] out)
       throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
     dcipher.doFinal(in, offset, length, out, offset);
   }
@@ -107,7 +105,7 @@ public class SymmetryCrypt {
    * @throws IllegalBlockSizeException the illegal block size exception
    * @throws BadPaddingException the bad padding exception
    */
-  public void encrypt(@NotNull final byte[] in, final int offset, final int length, @NotNull final byte[] out)
+  public void encrypt(final byte[] in, final int offset, final int length, final byte[] out)
       throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
     ecipher.doFinal(in, offset, length, out, offset);
   }

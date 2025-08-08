@@ -2,8 +2,8 @@ package javasabr.rlib.common.util.dictionary;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The iterator to iterate {@link LongDictionary}.
@@ -11,38 +11,35 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class LongDictionaryIterator<V> implements Iterator<V> {
 
   /**
    * The dictionary.
    */
-  @NotNull
   private final UnsafeLongDictionary<V> dictionary;
 
   /**
    * The next entry.
    */
-  @Nullable
-  private LongEntry<V> next;
+  private @Nullable LongEntry<V> next;
 
   /**
    * The current entry.
    */
-  @Nullable
-  private LongEntry<V> current;
+  private @Nullable LongEntry<V> current;
 
   /**
    * The current index.
    */
   private int index;
 
-  public LongDictionaryIterator(@NotNull UnsafeLongDictionary<V> dictionary) {
+  public LongDictionaryIterator(UnsafeLongDictionary<V> dictionary) {
     this.dictionary = dictionary;
 
-    if (dictionary.size() > 0) {
+    if (!dictionary.isEmpty()) {
       LongEntry<V>[] entries = dictionary.entries();
-      while (index < entries.length && (next = entries[index++]) == null)
-        ;
+      while (index < entries.length && (next = entries[index++]) == null);
     }
   }
 
@@ -71,8 +68,7 @@ public class LongDictionaryIterator<V> implements Iterator<V> {
     }
 
     if ((next = entry.getNext()) == null) {
-      while (index < entries.length && (next = entries[index++]) == null)
-        ;
+      while (index < entries.length && (next = entries[index++]) == null);
     }
 
     current = entry;

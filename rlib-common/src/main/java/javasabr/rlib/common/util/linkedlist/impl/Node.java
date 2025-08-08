@@ -1,8 +1,8 @@
 package javasabr.rlib.common.util.linkedlist.impl;
 
 import javasabr.rlib.common.util.pools.Reusable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The node of the LinkedList.
@@ -10,24 +10,23 @@ import org.jetbrains.annotations.Nullable;
  * @param <E> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public final class Node<E> implements Reusable {
 
   /**
    * The item.
    */
-  private E item;
+  private @Nullable E item;
 
   /**
    * The prev node.
    */
-  @Nullable
-  private Node<E> prev;
+  private @Nullable Node<E> prev;
 
   /**
    * The next node.
    */
-  @Nullable
-  private Node<E> next;
+  private @Nullable Node<E> next;
 
   @Override
   public void free() {
@@ -41,8 +40,7 @@ public final class Node<E> implements Reusable {
    *
    * @return yhe item.
    */
-  @NotNull
-  public E getItem() {
+  public @Nullable E getItem() {
     return item;
   }
 
@@ -51,7 +49,7 @@ public final class Node<E> implements Reusable {
    *
    * @param item yhe item.
    */
-  public void setItem(@Nullable final E item) {
+  public void setItem(@Nullable E item) {
     this.item = item;
   }
 
@@ -60,8 +58,7 @@ public final class Node<E> implements Reusable {
    *
    * @return yhe next node.
    */
-  @Nullable
-  public Node<E> getNext() {
+  public @Nullable Node<E> getNext() {
     return next;
   }
 
@@ -70,7 +67,7 @@ public final class Node<E> implements Reusable {
    *
    * @param next yhe next node.
    */
-  public void setNext(@Nullable final Node<E> next) {
+  public void setNext(@Nullable Node<E> next) {
     this.next = next;
   }
 
@@ -79,8 +76,7 @@ public final class Node<E> implements Reusable {
    *
    * @return yhe prev node.
    */
-  @Nullable
-  public Node<E> getPrev() {
+  public @Nullable Node<E> getPrev() {
     return prev;
   }
 
@@ -89,7 +85,7 @@ public final class Node<E> implements Reusable {
    *
    * @param prev yhe prev node.
    */
-  public void setPrev(@Nullable final Node<E> prev) {
+  public void setPrev(@Nullable Node<E> prev) {
     this.prev = prev;
   }
 }

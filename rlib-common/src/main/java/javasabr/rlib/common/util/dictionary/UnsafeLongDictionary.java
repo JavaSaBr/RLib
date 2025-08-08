@@ -1,7 +1,7 @@
 package javasabr.rlib.common.util.dictionary;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface for implementing Unsafe part of {@link LongDictionary} API.
@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public interface UnsafeLongDictionary<V> extends LongDictionary<V> {
 
   /**
@@ -16,7 +17,7 @@ public interface UnsafeLongDictionary<V> extends LongDictionary<V> {
    *
    * @return the array of entries.
    */
-  @NotNull LongEntry<V>[] entries();
+  LongEntry<V>[] entries();
 
   /**
    * Remove an entry for the key.
@@ -24,5 +25,6 @@ public interface UnsafeLongDictionary<V> extends LongDictionary<V> {
    * @param key the key of the entry.
    * @return removed entry.
    */
-  @Nullable LongEntry<V> removeEntryForKey(long key);
+  @Nullable
+  LongEntry<V> removeEntryForKey(long key);
 }

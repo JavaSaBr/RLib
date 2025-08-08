@@ -2,7 +2,7 @@ package javasabr.rlib.common.util.array.impl;
 
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayIterator;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The implementation of the unsafeArray iterator.
@@ -10,24 +10,25 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class DefaultArrayIterator<E> implements ArrayIterator<E> {
 
   /**
    * The array for iteration.
    */
-  private final @NotNull Array<E> array;
+  private final Array<E> array;
 
   /**
    * The unsafe array for directly access.
    */
-  private final @NotNull E[] unsafeArray;
+  private final E[] unsafeArray;
 
   /**
    * The current position in the array.
    */
   private int ordinal;
 
-  public DefaultArrayIterator(@NotNull Array<E> array) {
+  public DefaultArrayIterator(Array<E> array) {
     this.array = array;
     this.unsafeArray = array.array();
   }
@@ -48,7 +49,7 @@ public class DefaultArrayIterator<E> implements ArrayIterator<E> {
   }
 
   @Override
-  public @NotNull E next() {
+  public E next() {
     return ordinal >= unsafeArray.length ? null : unsafeArray[ordinal++];
   }
 

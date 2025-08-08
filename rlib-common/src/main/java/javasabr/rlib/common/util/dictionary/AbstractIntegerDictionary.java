@@ -9,8 +9,8 @@ import javasabr.rlib.common.function.IntObjectConsumer;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.IntegerArray;
 import javasabr.rlib.common.util.array.MutableIntegerArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base implementation of {@link IntegerDictionary}.
@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<IntKey, V, IntegerEntry<V>> implements
     UnsafeIntegerDictionary<V> {
 
@@ -30,7 +31,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
   }
 
   @Override
-  protected @NotNull Class<? super IntegerEntry<V>> getEntryType() {
+  protected Class<? super IntegerEntry<V>> getEntryType() {
     return IntegerEntry.class;
   }
 
@@ -42,7 +43,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
    * @param value the value of the key.
    * @param index the index of bucket.
    */
-  protected final void addEntry(int hash, int key, @NotNull V value, int index) {
+  protected final void addEntry(int hash, int key, V value, int index) {
 
     var entries = entries();
     var entry = entries[index];
@@ -63,7 +64,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
   }
 
   @Override
-  public void forEach(@NotNull IntObjectConsumer<@NotNull ? super V> consumer) {
+  public void forEach(IntObjectConsumer<? super V> consumer) {
     for (var entry : entries()) {
       while (entry != null) {
         consumer.accept(entry.getKey(), entry.getValue());
@@ -74,8 +75,8 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
 
   @Override
   public <T> void forEach(
-      @NotNull T argument,
-      @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer) {
+      T argument,
+      IntBiObjectConsumer<? super V, ? super T> consumer) {
     for (var entry : entries()) {
       while (entry != null) {
         consumer.accept(entry.getKey(), entry.getValue(), argument);
@@ -91,7 +92,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
   }
 
   @Override
-  public @NotNull V getOrCompute(int key, @NotNull Supplier<@NotNull V> factory) {
+  public V getOrCompute(int key, Supplier<V> factory) {
 
     var entry = getEntry(key);
 
@@ -108,7 +109,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
   }
 
   @Override
-  public @NotNull V getOrCompute(int key, @NotNull IntFunction<@NotNull V> factory) {
+  public V getOrCompute(int key, IntFunction<V> factory) {
 
     var entry = getEntry(key);
 
@@ -125,7 +126,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
   }
 
   @Override
-  public <T> @Nullable V getOrCompute(int key, @NotNull T argument, @NotNull Function<@NotNull T, @NotNull V> factory) {
+  public <T> @Nullable V getOrCompute(int key, T argument, Function<T, V> factory) {
 
     var entry = getEntry(key);
 
@@ -163,12 +164,12 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
   }
 
   @Override
-  public final @NotNull Iterator<V> iterator() {
+  public final Iterator<V> iterator() {
     return new IntegerDictionaryIterator<>(this);
   }
 
   @Override
-  public @NotNull IntegerArray keyArray(@NotNull MutableIntegerArray container) {
+  public IntegerArray keyArray(MutableIntegerArray container) {
 
     for (var entry : entries()) {
       while (entry != null) {
@@ -181,7 +182,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
   }
 
   @Override
-  public void copyTo(@NotNull Dictionary<? super IntKey, ? super V> dictionary) {
+  public void copyTo(Dictionary<? super IntKey, ? super V> dictionary) {
 
     if (isEmpty() || !(dictionary instanceof IntegerDictionary)) {
       return;
@@ -198,7 +199,7 @@ public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<In
   }
 
   @Override
-  public final @Nullable V put(int key, @NotNull V value) {
+  public final @Nullable V put(int key, V value) {
 
     var entries = entries();
 

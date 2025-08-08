@@ -2,7 +2,7 @@ package javasabr.rlib.common.util.dictionary;
 
 import javasabr.rlib.common.concurrent.atomic.ReusableAtomicInteger;
 import javasabr.rlib.common.util.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The base implementation of the {@link ConcurrentIntegerDictionary}.
@@ -10,12 +10,13 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractConcurrentIntegerDictionary<V> extends AbstractIntegerDictionary<V> implements
     ConcurrentIntegerDictionary<V> {
 
-  private final @NotNull ReusableAtomicInteger size;
+  private final ReusableAtomicInteger size;
 
-  private volatile @NotNull IntegerEntry<V>[] entries;
+  private volatile IntegerEntry<V>[] entries;
 
   private volatile int threshold;
 
@@ -38,12 +39,12 @@ public abstract class AbstractConcurrentIntegerDictionary<V> extends AbstractInt
   }
 
   @Override
-  public void setEntries(@NotNull IntegerEntry<V>[] entries) {
+  public void setEntries(IntegerEntry<V>[] entries) {
     this.entries = entries;
   }
 
   @Override
-  public IntegerEntry<V> @NotNull [] entries() {
+  public IntegerEntry<V> [] entries() {
     return entries;
   }
 

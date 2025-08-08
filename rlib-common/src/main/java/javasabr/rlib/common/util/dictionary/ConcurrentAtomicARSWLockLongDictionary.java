@@ -2,7 +2,7 @@ package javasabr.rlib.common.util.dictionary;
 
 import javasabr.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
 import javasabr.rlib.common.concurrent.lock.LockFactory;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The implementation of the {@link ConcurrentLongDictionary} using {@link LockFactory#newAtomicARSWLock()}*.
@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public class ConcurrentAtomicARSWLockLongDictionary<V> extends AbstractConcurrentLongDictionary<V> {
 
   /**
    * The lock.
    */
-  @NotNull
   private final AsyncReadSyncWriteLock lock;
 
   public ConcurrentAtomicARSWLockLongDictionary() {

@@ -6,14 +6,15 @@ import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.array.ArrayIterator;
 import javasabr.rlib.common.util.array.IntegerArray;
 import javasabr.rlib.common.util.array.MutableIntegerArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Simple implementation of dynamic integer array.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class DefaultIntegerArray implements MutableIntegerArray {
 
   protected int[] array;
@@ -28,13 +29,13 @@ public class DefaultIntegerArray implements MutableIntegerArray {
     this.size = 0;
   }
 
-  public DefaultIntegerArray(int @NotNull [] numbers) {
+  public DefaultIntegerArray(int [] numbers) {
     this.array = numbers;
     this.size = numbers.length;
   }
 
   @Override
-  public @NotNull DefaultIntegerArray add(int number) {
+  public DefaultIntegerArray add(int number) {
 
     if (size == array.length) {
       array = ArrayUtils.copyOf(array, Math.max(array.length >> 1, 1));
@@ -46,7 +47,7 @@ public class DefaultIntegerArray implements MutableIntegerArray {
   }
 
   @Override
-  public @NotNull DefaultIntegerArray addAll(int @NotNull [] numbers) {
+  public DefaultIntegerArray addAll(int [] numbers) {
 
     if (numbers.length < 1) {
       return this;
@@ -67,7 +68,7 @@ public class DefaultIntegerArray implements MutableIntegerArray {
   }
 
   @Override
-  public final @NotNull DefaultIntegerArray addAll(@NotNull IntegerArray numbers) {
+  public final DefaultIntegerArray addAll(IntegerArray numbers) {
 
     if (numbers.isEmpty()) {
       return this;
@@ -90,12 +91,12 @@ public class DefaultIntegerArray implements MutableIntegerArray {
   }
 
   @Override
-  public final @NotNull int[] array() {
+  public final int[] array() {
     return array;
   }
 
   @Override
-  public final @NotNull DefaultIntegerArray clear() {
+  public final DefaultIntegerArray clear() {
     size = 0;
     return this;
   }
@@ -136,7 +137,7 @@ public class DefaultIntegerArray implements MutableIntegerArray {
   }
 
   @Override
-  public final @NotNull ArrayIterator<Integer> iterator() {
+  public final ArrayIterator<Integer> iterator() {
     return new DefaultIterator();
   }
 
@@ -185,13 +186,13 @@ public class DefaultIntegerArray implements MutableIntegerArray {
   }
 
   @Override
-  public final @NotNull DefaultIntegerArray sort() {
+  public final DefaultIntegerArray sort() {
     ArrayUtils.sort(array, 0, size);
     return this;
   }
 
   @Override
-  public final @NotNull DefaultIntegerArray trimToSize() {
+  public final DefaultIntegerArray trimToSize() {
 
     var array = array();
 
@@ -244,7 +245,7 @@ public class DefaultIntegerArray implements MutableIntegerArray {
     }
 
     @Override
-    public @NotNull Integer next() {
+    public Integer next() {
       return array[ordinal++];
     }
 

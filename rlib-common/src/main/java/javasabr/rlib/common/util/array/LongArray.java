@@ -1,10 +1,12 @@
 package javasabr.rlib.common.util.array;
 
 import javasabr.rlib.common.util.ArrayUtils;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface Long array.
  */
+@NullMarked
 public interface LongArray extends Iterable<Long> {
 
   /**

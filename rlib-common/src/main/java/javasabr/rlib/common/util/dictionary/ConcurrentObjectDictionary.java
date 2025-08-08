@@ -5,8 +5,8 @@ import javasabr.rlib.common.function.NotNullConsumer;
 import javasabr.rlib.common.function.NotNullNullableBiFunction;
 import javasabr.rlib.common.function.NotNullNullableTripleFunction;
 import javasabr.rlib.common.function.NotNullTripleConsumer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface with methods for supporting thread-safe for the {@link ObjectDictionary}.
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>, ConcurrentDictionary<K, V> {
 
   /**
@@ -24,7 +25,7 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @param <T> the key's and value's type.
    * @return the new concurrent object dictionary.
    */
-  static <T> @NotNull ObjectDictionary<T, T> ofType(@NotNull Class<? super T> keyValueType) {
+  static <T> ObjectDictionary<T, T> ofType(Class<? super T> keyValueType) {
     return DictionaryFactory.newConcurrentStampedLockObjectDictionary();
   }
 
@@ -37,9 +38,9 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @param <V> the value's type.
    * @return the new concurrent object dictionary.
    */
-  static <K, V> @NotNull ConcurrentObjectDictionary<K, V> ofType(
-      @NotNull Class<? super K> keyType,
-      @NotNull Class<? super V> valueType) {
+  static <K, V> ConcurrentObjectDictionary<K, V> ofType(
+      Class<? super K> keyType,
+      Class<? super V> valueType) {
     return DictionaryFactory.newConcurrentStampedLockObjectDictionary();
   }
 
@@ -51,9 +52,9 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @param <A> the argument's type.
    * @return this dictionary.
    */
-  default <A> @NotNull ConcurrentObjectDictionary<K, V> runInReadLock(
-      @NotNull A argument,
-      @NotNull NotNullBiConsumer<ConcurrentObjectDictionary<K, V>, A> consumer) {
+  default <A> ConcurrentObjectDictionary<K, V> runInReadLock(
+      A argument,
+      NotNullBiConsumer<ConcurrentObjectDictionary<K, V>, A> consumer) {
 
     var stamp = readLock();
     try {
@@ -71,8 +72,8 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @param consumer the function.
    * @return this dictionary.
    */
-  default @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-      @NotNull NotNullConsumer<ConcurrentObjectDictionary<K, V>> consumer) {
+  default ConcurrentObjectDictionary<K, V> runInWriteLock(
+      NotNullConsumer<ConcurrentObjectDictionary<K, V>> consumer) {
 
     var stamp = writeLock();
     try {
@@ -92,9 +93,9 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @param <A> the argument's type.
    * @return this dictionary.
    */
-  default <A> @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-      @NotNull A argument,
-      @NotNull NotNullBiConsumer<ConcurrentObjectDictionary<K, V>, A> consumer) {
+  default <A> ConcurrentObjectDictionary<K, V> runInWriteLock(
+      A argument,
+      NotNullBiConsumer<ConcurrentObjectDictionary<K, V>, A> consumer) {
 
     var stamp = writeLock();
     try {
@@ -116,10 +117,10 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @param <S> the second argument's type.
    * @return this dictionary.
    */
-  default <F, S> @NotNull ConcurrentObjectDictionary<K, V> runInWriteLock(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullTripleConsumer<ConcurrentObjectDictionary<K, V>, F, S> consumer) {
+  default <F, S> ConcurrentObjectDictionary<K, V> runInWriteLock(
+      F first,
+      S second,
+      NotNullTripleConsumer<ConcurrentObjectDictionary<K, V>, F, S> consumer) {
 
     var stamp = writeLock();
     try {
@@ -141,8 +142,8 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @return the result of the function.
    */
   default <A, R> @Nullable R getInReadLock(
-      @NotNull A argument,
-      @NotNull NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, R> function) {
+      A argument,
+      NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, R> function) {
     var stamp = readLock();
     try {
       return function.apply(this, argument);
@@ -163,9 +164,9 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @return the result of the function.
    */
   default <F, S, R> @Nullable R getInReadLock(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullNullableTripleFunction<ConcurrentObjectDictionary<K, V>, F, S, R> function) {
+      F first,
+      S second,
+      NotNullNullableTripleFunction<ConcurrentObjectDictionary<K, V>, F, S, R> function) {
     var stamp = readLock();
     try {
       return function.apply(this, first, second);
@@ -184,8 +185,8 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @return the result of the function.
    */
   default <A, R> @Nullable R getInWriteLock(
-      @NotNull A argument,
-      @NotNull NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, R> function) {
+      A argument,
+      NotNullNullableBiFunction<ConcurrentObjectDictionary<K, V>, A, R> function) {
     var stamp = writeLock();
     try {
       return function.apply(this, argument);
@@ -206,9 +207,9 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    * @return the result of the function.
    */
   default <F, S, R> @Nullable R getInWriteLock(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull NotNullNullableTripleFunction<ConcurrentObjectDictionary<K, V>, F, S, R> function) {
+      F first,
+      S second,
+      NotNullNullableTripleFunction<ConcurrentObjectDictionary<K, V>, F, S, R> function) {
     var stamp = writeLock();
     try {
       return function.apply(this, first, second);
@@ -222,7 +223,7 @@ public interface ConcurrentObjectDictionary<K, V> extends ObjectDictionary<K, V>
    *
    * @param consumer the consumer.
    */
-  default void forEachInReadLock(@NotNull NotNullBiConsumer<? super K, ? super V> consumer) {
+  default void forEachInReadLock(NotNullBiConsumer<? super K, ? super V> consumer) {
     var stamp = readLock();
     try {
       forEach(consumer);

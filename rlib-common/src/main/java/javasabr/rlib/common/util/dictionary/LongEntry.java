@@ -1,8 +1,8 @@
 package javasabr.rlib.common.util.dictionary;
 
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The entry of {@link LongDictionary}.
@@ -10,18 +10,17 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public final class LongEntry<V> implements Entry<LongEntry<V>, V> {
 
   /**
    * The next entry.
    */
-  @Nullable
-  private LongEntry<V> next;
+  private @Nullable LongEntry<V> next;
 
   /**
    * The value of this entry.
    */
-  @NotNull
   private V value;
 
   /**
@@ -86,7 +85,7 @@ public final class LongEntry<V> implements Entry<LongEntry<V>, V> {
   }
 
   @Override
-  public @NotNull V getValue() {
+  public V getValue() {
     return value;
   }
 
@@ -103,7 +102,7 @@ public final class LongEntry<V> implements Entry<LongEntry<V>, V> {
    * @param value the value.
    * @param next the next.
    */
-  public void set(int hash, long key, @NotNull V value, @Nullable LongEntry<V> next) {
+  public void set(int hash, long key, V value, @Nullable LongEntry<V> next) {
     this.value = value;
     this.next = next;
     this.key = key;
@@ -111,7 +110,7 @@ public final class LongEntry<V> implements Entry<LongEntry<V>, V> {
   }
 
   @Override
-  public @NotNull V setValue(@NotNull V value) {
+  public V setValue(V value) {
     V old = getValue();
     this.value = value;
     return old;

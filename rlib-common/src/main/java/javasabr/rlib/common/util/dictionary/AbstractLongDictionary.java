@@ -8,8 +8,8 @@ import javasabr.rlib.common.function.LongBiObjectConsumer;
 import javasabr.rlib.common.function.LongObjectConsumer;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.LongArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base implementation of the {@link LongDictionary}.
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongKey, V, LongEntry<V>> implements
     UnsafeLongDictionary<V> {
 
@@ -37,7 +38,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   }
 
   @Override
-  protected @NotNull Class<? super LongEntry<V>> getEntryType() {
+  protected Class<? super LongEntry<V>> getEntryType() {
     return LongEntry.class;
   }
 
@@ -49,7 +50,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
    * @param value the value of the key.
    * @param index the index of bucket.
    */
-  private void addEntry(int hash, long key, @NotNull V value, int index) {
+  private void addEntry(int hash, long key, V value, int index) {
 
     var entries = entries();
     var entry = entries[index];
@@ -76,7 +77,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   }
 
   @Override
-  public @NotNull V getOrCompute(long key, @NotNull Supplier<@NotNull V> factory) {
+  public V getOrCompute(long key, Supplier<V> factory) {
 
     var entry = getEntry(key);
 
@@ -93,7 +94,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   }
 
   @Override
-  public @NotNull V getOrCompute(long key, @NotNull LongFunction<@NotNull V> factory) {
+  public V getOrCompute(long key, LongFunction<V> factory) {
 
     var entry = getEntry(key);
 
@@ -112,8 +113,8 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   @Override
   public <T> @Nullable V getOrCompute(
       long key,
-      @NotNull T argument,
-      @NotNull Function<@NotNull T, @NotNull V> factory) {
+      T argument,
+      Function<T, V> factory) {
 
     var entry = getEntry(key);
 
@@ -157,7 +158,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   }
 
   @Override
-  public @NotNull LongArray keyArray(@NotNull LongArray container) {
+  public LongArray keyArray(LongArray container) {
 
     for (var entry : entries()) {
       while (entry != null) {
@@ -170,7 +171,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   }
 
   @Override
-  public void copyTo(@NotNull Dictionary<? super LongKey, ? super V> dictionary) {
+  public void copyTo(Dictionary<? super LongKey, ? super V> dictionary) {
 
     if (isEmpty() || !(dictionary instanceof LongDictionary)) {
       return;
@@ -187,7 +188,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   }
 
   @Override
-  public V put(long key, @NotNull V value) {
+  public V put(long key, V value) {
 
     var entries = entries();
     var hash = hash(key);
@@ -285,7 +286,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   }
 
   @Override
-  public <T> void forEach(@NotNull T argument, @NotNull LongBiObjectConsumer<@NotNull V, @NotNull T> consumer) {
+  public <T> void forEach(T argument, LongBiObjectConsumer<V, T> consumer) {
     for (var entry : entries()) {
       while (entry != null) {
         consumer.accept(entry.getKey(), entry.getValue(), argument);
@@ -295,7 +296,7 @@ public abstract class AbstractLongDictionary<V> extends AbstractDictionary<LongK
   }
 
   @Override
-  public void forEach(@NotNull LongObjectConsumer<@NotNull V> consumer) {
+  public void forEach(LongObjectConsumer<V> consumer) {
     for (var entry : entries()) {
       while (entry != null) {
         consumer.accept(entry.getKey(), entry.getValue());

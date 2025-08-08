@@ -2,7 +2,7 @@ package javasabr.rlib.common.util.array.impl;
 
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.array.Array;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The sorted implementation of the {@link FastArray}.
@@ -10,20 +10,21 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the array's element type.
  * @author JavaSaBr
  */
+@NullMarked
 public class SortedFastArray<E extends Comparable<E>> extends FastArray<E> {
 
   private static final long serialVersionUID = 1L;
 
-  public SortedFastArray(@NotNull Class<? super E> type) {
+  public SortedFastArray(Class<? super E> type) {
     super(type);
   }
 
-  public SortedFastArray(@NotNull Class<? super E> type, int size) {
+  public SortedFastArray(Class<? super E> type, int size) {
     super(type, size);
   }
 
   @Override
-  public boolean add(@NotNull E element) {
+  public boolean add(E element) {
 
     if (size == array.length) {
       array = ArrayUtils.copyOfAndExtend(array, array.length * 3 / 2 + 1);
@@ -33,7 +34,7 @@ public class SortedFastArray<E extends Comparable<E>> extends FastArray<E> {
   }
 
   @Override
-  protected void processAdd(@NotNull Array<? extends E> elements, int selfSize, int targetSize) {
+  protected void processAdd(Array<? extends E> elements, int selfSize, int targetSize) {
     var array = elements.array();
     for (int i = 0, length = elements.size(); i < length; i++) {
       E element = array[i];
@@ -44,7 +45,7 @@ public class SortedFastArray<E extends Comparable<E>> extends FastArray<E> {
   }
 
   @Override
-  protected void processAdd(@NotNull E[] elements, int selfSize, int targetSize) {
+  protected void processAdd(E[] elements, int selfSize, int targetSize) {
     for (E element : elements) {
       if (!contains(element)) {
         unsafeAdd(element);
@@ -53,7 +54,7 @@ public class SortedFastArray<E extends Comparable<E>> extends FastArray<E> {
   }
 
   @Override
-  public boolean unsafeAdd(@NotNull E element) {
+  public boolean unsafeAdd(E element) {
 
     E[] array = array();
 

@@ -3,7 +3,7 @@ package javasabr.rlib.common.util.array.impl;
 import javasabr.rlib.common.concurrent.lock.AsyncReadSyncWriteLock;
 import javasabr.rlib.common.concurrent.lock.LockFactory;
 import javasabr.rlib.common.util.array.ConcurrentArray;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The concurrent implementation of the array using {@link LockFactory#newReentrantARSWLock()} for
@@ -12,17 +12,18 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the array's element type.
  * @author JavaSaBr
  */
+@NullMarked
 public class ConcurrentAtomicARSWLockArray<E> extends AbstractConcurrentArray<E> {
 
   private static final long serialVersionUID = -6291504312637658721L;
 
-  private final @NotNull AsyncReadSyncWriteLock lock;
+  private final AsyncReadSyncWriteLock lock;
 
-  public ConcurrentAtomicARSWLockArray(@NotNull Class<? super E> type) {
+  public ConcurrentAtomicARSWLockArray(Class<? super E> type) {
     this(type, 10);
   }
 
-  public ConcurrentAtomicARSWLockArray(@NotNull Class<? super E> type, int size) {
+  public ConcurrentAtomicARSWLockArray(Class<? super E> type, int size) {
     super(type, size);
     this.lock = LockFactory.newAtomicARSWLock();
   }

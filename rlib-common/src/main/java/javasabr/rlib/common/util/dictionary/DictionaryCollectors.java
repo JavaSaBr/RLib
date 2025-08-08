@@ -11,13 +11,14 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import javasabr.rlib.common.util.ObjectUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The collectors to {@link Dictionary}
  *
  * @author JavaSaBr
  */
+@NullMarked
 public final class DictionaryCollectors {
 
   static final Set<Characteristics> CH_ID = unmodifiableSet(EnumSet.of(Characteristics.IDENTITY_FINISH));
@@ -37,11 +38,11 @@ public final class DictionaryCollectors {
     private final Set<Characteristics> characteristics;
 
     CollectorImpl(
-        @NotNull Supplier<A> supplier,
-        @NotNull BiConsumer<A, T> accumulator,
-        @NotNull BinaryOperator<A> combiner,
-        @NotNull Function<A, R> finisher,
-        @NotNull Set<Characteristics> characteristics) {
+        Supplier<A> supplier,
+        BiConsumer<A, T> accumulator,
+        BinaryOperator<A> combiner,
+        Function<A, R> finisher,
+        Set<Characteristics> characteristics) {
       this.supplier = supplier;
       this.accumulator = accumulator;
       this.combiner = combiner;
@@ -50,10 +51,10 @@ public final class DictionaryCollectors {
     }
 
     CollectorImpl(
-        @NotNull Supplier<A> supplier,
-        @NotNull BiConsumer<A, T> accumulator,
-        @NotNull BinaryOperator<A> combiner,
-        @NotNull Set<Characteristics> characteristics) {
+        Supplier<A> supplier,
+        BiConsumer<A, T> accumulator,
+        BinaryOperator<A> combiner,
+        Set<Characteristics> characteristics) {
       this(supplier, accumulator, combiner, a -> (R) a, characteristics);
     }
 
@@ -83,9 +84,9 @@ public final class DictionaryCollectors {
     }
   }
 
-  public static <T, K, U> @NotNull Collector<T, ?, ObjectDictionary<K, U>> toObjectDictionary(
-      @NotNull Function<? super T, ? extends K> keyMapper,
-      @NotNull Function<? super T, ? extends U> valueMapper) {
+  public static <T, K, U> Collector<T, ?, ObjectDictionary<K, U>> toObjectDictionary(
+      Function<? super T, ? extends K> keyMapper,
+      Function<? super T, ? extends U> valueMapper) {
     return new CollectorImpl<>(
         DictionaryFactory::newObjectDictionary,
         uniqKeysAccumulator(keyMapper, valueMapper),
@@ -93,9 +94,9 @@ public final class DictionaryCollectors {
         CH_ID);
   }
 
-  public static <T, U> @NotNull Collector<T, ?, LongDictionary<U>> toLongDictionary(
-      @NotNull Function<? super T, Number> keyMapper,
-      @NotNull Function<? super T, ? extends U> valueMapper) {
+  public static <T, U> Collector<T, ?, LongDictionary<U>> toLongDictionary(
+      Function<? super T, Number> keyMapper,
+      Function<? super T, ? extends U> valueMapper) {
     return new CollectorImpl<>(
         DictionaryFactory::newLongDictionary,
         uniqLongsAccumulator(keyMapper, valueMapper),
@@ -115,8 +116,8 @@ public final class DictionaryCollectors {
    * @return an accumulating consumer.
    */
   private static <T, K, V> BiConsumer<ObjectDictionary<K, V>, T> uniqKeysAccumulator(
-      @NotNull Function<? super T, ? extends K> keyMapper,
-      @NotNull Function<? super T, ? extends V> valueMapper) {
+      Function<? super T, ? extends K> keyMapper,
+      Function<? super T, ? extends V> valueMapper) {
     return (map, element) -> {
 
       K key = keyMapper.apply(element);
@@ -140,8 +141,8 @@ public final class DictionaryCollectors {
    * @return an accumulating consumer.
    */
   private static <T, V> BiConsumer<LongDictionary<V>, T> uniqLongsAccumulator(
-      @NotNull Function<? super T, Number> keyMapper,
-      @NotNull Function<? super T, ? extends V> valueMapper) {
+      Function<? super T, Number> keyMapper,
+      Function<? super T, ? extends V> valueMapper) {
     return (map, element) -> {
 
       var key = keyMapper.apply(element);

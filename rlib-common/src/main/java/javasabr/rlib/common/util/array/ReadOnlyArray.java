@@ -3,7 +3,7 @@ package javasabr.rlib.common.util.array;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface to mark an array as read only array.
@@ -11,11 +11,12 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface ReadOnlyArray<E> extends Array<E> {
 
   @Override
   @Deprecated
-  void apply(@NotNull Function<? super E, ? extends E> function);
+  void apply(Function<? super E, ? extends E> function);
 
   @Override
   @Deprecated
@@ -23,47 +24,47 @@ public interface ReadOnlyArray<E> extends Array<E> {
 
   @Override
   @Deprecated
-  boolean addAll(@NotNull E[] array);
+  boolean addAll(E[] array);
 
   @Override
   @Deprecated
-  boolean addAll(@NotNull Array<? extends E> array);
+  boolean addAll(Array<? extends E> array);
 
   @Override
   @Deprecated
-  boolean addAll(@NotNull Collection<? extends E> c);
+  boolean addAll(Collection<? extends E> c);
 
   @Override
   @Deprecated
-  boolean fastRemove(@NotNull Object object);
+  boolean fastRemove(Object object);
 
   @Override
   @Deprecated
-  @NotNull E remove(int index);
+  E remove(int index);
 
   @Override
   @Deprecated
-  boolean removeIf(@NotNull Predicate<? super E> filter);
+  boolean removeIf(Predicate<? super E> filter);
 
   @Override
   @Deprecated
-  boolean retainAll(@NotNull Collection<?> target);
+  boolean retainAll(Collection<?> target);
 
   @Override
   @Deprecated
-  boolean retainAll(@NotNull Array<?> target);
+  boolean retainAll(Array<?> target);
 
   @Override
   @Deprecated
-  boolean removeAll(@NotNull Collection<?> target);
+  boolean removeAll(Collection<?> target);
 
   @Override
   @Deprecated
-  boolean removeAll(@NotNull Array<?> target);
+  boolean removeAll(Array<?> target);
 
   @Override
   @Deprecated
-  boolean remove(@NotNull Object object);
+  boolean remove(Object object);
 
   @Override
   @Deprecated
@@ -71,5 +72,5 @@ public interface ReadOnlyArray<E> extends Array<E> {
 
   @Override
   @Deprecated
-  @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator);
+  Array<E> sort(ArrayComparator<E> comparator);
 }

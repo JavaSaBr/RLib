@@ -1,7 +1,8 @@
 package javasabr.rlib.common.util.array;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface MutableIntegerArray extends IntegerArray {
 
   /**
@@ -10,7 +11,7 @@ public interface MutableIntegerArray extends IntegerArray {
    * @param number the new integer.
    * @return this array.
    */
-  @NotNull IntegerArray add(int number);
+  IntegerArray add(int number);
 
   /**
    * Add new numbers to this array.
@@ -18,7 +19,7 @@ public interface MutableIntegerArray extends IntegerArray {
    * @param numbers the new numbers.
    * @return this array.
    */
-  @NotNull IntegerArray addAll(int @NotNull [] numbers);
+  IntegerArray addAll(int [] numbers);
 
   /**
    * Add new numbers to this array.
@@ -26,14 +27,14 @@ public interface MutableIntegerArray extends IntegerArray {
    * @param numbers the new numbers.
    * @return this array.
    */
-  @NotNull IntegerArray addAll(@NotNull IntegerArray numbers);
+  IntegerArray addAll(IntegerArray numbers);
 
   /**
    * Clear this array.
    *
    * @return this array.
    */
-  @NotNull IntegerArray clear();
+  IntegerArray clear();
 
   /**
    * Remove the first equal number in array with putting last number to position of removed number.
@@ -82,7 +83,7 @@ public interface MutableIntegerArray extends IntegerArray {
    * @param numbers the array of numbers to remove.
    * @return true if at least one number was removed from this array.
    */
-  default boolean removeAll(@NotNull IntegerArray numbers) {
+  default boolean removeAll(IntegerArray numbers) {
 
     if (numbers.isEmpty()) {
       return false;
@@ -106,7 +107,7 @@ public interface MutableIntegerArray extends IntegerArray {
    * @param numbers the array of numbers.
    * @return true if at least one number was removed from this array.
    */
-  default boolean retainAll(@NotNull IntegerArray numbers) {
+  default boolean retainAll(IntegerArray numbers) {
 
     var array = array();
     var count = 0;
@@ -152,12 +153,12 @@ public interface MutableIntegerArray extends IntegerArray {
    *
    * @return this array.
    */
-  @NotNull IntegerArray sort();
+  IntegerArray sort();
 
   /**
    * Resize wrapped array to the relevant size.
    *
    * @return this array.
    */
-  @NotNull IntegerArray trimToSize();
+  IntegerArray trimToSize();
 }

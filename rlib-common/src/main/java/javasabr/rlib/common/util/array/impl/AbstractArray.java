@@ -1,13 +1,14 @@
 package javasabr.rlib.common.util.array.impl;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.Array;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base implementation of dynamic arrays.
@@ -15,8 +16,10 @@ import org.jetbrains.annotations.Nullable;
  * @param <E> the array's element type.
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractArray<E> implements Array<E> {
 
+  @Serial
   private static final long serialVersionUID = 2113052245369887690L;
 
   /**
@@ -24,11 +27,11 @@ public abstract class AbstractArray<E> implements Array<E> {
    */
   protected static final int DEFAULT_CAPACITY = 10;
 
-  public AbstractArray(@NotNull Class<? super E> type) {
+  public AbstractArray(Class<? super E> type) {
     this(type, DEFAULT_CAPACITY);
   }
 
-  public AbstractArray(@NotNull Class<? super E> type, int capacity) {
+  public AbstractArray(Class<? super E> type, int capacity) {
     super();
 
     if (capacity < 0) {
@@ -38,7 +41,7 @@ public abstract class AbstractArray<E> implements Array<E> {
     setArray(ArrayUtils.create(type, capacity));
   }
 
-  public AbstractArray(@NotNull E[] array) {
+  public AbstractArray(E[] array) {
     super();
     setArray(array);
     setSize(array.length);
@@ -58,11 +61,11 @@ public abstract class AbstractArray<E> implements Array<E> {
   }
 
   @Override
-  public @NotNull AbstractArray<E> clone() throws CloneNotSupportedException {
+  public AbstractArray<E> clone() throws CloneNotSupportedException {
     return ClassUtils.unsafeNNCast(super.clone());
   }
 
-  protected abstract void setArray(E @NotNull [] array);
+  protected abstract void setArray(E [] array);
 
   protected abstract void setSize(int size);
 
@@ -72,7 +75,7 @@ public abstract class AbstractArray<E> implements Array<E> {
   }
 
   @Override
-  public @NotNull String toString(@NotNull Function<E, @NotNull String> toString) {
+  public String toString(Function<E, String> toString) {
     return getClass().getSimpleName() + " size = " + size() + " :\n " + ArrayUtils.toString(this, toString);
   }
 

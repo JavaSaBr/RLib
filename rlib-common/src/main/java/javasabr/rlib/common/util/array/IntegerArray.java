@@ -6,28 +6,29 @@ import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.array.impl.ReadOnlyIntegerArray;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface of dynamic integer array.
  */
+@NullMarked
 public interface IntegerArray extends Iterable<Integer> {
 
-  @NotNull IntegerArray EMPTY = new ReadOnlyIntegerArray(ArrayUtils.EMPTY_INT_ARRAY);
+  IntegerArray EMPTY = new ReadOnlyIntegerArray(ArrayUtils.EMPTY_INT_ARRAY);
 
-  static @NotNull IntegerArray of(int value) {
+  static IntegerArray of(int value) {
     return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(value));
   }
 
-  static @NotNull IntegerArray of(int v1, int v2) {
+  static IntegerArray of(int v1, int v2) {
     return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(v1, v2));
   }
 
-  static @NotNull IntegerArray of(int v1, int v2, int v3) {
+  static IntegerArray of(int v1, int v2, int v3) {
     return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(v1, v2, v3));
   }
 
-  static @NotNull IntegerArray of(int... values) {
+  static IntegerArray of(int... values) {
     return new ReadOnlyIntegerArray(ArrayFactory.toIntArray(values));
   }
 
@@ -36,7 +37,7 @@ public interface IntegerArray extends Iterable<Integer> {
    *
    * @return the wrapped int array.
    */
-  int @NotNull [] array();
+  int [] array();
 
   default boolean contains(int element) {
 
@@ -51,7 +52,7 @@ public interface IntegerArray extends Iterable<Integer> {
     return false;
   }
 
-  default boolean containsAll(int @NotNull [] array) {
+  default boolean containsAll(int [] array) {
 
     for (int val : array) {
       if (!contains(val)) {
@@ -62,7 +63,7 @@ public interface IntegerArray extends Iterable<Integer> {
     return true;
   }
 
-  default boolean containsAll(@NotNull IntegerArray array) {
+  default boolean containsAll(IntegerArray array) {
 
     var elements = array.array();
 
@@ -120,10 +121,10 @@ public interface IntegerArray extends Iterable<Integer> {
   }
 
   @Override
-  @NotNull ArrayIterator<Integer> iterator();
+  ArrayIterator<Integer> iterator();
 
   @Override
-  default void forEach(@NotNull Consumer<? super Integer> consumer) {
+  default void forEach(Consumer<? super Integer> consumer) {
 
     var array = array();
 
@@ -132,7 +133,7 @@ public interface IntegerArray extends Iterable<Integer> {
     }
   }
 
-  default void forEachInt(@NotNull IntConsumer consumer) {
+  default void forEachInt(IntConsumer consumer) {
 
     var array = array();
 
@@ -181,7 +182,7 @@ public interface IntegerArray extends Iterable<Integer> {
    *
    * @return the array with data from this array.
    */
-  default int @NotNull [] toArray() {
+  default int [] toArray() {
     return ArrayUtils.copyOfRange(array(), 0, size());
   }
 
@@ -191,7 +192,7 @@ public interface IntegerArray extends Iterable<Integer> {
    * @param newArray the new array.
    * @return the array with data from this array.
    */
-  default int @NotNull [] toArray(int @NotNull [] newArray) {
+  default int [] toArray(int [] newArray) {
 
     var array = array();
 
@@ -207,7 +208,7 @@ public interface IntegerArray extends Iterable<Integer> {
     return ArrayUtils.copyOfRange(array(), 0, size());
   }
 
-  default @NotNull IntStream stream() {
+  default IntStream stream() {
     return Arrays.stream(array(), 0, size());
   }
 }

@@ -3,12 +3,14 @@ package javasabr.rlib.common.util.array.impl;
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.array.ArrayIterator;
 import javasabr.rlib.common.util.array.LongArray;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Реализация не потокобезопасного динамического массива примитивов long.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class FastLongArray implements LongArray {
 
   /**

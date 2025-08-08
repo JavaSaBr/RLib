@@ -8,8 +8,8 @@ import javasabr.rlib.common.function.IntObjectConsumer;
 import javasabr.rlib.common.util.array.ArrayFactory;
 import javasabr.rlib.common.util.array.IntegerArray;
 import javasabr.rlib.common.util.array.MutableIntegerArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface to implement a dictionary which uses int as key.
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
 
   /**
@@ -26,7 +27,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    * @param <V> the value's type.
    * @return the new integer dictionary.
    */
-  static <V> @NotNull IntegerDictionary<V> ofType(@NotNull Class<? super V> valueType) {
+  static <V> IntegerDictionary<V> ofType(Class<? super V> valueType) {
     return DictionaryFactory.newIntegerDictionary();
   }
 
@@ -37,7 +38,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    * @param <V> the value's type.
    * @return the new integer dictionary.
    */
-  static <V> @NotNull IntegerDictionary<V> of(@NotNull Object... values) {
+  static <V> IntegerDictionary<V> of(Object... values) {
 
     if (values.length < 2 || values.length % 2 != 0) {
       throw new IllegalArgumentException("Incorrect argument's count.");
@@ -82,7 +83,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    * @param factory the factory.
    * @return the stored value by the key or the new value.
    */
-  default @NotNull V getOrCompute(int key, @NotNull Supplier<@NotNull V> factory) {
+  default V getOrCompute(int key, Supplier<V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -94,7 +95,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    * @param factory the factory.
    * @return the stored value by the key or the new value.
    */
-  default @NotNull V getOrCompute(int key, @NotNull IntFunction<@NotNull V> factory) {
+  default V getOrCompute(int key, IntFunction<V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -110,7 +111,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    * @see #getOrCompute(int, Object, Function)
    */
 
-  default <T> @Nullable V get(int key, @Nullable T argument, @NotNull Function<T, V> factory) {
+  default <T> @Nullable V get(int key, @Nullable T argument, Function<T, V> factory) {
     return getOrCompute(key, argument, factory);
   }
 
@@ -126,8 +127,8 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    */
   default <T> @Nullable V getOrCompute(
       int key,
-      @NotNull T argument,
-      @NotNull Function<@NotNull T, @NotNull V> factory) {
+      T argument,
+      Function<T, V> factory) {
     throw new UnsupportedOperationException();
   }
 
@@ -136,7 +137,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    *
    * @return the array with all keys of this dictionary.
    */
-  default @NotNull IntegerArray keyArray() {
+  default IntegerArray keyArray() {
     return keyArray(ArrayFactory.newMutableIntegerArray(size()));
   }
 
@@ -146,7 +147,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    * @param container the container.
    * @return the container with all keys.
    */
-  default @NotNull IntegerArray keyArray(@NotNull MutableIntegerArray container) {
+  default IntegerArray keyArray(MutableIntegerArray container) {
     throw new UnsupportedOperationException();
   }
 
@@ -157,7 +158,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    * @param value the value.
    * @return the previous value for the key or null.
    */
-  default @Nullable V put(int key, @NotNull V value) {
+  default @Nullable V put(int key, V value) {
     throw new UnsupportedOperationException();
   }
 
@@ -176,7 +177,7 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    *
    * @param consumer the consumer.
    */
-  default void forEach(@NotNull IntObjectConsumer<@NotNull ? super V> consumer) {
+  default void forEach(IntObjectConsumer<? super V> consumer) {
     throw new UnsupportedOperationException();
   }
 
@@ -188,8 +189,8 @@ public interface IntegerDictionary<V> extends Dictionary<IntKey, V> {
    * @param <T> the argument's type.
    */
   default <T> void forEach(
-      @NotNull T argument,
-      @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer) {
+      T argument,
+      IntBiObjectConsumer<? super V, ? super T> consumer) {
     throw new UnsupportedOperationException();
   }
 }

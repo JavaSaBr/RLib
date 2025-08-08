@@ -8,7 +8,7 @@ import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayComparator;
 import javasabr.rlib.common.util.array.ArrayFactory;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The implementation of the array which create a new back-end array for each modification. Thread-safe.
@@ -16,19 +16,20 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the array's element type.
  * @author JavaSaBr
  */
+@NullMarked
 public class CopyOnModifyArray<E> extends AbstractArray<E> {
 
   private static final long serialVersionUID = -8477384427415127978L;
 
   @SuppressWarnings("NullableProblems")
-  protected volatile @NotNull ReusableAtomicReference<E[]> array;
+  protected volatile ReusableAtomicReference<E[]> array;
 
-  public CopyOnModifyArray(@NotNull Class<? super E> type, int size) {
+  public CopyOnModifyArray(Class<? super E> type, int size) {
     super(type, size);
   }
 
   @Override
-  public boolean add(@NotNull E object) {
+  public boolean add(E object) {
 
     var current = array.get();
     var newArray = ArrayUtils.copyOfAndExtend(current, 1);
@@ -42,7 +43,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public boolean addAll(@NotNull Array<? extends E> elements) {
+  public boolean addAll(Array<? extends E> elements) {
 
     if (elements.isEmpty()) {
       return false;
@@ -63,7 +64,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public boolean addAll(@NotNull Collection<? extends E> collection) {
+  public boolean addAll(Collection<? extends E> collection) {
 
     if (collection.isEmpty()) {
       return false;
@@ -86,7 +87,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public boolean addAll(@NotNull E[] elements) {
+  public boolean addAll(E[] elements) {
 
     if (elements.length < 1) {
       return false;
@@ -103,17 +104,17 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public final @NotNull E[] array() {
+  public final E[] array() {
     return array.get();
   }
 
   @Override
-  public @NotNull E remove(int index) {
+  public E remove(int index) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public boolean removeAll(@NotNull Array<?> target) {
+  public boolean removeAll(Array<?> target) {
 
     if (target.isEmpty()) {
       return false;
@@ -136,7 +137,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public boolean removeAll(@NotNull Collection<?> target) {
+  public boolean removeAll(Collection<?> target) {
 
     if (target.isEmpty()) {
       return false;
@@ -159,7 +160,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public boolean remove(@NotNull Object object) {
+  public boolean remove(Object object) {
 
     var current = array.get();
     var index = ArrayUtils.indexOf(current, object);
@@ -190,12 +191,12 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public boolean fastRemove(@NotNull Object object) {
+  public boolean fastRemove(Object object) {
     return remove(object);
   }
 
   @Override
-  public @NotNull E fastRemove(int index) {
+  public E fastRemove(int index) {
     throw new UnsupportedOperationException();
   }
 
@@ -216,7 +217,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public final @NotNull E get(int index) {
+  public final E get(int index) {
 
     if (index < 0 || index >= size()) {
       throw new NoSuchElementException();
@@ -226,12 +227,12 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public void replace(int index, @NotNull E element) {
+  public void replace(int index, E element) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected final void setArray(E @NotNull [] array) {
+  protected final void setArray(E [] array) {
 
     //noinspection ConstantConditions
     if (this.array == null) {
@@ -251,7 +252,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public @NotNull Array<E> sort(@NotNull ArrayComparator<E> comparator) {
+  public Array<E> sort(ArrayComparator<E> comparator) {
 
     var current = array();
     var newArray = ArrayUtils.copyOfAndExtend(current, 0);
@@ -266,7 +267,7 @@ public class CopyOnModifyArray<E> extends AbstractArray<E> {
   }
 
   @Override
-  public @NotNull CopyOnModifyArray<E> clone() throws CloneNotSupportedException {
+  public CopyOnModifyArray<E> clone() throws CloneNotSupportedException {
     var clone = (CopyOnModifyArray<E>) super.clone();
     clone.array = new ReusableAtomicReference<>(ArrayUtils.copyOf(array()));
     return clone;

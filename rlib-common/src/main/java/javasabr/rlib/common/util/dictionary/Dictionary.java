@@ -4,7 +4,7 @@ import javasabr.rlib.common.function.NotNullFunction;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayFactory;
 import javasabr.rlib.common.util.pools.Reusable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface for implementing a key-value dictionary.
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface Dictionary<K, V> extends Iterable<V>, Reusable {
 
   /**
@@ -20,7 +21,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
    *
    * @param function the function.
    */
-  default void apply(@NotNull NotNullFunction<? super V, V> function) {
+  default void apply(NotNullFunction<? super V, V> function) {
     throw new UnsupportedOperationException();
   }
 
@@ -37,7 +38,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
    * @param value the value.
    * @return true if this dictionary contains the value.
    */
-  default boolean containsValue(@NotNull V value) {
+  default boolean containsValue(V value) {
     throw new UnsupportedOperationException();
   }
 
@@ -60,14 +61,14 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
    *
    * @param dictionary the dictionary.
    */
-  void copyTo(@NotNull Dictionary<? super K, ? super V> dictionary);
+  void copyTo(Dictionary<? super K, ? super V> dictionary);
 
   /**
    * Put all data from the dictionary to this dictionary.
    *
    * @param dictionary the dictionary with new data.
    */
-  default void put(@NotNull Dictionary<K, V> dictionary) {
+  default void put(Dictionary<K, V> dictionary) {
     dictionary.copyTo(this);
   }
 
@@ -86,7 +87,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
    * @param container the container to store the values.
    * @return the container with all values from this dictionary.
    */
-  default @NotNull Array<V> values(@NotNull Array<V> container) {
+  default Array<V> values(Array<V> container) {
     throw new UnsupportedOperationException();
   }
 
@@ -96,7 +97,7 @@ public interface Dictionary<K, V> extends Iterable<V>, Reusable {
    * @param type the value's type.
    * @return the array with all values from this dictionary.
    */
-  default @NotNull Array<V> values(@NotNull Class<V> type) {
+  default Array<V> values(Class<V> type) {
     return values(ArrayFactory.newArray(type, size()));
   }
 }

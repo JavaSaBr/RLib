@@ -1,5 +1,7 @@
 package javasabr.rlib.common.util.dictionary;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * The interface with methods for supporting threadsafe for the {@link Dictionary}.
  *
@@ -7,6 +9,7 @@ package javasabr.rlib.common.util.dictionary;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public interface ConcurrentDictionary<K, V> extends Dictionary<K, V> {
 
   /**

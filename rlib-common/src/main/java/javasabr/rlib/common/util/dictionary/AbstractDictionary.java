@@ -7,8 +7,8 @@ import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.pools.PoolFactory;
 import javasabr.rlib.common.util.pools.ReusablePool;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base implementation of the {@link Dictionary}.
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements Dictionary<K, V> {
 
   /**
@@ -85,7 +86,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
   }
 
   @Override
-  public final void apply(@NotNull NotNullFunction<? super V, V> function) {
+  public final void apply(NotNullFunction<? super V, V> function) {
     for (var entry : entries()) {
       while (entry != null) {
         entry.setValue(function.apply(entry.getValue()));
@@ -129,7 +130,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
   }
 
   @Override
-  public final void forEach(@NotNull Consumer<? super V> consumer) {
+  public final void forEach(Consumer<? super V> consumer) {
     for (var entry : entries()) {
       while (entry != null) {
         consumer.accept(entry.getValue());
@@ -165,7 +166,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
    *
    * @param newEntries the new array of entries.
    */
-  private void transfer(@NotNull E[] newEntries) {
+  private void transfer(E[] newEntries) {
 
     var entries = entries();
     var newCapacity = newEntries.length;
@@ -190,7 +191,7 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
   }
 
   @Override
-  public final @NotNull Array<V> values(@NotNull Array<V> container) {
+  public final Array<V> values(Array<V> container) {
 
     var unsafeArray = container.asUnsafe();
     unsafeArray.prepareForSize(container.size() + size());
@@ -210,21 +211,21 @@ public abstract class AbstractDictionary<K, V, E extends Entry<E, V>> implements
    *
    * @return the entries type.
    */
-  protected abstract @NotNull Class<? super E> getEntryType();
+  protected abstract Class<? super E> getEntryType();
 
   /**
    * Set new array of entries of this {@link Dictionary}.
    *
    * @param entries the new array of entries.
    */
-  protected abstract void setEntries(@NotNull E[] entries);
+  protected abstract void setEntries(E[] entries);
 
   /**
    * Get an array of all entries in this dictionary..
    *
    * @return the array of entries.
    */
-  protected abstract E @NotNull [] entries();
+  protected abstract E [] entries();
 
   /**
    * Set the next size value at which to resize (capacity * load factor).

@@ -1,8 +1,8 @@
 package javasabr.rlib.common.util.array;
 
 import java.util.Comparator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface to implement a comparator for {@link Array}.
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public interface ArrayComparator<T> extends Comparator<T> {
 
   @Override
@@ -32,5 +33,5 @@ public interface ArrayComparator<T> extends Comparator<T> {
    * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater
    * than the second.
    */
-  int compareImpl(@NotNull T first, @NotNull T second);
+  int compareImpl(T first, T second);
 }

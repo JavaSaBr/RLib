@@ -3,7 +3,7 @@ package javasabr.rlib.common.util.array.impl;
 import java.util.concurrent.locks.StampedLock;
 import javasabr.rlib.common.concurrent.lock.LockFactory;
 import javasabr.rlib.common.util.array.ConcurrentArray;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The concurrent implementation of array using {@link StampedLock} for {@link ConcurrentArray#readLock()} and
@@ -12,17 +12,18 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
 
   private static final long serialVersionUID = -6291504312637658721L;
 
-  private final @NotNull StampedLock lock;
+  private final StampedLock lock;
 
-  public ConcurrentStampedLockArray(@NotNull Class<? super E> type) {
+  public ConcurrentStampedLockArray(Class<? super E> type) {
     this(type, 10);
   }
 
-  public ConcurrentStampedLockArray(@NotNull Class<? super E> type, int size) {
+  public ConcurrentStampedLockArray(Class<? super E> type, int size) {
     super(type, size);
     this.lock = LockFactory.newStampedLock();
   }
