@@ -15,7 +15,7 @@ public class SSLWritablePacket extends AbstractWritablePacket {
   }
 
   @Override
-  public boolean write(@NotNull ByteBuffer buffer) {
+  public boolean write(ByteBuffer buffer) {
     return true;
   }
 }

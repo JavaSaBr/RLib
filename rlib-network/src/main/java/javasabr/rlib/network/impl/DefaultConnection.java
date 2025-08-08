@@ -7,7 +7,6 @@ import javasabr.rlib.network.Network;
 import javasabr.rlib.network.packet.impl.DefaultReadablePacket;
 import javasabr.rlib.network.packet.impl.DefaultWritablePacket;
 import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
@@ -15,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultConnection extends IdBasedPacketConnection<DefaultReadablePacket, DefaultWritablePacket> {
 
   public DefaultConnection(
-      @NotNull Network<? extends Connection<DefaultReadablePacket, DefaultWritablePacket>> network,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
+      Network<? extends Connection<DefaultReadablePacket, DefaultWritablePacket>> network,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
     super(network, channel, bufferAllocator, packetRegistry, 100, 2, 2);
   }
 }

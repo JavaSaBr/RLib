@@ -7,7 +7,6 @@ import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.packet.ReadablePacket;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The base implementation of {@link ReadablePacket}.
@@ -19,7 +18,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
     ReadablePacket {
 
   @Override
-  public boolean read(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer, int length) {
+  public boolean read(Connection<?, ?> connection, ByteBuffer buffer, int length) {
     var oldLimit = buffer.limit();
     try {
       buffer.limit(buffer.position() + length);
@@ -39,7 +38,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param connection the network connection.
    * @param buffer the buffer with received data.
    */
-  protected void readImpl(@NotNull C connection, @NotNull ByteBuffer buffer) {
+  protected void readImpl(C connection, ByteBuffer buffer) {
   }
 
   /**
@@ -48,7 +47,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param buffer the buffer to read.
    * @return 1 byte from the buffer.
    */
-  protected int readByte(@NotNull ByteBuffer buffer) {
+  protected int readByte(ByteBuffer buffer) {
     return buffer.get();
   }
 
@@ -58,7 +57,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param buffer the buffer to read.
    * @param array the filled byte array.
    */
-  protected void readBytes(@NotNull ByteBuffer buffer, @NotNull byte[] array) {
+  protected void readBytes(ByteBuffer buffer, byte[] array) {
     buffer.get(array);
   }
 
@@ -70,7 +69,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param offset the offset to fill the byte array.
    * @param length the length to fill the byte array.
    */
-  protected void readBytes(@NotNull ByteBuffer buffer, @NotNull byte[] array, int offset, int length) {
+  protected void readBytes(ByteBuffer buffer, byte[] array, int offset, int length) {
     buffer.get(array, offset, length);
   }
 
@@ -80,7 +79,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param buffer the buffer to read.
    * @return 4 bytes as <code>float</code> from the buffer.
    */
-  protected float readFloat(@NotNull ByteBuffer buffer) {
+  protected float readFloat(ByteBuffer buffer) {
     return buffer.getFloat();
   }
 
@@ -90,7 +89,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param buffer the buffer to read.
    * @return 4 bytes as <code>double</code> from the buffer.
    */
-  protected double readDouble(@NotNull ByteBuffer buffer) {
+  protected double readDouble(ByteBuffer buffer) {
     return buffer.getDouble();
   }
 
@@ -100,7 +99,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param buffer the buffer to read.
    * @return 4 bytes as <code>int</code> from the buffer.
    */
-  protected int readInt(@NotNull ByteBuffer buffer) {
+  protected int readInt(ByteBuffer buffer) {
     return buffer.getInt();
   }
 
@@ -110,7 +109,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param buffer the buffer to read.
    * @return 8 bytes as <code>long</code> from buffer.
    */
-  protected long readLong(@NotNull ByteBuffer buffer) {
+  protected long readLong(ByteBuffer buffer) {
     return buffer.getLong();
   }
 
@@ -120,7 +119,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param buffer the buffer to read.
    * @return 2 bytes as <code>short</code> from buffer.
    */
-  protected int readShort(@NotNull ByteBuffer buffer) {
+  protected int readShort(ByteBuffer buffer) {
     return buffer.getShort();
   }
 
@@ -130,7 +129,7 @@ public abstract class AbstractReadablePacket<C extends Connection<?, ?>> extends
    * @param buffer the buffer to read.
    * @return the read string from the buffer.
    */
-  protected @NotNull String readString(@NotNull ByteBuffer buffer) {
+  protected String readString(ByteBuffer buffer) {
 
     var length = readInt(buffer);
     try {

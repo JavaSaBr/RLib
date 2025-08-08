@@ -3,8 +3,7 @@ package javasabr.rlib.network.packet.impl;
 import java.nio.ByteBuffer;
 import javasabr.rlib.network.Connection;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author JavaSaBr
@@ -18,12 +17,12 @@ public class StringReadablePacket extends AbstractReadablePacket<Connection<?, ?
   private volatile @Nullable String data;
 
   @Override
-  protected void readImpl(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer) {
+  protected void readImpl(Connection<?, ?> connection, ByteBuffer buffer) {
     this.data = readString(buffer);
   }
 
   @Override
-  public @NotNull String toString() {
+  public String toString() {
 
     var data = getData();
 

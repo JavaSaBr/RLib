@@ -17,7 +17,6 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLException;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @param <R> the readable packet's type.
@@ -34,20 +33,20 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
 
   private static final int SKIP_READ_PACKETS = -1;
 
-  protected final @NotNull SSLEngine sslEngine;
-  protected final @NotNull NotNullConsumer<WritablePacket> packetWriter;
+  protected final SSLEngine sslEngine;
+  protected final NotNullConsumer<WritablePacket> packetWriter;
 
-  protected volatile @NotNull ByteBuffer sslNetworkBuffer;
-  protected volatile @NotNull ByteBuffer sslDataBuffer;
+  protected volatile ByteBuffer sslNetworkBuffer;
+  protected volatile ByteBuffer sslDataBuffer;
 
   protected AbstractSSLPacketReader(
-      @NotNull C connection,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull Runnable updateActivityFunction,
-      @NotNull NotNullConsumer<? super R> readPacketHandler,
-      @NotNull SSLEngine sslEngine,
-      @NotNull NotNullConsumer<WritablePacket> packetWriter,
+      C connection,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      Runnable updateActivityFunction,
+      NotNullConsumer<? super R> readPacketHandler,
+      SSLEngine sslEngine,
+      NotNullConsumer<WritablePacket> packetWriter,
       int maxPacketsByRead) {
     super(connection, channel, bufferAllocator, updateActivityFunction, readPacketHandler, maxPacketsByRead);
     this.sslEngine = sslEngine;
@@ -61,12 +60,12 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
   }
 
   @Override
-  protected @NotNull ByteBuffer getBufferToReadFromChannel() {
+  protected ByteBuffer getBufferToReadFromChannel() {
     return sslNetworkBuffer;
   }
 
   @Override
-  protected void handleReceivedData(@NotNull Integer receivedBytes, @NotNull ByteBuffer readingBuffer) {
+  protected void handleReceivedData(Integer receivedBytes, ByteBuffer readingBuffer) {
 
     if (receivedBytes == -1) {
       doHandshake(readingBuffer, -1);
@@ -77,7 +76,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
   }
 
   @Override
-  protected int readPackets(@NotNull ByteBuffer receivedBuffer) {
+  protected int readPackets(ByteBuffer receivedBuffer) {
 
     var handshakeStatus = sslEngine.getHandshakeStatus();
 
@@ -89,7 +88,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
     }
   }
 
-  protected int doHandshake(@NotNull ByteBuffer receivedBuffer, int receivedBytes) {
+  protected int doHandshake(ByteBuffer receivedBuffer, int receivedBytes) {
 
     var handshakeStatus = sslEngine.getHandshakeStatus();
 
@@ -202,7 +201,7 @@ public abstract class AbstractSSLPacketReader<R extends ReadablePacket, C extend
     return decryptAndRead(receivedBuffer);
   }
 
-  protected int decryptAndRead(@NotNull ByteBuffer receivedBuffer) {
+  protected int decryptAndRead(ByteBuffer receivedBuffer) {
 
     int total = 0;
 

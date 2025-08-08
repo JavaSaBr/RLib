@@ -21,8 +21,7 @@ import javasabr.rlib.network.client.ClientNetwork;
 import javasabr.rlib.network.impl.AbstractNetwork;
 import javasabr.rlib.network.util.NetworkUtils;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Mono;
 
 /**
@@ -34,15 +33,15 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
 
   protected static final Logger LOGGER = LoggerManager.getLogger(DefaultClientNetwork.class);
 
-  protected final @NotNull AtomicBoolean connecting;
+  protected final AtomicBoolean connecting;
 
   protected volatile @Nullable CompletableFuture<C> pendingConnection;
   protected volatile @Getter
   @Nullable C currentConnection;
 
   public DefaultClientNetwork(
-      @NotNull NetworkConfig config,
-      @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
+      NetworkConfig config,
+      BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
     super(config, channelToConnection);
     this.connecting = new AtomicBoolean(false);
 
@@ -54,7 +53,7 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
   }
 
   @Override
-  public @NotNull CompletableFuture<C> connect(@NotNull InetSocketAddress serverAddress) {
+  public CompletableFuture<C> connect(InetSocketAddress serverAddress) {
 
     C currentConnection = getCurrentConnection();
 
@@ -89,7 +88,7 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
           }
 
           @Override
-          public void failed(@NotNull Throwable exc, @Nullable Void attachment) {
+          public void failed(Throwable exc, @Nullable Void attachment) {
             asyncResult.completeExceptionally(exc);
           }
         });
@@ -104,7 +103,7 @@ public class DefaultClientNetwork<C extends Connection<?, ?>> extends AbstractNe
   }
 
   @Override
-  public @NotNull Mono<C> connected(@NotNull InetSocketAddress serverAddress) {
+  public Mono<C> connected(InetSocketAddress serverAddress) {
     return Mono.create(monoSink -> connect(serverAddress).whenComplete((connection, ex) -> {
       if (ex != null) {
         monoSink.error(ex);

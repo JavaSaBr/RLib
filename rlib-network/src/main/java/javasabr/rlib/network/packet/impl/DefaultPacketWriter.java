@@ -8,7 +8,6 @@ import javasabr.rlib.common.function.NullableSupplier;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.packet.WritablePacket;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
@@ -19,13 +18,13 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
   protected final int packetLengthHeaderSize;
 
   public DefaultPacketWriter(
-      @NotNull C connection,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull Runnable updateActivityFunction,
-      @NotNull NullableSupplier<WritablePacket> nextWritePacketSupplier,
-      @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler,
-      @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
+      C connection,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      Runnable updateActivityFunction,
+      NullableSupplier<WritablePacket> nextWritePacketSupplier,
+      NotNullConsumer<WritablePacket> writtenPacketHandler,
+      NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
       int packetLengthHeaderSize) {
     super(
         connection,
@@ -39,17 +38,17 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
   }
 
   @Override
-  protected int getTotalSize(@NotNull WritablePacket packet, int expectedLength) {
+  protected int getTotalSize(WritablePacket packet, int expectedLength) {
     return expectedLength + packetLengthHeaderSize;
   }
 
   @Override
   protected boolean onBeforeWrite(
-      @NotNull W packet,
+      W packet,
       int expectedLength,
       int totalSize,
-      @NotNull ByteBuffer firstBuffer,
-      @NotNull ByteBuffer secondBuffer) {
+      ByteBuffer firstBuffer,
+      ByteBuffer secondBuffer) {
     firstBuffer
         .clear()
         .position(packetLengthHeaderSize);
@@ -57,16 +56,16 @@ public class DefaultPacketWriter<W extends WritablePacket, C extends Connection<
   }
 
   @Override
-  protected @NotNull ByteBuffer onResult(
-      @NotNull W packet,
+  protected ByteBuffer onResult(
+      W packet,
       int expectedLength,
       int totalSize,
-      @NotNull ByteBuffer firstBuffer,
-      @NotNull ByteBuffer secondBuffer) {
+      ByteBuffer firstBuffer,
+      ByteBuffer secondBuffer) {
     return writePacketLength(firstBuffer, firstBuffer.limit()).position(0);
   }
 
-  protected @NotNull ByteBuffer writePacketLength(@NotNull ByteBuffer buffer, int packetLength) {
+  protected ByteBuffer writePacketLength(ByteBuffer buffer, int packetLength) {
     return writeHeader(buffer, 0, packetLength, packetLengthHeaderSize);
   }
 }

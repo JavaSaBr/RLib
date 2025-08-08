@@ -2,7 +2,6 @@ package javasabr.rlib.network.packet;
 
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.network.Connection;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
@@ -14,7 +13,7 @@ public interface IdBasedReadablePacket<S extends IdBasedReadablePacket<S>> exten
    *
    * @return the new instance of this type.
    */
-  default @NotNull S newInstance() {
+  default S newInstance() {
     return ClassUtils.newInstance(getClass());
   }
 
@@ -23,7 +22,7 @@ public interface IdBasedReadablePacket<S extends IdBasedReadablePacket<S>> exten
    *
    * @param connection the owner's connection.
    */
-  default void execute(@NotNull Connection<?, ?> connection) {
+  default void execute(Connection<?, ?> connection) {
 
   }
 }

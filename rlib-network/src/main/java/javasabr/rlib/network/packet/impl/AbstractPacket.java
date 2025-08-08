@@ -23,7 +23,7 @@ public abstract class AbstractPacket implements Packet {
    * @param buffer the data buffer.
    * @param exception the exception.
    */
-  protected void handleException(@NotNull ByteBuffer buffer, @NotNull Exception exception) {
+  protected void handleException(ByteBuffer buffer, Exception exception) {
     LOGGER.warning(exception);
 
     if (buffer.isDirect()) {
@@ -36,7 +36,7 @@ public abstract class AbstractPacket implements Packet {
   }
 
   @Override
-  public @NotNull String getName() {
+  public String getName() {
     return getClass().getSimpleName();
   }
 

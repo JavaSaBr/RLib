@@ -2,7 +2,6 @@ package javasabr.rlib.network.packet;
 
 import javasabr.rlib.common.util.pools.Pool;
 import javasabr.rlib.common.util.pools.Reusable;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The interface to implement a reusable writable packet.
@@ -50,7 +49,7 @@ public interface ReusableWritablePacket extends WritablePacket, Reusable {
    *
    * @param pool the pool to store used packet.
    */
-  void setPool(@NotNull Pool<ReusableWritablePacket> pool);
+  void setPool(Pool<ReusableWritablePacket> pool);
 
   default void notifyAddedToSend() {
     increaseSends();

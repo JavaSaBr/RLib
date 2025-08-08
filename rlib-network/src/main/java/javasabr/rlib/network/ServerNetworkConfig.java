@@ -4,7 +4,6 @@ import java.nio.ByteOrder;
 import javasabr.rlib.common.concurrent.GroupThreadFactory;
 import lombok.Builder;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The interface to implement a server network config.
@@ -36,7 +35,7 @@ public interface ServerNetworkConfig extends NetworkConfig {
     private int threadPriority = Thread.NORM_PRIORITY;
   }
 
-  @NotNull ServerNetworkConfig DEFAULT_SERVER = new ServerNetworkConfig() {
+  ServerNetworkConfig DEFAULT_SERVER = new ServerNetworkConfig() {
 
     @Override
     public int getThreadGroupMinSize() {
@@ -44,7 +43,7 @@ public interface ServerNetworkConfig extends NetworkConfig {
     }
 
     @Override
-    public @NotNull String getThreadGroupName() {
+    public String getThreadGroupName() {
       return "ServerNetworkThread";
     }
   };
@@ -72,7 +71,7 @@ public interface ServerNetworkConfig extends NetworkConfig {
    *
    * @return the thread constructor.
    */
-  default @NotNull GroupThreadFactory.ThreadConstructor getThreadConstructor() {
+  default GroupThreadFactory.ThreadConstructor getThreadConstructor() {
     return Thread::new;
   }
 

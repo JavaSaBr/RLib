@@ -27,7 +27,6 @@ import javasabr.rlib.mail.sender.MailSenderConfig;
 import javasabr.rlib.mail.sender.exception.UncheckedMessagingException;
 import lombok.Builder;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 public class JavaxMailSender implements MailSender {
 
@@ -48,7 +47,7 @@ public class JavaxMailSender implements MailSender {
   private final Session session;
   private final InternetAddress from;
 
-  public JavaxMailSender(@NotNull MailSenderConfig config) {
+  public JavaxMailSender(MailSenderConfig config) {
     this(
         config,
         JavaxMailSenderConfig
@@ -59,7 +58,7 @@ public class JavaxMailSender implements MailSender {
             .build());
   }
 
-  public JavaxMailSender(@NotNull MailSenderConfig config, @NotNull JavaxMailSenderConfig javaxConfig) {
+  public JavaxMailSender(MailSenderConfig config, JavaxMailSenderConfig javaxConfig) {
 
     var prop = new Properties();
     prop.put("mail.smtp.auth", String.valueOf(config.isUseAuth()));
@@ -80,7 +79,7 @@ public class JavaxMailSender implements MailSender {
         prop, new Authenticator() {
 
           @Override
-          protected @NotNull PasswordAuthentication getPasswordAuthentication() {
+          protected PasswordAuthentication getPasswordAuthentication() {
             return new PasswordAuthentication(username, password);
           }
         });
@@ -112,7 +111,7 @@ public class JavaxMailSender implements MailSender {
   }
 
   @Override
-  public void send(@NotNull String email, @NotNull String subject, @NotNull String content) {
+  public void send(String email, String subject, String content) {
 
     try {
 
@@ -137,10 +136,10 @@ public class JavaxMailSender implements MailSender {
   }
 
   @Override
-  public @NotNull CompletableFuture<Void> sendAsync(
-      @NotNull String email,
-      @NotNull String subject,
-      @NotNull String content) {
+  public CompletableFuture<Void> sendAsync(
+      String email,
+      String subject,
+      String content) {
     return runAsync(() -> send(email, subject, content), executor);
   }
 }

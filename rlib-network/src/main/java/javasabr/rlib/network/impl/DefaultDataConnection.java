@@ -12,7 +12,6 @@ import javasabr.rlib.network.packet.impl.DefaultPacketReader;
 import javasabr.rlib.network.packet.impl.DefaultPacketWriter;
 import lombok.AccessLevel;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
@@ -21,15 +20,15 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DefaultDataConnection<R extends ReadablePacket, W extends WritablePacket> extends
     AbstractConnection<R, W> {
 
-  private final @NotNull PacketReader packetReader;
-  private final @NotNull PacketWriter packetWriter;
+  private final PacketReader packetReader;
+  private final PacketWriter packetWriter;
 
   private final int packetLengthHeaderSize;
 
   public DefaultDataConnection(
-      @NotNull Network<? extends Connection<R, W>> network,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
+      Network<? extends Connection<R, W>> network,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
       int maxPacketsByRead,
       int packetLengthHeaderSize) {
     super(network, channel, bufferAllocator, maxPacketsByRead);
@@ -38,7 +37,7 @@ public abstract class DefaultDataConnection<R extends ReadablePacket, W extends 
     this.packetWriter = createPacketWriter();
   }
 
-  protected @NotNull PacketReader createPacketReader() {
+  protected PacketReader createPacketReader() {
     return new DefaultPacketReader<>(
         this,
         channel,
@@ -50,7 +49,7 @@ public abstract class DefaultDataConnection<R extends ReadablePacket, W extends 
         maxPacketsByRead);
   }
 
-  protected @NotNull PacketWriter createPacketWriter() {
+  protected PacketWriter createPacketWriter() {
     return new DefaultPacketWriter<W, Connection<R, W>>(
         this,
         channel,
@@ -62,5 +61,5 @@ public abstract class DefaultDataConnection<R extends ReadablePacket, W extends 
         packetLengthHeaderSize);
   }
 
-  protected abstract @NotNull R createReadablePacket();
+  protected abstract R createReadablePacket();
 }

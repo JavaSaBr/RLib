@@ -26,8 +26,7 @@ import javasabr.rlib.network.packet.WritablePacket;
 import javasabr.rlib.network.packet.impl.WritablePacketWrapper;
 import javasabr.rlib.network.util.NetworkUtils;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
@@ -44,33 +43,33 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
   private static class WritablePacketWithFeedback<W extends WritablePacket> extends
       WritablePacketWrapper<CompletableFuture<Boolean>, W> {
 
-    public WritablePacketWithFeedback(@NotNull CompletableFuture<Boolean> attachment, @NotNull W packet) {
+    public WritablePacketWithFeedback(CompletableFuture<Boolean> attachment, W packet) {
       super(attachment, packet);
     }
   }
 
   protected final @Getter
-  @NotNull String remoteAddress;
+  String remoteAddress;
 
-  protected final @NotNull Network<? extends Connection<R, W>> network;
-  protected final @NotNull BufferAllocator bufferAllocator;
-  protected final @NotNull AsynchronousSocketChannel channel;
-  protected final @NotNull LinkedList<WritablePacket> pendingPackets;
-  protected final @NotNull StampedLock lock;
+  protected final Network<? extends Connection<R, W>> network;
+  protected final BufferAllocator bufferAllocator;
+  protected final AsynchronousSocketChannel channel;
+  protected final LinkedList<WritablePacket> pendingPackets;
+  protected final StampedLock lock;
 
-  protected final @NotNull AtomicBoolean isWriting;
-  protected final @NotNull AtomicBoolean closed;
+  protected final AtomicBoolean isWriting;
+  protected final AtomicBoolean closed;
 
-  protected final @NotNull Array<NotNullBiConsumer<? super Connection<R, W>, ? super R>> subscribers;
+  protected final Array<NotNullBiConsumer<? super Connection<R, W>, ? super R>> subscribers;
 
   protected final int maxPacketsByRead;
 
   protected volatile @Getter long lastActivity;
 
   public AbstractConnection(
-      @NotNull Network<? extends Connection<R, W>> network,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
+      Network<? extends Connection<R, W>> network,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
       int maxPacketsByRead) {
     this.bufferAllocator = bufferAllocator;
     this.maxPacketsByRead = maxPacketsByRead;
@@ -88,11 +87,11 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
   public void onConnected() {
   }
 
-  protected abstract @NotNull PacketReader getPacketReader();
+  protected abstract PacketReader getPacketReader();
 
-  protected abstract @NotNull PacketWriter getPacketWriter();
+  protected abstract PacketWriter getPacketWriter();
 
-  protected void handleReceivedPacket(@NotNull R packet) {
+  protected void handleReceivedPacket(R packet) {
     LOGGER.debug(
         channel,
         packet,
@@ -101,23 +100,23 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
   }
 
   @Override
-  public void onReceive(@NotNull NotNullBiConsumer<? super Connection<R, W>, ? super R> consumer) {
+  public void onReceive(NotNullBiConsumer<? super Connection<R, W>, ? super R> consumer) {
     subscribers.add(consumer);
     getPacketReader().startRead();
   }
 
   @Override
-  public @NotNull Flux<ReceivedPacketEvent<? extends Connection<R, W>, ? extends R>> receivedEvents() {
+  public Flux<ReceivedPacketEvent<? extends Connection<R, W>, ? extends R>> receivedEvents() {
     return Flux.create(this::registerFluxOnReceivedEvents);
   }
 
   @Override
-  public @NotNull Flux<? extends R> receivedPackets() {
+  public Flux<? extends R> receivedPackets() {
     return Flux.create(this::registerFluxOnReceivedPackets);
   }
 
   protected void registerFluxOnReceivedEvents(
-      @NotNull FluxSink<ReceivedPacketEvent<? extends Connection<R, W>, ? extends R>> sink) {
+      FluxSink<ReceivedPacketEvent<? extends Connection<R, W>, ? extends R>> sink) {
 
     NotNullBiConsumer<Connection<R, W>, R> listener =
       (connection, packet) -> sink.next(new ReceivedPacketEvent<>(connection,
@@ -128,7 +127,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     sink.onDispose(() -> subscribers.remove(listener));
   }
 
-  protected void registerFluxOnReceivedPackets(@NotNull FluxSink<? super R> sink) {
+  protected void registerFluxOnReceivedPackets(FluxSink<? super R> sink) {
 
     NotNullBiConsumer<Connection<R, W>, R> listener = (connection, packet) -> sink.next(packet);
 
@@ -180,10 +179,10 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     return closed.get();
   }
 
-  protected void onWrittenPacket(@NotNull WritablePacket packet) {
+  protected void onWrittenPacket(WritablePacket packet) {
   }
 
-  protected void onSentPacket(@NotNull WritablePacket packet, @NotNull Boolean result) {
+  protected void onSentPacket(WritablePacket packet, Boolean result) {
     if (packet instanceof WritablePacketWithFeedback) {
       ((WritablePacketWithFeedback<W>) packet)
           .getAttachment()
@@ -192,11 +191,11 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
   }
 
   @Override
-  public final void send(@NotNull W packet) {
+  public final void send(W packet) {
     sendImpl(packet);
   }
 
-  protected void sendImpl(@NotNull WritablePacket packet) {
+  protected void sendImpl(WritablePacket packet) {
 
     if (isClosed()) {
       return;
@@ -212,7 +211,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
     getPacketWriter().writeNextPacket();
   }
 
-  protected void queueAtFirst(@NotNull WritablePacket packet) {
+  protected void queueAtFirst(WritablePacket packet) {
     long stamp = lock.writeLock();
     try {
       pendingPackets.addFirst(packet);
@@ -222,7 +221,7 @@ public abstract class AbstractConnection<R extends ReadablePacket, W extends Wri
   }
 
   @Override
-  public @NotNull CompletableFuture<Boolean> sendWithFeedback(@NotNull W packet) {
+  public CompletableFuture<Boolean> sendWithFeedback(W packet) {
 
     var asyncResult = new CompletableFuture<Boolean>();
 

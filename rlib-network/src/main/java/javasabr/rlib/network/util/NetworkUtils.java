@@ -21,45 +21,44 @@ import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author JavaSaBr
  */
 public class NetworkUtils {
 
-  public static final @NotNull ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
+  public static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
 
   public static class AllTrustManager implements X509TrustManager {
 
-    public static final @NotNull X509Certificate[] EMPTY_CERTS = new X509Certificate[0];
+    public static final X509Certificate[] EMPTY_CERTS = new X509Certificate[0];
 
-    public @NotNull X509Certificate[] getAcceptedIssuers() {
+    public X509Certificate[] getAcceptedIssuers() {
       return EMPTY_CERTS;
     }
 
-    public void checkClientTrusted(@NotNull X509Certificate[] certificates, @NotNull String arg1) {
+    public void checkClientTrusted(X509Certificate[] certificates, String arg1) {
     }
 
-    public void checkServerTrusted(@NotNull X509Certificate[] certificates, @NotNull String arg1) {
+    public void checkServerTrusted(X509Certificate[] certificates, String arg1) {
     }
   }
 
-  public static @NotNull SocketAddress getRemoteAddress(@NotNull AsynchronousSocketChannel socketChannel) {
+  public static SocketAddress getRemoteAddress(AsynchronousSocketChannel socketChannel) {
     return Utils.uncheckedGet(socketChannel, AsynchronousSocketChannel::getRemoteAddress);
   }
 
-  public static @NotNull SSLContext createSslContext(
-      @NotNull InputStream keyStoreData,
-      @NotNull String keyStorePassword) {
+  public static SSLContext createSslContext(
+      InputStream keyStoreData,
+      String keyStorePassword) {
     return createSslContext("PKCS12", keyStoreData, keyStorePassword, null, null, null);
   }
 
-  public static @NotNull SSLContext createSslContext(
-      @NotNull String keyStoreType,
-      @NotNull InputStream keyStoreData,
-      @NotNull String keyStorePassword,
+  public static SSLContext createSslContext(
+      String keyStoreType,
+      InputStream keyStoreData,
+      String keyStorePassword,
       @Nullable String trustStoreType,
       @Nullable InputStream trustStoreData,
       @Nullable String trustStorePassword) {
@@ -97,7 +96,7 @@ public class NetworkUtils {
     }
   }
 
-  public static @NotNull SSLContext createAllTrustedClientSslContext() {
+  public static SSLContext createAllTrustedClientSslContext() {
 
     try {
 
@@ -118,7 +117,7 @@ public class NetworkUtils {
    * @return the hex dump string.
    * @since 9.9.0
    */
-  public static @NotNull String hexDump(@NotNull ByteBuffer buffer) {
+  public static String hexDump(ByteBuffer buffer) {
     if (!buffer.hasRemaining()) {
       return "<empty data>";
     } else {
@@ -134,7 +133,7 @@ public class NetworkUtils {
    * @return the hex dump string.
    * @since 9.9.0
    */
-  public static @NotNull String hexDump(@NotNull ByteBuffer buffer, @NotNull SSLEngineResult result) {
+  public static String hexDump(ByteBuffer buffer, SSLEngineResult result) {
     if (result.bytesProduced() < 1) {
       return "<empty data>";
     } else {
@@ -149,7 +148,7 @@ public class NetworkUtils {
    * @param length the length.
    * @return the hex dump string.
    */
-  public static @NotNull String hexDump(@NotNull byte[] array, int length) {
+  public static String hexDump(byte[] array, int length) {
     return hexDump(array, 0, length);
   }
 
@@ -161,7 +160,7 @@ public class NetworkUtils {
    * @param length the length.
    * @return the hex dump string.
    */
-  public static @NotNull String hexDump(@NotNull byte[] array, int offset, int length) {
+  public static String hexDump(byte[] array, int offset, int length) {
 
     var builder = new StringBuilder();
     var count = 0;
@@ -237,7 +236,7 @@ public class NetworkUtils {
     return builder.toString();
   }
 
-  private static @NotNull StringBuilder hexDigit(@NotNull StringBuilder builder, byte value) {
+  private static StringBuilder hexDigit(StringBuilder builder, byte value) {
 
     char ch = (char) ((value >> 4) & 0xF);
 
@@ -279,7 +278,7 @@ public class NetworkUtils {
    * @param port the port.
    * @return true if the port is available.
    */
-  public static boolean isPortAvailable(@NotNull String host, int port) {
+  public static boolean isPortAvailable(String host, int port) {
     try (var ignored = "*".equals(host)
                        ? new ServerSocket(port)
                        : new ServerSocket(port, 50, InetAddress.getByName(host))) {
@@ -303,16 +302,16 @@ public class NetworkUtils {
         .orElse(-1);
   }
 
-  public static @NotNull ByteBuffer enlargePacketBuffer(@NotNull BufferAllocator allocator, @NotNull SSLEngine engine) {
+  public static ByteBuffer enlargePacketBuffer(BufferAllocator allocator, SSLEngine engine) {
     return allocator.takeBuffer(engine
         .getSession()
         .getPacketBufferSize());
   }
 
-  public static @NotNull ByteBuffer increaseApplicationBuffer(
-      @NotNull ByteBuffer current,
-      @NotNull BufferAllocator allocator,
-      @NotNull SSLEngine engine) {
+  public static ByteBuffer increaseApplicationBuffer(
+      ByteBuffer current,
+      BufferAllocator allocator,
+      SSLEngine engine) {
 
     var newBuffer = allocator.takeBuffer(engine
         .getSession()
@@ -326,10 +325,10 @@ public class NetworkUtils {
     return newBuffer;
   }
 
-  public static @NotNull ByteBuffer increasePacketBuffer(
-      @NotNull ByteBuffer current,
-      @NotNull BufferAllocator allocator,
-      @NotNull SSLEngine engine) {
+  public static ByteBuffer increasePacketBuffer(
+      ByteBuffer current,
+      BufferAllocator allocator,
+      SSLEngine engine) {
 
     var newBuffer = allocator.takeBuffer(engine
         .getSession()
@@ -343,9 +342,9 @@ public class NetworkUtils {
     return newBuffer;
   }
 
-  public static @NotNull ByteBuffer enlargeApplicationBuffer(
-      @NotNull BufferAllocator allocator,
-      @NotNull SSLEngine engine) {
+  public static ByteBuffer enlargeApplicationBuffer(
+      BufferAllocator allocator,
+      SSLEngine engine) {
     return allocator.takeBuffer(engine
         .getSession()
         .getApplicationBufferSize());

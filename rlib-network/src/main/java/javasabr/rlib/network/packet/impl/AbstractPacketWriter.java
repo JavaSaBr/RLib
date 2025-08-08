@@ -19,8 +19,7 @@ import javasabr.rlib.network.packet.PacketWriter;
 import javasabr.rlib.network.packet.WritablePacket;
 import javasabr.rlib.network.util.NetworkUtils;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author JavaSaBr
@@ -34,42 +33,42 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
   private final CompletionHandler<Integer, WritablePacket> writeHandler = new CompletionHandler<>() {
 
     @Override
-    public void completed(@NotNull Integer result, @NotNull WritablePacket packet) {
+    public void completed(Integer result, WritablePacket packet) {
       handleSuccessfulWriting(result, packet);
     }
 
     @Override
-    public void failed(@NotNull Throwable exc, @NotNull WritablePacket packet) {
+    public void failed(Throwable exc, WritablePacket packet) {
       handleFailedWriting(exc, packet);
     }
   };
 
-  protected final @NotNull AtomicBoolean isWriting = new AtomicBoolean();
+  protected final AtomicBoolean isWriting = new AtomicBoolean();
 
-  protected final @NotNull C connection;
-  protected final @NotNull AsynchronousSocketChannel channel;
-  protected final @NotNull BufferAllocator bufferAllocator;
-  protected final @NotNull ByteBuffer firstWriteBuffer;
-  protected final @NotNull ByteBuffer secondWriteBuffer;
+  protected final C connection;
+  protected final AsynchronousSocketChannel channel;
+  protected final BufferAllocator bufferAllocator;
+  protected final ByteBuffer firstWriteBuffer;
+  protected final ByteBuffer secondWriteBuffer;
 
   protected volatile @Nullable ByteBuffer firstWriteTempBuffer;
   protected volatile @Nullable ByteBuffer secondWriteTempBuffer;
 
-  protected volatile @NotNull ByteBuffer writingBuffer = EMPTY_BUFFER;
+  protected volatile ByteBuffer writingBuffer = EMPTY_BUFFER;
 
-  protected final @NotNull Runnable updateActivityFunction;
-  protected final @NotNull NullableSupplier<WritablePacket> nextWritePacketSupplier;
-  protected final @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler;
-  protected final @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler;
+  protected final Runnable updateActivityFunction;
+  protected final NullableSupplier<WritablePacket> nextWritePacketSupplier;
+  protected final NotNullConsumer<WritablePacket> writtenPacketHandler;
+  protected final NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler;
 
   public AbstractPacketWriter(
-      @NotNull C connection,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull Runnable updateActivityFunction,
-      @NotNull NullableSupplier<WritablePacket> packetProvider,
-      @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler,
-      @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler) {
+      C connection,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      Runnable updateActivityFunction,
+      NullableSupplier<WritablePacket> packetProvider,
+      NotNullConsumer<WritablePacket> writtenPacketHandler,
+      NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler) {
     this.connection = connection;
     this.channel = channel;
     this.bufferAllocator = bufferAllocator;
@@ -113,7 +112,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
     writtenPacketHandler.accept(waitPacket);
   }
 
-  protected @NotNull ByteBuffer serialize(@NotNull WritablePacket packet) {
+  protected ByteBuffer serialize(WritablePacket packet) {
 
     if (packet instanceof WritablePacketWrapper) {
       packet = ((WritablePacketWrapper<?, ?>) packet).getPacket();
@@ -143,7 +142,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
    * @param expectedLength the expected size.
    * @return the total size or -1.
    */
-  protected abstract int getTotalSize(@NotNull WritablePacket packet, int expectedLength);
+  protected abstract int getTotalSize(WritablePacket packet, int expectedLength);
 
   /**
    * Serialize packet to byte buffer.
@@ -155,12 +154,12 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
    * @param secondBuffer the second byte buffer.
    * @return the buffer to write to channel.
    */
-  protected @NotNull ByteBuffer serialize(
-      @NotNull W packet,
+  protected ByteBuffer serialize(
+      W packet,
       int expectedLength,
       int totalSize,
-      @NotNull ByteBuffer firstBuffer,
-      @NotNull ByteBuffer secondBuffer) {
+      ByteBuffer firstBuffer,
+      ByteBuffer secondBuffer) {
 
     if (!onBeforeWrite(packet, expectedLength, totalSize, firstBuffer, secondBuffer)) {
       return firstBuffer
@@ -190,11 +189,11 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
    * @return true if handling was successful.
    */
   protected boolean onBeforeWrite(
-      @NotNull W packet,
+      W packet,
       int expectedLength,
       int totalSize,
-      @NotNull ByteBuffer firstBuffer,
-      @NotNull ByteBuffer secondBuffer) {
+      ByteBuffer firstBuffer,
+      ByteBuffer secondBuffer) {
     firstBuffer.clear();
     return true;
   }
@@ -210,11 +209,11 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
    * @return true if writing was successful.
    */
   protected boolean onWrite(
-      @NotNull W packet,
+      W packet,
       int expectedLength,
       int totalSize,
-      @NotNull ByteBuffer firstBuffer,
-      @NotNull ByteBuffer secondBuffer) {
+      ByteBuffer firstBuffer,
+      ByteBuffer secondBuffer) {
     return packet.write(firstBuffer);
   }
 
@@ -229,11 +228,11 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
    * @return true if handling was successful.
    */
   protected boolean onAfterWrite(
-      @NotNull W packet,
+      W packet,
       int expectedLength,
       int totalSize,
-      @NotNull ByteBuffer firstBuffer,
-      @NotNull ByteBuffer secondBuffer) {
+      ByteBuffer firstBuffer,
+      ByteBuffer secondBuffer) {
     firstBuffer.flip();
     return true;
   }
@@ -248,16 +247,16 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
    * @param secondBuffer the second byte buffer.
    * @return the same byte buffer.
    */
-  protected @NotNull ByteBuffer onResult(
-      @NotNull W packet,
+  protected ByteBuffer onResult(
+      W packet,
       int expectedLength,
       int totalSize,
-      @NotNull ByteBuffer firstBuffer,
-      @NotNull ByteBuffer secondBuffer) {
+      ByteBuffer firstBuffer,
+      ByteBuffer secondBuffer) {
     return firstBuffer.position(0);
   }
 
-  protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int position, int value, int headerSize) {
+  protected ByteBuffer writeHeader(ByteBuffer buffer, int position, int value, int headerSize) {
     try {
 
       switch (headerSize) {
@@ -283,7 +282,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
     }
   }
 
-  protected @NotNull ByteBuffer writeHeader(@NotNull ByteBuffer buffer, int value, int headerSize) {
+  protected ByteBuffer writeHeader(ByteBuffer buffer, int value, int headerSize) {
 
     switch (headerSize) {
       case 1:
@@ -308,7 +307,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
    * @param result the count of wrote bytes.
    * @param packet the sent packet.
    */
-  protected void handleSuccessfulWriting(@NotNull Integer result, @NotNull WritablePacket packet) {
+  protected void handleSuccessfulWriting(Integer result, WritablePacket packet) {
     updateActivityFunction.run();
 
     if (result == -1) {
@@ -350,7 +349,7 @@ public abstract class AbstractPacketWriter<W extends WritablePacket, C extends C
    * @param exception the exception.
    * @param packet the packet.
    */
-  protected void handleFailedWriting(@NotNull Throwable exception, @NotNull WritablePacket packet) {
+  protected void handleFailedWriting(Throwable exception, WritablePacket packet) {
     LOGGER.error(new RuntimeException("Failed writing packet: " + packet, exception));
 
     if (!connection.isClosed()) {

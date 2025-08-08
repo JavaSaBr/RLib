@@ -3,7 +3,6 @@ package javasabr.rlib.network.packet;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import javasabr.rlib.logger.api.LoggerManager;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface to implement a writable packet.
@@ -18,7 +17,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @return true if writing was successful.
    */
-  boolean write(@NotNull ByteBuffer buffer);
+  boolean write(ByteBuffer buffer);
 
   /**
    * Return an expected data length of this packet or -1.
@@ -35,7 +34,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @param value the value.
    */
-  default void writeByte(@NotNull ByteBuffer buffer, int value) {
+  default void writeByte(ByteBuffer buffer, int value) {
     buffer.put((byte) value);
   }
 
@@ -45,7 +44,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @param value the value.
    */
-  default void writeChar(@NotNull ByteBuffer buffer, char value) {
+  default void writeChar(ByteBuffer buffer, char value) {
     buffer.putChar(value);
   }
 
@@ -55,7 +54,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @param value the value.
    */
-  default void writeChar(@NotNull final ByteBuffer buffer, final int value) {
+  default void writeChar(final ByteBuffer buffer, final int value) {
     buffer.putChar((char) value);
   }
 
@@ -65,7 +64,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @param value the value.
    */
-  default void writeFloat(@NotNull ByteBuffer buffer, float value) {
+  default void writeFloat(ByteBuffer buffer, float value) {
     buffer.putFloat(value);
   }
 
@@ -75,7 +74,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @param value the value.
    */
-  default void writeInt(@NotNull ByteBuffer buffer, int value) {
+  default void writeInt(ByteBuffer buffer, int value) {
     buffer.putInt(value);
   }
 
@@ -85,7 +84,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @param value the value.
    */
-  default void writeLong(@NotNull ByteBuffer buffer, long value) {
+  default void writeLong(ByteBuffer buffer, long value) {
     buffer.putLong(value);
   }
 
@@ -95,7 +94,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @param value the value for writing.
    */
-  default void writeShort(@NotNull ByteBuffer buffer, int value) {
+  default void writeShort(ByteBuffer buffer, int value) {
     buffer.putShort((short) value);
   }
 
@@ -105,7 +104,7 @@ public interface WritablePacket extends Packet {
    * @param buffer the buffer.
    * @param string the string for writing.
    */
-  default void writeString(@NotNull ByteBuffer buffer, @NotNull String string) {
+  default void writeString(ByteBuffer buffer, String string) {
     try {
 
       writeInt(buffer, string.length());
@@ -130,7 +129,7 @@ public interface WritablePacket extends Packet {
    * @param buffer thr packet buffer.
    * @param data the data buffer.
    */
-  default void writeBuffer(@NotNull ByteBuffer buffer, @NotNull ByteBuffer data) {
+  default void writeBuffer(ByteBuffer buffer, ByteBuffer data) {
     buffer.put(data.array(), data.position(), data.limit());
   }
 }

@@ -7,8 +7,7 @@ import javasabr.rlib.common.function.NotNullConsumer;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.packet.ReadablePacket;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @param <R> the readable packet's type.
@@ -22,12 +21,12 @@ public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<
   private final int packetLengthHeaderSize;
 
   public DefaultPacketReader(
-      @NotNull C connection,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull Runnable updateActivityFunction,
-      @NotNull NotNullConsumer<R> readPacketHandler,
-      @NotNull IntFunction<R> readPacketFactory,
+      C connection,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      Runnable updateActivityFunction,
+      NotNullConsumer<R> readPacketHandler,
+      IntFunction<R> readPacketFactory,
       int packetLengthHeaderSize,
       int maxPacketsByRead) {
     super(connection, channel, bufferAllocator, updateActivityFunction, readPacketHandler, maxPacketsByRead);
@@ -36,18 +35,18 @@ public class DefaultPacketReader<R extends ReadablePacket, C extends Connection<
   }
 
   @Override
-  protected boolean canStartReadPacket(@NotNull ByteBuffer buffer) {
+  protected boolean canStartReadPacket(ByteBuffer buffer) {
     return buffer.remaining() >= packetLengthHeaderSize;
   }
 
   @Override
-  protected int readPacketLength(@NotNull ByteBuffer buffer) {
+  protected int readPacketLength(ByteBuffer buffer) {
     return readHeader(buffer, packetLengthHeaderSize);
   }
 
   @Override
   protected @Nullable R createPacketFor(
-      @NotNull ByteBuffer buffer,
+      ByteBuffer buffer,
       int startPacketPosition,
       int packetLength,
       int dataLength) {

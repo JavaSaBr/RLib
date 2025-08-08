@@ -2,7 +2,6 @@ package javasabr.rlib.network.packet;
 
 import java.nio.ByteBuffer;
 import javasabr.rlib.network.Connection;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The interface to implement a readable network packet.
@@ -19,5 +18,5 @@ public interface ReadablePacket extends Packet {
    * @param length the data length.
    * @return true if reading was success.
    */
-  boolean read(@NotNull Connection<?, ?> connection, @NotNull ByteBuffer buffer, int length);
+  boolean read(Connection<?, ?> connection, ByteBuffer buffer, int length);
 }

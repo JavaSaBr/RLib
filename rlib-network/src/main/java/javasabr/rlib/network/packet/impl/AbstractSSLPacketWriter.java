@@ -19,8 +19,7 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extends Connection<?, W>> extends
     AbstractPacketWriter<W, C> {
@@ -31,23 +30,23 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
       NetworkUtils.EMPTY_BUFFER
   };
 
-  protected final @NotNull SSLEngine sslEngine;
-  protected final @NotNull NotNullConsumer<WritablePacket> packetWriter;
-  protected final @NotNull NotNullConsumer<WritablePacket> queueAtFirst;
+  protected final SSLEngine sslEngine;
+  protected final NotNullConsumer<WritablePacket> packetWriter;
+  protected final NotNullConsumer<WritablePacket> queueAtFirst;
 
-  protected volatile @NotNull ByteBuffer sslNetworkBuffer;
+  protected volatile ByteBuffer sslNetworkBuffer;
 
   public AbstractSSLPacketWriter(
-      @NotNull C connection,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull Runnable updateActivityFunction,
-      @NotNull NullableSupplier<WritablePacket> packetProvider,
-      @NotNull NotNullConsumer<WritablePacket> writtenPacketHandler,
-      @NotNull NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
-      @NotNull SSLEngine sslEngine,
-      @NotNull NotNullConsumer<WritablePacket> packetWriter,
-      @NotNull NotNullConsumer<WritablePacket> queueAtFirst) {
+      C connection,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      Runnable updateActivityFunction,
+      NullableSupplier<WritablePacket> packetProvider,
+      NotNullConsumer<WritablePacket> writtenPacketHandler,
+      NotNullBiConsumer<WritablePacket, Boolean> sentPacketHandler,
+      SSLEngine sslEngine,
+      NotNullConsumer<WritablePacket> packetWriter,
+      NotNullConsumer<WritablePacket> queueAtFirst) {
     super(
         connection,
         channel,
@@ -78,7 +77,7 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
   }
 
   @Override
-  protected @NotNull ByteBuffer serialize(@NotNull WritablePacket packet) {
+  protected ByteBuffer serialize(WritablePacket packet) {
 
     var status = sslEngine.getHandshakeStatus();
 
@@ -122,7 +121,7 @@ public abstract class AbstractSSLPacketWriter<W extends WritablePacket, C extend
     throw new IllegalStateException();
   }
 
-  protected @Nullable ByteBuffer doHandshake(@NotNull WritablePacket packet) {
+  protected @Nullable ByteBuffer doHandshake(WritablePacket packet) {
 
     if (!(packet instanceof SSLWritablePacket)) {
       LOGGER.debug(packet, pck -> "Return packet " + pck + " to queue as first");

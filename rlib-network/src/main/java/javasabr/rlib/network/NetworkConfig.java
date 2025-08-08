@@ -3,7 +3,6 @@ package javasabr.rlib.network;
 import java.nio.ByteOrder;
 import lombok.Builder;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The interface to implement a network config.
@@ -29,10 +28,10 @@ public interface NetworkConfig {
     private int writeBufferSize = 2048;
   }
 
-  @NotNull NetworkConfig DEFAULT_CLIENT = new NetworkConfig() {
+  NetworkConfig DEFAULT_CLIENT = new NetworkConfig() {
 
     @Override
-    public @NotNull String getThreadGroupName() {
+    public String getThreadGroupName() {
       return "ClientNetworkThread";
     }
   };
@@ -42,7 +41,7 @@ public interface NetworkConfig {
    *
    * @return the group name.
    */
-  default @NotNull String getThreadGroupName() {
+  default String getThreadGroupName() {
     return "NetworkThread";
   }
 
@@ -74,7 +73,7 @@ public interface NetworkConfig {
     return 2048;
   }
 
-  default @NotNull ByteOrder getByteOrder() {
+  default ByteOrder getByteOrder() {
     return ByteOrder.BIG_ENDIAN;
   }
 

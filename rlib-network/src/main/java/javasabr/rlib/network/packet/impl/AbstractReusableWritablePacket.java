@@ -10,8 +10,7 @@ import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.pools.Pool;
 import javasabr.rlib.common.util.pools.PoolFactory;
 import javasabr.rlib.network.packet.ReusableWritablePacket;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The reusable implementation of {@link AbstractWritablePacket} using the counter to control the life cycle of this
@@ -39,7 +38,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
   }
 
   @Override
-  public boolean write(@NotNull ByteBuffer buffer) {
+  public boolean write(ByteBuffer buffer) {
 
     if (counter.get() < 1) {
       LOGGER.warning(
@@ -120,7 +119,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
    *
    * @return thread local pool.
    */
-  protected @NotNull Pool<ReusableWritablePacket> getThreadLocalPool() {
+  protected Pool<ReusableWritablePacket> getThreadLocalPool() {
     Class<ReusableWritablePacket> packetClass = ClassUtils.unsafeNNCast(getClass());
     return LOCAL_POOLS
         .get()
@@ -137,7 +136,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
    *
    * @return the pool to store used packet.
    */
-  protected @NotNull Pool<ReusableWritablePacket> getPool() {
+  protected Pool<ReusableWritablePacket> getPool() {
 
     Pool<ReusableWritablePacket> local = this.pool;
 
@@ -170,7 +169,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
    * @param <T> the result packet's type.
    * @return the new instance.
    */
-  public <T extends ReusableWritablePacket> @NotNull T newInstance() {
+  public <T extends ReusableWritablePacket> T newInstance() {
 
     Pool<ReusableWritablePacket> pool = getPool();
     ReusableWritablePacket result = pool.take(getClass(), ClassUtils::newInstance);
@@ -180,7 +179,7 @@ public abstract class AbstractReusableWritablePacket extends AbstractWritablePac
   }
 
   @Override
-  public final void setPool(@NotNull Pool<ReusableWritablePacket> pool) {
+  public final void setPool(Pool<ReusableWritablePacket> pool) {
     this.pool = pool;
   }
 

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractWritablePacket extends AbstractPacket implements WritablePacket {
 
   @Override
-  public boolean write(@NotNull ByteBuffer buffer) {
+  public boolean write(ByteBuffer buffer) {
     try {
       writeImpl(buffer);
       return true;
@@ -27,6 +27,5 @@ public abstract class AbstractWritablePacket extends AbstractPacket implements W
    *
    * @param buffer the buffer
    */
-  protected void writeImpl(@NotNull ByteBuffer buffer) {
-  }
+  protected void writeImpl(ByteBuffer buffer) {}
 }

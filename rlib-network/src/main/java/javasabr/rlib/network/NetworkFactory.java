@@ -13,7 +13,6 @@ import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
 import javasabr.rlib.network.server.ServerNetwork;
 import javasabr.rlib.network.server.impl.DefaultServerNetwork;
 import javax.net.ssl.SSLContext;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Class with factory methods to build client/server networks.
@@ -22,15 +21,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class NetworkFactory {
 
-  public static <C extends UnsafeConnection<?, ?>> @NotNull ClientNetwork<C> newClientNetwork(
-      @NotNull NetworkConfig networkConfig,
-      @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
+  public static <C extends UnsafeConnection<?, ?>> ClientNetwork<C> newClientNetwork(
+      NetworkConfig networkConfig,
+      BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
     return new DefaultClientNetwork<>(networkConfig, channelToConnection);
   }
 
-  public static <C extends UnsafeConnection<?, ?>> @NotNull ServerNetwork<C> newServerNetwork(
-      @NotNull ServerNetworkConfig networkConfig,
-      @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
+  public static <C extends UnsafeConnection<?, ?>> ServerNetwork<C> newServerNetwork(
+      ServerNetworkConfig networkConfig,
+      BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
     return new DefaultServerNetwork<>(networkConfig, channelToConnection);
   }
 
@@ -39,7 +38,7 @@ public final class NetworkFactory {
    *
    * @return the client network.
    */
-  public static @NotNull ClientNetwork<StringDataConnection> newStringDataClientNetwork() {
+  public static ClientNetwork<StringDataConnection> newStringDataClientNetwork() {
     return newStringDataClientNetwork(NetworkConfig.DEFAULT_CLIENT);
   }
 
@@ -49,8 +48,8 @@ public final class NetworkFactory {
    * @param networkConfig the network config.
    * @return the client network.
    */
-  public static @NotNull ClientNetwork<StringDataConnection> newStringDataClientNetwork(
-      @NotNull NetworkConfig networkConfig) {
+  public static ClientNetwork<StringDataConnection> newStringDataClientNetwork(
+      NetworkConfig networkConfig) {
     return newStringDataClientNetwork(networkConfig, new DefaultBufferAllocator(networkConfig));
   }
 
@@ -61,9 +60,9 @@ public final class NetworkFactory {
    * @param bufferAllocator the buffer allocator.
    * @return the client network.
    */
-  public static @NotNull ClientNetwork<StringDataConnection> newStringDataClientNetwork(
-      @NotNull NetworkConfig networkConfig,
-      @NotNull BufferAllocator bufferAllocator) {
+  public static ClientNetwork<StringDataConnection> newStringDataClientNetwork(
+      NetworkConfig networkConfig,
+      BufferAllocator bufferAllocator) {
     return newClientNetwork(
         networkConfig,
         (network, channel) -> new StringDataConnection(network, channel, bufferAllocator));
@@ -75,8 +74,8 @@ public final class NetworkFactory {
    * @param packetRegistry the readable packet registry.
    * @return the server network.
    */
-  public static @NotNull ClientNetwork<DefaultConnection> newDefaultClientNetwork(
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
+  public static ClientNetwork<DefaultConnection> newDefaultClientNetwork(
+      ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
     return newDefaultClientNetwork(
         NetworkConfig.DEFAULT_CLIENT,
         new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
@@ -91,10 +90,10 @@ public final class NetworkFactory {
    * @param packetRegistry the readable packet registry.
    * @return the server network.
    */
-  public static @NotNull ClientNetwork<DefaultConnection> newDefaultClientNetwork(
-      @NotNull NetworkConfig networkConfig,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
+  public static ClientNetwork<DefaultConnection> newDefaultClientNetwork(
+      NetworkConfig networkConfig,
+      BufferAllocator bufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
     return newClientNetwork(
         networkConfig,
         (network, channel) -> new DefaultConnection(network, channel, bufferAllocator, packetRegistry));
@@ -108,10 +107,10 @@ public final class NetworkFactory {
    * @param sslContext the ssl context.
    * @return the client network.
    */
-  public static @NotNull ClientNetwork<StringDataSSLConnection> newStringDataSSLClientNetwork(
-      @NotNull NetworkConfig networkConfig,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull SSLContext sslContext) {
+  public static ClientNetwork<StringDataSSLConnection> newStringDataSSLClientNetwork(
+      NetworkConfig networkConfig,
+      BufferAllocator bufferAllocator,
+      SSLContext sslContext) {
     return newClientNetwork(
         networkConfig,
         (network, channel) -> new StringDataSSLConnection(network, channel, bufferAllocator, sslContext, true));
@@ -122,7 +121,7 @@ public final class NetworkFactory {
    *
    * @return the server network.
    */
-  public static @NotNull ServerNetwork<StringDataConnection> newStringDataServerNetwork() {
+  public static ServerNetwork<StringDataConnection> newStringDataServerNetwork() {
     return newStringDataServerNetwork(ServerNetworkConfig.DEFAULT_SERVER);
   }
 
@@ -132,8 +131,8 @@ public final class NetworkFactory {
    * @param networkConfig the network config.
    * @return the server network.
    */
-  public static @NotNull ServerNetwork<StringDataConnection> newStringDataServerNetwork(
-      @NotNull ServerNetworkConfig networkConfig) {
+  public static ServerNetwork<StringDataConnection> newStringDataServerNetwork(
+      ServerNetworkConfig networkConfig) {
     return newStringDataServerNetwork(networkConfig, new DefaultBufferAllocator(networkConfig));
   }
 
@@ -144,9 +143,9 @@ public final class NetworkFactory {
    * @param bufferAllocator the buffer allocator.
    * @return the server network.
    */
-  public static @NotNull ServerNetwork<StringDataConnection> newStringDataServerNetwork(
-      @NotNull ServerNetworkConfig networkConfig,
-      @NotNull BufferAllocator bufferAllocator) {
+  public static ServerNetwork<StringDataConnection> newStringDataServerNetwork(
+      ServerNetworkConfig networkConfig,
+      BufferAllocator bufferAllocator) {
     return newServerNetwork(
         networkConfig,
         (network, channel) -> new StringDataConnection(network, channel, bufferAllocator));
@@ -160,10 +159,10 @@ public final class NetworkFactory {
    * @param sslContext the ssl context.
    * @return the server network.
    */
-  public static @NotNull ServerNetwork<StringDataSSLConnection> newStringDataSSLServerNetwork(
-      @NotNull ServerNetworkConfig networkConfig,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull SSLContext sslContext) {
+  public static ServerNetwork<StringDataSSLConnection> newStringDataSSLServerNetwork(
+      ServerNetworkConfig networkConfig,
+      BufferAllocator bufferAllocator,
+      SSLContext sslContext) {
     return newServerNetwork(
         networkConfig,
         (network, channel) -> new StringDataSSLConnection(network, channel, bufferAllocator, sslContext, false));
@@ -175,8 +174,8 @@ public final class NetworkFactory {
    * @param packetRegistry the readable packet registry.
    * @return the server network.
    */
-  public static @NotNull ServerNetwork<DefaultConnection> newDefaultServerNetwork(
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
+  public static ServerNetwork<DefaultConnection> newDefaultServerNetwork(
+      ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
     return newDefaultServerNetwork(
         ServerNetworkConfig.DEFAULT_SERVER,
         new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
@@ -191,10 +190,10 @@ public final class NetworkFactory {
    * @param packetRegistry the readable packet registry.
    * @return the server network.
    */
-  public static @NotNull ServerNetwork<DefaultConnection> newDefaultServerNetwork(
-      @NotNull ServerNetworkConfig networkConfig,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
+  public static ServerNetwork<DefaultConnection> newDefaultServerNetwork(
+      ServerNetworkConfig networkConfig,
+      BufferAllocator bufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> packetRegistry) {
     return newServerNetwork(
         networkConfig,
         (network, channel) -> new DefaultConnection(network, channel, bufferAllocator, packetRegistry));

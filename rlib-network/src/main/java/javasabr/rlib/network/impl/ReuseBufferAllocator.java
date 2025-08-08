@@ -12,7 +12,6 @@ import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.NetworkConfig;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
@@ -22,14 +21,14 @@ public class ReuseBufferAllocator implements BufferAllocator {
 
   protected static final Logger LOGGER = LoggerManager.getLogger(ReuseBufferAllocator.class);
 
-  protected final @NotNull Pool<ByteBuffer> readBufferPool;
-  protected final @NotNull Pool<ByteBuffer> pendingBufferPool;
-  protected final @NotNull Pool<ByteBuffer> writeBufferPool;
-  protected final @NotNull ConcurrentArray<ByteBuffer> byteBuffers;
+  protected final Pool<ByteBuffer> readBufferPool;
+  protected final Pool<ByteBuffer> pendingBufferPool;
+  protected final Pool<ByteBuffer> writeBufferPool;
+  protected final ConcurrentArray<ByteBuffer> byteBuffers;
 
-  protected final @NotNull NetworkConfig config;
+  protected final NetworkConfig config;
 
-  public ReuseBufferAllocator(@NotNull NetworkConfig config) {
+  public ReuseBufferAllocator(NetworkConfig config) {
     this.config = config;
     this.readBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
     this.pendingBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
@@ -38,27 +37,27 @@ public class ReuseBufferAllocator implements BufferAllocator {
   }
 
   @Override
-  public @NotNull ByteBuffer takeReadBuffer() {
+  public ByteBuffer takeReadBuffer() {
     return readBufferPool
         .take(config, readBufferFactory())
         .clear();
   }
 
   @Override
-  public @NotNull ByteBuffer takePendingBuffer() {
+  public ByteBuffer takePendingBuffer() {
     return pendingBufferPool
         .take(config, pendingBufferFactory())
         .clear();
   }
 
   @Override
-  public @NotNull ByteBuffer takeWriteBuffer() {
+  public ByteBuffer takeWriteBuffer() {
     return writeBufferPool
         .take(config, writeBufferFactory())
         .clear();
   }
 
-  protected @NotNull Function<NetworkConfig, ByteBuffer> pendingBufferFactory() {
+  protected Function<NetworkConfig, ByteBuffer> pendingBufferFactory() {
     return config -> {
       var bufferSize = config.getPendingBufferSize();
       LOGGER.debug(bufferSize, size -> "Allocate a new pending buffer with size: " + size);
@@ -71,7 +70,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
     };
   }
 
-  protected @NotNull Function<NetworkConfig, ByteBuffer> readBufferFactory() {
+  protected Function<NetworkConfig, ByteBuffer> readBufferFactory() {
     return config -> {
       var bufferSize = config.getReadBufferSize();
       LOGGER.debug(bufferSize, size -> "Allocate a new read buffer with size: " + size);
@@ -84,7 +83,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
     };
   }
 
-  protected @NotNull Function<NetworkConfig, ByteBuffer> writeBufferFactory() {
+  protected Function<NetworkConfig, ByteBuffer> writeBufferFactory() {
     return config -> {
       var bufferSize = config.getWriteBufferSize();
       LOGGER.debug(bufferSize, size -> "Allocate a new write buffer with size: " + size);
@@ -98,7 +97,7 @@ public class ReuseBufferAllocator implements BufferAllocator {
   }
 
   @Override
-  public @NotNull ByteBuffer takeBuffer(int bufferSize) {
+  public ByteBuffer takeBuffer(int bufferSize) {
 
     // check of existing enough buffer for the size under read lock
     var exist = byteBuffers.findAnyInReadLock(bufferSize, (required, buffer) -> required < buffer.capacity());
@@ -132,25 +131,25 @@ public class ReuseBufferAllocator implements BufferAllocator {
   }
 
   @Override
-  public @NotNull ReuseBufferAllocator putReadBuffer(@NotNull ByteBuffer buffer) {
+  public ReuseBufferAllocator putReadBuffer(ByteBuffer buffer) {
     readBufferPool.put(buffer);
     return this;
   }
 
   @Override
-  public @NotNull ReuseBufferAllocator putPendingBuffer(@NotNull ByteBuffer buffer) {
+  public ReuseBufferAllocator putPendingBuffer(ByteBuffer buffer) {
     pendingBufferPool.put(buffer);
     return this;
   }
 
   @Override
-  public @NotNull ReuseBufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer) {
+  public ReuseBufferAllocator putWriteBuffer(ByteBuffer buffer) {
     writeBufferPool.put(buffer);
     return this;
   }
 
   @Override
-  public @NotNull BufferAllocator putBuffer(@NotNull ByteBuffer buffer) {
+  public BufferAllocator putBuffer(ByteBuffer buffer) {
     LOGGER.debug(buffer, buf -> "Save used temp buffer: " + buf + " - (" + buf.hashCode() + ")");
     byteBuffers.runInWriteLock(buffer.clear(), Collection::add);
     return this;

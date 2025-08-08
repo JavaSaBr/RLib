@@ -1,7 +1,6 @@
 package javasabr.rlib.network;
 
 import java.nio.ByteBuffer;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The interface to implement a buffer allocator for network things.
@@ -15,21 +14,21 @@ public interface BufferAllocator {
    *
    * @return the new buffer.
    */
-  @NotNull ByteBuffer takeReadBuffer();
+  ByteBuffer takeReadBuffer();
 
   /**
    * Get a new pending buffer to use.
    *
    * @return the new pending buffer.
    */
-  @NotNull ByteBuffer takePendingBuffer();
+  ByteBuffer takePendingBuffer();
 
   /**
    * Get a new write buffer to use.
    *
    * @return the new buffer.
    */
-  @NotNull ByteBuffer takeWriteBuffer();
+  ByteBuffer takeWriteBuffer();
 
   /**
    * Get a new buffer with requested capacity.
@@ -37,7 +36,7 @@ public interface BufferAllocator {
    * @param bufferSize the size of new buffer.
    * @return the new buffer.
    */
-  @NotNull ByteBuffer takeBuffer(int bufferSize);
+  ByteBuffer takeBuffer(int bufferSize);
 
   /**
    * Store an old read buffer if need.
@@ -45,7 +44,7 @@ public interface BufferAllocator {
    * @param buffer the old read buffer.
    * @return this allocator.
    */
-  @NotNull BufferAllocator putReadBuffer(@NotNull ByteBuffer buffer);
+  BufferAllocator putReadBuffer(ByteBuffer buffer);
 
   /**
    * Store an old pending buffer if need.
@@ -53,7 +52,7 @@ public interface BufferAllocator {
    * @param buffer the old pending buffer.
    * @return this allocator.
    */
-  @NotNull BufferAllocator putPendingBuffer(@NotNull ByteBuffer buffer);
+  BufferAllocator putPendingBuffer(ByteBuffer buffer);
 
   /**
    * Store an old write buffer if need.
@@ -61,7 +60,7 @@ public interface BufferAllocator {
    * @param buffer the old write buffer.
    * @return this allocator.
    */
-  @NotNull BufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer);
+  BufferAllocator putWriteBuffer(ByteBuffer buffer);
 
   /**
    * Store an old byte buffer if need.
@@ -70,5 +69,5 @@ public interface BufferAllocator {
    * @return this allocator.
    */
 
-  @NotNull BufferAllocator putBuffer(@NotNull ByteBuffer buffer);
+  BufferAllocator putBuffer(ByteBuffer buffer);
 }

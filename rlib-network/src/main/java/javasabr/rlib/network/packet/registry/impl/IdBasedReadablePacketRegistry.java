@@ -13,7 +13,6 @@ import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The id based implementation of readable packets registry.
@@ -36,7 +35,7 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> i
   @Setter(AccessLevel.PRIVATE)
   private volatile R[] idToPacket;
 
-  public IdBasedReadablePacketRegistry(@NotNull Class<? extends R> type) {
+  public IdBasedReadablePacketRegistry(Class<? extends R> type) {
     this.idToPacket = ArrayUtils.create(type, 0);
     this.type = type;
   }
@@ -49,7 +48,7 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> i
    * @throws IllegalArgumentException if found a class without packet description annotation or if found duplication by
    * id.
    */
-  public @NotNull IdBasedReadablePacketRegistry<R> register(@NotNull Array<Class<? extends R>> classes) {
+  public IdBasedReadablePacketRegistry<R> register(Array<Class<? extends R>> classes) {
     return register(classes.array(), classes.size());
   }
 
@@ -62,7 +61,7 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> i
    * id.
    */
   @SafeVarargs
-  public final @NotNull IdBasedReadablePacketRegistry<R> register(@NotNull Class<? extends R>... classes) {
+  public final IdBasedReadablePacketRegistry<R> register(Class<? extends R>... classes) {
     return register(classes, classes.length);
   }
 
@@ -75,7 +74,7 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> i
    * @throws IllegalArgumentException if found a class without packet description annotation or if found duplication by
    * id.
    */
-  public @NotNull IdBasedReadablePacketRegistry<R> register(@NotNull Class<? extends R>[] classes, int length) {
+  public IdBasedReadablePacketRegistry<R> register(Class<? extends R>[] classes, int length) {
 
     var incorrectClass = Arrays
         .stream(classes, 0, length)
@@ -133,7 +132,7 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> i
    * @throws IllegalArgumentException if this class doesn't have {@link PacketDescription}, wrong id or some class is
    * already presented with the same id.
    */
-  public @NotNull IdBasedReadablePacketRegistry<R> register(@NotNull Class<? extends R> cs) {
+  public IdBasedReadablePacketRegistry<R> register(Class<? extends R> cs) {
     return register(cs, () -> ClassUtils.newInstance(cs));
   }
 
@@ -147,9 +146,9 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> i
    * @throws IllegalArgumentException if this class doesn't have {@link PacketDescription}, wrong id or some class is
    * already presented with the same id.
    */
-  public <P extends R> @NotNull IdBasedReadablePacketRegistry<R> register(
-      @NotNull Class<P> cs,
-      @NotNull Supplier<P> factory) {
+  public <P extends R> IdBasedReadablePacketRegistry<R> register(
+      Class<P> cs,
+      Supplier<P> factory) {
 
     var description = cs.getAnnotation(PacketDescription.class);
 
@@ -183,7 +182,7 @@ public class IdBasedReadablePacketRegistry<R extends IdBasedReadablePacket<R>> i
   }
 
   @Override
-  public @NotNull R findById(int id) {
+  public R findById(int id) {
 
     R[] idToPacket = getIdToPacket();
 

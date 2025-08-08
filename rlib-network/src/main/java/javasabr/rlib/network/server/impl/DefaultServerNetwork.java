@@ -30,7 +30,6 @@ import javasabr.rlib.network.UnsafeConnection;
 import javasabr.rlib.network.impl.AbstractNetwork;
 import javasabr.rlib.network.server.ServerNetwork;
 import javasabr.rlib.network.util.NetworkUtils;
-import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
@@ -50,7 +49,7 @@ public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extend
   private final ServerCompletionHandler<C> acceptHandler = new ServerCompletionHandler<>() {
 
     @Override
-    public void completed(@NotNull AsynchronousSocketChannel channel, @NotNull DefaultServerNetwork<C> network) {
+    public void completed(AsynchronousSocketChannel channel, DefaultServerNetwork<C> network) {
       var connection = network.channelToConnection.apply(DefaultServerNetwork.this, channel);
       LOGGER.debug(connection, conn -> "Accepted new connection: " + conn.getRemoteAddress());
       network.onAccept(connection);
@@ -58,7 +57,7 @@ public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extend
     }
 
     @Override
-    public void failed(@NotNull Throwable exc, @NotNull DefaultServerNetwork<C> network) {
+    public void failed(Throwable exc, DefaultServerNetwork<C> network) {
       if (exc instanceof AsynchronousCloseException) {
         LOGGER.warning("Server network was closed");
       } else {
@@ -77,8 +76,8 @@ public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extend
   protected final Array<Consumer<? super C>> subscribers;
 
   public DefaultServerNetwork(
-      @NotNull ServerNetworkConfig config,
-      @NotNull BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
+      ServerNetworkConfig config,
+      BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
 
     super(config, channelToConnection);
 
@@ -116,7 +115,7 @@ public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extend
   }
 
   @Override
-  public @NotNull InetSocketAddress start() {
+  public InetSocketAddress start() {
 
     InetSocketAddress address = null;
 
@@ -140,7 +139,7 @@ public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extend
   }
 
   @Override
-  public <S extends ServerNetwork<C>> @NotNull S start(@NotNull InetSocketAddress serverAddress) {
+  public <S extends ServerNetwork<C>> S start(InetSocketAddress serverAddress) {
     Utils.unchecked(channel, serverAddress, AsynchronousServerSocketChannel::bind);
 
     LOGGER.info(serverAddress, addr -> "Started server socket on address: " + addr);
@@ -163,23 +162,23 @@ public final class DefaultServerNetwork<C extends UnsafeConnection<?, ?>> extend
     }
   }
 
-  protected void onAccept(@NotNull C connection) {
+  protected void onAccept(C connection) {
     connection.onConnected();
     subscribers.forEachR(connection, Consumer::accept);
   }
 
   @Override
-  public void onAccept(@NotNull Consumer<? super C> consumer) {
+  public void onAccept(Consumer<? super C> consumer) {
     subscribers.add(consumer);
     acceptNext();
   }
 
   @Override
-  public @NotNull Flux<C> accepted() {
+  public Flux<C> accepted() {
     return Flux.create(this::registerFluxOnAccepted);
   }
 
-  protected void registerFluxOnAccepted(@NotNull FluxSink<C> sink) {
+  protected void registerFluxOnAccepted(FluxSink<C> sink) {
     Consumer<? super C> listener = sink::next;
     onAccept(listener);
     sink.onDispose(() -> subscribers.remove(listener));

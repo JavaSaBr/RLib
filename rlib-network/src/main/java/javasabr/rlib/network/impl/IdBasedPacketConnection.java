@@ -13,7 +13,6 @@ import javasabr.rlib.network.packet.impl.IdBasedPacketWriter;
 import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
 import lombok.AccessLevel;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
@@ -22,18 +21,18 @@ import org.jetbrains.annotations.NotNull;
 public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W extends IdBasedWritablePacket> extends
     AbstractConnection<R, W> {
 
-  private final @NotNull PacketReader packetReader;
-  private final @NotNull PacketWriter packetWriter;
-  private final @NotNull ReadablePacketRegistry<R> packetRegistry;
+  private final PacketReader packetReader;
+  private final PacketWriter packetWriter;
+  private final ReadablePacketRegistry<R> packetRegistry;
 
   private final int packetLengthHeaderSize;
   private final int packetIdHeaderSize;
 
   public IdBasedPacketConnection(
-      @NotNull Network<? extends Connection<R, W>> network,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull ReadablePacketRegistry<R> packetRegistry,
+      Network<? extends Connection<R, W>> network,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      ReadablePacketRegistry<R> packetRegistry,
       int maxPacketsByRead,
       int packetLengthHeaderSize,
       int packetIdHeaderSize) {
@@ -45,7 +44,7 @@ public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W exten
     this.packetWriter = createPacketWriter();
   }
 
-  protected @NotNull PacketReader createPacketReader() {
+  protected PacketReader createPacketReader() {
     return new IdBasedPacketReader<>(
         this,
         channel,
@@ -58,7 +57,7 @@ public class IdBasedPacketConnection<R extends IdBasedReadablePacket<R>, W exten
         packetRegistry);
   }
 
-  protected @NotNull PacketWriter createPacketWriter() {
+  protected PacketWriter createPacketWriter() {
     return new IdBasedPacketWriter<>(
         this,
         channel,

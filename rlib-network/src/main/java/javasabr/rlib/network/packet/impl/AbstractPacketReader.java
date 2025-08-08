@@ -21,8 +21,7 @@ import javasabr.rlib.network.util.NetworkUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @param <R> the readable packet's type.
@@ -37,27 +36,27 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
   private final CompletionHandler<Integer, ByteBuffer> readHandler = new CompletionHandler<>() {
 
     @Override
-    public void completed(@NotNull Integer receivedBytes, @NotNull ByteBuffer readingBuffer) {
+    public void completed(Integer receivedBytes, ByteBuffer readingBuffer) {
       handleReceivedData(receivedBytes, readingBuffer);
     }
 
     @Override
-    public void failed(@NotNull Throwable exc, @NotNull ByteBuffer readingBuffer) {
+    public void failed(Throwable exc, ByteBuffer readingBuffer) {
       handleFailedReceiving(exc, readingBuffer);
     }
   };
 
-  protected final @NotNull AtomicBoolean isReading = new AtomicBoolean(false);
+  protected final AtomicBoolean isReading = new AtomicBoolean(false);
 
-  protected final @NotNull C connection;
-  protected final @NotNull AsynchronousSocketChannel channel;
-  protected final @NotNull BufferAllocator bufferAllocator;
+  protected final C connection;
+  protected final AsynchronousSocketChannel channel;
+  protected final BufferAllocator bufferAllocator;
 
-  protected final @NotNull ByteBuffer readBuffer;
-  protected final @NotNull ByteBuffer pendingBuffer;
+  protected final ByteBuffer readBuffer;
+  protected final ByteBuffer pendingBuffer;
 
-  protected final @NotNull Runnable updateActivityFunction;
-  protected final @NotNull Consumer<? super R> readPacketHandler;
+  protected final Runnable updateActivityFunction;
+  protected final Consumer<? super R> readPacketHandler;
 
   @Getter(AccessLevel.PROTECTED)
   @Setter(AccessLevel.PROTECTED)
@@ -66,11 +65,11 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
   protected final int maxPacketsByRead;
 
   protected AbstractPacketReader(
-      @NotNull C connection,
-      @NotNull AsynchronousSocketChannel channel,
-      @NotNull BufferAllocator bufferAllocator,
-      @NotNull Runnable updateActivityFunction,
-      @NotNull NotNullConsumer<? super R> readPacketHandler,
+      C connection,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      Runnable updateActivityFunction,
+      NotNullConsumer<? super R> readPacketHandler,
       int maxPacketsByRead) {
     this.connection = connection;
     this.channel = channel;
@@ -82,7 +81,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     this.maxPacketsByRead = maxPacketsByRead;
   }
 
-  protected @NotNull ByteBuffer getBufferToReadFromChannel() {
+  protected ByteBuffer getBufferToReadFromChannel() {
     return readBuffer;
   }
 
@@ -106,7 +105,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
    * @param receivedBuffer the buffer with received data.
    * @return count of read packets.
    */
-  protected int readPackets(@NotNull ByteBuffer receivedBuffer) {
+  protected int readPackets(ByteBuffer receivedBuffer) {
     return readPackets(receivedBuffer, pendingBuffer);
   }
 
@@ -117,7 +116,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
    * @param pendingBuffer the buffer with pending data from prev. received buffer.
    * @return count of read packets.
    */
-  protected int readPackets(@NotNull ByteBuffer receivedBuffer, @NotNull ByteBuffer pendingBuffer) {
+  protected int readPackets(ByteBuffer receivedBuffer, ByteBuffer pendingBuffer) {
 
     LOGGER.debug(receivedBuffer, buf -> "Start reading packets from received buffer " + buf);
 
@@ -299,7 +298,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     return readPackets;
   }
 
-  protected void readAndHandlePacket(@NotNull ByteBuffer bufferToRead, int dataLength, @NotNull R packet) {
+  protected void readAndHandlePacket(ByteBuffer bufferToRead, int dataLength, R packet) {
     if (packet.read(connection, bufferToRead, dataLength)) {
       readPacketHandler.accept(packet);
     } else {
@@ -313,7 +312,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
    * @param buffer the buffer to read.
    * @return true if this buffer has enough data to start initial reading.
    */
-  protected abstract boolean canStartReadPacket(@NotNull ByteBuffer buffer);
+  protected abstract boolean canStartReadPacket(ByteBuffer buffer);
 
   /**
    * Calculate size of packet data.
@@ -323,7 +322,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
    * @param buffer the buffer.
    * @return the length of packet data part.
    */
-  protected int getDataLength(int packetLength, int readBytes, @NotNull ByteBuffer buffer) {
+  protected int getDataLength(int packetLength, int readBytes, ByteBuffer buffer) {
     return packetLength - readBytes;
   }
 
@@ -333,9 +332,9 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
    * @param buffer the buffer with received data.
    * @return the packet length or -1 if we have no enough data to read length.
    */
-  protected abstract int readPacketLength(@NotNull ByteBuffer buffer);
+  protected abstract int readPacketLength(ByteBuffer buffer);
 
-  protected void reAllocTempBuffers(@NotNull ByteBuffer sourceBuffer, int packetLength) {
+  protected void reAllocTempBuffers(ByteBuffer sourceBuffer, int packetLength) {
 
     LOGGER.debug(
         sourceBuffer.capacity(),
@@ -356,7 +355,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     this.tempPendingBuffer = newReadTempBuffer;
   }
 
-  protected void allocTempBuffers(@NotNull ByteBuffer sourceBuffer, int packetLength) {
+  protected void allocTempBuffers(ByteBuffer sourceBuffer, int packetLength) {
 
     LOGGER.debug(
         packetLength,
@@ -391,7 +390,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
    * @param receivedBytes the count of received bytes.
    * @param readingBuffer the currently reading buffer.
    */
-  protected void handleReceivedData(@NotNull Integer receivedBytes, @NotNull ByteBuffer readingBuffer) {
+  protected void handleReceivedData(Integer receivedBytes, ByteBuffer readingBuffer) {
     updateActivityFunction.run();
 
     if (receivedBytes == -1) {
@@ -422,7 +421,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
    * @param exception the exception.
    * @param readingBuffer the currently reading buffer.
    */
-  protected void handleFailedReceiving(@NotNull Throwable exception, @NotNull ByteBuffer readingBuffer) {
+  protected void handleFailedReceiving(Throwable exception, ByteBuffer readingBuffer) {
     if (exception instanceof AsynchronousCloseException) {
       LOGGER.info(connection, cn -> "Connection " + cn.getRemoteAddress() + " was closed.");
     } else {
@@ -440,7 +439,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
     return maxPacketsByRead;
   }
 
-  protected int readHeader(@NotNull ByteBuffer buffer, int headerSize) {
+  protected int readHeader(ByteBuffer buffer, int headerSize) {
     switch (headerSize) {
       case 1:
         return buffer.get() & 0xFF;
@@ -463,7 +462,7 @@ public abstract class AbstractPacketReader<R extends ReadablePacket, C extends C
    * @return the readable packet.
    */
   protected abstract @Nullable R createPacketFor(
-      @NotNull ByteBuffer buffer,
+      ByteBuffer buffer,
       int startPacketPosition,
       int packetLength,
       int dataLength);

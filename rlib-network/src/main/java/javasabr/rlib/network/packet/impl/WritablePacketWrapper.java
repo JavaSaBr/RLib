@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import javasabr.rlib.network.packet.WritablePacket;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The writable packet wrapper with additional attachment.
@@ -20,7 +19,7 @@ public class WritablePacketWrapper<A, W extends WritablePacket> implements Writa
   private final W packet;
 
   @Override
-  public boolean write(@NotNull ByteBuffer buffer) {
+  public boolean write(ByteBuffer buffer) {
     return packet.write(buffer);
   }
 
@@ -30,7 +29,7 @@ public class WritablePacketWrapper<A, W extends WritablePacket> implements Writa
   }
 
   @Override
-  public @NotNull String getName() {
+  public String getName() {
     return "WritablePacketWrapper";
   }
 }

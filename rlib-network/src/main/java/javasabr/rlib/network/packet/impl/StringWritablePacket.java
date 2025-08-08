@@ -2,7 +2,6 @@ package javasabr.rlib.network.packet.impl;
 
 import java.nio.ByteBuffer;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
@@ -10,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 public class StringWritablePacket extends AbstractWritablePacket {
 
-  private final @NotNull String data;
+  private final String data;
 
   @Override
-  protected void writeImpl(@NotNull ByteBuffer buffer) {
+  protected void writeImpl(ByteBuffer buffer) {
     super.writeImpl(buffer);
     writeString(buffer, data);
   }
@@ -24,7 +23,7 @@ public class StringWritablePacket extends AbstractWritablePacket {
   }
 
   @Override
-  public @NotNull String toString() {
+  public String toString() {
     return "StringWritablePacket {\n" + "\"\tdataLength\":" + data.length() + "\n}";
   }
 }

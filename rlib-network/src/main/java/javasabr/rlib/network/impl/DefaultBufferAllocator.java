@@ -8,7 +8,6 @@ import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.NetworkConfig;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The default byte buffer allocator.
@@ -20,13 +19,13 @@ public class DefaultBufferAllocator implements BufferAllocator {
 
   private static final Logger LOGGER = LoggerManager.getLogger(DefaultBufferAllocator.class);
 
-  protected final @NotNull Pool<ByteBuffer> readBufferPool;
-  protected final @NotNull Pool<ByteBuffer> pendingBufferPool;
-  protected final @NotNull Pool<ByteBuffer> writeBufferPool;
+  protected final Pool<ByteBuffer> readBufferPool;
+  protected final Pool<ByteBuffer> pendingBufferPool;
+  protected final Pool<ByteBuffer> writeBufferPool;
 
-  protected final @NotNull NetworkConfig config;
+  protected final NetworkConfig config;
 
-  public DefaultBufferAllocator(@NotNull NetworkConfig config) {
+  public DefaultBufferAllocator(NetworkConfig config) {
     this.config = config;
     this.readBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
     this.pendingBufferPool = PoolFactory.newConcurrentStampedLockPool(ByteBuffer.class);
@@ -34,7 +33,7 @@ public class DefaultBufferAllocator implements BufferAllocator {
   }
 
   @Override
-  public @NotNull ByteBuffer takeReadBuffer() {
+  public ByteBuffer takeReadBuffer() {
     var bufferSize = config.getReadBufferSize();
     LOGGER.debug(bufferSize, size -> "Allocate a new read buffer with size: " + size);
     return config.isDirectByteBuffer()
@@ -46,7 +45,7 @@ public class DefaultBufferAllocator implements BufferAllocator {
   }
 
   @Override
-  public @NotNull ByteBuffer takePendingBuffer() {
+  public ByteBuffer takePendingBuffer() {
     var bufferSize = config.getPendingBufferSize();
     LOGGER.debug(bufferSize, size -> "Allocate a new pending buffer with size: " + size);
     return config.isDirectByteBuffer()
@@ -58,7 +57,7 @@ public class DefaultBufferAllocator implements BufferAllocator {
   }
 
   @Override
-  public @NotNull ByteBuffer takeWriteBuffer() {
+  public ByteBuffer takeWriteBuffer() {
     var bufferSize = config.getWriteBufferSize();
     LOGGER.debug(bufferSize, size -> "Allocate a new write buffer with size: " + size);
     return config.isDirectByteBuffer()
@@ -70,7 +69,7 @@ public class DefaultBufferAllocator implements BufferAllocator {
   }
 
   @Override
-  public @NotNull ByteBuffer takeBuffer(int bufferSize) {
+  public ByteBuffer takeBuffer(int bufferSize) {
     LOGGER.debug(bufferSize, size -> "Allocate a new buffer with size: " + size);
     return config.isDirectByteBuffer()
            ? ByteBuffer.allocateDirect(bufferSize)
@@ -81,25 +80,25 @@ public class DefaultBufferAllocator implements BufferAllocator {
   }
 
   @Override
-  public @NotNull DefaultBufferAllocator putReadBuffer(@NotNull ByteBuffer buffer) {
+  public DefaultBufferAllocator putReadBuffer(ByteBuffer buffer) {
     LOGGER.debug("Skip storing a read buffer");
     return this;
   }
 
   @Override
-  public @NotNull DefaultBufferAllocator putPendingBuffer(@NotNull ByteBuffer buffer) {
+  public DefaultBufferAllocator putPendingBuffer(ByteBuffer buffer) {
     LOGGER.debug("Skip storing a pending buffer");
     return this;
   }
 
   @Override
-  public @NotNull DefaultBufferAllocator putWriteBuffer(@NotNull ByteBuffer buffer) {
+  public DefaultBufferAllocator putWriteBuffer(ByteBuffer buffer) {
     LOGGER.debug("Skip storing a write buffer");
     return this;
   }
 
   @Override
-  public @NotNull BufferAllocator putBuffer(@NotNull ByteBuffer buffer) {
+  public BufferAllocator putBuffer(ByteBuffer buffer) {
     LOGGER.debug("Skip storing a mapped byte buffer");
     return this;
   }
