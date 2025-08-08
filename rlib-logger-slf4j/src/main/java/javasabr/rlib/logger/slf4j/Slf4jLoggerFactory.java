@@ -4,7 +4,6 @@ import java.io.Writer;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerListener;
-import org.jetbrains.annotations.NotNull;
 
 public class Slf4jLoggerFactory implements LoggerFactory {
 
@@ -15,37 +14,37 @@ public class Slf4jLoggerFactory implements LoggerFactory {
   }
 
   @Override
-  public @NotNull Logger make(@NotNull String name) {
+  public Logger make(String name) {
     return new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(name));
   }
 
   @Override
-  public @NotNull Logger make(@NotNull Class<?> type) {
+  public Logger make(Class<?> type) {
     return new Slf4jLogger(org.slf4j.LoggerFactory.getLogger(type));
   }
 
   @Override
-  public @NotNull Logger getDefault() {
+  public Logger getDefault() {
     return logger;
   }
 
   @Override
-  public void addListener(@NotNull LoggerListener listener) {
+  public void addListener(LoggerListener listener) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void addWriter(@NotNull Writer writer) {
+  public void addWriter(Writer writer) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void removeListener(@NotNull LoggerListener listener) {
+  public void removeListener(LoggerListener listener) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void removeWriter(@NotNull Writer writer) {
+  public void removeWriter(Writer writer) {
     throw new UnsupportedOperationException();
   }
 }

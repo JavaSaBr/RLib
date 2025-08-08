@@ -4,7 +4,6 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ServiceLoader;
 import javasabr.rlib.logger.api.impl.NullLoggerFactory;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The class to manage loggers.
@@ -61,7 +60,7 @@ public class LoggerManager {
    *
    * @param listener the new listener.
    */
-  public static void addListener(@NotNull LoggerListener listener) {
+  public static void addListener(LoggerListener listener) {
     LOGGER_FACTORY.addListener(listener);
   }
 
@@ -70,7 +69,7 @@ public class LoggerManager {
    *
    * @param writer the new writer.
    */
-  public static void addWriter(@NotNull Writer writer) {
+  public static void addWriter(Writer writer) {
     LOGGER_FACTORY.addWriter(writer);
   }
 
@@ -79,7 +78,7 @@ public class LoggerManager {
    *
    * @return the main logger.
    */
-  public static @NotNull Logger getDefaultLogger() {
+  public static Logger getDefaultLogger() {
     return LOGGER_FACTORY.getDefault();
   }
 
@@ -89,7 +88,7 @@ public class LoggerManager {
    * @param cs the class.
    * @return the logger for the class.
    */
-  public static @NotNull Logger getLogger(@NotNull Class<?> cs) {
+  public static Logger getLogger(Class<?> cs) {
     return LOGGER_FACTORY.make(cs);
   }
 
@@ -99,7 +98,7 @@ public class LoggerManager {
    * @param id the id.
    * @return the logger for the class.
    */
-  public static @NotNull Logger getLogger(@NotNull String id) {
+  public static Logger getLogger(String id) {
     return LOGGER_FACTORY.make(id);
   }
 
@@ -108,7 +107,7 @@ public class LoggerManager {
    *
    * @param listener the listener.
    */
-  public static void removeListener(@NotNull LoggerListener listener) {
+  public static void removeListener(LoggerListener listener) {
     LOGGER_FACTORY.removeListener(listener);
   }
 
@@ -117,7 +116,7 @@ public class LoggerManager {
    *
    * @param writer the writer.
    */
-  public static void removeWriter(@NotNull Writer writer) {
+  public static void removeWriter(Writer writer) {
     LOGGER_FACTORY.removeWriter(writer);
   }
 
@@ -127,7 +126,7 @@ public class LoggerManager {
    * @param cs the class which use its own logger.
    * @param level the logger level to enable.
    */
-  public static void enable(@NotNull Class<?> cs, @NotNull LoggerLevel level) {
+  public static void enable(Class<?> cs, LoggerLevel level) {
     getLogger(cs).setEnabled(level, true);
   }
 
@@ -137,7 +136,7 @@ public class LoggerManager {
    * @param cs the class which use its own logger.
    * @param level the logger level to disable.
    */
-  public static void disable(@NotNull Class<?> cs, @NotNull LoggerLevel level) {
+  public static void disable(Class<?> cs, LoggerLevel level) {
     getLogger(cs).setEnabled(level, false);
   }
 }

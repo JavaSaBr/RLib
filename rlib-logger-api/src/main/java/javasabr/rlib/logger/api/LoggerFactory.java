@@ -1,7 +1,6 @@
 package javasabr.rlib.logger.api;
 
 import java.io.Writer;
-import org.jetbrains.annotations.NotNull;
 
 public interface LoggerFactory {
 
@@ -11,7 +10,7 @@ public interface LoggerFactory {
    * @param name the logger's name.
    * @return the new logger.
    */
-  @NotNull Logger make(@NotNull String name);
+  Logger make(String name);
 
   /**
    * Make a new logger for the type.
@@ -19,40 +18,40 @@ public interface LoggerFactory {
    * @param type the logger's type.
    * @return the new logger.
    */
-  @NotNull Logger make(@NotNull Class<?> type);
+  Logger make(Class<?> type);
 
   /**
    * Get a default logger.
    *
    * @return he default logger.
    */
-  @NotNull Logger getDefault();
+  Logger getDefault();
 
   /**
    * Add the new listener.
    *
    * @param listener the new listener.
    */
-  void addListener(@NotNull LoggerListener listener);
+  void addListener(LoggerListener listener);
 
   /**
    * Add the new writer.
    *
    * @param writer the new writer.
    */
-  void addWriter(@NotNull Writer writer);
+  void addWriter(Writer writer);
 
   /**
    * Remove the listener.
    *
    * @param listener the listener.
    */
-  void removeListener(@NotNull LoggerListener listener);
+  void removeListener(LoggerListener listener);
 
   /**
    * Remove the writer.
    *
    * @param writer the writer.
    */
-  void removeWriter(@NotNull Writer writer);
+  void removeWriter(Writer writer);
 }

@@ -1,7 +1,6 @@
 package javasabr.rlib.logger.api;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface to implement a logger.
@@ -13,49 +12,49 @@ public interface Logger {
   @FunctionalInterface
   interface Factory {
 
-    @NotNull String make();
+    String make();
   }
 
   @FunctionalInterface
   interface SinFactory<F> {
 
-    @NotNull String make(@NotNull F first);
+    String make(F first);
   }
 
   @FunctionalInterface
   interface IntSinFactory {
 
-    @NotNull String make(int val);
+    String make(int val);
   }
 
   @FunctionalInterface
   interface BiFactory<F, S> {
 
-    @NotNull String make(@NotNull F first, @NotNull S second);
+    String make(F first, S second);
   }
 
   @FunctionalInterface
   interface NullableBiFactory<F, S> {
 
-    @NotNull String make(@Nullable F first, @Nullable S second);
+    String make(@Nullable F first, @Nullable S second);
   }
 
   @FunctionalInterface
   interface ObjIntFactory<F> {
 
-    @NotNull String make(@NotNull F first, int second);
+    String make(F first, int second);
   }
 
   @FunctionalInterface
   interface IntBiFactory {
 
-    @NotNull String make(int first, int second);
+    String make(int first, int second);
   }
 
   @FunctionalInterface
   interface TriFactory<F, S, T> {
 
-    @NotNull String make(@NotNull F first, @NotNull S second, @NotNull T third);
+    String make(F first, S second, T third);
   }
 
   /**
@@ -63,7 +62,7 @@ public interface Logger {
    *
    * @param message the message.
    */
-  default void debug(@NotNull String message) {
+  default void debug(String message) {
     print(LoggerLevel.DEBUG, message);
   }
 
@@ -73,7 +72,7 @@ public interface Logger {
    * @param arg the arg for the message factory.
    * @param messageFactory the message factory.
    */
-  default void debug(int arg, @NotNull Logger.IntSinFactory messageFactory) {
+  default void debug(int arg, Logger.IntSinFactory messageFactory) {
     print(LoggerLevel.DEBUG, arg, messageFactory);
   }
 
@@ -84,7 +83,7 @@ public interface Logger {
    * @param messageFactory the message factory.
    * @param <T> the argument's type.
    */
-  default <T> void debug(@NotNull T arg, @NotNull Logger.SinFactory<T> messageFactory) {
+  default <T> void debug(T arg, Logger.SinFactory<T> messageFactory) {
     print(LoggerLevel.DEBUG, arg, messageFactory);
   }
 
@@ -97,7 +96,7 @@ public interface Logger {
    * @param <F> the first argument's type.
    * @param <S> the second argument's type.
    */
-  default <F, S> void debug(@NotNull F first, @NotNull S second, @NotNull Logger.BiFactory<F, S> messageFactory) {
+  default <F, S> void debug(F first, S second, Logger.BiFactory<F, S> messageFactory) {
     print(LoggerLevel.DEBUG, first, second, messageFactory);
   }
 
@@ -113,7 +112,7 @@ public interface Logger {
   default <F, S> void debugNullable(
       @Nullable F first,
       @Nullable S second,
-      @NotNull Logger.NullableBiFactory<F, S> messageFactory) {
+      Logger.NullableBiFactory<F, S> messageFactory) {
     print(LoggerLevel.DEBUG, first, second, messageFactory);
   }
 
@@ -125,7 +124,7 @@ public interface Logger {
    * @param messageFactory the message factory.
    * @param <F> the first argument's type.
    */
-  default <F> void debug(@NotNull F first, int second, @NotNull Logger.ObjIntFactory<F> messageFactory) {
+  default <F> void debug(F first, int second, Logger.ObjIntFactory<F> messageFactory) {
     print(LoggerLevel.DEBUG, first, second, messageFactory);
   }
 
@@ -136,7 +135,7 @@ public interface Logger {
    * @param second the second arg for the message factory.
    * @param messageFactory the message factory.
    */
-  default void debug(int first, int second, @NotNull Logger.IntBiFactory messageFactory) {
+  default void debug(int first, int second, Logger.IntBiFactory messageFactory) {
     print(LoggerLevel.DEBUG, first, second, messageFactory);
   }
 
@@ -152,10 +151,10 @@ public interface Logger {
    * @param <T> the third argument's type.
    */
   default <F, S, T> void debug(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull T third,
-      @NotNull Logger.TriFactory<F, S, T> messageFactory) {
+      F first,
+      S second,
+      T third,
+      Logger.TriFactory<F, S, T> messageFactory) {
     print(LoggerLevel.DEBUG, first, second, third, messageFactory);
   }
 
@@ -164,7 +163,7 @@ public interface Logger {
    *
    * @param message the message.
    */
-  default void error(@NotNull String message) {
+  default void error(String message) {
     print(LoggerLevel.ERROR, message);
   }
 
@@ -173,7 +172,7 @@ public interface Logger {
    *
    * @param exception the exception.
    */
-  default void error(@NotNull Throwable exception) {
+  default void error(Throwable exception) {
     print(LoggerLevel.ERROR, exception);
   }
 
@@ -182,7 +181,7 @@ public interface Logger {
    *
    * @param message the message.
    */
-  default void info(@NotNull String message) {
+  default void info(String message) {
     print(LoggerLevel.INFO, message);
   }
 
@@ -193,7 +192,7 @@ public interface Logger {
    * @param messageFactory the message factory.
    * @param <T> the argument's type.
    */
-  default <T> void info(@NotNull T arg, @NotNull Logger.SinFactory<T> messageFactory) {
+  default <T> void info(T arg, Logger.SinFactory<T> messageFactory) {
     print(LoggerLevel.INFO, arg, messageFactory);
   }
 
@@ -206,7 +205,7 @@ public interface Logger {
    * @param <F> the first argument's type.
    * @param <S> the second argument's type.
    */
-  default <F, S> void info(@NotNull F first, @NotNull S second, @NotNull Logger.BiFactory<F, S> messageFactory) {
+  default <F, S> void info(F first, S second, Logger.BiFactory<F, S> messageFactory) {
     print(LoggerLevel.INFO, first, second, messageFactory);
   }
 
@@ -222,10 +221,10 @@ public interface Logger {
    * @param <T> the third argument's type.
    */
   default <F, S, T> void info(
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull T third,
-      @NotNull Logger.TriFactory<F, S, T> messageFactory) {
+      F first,
+      S second,
+      T third,
+      Logger.TriFactory<F, S, T> messageFactory) {
     print(LoggerLevel.INFO, first, second, third, messageFactory);
   }
 
@@ -235,7 +234,7 @@ public interface Logger {
    * @param level the logger level.
    * @return true if the level is enabled.
    */
-  default boolean isEnabled(@NotNull LoggerLevel level) {
+  default boolean isEnabled(LoggerLevel level) {
     return level.isEnabled();
   }
 
@@ -246,7 +245,7 @@ public interface Logger {
    * @param enabled true if need to be enabled.
    * @return true if the status was changed.
    */
-  default boolean setEnabled(@NotNull LoggerLevel level, boolean enabled) {
+  default boolean setEnabled(LoggerLevel level, boolean enabled) {
     return false;
   }
 
@@ -256,7 +255,7 @@ public interface Logger {
    * @param level the logger level.
    * @return true if the status was changed.
    */
-  default boolean applyDefault(@NotNull LoggerLevel level) {
+  default boolean applyDefault(LoggerLevel level) {
     return false;
   }
 
@@ -265,7 +264,7 @@ public interface Logger {
    *
    * @param message the message.
    */
-  default void warning(@NotNull String message) {
+  default void warning(String message) {
     print(LoggerLevel.WARNING, message);
   }
 
@@ -274,7 +273,7 @@ public interface Logger {
    *
    * @param exception the exception.
    */
-  default void warning(@NotNull Throwable exception) {
+  default void warning(Throwable exception) {
     print(LoggerLevel.WARNING, exception);
   }
 
@@ -285,7 +284,7 @@ public interface Logger {
    * @param messageFactory the message factory.
    * @param <A> the argument's type.
    */
-  default <A> void warning(@NotNull A arg, @NotNull Logger.SinFactory<A> messageFactory) {
+  default <A> void warning(A arg, Logger.SinFactory<A> messageFactory) {
     print(LoggerLevel.WARNING, arg, messageFactory);
   }
 
@@ -298,7 +297,7 @@ public interface Logger {
    * @param <F> the first argument's type.
    * @param <S> the second argument's type.
    */
-  default <F, S> void warning(@NotNull F first, @NotNull S second, @NotNull Logger.BiFactory<F, S> messageFactory) {
+  default <F, S> void warning(F first, S second, Logger.BiFactory<F, S> messageFactory) {
     print(LoggerLevel.WARNING, first, second, messageFactory);
   }
 
@@ -308,7 +307,7 @@ public interface Logger {
    * @param level the level of the message.
    * @param message the message.
    */
-  void print(@NotNull LoggerLevel level, @NotNull String message);
+  void print(LoggerLevel level, String message);
 
   /**
    * Print the message.
@@ -316,7 +315,7 @@ public interface Logger {
    * @param level the level of the message.
    * @param exception the exception.
    */
-  void print(@NotNull LoggerLevel level, @NotNull Throwable exception);
+  void print(LoggerLevel level, Throwable exception);
 
   /**
    * Print a build message.
@@ -326,7 +325,7 @@ public interface Logger {
    * @param messageFactory the message factory.
    * @param <T> the argument's type.
    */
-  default <T> void print(@NotNull LoggerLevel level, @NotNull T arg, @NotNull Logger.SinFactory<T> messageFactory) {
+  default <T> void print(LoggerLevel level, T arg, Logger.SinFactory<T> messageFactory) {
     if (isEnabled(level)) {
       print(level, messageFactory.make(arg));
     }
@@ -339,7 +338,7 @@ public interface Logger {
    * @param arg the arg for the message factory.
    * @param messageFactory the message factory.
    */
-  default void print(@NotNull LoggerLevel level, int arg, @NotNull Logger.IntSinFactory messageFactory) {
+  default void print(LoggerLevel level, int arg, Logger.IntSinFactory messageFactory) {
     if (isEnabled(level)) {
       print(level, messageFactory.make(arg));
     }
@@ -356,10 +355,10 @@ public interface Logger {
    * @param <S> the second argument's type.
    */
   default <F, S> void print(
-      @NotNull LoggerLevel level,
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull Logger.BiFactory<F, S> messageFactory) {
+      LoggerLevel level,
+      F first,
+      S second,
+      Logger.BiFactory<F, S> messageFactory) {
     if (isEnabled(level)) {
       print(level, messageFactory.make(first, second));
     }
@@ -376,10 +375,10 @@ public interface Logger {
    * @param <S> the second argument's type.
    */
   default <F, S> void print(
-      @NotNull LoggerLevel level,
+      LoggerLevel level,
       @Nullable F first,
       @Nullable S second,
-      @NotNull Logger.NullableBiFactory<F, S> messageFactory) {
+      Logger.NullableBiFactory<F, S> messageFactory) {
     if (isEnabled(level)) {
       print(level, messageFactory.make(first, second));
     }
@@ -395,10 +394,10 @@ public interface Logger {
    * @param <F> the first argument's type.
    */
   default <F> void print(
-      @NotNull LoggerLevel level,
-      @NotNull F first,
+      LoggerLevel level,
+      F first,
       int second,
-      @NotNull Logger.ObjIntFactory<F> messageFactory) {
+      Logger.ObjIntFactory<F> messageFactory) {
     if (isEnabled(level)) {
       print(level, messageFactory.make(first, second));
     }
@@ -412,7 +411,7 @@ public interface Logger {
    * @param second the second arg for the message factory.
    * @param messageFactory the message factory.
    */
-  default void print(@NotNull LoggerLevel level, int first, int second, @NotNull Logger.IntBiFactory messageFactory) {
+  default void print(LoggerLevel level, int first, int second, Logger.IntBiFactory messageFactory) {
     if (isEnabled(level)) {
       print(level, messageFactory.make(first, second));
     }
@@ -431,11 +430,11 @@ public interface Logger {
    * @param <T> the third argument's type.
    */
   default <F, S, T> void print(
-      @NotNull LoggerLevel level,
-      @NotNull F first,
-      @NotNull S second,
-      @NotNull T third,
-      @NotNull Logger.TriFactory<F, S, T> messageFactory) {
+      LoggerLevel level,
+      F first,
+      S second,
+      T third,
+      Logger.TriFactory<F, S, T> messageFactory) {
 
     if (isEnabled(level)) {
       print(level, messageFactory.make(first, second, third));

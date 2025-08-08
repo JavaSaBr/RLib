@@ -4,40 +4,37 @@ import java.io.Writer;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerListener;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class NullLoggerFactory implements LoggerFactory {
 
   private static final NullLogger NULL_LOGGER = new NullLogger();
 
   @Override
-  public @NotNull Logger make(@NotNull String name) {
+  public Logger make(String name) {
     return NULL_LOGGER;
   }
 
   @Override
-  public @NotNull Logger make(@NotNull Class<?> type) {
+  public Logger make(Class<?> type) {
     return NULL_LOGGER;
   }
 
   @Override
-  public @NotNull Logger getDefault() {
+  public Logger getDefault() {
     return NULL_LOGGER;
   }
 
   @Override
-  public void addListener(@NotNull LoggerListener listener) {
-  }
+  public void addListener(LoggerListener listener) {}
 
   @Override
-  public void addWriter(@NotNull Writer writer) {
-  }
+  public void addWriter(Writer writer) {}
 
   @Override
-  public void removeListener(@NotNull LoggerListener listener) {
-  }
+  public void removeListener(LoggerListener listener) {}
 
   @Override
-  public void removeWriter(@NotNull Writer writer) {
-  }
+  public void removeWriter(Writer writer) {}
 }

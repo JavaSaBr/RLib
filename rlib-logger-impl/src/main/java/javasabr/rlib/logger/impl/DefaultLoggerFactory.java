@@ -14,7 +14,6 @@ import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerListener;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The class for managing loggers.
@@ -26,27 +25,27 @@ public class DefaultLoggerFactory implements LoggerFactory {
   /**
    * The dictionary of all created loggers.
    */
-  private final @NotNull ConcurrentMap<String, Logger> loggers;
+  private final ConcurrentMap<String, Logger> loggers;
 
   /**
    * The main logger.
    */
-  private final @NotNull Logger logger;
+  private final Logger logger;
 
   /**
    * The list of listeners.
    */
-  private final @NotNull ConcurrentArray<LoggerListener> listeners;
+  private final ConcurrentArray<LoggerListener> listeners;
 
   /**
    * The list of writers.
    */
-  private final @NotNull ConcurrentArray<Writer> writers;
+  private final ConcurrentArray<Writer> writers;
 
   /**
    * The date time formatter.
    */
-  private final @NotNull DateTimeFormatter timeFormatter;
+  private final DateTimeFormatter timeFormatter;
 
   public DefaultLoggerFactory() {
     this.loggers = new ConcurrentHashMap<>();
@@ -57,37 +56,37 @@ public class DefaultLoggerFactory implements LoggerFactory {
   }
 
   @Override
-  public void addListener(@NotNull LoggerListener listener) {
+  public void addListener(LoggerListener listener) {
     listeners.runInWriteLock(listener, Array::add);
   }
 
   @Override
-  public void addWriter(@NotNull Writer writer) {
+  public void addWriter(Writer writer) {
     writers.runInWriteLock(writer, Array::add);
   }
 
   @Override
-  public @NotNull Logger getDefault() {
+  public Logger getDefault() {
     return logger;
   }
 
   @Override
-  public @NotNull Logger make(@NotNull Class<?> type) {
+  public Logger make(Class<?> type) {
     return notNull(loggers.computeIfAbsent(type.getSimpleName(), name -> new DefaultLogger(name, this)));
   }
 
   @Override
-  public @NotNull Logger make(@NotNull String name) {
+  public Logger make(String name) {
     return notNull(loggers.computeIfAbsent(name, str -> new DefaultLogger(str, this)));
   }
 
   @Override
-  public void removeListener(@NotNull LoggerListener listener) {
+  public void removeListener(LoggerListener listener) {
     listeners.runInWriteLock(listener, Array::remove);
   }
 
   @Override
-  public void removeWriter(@NotNull Writer writer) {
+  public void removeWriter(Writer writer) {
     writers.runInWriteLock(writer, Array::remove);
   }
 
@@ -98,7 +97,7 @@ public class DefaultLoggerFactory implements LoggerFactory {
    * @param name the name of owner.
    * @param message the message.
    */
-  void write(@NotNull LoggerLevel level, @NotNull String name, @NotNull String message) {
+  void write(LoggerLevel level, String name, String message) {
 
     var timeStump = timeFormatter.format(LocalTime.now());
     var result = level.getTitle() + ' ' + timeStump + ' ' + name + ": " + message;
@@ -112,7 +111,7 @@ public class DefaultLoggerFactory implements LoggerFactory {
    * @param level the level of the result message.
    * @param resultMessage the result message.
    */
-  private void write(@NotNull LoggerLevel level, @NotNull String resultMessage) {
+  private void write(LoggerLevel level, String resultMessage) {
 
     listeners.forEachInReadLockR(resultMessage, LoggerListener::println);
     writers.forEachInReadLockR(resultMessage, DefaultLoggerFactory::append);
@@ -127,7 +126,7 @@ public class DefaultLoggerFactory implements LoggerFactory {
     writers.forEachInReadLock(DefaultLoggerFactory::flush);
   }
 
-  private static void append(@NotNull Writer writer, @NotNull String toWrite) {
+  private static void append(Writer writer, String toWrite) {
     try {
       writer.append(toWrite);
       writer.append('\n');
@@ -136,7 +135,7 @@ public class DefaultLoggerFactory implements LoggerFactory {
     }
   }
 
-  private static void flush(@NotNull Writer writer) {
+  private static void flush(Writer writer) {
     try {
       writer.flush();
     } catch (IOException e) {

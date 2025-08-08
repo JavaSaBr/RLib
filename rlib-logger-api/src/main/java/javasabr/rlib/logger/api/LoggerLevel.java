@@ -2,7 +2,6 @@ package javasabr.rlib.logger.api;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The list of logging levels.
@@ -34,7 +33,6 @@ public enum LoggerLevel {
    * The level title.
    */
   @Setter
-  @NotNull
   private String title;
 
   /**
@@ -48,7 +46,7 @@ public enum LoggerLevel {
    */
   private boolean forceFlush;
 
-  LoggerLevel(@NotNull String title, boolean forceFlush, boolean enabled) {
+  LoggerLevel(String title, boolean forceFlush, boolean enabled) {
     this.title = title;
     this.forceFlush = forceFlush;
     this.enabled = enabled;

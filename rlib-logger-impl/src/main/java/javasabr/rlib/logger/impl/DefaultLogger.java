@@ -4,7 +4,6 @@ import java.util.Objects;
 import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The base implementation of the logger.
@@ -30,39 +29,39 @@ public final class DefaultLogger implements Logger {
    */
   private final DefaultLoggerFactory loggerFactory;
 
-  public DefaultLogger(@NotNull String name, @NotNull DefaultLoggerFactory loggerFactory) {
+  public DefaultLogger(String name, DefaultLoggerFactory loggerFactory) {
     this.name = name;
     this.loggerFactory = loggerFactory;
     this.override = new Boolean[VALUES.length];
   }
 
   @Override
-  public boolean isEnabled(@NotNull LoggerLevel level) {
+  public boolean isEnabled(LoggerLevel level) {
     var value = override[level.ordinal()];
     return Objects.requireNonNullElse(value, level.isEnabled());
   }
 
   @Override
-  public boolean setEnabled(@NotNull LoggerLevel level, boolean enabled) {
+  public boolean setEnabled(LoggerLevel level, boolean enabled) {
     override[level.ordinal()] = enabled;
     return true;
   }
 
   @Override
-  public boolean applyDefault(@NotNull LoggerLevel level) {
+  public boolean applyDefault(LoggerLevel level) {
     override[level.ordinal()] = null;
     return true;
   }
 
   @Override
-  public void print(@NotNull LoggerLevel level, @NotNull String message) {
+  public void print(LoggerLevel level, String message) {
     if (isEnabled(level)) {
       loggerFactory.write(level, name, message);
     }
   }
 
   @Override
-  public void print(@NotNull LoggerLevel level, @NotNull Throwable exception) {
+  public void print(LoggerLevel level, Throwable exception) {
     if (isEnabled(level)) {
       loggerFactory.write(level, name, StringUtils.toString(exception));
     }

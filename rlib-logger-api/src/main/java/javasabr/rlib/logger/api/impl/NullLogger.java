@@ -2,17 +2,14 @@ package javasabr.rlib.logger.api.impl;
 
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public final class NullLogger implements Logger {
 
   @Override
-  public void print(@NotNull LoggerLevel level, @NotNull String message) {
-
-  }
+  public void print(LoggerLevel level, String message) {}
 
   @Override
-  public void print(@NotNull LoggerLevel level, @NotNull Throwable exception) {
-
-  }
+  public void print(LoggerLevel level, Throwable exception) {}
 }

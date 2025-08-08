@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javasabr.rlib.logger.api.LoggerListener;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The implementation of a logger listener to save log to files in a directory.
@@ -23,7 +22,6 @@ public class FolderFileListener implements LoggerListener {
   /**
    * The folder with log files.
    */
-  @NotNull
   private final Path folder;
 
   /**
@@ -31,7 +29,7 @@ public class FolderFileListener implements LoggerListener {
    */
   private Writer writer;
 
-  public FolderFileListener(@NotNull Path folder) {
+  public FolderFileListener(Path folder) {
 
     if (!Files.isDirectory(folder)) {
       throw new IllegalArgumentException("file is not directory.");
@@ -55,7 +53,7 @@ public class FolderFileListener implements LoggerListener {
    * @return the writer.
    * @throws IOException the io exception
    */
-  public @NotNull Writer getWriter() throws IOException {
+  public Writer getWriter() throws IOException {
 
     if (writer == null) {
 
@@ -69,7 +67,7 @@ public class FolderFileListener implements LoggerListener {
   }
 
   @Override
-  public void println(@NotNull String text) {
+  public void println(String text) {
     try {
       var writer = getWriter();
       writer.append(text);
