@@ -1,13 +1,14 @@
 package javasabr.rlib.common.util.array.impl;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.Array;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base implementation of dynamic arrays.
@@ -15,85 +16,86 @@ import org.jetbrains.annotations.Nullable;
  * @param <E> the array's element type.
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractArray<E> implements Array<E> {
 
-    private static final long serialVersionUID = 2113052245369887690L;
+  @Serial
+  private static final long serialVersionUID = 2113052245369887690L;
 
-    /**
-     * The default size of new backend array.
-     */
-    protected static final int DEFAULT_CAPACITY = 10;
+  /**
+   * The default size of new backend array.
+   */
+  protected static final int DEFAULT_CAPACITY = 10;
 
-    public AbstractArray(@NotNull Class<? super E> type) {
-        this(type, DEFAULT_CAPACITY);
+  public AbstractArray(Class<? super E> type) {
+    this(type, DEFAULT_CAPACITY);
+  }
+
+  public AbstractArray(Class<? super E> type, int capacity) {
+    super();
+
+    if (capacity < 0) {
+      throw new IllegalArgumentException("Negative capacity");
     }
 
-    public AbstractArray(@NotNull Class<? super E> type, int capacity) {
-        super();
+    setArray(ArrayUtils.create(type, capacity));
+  }
 
-        if (capacity < 0) {
-            throw new IllegalArgumentException("Negative capacity");
-        }
+  public AbstractArray(E[] array) {
+    super();
+    setArray(array);
+    setSize(array.length);
+  }
 
-        setArray(ArrayUtils.create(type, capacity));
+  @Override
+  public void clear() {
+    if (!isEmpty()) {
+      ArrayUtils.clear(array());
+      setSize(0);
+    }
+  }
+
+  @Override
+  public void free() {
+    clear();
+  }
+
+  @Override
+  public AbstractArray<E> clone() throws CloneNotSupportedException {
+    return ClassUtils.unsafeNNCast(super.clone());
+  }
+
+  protected abstract void setArray(E [] array);
+
+  protected abstract void setSize(int size);
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " size = " + size() + " :\n " + ArrayUtils.toString(this);
+  }
+
+  @Override
+  public String toString(Function<E, String> toString) {
+    return getClass().getSimpleName() + " size = " + size() + " :\n " + ArrayUtils.toString(this, toString);
+  }
+
+  @Override
+  public boolean equals(@Nullable Object another) {
+
+    if (this == another) {
+      return true;
+    } else if (!(another instanceof Array)) {
+      return false;
     }
 
-    public AbstractArray(@NotNull E[] array) {
-        super();
-        setArray(array);
-        setSize(array.length);
-    }
+    var array = (Array<?>) another;
+    return size() == array.size() && Arrays.equals(array(), 0, size(), array.array(), 0, array.size());
+  }
 
-    @Override
-    public void clear() {
-        if (!isEmpty()) {
-            ArrayUtils.clear(array());
-            setSize(0);
-        }
-    }
-
-    @Override
-    public void free() {
-        clear();
-    }
-
-    @Override
-    public @NotNull AbstractArray<E> clone() throws CloneNotSupportedException {
-        return ClassUtils.unsafeNNCast(super.clone());
-    }
-
-    protected abstract void setArray(E @NotNull [] array);
-    protected abstract void setSize(int size);
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + " size = " + size() +
-                " :\n " + ArrayUtils.toString(this);
-    }
-
-    @Override
-    public @NotNull String toString(@NotNull Function<E, @NotNull String> toString) {
-        return getClass().getSimpleName() + " size = " + size() +
-                " :\n " + ArrayUtils.toString(this, toString);
-    }
-
-    @Override
-    public boolean equals(@Nullable Object another) {
-
-        if (this == another) {
-            return true;
-        } else if (!(another instanceof Array)) {
-            return false;
-        }
-
-        var array = (Array<?>) another;
-        return size() == array.size() && Arrays.equals(array(), 0, size(), array.array(), 0, array.size());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(size());
-        result = 31 * result + Arrays.hashCode(array());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(size());
+    result = 31 * result + Arrays.hashCode(array());
+    return result;
+  }
 }

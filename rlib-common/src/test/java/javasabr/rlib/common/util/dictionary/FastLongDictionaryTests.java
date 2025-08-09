@@ -16,62 +16,63 @@ import org.junit.jupiter.api.Test;
  */
 public class FastLongDictionaryTests {
 
-    @Test
-    void generalTest() {
+  @Test
+  void generalTest() {
 
-        var dictionary = DictionaryFactory.<String>newLongDictionary();
-        dictionary.put(5, "5");
-        dictionary.put(6, "6");
+    var dictionary = DictionaryFactory.<String>newLongDictionary();
+    dictionary.put(5, "5");
+    dictionary.put(6, "6");
 
-        assertEquals(2, dictionary.size());
+    assertEquals(2, dictionary.size());
 
-        dictionary.put(7, "7");
+    dictionary.put(7, "7");
 
-        assertEquals(3, dictionary.size());
-        assertEquals("7", dictionary.get(7));
+    assertEquals(3, dictionary.size());
+    assertEquals("7", dictionary.get(7));
 
-        assertEquals("8", dictionary.getOrCompute(8, () -> "8"));
-        assertEquals("9", dictionary.getOrCompute(9, key -> "9"));
+    assertEquals("8", dictionary.getOrCompute(8, () -> "8"));
+    assertEquals("9", dictionary.getOrCompute(9, key -> "9"));
 
-        assertEquals(5, dictionary.size());
+    assertEquals(5, dictionary.size());
 
-        assertEquals("8", dictionary.remove(8));
+    assertEquals("8", dictionary.remove(8));
 
-        assertEquals(4, dictionary.size());
-    }
+    assertEquals(4, dictionary.size());
+  }
 
-    @Test
-    void emptyDictionaryTest() {
+  @Test
+  void emptyDictionaryTest() {
 
-        var emptyDictionary = LongDictionary.<String>empty();
+    var emptyDictionary = LongDictionary.<String>empty();
 
-        assertThrows(IllegalStateException.class, () -> emptyDictionary.put(1, "1"));
-        assertThrows(IllegalStateException.class, () -> emptyDictionary.remove(1));
-        assertThrows(IllegalStateException.class, () -> emptyDictionary.put(newLongDictionary()));
-        assertThrows(IllegalStateException.class, emptyDictionary::clear);
-    }
+    assertThrows(IllegalStateException.class, () -> emptyDictionary.put(1, "1"));
+    assertThrows(IllegalStateException.class, () -> emptyDictionary.remove(1));
+    assertThrows(IllegalStateException.class, () -> emptyDictionary.put(newLongDictionary()));
+    assertThrows(IllegalStateException.class, emptyDictionary::clear);
+  }
 
-    @Test
-    void dictionaryOfTest() {
+  @Test
+  void dictionaryOfTest() {
 
-        var dictionary = LongDictionary.<String>of(1, "val1", 2, "val2", 3, "val3");
+    var dictionary = LongDictionary.<String>of(1, "val1", 2, "val2", 3, "val3");
 
-        assertEquals(3, dictionary.size());
-        assertEquals("val1", dictionary.get(1));
-        assertEquals("val3", dictionary.get(3));
+    assertEquals(3, dictionary.size());
+    assertEquals("val1", dictionary.get(1));
+    assertEquals("val3", dictionary.get(3));
 
-        assertThrows(IllegalArgumentException.class, () -> LongDictionary.of("Key1", 1, "Key2", 2, "Key3"));
-        assertThrows(IllegalArgumentException.class, () -> LongDictionary.of("Key1"));
-    }
+    assertThrows(IllegalArgumentException.class, () -> LongDictionary.of("Key1", 1, "Key2", 2, "Key3"));
+    assertThrows(IllegalArgumentException.class, () -> LongDictionary.of("Key1"));
+  }
 
-    @Test
-    void collectorTest() {
+  @Test
+  void collectorTest() {
 
-        var dictionary = List.of(1, 2, 3, 4, 5)
-            .stream()
-            .collect(toLongDictionary(Function.identity(), Function.identity()));
+    var dictionary = List
+        .of(1, 2, 3, 4, 5)
+        .stream()
+        .collect(toLongDictionary(Function.identity(), Function.identity()));
 
-        assertEquals(5, dictionary.size());
-        assertEquals(3, (int) dictionary.get(3));
-    }
+    assertEquals(5, dictionary.size());
+    assertEquals(3, (int) dictionary.get(3));
+  }
 }

@@ -2,27 +2,23 @@ package javasabr.rlib.common.util.array;
 
 public interface ConcurrentIntegerArray {
 
-    /**
-     * Write lock.
-     */
-    default void writeLock() {
-    }
+  /**
+   * Write lock.
+   */
+  default void writeLock() {}
 
-    /**
-     * Write unlock.
-     */
-    default void writeUnlock() {
-    }
+  /**
+   * Write unlock.
+   */
+  default void writeUnlock() {}
 
-    /**
-     * Read lock.
-     */
-    default void readLock() {
-    }
+  /**
+   * Read lock.
+   */
+  default void readLock() {}
 
-    /**
-     * Read unlock.
-     */
-    default void readUnlock() {
-    }
+  /**
+   * Read unlock.
+   */
+  default void readUnlock() {}
 }

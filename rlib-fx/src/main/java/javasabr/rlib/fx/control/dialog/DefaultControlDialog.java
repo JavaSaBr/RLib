@@ -5,7 +5,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javasabr.rlib.fx.CssClasses;
 import javasabr.rlib.fx.util.FxUtils;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The default implementation of {@link ControlDialog}
@@ -14,74 +13,76 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DefaultControlDialog extends ControlDialog<GridPane, GridPane, GridPane> {
 
-    @NotNull
-    protected final Label titleLabel;
+  protected final Label titleLabel;
 
-    @NotNull
-    protected final Button closeButton;
+  protected final Button closeButton;
 
-    public DefaultControlDialog() {
-        this.titleLabel = new Label("No title");
-        this.closeButton = createCloseButton();
-    }
+  public DefaultControlDialog() {
+    this.titleLabel = new Label("No title");
+    this.closeButton = createCloseButton();
+  }
 
-    protected @NotNull Button createCloseButton() {
-        return new Button("X");
-    }
+  protected Button createCloseButton() {
+    return new Button("X");
+  }
 
-    @Override
-    protected @NotNull GridPane createHeader() {
-        return new GridPane();
-    }
+  @Override
+  protected GridPane createHeader() {
+    return new GridPane();
+  }
 
-    @Override
-    protected @NotNull GridPane createContainer() {
-        return new GridPane();
-    }
+  @Override
+  protected GridPane createContainer() {
+    return new GridPane();
+  }
 
-    @Override
-    protected @NotNull GridPane createActions() {
-        return new GridPane();
-    }
+  @Override
+  protected GridPane createActions() {
+    return new GridPane();
+  }
 
-    @Override
-    protected void configure() {
-        super.configure();
+  @Override
+  protected void configure() {
+    super.configure();
 
-        container.prefHeightProperty()
-                .bind(heightProperty());
+    container
+        .prefHeightProperty()
+        .bind(heightProperty());
 
-        closeButton.setOnAction(event -> hide());
+    closeButton.setOnAction(event -> hide());
 
-        FxUtils.addClass(this, CssClasses.CONTROL_DIALOG)
-                .addClass(header, CssClasses.DIALOG_HEADER)
-                .addClass(container, CssClasses.DIALOG_CONTENT)
-                .addClass(actions, CssClasses.DIALOG_ACTIONS);
-    }
+    FxUtils
+        .addClass(this, CssClasses.CONTROL_DIALOG)
+        .addClass(header, CssClasses.DIALOG_HEADER)
+        .addClass(container, CssClasses.DIALOG_CONTENT)
+        .addClass(actions, CssClasses.DIALOG_ACTIONS);
+  }
 
-    @Override
-    protected void fillHeader(@NotNull GridPane header) {
-        super.fillHeader(header);
+  @Override
+  protected void fillHeader(GridPane header) {
+    super.fillHeader(header);
 
-        titleLabel.prefWidthProperty()
-                .bind(header.widthProperty());
+    titleLabel
+        .prefWidthProperty()
+        .bind(header.widthProperty());
 
-        FxUtils.addClass(titleLabel, CssClasses.DIALOG_TITLE)
-                .addClass(closeButton, CssClasses.BUTTON_CLOSE);
+    FxUtils
+        .addClass(titleLabel, CssClasses.DIALOG_TITLE)
+        .addClass(closeButton, CssClasses.BUTTON_CLOSE);
 
-        header.add(titleLabel, 0, 0);
-        header.add(closeButton, 1, 0);
-    }
+    header.add(titleLabel, 0, 0);
+    header.add(closeButton, 1, 0);
+  }
 
-    @Override
-    protected void fillContent(@NotNull GridPane content) {
+  @Override
+  protected void fillContent(GridPane content) {
 
-        super.fillContent(content);
-    }
+    super.fillContent(content);
+  }
 
-    @Override
-    protected void fillActions(@NotNull GridPane actions) {
+  @Override
+  protected void fillActions(GridPane actions) {
 
-        super.fillActions(actions);
-    }
+    super.fillActions(actions);
+  }
 }

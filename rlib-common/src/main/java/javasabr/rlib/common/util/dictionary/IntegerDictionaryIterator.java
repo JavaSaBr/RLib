@@ -2,8 +2,8 @@ package javasabr.rlib.common.util.dictionary;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The iterator to iterate {@link IntegerDictionary}.
@@ -11,84 +11,82 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class IntegerDictionaryIterator<V> implements Iterator<V> {
 
-    /**
-     * The dictionary.
-     */
-    @NotNull
-    private final UnsafeIntegerDictionary<V> dictionary;
+  /**
+   * The dictionary.
+   */
+  private final UnsafeIntegerDictionary<V> dictionary;
 
-    /**
-     * The next entry.
-     */
-    @Nullable
-    private IntegerEntry<V> next;
+  /**
+   * The next entry.
+   */
+  private @Nullable IntegerEntry<V> next;
 
-    /**
-     * The current entry.
-     */
-    @Nullable
-    private IntegerEntry<V> current;
+  /**
+   * The current entry.
+   */
+  private @Nullable IntegerEntry<V> current;
 
-    /**
-     * The current index.
-     */
-    private int index;
+  /**
+   * The current index.
+   */
+  private int index;
 
-    public IntegerDictionaryIterator(@NotNull UnsafeIntegerDictionary<V> dictionary) {
-        this.dictionary = dictionary;
+  public IntegerDictionaryIterator(UnsafeIntegerDictionary<V> dictionary) {
+    this.dictionary = dictionary;
 
-        if (dictionary.size() > 0) {
-            IntegerEntry<V>[] entries = dictionary.entries();
-            while (index < entries.length && (next = entries[index++]) == null) ;
-        }
+    if (!dictionary.isEmpty()) {
+      IntegerEntry<V>[] entries = dictionary.entries();
+      while (index < entries.length && (next = entries[index++]) == null);
+    }
+  }
+
+  @Override
+  public boolean hasNext() {
+    return next != null;
+  }
+
+  @Override
+  public V next() {
+    return nextEntry().getValue();
+  }
+
+  /**
+   * Get the next entry.
+   *
+   * @return the next entry.
+   */
+  private IntegerEntry<V> nextEntry() {
+
+    IntegerEntry<V>[] content = dictionary.entries();
+    IntegerEntry<V> entry = next;
+
+    if (entry == null) {
+      throw new NoSuchElementException();
     }
 
-    @Override
-    public boolean hasNext() {
-        return next != null;
+    if ((next = entry.getNext()) == null) {
+      while (index < content.length && (next = content[index++]) == null);
     }
 
-    @Override
-    public V next() {
-        return nextEntry().getValue();
+    current = entry;
+
+    return entry;
+  }
+
+  @Override
+  public void remove() {
+
+    if (current == null) {
+      throw new IllegalStateException();
     }
 
-    /**
-     * Get the next entry.
-     *
-     * @return the next entry.
-     */
-    private IntegerEntry<V> nextEntry() {
+    int key = current.getKey();
 
-        IntegerEntry<V>[] content = dictionary.entries();
-        IntegerEntry<V> entry = next;
+    current = null;
 
-        if (entry == null) {
-            throw new NoSuchElementException();
-        }
-
-        if ((next = entry.getNext()) == null) {
-            while (index < content.length && (next = content[index++]) == null) ;
-        }
-
-        current = entry;
-
-        return entry;
-    }
-
-    @Override
-    public void remove() {
-
-        if (current == null) {
-            throw new IllegalStateException();
-        }
-
-        int key = current.getKey();
-
-        current = null;
-
-        dictionary.removeEntryForKey(key);
-    }
+    dictionary.removeEntryForKey(key);
+  }
 }

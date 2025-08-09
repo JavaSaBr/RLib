@@ -6,5 +6,5 @@ package javasabr.rlib.common.function;
 @FunctionalInterface
 public interface ObjectIntPredicate<T> {
 
-    boolean test(T first, int second);
+  boolean test(T first, int second);
 }

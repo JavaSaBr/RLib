@@ -8,10 +8,10 @@ package javasabr.rlib.common.function;
 @FunctionalInterface
 public interface SafeRunnable {
 
-    /**
-     * Run.
-     *
-     * @throws Exception the exception
-     */
-    void run() throws Exception;
+  /**
+   * Run.
+   *
+   * @throws Exception the exception
+   */
+  void run() throws Exception;
 }

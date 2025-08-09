@@ -5,72 +5,64 @@ import org.junit.jupiter.api.Test;
 
 public class ReadOnlyIntegerArrayTest {
 
-    @Test
-    void getElementsTest() {
+  @Test
+  void getElementsTest() {
 
-        var array = IntegerArray.of(5, -4, 25, -1, 70);
+    var array = IntegerArray.of(5, -4, 25, -1, 70);
 
-        Assertions.assertEquals(25, array.get(2));
-        Assertions.assertEquals(5, array.first());
-        Assertions.assertEquals(70, array.last());
+    Assertions.assertEquals(25, array.get(2));
+    Assertions.assertEquals(5, array.first());
+    Assertions.assertEquals(70, array.last());
 
-        var empty = IntegerArray.EMPTY;
+    var empty = IntegerArray.EMPTY;
 
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> empty.get(2));
-        Assertions.assertThrows(IllegalStateException.class, empty::first);
-        Assertions.assertThrows(IllegalStateException.class, empty::last);
-    }
+    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> empty.get(2));
+    Assertions.assertThrows(IllegalStateException.class, empty::first);
+    Assertions.assertThrows(IllegalStateException.class, empty::last);
+  }
 
-    @Test
-    void equalsTest() {
+  @Test
+  void equalsTest() {
 
-        var first = IntegerArray.of(5, -4, 25, -1, 70);
-        var second = IntegerArray.of(5, -4, 25, -1, 70);
+    var first = IntegerArray.of(5, -4, 25, -1, 70);
+    var second = IntegerArray.of(5, -4, 25, -1, 70);
 
-        Assertions.assertEquals(first, second);
-        Assertions.assertNotEquals(IntegerArray.of(5, -4, 4, -1, 70), second);
-    }
+    Assertions.assertEquals(first, second);
+    Assertions.assertNotEquals(IntegerArray.of(5, -4, 4, -1, 70), second);
+  }
 
-    @Test
-    void toArrayTest() {
+  @Test
+  void toArrayTest() {
 
-        var array = IntegerArray.of(5, -4, 25, -1, 70);
+    var array = IntegerArray.of(5, -4, 25, -1, 70);
 
-        Assertions.assertArrayEquals(
-            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
-            array.toArray()
-        );
+    Assertions.assertArrayEquals(ArrayFactory.toIntArray(5, -4, 25, -1, 70), array.toArray());
 
-        Assertions.assertArrayEquals(
-            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
-            array.toArray(new int[0])
-        );
+    Assertions.assertArrayEquals(ArrayFactory.toIntArray(5, -4, 25, -1, 70), array.toArray(new int[0]));
 
-        Assertions.assertArrayEquals(
-            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
-            array.toArray(new int[array.size()])
-        );
-    }
+    Assertions.assertArrayEquals(ArrayFactory.toIntArray(5, -4, 25, -1, 70), array.toArray(new int[array.size()]));
+  }
 
-    @Test
-    void streamTest() {
+  @Test
+  void streamTest() {
 
-        var array = IntegerArray.of(5, -4, 25, -1, 70);
+    var array = IntegerArray.of(5, -4, 25, -1, 70);
 
-        Assertions.assertArrayEquals(
-            ArrayFactory.toIntArray(5, -4, 25, -1, 70),
-            array.stream().toArray()
-        );
-    }
+    Assertions.assertArrayEquals(
+        ArrayFactory.toIntArray(5, -4, 25, -1, 70),
+        array
+            .stream()
+            .toArray());
+  }
 
-    @Test
-    void forEachTest() {
+  @Test
+  void forEachTest() {
 
-        var array = IntegerArray.of(5, -4, 25, -1, 70);
-        var toCollect = ArrayFactory.newMutableIntegerArray();
+    var array = IntegerArray.of(5, -4, 25, -1, 70);
+    var toCollect = ArrayFactory.newMutableIntegerArray();
 
-        array.forEachInt(toCollect::add);
+    array.forEachInt(toCollect::add);
 
-        Assertions.assertEquals(toCollect, array);
-    }
+    Assertions.assertEquals(toCollect, array);
+  }
 }

@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The function to consume float and object.
@@ -11,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface FloatObjectConsumer<T> {
 
-    /**
-     * Accept the two parameters.
-     *
-     * @param first  the first.
-     * @param second the second.
-     */
-    void accept(float first, @Nullable T second);
+  /**
+   * Accept the two parameters.
+   *
+   * @param first the first.
+   * @param second the second.
+   */
+  void accept(float first, @Nullable T second);
 }

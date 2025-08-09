@@ -2,7 +2,6 @@ package javasabr.rlib.network.packet;
 
 import javasabr.rlib.common.util.pools.Pool;
 import javasabr.rlib.common.util.pools.Reusable;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The interface to implement a reusable writable packet.
@@ -11,48 +10,48 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface ReusableWritablePacket extends WritablePacket, Reusable {
 
-    /**
-     * Handle completion of packet sending.
-     */
-    void complete();
+  /**
+   * Handle completion of packet sending.
+   */
+  void complete();
 
-    /**
-     * Force complete this packet.
-     */
-    void forceComplete();
+  /**
+   * Force complete this packet.
+   */
+  void forceComplete();
 
-    /**
-     * Decrease sending count.
-     */
-    void decreaseSends();
+  /**
+   * Decrease sending count.
+   */
+  void decreaseSends();
 
-    /**
-     * Decrease sending count.
-     *
-     * @param count the count.
-     */
-    void decreaseSends(int count);
+  /**
+   * Decrease sending count.
+   *
+   * @param count the count.
+   */
+  void decreaseSends(int count);
 
-    /**
-     * Increase sending count.
-     */
-    void increaseSends();
+  /**
+   * Increase sending count.
+   */
+  void increaseSends();
 
-    /**
-     * Increase sending count.
-     *
-     * @param count the count.
-     */
-    void increaseSends(int count);
+  /**
+   * Increase sending count.
+   *
+   * @param count the count.
+   */
+  void increaseSends(int count);
 
-    /**
-     * Set the pool.
-     *
-     * @param pool the pool to store used packet.
-     */
-    void setPool(@NotNull Pool<ReusableWritablePacket> pool);
+  /**
+   * Set the pool.
+   *
+   * @param pool the pool to store used packet.
+   */
+  void setPool(Pool<ReusableWritablePacket> pool);
 
-    default void notifyAddedToSend() {
-        increaseSends();
-    }
+  default void notifyAddedToSend() {
+    increaseSends();
+  }
 }

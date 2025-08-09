@@ -3,97 +3,96 @@ package javasabr.rlib.common.io.impl;
 import java.io.InputStream;
 import javasabr.rlib.common.io.ReusableStream;
 import javasabr.rlib.common.util.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The implementation of reusable input stream.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public final class ReuseBytesInputStream extends InputStream implements ReusableStream {
 
-    /**
-     * The data buffer.
-     */
-    @NotNull
-    protected byte buffer[];
+  /**
+   * The data buffer.
+   */
+  protected byte[] buffer;
 
-    /**
-     * The position.
-     */
-    protected int pos;
+  /**
+   * The position.
+   */
+  protected int pos;
 
-    /**
-     * The count bytes.
-     */
-    protected int count;
+  /**
+   * The count bytes.
+   */
+  protected int count;
 
-    public ReuseBytesInputStream() {
-        this.buffer = ArrayUtils.EMPTY_BYTE_ARRAY;
+  public ReuseBytesInputStream() {
+    this.buffer = ArrayUtils.EMPTY_BYTE_ARRAY;
+  }
+
+  public ReuseBytesInputStream(byte buffer[]) {
+    this.buffer = buffer;
+    this.pos = 0;
+    this.count = buffer.length;
+  }
+
+  public ReuseBytesInputStream(byte[] buffer, int offset, int length) {
+    this.buffer = buffer;
+    this.pos = offset;
+    this.count = Math.min(offset + length, buffer.length);
+  }
+
+  @Override
+  public void initFor(byte[] buffer, int offset, int length) {
+    this.buffer = buffer;
+    this.pos = offset;
+    this.count = length;
+  }
+
+  @Override
+  public synchronized int read() {
+    return (pos < count) ? (buffer[pos++] & 0xff) : -1;
+  }
+
+  @Override
+  public synchronized int read(byte[] buffer, int offset, int length) {
+
+    if (offset < 0 || length < 0 || length > buffer.length - offset) {
+      throw new IndexOutOfBoundsException();
     }
 
-    public ReuseBytesInputStream(@NotNull final byte buffer[]) {
-        this.buffer = buffer;
-        this.pos = 0;
-        this.count = buffer.length;
+    if (pos >= count) {
+      return -1;
     }
 
-    public ReuseBytesInputStream(@NotNull final byte buffer[], final int offset, final int length) {
-        this.buffer = buffer;
-        this.pos = offset;
-        this.count = Math.min(offset + length, buffer.length);
+    int available = count - pos;
+
+    if (length > available) {
+      length = available;
     }
 
-    @Override
-    public void initFor(@NotNull final byte[] buffer, final int offset, final int length) {
-        this.buffer = buffer;
-        this.pos = offset;
-        this.count = length;
+    if (length <= 0) {
+      return 0;
     }
 
-    @Override
-    public synchronized int read() {
-        return (pos < count) ? (buffer[pos++] & 0xff) : -1;
-    }
+    System.arraycopy(this.buffer, pos, buffer, offset, length);
+    pos += length;
 
-    @Override
-    public synchronized int read(@NotNull final byte buffer[], int offset, int length) {
+    return length;
+  }
 
-        if (offset < 0 || length < 0 || length > buffer.length - offset) {
-            throw new IndexOutOfBoundsException();
-        }
+  @Override
+  public synchronized int available() {
+    return count - pos;
+  }
 
-        if (pos >= count) {
-            return -1;
-        }
+  @Override
+  public void close() {}
 
-        int available = count - pos;
-
-        if (length > available) {
-            length = available;
-        }
-
-        if (length <= 0) {
-            return 0;
-        }
-
-        System.arraycopy(this.buffer, pos, buffer, offset, length);
-        pos += length;
-
-        return length;
-    }
-
-    @Override
-    public synchronized int available() {
-        return count - pos;
-    }
-
-    @Override
-    public void close() {
-    }
-
-    @Override
-    public synchronized void reset() {
-        this.pos = 0;
-    }
+  @Override
+  public synchronized void reset() {
+    this.pos = 0;
+  }
 }

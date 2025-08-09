@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The consumer with 3 arguments.
@@ -12,12 +12,12 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface ObjectFloatObjectConsumer<F, T> {
 
-    /**
-     * Accept.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     */
-    void accept(@Nullable F first, float second, @Nullable T third);
+  /**
+   * Accept.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   */
+  void accept(@Nullable F first, float second, @Nullable T third);
 }

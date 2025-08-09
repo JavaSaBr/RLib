@@ -7,5 +7,4 @@ import javasabr.rlib.network.impl.DefaultConnection;
  */
 public class DefaultReadablePacket extends AbstractIdBasedReadablePacket<DefaultConnection, DefaultReadablePacket> {
 
-
 }

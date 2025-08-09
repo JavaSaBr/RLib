@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author JavaSaBr
@@ -8,5 +8,5 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface SafeFactory<R> {
 
-    @Nullable R get() throws Exception;
+  @Nullable R get() throws Exception;
 }

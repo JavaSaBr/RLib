@@ -9,8 +9,7 @@ import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.packet.ReadablePacket;
 import javasabr.rlib.network.packet.WritablePacket;
 import javax.net.ssl.SSLEngine;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @param <R> the readable packet's type.
@@ -20,52 +19,49 @@ import org.jetbrains.annotations.Nullable;
 public class DefaultSSLPacketReader<R extends ReadablePacket, C extends Connection<R, ?>> extends
     AbstractSSLPacketReader<R, C> {
 
-    private final IntFunction<R> readPacketFactory;
-    private final int packetLengthHeaderSize;
+  private final IntFunction<R> readPacketFactory;
+  private final int packetLengthHeaderSize;
 
-    public DefaultSSLPacketReader(
-        @NotNull C connection,
-        @NotNull AsynchronousSocketChannel channel,
-        @NotNull BufferAllocator bufferAllocator,
-        @NotNull Runnable updateActivityFunction,
-        @NotNull NotNullConsumer<R> readPacketHandler,
-        @NotNull IntFunction<R> readPacketFactory,
-        @NotNull SSLEngine sslEngine,
-        @NotNull NotNullConsumer<WritablePacket> packetWriter,
-        int packetLengthHeaderSize,
-        int maxPacketsByRead
-    ) {
-        super(
-            connection,
-            channel,
-            bufferAllocator,
-            updateActivityFunction,
-            readPacketHandler,
-            sslEngine,
-            packetWriter,
-            maxPacketsByRead
-        );
-        this.readPacketFactory = readPacketFactory;
-        this.packetLengthHeaderSize = packetLengthHeaderSize;
-    }
+  public DefaultSSLPacketReader(
+      C connection,
+      AsynchronousSocketChannel channel,
+      BufferAllocator bufferAllocator,
+      Runnable updateActivityFunction,
+      NotNullConsumer<R> readPacketHandler,
+      IntFunction<R> readPacketFactory,
+      SSLEngine sslEngine,
+      NotNullConsumer<WritablePacket> packetWriter,
+      int packetLengthHeaderSize,
+      int maxPacketsByRead) {
+    super(
+        connection,
+        channel,
+        bufferAllocator,
+        updateActivityFunction,
+        readPacketHandler,
+        sslEngine,
+        packetWriter,
+        maxPacketsByRead);
+    this.readPacketFactory = readPacketFactory;
+    this.packetLengthHeaderSize = packetLengthHeaderSize;
+  }
 
-    @Override
-    protected boolean canStartReadPacket(@NotNull ByteBuffer buffer) {
-        return buffer.remaining() >= packetLengthHeaderSize;
-    }
+  @Override
+  protected boolean canStartReadPacket(ByteBuffer buffer) {
+    return buffer.remaining() >= packetLengthHeaderSize;
+  }
 
-    @Override
-    protected int readPacketLength(@NotNull ByteBuffer buffer) {
-        return readHeader(buffer, packetLengthHeaderSize);
-    }
+  @Override
+  protected int readPacketLength(ByteBuffer buffer) {
+    return readHeader(buffer, packetLengthHeaderSize);
+  }
 
-    @Override
-    protected @Nullable R createPacketFor(
-        @NotNull ByteBuffer buffer,
-        int startPacketPosition,
-        int packetLength,
-        int dataLength
-    ) {
-        return readPacketFactory.apply(dataLength);
-    }
+  @Override
+  protected @Nullable R createPacketFor(
+      ByteBuffer buffer,
+      int startPacketPosition,
+      int packetLength,
+      int dataLength) {
+    return readPacketFactory.apply(dataLength);
+  }
 }

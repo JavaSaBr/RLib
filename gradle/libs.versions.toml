@@ -11,8 +11,6 @@ angus-mail = "2.0.4"
 testcontainers = "1.21.3"
 # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
 junit-jupiter = "5.13.4"
-# https://mvnrepository.com/artifact/org.jetbrains/annotations
-jetbrains-annotations = "26.0.2"
 # https://mvnrepository.com/artifact/org.projectlombok/lombok
 lombok = "1.18.38"
 # https://mvnrepository.com/artifact/org.jspecify/jspecify
@@ -22,18 +20,17 @@ junit-platform-launcher = "1.13.4"
 
 [libraries]
 project-reactor-core = { module = "io.projectreactor:reactor-core", version.ref = "project-reactor" }
-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
 junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform-launcher" }
-slf4j-api =  { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-slf4j-simple =  { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
-slf4j-ext =  { module = "org.slf4j:slf4j-ext", version.ref = "slf4j" }
-jakarta-mail-api =  { module = "jakarta.mail:jakarta.mail-api", version.ref = "jakarta-mail" }
-angus-mail =  { module = "org.eclipse.angus:angus-mail", version.ref = "angus-mail" }
-testcontainers =  { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+slf4j-ext = { module = "org.slf4j:slf4j-ext", version.ref = "slf4j" }
+jakarta-mail-api = { module = "jakarta.mail:jakarta.mail-api", version.ref = "jakarta-mail" }
+angus-mail = { module = "org.eclipse.angus:angus-mail", version.ref = "angus-mail" }
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 
 [bundles]
 junit = ["junit-engine", "junit-api"]

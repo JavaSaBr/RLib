@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The function.
@@ -11,12 +11,12 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface IntObjectPredicate<T> {
 
-    /**
-     * Test boolean.
-     *
-     * @param first  the first
-     * @param second the second
-     * @return the boolean
-     */
-    boolean test(int first, @Nullable T second);
+  /**
+   * Test boolean.
+   *
+   * @param first the first
+   * @param second the second
+   * @return the boolean
+   */
+  boolean test(int first, @Nullable T second);
 }

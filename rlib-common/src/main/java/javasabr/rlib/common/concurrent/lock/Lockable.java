@@ -7,13 +7,13 @@ package javasabr.rlib.common.concurrent.lock;
  */
 public interface Lockable {
 
-    /**
-     * Lock this object.
-     */
-    void lock();
+  /**
+   * Lock this object.
+   */
+  void lock();
 
-    /**
-     * Unlock this object.
-     */
-    void unlock();
+  /**
+   * Unlock this object.
+   */
+  void unlock();
 }

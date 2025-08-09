@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 
 public class Slf4jLoggerTest {
 
-    @Test
-    void shouldCreateDefaultLoggerImplementation() {
+  @Test
+  void shouldCreateDefaultLoggerImplementation() {
 
-        var logger = LoggerManager.getLogger(Slf4jLoggerTest.class);
+    var logger = LoggerManager.getLogger(Slf4jLoggerTest.class);
 
-        Assertions.assertTrue(logger instanceof Slf4jLogger);
-    }
+    Assertions.assertTrue(logger instanceof Slf4jLogger);
+  }
 }

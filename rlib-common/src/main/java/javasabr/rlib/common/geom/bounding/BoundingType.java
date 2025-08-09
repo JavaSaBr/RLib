@@ -6,16 +6,16 @@ package javasabr.rlib.common.geom.bounding;
  * @author JavaSaBr
  */
 public enum BoundingType {
-    /**
-     * Axis aligned box bounding type.
-     */
-    AXIS_ALIGNED_BOX,
-    /**
-     * Sphere bounding type.
-     */
-    SPHERE,
-    /**
-     * Empty bounding type.
-     */
-    EMPTY,
+  /**
+   * Axis aligned box bounding type.
+   */
+  AXIS_ALIGNED_BOX,
+  /**
+   * Sphere bounding type.
+   */
+  SPHERE,
+  /**
+   * Empty bounding type.
+   */
+  EMPTY,
 }

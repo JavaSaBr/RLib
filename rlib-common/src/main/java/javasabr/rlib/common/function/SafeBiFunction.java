@@ -1,9 +1,9 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @FunctionalInterface
 public interface SafeBiFunction<F, S, R> {
 
-    @Nullable R apply(@Nullable F first, @Nullable S second) throws Exception;
+  @Nullable R apply(@Nullable F first, @Nullable S second) throws Exception;
 }

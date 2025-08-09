@@ -10,12 +10,12 @@ package javasabr.rlib.common.function;
 @FunctionalInterface
 public interface ObjectLongFunction<T, R> {
 
-    /**
-     * Apply r.
-     *
-     * @param first  the first
-     * @param second the second
-     * @return the r
-     */
-    R apply(T first, long second);
+  /**
+   * Apply r.
+   *
+   * @param first the first
+   * @param second the second
+   * @return the r
+   */
+  R apply(T first, long second);
 }

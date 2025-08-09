@@ -13,44 +13,43 @@ import org.junit.jupiter.api.Test;
 
 public class DefaultLoggerTest {
 
-    private static final ConcurrentArray<String> WROTE_DATA = ConcurrentArray.ofType(String.class);
+  private static final ConcurrentArray<String> WROTE_DATA = ConcurrentArray.ofType(String.class);
 
-    private static final LoggerListener LOGGER_LISTENER =
-        text -> WROTE_DATA.runInWriteLock(strings -> strings.add(text));
+  private static final LoggerListener LOGGER_LISTENER = text -> WROTE_DATA.runInWriteLock(strings -> strings.add(text));
 
-    @BeforeAll
-    static void registerListener() {
-        LoggerManager.addListener(LOGGER_LISTENER);
-    }
+  @BeforeAll
+  static void registerListener() {
+    LoggerManager.addListener(LOGGER_LISTENER);
+  }
 
-    @AfterAll
-    static void unregisterListener() {
-        LoggerManager.addListener(LOGGER_LISTENER);
-    }
+  @AfterAll
+  static void unregisterListener() {
+    LoggerManager.addListener(LOGGER_LISTENER);
+  }
 
-    @BeforeEach
-    void clearWroteData() {
-        WROTE_DATA.runInWriteLock(Collection::clear);
-    }
+  @BeforeEach
+  void clearWroteData() {
+    WROTE_DATA.runInWriteLock(Collection::clear);
+  }
 
-    @Test
-    void shouldCreateDefaultLoggerImplementation() {
+  @Test
+  void shouldCreateDefaultLoggerImplementation() {
 
-        var logger = LoggerManager.getLogger(DefaultLoggerTest.class);
+    var logger = LoggerManager.getLogger(DefaultLoggerTest.class);
 
-        Assertions.assertTrue(logger instanceof DefaultLogger);
-    }
+    Assertions.assertTrue(logger instanceof DefaultLogger);
+  }
 
-    @Test
-    void shouldWriteDataToDefaultLoggerImplementation() {
+  @Test
+  void shouldWriteDataToDefaultLoggerImplementation() {
 
-        var logger = LoggerManager.getLogger(DefaultLoggerTest.class);
-        logger.print(LoggerLevel.ERROR, "test data");
+    var logger = LoggerManager.getLogger(DefaultLoggerTest.class);
+    logger.print(LoggerLevel.ERROR, "test data");
 
-        Assertions.assertEquals(1, WROTE_DATA.size());
+    Assertions.assertEquals(1, WROTE_DATA.size());
 
-        logger.print(LoggerLevel.ERROR, "test data 2");
+    logger.print(LoggerLevel.ERROR, "test data 2");
 
-        Assertions.assertEquals(2, WROTE_DATA.size());
-    }
+    Assertions.assertEquals(2, WROTE_DATA.size());
+  }
 }

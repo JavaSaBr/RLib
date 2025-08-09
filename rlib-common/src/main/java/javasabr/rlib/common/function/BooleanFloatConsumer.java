@@ -8,11 +8,11 @@ package javasabr.rlib.common.function;
 @FunctionalInterface
 public interface BooleanFloatConsumer {
 
-    /**
-     * Accept.
-     *
-     * @param first  the first
-     * @param second the second
-     */
-    void accept(boolean first, float second);
+  /**
+   * Accept.
+   *
+   * @param first the first
+   * @param second the second
+   */
+  void accept(boolean first, float second);
 }

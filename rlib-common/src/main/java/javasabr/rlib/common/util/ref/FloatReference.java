@@ -20,13 +20,13 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 public class FloatReference extends AbstractReference {
 
-    /**
-     * The value of this reference.
-     */
-    private float value;
+  /**
+   * The value of this reference.
+   */
+  private float value;
 
-    @Override
-    public void free() {
-        this.value = 0F;
-    }
+  @Override
+  public void free() {
+    this.value = 0F;
+  }
 }

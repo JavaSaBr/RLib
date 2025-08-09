@@ -2,8 +2,8 @@ package javasabr.rlib.common.util.dictionary;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The iterator to iterate {@link LongDictionary}.
@@ -11,84 +11,82 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class LongDictionaryIterator<V> implements Iterator<V> {
 
-    /**
-     * The dictionary.
-     */
-    @NotNull
-    private final UnsafeLongDictionary<V> dictionary;
+  /**
+   * The dictionary.
+   */
+  private final UnsafeLongDictionary<V> dictionary;
 
-    /**
-     * The next entry.
-     */
-    @Nullable
-    private LongEntry<V> next;
+  /**
+   * The next entry.
+   */
+  private @Nullable LongEntry<V> next;
 
-    /**
-     * The current entry.
-     */
-    @Nullable
-    private LongEntry<V> current;
+  /**
+   * The current entry.
+   */
+  private @Nullable LongEntry<V> current;
 
-    /**
-     * The current index.
-     */
-    private int index;
+  /**
+   * The current index.
+   */
+  private int index;
 
-    public LongDictionaryIterator(@NotNull UnsafeLongDictionary<V> dictionary) {
-        this.dictionary = dictionary;
+  public LongDictionaryIterator(UnsafeLongDictionary<V> dictionary) {
+    this.dictionary = dictionary;
 
-        if (dictionary.size() > 0) {
-            LongEntry<V>[] entries = dictionary.entries();
-            while (index < entries.length && (next = entries[index++]) == null) ;
-        }
+    if (!dictionary.isEmpty()) {
+      LongEntry<V>[] entries = dictionary.entries();
+      while (index < entries.length && (next = entries[index++]) == null);
+    }
+  }
+
+  @Override
+  public boolean hasNext() {
+    return next != null;
+  }
+
+  @Override
+  public V next() {
+    return nextEntry().getValue();
+  }
+
+  /**
+   * Get the next entry.
+   *
+   * @return the next entry.
+   */
+  private LongEntry<V> nextEntry() {
+
+    LongEntry<V>[] entries = dictionary.entries();
+    LongEntry<V> entry = next;
+
+    if (entry == null) {
+      throw new NoSuchElementException();
     }
 
-    @Override
-    public boolean hasNext() {
-        return next != null;
+    if ((next = entry.getNext()) == null) {
+      while (index < entries.length && (next = entries[index++]) == null);
     }
 
-    @Override
-    public V next() {
-        return nextEntry().getValue();
+    current = entry;
+
+    return entry;
+  }
+
+  @Override
+  public void remove() {
+
+    if (current == null) {
+      throw new IllegalStateException();
     }
 
-    /**
-     * Get the next entry.
-     *
-     * @return the next entry.
-     */
-    private LongEntry<V> nextEntry() {
+    long key = current.getKey();
 
-        LongEntry<V>[] entries = dictionary.entries();
-        LongEntry<V> entry = next;
+    current = null;
 
-        if (entry == null) {
-            throw new NoSuchElementException();
-        }
-
-        if ((next = entry.getNext()) == null) {
-            while (index < entries.length && (next = entries[index++]) == null) ;
-        }
-
-        current = entry;
-
-        return entry;
-    }
-
-    @Override
-    public void remove() {
-
-        if (current == null) {
-            throw new IllegalStateException();
-        }
-
-        long key = current.getKey();
-
-        current = null;
-
-        dictionary.removeEntryForKey(key);
-    }
+    dictionary.removeEntryForKey(key);
+  }
 }

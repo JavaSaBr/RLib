@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * The function.
@@ -11,17 +11,17 @@ import org.jetbrains.annotations.Nullable;
  * @param <R> the type parameter
  * @author JavaSaBr
  */
+@NullUnmarked
 @FunctionalInterface
 public interface TripleFunction<F, S, T, R> {
 
-    /**
-     * Apply r.
-     *
-     * @param first  the first
-     * @param second the second
-     * @param third  the third
-     * @return the r
-     */
-    @Nullable
-    R apply(@Nullable F first, @Nullable S second, @Nullable T third);
+  /**
+   * Apply r.
+   *
+   * @param first the first
+   * @param second the second
+   * @param third the third
+   * @return the r
+   */
+  R apply(F first, S second, T third);
 }

@@ -1,7 +1,5 @@
 package javasabr.rlib.logger.api;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * The interface to implement a listener of logger events.
  *
@@ -9,16 +7,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface LoggerListener {
 
-    /**
-     * Print the result logger message.
-     *
-     * @param text the text.
-     */
-    void println(@NotNull String text);
+  /**
+   * Print the result logger message.
+   *
+   * @param text the text.
+   */
+  void println(String text);
 
-    /**
-     * Flush last data.
-     */
-    default void flush() {
-    }
+  /**
+   * Flush last data.
+   */
+  default void flush() {
+  }
 }

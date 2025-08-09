@@ -4,12 +4,12 @@ import static java.lang.Math.max;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
-import javasabr.rlib.common.concurrent.atomic.AtomicInteger;
+import javasabr.rlib.common.concurrent.atomic.ReusableAtomicInteger;
 import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayIterator;
 import javasabr.rlib.common.util.array.UnsafeArray;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The implementation of the array with synchronization all methods.
@@ -17,196 +17,196 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the array's element type.
  * @author JavaSaBr
  */
+@NullMarked
 public class SynchronizedArray<E> extends AbstractArray<E> implements UnsafeArray<E> {
 
-    private static final long serialVersionUID = -7288153859732883548L;
+  private static final long serialVersionUID = -7288153859732883548L;
 
-    /**
-     * The count of elements in this array.
-     */
-    private final AtomicInteger size;
+  /**
+   * The count of elements in this array.
+   */
+  private final ReusableAtomicInteger size;
 
-    /**
-     * The unsafe array.
-     */
-    private volatile E[] array;
+  /**
+   * The unsafe array.
+   */
+  private volatile E[] array;
 
+  public SynchronizedArray(Class<? super E> type) {
+    this(type, 10);
+  }
 
-    public SynchronizedArray(@NotNull Class<? super E> type) {
-        this(type, 10);
+  public SynchronizedArray(Class<? super E> type, int size) {
+    super(type, size);
+    this.size = new ReusableAtomicInteger();
+  }
+
+  @Override
+  public synchronized boolean add(E element) {
+
+    if (size() == array.length) {
+      array = ArrayUtils.copyOfAndExtend(array, array.length >> 1);
     }
 
-    public SynchronizedArray(@NotNull Class<? super E> type, int size) {
-        super(type, size);
-        this.size = new AtomicInteger();
+    array[size.getAndIncrement()] = element;
+    return true;
+  }
+
+  @Override
+  public synchronized final boolean addAll(Array<? extends E> elements) {
+
+    if (elements.isEmpty()) {
+      return true;
     }
 
-    @Override
-    public synchronized boolean add(@NotNull E element) {
+    final int current = array.length;
+    final int selfSize = size();
+    final int targetSize = elements.size();
+    final int diff = selfSize + targetSize - current;
 
-        if (size() == array.length) {
-            array = ArrayUtils.copyOfAndExtend(array, array.length >> 1);
-        }
-
-        array[size.getAndIncrement()] = element;
-        return true;
+    if (diff > 0) {
+      array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
     }
 
-    @Override
-    public synchronized final boolean addAll(@NotNull Array<? extends E> elements) {
+    processAdd(elements, selfSize, targetSize);
+    return true;
+  }
 
-        if (elements.isEmpty()) {
-            return true;
-        }
-
-        final int current = array.length;
-        final int selfSize = size();
-        final int targetSize = elements.size();
-        final int diff = selfSize + targetSize - current;
-
-        if (diff > 0) {
-            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
-        }
-
-        processAdd(elements, selfSize, targetSize);
-        return true;
+  @Override
+  public synchronized boolean addAll(final Collection<? extends E> collection) {
+    if (collection.isEmpty()) {
+      return true;
     }
 
-    @Override
-    public synchronized boolean addAll(@NotNull final Collection<? extends E> collection) {
-        if (collection.isEmpty()) return true;
+    final int current = array.length;
+    final int diff = size() + collection.size() - current;
 
-        final int current = array.length;
-        final int diff = size() + collection.size() - current;
-
-        if (diff > 0) {
-            array = ArrayUtils.copyOfAndExtend(array, Math.max(current >> 1, diff));
-        }
-
-        for (final E element : collection) unsafeAdd(element);
-        return true;
+    if (diff > 0) {
+      array = ArrayUtils.copyOfAndExtend(array, Math.max(current >> 1, diff));
     }
 
-    @Override
-    public synchronized final boolean addAll(@NotNull final E[] elements) {
+    for (final E element : collection)
+      unsafeAdd(element);
+    return true;
+  }
 
-        final int current = array.length;
-        final int selfSize = size();
-        final int targetSize = elements.length;
-        final int diff = selfSize + targetSize - current;
+  @Override
+  public synchronized final boolean addAll(final E[] elements) {
 
-        if (diff > 0) {
-            array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
-        }
+    final int current = array.length;
+    final int selfSize = size();
+    final int targetSize = elements.length;
+    final int diff = selfSize + targetSize - current;
 
-        processAdd(elements, selfSize, targetSize);
-        return true;
+    if (diff > 0) {
+      array = ArrayUtils.copyOfAndExtend(array, max(current >> 1, diff));
     }
 
-    @NotNull
-    @Override
-    public final E[] array() {
-        return array;
+    processAdd(elements, selfSize, targetSize);
+    return true;
+  }
+
+  @Override
+  public final E[] array() {
+    return array;
+  }
+
+  @Override
+  public synchronized final E fastRemove(final int index) {
+
+    if (index < 0 || index >= size()) {
+      throw new NoSuchElementException();
     }
 
-    @NotNull
-    @Override
-    public synchronized final E fastRemove(final int index) {
+    final int newSize = size.decrementAndGet();
+    final E old = array[index];
 
-        if (index < 0 || index >= size()) {
-            throw new NoSuchElementException();
-        }
+    array[index] = array[newSize];
+    array[newSize] = null;
 
-        final int newSize = size.decrementAndGet();
-        final E old = array[index];
+    return old;
+  }
 
-        array[index] = array[newSize];
-        array[newSize] = null;
+  @Override
+  public synchronized final E get(final int index) {
 
-        return old;
+    if (index < 0 || index >= size()) {
+      throw new NoSuchElementException();
     }
 
-    @NotNull
-    @Override
-    public synchronized final E get(final int index) {
+    return array[index];
+  }
 
-        if (index < 0 || index >= size()) {
-            throw new NoSuchElementException();
-        }
+  @Override
+  public synchronized ArrayIterator<E> iterator() {
+    return new DefaultArrayIterator<>(this);
+  }
 
-        return array[index];
+  @Override
+  public void replace(int index, E element) {
+
+    if (index < 0 || index >= size()) {
+      throw new ArrayIndexOutOfBoundsException();
     }
 
-    @Override
-    public synchronized @NotNull ArrayIterator<E> iterator() {
-        return new DefaultArrayIterator<>(this);
+    array[index] = element;
+  }
+
+  @Override
+  protected final void setArray(final E[] array) {
+    this.array = array;
+  }
+
+  @Override
+  protected final void setSize(final int size) {
+    this.size.getAndSet(size);
+  }
+
+  @Override
+  public final int size() {
+    return size.get();
+  }
+
+  @Override
+  public synchronized E remove(int index) {
+
+    if (index < 0 || index >= size()) {
+      throw new NoSuchElementException();
     }
 
-    @Override
-    public void replace(int index, @NotNull E element) {
+    var length = size();
+    var numMoved = length - index - 1;
 
-        if (index < 0 || index >= size()) {
-            throw new ArrayIndexOutOfBoundsException();
-        }
+    var old = array[index];
 
-        array[index] = element;
+    if (numMoved > 0) {
+      System.arraycopy(array, index + 1, array, index, numMoved);
     }
 
-    @Override
-    protected final void setArray(@NotNull final E[] array) {
-        this.array = array;
+    array[size.decrementAndGet()] = null;
+    return old;
+  }
+
+  @Override
+  public synchronized SynchronizedArray<E> trimToSize() {
+
+    var size = size();
+
+    if (size == array.length) {
+      return this;
     }
 
-    @Override
-    protected final void setSize(final int size) {
-        this.size.getAndSet(size);
-    }
+    array = ArrayUtils.copyOfRange(array, 0, size);
+    return this;
+  }
 
-    @Override
-    public final int size() {
-        return size.get();
-    }
+  protected void processAdd(final Array<? extends E> elements, final int selfSize, final int targetSize) {
+    System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
+    size.set(selfSize + targetSize);
+  }
 
-    @Override
-    public synchronized @NotNull E remove(int index) {
-
-        if (index < 0 || index >= size()) {
-            throw new NoSuchElementException();
-        }
-
-        var length = size();
-        var numMoved = length - index - 1;
-
-        var old = array[index];
-
-        if (numMoved > 0) {
-            System.arraycopy(array, index + 1, array, index, numMoved);
-        }
-
-        array[size.decrementAndGet()] = null;
-        return old;
-    }
-
-    @Override
-    public synchronized @NotNull SynchronizedArray<E> trimToSize() {
-
-        var size = size();
-
-        if (size == array.length) {
-            return this;
-        }
-
-        array = ArrayUtils.copyOfRange(array, 0, size);
-        return this;
-    }
-
-    protected void processAdd(@NotNull final Array<? extends E> elements, final int selfSize, final int targetSize) {
-        System.arraycopy(elements.array(), 0, array, selfSize, targetSize);
-        size.set(selfSize + targetSize);
-    }
-
-    protected void processAdd(@NotNull final E[] elements, final int selfSize, final int targetSize) {
-        System.arraycopy(elements, 0, array, selfSize, targetSize);
-        size.set(selfSize + targetSize);
-    }
+  protected void processAdd(final E[] elements, final int selfSize, final int targetSize) {
+    System.arraycopy(elements, 0, array, selfSize, targetSize);
+    size.set(selfSize + targetSize);
+  }
 }

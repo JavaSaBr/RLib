@@ -9,8 +9,8 @@ import javasabr.rlib.common.function.IntObjectConsumer;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.array.IntegerArray;
 import javasabr.rlib.common.util.array.MutableIntegerArray;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base implementation of {@link IntegerDictionary}.
@@ -18,292 +18,287 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the type parameter
  * @author JavaSaBr
  */
+@NullMarked
 public abstract class AbstractIntegerDictionary<V> extends AbstractDictionary<IntKey, V, IntegerEntry<V>> implements
     UnsafeIntegerDictionary<V> {
 
-    protected AbstractIntegerDictionary() {
-        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
+  protected AbstractIntegerDictionary() {
+    this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
+  }
+
+  protected AbstractIntegerDictionary(float loadFactor, int initCapacity) {
+    super(loadFactor, initCapacity);
+  }
+
+  @Override
+  protected Class<? super IntegerEntry<V>> getEntryType() {
+    return IntegerEntry.class;
+  }
+
+  /**
+   * Add a new entry to this dictionary.
+   *
+   * @param hash the hash of the key.
+   * @param key the key.
+   * @param value the value of the key.
+   * @param index the index of bucket.
+   */
+  protected final void addEntry(int hash, int key, V value, int index) {
+
+    var entries = entries();
+    var entry = entries[index];
+
+    var newEntry = entryPool.take(IntegerEntry::new);
+    newEntry.set(hash, key, value, entry);
+
+    entries[index] = newEntry;
+
+    if (incrementSizeAndGet() >= getThreshold()) {
+      resize(2 * entries.length);
+    }
+  }
+
+  @Override
+  public final boolean containsKey(int key) {
+    return getEntry(key) != null;
+  }
+
+  @Override
+  public void forEach(IntObjectConsumer<? super V> consumer) {
+    for (var entry : entries()) {
+      while (entry != null) {
+        consumer.accept(entry.getKey(), entry.getValue());
+        entry = entry.getNext();
+      }
+    }
+  }
+
+  @Override
+  public <T> void forEach(
+      T argument,
+      IntBiObjectConsumer<? super V, ? super T> consumer) {
+    for (var entry : entries()) {
+      while (entry != null) {
+        consumer.accept(entry.getKey(), entry.getValue(), argument);
+        entry = entry.getNext();
+      }
+    }
+  }
+
+  @Override
+  public final @Nullable V get(int key) {
+    var entry = getEntry(key);
+    return entry == null ? null : entry.getValue();
+  }
+
+  @Override
+  public V getOrCompute(int key, Supplier<V> factory) {
+
+    var entry = getEntry(key);
+
+    if (entry == null) {
+      put(key, factory.get());
+      entry = getEntry(key);
     }
 
-    protected AbstractIntegerDictionary(float loadFactor, int initCapacity) {
-        super(loadFactor, initCapacity);
+    if (entry == null) {
+      throw new IllegalStateException("The factory " + factory + " returned a null value.");
     }
 
-    @Override
-    protected @NotNull Class<? super IntegerEntry<V>> getEntryType() {
-        return IntegerEntry.class;
+    return entry.getValue();
+  }
+
+  @Override
+  public V getOrCompute(int key, IntFunction<V> factory) {
+
+    var entry = getEntry(key);
+
+    if (entry == null) {
+      put(key, factory.apply(key));
+      entry = getEntry(key);
     }
 
-    /**
-     * Add a new entry to this dictionary.
-     *
-     * @param hash  the hash of the key.
-     * @param key   the key.
-     * @param value the value of the key.
-     * @param index the index of bucket.
-     */
-    protected final void addEntry(int hash, int key, @NotNull V value, int index) {
-
-        var entries = entries();
-        var entry = entries[index];
-
-        var newEntry = entryPool.take(IntegerEntry::new);
-        newEntry.set(hash, key, value, entry);
-
-        entries[index] = newEntry;
-
-        if (incrementSizeAndGet() >= getThreshold()) {
-            resize(2 * entries.length);
-        }
+    if (entry == null) {
+      throw new IllegalStateException("The factory " + factory + " returned a null value.");
     }
 
-    @Override
-    public final boolean containsKey(int key) {
-        return getEntry(key) != null;
+    return entry.getValue();
+  }
+
+  @Override
+  public <T> @Nullable V getOrCompute(int key, T argument, Function<T, V> factory) {
+
+    var entry = getEntry(key);
+
+    if (entry == null) {
+      put(key, factory.apply(argument));
+      entry = getEntry(key);
     }
 
-    @Override
-    public void forEach(@NotNull IntObjectConsumer<@NotNull ? super V> consumer) {
-        for (var entry : entries()) {
-            while (entry != null) {
-                consumer.accept(entry.getKey(), entry.getValue());
-                entry = entry.getNext();
-            }
-        }
+    if (entry == null) {
+      throw new IllegalStateException("The factory " + factory + " returned a null value.");
     }
 
-    @Override
-    public <T> void forEach(
-        @NotNull T argument,
-        @NotNull IntBiObjectConsumer<@NotNull ? super V, @NotNull ? super T> consumer
-    ) {
-        for (var entry : entries()) {
-            while (entry != null) {
-                consumer.accept(entry.getKey(), entry.getValue(), argument);
-                entry = entry.getNext();
-            }
-        }
+    return entry.getValue();
+  }
+
+  /**
+   * Get the entry with value for the key.
+   *
+   * @param key the key.
+   * @return the entry or null.
+   */
+
+  private @Nullable IntegerEntry<V> getEntry(int key) {
+
+    var entries = entries();
+    var index = indexFor(hash(key), entries.length);
+
+    for (IntegerEntry<V> entry = entries[index]; entry != null; entry = entry.getNext()) {
+      if (key == entry.getKey()) {
+        return entry;
+      }
     }
 
-    @Override
-    public final @Nullable V get(int key) {
-        var entry = getEntry(key);
-        return entry == null ? null : entry.getValue();
+    return null;
+  }
+
+  @Override
+  public final Iterator<V> iterator() {
+    return new IntegerDictionaryIterator<>(this);
+  }
+
+  @Override
+  public IntegerArray keyArray(MutableIntegerArray container) {
+
+    for (var entry : entries()) {
+      while (entry != null) {
+        container.add(entry.getKey());
+        entry = entry.getNext();
+      }
     }
 
-    @Override
-    public @NotNull V getOrCompute(int key, @NotNull Supplier<@NotNull V> factory) {
+    return container;
+  }
 
-        var entry = getEntry(key);
+  @Override
+  public void copyTo(Dictionary<? super IntKey, ? super V> dictionary) {
 
-        if (entry == null) {
-            put(key, factory.get());
-            entry = getEntry(key);
-        }
-
-        if (entry == null) {
-            throw new IllegalStateException("The factory " + factory + " returned a null value.");
-        }
-
-        return entry.getValue();
+    if (isEmpty() || !(dictionary instanceof IntegerDictionary)) {
+      return;
     }
 
-    @Override
-    public @NotNull V getOrCompute(int key, @NotNull IntFunction<@NotNull V> factory) {
+    IntegerDictionary<V> target = ClassUtils.unsafeNNCast(dictionary);
 
-        var entry = getEntry(key);
+    for (IntegerEntry<V> entry : entries()) {
+      while (entry != null) {
+        target.put(entry.getKey(), entry.getValue());
+        entry = entry.getNext();
+      }
+    }
+  }
 
-        if (entry == null) {
-            put(key, factory.apply(key));
-            entry = getEntry(key);
-        }
+  @Override
+  public final @Nullable V put(int key, V value) {
 
-        if (entry == null) {
-            throw new IllegalStateException("The factory " + factory + " returned a null value.");
-        }
+    var entries = entries();
 
-        return entry.getValue();
+    var hash = hash(key);
+    var entryIndex = indexFor(hash, entries.length);
+
+    for (var entry = entries[entryIndex]; entry != null; entry = entry.getNext()) {
+      if (entry.getHash() == hash && key == entry.getKey()) {
+        return entry.setValue(value);
+      }
     }
 
-    @Override
-    public <T> @Nullable V getOrCompute(
-        int key,
-        @NotNull T argument,
-        @NotNull Function<@NotNull T, @NotNull V> factory
-    ) {
+    addEntry(hash, key, value, entryIndex);
+    return null;
+  }
 
-        var entry = getEntry(key);
+  @Override
+  public @Nullable V remove(int key) {
 
-        if (entry == null) {
-            put(key, factory.apply(argument));
-            entry = getEntry(key);
-        }
+    var old = removeEntryForKey(key);
 
-        if (entry == null) {
-            throw new IllegalStateException("The factory " + factory + " returned a null value.");
-        }
-
-        return entry.getValue();
+    if (old == null) {
+      return null;
     }
 
-    /**
-     * Get the entry with value for the key.
-     *
-     * @param key the key.
-     * @return the entry or null.
-     */
+    var value = old.getValue();
 
-    private @Nullable IntegerEntry<V> getEntry(int key) {
+    entryPool.put(old);
 
-        var entries = entries();
-        var index = indexFor(hash(key), entries.length);
+    return value;
+  }
 
-        for (IntegerEntry<V> entry = entries[index]; entry != null; entry = entry.getNext()) {
-            if (key == entry.getKey()) {
-                return entry;
-            }
-        }
+  /**
+   * Remove the entry for the key.
+   *
+   * @param key the key of the entry.
+   * @return removed entry or null.
+   */
+  @Override
+  public final @Nullable IntegerEntry<V> removeEntryForKey(int key) {
 
-        return null;
-    }
+    var entries = entries();
 
-    @Override
-    public final @NotNull Iterator<V> iterator() {
-        return new IntegerDictionaryIterator<>(this);
-    }
+    int i = indexFor(hash(key), entries.length);
 
-    @Override
-    public @NotNull IntegerArray keyArray(@NotNull MutableIntegerArray container) {
+    var prev = entries[i];
+    var entry = prev;
 
-        for (var entry : entries()) {
-            while (entry != null) {
-                container.add(entry.getKey());
-                entry = entry.getNext();
-            }
-        }
+    while (entry != null) {
 
-        return container;
-    }
+      var next = entry.getNext();
 
-    @Override
-    public void copyTo(@NotNull Dictionary<? super IntKey, ? super V> dictionary) {
+      if (key == entry.getKey()) {
+        decrementSizeAndGet();
 
-        if (isEmpty() || !(dictionary instanceof IntegerDictionary)) {
-            return;
-        }
-
-        IntegerDictionary<V> target = ClassUtils.unsafeNNCast(dictionary);
-
-        for (IntegerEntry<V> entry : entries()) {
-            while (entry != null) {
-                target.put(entry.getKey(), entry.getValue());
-                entry = entry.getNext();
-            }
-        }
-    }
-
-    @Override
-    public final @Nullable V put(int key, @NotNull V value) {
-
-        var entries = entries();
-
-        var hash = hash(key);
-        var entryIndex = indexFor(hash, entries.length);
-
-        for (var entry = entries[entryIndex]; entry != null; entry = entry.getNext()) {
-            if (entry.getHash() == hash && key == entry.getKey()) {
-                return entry.setValue(value);
-            }
-        }
-
-        addEntry(hash, key, value, entryIndex);
-        return null;
-    }
-
-
-    @Override
-    public @Nullable V remove(int key) {
-
-        var old = removeEntryForKey(key);
-
-        if (old == null) {
-            return null;
-        }
-
-        var value = old.getValue();
-
-        entryPool.put(old);
-
-        return value;
-    }
-
-    /**
-     * Remove the entry for the key.
-     *
-     * @param key the key of the entry.
-     * @return removed entry or null.
-     */
-    @Override
-    public final @Nullable IntegerEntry<V> removeEntryForKey(int key) {
-
-        var entries = entries();
-
-        int i = indexFor(hash(key), entries.length);
-
-        var prev = entries[i];
-        var entry = prev;
-
-        while (entry != null) {
-
-            var next = entry.getNext();
-
-            if (key == entry.getKey()) {
-                decrementSizeAndGet();
-
-                if (prev == entry) {
-                    entries[i] = next;
-                } else {
-                    prev.setNext(next);
-                }
-
-                return entry;
-            }
-
-            prev = entry;
-            entry = next;
+        if (prev == entry) {
+          entries[i] = next;
+        } else {
+          prev.setNext(next);
         }
 
-        return null;
+        return entry;
+      }
+
+      prev = entry;
+      entry = next;
     }
 
-    @Override
-    public final String toString() {
+    return null;
+  }
 
-        var size = size();
+  @Override
+  public final String toString() {
 
-        var builder = new StringBuilder(getClass().getSimpleName());
+    var size = size();
+
+    var builder = new StringBuilder(getClass().getSimpleName());
+    builder
+        .append(" size = ")
+        .append(size)
+        .append(" : ");
+
+    for (var entry : entries()) {
+      while (entry != null) {
         builder
-            .append(" size = ")
-            .append(size)
-            .append(" : ");
-
-        for (var entry : entries()) {
-            while (entry != null) {
-                builder
-                    .append("[")
-                    .append(entry.getKey())
-                    .append(" - ")
-                    .append(entry.getValue())
-                    .append("]")
-                    .append("\n");
-                entry = entry.getNext();
-            }
-        }
-
-        if (size > 0) {
-            builder.replace(builder.length() - 1, builder.length(), ".");
-        }
-
-        return builder.toString();
+            .append("[")
+            .append(entry.getKey())
+            .append(" - ")
+            .append(entry.getValue())
+            .append("]")
+            .append("\n");
+        entry = entry.getNext();
+      }
     }
+
+    if (size > 0) {
+      builder.replace(builder.length() - 1, builder.length(), ".");
+    }
+
+    return builder.toString();
+  }
 }

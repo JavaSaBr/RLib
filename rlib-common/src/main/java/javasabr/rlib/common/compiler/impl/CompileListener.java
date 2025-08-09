@@ -8,7 +8,6 @@ import javasabr.rlib.common.util.array.ArrayFactory;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaFileObject;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The listener of compile events.
@@ -17,35 +16,34 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CompileListener implements DiagnosticListener<JavaFileObject> {
 
-    /**
-     * The list of diagnostic reports.
-     */
-    @NotNull
-    private final Array<Diagnostic<? extends JavaFileObject>> diagnostics;
+  /**
+   * The list of diagnostic reports.
+   */
+  private final Array<Diagnostic<? extends JavaFileObject>> diagnostics;
 
-    public CompileListener() {
-        this.diagnostics = ArrayFactory.newArray(Diagnostic.class);
-    }
+  public CompileListener() {
+    this.diagnostics = ArrayFactory.newArray(Diagnostic.class);
+  }
 
-    /**
-     * Clear reports.
-     */
-    public void clear() {
-        diagnostics.clear();
-    }
+  /**
+   * Clear reports.
+   */
+  public void clear() {
+    diagnostics.clear();
+  }
 
-    /**
-     * Get diagnostics.
-     *
-     * @return the list of diagnostic reports.
-     */
-    public @NotNull Diagnostic<JavaFileObject>[] getDiagnostics() {
-        final Diagnostic[] array = diagnostics.toArray(Diagnostic.class);
-        return notNull(unsafeCast(array));
-    }
+  /**
+   * Get diagnostics.
+   *
+   * @return the list of diagnostic reports.
+   */
+  public Diagnostic<JavaFileObject>[] getDiagnostics() {
+    final Diagnostic[] array = diagnostics.toArray(Diagnostic.class);
+    return notNull(unsafeCast(array));
+  }
 
-    @Override
-    public void report(@NotNull final Diagnostic<? extends JavaFileObject> diagnostic) {
-        diagnostics.add(diagnostic);
-    }
+  @Override
+  public void report(final Diagnostic<? extends JavaFileObject> diagnostic) {
+    diagnostics.add(diagnostic);
+  }
 }

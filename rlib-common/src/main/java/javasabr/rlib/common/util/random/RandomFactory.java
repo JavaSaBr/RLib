@@ -1,6 +1,6 @@
 package javasabr.rlib.common.util.random;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The factory of randoms implementations.
@@ -9,17 +9,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class RandomFactory {
 
-    /**
-     * New fast random random.
-     *
-     * @return the random
-     */
-    @NotNull
-    public static Random newFastRandom() {
-        return new FastRandom();
-    }
+  /**
+   * New fast random random.
+   *
+   * @return the random
+   */
+  public static Random newFastRandom() {
+    return new FastRandom();
+  }
 
-    private RandomFactory() {
-        throw new RuntimeException();
-    }
+  private RandomFactory() {
+    throw new RuntimeException();
+  }
 }

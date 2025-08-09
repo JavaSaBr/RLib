@@ -7,7 +7,7 @@ package javasabr.rlib.common.util.dictionary;
  */
 public final class LongKey {
 
-    private LongKey() {
-        throw new IllegalArgumentException();
-    }
+  private LongKey() {
+    throw new IllegalArgumentException();
+  }
 }

@@ -85,6 +85,7 @@
     -fx-border-width: 0px;
     -fx-text-fill: white;
 }
+
 .control-dialog > .dialog-actions > .button-action:pressed {
     -fx-background-color: black;
     -fx-background-radius: 0px;

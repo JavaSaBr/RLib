@@ -20,13 +20,13 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 public class IntReference extends AbstractReference {
 
-    /**
-     * The value of this reference.
-     */
-    private int value;
+  /**
+   * The value of this reference.
+   */
+  private int value;
 
-    @Override
-    public void free() {
-        this.value = 0;
-    }
+  @Override
+  public void free() {
+    this.value = 0;
+  }
 }

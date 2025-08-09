@@ -11,218 +11,199 @@ import javasabr.rlib.network.packet.registry.ReadablePacketRegistry;
 import javasabr.rlib.network.server.ServerNetwork;
 import javax.net.ssl.SSLContext;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author JavaSaBr
  */
 public class BaseNetworkTest {
 
-    @AllArgsConstructor
-    public static class TestNetwork<C extends Connection<?, ?>> implements AutoCloseable {
+  @AllArgsConstructor
+  public static class TestNetwork<C extends Connection<?, ?>> implements AutoCloseable {
 
-        public final ServerNetworkConfig serverNetworkConfig;
-        public final NetworkConfig clientNetworkConfig;
+    public final ServerNetworkConfig serverNetworkConfig;
+    public final NetworkConfig clientNetworkConfig;
 
-        public final C clientToServer;
-        public final C serverToClient;
+    public final C clientToServer;
+    public final C serverToClient;
 
-        private final ServerNetwork<C> serverNetwork;
-        private final ClientNetwork<C> clientNetwork;
+    private final ServerNetwork<C> serverNetwork;
+    private final ClientNetwork<C> clientNetwork;
 
-        @Override
-        public void close() {
-            shutdown();
-        }
-
-        public void shutdown() {
-            serverNetwork.shutdown();
-            clientNetwork.shutdown();
-        }
+    @Override
+    public void close() {
+      shutdown();
     }
 
-    protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork() {
-        return buildStringNetwork(
-            ServerNetworkConfig.DEFAULT_SERVER,
-            new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
-            NetworkConfig.DEFAULT_CLIENT,
-            new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT)
-        );
+    public void shutdown() {
+      serverNetwork.shutdown();
+      clientNetwork.shutdown();
     }
+  }
 
-    protected @NotNull TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
-        @NotNull SSLContext serverSSLContext,
-        @NotNull SSLContext clientSSLContext
-    ) {
-        return buildStringSSLNetwork(
-            ServerNetworkConfig.DEFAULT_SERVER,
-            new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
-            serverSSLContext,
-            NetworkConfig.DEFAULT_CLIENT,
-            new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
-            clientSSLContext
-        );
-    }
+  protected TestNetwork<StringDataConnection> buildStringNetwork() {
+    return buildStringNetwork(
+        ServerNetworkConfig.DEFAULT_SERVER,
+        new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
+        NetworkConfig.DEFAULT_CLIENT,
+        new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT));
+  }
 
-    protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork(
-        @NotNull BufferAllocator serverBufferAllocator,
-        @NotNull BufferAllocator clientBufferAllocator
-    ) {
-        return buildStringNetwork(
-            ServerNetworkConfig.DEFAULT_SERVER,
-            serverBufferAllocator,
-            NetworkConfig.DEFAULT_CLIENT,
-            clientBufferAllocator
-        );
-    }
+  protected TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
+      SSLContext serverSSLContext,
+      SSLContext clientSSLContext) {
+    return buildStringSSLNetwork(
+        ServerNetworkConfig.DEFAULT_SERVER,
+        new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
+        serverSSLContext,
+        NetworkConfig.DEFAULT_CLIENT,
+        new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
+        clientSSLContext);
+  }
 
-    protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork(
-        @NotNull ServerNetworkConfig serverNetworkConfig,
-        @NotNull BufferAllocator serverBufferAllocator
-    ) {
-        return buildStringNetwork(
-            serverNetworkConfig,
-            serverBufferAllocator,
-            NetworkConfig.DEFAULT_CLIENT,
-            new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT)
-        );
-    }
+  protected TestNetwork<StringDataConnection> buildStringNetwork(
+      BufferAllocator serverBufferAllocator,
+      BufferAllocator clientBufferAllocator) {
+    return buildStringNetwork(
+        ServerNetworkConfig.DEFAULT_SERVER,
+        serverBufferAllocator,
+        NetworkConfig.DEFAULT_CLIENT,
+        clientBufferAllocator);
+  }
 
-    protected @NotNull TestNetwork<StringDataConnection> buildStringNetwork(
-        @NotNull ServerNetworkConfig serverNetworkConfig,
-        @NotNull BufferAllocator serverBufferAllocator,
-        @NotNull NetworkConfig clientNetworkConfig,
-        @NotNull BufferAllocator clientBufferAllocator
-    ) {
+  protected TestNetwork<StringDataConnection> buildStringNetwork(
+      ServerNetworkConfig serverNetworkConfig,
+      BufferAllocator serverBufferAllocator) {
+    return buildStringNetwork(
+        serverNetworkConfig,
+        serverBufferAllocator,
+        NetworkConfig.DEFAULT_CLIENT,
+        new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT));
+  }
 
-        var asyncClientToServer = new CompletableFuture<StringDataConnection>();
-        var asyncServerToClient = new CompletableFuture<StringDataConnection>();
+  protected TestNetwork<StringDataConnection> buildStringNetwork(
+      ServerNetworkConfig serverNetworkConfig,
+      BufferAllocator serverBufferAllocator,
+      NetworkConfig clientNetworkConfig,
+      BufferAllocator clientBufferAllocator) {
 
-        var serverNetwork = NetworkFactory.newStringDataServerNetwork(serverNetworkConfig, serverBufferAllocator);
-        var serverAddress = serverNetwork.start();
+    var asyncClientToServer = new CompletableFuture<StringDataConnection>();
+    var asyncServerToClient = new CompletableFuture<StringDataConnection>();
 
-        serverNetwork.onAccept(asyncServerToClient::complete);
+    var serverNetwork = NetworkFactory.newStringDataServerNetwork(serverNetworkConfig, serverBufferAllocator);
+    var serverAddress = serverNetwork.start();
 
-        var clientNetwork = NetworkFactory.newStringDataClientNetwork(clientNetworkConfig, clientBufferAllocator);
-        clientNetwork.connect(serverAddress)
-            .thenApply(asyncClientToServer::complete);
+    serverNetwork.onAccept(asyncServerToClient::complete);
 
-        return new TestNetwork<>(
-            serverNetworkConfig,
-            clientNetworkConfig,
-            asyncClientToServer.join(),
-            asyncServerToClient.join(),
-            serverNetwork,
-            clientNetwork
-        );
-    }
+    var clientNetwork = NetworkFactory.newStringDataClientNetwork(clientNetworkConfig, clientBufferAllocator);
+    clientNetwork
+        .connect(serverAddress)
+        .thenApply(asyncClientToServer::complete);
 
-    protected @NotNull TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
-        @NotNull ServerNetworkConfig serverNetworkConfig,
-        @NotNull BufferAllocator serverBufferAllocator,
-        @NotNull SSLContext serverSSLContext,
-        @NotNull NetworkConfig clientNetworkConfig,
-        @NotNull BufferAllocator clientBufferAllocator,
-        @NotNull SSLContext clientSSLContext
-    ) {
+    return new TestNetwork<>(
+        serverNetworkConfig,
+        clientNetworkConfig,
+        asyncClientToServer.join(),
+        asyncServerToClient.join(),
+        serverNetwork,
+        clientNetwork);
+  }
 
-        var asyncClientToServer = new CompletableFuture<StringDataSSLConnection>();
-        var asyncServerToClient = new CompletableFuture<StringDataSSLConnection>();
+  protected TestNetwork<StringDataSSLConnection> buildStringSSLNetwork(
+      ServerNetworkConfig serverNetworkConfig,
+      BufferAllocator serverBufferAllocator,
+      SSLContext serverSSLContext,
+      NetworkConfig clientNetworkConfig,
+      BufferAllocator clientBufferAllocator,
+      SSLContext clientSSLContext) {
 
-        var serverNetwork = NetworkFactory.newStringDataSSLServerNetwork(
-            serverNetworkConfig,
-            serverBufferAllocator,
-            serverSSLContext
-        );
+    var asyncClientToServer = new CompletableFuture<StringDataSSLConnection>();
+    var asyncServerToClient = new CompletableFuture<StringDataSSLConnection>();
 
-        var serverAddress = serverNetwork.start();
-        serverNetwork.onAccept(asyncServerToClient::complete);
+    var serverNetwork = NetworkFactory.newStringDataSSLServerNetwork(
+        serverNetworkConfig,
+        serverBufferAllocator,
+        serverSSLContext);
 
-        var clientNetwork = NetworkFactory.newStringDataSSLClientNetwork(
-            clientNetworkConfig,
-            clientBufferAllocator,
-            clientSSLContext
-        );
+    var serverAddress = serverNetwork.start();
+    serverNetwork.onAccept(asyncServerToClient::complete);
 
-        clientNetwork.connect(serverAddress)
-            .thenApply(asyncClientToServer::complete);
+    var clientNetwork = NetworkFactory.newStringDataSSLClientNetwork(
+        clientNetworkConfig,
+        clientBufferAllocator,
+        clientSSLContext);
 
-        return new TestNetwork<>(
-            serverNetworkConfig,
-            clientNetworkConfig,
-            asyncClientToServer.join(),
-            asyncServerToClient.join(),
-            serverNetwork,
-            clientNetwork
-        );
-    }
+    clientNetwork
+        .connect(serverAddress)
+        .thenApply(asyncClientToServer::complete);
 
-    protected @NotNull TestNetwork<DefaultConnection> buildDefaultNetwork(
-        @NotNull ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
-        @NotNull ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry
-    ) {
-        return buildDefaultNetwork(
-            ServerNetworkConfig.DEFAULT_SERVER,
-            new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
-            serverPacketRegistry,
-            NetworkConfig.DEFAULT_CLIENT,
-            new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
-            clientPacketRegistry
-        );
-    }
+    return new TestNetwork<>(
+        serverNetworkConfig,
+        clientNetworkConfig,
+        asyncClientToServer.join(),
+        asyncServerToClient.join(),
+        serverNetwork,
+        clientNetwork);
+  }
 
-    protected @NotNull TestNetwork<DefaultConnection> buildDefaultNetwork(
-        @NotNull BufferAllocator serverBufferAllocator,
-        @NotNull ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
-        @NotNull BufferAllocator clientBufferAllocator,
-        @NotNull ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry
-    ) {
-        return buildDefaultNetwork(
-            ServerNetworkConfig.DEFAULT_SERVER,
-            serverBufferAllocator,
-            serverPacketRegistry,
-            NetworkConfig.DEFAULT_CLIENT,
-            clientBufferAllocator,
-            clientPacketRegistry
-        );
-    }
+  protected TestNetwork<DefaultConnection> buildDefaultNetwork(
+      ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
+      ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
+    return buildDefaultNetwork(
+        ServerNetworkConfig.DEFAULT_SERVER,
+        new DefaultBufferAllocator(ServerNetworkConfig.DEFAULT_SERVER),
+        serverPacketRegistry,
+        NetworkConfig.DEFAULT_CLIENT,
+        new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
+        clientPacketRegistry);
+  }
 
-    protected @NotNull TestNetwork<DefaultConnection> buildDefaultNetwork(
-        @NotNull ServerNetworkConfig serverNetworkConfig,
-        @NotNull BufferAllocator serverBufferAllocator,
-        @NotNull ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
-        @NotNull NetworkConfig clientNetworkConfig,
-        @NotNull BufferAllocator clientBufferAllocator,
-        @NotNull ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry
-    ) {
+  protected TestNetwork<DefaultConnection> buildDefaultNetwork(
+      BufferAllocator serverBufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
+      BufferAllocator clientBufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
+    return buildDefaultNetwork(
+        ServerNetworkConfig.DEFAULT_SERVER,
+        serverBufferAllocator,
+        serverPacketRegistry,
+        NetworkConfig.DEFAULT_CLIENT,
+        clientBufferAllocator,
+        clientPacketRegistry);
+  }
 
-        var asyncClientToServer = new CompletableFuture<DefaultConnection>();
-        var asyncServerToClient = new CompletableFuture<DefaultConnection>();
+  protected TestNetwork<DefaultConnection> buildDefaultNetwork(
+      ServerNetworkConfig serverNetworkConfig,
+      BufferAllocator serverBufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> serverPacketRegistry,
+      NetworkConfig clientNetworkConfig,
+      BufferAllocator clientBufferAllocator,
+      ReadablePacketRegistry<DefaultReadablePacket> clientPacketRegistry) {
 
-        var serverNetwork = NetworkFactory.newDefaultServerNetwork(
-            serverNetworkConfig,
-            serverBufferAllocator,
-            serverPacketRegistry
-        );
-        var serverAddress = serverNetwork.start();
+    var asyncClientToServer = new CompletableFuture<DefaultConnection>();
+    var asyncServerToClient = new CompletableFuture<DefaultConnection>();
 
-        serverNetwork.onAccept(asyncServerToClient::complete);
+    var serverNetwork = NetworkFactory.newDefaultServerNetwork(
+        serverNetworkConfig,
+        serverBufferAllocator,
+        serverPacketRegistry);
+    var serverAddress = serverNetwork.start();
 
-        var clientNetwork = NetworkFactory.newDefaultClientNetwork(
-            clientNetworkConfig,
-            clientBufferAllocator,
-            clientPacketRegistry
-        );
-        clientNetwork.connect(serverAddress)
-            .thenApply(asyncClientToServer::complete);
+    serverNetwork.onAccept(asyncServerToClient::complete);
 
-        return new TestNetwork<>(
-            serverNetworkConfig,
-            clientNetworkConfig,
-            asyncClientToServer.join(),
-            asyncServerToClient.join(),
-            serverNetwork,
-            clientNetwork
-        );
-    }
+    var clientNetwork = NetworkFactory.newDefaultClientNetwork(
+        clientNetworkConfig,
+        clientBufferAllocator,
+        clientPacketRegistry);
+    clientNetwork
+        .connect(serverAddress)
+        .thenApply(asyncClientToServer::complete);
+
+    return new TestNetwork<>(
+        serverNetworkConfig,
+        clientNetworkConfig,
+        asyncClientToServer.join(),
+        asyncServerToClient.join(),
+        serverNetwork,
+        clientNetwork);
+  }
 }

@@ -1,5 +1,5 @@
 public class TestCompileJavaSource {
-    public String makeString() {
-        return "testString";
-    }
+  public String makeString() {
+    return "testString";
+  }
 }

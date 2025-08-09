@@ -7,7 +7,7 @@ package javasabr.rlib.common.util.dictionary;
  */
 public final class IntKey {
 
-    private IntKey() {
-        throw new IllegalArgumentException();
-    }
+  private IntKey() {
+    throw new IllegalArgumentException();
+  }
 }

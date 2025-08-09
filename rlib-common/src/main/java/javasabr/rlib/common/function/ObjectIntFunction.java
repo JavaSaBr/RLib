@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The function.
@@ -12,13 +12,12 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface ObjectIntFunction<T, R> {
 
-    /**
-     * Apply r.
-     *
-     * @param first  the first
-     * @param second the second
-     * @return the r
-     */
-    @Nullable
-    R apply(@Nullable T first, int second);
+  /**
+   * Apply r.
+   *
+   * @param first the first
+   * @param second the second
+   * @return the r
+   */
+  @Nullable R apply(@Nullable T first, int second);
 }

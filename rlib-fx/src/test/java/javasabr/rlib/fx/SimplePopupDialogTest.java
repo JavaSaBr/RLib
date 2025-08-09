@@ -7,31 +7,31 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javasabr.rlib.fx.dialog.SimplePopupDialog;
 import javasabr.rlib.fx.util.FxUtils;
-import org.jetbrains.annotations.NotNull;
 
 public class SimplePopupDialogTest extends Application {
 
-    @Override
-    public void start(@NotNull Stage stage) throws Exception {
+  @Override
+  public void start(Stage stage) throws Exception {
 
-        var root = new StackPane();
-        var scene = new Scene(root);
-        scene.getStylesheets()
-                .add(CssClasses.CSS_FILE);
+    var root = new StackPane();
+    var scene = new Scene(root);
+    scene
+        .getStylesheets()
+        .add(CssClasses.CSS_FILE);
 
-        var button = new Button("Create a dialog");
-        button.setOnAction(event -> openDialog(stage));
+    var button = new Button("Create a dialog");
+    button.setOnAction(event -> openDialog(stage));
 
-        FxUtils.addChild(root, button);
+    FxUtils.addChild(root, button);
 
-        stage.setScene(scene);
-        stage.setWidth(1024);
-        stage.setHeight(768);
-        stage.show();
-    }
+    stage.setScene(scene);
+    stage.setWidth(1024);
+    stage.setHeight(768);
+    stage.show();
+  }
 
-    private void openDialog(@NotNull Stage window) {
-        SimplePopupDialog dialog = new SimplePopupDialog();
-        dialog.show(window);
-    }
+  private void openDialog(Stage window) {
+    SimplePopupDialog dialog = new SimplePopupDialog();
+    dialog.show(window);
+  }
 }

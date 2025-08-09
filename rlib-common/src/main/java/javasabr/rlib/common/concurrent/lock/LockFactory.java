@@ -2,82 +2,83 @@ package javasabr.rlib.common.concurrent.lock;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.StampedLock;
-import javasabr.rlib.common.concurrent.lock.impl.FinalAtomicLock;
-import javasabr.rlib.common.concurrent.lock.impl.FinalAtomicReadWriteLock;
-import javasabr.rlib.common.concurrent.lock.impl.FinalReentrantAtomicLock;
-import javasabr.rlib.common.concurrent.lock.impl.FinalReentrantLock;
-import javasabr.rlib.common.concurrent.lock.impl.FinalReentrantReadWriteLock;
-import javasabr.rlib.common.concurrent.lock.impl.FinalStampedLock;
+import javasabr.rlib.common.concurrent.lock.impl.AtomicLock;
+import javasabr.rlib.common.concurrent.lock.impl.AtomicReadWriteLock;
 import javasabr.rlib.common.concurrent.lock.impl.ReentrantARSWLock;
+import javasabr.rlib.common.concurrent.lock.impl.ReentrantAtomicLock;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The factory for creating new locks.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class LockFactory {
 
-    /**
-     * Create a new {@link ReentrantARSWLock}.
-     *
-     * @return the new lock.
-     */
-    public static AsyncReadSyncWriteLock newReentrantARSWLock() {
-        return new ReentrantARSWLock();
-    }
+  /**
+   * Create a new {@link ReentrantARSWLock}.
+   *
+   * @return the new lock.
+   */
+  public static AsyncReadSyncWriteLock newReentrantARSWLock() {
+    return new ReentrantARSWLock();
+  }
 
-    /**
-     * Create a new {@link FinalStampedLock}.
-     *
-     * @return the new lock.
-     */
-    public static StampedLock newStampedLock() {
-        return new FinalStampedLock();
-    }
+  /**
+   * Create a new {@link FinalStampedLock}.
+   *
+   * @return the new lock.
+   */
+  public static StampedLock newStampedLock() {
+    return new StampedLock();
+  }
 
-    /**
-     * Create a new {@link FinalReentrantLock}.
-     *
-     * @return the new lock.
-     */
-    public static Lock newReentrantLock() {
-        return new FinalReentrantLock();
-    }
+  /**
+   * Create a new {@link FinalReentrantLock}.
+   *
+   * @return the new lock.
+   */
+  public static Lock newReentrantLock() {
+    return new ReentrantLock();
+  }
 
-    /**
-     * Create a new {@link FinalAtomicReadWriteLock}.
-     *
-     * @return the new lock.
-     */
-    public static AsyncReadSyncWriteLock newAtomicARSWLock() {
-        return new FinalAtomicReadWriteLock();
-    }
+  /**
+   * Create a new {@link FinalAtomicReadWriteLock}.
+   *
+   * @return the new lock.
+   */
+  public static AsyncReadSyncWriteLock newAtomicARSWLock() {
+    return new AtomicReadWriteLock();
+  }
 
-    /**
-     * Create a new {@link FinalAtomicLock}.
-     *
-     * @return the new lock.
-     */
-    public static Lock newAtomicLock() {
-        return new FinalAtomicLock();
-    }
+  /**
+   * Create a new {@link FinalAtomicLock}.
+   *
+   * @return the new lock.
+   */
+  public static Lock newAtomicLock() {
+    return new AtomicLock();
+  }
 
-    /**
-     * Create a new {@link FinalReentrantReadWriteLock}.
-     *
-     * @return the new lock.
-     */
-    public static ReadWriteLock newReentrantRWLock() {
-        return new FinalReentrantReadWriteLock();
-    }
+  /**
+   * Create a new {@link FinalReentrantReadWriteLock}.
+   *
+   * @return the new lock.
+   */
+  public static ReadWriteLock newReentrantRWLock() {
+    return new ReentrantReadWriteLock();
+  }
 
-    /**
-     * Create a new {@link FinalReentrantAtomicLock}.
-     *
-     * @return the new lock.
-     */
-    public static Lock newReentrantAtomicLock() {
-        return new FinalReentrantAtomicLock();
-    }
+  /**
+   * Create a new {@link FinalReentrantAtomicLock}.
+   *
+   * @return the new lock.
+   */
+  public static Lock newReentrantAtomicLock() {
+    return new ReentrantAtomicLock();
+  }
 }

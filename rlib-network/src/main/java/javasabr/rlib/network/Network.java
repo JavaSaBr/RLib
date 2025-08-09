@@ -7,8 +7,8 @@ package javasabr.rlib.network;
  */
 public interface Network<C extends Connection<?, ?>> {
 
-    /**
-     * Shutdown this network.
-     */
-    void shutdown();
+  /**
+   * Shutdown this network.
+   */
+  void shutdown();
 }

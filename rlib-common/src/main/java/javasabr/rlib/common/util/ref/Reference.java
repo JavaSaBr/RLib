@@ -7,5 +7,4 @@ import javasabr.rlib.common.util.pools.Reusable;
  *
  * @author JavaSaBr
  */
-public interface Reference extends Reusable {
-}
+public interface Reference extends Reusable {}

@@ -5,7 +5,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The simple implementation of a draggable element.
@@ -14,44 +13,44 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SimpleDraggableElement extends VBox {
 
-    public SimpleDraggableElement() {
-        setOnDragDetected(this::processStartDragAndDrop);
-        setOnDragDone(this::processFinishDragAndDrop);
-    }
+  public SimpleDraggableElement() {
+    setOnDragDetected(this::processStartDragAndDrop);
+    setOnDragDone(this::processFinishDragAndDrop);
+  }
 
-    /**
-     * Get transfer modes.
-     *
-     * @return transfer modes.
-     */
-    protected @NotNull TransferMode[] getTransferMode() {
-        return TransferMode.COPY_OR_MOVE;
-    }
+  /**
+   * Get transfer modes.
+   *
+   * @return transfer modes.
+   */
+  protected TransferMode[] getTransferMode() {
+    return TransferMode.COPY_OR_MOVE;
+  }
 
-    /**
-     * Prepare data to the dragboard.
-     *
-     * @param dragboard the dragboard.
-     */
-    protected void prepareData(@NotNull final Dragboard dragboard) {
-    }
+  /**
+   * Prepare data to the dragboard.
+   *
+   * @param dragboard the dragboard.
+   */
+  protected void prepareData(final Dragboard dragboard) {
+  }
 
-    /**
-     * Handle finishing of dragging.
-     *
-     * @param event the mouse event.
-     */
-    protected void processFinishDragAndDrop(@NotNull final DragEvent event) {
-        event.consume();
-    }
+  /**
+   * Handle finishing of dragging.
+   *
+   * @param event the mouse event.
+   */
+  protected void processFinishDragAndDrop(final DragEvent event) {
+    event.consume();
+  }
 
-    /**
-     * Handle starting of dragging.
-     *
-     * @param event the mouse event.
-     */
-    protected void processStartDragAndDrop(@NotNull final MouseEvent event) {
-        prepareData(startDragAndDrop(getTransferMode()));
-        event.consume();
-    }
+  /**
+   * Handle starting of dragging.
+   *
+   * @param event the mouse event.
+   */
+  protected void processStartDragAndDrop(final MouseEvent event) {
+    prepareData(startDragAndDrop(getTransferMode()));
+    event.consume();
+  }
 }

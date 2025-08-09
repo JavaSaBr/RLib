@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * ФThe function.
@@ -11,12 +11,12 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface LongObjectPredicate<T> {
 
-    /**
-     * Test boolean.
-     *
-     * @param first  the first
-     * @param second the second
-     * @return the boolean
-     */
-    boolean test(long first, @Nullable T second);
+  /**
+   * Test boolean.
+   *
+   * @param first the first
+   * @param second the second
+   * @return the boolean
+   */
+  boolean test(long first, @Nullable T second);
 }

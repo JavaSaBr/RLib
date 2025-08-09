@@ -7,138 +7,140 @@ import javasabr.rlib.common.geom.Vector3fBuffer;
 import javasabr.rlib.common.geom.bounding.Bounding;
 import javasabr.rlib.common.geom.bounding.BoundingType;
 import javasabr.rlib.common.geom.util.GeometryUtils;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The implementation of sphere bounding.
  *
  * @author JavaSaBr
  */
+@NullMarked
 public class BoundingSphere extends AbstractBounding {
 
-    /**
-     * The sphere radius.
-     */
-    protected float radius;
+  /**
+   * The sphere radius.
+   */
+  protected float radius;
 
-    /**
-     * The square radius.
-     */
-    protected float squareRadius;
+  /**
+   * The square radius.
+   */
+  protected float squareRadius;
 
-    public BoundingSphere(@NotNull Vector3f center, @NotNull Vector3f offset, float radius) {
-        super(center, offset);
+  public BoundingSphere(Vector3f center, Vector3f offset, float radius) {
+    super(center, offset);
 
-        this.radius = radius;
-        this.squareRadius = radius * radius;
+    this.radius = radius;
+    this.squareRadius = radius * radius;
+  }
+
+  @Override
+  public boolean contains(float x, float y, float z) {
+
+    float startX = getResultCenterX();
+    float centerY = getResultCenterY();
+    float centerZ = getResultCenterZ();
+
+    return GeometryUtils.getSquareDistance(startX, centerY, centerZ, x, y, z) < squareRadius;
+  }
+
+  @Override
+  public float getResultCenterZ() {
+    return center.getZ() + offset.getZ();
+  }
+
+  @Override
+  public float getResultCenterY() {
+    return center.getY() + offset.getY();
+  }
+
+  @Override
+  public float getResultCenterX() {
+    return center.getX() + offset.getX();
+  }
+
+  @Override
+  public BoundingType getBoundingType() {
+    return BoundingType.SPHERE;
+  }
+
+  /**
+   * Get the sphere's radius.
+   *
+   * @return the sphere's radius.
+   */
+  public float getRadius() {
+    return radius;
+  }
+
+  @Override
+  public Vector3f getResultCenter(Vector3fBuffer buffer) {
+
+    Vector3f vector = buffer
+        .nextVector()
+        .set(center);
+
+    if (offset.isZero()) {
+      return vector;
     }
 
-    @Override
-    public boolean contains(float x, float y, float z) {
+    return vector.addLocal(offset);
+  }
 
-        float startX = getResultCenterX();
-        float centerY = getResultCenterY();
-        float centerZ = getResultCenterZ();
-
-        return GeometryUtils.getSquareDistance(startX, centerY, centerZ, x, y, z) < squareRadius;
-    }
-
-    @Override
-    public float getResultCenterZ() {
-        return center.getZ() + offset.getZ();
-    }
-
-    @Override
-    public float getResultCenterY() {
-        return center.getY() + offset.getY();
-    }
-
-    @Override
-    public float getResultCenterX() {
-        return center.getX() + offset.getX();
-    }
-
-    @Override
-    public @NotNull BoundingType getBoundingType() {
-        return BoundingType.SPHERE;
-    }
-
-    /**
-     * Get the sphere's radius.
-     *
-     * @return the sphere's radius.
-     */
-    public float getRadius() {
-        return radius;
-    }
-
-    @Override
-    public @NotNull Vector3f getResultCenter(@NotNull Vector3fBuffer buffer) {
-
-        Vector3f vector = buffer.nextVector()
-                .set(center);
-
-        if (offset.isZero()) {
-            return vector;
-        }
-
-        return vector.addLocal(offset);
-    }
-
-    @Override
-    public boolean intersects(@NotNull Bounding bounding, @NotNull Vector3fBuffer buffer) {
-        switch (bounding.getBoundingType()) {
-            case EMPTY: {
-                return false;
-            }
-            case SPHERE: {
-
-                BoundingSphere sphere = (BoundingSphere) bounding;
-
-                Vector3f diff = getResultCenter(buffer)
-                        .subtractLocal(sphere.getResultCenter(buffer));
-
-                float rsum = getRadius() + sphere.getRadius();
-
-                return diff.dot(diff) <= rsum * rsum;
-            }
-            case AXIS_ALIGNED_BOX: {
-
-                AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
-
-                Vector3f center = getResultCenter(buffer);
-                Vector3f target = box.getResultCenter(buffer);
-
-                return abs(target.getX() - center.getX()) < getRadius() + box.getSizeX() &&
-                        abs(target.getY() - center.getY()) < getRadius() + box.getSizeY() &&
-                        abs(target.getZ() - center.getZ()) < getRadius() + box.getSizeZ();
-            }
-        }
-
+  @Override
+  public boolean intersects(Bounding bounding, Vector3fBuffer buffer) {
+    switch (bounding.getBoundingType()) {
+      case EMPTY: {
         return false;
+      }
+      case SPHERE: {
+
+        BoundingSphere sphere = (BoundingSphere) bounding;
+
+        Vector3f diff = getResultCenter(buffer).subtractLocal(sphere.getResultCenter(buffer));
+
+        float rsum = getRadius() + sphere.getRadius();
+
+        return diff.dot(diff) <= rsum * rsum;
+      }
+      case AXIS_ALIGNED_BOX: {
+
+        AxisAlignedBoundingBox box = (AxisAlignedBoundingBox) bounding;
+
+        Vector3f center = getResultCenter(buffer);
+        Vector3f target = box.getResultCenter(buffer);
+
+        return abs(target.getX() - center.getX()) < getRadius() + box.getSizeX()
+            && abs(target.getY() - center.getY()) < getRadius() + box.getSizeY()
+            && abs(target.getZ() - center.getZ()) < getRadius() + box.getSizeZ();
+      }
     }
 
-    @Override
-    public boolean intersects(@NotNull Vector3f start, @NotNull Vector3f direction, @NotNull Vector3fBuffer buffer) {
+    return false;
+  }
 
-        Vector3f diff = buffer.nextVector()
-                .set(start)
-                .subtractLocal(getResultCenter(buffer));
+  @Override
+  public boolean intersects(Vector3f start, Vector3f direction, Vector3fBuffer buffer) {
 
-        float a = start.dot(diff) - squareRadius;
+    Vector3f diff = buffer
+        .nextVector()
+        .set(start)
+        .subtractLocal(getResultCenter(buffer));
 
-        if (a <= 0.0) {
-            return true;
-        }
+    float a = start.dot(diff) - squareRadius;
 
-        float b = direction.dot(diff);
-
-        return b < 0.0 && b * b >= a;
-
+    if (a <= 0.0) {
+      return true;
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + " [radius=" + radius + ", squareRadius=" + squareRadius + "]";
-    }
+    float b = direction.dot(diff);
+
+    return b < 0.0 && b * b >= a;
+
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " [radius=" + radius + ", squareRadius=" + squareRadius + "]";
+  }
 }

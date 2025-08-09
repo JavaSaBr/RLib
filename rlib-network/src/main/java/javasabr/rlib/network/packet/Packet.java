@@ -1,7 +1,5 @@
 package javasabr.rlib.network.packet;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * The interface to implement a network packet.
  *
@@ -9,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Packet {
 
-    /**
-     * Get packet's name.
-     *
-     * @return the packet's name.
-     */
-    @NotNull String getName();
+  /**
+   * Get packet's name.
+   *
+   * @return the packet's name.
+   */
+  String getName();
 }

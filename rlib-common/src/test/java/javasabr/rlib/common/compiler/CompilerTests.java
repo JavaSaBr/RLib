@@ -13,23 +13,24 @@ import org.junit.jupiter.api.Test;
  */
 public class CompilerTests {
 
-    @Test
-    void compileTest()
-        throws URISyntaxException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+  @Test
+  void compileTest()
+      throws URISyntaxException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        var javaSource = getClass()
-            .getResource("/java/source/TestCompileJavaSource.java");
+    var javaSource = getClass().getResource("/java/source/TestCompileJavaSource.java");
 
-        var compiler = CompilerFactory.newDefaultCompiler();
-        var compiled = compiler.compile(javaSource.toURI());
+    var compiler = CompilerFactory.newDefaultCompiler();
+    var compiled = compiler.compile(javaSource.toURI());
 
-        Assertions.assertEquals(1, compiled.length);
-        Assertions.assertEquals("TestCompileJavaSource", compiled[0].getName());
+    Assertions.assertEquals(1, compiled.length);
+    Assertions.assertEquals("TestCompileJavaSource", compiled[0].getName());
 
-        var instance = ClassUtils.newInstance(compiled[0]);
-        var method = instance.getClass().getMethod("makeString");
-        var result = method.invoke(instance);
+    var instance = ClassUtils.newInstance(compiled[0]);
+    var method = instance
+        .getClass()
+        .getMethod("makeString");
+    var result = method.invoke(instance);
 
-        Assertions.assertEquals("testString", result);
-    }
+    Assertions.assertEquals("testString", result);
+  }
 }

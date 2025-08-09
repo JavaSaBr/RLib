@@ -7,14 +7,14 @@ import lombok.Getter;
 @Builder
 public class MailSenderConfig {
 
-    private String host;
-    private int port;
+  private String host;
+  private int port;
 
-    private String sslHost;
-    private String username;
-    private String password;
-    private String from;
+  private String sslHost;
+  private String username;
+  private String password;
+  private String from;
 
-    private boolean useAuth;
-    private boolean enableTtls;
+  private boolean useAuth;
+  private boolean enableTtls;
 }

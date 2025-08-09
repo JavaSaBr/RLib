@@ -1,6 +1,6 @@
 package javasabr.rlib.common.function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author JavaSaBr
@@ -8,5 +8,5 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface SafeConsumer<T> {
 
-    void accept(@Nullable T argument) throws Exception;
+  void accept(@Nullable T argument) throws Exception;
 }

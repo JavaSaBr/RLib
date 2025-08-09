@@ -7,8 +7,8 @@ package javasabr.rlib.common.util.ref;
  */
 final class TLFloatReference extends FloatReference {
 
-    @Override
-    public void release() {
-        ReferenceFactory.release(this);
-    }
+  @Override
+  public void release() {
+    ReferenceFactory.release(this);
+  }
 }

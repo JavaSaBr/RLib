@@ -9,17 +9,17 @@ import javasabr.rlib.network.Connection;
  */
 public interface PackedIdBasedConnection extends Connection {
 
-    /**
-     * Get length of packet's header with packet's data length.
-     *
-     * @return the length of packet's header with packet's data length.
-     */
-    int getPacketLengthHeaderSize();
+  /**
+   * Get length of packet's header with packet's data length.
+   *
+   * @return the length of packet's header with packet's data length.
+   */
+  int getPacketLengthHeaderSize();
 
-    /**
-     * Get length of packet's header with packet's id.
-     *
-     * @return the length of packet's header with packet's id.
-     */
-    int getPacketIdHeaderSize();
+  /**
+   * Get length of packet's header with packet's id.
+   *
+   * @return the length of packet's header with packet's id.
+   */
+  int getPacketIdHeaderSize();
 }

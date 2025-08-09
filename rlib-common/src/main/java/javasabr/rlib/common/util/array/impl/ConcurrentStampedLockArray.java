@@ -3,7 +3,7 @@ package javasabr.rlib.common.util.array.impl;
 import java.util.concurrent.locks.StampedLock;
 import javasabr.rlib.common.concurrent.lock.LockFactory;
 import javasabr.rlib.common.util.array.ConcurrentArray;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The concurrent implementation of array using {@link StampedLock} for {@link ConcurrentArray#readLock()} and
@@ -12,48 +12,49 @@ import org.jetbrains.annotations.NotNull;
  * @param <E> the element's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class ConcurrentStampedLockArray<E> extends AbstractConcurrentArray<E> {
 
-    private static final long serialVersionUID = -6291504312637658721L;
+  private static final long serialVersionUID = -6291504312637658721L;
 
-    private final @NotNull StampedLock lock;
+  private final StampedLock lock;
 
-    public ConcurrentStampedLockArray(@NotNull Class<? super E> type) {
-        this(type, 10);
-    }
+  public ConcurrentStampedLockArray(Class<? super E> type) {
+    this(type, 10);
+  }
 
-    public ConcurrentStampedLockArray(@NotNull Class<? super E> type, int size) {
-        super(type, size);
-        this.lock = LockFactory.newStampedLock();
-    }
+  public ConcurrentStampedLockArray(Class<? super E> type, int size) {
+    super(type, size);
+    this.lock = LockFactory.newStampedLock();
+  }
 
-    @Override
-    public final long readLock() {
-        return lock.readLock();
-    }
+  @Override
+  public final long readLock() {
+    return lock.readLock();
+  }
 
-    @Override
-    public final long tryOptimisticRead() {
-        return lock.tryOptimisticRead();
-    }
+  @Override
+  public final long tryOptimisticRead() {
+    return lock.tryOptimisticRead();
+  }
 
-    @Override
-    public final boolean validate(long stamp) {
-        return lock.validate(stamp);
-    }
+  @Override
+  public final boolean validate(long stamp) {
+    return lock.validate(stamp);
+  }
 
-    @Override
-    public final void readUnlock(long stamp) {
-        lock.unlockRead(stamp);
-    }
+  @Override
+  public final void readUnlock(long stamp) {
+    lock.unlockRead(stamp);
+  }
 
-    @Override
-    public final long writeLock() {
-        return lock.writeLock();
-    }
+  @Override
+  public final long writeLock() {
+    return lock.writeLock();
+  }
 
-    @Override
-    public final void writeUnlock(long stamp) {
-        lock.unlockWrite(stamp);
-    }
+  @Override
+  public final void writeUnlock(long stamp) {
+    lock.unlockWrite(stamp);
+  }
 }

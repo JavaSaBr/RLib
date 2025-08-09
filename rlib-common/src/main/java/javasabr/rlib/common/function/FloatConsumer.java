@@ -8,10 +8,10 @@ package javasabr.rlib.common.function;
 @FunctionalInterface
 public interface FloatConsumer {
 
-    /**
-     * Consume the float value.
-     *
-     * @param value the value.
-     */
-    void consume(float value);
+  /**
+   * Consume the float value.
+   *
+   * @param value the value.
+   */
+  void consume(float value);
 }

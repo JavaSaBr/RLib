@@ -2,54 +2,54 @@ package javasabr.rlib.common.util.dictionary;
 
 import java.util.concurrent.locks.StampedLock;
 import javasabr.rlib.common.concurrent.lock.LockFactory;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
- * The implementation of the {@link ConcurrentObjectDictionary} using {@link
- * LockFactory#newAtomicARSWLock()}*.
+ * The implementation of the {@link ConcurrentObjectDictionary} using {@link LockFactory#newAtomicARSWLock()}*.
  *
  * @param <K> the key's type.
  * @param <V> the value's type.
  * @author JavaSaBr
  */
+@NullMarked
 public class ConcurrentStampedLockObjectDictionary<K, V> extends AbstractConcurrentObjectDictionary<K, V> {
 
-    private final @NotNull StampedLock lock;
+  private final StampedLock lock;
 
-    public ConcurrentStampedLockObjectDictionary() {
-        this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
-    }
+  public ConcurrentStampedLockObjectDictionary() {
+    this(DEFAULT_LOAD_FACTOR, DEFAULT_INITIAL_CAPACITY);
+  }
 
-    public ConcurrentStampedLockObjectDictionary(float loadFactor) {
-        this(loadFactor, DEFAULT_INITIAL_CAPACITY);
-    }
+  public ConcurrentStampedLockObjectDictionary(float loadFactor) {
+    this(loadFactor, DEFAULT_INITIAL_CAPACITY);
+  }
 
-    public ConcurrentStampedLockObjectDictionary(int initCapacity) {
-        this(DEFAULT_LOAD_FACTOR, initCapacity);
-    }
+  public ConcurrentStampedLockObjectDictionary(int initCapacity) {
+    this(DEFAULT_LOAD_FACTOR, initCapacity);
+  }
 
-    public ConcurrentStampedLockObjectDictionary(float loadFactor, int initCapacity) {
-        super(loadFactor, initCapacity);
-        this.lock = new StampedLock();
-    }
+  public ConcurrentStampedLockObjectDictionary(float loadFactor, int initCapacity) {
+    super(loadFactor, initCapacity);
+    this.lock = new StampedLock();
+  }
 
-    @Override
-    public long readLock() {
-        return lock.readLock();
-    }
+  @Override
+  public long readLock() {
+    return lock.readLock();
+  }
 
-    @Override
-    public void readUnlock(long stamp) {
-        lock.unlockRead(stamp);
-    }
+  @Override
+  public void readUnlock(long stamp) {
+    lock.unlockRead(stamp);
+  }
 
-    @Override
-    public void writeUnlock(long stamp) {
-        lock.unlockWrite(stamp);
-    }
+  @Override
+  public void writeUnlock(long stamp) {
+    lock.unlockWrite(stamp);
+  }
 
-    @Override
-    public long writeLock() {
-        return lock.writeLock();
-    }
+  @Override
+  public long writeLock() {
+    return lock.writeLock();
+  }
 }
