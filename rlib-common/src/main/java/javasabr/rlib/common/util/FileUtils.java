@@ -614,17 +614,19 @@ public class FileUtils {
       for (var entry = zin.getNextEntry(); entry != null; entry = zin.getNextEntry()) {
 
         String entryName = entry.getName();
-        if (entryName.startsWith("..")) {
-          LOGGER.warning(entryName, "Unexpected entry name:[%s]"::formatted);
+        Path targetFile = destination
+            .resolve(entryName)
+            .normalize();
+
+        if (!targetFile.startsWith(destination)) {
+          LOGGER.warning(entryName, "Unexpected entry name:[%s] which is outside"::formatted);
           continue;
         }
 
-        var file = destination.resolve(entryName);
-
         if (entry.isDirectory()) {
-          Files.createDirectories(file);
+          Files.createDirectories(targetFile);
         } else {
-          Files.copy(zin, file, StandardCopyOption.REPLACE_EXISTING);
+          Files.copy(zin, targetFile, StandardCopyOption.REPLACE_EXISTING);
         }
       }
 
