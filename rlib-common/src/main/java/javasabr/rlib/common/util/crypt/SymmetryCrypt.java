@@ -1,6 +1,8 @@
 package javasabr.rlib.common.util.crypt;
 
+import java.io.Serial;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
@@ -9,55 +11,40 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
-import org.jspecify.annotations.NullMarked;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 
 /**
- * The symmetry crypt based on RC4.
- *
  * @author JavaSaBr
  */
-@NullMarked
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SymmetryCrypt {
 
-  /**
-   * The crypter.
-   */
-  private final Cipher ecipher;
+  public static final String ALG_RC_4 = "RC4";
 
-  /**
-   * The encrypter.
-   */
-  private final Cipher dcipher;
+  Cipher ecipher;
+  Cipher dcipher;
 
-  /**
-   * THe secret key.
-   */
-  private final SecretKey secretKey;
+  public SymmetryCrypt(String key)
+      throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException {
+    this(key, ALG_RC_4);
+  }
 
-  /**
-   * Instantiates a new Symmetry crypt.
-   *
-   * @param key the key.
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws NoSuchPaddingException the no such padding exception
-   * @throws UnsupportedEncodingException the unsupported encoding exception
-   * @throws InvalidKeyException the invalid key exception
-   */
-  public SymmetryCrypt(final String key)
+  public SymmetryCrypt(String key, String algorithm)
       throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException, InvalidKeyException {
 
-    final Cipher ecipher = Cipher.getInstance("RC4");
-    final Cipher dcipher = Cipher.getInstance("RC4");
+    Cipher ecipher = Cipher.getInstance(algorithm);
+    Cipher dcipher = Cipher.getInstance(algorithm);
 
-    final byte[] bytes = key.getBytes("UTF-8");
+    byte[] bytes = key.getBytes(StandardCharsets.UTF_8);
+    var secretKey = new SecretKey() {
 
-    secretKey = new SecretKey() {
-
+      @Serial
       private static final long serialVersionUID = -8907627571317506056L;
 
       @Override
       public String getAlgorithm() {
-        return "RC4";
+        return algorithm;
       }
 
       @Override
@@ -78,34 +65,12 @@ public class SymmetryCrypt {
     this.dcipher = dcipher;
   }
 
-  /**
-   * Decrypt data.
-   *
-   * @param in the encrypted data.
-   * @param offset the offset.
-   * @param length the length.
-   * @param out the buffer to store decrypted data.
-   * @throws ShortBufferException the short buffer exception
-   * @throws IllegalBlockSizeException the illegal block size exception
-   * @throws BadPaddingException the bad padding exception
-   */
-  public void decrypt(final byte[] in, final int offset, final int length, final byte[] out)
+  public void decrypt(byte[] in, int offset, int length, byte[] out)
       throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
     dcipher.doFinal(in, offset, length, out, offset);
   }
 
-  /**
-   * Encrypt data.
-   *
-   * @param in the decrypted data.
-   * @param offset the offset.
-   * @param length the length.
-   * @param out the buffer to store encrypted data.
-   * @throws ShortBufferException the short buffer exception
-   * @throws IllegalBlockSizeException the illegal block size exception
-   * @throws BadPaddingException the bad padding exception
-   */
-  public void encrypt(final byte[] in, final int offset, final int length, final byte[] out)
+  public void encrypt(byte[] in, int offset, int length, byte[] out)
       throws ShortBufferException, IllegalBlockSizeException, BadPaddingException {
     ecipher.doFinal(in, offset, length, out, offset);
   }

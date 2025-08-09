@@ -36,8 +36,8 @@ import javasabr.rlib.common.util.array.Array;
 import javasabr.rlib.common.util.array.ArrayComparator;
 import javasabr.rlib.common.util.array.ArrayFactory;
 import javasabr.rlib.common.util.array.UnsafeArray;
+import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -45,8 +45,9 @@ import org.jspecify.annotations.Nullable;
  *
  * @author JavaSaBr
  */
-@NullMarked
 public class FileUtils {
+
+  private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
 
   public static final ArrayComparator<Path> FILE_PATH_LENGTH_COMPARATOR = (first, second) -> {
 
@@ -612,7 +613,13 @@ public class FileUtils {
     try (var zin = new ZipInputStream(Files.newInputStream(zipFile))) {
       for (var entry = zin.getNextEntry(); entry != null; entry = zin.getNextEntry()) {
 
-        var file = destination.resolve(entry.getName());
+        String entryName = entry.getName();
+        if (entryName.startsWith("..")) {
+          LOGGER.warning(entryName, "Unexpected entry name:[%s]"::formatted);
+          continue;
+        }
+
+        var file = destination.resolve(entryName);
 
         if (entry.isDirectory()) {
           Files.createDirectories(file);
