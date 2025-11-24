@@ -4,6 +4,7 @@ import javasabr.rlib.collections.dictionary.impl.DefaultMutableHashBasedIntToRef
 import javasabr.rlib.collections.dictionary.impl.DefaultMutableHashBasedLongToRefDictionary;
 import javasabr.rlib.collections.dictionary.impl.DefaultMutableHashBasedRefToRefDictionary;
 import javasabr.rlib.collections.dictionary.impl.StampedLockBasedHashBasedRefToRefDictionary;
+import javasabr.rlib.collections.dictionary.impl.gc.optimized.GcOptimizedMutableHashBasedIntToRefDictionary;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -14,6 +15,10 @@ public class DictionaryFactory {
 
   public static <V> MutableIntToRefDictionary<V> mutableIntToRefDictionary() {
     return new DefaultMutableHashBasedIntToRefDictionary<>();
+  }
+
+  public static <V> MutableIntToRefDictionary<V> gcOptimizedIntToRefDictionary() {
+    return new GcOptimizedMutableHashBasedIntToRefDictionary<>();
   }
 
   public static <V> MutableLongToRefDictionary<V> mutableLongToRefDictionary() {
