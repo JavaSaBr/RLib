@@ -185,9 +185,9 @@ public class DefaultNetworkTest extends BaseNetworkTest {
           var connection = event.connection();
           var packet = event.packet();
           if (packet instanceof ServerPackets.RequestEchoMessage request) {
-            connection.send(new ServerPackets.ResponseEchoMessage(request.message));
+            connection.sendInBackground(new ServerPackets.ResponseEchoMessage(request.message));
           } else if (packet instanceof ServerPackets.RequestServerTime request) {
-            connection.send(new ServerPackets.ResponseServerTime());
+            connection.sendInBackground(new ServerPackets.ResponseServerTime());
           }
         })
         .subscribe(event -> log.info(event, "Received from client:[%s]"::formatted));
@@ -199,9 +199,9 @@ public class DefaultNetworkTest extends BaseNetworkTest {
             .range(10, 100)
             .forEach(length -> {
               if (length % 2 == 0) {
-                connection.send(new ClientPackets.RequestServerTime());
+                connection.sendInBackground(new ClientPackets.RequestServerTime());
               } else {
-                connection.send(new ClientPackets.RequestEchoMessage(StringUtils.generate(length)));
+                connection.sendInBackground(new ClientPackets.RequestEchoMessage(StringUtils.generate(length)));
               }
             }))
         .flatMapMany(Connection::receivedEvents)
@@ -269,7 +269,7 @@ public class DefaultNetworkTest extends BaseNetworkTest {
       List<String> messages = IntStream
           .range(0, packetCount)
           .mapToObj(value -> StringUtils.generate(random.nextInt(0, bufferSize)))
-          .peek(message -> clientToServer.send(new ClientPackets.RequestEchoMessage(message)))
+          .peek(message -> clientToServer.sendInBackground(new ClientPackets.RequestEchoMessage(message)))
           .toList();
 
       List<? extends ReadableNetworkPacket<DefaultConnection>> receivedPackets =

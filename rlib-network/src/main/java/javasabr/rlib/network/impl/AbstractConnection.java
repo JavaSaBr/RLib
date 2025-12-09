@@ -223,7 +223,7 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
   }
 
   @Override
-  public final void send(WritableNetworkPacket<C> packet) {
+  public final void sendInBackground(WritableNetworkPacket<C> packet) {
     sendImpl(packet);
   }
 
@@ -250,7 +250,7 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
   }
 
   @Override
-  public CompletableFuture<Boolean> sendWithFeedback(WritableNetworkPacket<C> packet) {
+  public CompletableFuture<Boolean> sendAsync(WritableNetworkPacket<C> packet) {
     var asyncResult = new CompletableFuture<Boolean>();
     sendImpl(new WritablePacketWithFeedback<>(asyncResult, packet));
     if (closed()) {

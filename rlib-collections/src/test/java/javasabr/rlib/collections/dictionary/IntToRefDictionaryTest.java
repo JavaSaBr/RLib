@@ -183,12 +183,14 @@ class IntToRefDictionaryTest {
 
     return Stream.of(
         Arguments.of(source),
-        Arguments.of(DictionaryFactory.mutableIntToRefDictionary().append(source)));
+        Arguments.of(DictionaryFactory.mutableIntToRefDictionary().append(source)),
+        Arguments.of(DictionaryFactory.gcOptimizedIntToRefDictionary().append(source)));
   }
 
   private static Stream<Arguments> generateEmptyDictionaries() {
     return Stream.of(
         Arguments.of(IntToRefDictionary.empty()),
-        Arguments.of(DictionaryFactory.mutableIntToRefDictionary()));
+        Arguments.of(DictionaryFactory.mutableIntToRefDictionary()),
+        Arguments.of(DictionaryFactory.gcOptimizedIntToRefDictionary()));
   }
 }

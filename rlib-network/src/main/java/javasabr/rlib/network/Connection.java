@@ -41,16 +41,16 @@ public interface Connection<C extends Connection<C>> {
   boolean closed();
 
   /**
-   * Send a packet to connection's owner.
+   * Send a packet to connection's owner in background.
    */
-  void send(WritableNetworkPacket<C> packet);
+  void sendInBackground(WritableNetworkPacket<C> packet);
 
   /**
-   * Send a packet to connection's owner with async feedback of this sending.
+   * Send a packet to connection's owner with async feedback of this action.
    *
    * @return the async result with true if the packet was sent or false if sending was failed.
    */
-  CompletableFuture<Boolean> sendWithFeedback(WritableNetworkPacket<C> packet);
+  CompletableFuture<Boolean> sendAsync(WritableNetworkPacket<C> packet);
 
   /**
    * Register a consumer to handle received valid packets.

@@ -51,10 +51,10 @@ public class BaseNetworkTest {
     }
 
     @Override
-    public void send(WritableNetworkPacket packet) {}
+    public void sendInBackground(WritableNetworkPacket packet) {}
 
     @Override
-    public CompletableFuture<Boolean> sendWithFeedback(WritableNetworkPacket packet) {
+    public CompletableFuture<Boolean> sendAsync(WritableNetworkPacket packet) {
       return CompletableFuture.completedFuture(false);
     }
 

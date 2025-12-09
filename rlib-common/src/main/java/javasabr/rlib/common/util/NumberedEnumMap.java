@@ -1,10 +1,13 @@
 package javasabr.rlib.common.util;
 
 import java.util.stream.Stream;
+import lombok.AccessLevel;
 import lombok.CustomLog;
+import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.Nullable;
 
 @CustomLog
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class NumberedEnumMap<T extends Enum<T> & NumberedEnum<T>> {
 
   T[] values;

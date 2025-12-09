@@ -1,5 +1,6 @@
 package javasabr.rlib.collections.dictionary.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -11,6 +12,7 @@ import javasabr.rlib.collections.array.ArrayFactory;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.collections.array.UnsafeMutableArray;
 import javasabr.rlib.collections.dictionary.LinkedHashEntry;
+import javasabr.rlib.collections.dictionary.RefToRefDictionary;
 import javasabr.rlib.collections.dictionary.UnsafeRefToRefDictionary;
 import org.jspecify.annotations.Nullable;
 
@@ -159,6 +161,37 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
     }
 
     return container;
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(entries());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof RefToRefDictionary<?, ?> another)) {
+      return false;
+    } else if (size() != another.size()) {
+      return false;
+    }
+
+    RefToRefDictionary<Object, Object> toCompare = (RefToRefDictionary<Object, Object>) obj;
+
+    for (E entry : entries()) {
+      while (entry != null) {
+        if (!toCompare.containsKey(entry.key())) {
+          return false;
+        }
+        V value = entry.value();
+        Object anotherValue = toCompare.get(entry.key());
+        if (!Objects.equals(value, anotherValue)) {
+          return false;
+        }
+        entry = entry.next();
+      }
+    }
+    return true;
   }
 
   @Override

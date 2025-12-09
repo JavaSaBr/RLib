@@ -158,6 +158,7 @@ class MutableIntToRefDictionaryTest {
   private static Stream<Arguments> generateDictionaries() {
     return Stream.of(
         Arguments.of(MutableIntToRefDictionary.ofTypes(String.class)),
-        Arguments.of(DictionaryFactory.mutableIntToRefDictionary()));
+        Arguments.of(DictionaryFactory.mutableIntToRefDictionary()),
+        Arguments.of(DictionaryFactory.gcOptimizedIntToRefDictionary()));
   }
 }
