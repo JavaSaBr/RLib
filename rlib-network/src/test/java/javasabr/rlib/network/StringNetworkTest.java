@@ -58,7 +58,7 @@ public class StringNetworkTest extends BaseNetworkTest {
         .subscribe(event -> {
           String message = event.packet().data();
           log.info(message, "Received from client:[%s]"::formatted);
-          event.connection().send(new StringWritableNetworkPacket<>("Echo: " + message));
+          event.connection().sendInBackground(new StringWritableNetworkPacket<>("Echo: " + message));
         });
 
     ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -72,7 +72,7 @@ public class StringNetworkTest extends BaseNetworkTest {
               int delay = ThreadLocalRandom
                   .current()
                   .nextInt(50);
-              executor.schedule(() -> connection.send(packet), delay, TimeUnit.MILLISECONDS);
+              executor.schedule(() -> connection.sendInBackground(packet), delay, TimeUnit.MILLISECONDS);
             }))
         .flatMapMany(connection -> connection.receivedEvents(RECEIVED_PACKET_TYPE))
         .subscribe(event -> {
@@ -127,7 +127,7 @@ public class StringNetworkTest extends BaseNetworkTest {
           .mapToObj(value -> StringUtils.generate(random.nextInt(0, bufferSize)))
           .peek(message -> {
             log.info(message.length(), "Send [%s] symbols to server"::formatted);
-            clientToServer.send(new StringWritableNetworkPacket<>(message));
+            clientToServer.sendInBackground(new StringWritableNetworkPacket<>(message));
           })
           .toList();
 
@@ -183,7 +183,7 @@ public class StringNetworkTest extends BaseNetworkTest {
                 .nextInt(15);
             executor.schedule(
                 () -> {
-                  clientToServer.send(packet);
+                  clientToServer.sendInBackground(packet);
                   log.info(message.length(), "Send [%s] symbols to server"::formatted);
                 }, delay, TimeUnit.MILLISECONDS);
           })
@@ -241,7 +241,7 @@ public class StringNetworkTest extends BaseNetworkTest {
                 .nextInt(15);
             executor.schedule(
                 () -> {
-                  clientToServer.send(packet);
+                  clientToServer.sendInBackground(packet);
                   log.info(message.length(), "Send [%s] symbols to server"::formatted);
                 }, delay, TimeUnit.MILLISECONDS);
           })
@@ -296,7 +296,7 @@ public class StringNetworkTest extends BaseNetworkTest {
         .accepted()
         .flatMap(Connection::receivedEvents)
         .doOnNext(event -> receivedPacketsOnServer.incrementAndGet())
-        .subscribe(event -> event.connection().send(newMessage(minMessageLength, maxMessageLength)));
+        .subscribe(event -> event.connection().sendInBackground(newMessage(minMessageLength, maxMessageLength)));
 
     Flux
         .fromStream(IntStream
@@ -309,7 +309,7 @@ public class StringNetworkTest extends BaseNetworkTest {
           var receivedEvents = connection.receivedEvents();
 
           for (int i = 0; i < packetsPerClient; i++) {
-            connection.send(newMessage(minMessageLength, maxMessageLength));
+            connection.sendInBackground(newMessage(minMessageLength, maxMessageLength));
             sentPacketsToServer.incrementAndGet();
           }
 
@@ -354,7 +354,7 @@ public class StringNetworkTest extends BaseNetworkTest {
     serverNetwork.onAccept(connection -> {
       connection.onReceiveValidPacket((con, packet) -> {
         receivedPacketsOnServer.incrementAndGet();
-        con.send(newMessage(minMessageLength, maxMessageLength));
+        con.sendInBackground(newMessage(minMessageLength, maxMessageLength));
       });
       connectedClients.countDown();
     });
@@ -377,7 +377,7 @@ public class StringNetworkTest extends BaseNetworkTest {
         }))
         .forEach(connection -> IntStream
             .range(0, packetsPerClient)
-            .peek(value -> connection.send(newMessage(minMessageLength, maxMessageLength)))
+            .peek(value -> connection.sendInBackground(newMessage(minMessageLength, maxMessageLength)))
             .forEach(val -> sentPacketsToServer.incrementAndGet()));
 
     Assertions.assertTrue(
@@ -409,7 +409,7 @@ public class StringNetworkTest extends BaseNetworkTest {
       List<CompletableFuture<Boolean>> asyncResults = IntStream
           .range(0, packetCount)
           .mapToObj(value -> StringUtils.generate(random.nextInt(0, bufferSize)))
-          .map(message -> clientToServer.sendWithFeedback(new StringWritableNetworkPacket<>(message)))
+          .map(message -> clientToServer.sendAsync(new StringWritableNetworkPacket<>(message)))
           .toList();
 
       CompletableFuture

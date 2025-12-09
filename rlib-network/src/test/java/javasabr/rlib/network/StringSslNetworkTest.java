@@ -95,7 +95,7 @@ public class StringSslNetworkTest extends BaseNetworkTest {
         .subscribe(event -> {
           var message = ((StringReadableNetworkPacket<?>) event.packet()).data();
           log.info(message, "Received from client:[%s]"::formatted);
-          event.connection().send(new StringWritableNetworkPacket<>("Echo: " + message));
+          event.connection().sendInBackground(new StringWritableNetworkPacket<>("Echo: " + message));
         });
 
     SSLContext clientSslContext = NetworkUtils.createAllTrustedClientSslContext();
@@ -154,7 +154,7 @@ public class StringSslNetworkTest extends BaseNetworkTest {
 
     clientNetwork
         .connectReactive(new InetSocketAddress("localhost", serverPort))
-        .doOnNext(connection -> connection.send(new StringWritableNetworkPacket<>("Hello SSL")))
+        .doOnNext(connection -> connection.sendInBackground(new StringWritableNetworkPacket<>("Hello SSL")))
         .doOnError(Throwable::printStackTrace)
         .flatMapMany(Connection::receivedEvents)
         .subscribe(event -> {
@@ -230,7 +230,7 @@ public class StringSslNetworkTest extends BaseNetworkTest {
         .subscribe(event -> {
           var message = ((StringReadableNetworkPacket<?>) event.packet()).data();
           log.info(message, "Received from client:[%s]"::formatted);
-          event.connection().send(new StringWritableNetworkPacket<>("Echo: " + message));
+          event.connection().sendInBackground(new StringWritableNetworkPacket<>("Echo: " + message));
         });
 
     SSLContext clientSslContext = NetworkUtils.createAllTrustedClientSslContext();
@@ -250,7 +250,7 @@ public class StringSslNetworkTest extends BaseNetworkTest {
                   .nextInt(2000);
               executor.schedule(
                   () -> {
-                    connection.send(packet);
+                    connection.sendInBackground(packet);
                     log.info(packet.data().length(), "Send [%s] symbols to server"::formatted);
                   }, delay, TimeUnit.MILLISECONDS);
             }))
@@ -303,7 +303,7 @@ public class StringSslNetworkTest extends BaseNetworkTest {
             var length = value % 3 == 0 ? bufferSize : random.nextInt(0, bufferSize / 2 - 1);
             return StringUtils.generate(length);
           })
-          .peek(message -> clientToServer.send(new StringWritableNetworkPacket<>(message)))
+          .peek(message -> clientToServer.sendInBackground(new StringWritableNetworkPacket<>(message)))
           .toList();
 
       List<? extends ReadableNetworkPacket<StringDataSslConnection>> receivedPackets =

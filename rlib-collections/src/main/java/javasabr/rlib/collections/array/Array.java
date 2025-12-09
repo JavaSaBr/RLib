@@ -23,6 +23,10 @@ public interface Array<E> extends Iterable<E>, Serializable, Cloneable {
     return new ImmutableArray<>(ClassUtils.unsafeCast(type));
   }
 
+  static <E> ArrayBuilder<E> builder(Class<? super E> type) {
+    return new ArrayBuilder<>(type);
+  }
+  
   static <E> Array<E> of(E single) {
     @SuppressWarnings("unchecked")
     Class<E> type = (Class<E>) single.getClass();
@@ -93,6 +97,14 @@ public interface Array<E> extends Iterable<E>, Serializable, Cloneable {
       return array;
     }
     return new ImmutableArray<>(array.type(), array.toArray());
+  }
+
+  static <E> Array<E> copyOf(Class<? super E> type, Collection<E> collection) {
+    if (collection instanceof MutableArray<E> mutableArray) {
+      return copyOf(mutableArray);
+    }
+    E[] array = collection.toArray(ArrayUtils.create(type, collection.size()));
+    return ImmutableArray.trustWrap(array);
   }
 
   Class<E> type();

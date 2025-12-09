@@ -106,9 +106,9 @@ public class HandlingValidAndInvalidReceivedPacketsTest extends BaseNetworkTest 
             .range(0, 30)
             .forEach(length -> {
               if (length % 5 == 0) {
-                connection.send(new ClientPackets.TestValidatablePacket(false));
+                connection.sendInBackground(new ClientPackets.TestValidatablePacket(false));
               } else {
-                connection.send(new ClientPackets.TestValidatablePacket(true));
+                connection.sendInBackground(new ClientPackets.TestValidatablePacket(true));
               }
             }))
         .subscribe();

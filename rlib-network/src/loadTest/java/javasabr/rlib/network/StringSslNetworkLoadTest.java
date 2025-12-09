@@ -82,7 +82,7 @@ public class StringSslNetworkLoadTest {
             ScheduledFuture<?> schedule = executor.schedule(
                 () -> {
                   var message = newMessage(10, 10240); // 10240
-                  connection.send(message);
+                  connection.sendInBackground(message);
                 }, delay, TimeUnit.MILLISECONDS);
             tasks.add(schedule);
           }
@@ -155,7 +155,7 @@ public class StringSslNetworkLoadTest {
           statistics
               .receivedClientPackersPerSecond()
               .accumulate(1);
-          connection.send(new StringWritableNetworkPacket<>("Echo: " + receivedPacket.data()));
+          connection.sendInBackground(new StringWritableNetworkPacket<>("Echo: " + receivedPacket.data()));
           statistics
               .sentEchoPackersPerSecond()
               .accumulate(1);
