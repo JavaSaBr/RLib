@@ -37,16 +37,27 @@ public class StringUtils {
   }
 
   /**
-   * Return the another string if the received string is empty.
+   * Return the another string if the received string is empty or null.
    *
    * @param string the string.
    * @param another the another string.
-   * @return the another string if the received string is empty.
+   * @return the another string if the received string is empty or null.
    */
   public static String ifEmpty(@Nullable String string, String another) {
     return isEmpty(string) ? another : string;
   }
 
+  /**
+   * Return the another string if the received string is blank or null.
+   *
+   * @param string the string.
+   * @param another the another string.
+   * @return the another string if the received string is blank or null.
+   */
+  public static String ifBlank(@Nullable String string, String another) {
+    return isBlank(string) ? another : string;
+  }
+  
   /**
    * Check a string email.
    *
@@ -212,13 +223,23 @@ public class StringUtils {
   }
 
   /**
-   * Returns true if the string empty or null.
+   * Returns true if the string is empty or null.
    *
    * @param string the string.
    * @return true if the string is null or empty.
    */
   public static boolean isEmpty(@Nullable String string) {
     return string == null || string.isEmpty();
+  }
+
+  /**
+   * Returns true if the string is blank or null.
+   *
+   * @param string the string.
+   * @return true if the string is null or blank.
+   */
+  public static boolean isBlank(@Nullable String string) {
+    return string == null || string.isBlank();
   }
 
   /**
@@ -229,6 +250,16 @@ public class StringUtils {
    */
   public static boolean isNotEmpty(@Nullable String string) {
     return !isEmpty(string);
+  }
+
+  /**
+   * Returns true if the string isn't blank.
+   *
+   * @param string the string.
+   * @return true if the string isn't blank.
+   */
+  public static boolean isNotBlank(@Nullable String string) {
+    return !isBlank(string);
   }
 
   /**
