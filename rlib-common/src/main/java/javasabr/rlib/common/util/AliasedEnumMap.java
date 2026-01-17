@@ -22,7 +22,7 @@ public class AliasedEnumMap<T extends Enum<T> & AliasedEnum<T>> {
       for (String alias : enumConstant.aliases()) {
         T previous = aliasToValue.put(alias, enumConstant);
         if (previous != null) {
-          throw new IllegalArgumentException("Detect duplicated alias:[%s] for [%s] and [%s]".formatted(
+          throw new IllegalArgumentException("Detected duplicated alias:[%s] for [%s] and [%s]".formatted(
               alias,
               previous.name(),
               enumConstant.name()));
