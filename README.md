@@ -214,11 +214,11 @@ var value = dictionary.get("key1");
 
 // Thread-safe dictionary with stamped lock
 var lockableDictionary = DictionaryFactory.stampedLockBasedRefToRefDictionary();
-var stamp = lockableDictionary.readLock();
+var stamp = lockableDictionary.writeLock();
 try {
   lockableDictionary.put("key", "value");
 } finally {
-  lockableDictionary.readUnlock(stamp)
+  lockableDictionary.writeUnlock(stamp);
 }
 
 // Primitive key dictionaries (no boxing overhead)
