@@ -13,7 +13,7 @@ Key repo facts (fast reference)
 - Java target: JDK 21+ (README indicates Java 21+).
 - Multi-module layout (from settings.gradle): :rlib-common, :rlib-fx, :rlib-network, :rlib-testcontainers, :rlib-mail, :rlib-logger-api, :rlib-logger-impl, :rlib-logger-slf4j, :rlib-plugin-system, :rlib-geometry, :rlib-classpath, :rlib-compiler, :rlib-io, :rlib-collections, :rlib-functions, :rlib-reusable, :rlib-reference, :rlib-concurrent, :test-coverage.
 - Version catalog: gradle/libs.versions.toml (declares dependency versions such as junit, testcontainers, slf4j, lombok).
-- No GitHub Actions workflows detected in .github/workflows at time of writing — local Gradle build is the canonical validation.
+- GitHub Actions: workflow in .github/workflows/develop.yml runs on the develop branch (build, test, coverage); local Gradle build remains the canonical validation.
 
 Required environment (always verify before building)
 - JDK 21 installed and JAVA_HOME set to the JDK 21 installation. Confirm: `java -version` and `echo $JAVA_HOME`.
