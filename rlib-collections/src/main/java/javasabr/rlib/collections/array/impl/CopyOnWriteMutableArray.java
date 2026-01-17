@@ -2,6 +2,7 @@ package javasabr.rlib.collections.array.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.atomic.AtomicReference;
 import javasabr.rlib.collections.array.Array;
@@ -207,5 +208,31 @@ public class CopyOnWriteMutableArray<E> extends AbstractMutableArray<E> implemen
   @Override
   protected int decrementAnGetSize() {
     return 0;
+  }
+
+  @Override
+  public void sort() {
+    for (int i = 0; i < LIMIT_ATTEMPTS; i++) {
+      @Nullable E[] original = wrapped.get();
+      @Nullable E[] copy = Arrays.copyOf(original, original.length);
+      sortInternalArray(copy, copy.length);
+      if (wrapped.compareAndSet(original, copy)) {
+        return;
+      }
+    }
+    throw new ConcurrentModificationException("Cannot successfully sort this array");
+  }
+
+  @Override
+  public void sort(Comparator<E> comparator) {
+    for (int i = 0; i < LIMIT_ATTEMPTS; i++) {
+      @Nullable E[] original = wrapped.get();
+      @Nullable E[] copy = Arrays.copyOf(original, original.length);
+      Arrays.sort(copy, comparator);
+      if (wrapped.compareAndSet(original, copy)) {
+        return;
+      }
+    }
+    throw new ConcurrentModificationException("Cannot successfully sort this array");
   }
 }

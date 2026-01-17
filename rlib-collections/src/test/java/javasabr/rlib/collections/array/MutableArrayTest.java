@@ -1,5 +1,6 @@
 package javasabr.rlib.collections.array;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
@@ -251,6 +252,36 @@ class MutableArrayTest {
     Assertions.assertEquals(
         "[val_0, val_1, val_2, val_3, val_4, val_5, val_6, val_7, val_8, val_9]",
         mutableArray.toString());
+  }
+
+  @ParameterizedTest
+  @MethodSource("generateMutableArrays")
+  @DisplayName("should sort array correctly")
+  void shouldSortArrayCorrectly(MutableArray<String> mutableArray) {
+    // given:
+    mutableArray.addAll(Array.of("10", "99", "5", "3", "77", "45", "25", "56"));
+    
+    // when:
+    mutableArray.sort();
+    
+    // then:
+    var expected = Array.of("10", "25", "3", "45", "5", "56", "77", "99");
+    Assertions.assertEquals(expected, mutableArray);
+  }
+
+  @ParameterizedTest
+  @MethodSource("generateMutableArrays")
+  @DisplayName("should sort array correctly")
+  void shouldSortArrayUsingComparatorCorrectly(MutableArray<String> mutableArray) {
+    // given:
+    mutableArray.addAll(Array.of("10", "99", "5", "3", "77", "45", "25", "56"));
+
+    // when:
+    mutableArray.sort(Comparator.comparingInt(Integer::parseInt));
+
+    // then:
+    var expected = Array.of("3", "5", "10", "25", "45", "56", "77", "99");
+    Assertions.assertEquals(expected, mutableArray);
   }
 
   private static Stream<Arguments> generateMutableArrays() {
