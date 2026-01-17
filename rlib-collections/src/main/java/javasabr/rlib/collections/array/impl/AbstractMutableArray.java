@@ -243,7 +243,8 @@ public abstract class AbstractMutableArray<E> extends AbstractArray<E> implement
       Comparable[] wrapped = (Comparable[]) array;
       Arrays.sort(wrapped, 0, size, Comparator.naturalOrder());
     } else {
-      Arrays.sort(array, 0, size, Comparator.comparingInt(ObjectUtils::hash));
+      throw new IllegalStateException(
+          "Cannot sort array of non-Comparable elements without an explicit comparator");
     }
   }
   
