@@ -65,10 +65,8 @@ Project layout & where to change things
     - Update the module's code, update tests, run `./gradlew clean build`, and ensure no other modules break.
 
 Checks run prior to check-in (local replication)
-- There are no repo-level GitHub Actions found; replicate CI by running:
-    - `./gradlew clean build` (recommended).
-    - `./gradlew check` for verification tasks.
-- If a PR template or contributor CI exists elsewhere, follow repository-contributor guidance (none found in root).
+- `./gradlew clean build` (recommended).
+- `./gradlew check` for verification tasks.
 
 Dependencies not obvious from layout
 - Some features rely on Docker (Testcontainers) and on optional remote Maven repositories (README references an additional Maven URL for published artifacts). If using published artifacts in gradle config, ensure repository access.
