@@ -200,6 +200,88 @@ var count = container.getEmailCountFrom("from@test.com");
 container.deleteEmails();
 ```
 
+### Collections API
+
+Extended collections with dictionaries (maps) and arrays optimized for specific use cases:
+
+```java
+// Mutable dictionary (map) with object keys
+var dictionary = DictionaryFactory.mutableRefToRefDictionary();
+dictionary.put("key1", "value1");
+dictionary.put("key2", "value2");
+
+var value = dictionary.get("key1");
+
+// Thread-safe dictionary with stamped lock
+var lockableDictionary = DictionaryFactory.stampedLockBasedRefToRefDictionary();
+var stamp = lockableDictionary.readLock();
+try {
+  lockableDictionary.put("key", "value");
+} finally {
+  lockableDictionary.readUnlock(stamp)
+}
+
+// Primitive key dictionaries (no boxing overhead)
+var intToRefDictionary = DictionaryFactory.mutableIntToRefDictionary();
+intToRefDictionary.put(1, "value1");
+
+var longToRefDictionary = DictionaryFactory.mutableLongToRefDictionary();
+longToRefDictionary.put(100L, "value2");
+
+// Mutable arrays with type safety
+var array = ArrayFactory.mutableArray(String.class);
+array.add("element1");
+array.add("element2");
+
+// Thread-safe copy-on-write array
+var cowArray = ArrayFactory.copyOnModifyArray(String.class);
+
+// Stamped lock based thread-safe array
+var lockableArray = ArrayFactory.stampedLockBasedArray(String.class);
+```
+
+### Object Pooling
+
+Reusable object pools for reducing GC pressure:
+
+```java
+// Create a pool for reusable objects
+var pool = PoolFactory.newReusablePool(MyReusableObject.class);
+
+// Take an object from pool (or create new if empty)
+var obj = pool.take();
+
+// Use the object...
+
+// Return to pool for reuse
+pool.put(obj);
+
+// Thread-safe pool
+var lockablePool = PoolFactory.newLockBasePool(MyObject.class);
+```
+
+### Plugin System
+
+Dynamic plugin loading and management:
+
+```java
+var pluginSystem = PluginSystemFactory.newBasePluginSystem();
+pluginSystem.configureAppVersion(new Version("1.0.0"));
+pluginSystem.configureEmbeddedPluginPath(Paths.get("plugins/"));
+
+// Async plugin loading
+pluginSystem
+    .preLoad(ForkJoinPool.commonPool())
+    .thenCompose(system -> system.initialize(ForkJoinPool.commonPool()))
+    .toCompletableFuture()
+    .join();
+
+// Access extension points
+var extensionPoint = pluginSystem
+    .extensionPointManager()
+    .getExtensionPoint(MyExtension.class);
+```
+
 ## Building
 
 ```bash
