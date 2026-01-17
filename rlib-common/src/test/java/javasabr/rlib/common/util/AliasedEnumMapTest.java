@@ -43,7 +43,7 @@ class AliasedEnumMapTest {
     assertThat(TestEnum.MAP.resolve("CONSTANT2")).isEqualTo(TestEnum.CONSTANT2);
     assertThat(TestEnum.MAP.resolve("constant3")).isEqualTo(TestEnum.CONSTANT3);
     assertThat(TestEnum.MAP.resolve("CONSTANT4")).isEqualTo(TestEnum.CONSTANT4);
-    assertThat(TestEnum.MAP.resolve("unkonwn")).isNull();
+    assertThat(TestEnum.MAP.resolve("unknown")).isNull();
     assertThat(TestEnum.MAP.resolve("")).isNull();
     assertThat(TestEnum.MAP.resolve("unknown", TestEnum.CONSTANT4)).isEqualTo(TestEnum.CONSTANT4);
   }
