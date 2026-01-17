@@ -271,7 +271,7 @@ class MutableArrayTest {
 
   @ParameterizedTest
   @MethodSource("generateMutableArrays")
-  @DisplayName("should sort array correctly")
+  @DisplayName("should sort array using comparator correctly")
   void shouldSortArrayUsingComparatorCorrectly(MutableArray<String> mutableArray) {
     // given:
     mutableArray.addAll(Array.of("10", "99", "5", "3", "77", "45", "25", "56"));
