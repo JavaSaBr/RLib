@@ -2,6 +2,7 @@ package javasabr.rlib.collections.array.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Spliterator;
@@ -10,6 +11,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.collections.array.UnsafeMutableArray;
+import javasabr.rlib.common.util.ObjectUtils;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.Nullable;
@@ -224,6 +226,31 @@ public abstract class AbstractMutableArray<E> extends AbstractArray<E> implement
   @Override
   public UnsafeMutableArray<E> asUnsafe() {
     return this;
+  }
+
+  @Override
+
+  public void sort() {
+    sortInternalArray(wrapped(), size());
+  }
+
+  @SuppressWarnings({
+      "rawtypes",
+      "unchecked"
+  })
+  protected void sortInternalArray(@Nullable E[] array, int size) {
+    if (Comparable.class.isAssignableFrom(type())) {
+      Comparable[] wrapped = (Comparable[]) array;
+      Arrays.sort(wrapped, 0, size, Comparator.naturalOrder());
+    } else {
+      throw new IllegalStateException(
+          "Cannot sort array of non-Comparable elements without an explicit comparator");
+    }
+  }
+  
+  @Override
+  public void sort(Comparator<E> comparator) {
+    Arrays.sort(wrapped(), 0, size(), comparator);
   }
 
   protected static void validateCapacity(int capacity) {

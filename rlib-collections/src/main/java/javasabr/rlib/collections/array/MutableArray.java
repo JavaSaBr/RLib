@@ -1,6 +1,7 @@
 package javasabr.rlib.collections.array;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
@@ -48,4 +49,8 @@ public interface MutableArray<E> extends Array<E>, Collection<E> {
 
   @Override
   UnsafeMutableArray<E> asUnsafe();
+  
+  void sort();
+  
+  void sort(Comparator<E> comparator);
 }

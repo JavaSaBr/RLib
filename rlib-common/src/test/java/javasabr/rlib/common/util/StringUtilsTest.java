@@ -103,7 +103,6 @@ class StringUtilsTest {
 
   @Test
   void shouldVerifyEmails() {
-
     Assertions.assertTrue(StringUtils.isValidEmail("test@test.com"));
     Assertions.assertTrue(StringUtils.isValidEmail("тест@test.com"));
     Assertions.assertTrue(StringUtils.isValidEmail("тест@тест.рф"));
@@ -116,7 +115,6 @@ class StringUtilsTest {
 
   @Test
   void shouldDetectEmails() {
-
     Assertions.assertTrue(StringUtils.isEmail("test@test.com"));
     Assertions.assertTrue(StringUtils.isEmail("test.test@test.com"));
     Assertions.assertTrue(StringUtils.isEmail("test.test@test.test.com"));
@@ -125,5 +123,59 @@ class StringUtilsTest {
     Assertions.assertFalse(StringUtils.isEmail("test-test.com"));
     Assertions.assertFalse(StringUtils.isEmail("test@test"));
     Assertions.assertFalse(StringUtils.isEmail("test@test."));
+  }
+
+  @Test
+  void shouldCheckIfStringIsEmpty() {
+    Assertions.assertTrue(StringUtils.isEmpty(null));
+    Assertions.assertFalse(StringUtils.isNotEmpty(null));
+    
+    Assertions.assertTrue(StringUtils.isEmpty(""));
+    Assertions.assertFalse(StringUtils.isNotEmpty(""));
+    
+    Assertions.assertFalse(StringUtils.isEmpty(" "));
+    Assertions.assertTrue(StringUtils.isNotEmpty(" "));
+    
+    Assertions.assertFalse(StringUtils.isEmpty("123"));
+    Assertions.assertTrue(StringUtils.isNotEmpty("123"));
+  }
+
+  @Test
+  void shouldReturnAnotherStringIfEmpty() {
+    Assertions.assertEquals("alt", StringUtils.ifEmpty(null, "alt"));
+    Assertions.assertEquals("alt", StringUtils.ifEmpty("", "alt"));
+    Assertions.assertEquals(" ", StringUtils.ifEmpty(" ", "alt"));
+    Assertions.assertEquals("123", StringUtils.ifEmpty("123", "alt"));
+  }
+
+  @Test
+  void shouldCheckIfStringIsBlank() {
+    Assertions.assertTrue(StringUtils.isBlank(null));
+    Assertions.assertFalse(StringUtils.isNotBlank(null));
+    
+    Assertions.assertTrue(StringUtils.isBlank(""));
+    Assertions.assertFalse(StringUtils.isNotBlank(""));
+    
+    Assertions.assertTrue(StringUtils.isBlank(" "));
+    Assertions.assertFalse(StringUtils.isNotBlank(" "));
+    
+    Assertions.assertTrue(StringUtils.isBlank("       "));
+    Assertions.assertFalse(StringUtils.isNotBlank("       "));
+    
+    Assertions.assertFalse(StringUtils.isBlank("   1"));
+    Assertions.assertTrue(StringUtils.isNotBlank("   1"));
+    
+    Assertions.assertFalse(StringUtils.isBlank("123"));
+    Assertions.assertTrue(StringUtils.isNotBlank("123"));
+  }
+  
+  @Test
+  void shouldReturnAnotherStringIfBlank() {
+    Assertions.assertEquals("alt", StringUtils.ifBlank(null, "alt"));
+    Assertions.assertEquals("alt", StringUtils.ifBlank("", "alt"));
+    Assertions.assertEquals("alt", StringUtils.ifBlank(" ", "alt"));
+    Assertions.assertEquals("alt", StringUtils.ifBlank("   ", "alt"));
+    Assertions.assertEquals("    1", StringUtils.ifBlank("    1", "alt"));
+    Assertions.assertEquals("123", StringUtils.ifBlank("123", "alt"));
   }
 }
