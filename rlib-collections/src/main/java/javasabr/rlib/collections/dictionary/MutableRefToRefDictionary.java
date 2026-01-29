@@ -26,6 +26,12 @@ public interface MutableRefToRefDictionary<K, V> extends RefToRefDictionary<K, V
   @Nullable
   V put(K key, V value);
 
+  /**
+   * @return the previous value associated with the specified key, or null if there was no mapping for the key.
+   */
+  @Nullable 
+  V putIfAbsent(K key, V value);
+  
   void putAll(RefToRefDictionary<? extends K, ? extends V> dictionary);
 
   MutableRefToRefDictionary<K, V> append(RefToRefDictionary<? extends K, ? extends V> dictionary);
@@ -41,6 +47,11 @@ public interface MutableRefToRefDictionary<K, V> extends RefToRefDictionary<K, V
   @Nullable
   V remove(K key);
 
+  /**
+   * @return true if the expectedValue was removed
+   */
+  boolean remove(K key, V expectedValue);
+  
   /**
    * @return the optional value of the previous value for the key.
    */
