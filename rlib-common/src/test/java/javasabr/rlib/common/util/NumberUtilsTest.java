@@ -137,19 +137,22 @@ class NumberUtilsTest {
 
   @Test
   void shouldWriteHighLowBitsCorrectly() {
-
     for (int low = 0; low < 16; low++) {
       for (int high = 0; high < 16; high++) {
         var result = NumberUtils.setHighByteBits(low, high);
-        assertThat(NumberUtils.getHighByteBits(result)).isEqualTo(high);
-        assertThat(NumberUtils.getLowByteBits(result)).isEqualTo(low);
+        assertThat(NumberUtils.getHighByteBits(result))
+            .isEqualTo((byte) high);
+        assertThat(NumberUtils.getLowByteBits(result))
+            .isEqualTo((byte) low);
       }
     }
 
     for (int low = 0; low < 16; low++) {
       var result = NumberUtils.setLowByteBits(256, low);
-      assertThat(NumberUtils.getHighByteBits(result)).isEqualTo(16);
-      assertThat(NumberUtils.getLowByteBits(result)).isEqualTo(low);
+      assertThat(NumberUtils.getHighByteBits(result))
+          .isEqualTo((byte) 16);
+      assertThat(NumberUtils.getLowByteBits(result))
+          .isEqualTo((byte) low);
     }
   }
 
@@ -157,35 +160,35 @@ class NumberUtilsTest {
   void shouldReadHighLowBitsCorrectly() {
     for (int i = 0; i < 16; i++) {
       assertThat(NumberUtils.getHighByteBits(i << 4))
-          .isEqualTo(i);
+          .isEqualTo((byte) i);
     }
 
     assertThat(NumberUtils.getHighByteBits(0b1000_0100))
-        .isEqualTo(0b0000_1000);
+        .isEqualTo((byte) 0b0000_1000);
     assertThat(NumberUtils.getHighByteBits(0b0100_1000))
-        .isEqualTo(0b0000_0100);
+        .isEqualTo((byte) 0b0000_0100);
     assertThat(NumberUtils.getHighByteBits(0b0010_0010))
-        .isEqualTo(0b0000_0010);
+        .isEqualTo((byte) 0b0000_0010);
     assertThat(NumberUtils.getHighByteBits(0b0001_0001))
-        .isEqualTo(0b0000_0001);
+        .isEqualTo((byte) 0b0000_0001);
     assertThat(NumberUtils.getHighByteBits(0b0101_1000))
-        .isEqualTo(0b0000_0101);
+        .isEqualTo((byte) 0b0000_0101);
 
     for (int i = 0; i < 16; i++) {
       assertThat(NumberUtils.getLowByteBits(i & 0x0F))
-          .isEqualTo(i);
+          .isEqualTo((byte) i);
     }
 
     assertThat(NumberUtils.getLowByteBits(0b1000_1000))
-        .isEqualTo(0b0000_1000);
+        .isEqualTo((byte) 0b0000_1000);
     assertThat(NumberUtils.getLowByteBits(0b0100_0100))
-        .isEqualTo(0b0000_0100);
+        .isEqualTo((byte) 0b0000_0100);
     assertThat(NumberUtils.getLowByteBits(0b0010_0010))
-        .isEqualTo(0b0000_0010);
+        .isEqualTo((byte) 0b0000_0010);
     assertThat(NumberUtils.getLowByteBits(0b0001_0001))
-        .isEqualTo(0b0000_0001);
+        .isEqualTo((byte) 0b0000_0001);
     assertThat(NumberUtils.getLowByteBits(0b0101_0101))
-        .isEqualTo(0b0000_0101);
+        .isEqualTo((byte) 0b0000_0101);
   }
 
   @Test
@@ -227,7 +230,6 @@ class NumberUtilsTest {
 
   @Test
   void shouldValidateIntegerCorrectly() {
-
     // int
     assertThat(NumberUtils.validate(10, 1, 20))
         .isEqualTo(10);
@@ -281,7 +283,6 @@ class NumberUtilsTest {
 
   @Test
   void shouldValidateBooleanCorrectly() {
-
     assertThat(NumberUtils.toBoolean(1)).isTrue();
     assertThat(NumberUtils.toBoolean(0)).isFalse();
     assertThat(NumberUtils.toBoolean(1L)).isTrue();
@@ -307,7 +308,6 @@ class NumberUtilsTest {
 
   @Test
   void shouldEqualsNumbersCorrectly() {
-
     assertThat(NumberUtils.equals((byte) 10, (byte) 10)).isTrue();
     assertThat(NumberUtils.equals((short) 10, (short) 10)).isTrue();
     assertThat(NumberUtils.equals(10, 10)).isTrue();

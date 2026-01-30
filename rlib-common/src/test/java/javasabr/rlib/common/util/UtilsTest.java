@@ -13,11 +13,15 @@ public class UtilsTest {
 
   @Test
   void shouldSafetyTryGet() {
-    assertThat(Utils.tryGet("15", Integer::valueOf))
-        .isEqualTo(Integer.valueOf(15));
-    assertThat(Utils.tryGet("invalidnumber", Integer::valueOf))
-        .isNull();
+    // when/then:
+    Integer number = Utils.tryGet("15", Integer::valueOf);
+    assertThat(number).isEqualTo(Integer.valueOf(15));
 
+    // when/then:
+    Integer invalidNumber = Utils.tryGet("invalidnumber", Integer::valueOf);
+    assertThat(invalidNumber).isNull();
+    
+    // when/then:
     assertThat(Utils.tryGet("15", Integer::valueOf, 2))
         .isEqualTo(Integer.valueOf(15));
     assertThat(Utils.tryGet("invalidnumber", Integer::valueOf, 2))

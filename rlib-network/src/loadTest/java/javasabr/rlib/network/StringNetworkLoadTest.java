@@ -1,5 +1,7 @@
 package javasabr.rlib.network;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -27,8 +29,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @CustomLog
 public class StringNetworkLoadTest {

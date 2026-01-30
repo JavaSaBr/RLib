@@ -1,12 +1,8 @@
 package javasabr.rlib.io;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import javasabr.rlib.io.util.FileUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -16,33 +12,34 @@ public class FileUtilsTest {
 
   @Test
   void shouldGetNameByPath() {
-
     var path = "/some/folder/some/name.ololo";
     var path2 = "D:\\some\\folder\\some\\name.ololo";
 
-    Assertions.assertEquals("name.ololo", FileUtils.getName(path, '/'));
-    assertEquals("name.ololo", FileUtils.getName(path2, '\\'));
+    assertThat(FileUtils.getName(path, '/'))
+        .isEqualTo("name.ololo");
+    assertThat(FileUtils.getName(path2, '\\'))
+        .isEqualTo("name.ololo");
   }
 
   @Test
   void shouldGetParentByPath() {
-
     var path = "/some/folder/some/name.ololo";
     var path2 = "D:\\some\\folder\\some\\name.ololo";
 
-    assertEquals("/some/folder/some", FileUtils.getParent(path, '/'));
-    assertEquals("D:\\some\\folder\\some", FileUtils.getParent(path2, '\\'));
+    assertThat(FileUtils.getParent(path, '/'))
+        .isEqualTo("/some/folder/some");
+    assertThat(FileUtils.getParent(path2, '\\'))
+        .isEqualTo("D:\\some\\folder\\some");
   }
 
   @Test
   void shouldNormalizeFileName() {
     var first = FileUtils.normalizeName("file*:?name!!@#$\"\"wefwef<>.png");
-    assertEquals("file___name!!@#$__wefwef__.png", first);
+    assertThat(first).isEqualTo("file___name!!@#$__wefwef__.png");
   }
 
   @Test
   void shouldGetFileExtension() {
-
     var path1 = "file.txt";
     var path2 = "file.tar.gz";
     var path3 = "folder/folder.subname/file.png";
@@ -51,19 +48,18 @@ public class FileUtilsTest {
     var path6 = "D:\\folder\\folder.folder\\test";
     var path7 = "/folder/folder.folder/test";
 
-    assertEquals("txt", FileUtils.getExtension(path1));
-    assertEquals("gz", FileUtils.getExtension(path2));
-    assertEquals("png", FileUtils.getExtension(path3));
-    assertEquals("jpg", FileUtils.getExtension(path4));
-    assertEquals("TxT", FileUtils.getExtension(path5));
-    assertEquals("txt", FileUtils.getExtension(path5, true));
-    assertNull(FileUtils.getExtension(path6));
-    assertNull(FileUtils.getExtension(path7));
+    assertThat(FileUtils.getExtension(path1)).isEqualTo("txt");
+    assertThat(FileUtils.getExtension(path2)).isEqualTo("gz");
+    assertThat(FileUtils.getExtension(path3)).isEqualTo("png");
+    assertThat(FileUtils.getExtension(path4)).isEqualTo("jpg");
+    assertThat(FileUtils.getExtension(path5)).isEqualTo("TxT");
+    assertThat(FileUtils.getExtension(path5, true)).isEqualTo("txt");
+    assertThat(FileUtils.getExtension(path6)).isNull();
+    assertThat(FileUtils.getExtension(path7)).isNull();
   }
 
   @Test
   void shouldCheckExistingExtension() {
-
     var path1 = "file.txt";
     var path2 = "file.tar.gz";
     var path3 = "folder/folder.subname/file.png";
@@ -71,11 +67,11 @@ public class FileUtilsTest {
     var path6 = "D:\\folder\\folder.folder\\test";
     var path7 = "/folder/folder.folder/test";
 
-    assertTrue(FileUtils.hasExtension(path1));
-    assertTrue(FileUtils.hasExtension(path2));
-    assertTrue(FileUtils.hasExtension(path3));
-    assertTrue(FileUtils.hasExtension(path4));
-    assertFalse(FileUtils.hasExtension(path6));
-    assertFalse(FileUtils.hasExtension(path7));
+    assertThat(FileUtils.hasExtension(path1)).isTrue();
+    assertThat(FileUtils.hasExtension(path2)).isTrue();
+    assertThat(FileUtils.hasExtension(path3)).isTrue();
+    assertThat(FileUtils.hasExtension(path4)).isTrue();
+    assertThat(FileUtils.hasExtension(path6)).isFalse();
+    assertThat(FileUtils.hasExtension(path7)).isFalse();
   }
 }

@@ -1,5 +1,7 @@
 package javasabr.rlib.network;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -33,7 +35,6 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import lombok.CustomLog;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -71,7 +72,7 @@ public class StringSslNetworkTest extends BaseNetworkTest {
     Scanner serverIn = new Scanner(clientSocketOnServer.getInputStream());
     String receivedOnServer = serverIn.next() + " " + serverIn.next();
 
-    Assertions.assertEquals("Hello SSL", receivedOnServer);
+    assertThat(receivedOnServer).isEqualTo("Hello SSL");
   }
 
   @Test
@@ -179,7 +180,7 @@ public class StringSslNetworkTest extends BaseNetworkTest {
     var receivedPacket = new StringReadableNetworkPacket<StringDataSslConnection>();
     receivedPacket.read(null, buffer, dataLength);
 
-    Assertions.assertEquals("Hello SSL", receivedPacket.data());
+    assertThat(receivedPacket.data()).isEqualTo("Hello SSL");
 
     log.info(receivedPacket.data(), "Received from client:[%s]"::formatted);
 
@@ -196,9 +197,9 @@ public class StringSslNetworkTest extends BaseNetworkTest {
 
     buffer.clear();
 
-    Assertions.assertTrue(
-        counter.await(100_000, TimeUnit.MILLISECONDS),
-        "Still wait for " + counter.getCount() + " packets...");
+    assertThat(counter.await(100_000, TimeUnit.MILLISECONDS))
+        .as("Still wait for " + counter.getCount() + " packets...")
+        .isTrue();
 
     clientNetwork.shutdown();
     serverSocket.close();
@@ -262,9 +263,9 @@ public class StringSslNetworkTest extends BaseNetworkTest {
           counter.countDown();
         });
 
-    Assertions.assertTrue(
-        counter.await(60, TimeUnit.SECONDS),
-        "Still wait for " + counter.getCount() + " packets...");
+    assertThat(counter.await(60, TimeUnit.SECONDS))
+        .as(() -> "Still wait for " + counter.getCount() + " packets...")
+        .isTrue();
 
     serverNetwork.shutdown();
     clientNetwork.shutdown();
@@ -309,7 +310,9 @@ public class StringSslNetworkTest extends BaseNetworkTest {
       List<? extends ReadableNetworkPacket<StringDataSslConnection>> receivedPackets =
           ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofSeconds(5000)));
 
-      Assertions.assertEquals(packetCount, receivedPackets.size(), "Didn't receive all packets");
+      assertThat(receivedPackets.size())
+          .as("Didn't receive all packets")
+          .isEqualTo(packetCount);
 
       var wrongPacket = receivedPackets
           .stream()
@@ -319,7 +322,9 @@ public class StringSslNetworkTest extends BaseNetworkTest {
           .findFirst()
           .orElse(null);
 
-      Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
+      assertThat(wrongPacket)
+          .as("Wrong received packet: " + wrongPacket)
+          .isNull();
     }
   }
 
