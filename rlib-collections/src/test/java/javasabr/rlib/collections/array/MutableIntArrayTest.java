@@ -1,7 +1,8 @@
 package javasabr.rlib.collections.array;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,23 +18,23 @@ class MutableIntArrayTest {
     mutableArray.add(10);
 
     // then:
-    Assertions.assertEquals(1, mutableArray.size());
-    Assertions.assertEquals(10, mutableArray.get(0));
+    assertThat(mutableArray.size()).isEqualTo(1);
+    assertThat(mutableArray.get(0)).isEqualTo(10);
 
     // when:
     mutableArray.add(20);
 
     // then:
-    Assertions.assertEquals(2, mutableArray.size());
-    Assertions.assertEquals(20, mutableArray.get(1));
+    assertThat(mutableArray.size()).isEqualTo(2);
+    assertThat(mutableArray.get(1)).isEqualTo(20);
 
     // when:
     mutableArray.add(30);
 
     // then:
-    Assertions.assertEquals(3, mutableArray.size());
-    Assertions.assertEquals(30, mutableArray.get(2));
-    Assertions.assertEquals(IntArray.of(10, 20, 30), mutableArray);
+    assertThat(mutableArray.size()).isEqualTo(3);
+    assertThat(mutableArray.get(2)).isEqualTo(30);
+    assertThat(mutableArray).isEqualTo(IntArray.of(10, 20, 30));
 
     // when:
     for(int i = 0; i < 100; i++) {
@@ -41,8 +42,8 @@ class MutableIntArrayTest {
     }
 
     // then:
-    Assertions.assertEquals(103, mutableArray.size());
-    Assertions.assertEquals(199, mutableArray.get(102));
+    assertThat(mutableArray.size()).isEqualTo(103);
+    assertThat(mutableArray.get(102)).isEqualTo(199);
   }
 
   @ParameterizedTest
@@ -58,25 +59,25 @@ class MutableIntArrayTest {
     mutableArray.remove(100);
 
     // then:
-    Assertions.assertEquals(100, mutableArray.size());
-    Assertions.assertEquals(101, mutableArray.get(0));
+    assertThat(mutableArray.size()).isEqualTo(100);
+    assertThat(mutableArray.get(0)).isEqualTo(101);
 
     // when:
     mutableArray.remove(110);
 
     // then:
-    Assertions.assertEquals(99, mutableArray.size());
-    Assertions.assertEquals(101, mutableArray.get(0));
-    Assertions.assertEquals(109, mutableArray.get(8));
-    Assertions.assertEquals(111, mutableArray.get(9));
+    assertThat(mutableArray.size()).isEqualTo(99);
+    assertThat(mutableArray.get(0)).isEqualTo(101);
+    assertThat(mutableArray.get(8)).isEqualTo(109);
+    assertThat(mutableArray.get(9)).isEqualTo(111);
 
     // when:
     mutableArray.remove(200);
 
     // then:
-    Assertions.assertEquals(98, mutableArray.size());
-    Assertions.assertEquals(199, mutableArray.get(97));
-    Assertions.assertEquals(198, mutableArray.get(96));
+    assertThat(mutableArray.size()).isEqualTo(98);
+    assertThat(mutableArray.get(97)).isEqualTo(199);
+    assertThat(mutableArray.get(96)).isEqualTo(198);
   }
 
   @ParameterizedTest
@@ -92,15 +93,15 @@ class MutableIntArrayTest {
     mutableArray.replace(0, 200);
 
     // then:
-    Assertions.assertEquals(101, mutableArray.size());
-    Assertions.assertEquals(200, mutableArray.get(0));
+    assertThat(mutableArray.size()).isEqualTo(101);
+    assertThat(mutableArray.get(0)).isEqualTo(200);
 
     // when:
     mutableArray.replace(11, 211);
 
     // then:
-    Assertions.assertEquals(101, mutableArray.size());
-    Assertions.assertEquals(211, mutableArray.get(11));
+    assertThat(mutableArray.size()).isEqualTo(101);
+    assertThat(mutableArray.get(11)).isEqualTo(211);
   }
 
   @ParameterizedTest
@@ -119,23 +120,23 @@ class MutableIntArrayTest {
     mutableArray.addAll(anotherArray);
 
     // then:
-    Assertions.assertEquals(27, mutableArray.size());
-    Assertions.assertEquals(100, mutableArray.get(0));
-    Assertions.assertEquals(120, mutableArray.get(20));
-    Assertions.assertEquals(31, mutableArray.get(21));
-    Assertions.assertEquals(36, mutableArray.get(26));
+    assertThat(mutableArray.size()).isEqualTo(27);
+    assertThat(mutableArray.get(0)).isEqualTo(100);
+    assertThat(mutableArray.get(20)).isEqualTo(120);
+    assertThat(mutableArray.get(21)).isEqualTo(31);
+    assertThat(mutableArray.get(26)).isEqualTo(36);
 
     // when:
     mutableArray.addAll(anotherNativeArray);
 
     // then:
-    Assertions.assertEquals(33, mutableArray.size());
-    Assertions.assertEquals(100, mutableArray.get(0));
-    Assertions.assertEquals(120, mutableArray.get(20));
-    Assertions.assertEquals(31, mutableArray.get(21));
-    Assertions.assertEquals(36, mutableArray.get(26));
-    Assertions.assertEquals(41, mutableArray.get(27));
-    Assertions.assertEquals(46, mutableArray.get(32));
+    assertThat(mutableArray.size()).isEqualTo(33);
+    assertThat(mutableArray.get(0)).isEqualTo(100);
+    assertThat(mutableArray.get(20)).isEqualTo(120);
+    assertThat(mutableArray.get(21)).isEqualTo(31);
+    assertThat(mutableArray.get(26)).isEqualTo(36);
+    assertThat(mutableArray.get(27)).isEqualTo(41);
+    assertThat(mutableArray.get(32)).isEqualTo(46);
   }
 
   @ParameterizedTest
@@ -157,17 +158,17 @@ class MutableIntArrayTest {
     mutableArray.removeAll(anotherArray);
 
     // then:
-    Assertions.assertEquals(27, mutableArray.size());
-    Assertions.assertEquals(100, mutableArray.get(0));
-    Assertions.assertEquals(120, mutableArray.get(20));
-    Assertions.assertEquals(41, mutableArray.get(21));
-    Assertions.assertEquals(46, mutableArray.get(26));
+    assertThat(mutableArray.size()).isEqualTo(27);
+    assertThat(mutableArray.get(0)).isEqualTo(100);
+    assertThat(mutableArray.get(20)).isEqualTo(120);
+    assertThat(mutableArray.get(21)).isEqualTo(41);
+    assertThat(mutableArray.get(26)).isEqualTo(46);
 
     // when:
     mutableArray.removeAll(anotherNativeArray);
 
     // then:
-    Assertions.assertEquals(21, mutableArray.size());
+    assertThat(mutableArray.size()).isEqualTo(21);
   }
 
   @ParameterizedTest
@@ -180,16 +181,16 @@ class MutableIntArrayTest {
     }
 
     // then:
-    Assertions.assertEquals(21, mutableArray.size());
-    Assertions.assertEquals(100, mutableArray.get(0));
-    Assertions.assertEquals(120, mutableArray.get(20));
+    assertThat(mutableArray.size()).isEqualTo(21);
+    assertThat(mutableArray.get(0)).isEqualTo(100);
+    assertThat(mutableArray.get(20)).isEqualTo(120);
 
     // when:
     mutableArray.clear();
 
     // then:
-    Assertions.assertEquals(0, mutableArray.size());
-    Assertions.assertArrayEquals(new int[0], mutableArray.toArray());
+    assertThat(mutableArray.size()).isEqualTo(0);
+    assertThat(mutableArray.toArray()).isEqualTo(new int[0]);
   }
 
   @ParameterizedTest
@@ -205,7 +206,7 @@ class MutableIntArrayTest {
     }
 
     // then:
-    Assertions.assertEquals(100, mutableArray.size());
+    assertThat(mutableArray.size()).isEqualTo(100);
 
     // when:
     for(int i = 0; i < 30; i++) {
@@ -213,14 +214,14 @@ class MutableIntArrayTest {
     }
 
     // then:
-    Assertions.assertEquals(70, mutableArray.size());
-    Assertions.assertEquals(109, unsafe.wrapped().length);
+    assertThat(mutableArray.size()).isEqualTo(70);
+    assertThat(unsafe.wrapped().length).isEqualTo(109);
 
     // when:
     unsafe.trimToSize();
 
     // then:
-    Assertions.assertEquals(70, unsafe.wrapped().length);
+    assertThat(unsafe.wrapped().length).isEqualTo(70);
   }
 
   @ParameterizedTest
@@ -232,7 +233,8 @@ class MutableIntArrayTest {
       mutableArray.add(20 + i);
     }
     // then:
-    Assertions.assertEquals("[20,21,22,23,24,25,26,27,28,29]", mutableArray.toString());
+    assertThat(mutableArray.toString())
+        .isEqualTo("[20,21,22,23,24,25,26,27,28,29]");
   }
 
   private static Stream<Arguments> generateMutableArrays() {

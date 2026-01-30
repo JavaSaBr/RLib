@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -67,80 +66,76 @@ public class ArrayTest  {
   void shouldCorrectlyTakeValues(Array<String> array) {
 
     // then:
-    Assertions.assertEquals(4, array.size());
-    Assertions.assertEquals("First", array.get(0));
-    Assertions.assertEquals("Second", array.get(1));
-    Assertions.assertEquals("Third", array.get(2));
-    Assertions.assertEquals("  ", array.get(3));
-    Assertions.assertEquals("First", array.first());
-    Assertions.assertEquals("  ", array.last());
+    assertThat(array.size()).isEqualTo(4);
+    assertThat(array.get(0)).isEqualTo("First");
+    assertThat(array.get(1)).isEqualTo("Second");
+    assertThat(array.get(2)).isEqualTo("Third");
+    assertThat(array.get(3)).isEqualTo("  ");
+    assertThat(array.first()).isEqualTo("First");
+    assertThat(array.last()).isEqualTo("  ");
 
     // then:
-    Assertions.assertArrayEquals(
-        new String[]{
+    assertThat(array.stream().toArray()).isEqualTo(new String[]{
             "First",
             "Second",
             "Third",
             "  "
-        }, array.stream().toArray());
+        });
 
     // then:
-    Assertions.assertTrue(array.contains("Second"));
-    Assertions.assertFalse(array.contains("test"));
+    assertThat(array.contains("Second")).isTrue();
+    assertThat(array.contains("test")).isFalse();
   }
 
   @ParameterizedTest
   @MethodSource("generateArraysWithDuplicates")
   void shouldFindElementIndex(Array<String> array) {
     // when/then:
-    Assertions.assertEquals(0, array.indexOf("First"));
-    Assertions.assertEquals(3, array.indexOf("  "));
-    Assertions.assertEquals(-1, array.indexOf("notexist"));
+    assertThat(array.indexOf("First")).isEqualTo(0);
+    assertThat(array.indexOf("  ")).isEqualTo(3);
+    assertThat(array.indexOf("notexist")).isEqualTo(-1);
   }
 
   @ParameterizedTest
   @MethodSource("generateArraysWithDuplicates")
   void shouldFindLastElementIndex(Array<String> array) {
     // when/then:
-    Assertions.assertEquals(4, array.lastIndexOf("First"));
-    Assertions.assertEquals(6, array.lastIndexOf("Third"));
-    Assertions.assertEquals(-1, array.lastIndexOf("notexist"));
+    assertThat(array.lastIndexOf("First")).isEqualTo(4);
+    assertThat(array.lastIndexOf("Third")).isEqualTo(6);
+    assertThat(array.lastIndexOf("notexist")).isEqualTo(-1);
   }
 
   @ParameterizedTest
   @MethodSource("generateArrays")
   void shouldFindElementIndexWithFunction(Array<String> array) {
     // when/then:
-    Assertions.assertEquals(0, array.indexOf(s -> s + s, "FirstFirst"));
-    Assertions.assertEquals(3, array.indexOf(s -> s + s, "    "));
-    Assertions.assertEquals(-1, array.indexOf("notexist"));
+    assertThat(array.indexOf(s -> s + s, "FirstFirst")).isEqualTo(0);
+    assertThat(array.indexOf(s -> s + s, "    ")).isEqualTo(3);
+    assertThat(array.indexOf("notexist")).isEqualTo(-1);
   }
 
   @ParameterizedTest
   @MethodSource("generateArrays")
   void shouldCorrectlyTransformToNativeArray(Array<String> array) {
     // then:
-    Assertions.assertArrayEquals(
-        new String[]{
+    assertThat(array.toArray()).isEqualTo(new String[]{
             "First",
             "Second",
             "Third",
             "  "
-        }, array.toArray());
-    Assertions.assertArrayEquals(
-        new String[]{
+        });
+    assertThat(array.toArray(new String[4])).isEqualTo(new String[]{
             "First",
             "Second",
             "Third",
             "  "
-        }, array.toArray(new String[4]));
-    Assertions.assertArrayEquals(
-        new String[]{
+        });
+    assertThat(array.toArray(String.class)).isEqualTo(new String[]{
             "First",
             "Second",
             "Third",
             "  "
-        }, array.toArray(String.class));
+        });
   }
 
   @ParameterizedTest

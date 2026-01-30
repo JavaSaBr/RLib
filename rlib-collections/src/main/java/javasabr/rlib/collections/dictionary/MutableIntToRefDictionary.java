@@ -25,6 +25,12 @@ public interface MutableIntToRefDictionary<V> extends IntToRefDictionary<V> {
   @Nullable
   V put(int key, V value);
 
+  /**
+   * @return the existing value if the key is already present, or null if the key was absent and the new mapping was added.
+   */
+  @Nullable
+  V putIfAbsent(int key, V value);
+  
   void putAll(IntToRefDictionary<? extends V> dictionary);
 
   MutableIntToRefDictionary<V> append(IntToRefDictionary<? extends V> dictionary);
@@ -40,6 +46,11 @@ public interface MutableIntToRefDictionary<V> extends IntToRefDictionary<V> {
   @Nullable
   V remove(int key);
 
+  /**
+   * @return true if the expectedValue was removed
+   */
+  boolean remove(int key, V expectedValue);
+  
   /**
    * @return the optional value of the previous value for the key.
    */

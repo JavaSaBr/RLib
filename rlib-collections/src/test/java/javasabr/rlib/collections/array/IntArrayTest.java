@@ -3,7 +3,6 @@ package javasabr.rlib.collections.array;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -49,47 +48,46 @@ public class IntArrayTest {
   @ParameterizedTest
   @MethodSource("generateArrays")
   void shouldCorrectlyTakeValues(IntArray array) {
+    // then:
+    assertThat(array.size()).isEqualTo(4);
+    assertThat(array.get(0)).isEqualTo(5);
+    assertThat(array.get(1)).isEqualTo(8);
+    assertThat(array.get(2)).isEqualTo(13);
+    assertThat(array.get(3)).isEqualTo(25);
+    assertThat(array.first()).isEqualTo(5);
+    assertThat(array.last()).isEqualTo(25);
 
     // then:
-    Assertions.assertEquals(4, array.size());
-    Assertions.assertEquals(5, array.get(0));
-    Assertions.assertEquals(8, array.get(1));
-    Assertions.assertEquals(13, array.get(2));
-    Assertions.assertEquals(25, array.get(3));
-    Assertions.assertEquals(5, array.first());
-    Assertions.assertEquals(25, array.last());
+    assertThat(array.stream().toArray()).isEqualTo(new int[]{5, 8, 13, 25});
 
     // then:
-    Assertions.assertArrayEquals(new int[]{5, 8, 13, 25}, array.stream().toArray());
-
-    // then:
-    Assertions.assertTrue(array.contains(8));
-    Assertions.assertFalse(array.contains(99));
+    assertThat(array.contains(8)).isTrue();
+    assertThat(array.contains(99)).isFalse();
   }
 
   @ParameterizedTest
   @MethodSource("generateArraysWithDuplicates")
   void shouldFindElementIndex(IntArray array) {
     // when/then:
-    Assertions.assertEquals(0, array.indexOf(5));
-    Assertions.assertEquals(3, array.indexOf(25));
-    Assertions.assertEquals(-1, array.indexOf(99));
+    assertThat(array.indexOf(5)).isEqualTo(0);
+    assertThat(array.indexOf(25)).isEqualTo(3);
+    assertThat(array.indexOf(99)).isEqualTo(-1);
   }
 
   @ParameterizedTest
   @MethodSource("generateArraysWithDuplicates")
   void shouldFindLastElementIndex(IntArray array) {
     // when/then:
-    Assertions.assertEquals(4, array.lastIndexOf(5));
-    Assertions.assertEquals(6, array.lastIndexOf(13));
-    Assertions.assertEquals(-1, array.lastIndexOf(99));
+    assertThat(array.lastIndexOf(5)).isEqualTo(4);
+    assertThat(array.lastIndexOf(13)).isEqualTo(6);
+    assertThat(array.lastIndexOf(99)).isEqualTo(-1);
   }
 
   @ParameterizedTest
   @MethodSource("generateArrays")
   void shouldCorrectlyTransformToNativeArray(IntArray array) {
     // when/then:
-    Assertions.assertArrayEquals(new int[]{5, 8, 13, 25}, array.stream().toArray());
+    assertThat(array.stream().toArray()).isEqualTo(new int[]{5, 8, 13, 25});
   }
 
   @ParameterizedTest

@@ -1,8 +1,9 @@
 package javasabr.rlib.collections.array;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Objects;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,24 +14,28 @@ class ArrayIterationsTest {
   @MethodSource("generateArrays")
   void shouldFindAnyCorrectly(Array<String> array) {
     // when/then:
-    Assertions.assertNull(array
+    assertThat(array
         .iterations()
-        .findAny("notexist", Objects::equals));
-    Assertions.assertNotNull(array
+        .findAny("notexist", Objects::equals))
+        .isNull();
+    assertThat(array
         .iterations()
-        .findAny("Second", Objects::equals));
+        .findAny("Second", Objects::equals))
+        .isNotNull();
   }
 
   @ParameterizedTest
   @MethodSource("generateArrays")
   void shouldFindAny2Correctly(Array<String> array) {
     // when/then:
-    Assertions.assertNull(array
+    assertThat(array
         .iterations()
-        .findAny(10, (element, intArg) -> String.valueOf(intArg).equals(element)));
-    Assertions.assertNotNull(array
+        .findAny(10, (element, intArg) -> String.valueOf(intArg).equals(element)))
+        .isNull();
+    assertThat(array
         .iterations()
-        .findAny(5, (element, intArg) -> String.valueOf(intArg).equals(element)));
+        .findAny(5, (element, intArg) -> String.valueOf(intArg).equals(element)))
+        .isNotNull();
   }
 
   @ParameterizedTest
@@ -50,7 +55,7 @@ class ArrayIterationsTest {
         .forEach("_postfix", (element, arg1) -> result.add(element + arg1));
 
     // then:
-    Assertions.assertEquals(expected, result);
+    assertThat(result).isEqualTo(expected);
   }
 
   @ParameterizedTest
@@ -70,7 +75,7 @@ class ArrayIterationsTest {
         .forEach("prefix_", "_postfix", (element, arg1, arg2) -> result.add(arg1 + element + arg2));
 
     // then:
-    Assertions.assertEquals(expected, result);
+    assertThat(result).isEqualTo(expected);
   }
 
   @ParameterizedTest
@@ -90,19 +95,21 @@ class ArrayIterationsTest {
         .forEach("prefix_", 55L, (element, arg1, arg2) -> result.add(arg1 + element + arg2));
 
     // then:
-    Assertions.assertEquals(expected, result);
+    assertThat(result).isEqualTo(expected);
   }
 
   @ParameterizedTest
   @MethodSource("generateArrays")
   void shouldAnyMatchCorrectly(Array<String> array) {
     // when/then:
-    Assertions.assertFalse(array
+    assertThat(array
         .iterations()
-        .anyMatch(10, (element, intArg) -> String.valueOf(intArg).equals(element)));
-    Assertions.assertTrue(array
+        .anyMatch(10, (element, intArg) -> String.valueOf(intArg).equals(element)))
+        .isFalse();
+    assertThat(array
         .iterations()
-        .anyMatch(5, (element, intArg) -> String.valueOf(intArg).equals(element)));
+        .anyMatch(5, (element, intArg) -> String.valueOf(intArg).equals(element)))
+        .isTrue();
   }
 
   private static Stream<Arguments> generateArrays() {

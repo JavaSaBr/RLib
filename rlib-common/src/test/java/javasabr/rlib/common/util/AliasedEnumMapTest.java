@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import javasabr.rlib.common.AliasedEnum;
 import org.jspecify.annotations.NonNull;

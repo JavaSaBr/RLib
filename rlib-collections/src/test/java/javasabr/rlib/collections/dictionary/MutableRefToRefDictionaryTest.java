@@ -32,6 +32,33 @@ class MutableRefToRefDictionaryTest {
 
   @ParameterizedTest
   @MethodSource("generateDictionaries")
+  void shouldPutIfAbsentNewPairs(MutableRefToRefDictionary<String, String> dictionary) {
+    // given:
+    dictionary.put("key1", "val1");
+    dictionary.put("key4", "val4");
+    dictionary.put("key7", "val7");
+    dictionary.put("key55", "val55");
+    // when:
+    String result1 = dictionary.putIfAbsent("key1", "val1_1");
+    String result2 = dictionary.putIfAbsent("key4", "val4_1");
+    String result3 = dictionary.putIfAbsent("key44", "val44");
+    // then:
+    assertThat(result1).isEqualTo("val1");
+    assertThat(result2).isEqualTo("val4");
+    assertThat(result3).isNull();
+    assertThat(dictionary.get("key1")).isEqualTo("val1");
+    assertThat(dictionary.get("key4")).isEqualTo("val4");
+    assertThat(dictionary.get("key55")).isEqualTo("val55");
+    assertThat(dictionary.get("key44")).isEqualTo("val44");
+    assertThat(dictionary.containsKey("key1")).isTrue();
+    assertThat(dictionary.containsKey("key4")).isTrue();
+    assertThat(dictionary.containsKey("key55")).isTrue();
+    assertThat(dictionary.containsKey("key44")).isTrue();
+    assertThat(dictionary.size()).isEqualTo(5);
+  }
+
+  @ParameterizedTest
+  @MethodSource("generateDictionaries")
   void shouldPutOptionalNewPairs(MutableRefToRefDictionary<String, String> dictionary) {
     // when:
     dictionary.put("key4", "val4");
@@ -70,6 +97,31 @@ class MutableRefToRefDictionaryTest {
     assertThat(dictionary.containsKey("key1")).isFalse();
     assertThat(dictionary.containsKey("key55")).isFalse();
     assertThat(dictionary.size()).isEqualTo(2);
+  }
+
+  @ParameterizedTest
+  @MethodSource("generateDictionaries")
+  void shouldRemoveByKeysWithExpectedValues(MutableRefToRefDictionary<String, String> dictionary) {
+    // given:
+    dictionary.put("key1", "val1");
+    dictionary.put("key4", "val4");
+    dictionary.put("key7", "val7");
+    dictionary.put("key55", "val55");
+
+    // when:
+    boolean removed1 = dictionary.remove("key1", "val2");
+    boolean removed2 = dictionary.remove("key55", "val55");
+
+    // then:
+    assertThat(removed1).isFalse();
+    assertThat(removed2).isTrue();
+    assertThat(dictionary.get("key4")).isEqualTo("val4");
+    assertThat(dictionary.get("key7")).isEqualTo("val7");
+    assertThat(dictionary.get("key1")).isEqualTo("val1");
+    assertThat(dictionary.get("key55")).isNull();
+    assertThat(dictionary.containsKey("key1")).isTrue();
+    assertThat(dictionary.containsKey("key55")).isFalse();
+    assertThat(dictionary.size()).isEqualTo(3);
   }
 
   @ParameterizedTest

@@ -1,5 +1,9 @@
 package javasabr.rlib.network;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.network.annotation.NetworkPacketDescription;
@@ -9,7 +13,6 @@ import javasabr.rlib.network.packet.impl.AbstractIdBasedReadableNetworkPacket;
 import javasabr.rlib.network.packet.impl.DefaultReadableNetworkPacket;
 import javasabr.rlib.network.packet.registry.impl.IdBasedReadableNetworkPacketRegistry;
 import lombok.NoArgsConstructor;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -53,54 +56,62 @@ public class IdBasedReadableNetworkPacketRegistryTest {
 
   @Test
   void shouldBeCreated() {
-    Assertions.assertDoesNotThrow(
-        () -> new IdBasedReadableNetworkPacketRegistry<>(IdBasedReadableNetworkPacket.class));
+    assertThatCode(
+        () -> new IdBasedReadableNetworkPacketRegistry<>(IdBasedReadableNetworkPacket.class))
+        .doesNotThrowAnyException();
   }
 
   @Test
   void shouldRegister3PacketsByArray() {
-
     var registry = new IdBasedReadableNetworkPacketRegistry<>(IdBasedReadableNetworkPacket.class)
         .register(Array.typed(Class.class, Impl1.class, Impl2.class, Impl3.class));
 
-    Assertions.assertInstanceOf(Impl1.class, registry.resolvePrototypeById(1));
-    Assertions.assertInstanceOf(Impl2.class, registry.resolvePrototypeById(2));
-    Assertions.assertInstanceOf(Impl3.class, registry.resolvePrototypeById(3));
+    assertThat(registry.resolvePrototypeById(1))
+        .isInstanceOf(Impl1.class);
+    assertThat(registry.resolvePrototypeById(2))
+        .isInstanceOf(Impl2.class);
+    assertThat(registry.resolvePrototypeById(3))
+        .isInstanceOf(Impl3.class);
   }
 
   @Test
   void shouldRegister3PacketsByVarargs() {
-
     var registry = new IdBasedReadableNetworkPacketRegistry<>(IdBasedReadableNetworkPacket.class)
         .register(Impl1.class, Impl2.class, Impl3.class);
 
-    Assertions.assertInstanceOf(Impl1.class, registry.resolvePrototypeById(1));
-    Assertions.assertInstanceOf(Impl2.class, registry.resolvePrototypeById(2));
-    Assertions.assertInstanceOf(Impl3.class, registry.resolvePrototypeById(3));
+    assertThat(registry.resolvePrototypeById(1))
+        .isInstanceOf(Impl1.class);
+    assertThat(registry.resolvePrototypeById(2))
+        .isInstanceOf(Impl2.class);
+    assertThat(registry.resolvePrototypeById(3))
+        .isInstanceOf(Impl3.class);
   }
 
   @Test
   void shouldRegister3PacketsBySingle() {
-
     var registry = new IdBasedReadableNetworkPacketRegistry<>(IdBasedReadableNetworkPacket.class)
         .register(Impl1.class)
         .register(Impl2.class)
         .register(Impl3.class);
 
-    Assertions.assertInstanceOf(Impl1.class, registry.resolvePrototypeById(1));
-    Assertions.assertInstanceOf(Impl2.class, registry.resolvePrototypeById(2));
-    Assertions.assertInstanceOf(Impl3.class, registry.resolvePrototypeById(3));
+    assertThat(registry.resolvePrototypeById(1))
+        .isInstanceOf(Impl1.class);
+    assertThat(registry.resolvePrototypeById(2))
+        .isInstanceOf(Impl2.class);
+    assertThat(registry.resolvePrototypeById(3))
+        .isInstanceOf(Impl3.class);
   }
 
   @Test
   void shouldRegister2PrivatePacketsBySingle() {
-
     var registry = new IdBasedReadableNetworkPacketRegistry<>(PrivateBase.class)
         .register(PrivateImpl1.class, PrivateImpl1::new)
         .register(PrivateImpl2.class, PrivateImpl2::new);
 
-    Assertions.assertInstanceOf(PrivateImpl1.class, registry.resolvePrototypeById(1));
-    Assertions.assertInstanceOf(PrivateImpl2.class, registry.resolvePrototypeById(10));
+    assertThat(registry.resolvePrototypeById(1))
+        .isInstanceOf(PrivateImpl1.class);
+    assertThat(registry.resolvePrototypeById(10))
+        .isInstanceOf(PrivateImpl2.class);
   }
 
   @Test
@@ -116,8 +127,11 @@ public class IdBasedReadableNetworkPacketRegistryTest {
     var registry = new IdBasedReadableNetworkPacketRegistry<>(PublicBase.class)
         .register(ClassUtils.<Array<Class<? extends PublicBase>>>unsafeNNCast(array));
 
-    Assertions.assertInstanceOf(PublicImpl1.class, registry.resolvePrototypeById(1));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> registry.resolvePrototypeById(2));
-    Assertions.assertInstanceOf(PublicImpl2.class, registry.resolvePrototypeById(5));
+    assertThat(registry.resolvePrototypeById(1))
+        .isInstanceOf(PublicImpl1.class);
+    assertThatThrownBy(() -> registry.resolvePrototypeById(2))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThat(registry.resolvePrototypeById(5))
+        .isInstanceOf(PublicImpl2.class);
   }
 }

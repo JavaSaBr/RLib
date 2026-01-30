@@ -1,10 +1,11 @@
 package javasabr.rlib.concurrent.executor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import javasabr.rlib.common.util.GroupThreadFactory;
 import javasabr.rlib.common.util.ThreadUtils;
 import javasabr.rlib.concurrent.executor.impl.ThreadPoolTaskExecutor;
-import org.junit.jupiter.api.Assertions;
 
 /**
  * @author JavaSaBr
@@ -33,7 +34,7 @@ public class TestThreadPoolTaskExecutor {
 
     ThreadUtils.sleep(30);
 
-    Assertions.assertEquals(TASK_LIMIT, counter.get());
+    assertThat(counter.get()).isEqualTo(TASK_LIMIT);
 
     System.out.println(header + " test executor finished.");
   }

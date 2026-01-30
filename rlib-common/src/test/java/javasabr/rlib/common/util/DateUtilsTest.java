@@ -2,74 +2,81 @@ package javasabr.rlib.common.util;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class DateUtilsTest {
 
   @Test
   void stringToLocalDateTest() {
+    assertThat(DateUtils.toLocalDate("1800-05-20"))
+        .isEqualTo(LocalDate.of(1800, 5, 20));
 
-    Assertions.assertEquals(LocalDate.of(1800, 5, 20), DateUtils.toLocalDate("1800-05-20"));
+    assertThat(DateUtils.toLocalDate("2020-1-10"))
+        .isNull();
+    assertThat(DateUtils.toLocalDate("2020-01-10"))
+        .isEqualTo(LocalDate.of(2020, 1, 10));
 
-    Assertions.assertNull(DateUtils.toLocalDate("2020-1-10"));
-    Assertions.assertEquals(LocalDate.of(2020, 1, 10), DateUtils.toLocalDate("2020-01-10"));
+    assertThat(DateUtils.toLocalDate("2015-5-1"))
+        .isNull();
+    assertThat(DateUtils.toLocalDate("2015-05-01"))
+        .isEqualTo(LocalDate.of(2015, 5, 1));
 
-    Assertions.assertNull(DateUtils.toLocalDate("2015-5-1"));
-    Assertions.assertEquals(LocalDate.of(2015, 5, 1), DateUtils.toLocalDate("2015-05-01"));
-
-    Assertions.assertNull(DateUtils.toLocalDate("invaliddate"));
+    assertThat(DateUtils.toLocalDate("invaliddate"))
+        .isNull();
   }
 
   @Test
   void localDateToStringTest() {
+    assertThat(DateUtils.toString(LocalDate.of(1800, 5, 20)))
+        .isEqualTo("1800-05-20");
 
-    Assertions.assertEquals("1800-05-20", DateUtils.toString(LocalDate.of(1800, 5, 20)));
+    assertThat(DateUtils.toString(LocalDate.of(2020, 1, 10)))
+        .isEqualTo("2020-01-10");
 
-    Assertions.assertEquals("2020-01-10", DateUtils.toString(LocalDate.of(2020, 1, 10)));
+    assertThat(DateUtils.toString(LocalDate.of(2015, 5, 1)))
+        .isEqualTo("2015-05-01");
 
-    Assertions.assertEquals("2015-05-01", DateUtils.toString(LocalDate.of(2015, 5, 1)));
-
-    Assertions.assertNull(DateUtils.toString(null));
+    assertThat(DateUtils.toString(null))
+        .isNull();
   }
 
   @Test
   void temporalAccessorToStringTest() {
+    assertThat(DateUtils.toString(LocalDate.of(1800, 5, 20), ISO_LOCAL_DATE))
+        .isEqualTo("1800-05-20");
 
-    Assertions.assertEquals("1800-05-20", DateUtils.toString(LocalDate.of(1800, 5, 20), ISO_LOCAL_DATE));
+    assertThat(DateUtils.toString(LocalDateTime.of(2020, 1, 10, 23, 42), ISO_LOCAL_DATE_TIME))
+        .isEqualTo("2020-01-10T23:42:00");
 
-    Assertions.assertEquals(
-        "2020-01-10T23:42:00",
-        DateUtils.toString(LocalDateTime.of(2020, 1, 10, 23, 42), ISO_LOCAL_DATE_TIME));
-
-    Assertions.assertNull(DateUtils.toString(null, ISO_LOCAL_DATE));
+    assertThat(DateUtils.toString(null, ISO_LOCAL_DATE))
+        .isNull();
   }
 
   @Test
   void formatTimestampTest() {
-
     var localDateTime = LocalDateTime.of(2010, 5, 12, 23, 10, 35, 0);
 
-    Assertions.assertEquals("23:10:35:000", DateUtils.formatShortTimestamp(localDateTime));
-    Assertions.assertEquals(
-        "23:10:35:000",
-        DateUtils.formatShortTimestamp(localDateTime
+    assertThat(DateUtils.formatShortTimestamp(localDateTime))
+        .isEqualTo("23:10:35:000");
+    assertThat(DateUtils.formatShortTimestamp(localDateTime
             .toInstant(ZoneOffset.UTC)
-            .toEpochMilli()));
+            .toEpochMilli()))
+        .isEqualTo("23:10:35:000");
 
     var zonedDateTime = ZonedDateTime.of(2010, 5, 12, 23, 10, 35, 0, ZoneOffset.ofHours(3));
 
-    Assertions.assertEquals("23:10:35:000", DateUtils.formatShortTimestamp(zonedDateTime));
-    Assertions.assertEquals(
-        "23:10:35:000",
-        DateUtils.formatShortTimestamp(zonedDateTime
+    assertThat(DateUtils.formatShortTimestamp(zonedDateTime))
+        .isEqualTo("23:10:35:000");
+    assertThat(DateUtils.formatShortTimestamp(zonedDateTime
             .toLocalDateTime()
             .toInstant(ZoneOffset.UTC)
-            .toEpochMilli()));
+            .toEpochMilli()))
+        .isEqualTo("23:10:35:000");
   }
 }

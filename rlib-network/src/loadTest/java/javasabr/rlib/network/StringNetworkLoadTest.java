@@ -1,5 +1,7 @@
 package javasabr.rlib.network;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -26,7 +28,6 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @CustomLog
@@ -164,9 +165,9 @@ public class StringNetworkLoadTest {
       testClient.connectAndSendMessages(serverAddress, messagesPerIteration);
     }
 
-    Assertions
-        .assertTrue(finalWaiter.await(300_000, TimeUnit.MILLISECONDS),
-            "Still not received [%s] -> [%s] messages".formatted(expectedMessages, finalWaiter.getCount()));
+    assertThat(finalWaiter.await(300_000, TimeUnit.MILLISECONDS))
+        .as("Still not received [%s] -> [%s] messages".formatted(expectedMessages, finalWaiter.getCount()))
+        .isTrue();
 
     for (TestClient client : clients) {
       client.close();

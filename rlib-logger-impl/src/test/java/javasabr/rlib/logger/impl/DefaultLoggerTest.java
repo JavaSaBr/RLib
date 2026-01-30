@@ -1,12 +1,13 @@
 package javasabr.rlib.logger.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import javasabr.rlib.collections.array.ArrayFactory;
 import javasabr.rlib.collections.array.LockableArray;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerListener;
 import javasabr.rlib.logger.api.LoggerManager;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,10 +48,9 @@ public class DefaultLoggerTest {
 
   @Test
   void shouldCreateDefaultLoggerImplementation() {
-
     var logger = LoggerManager.getLogger(DefaultLoggerTest.class);
-
-    Assertions.assertTrue(logger instanceof DefaultLogger);
+    assertThat(logger)
+        .isInstanceOf(DefaultLogger.class);
   }
 
   @Test
@@ -59,10 +59,10 @@ public class DefaultLoggerTest {
     var logger = LoggerManager.getLogger(DefaultLoggerTest.class);
     logger.print(LoggerLevel.ERROR, "test data");
 
-    Assertions.assertEquals(1, WROTE_DATA.size());
+    assertThat(WROTE_DATA.size()).isEqualTo(1);
 
     logger.print(LoggerLevel.ERROR, "test data 2");
 
-    Assertions.assertEquals(2, WROTE_DATA.size());
+    assertThat(WROTE_DATA.size()).isEqualTo(2);
   }
 }

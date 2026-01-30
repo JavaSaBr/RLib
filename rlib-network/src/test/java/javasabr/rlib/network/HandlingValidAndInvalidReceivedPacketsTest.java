@@ -20,7 +20,6 @@ import javasabr.rlib.network.packet.registry.ReadableNetworkPacketRegistry;
 import javasabr.rlib.network.server.ServerNetwork;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @CustomLog
@@ -113,9 +112,9 @@ public class HandlingValidAndInvalidReceivedPacketsTest extends BaseNetworkTest 
             }))
         .subscribe();
 
-    Assertions.assertTrue(
-        counter.await(10000, TimeUnit.MILLISECONDS),
-        "Still wait for " + counter.getCount() + " packets...");
+    assertThat(counter.await(10000, TimeUnit.MILLISECONDS))
+        .as("Still wait for " + counter.getCount() + " packets...")
+        .isTrue();
 
     clientNetwork.shutdown();
     serverNetwork.shutdown();

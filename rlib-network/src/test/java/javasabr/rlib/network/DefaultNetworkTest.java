@@ -1,6 +1,7 @@
 package javasabr.rlib.network;
 
 import static javasabr.rlib.network.ServerNetworkConfig.DEFAULT_SERVER;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -29,7 +30,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -210,9 +210,10 @@ public class DefaultNetworkTest extends BaseNetworkTest {
           counter.countDown();
         });
 
-    Assertions.assertTrue(
-        counter.await(10000, TimeUnit.MILLISECONDS),
-        "Still wait for " + counter.getCount() + " packets...");
+    
+    assertThat(counter.await(10000, TimeUnit.MILLISECONDS))
+        .as(() -> "Still wait for " + counter.getCount() + " packets...")
+        .isTrue();
 
     clientNetwork.shutdown();
     serverNetwork.shutdown();
@@ -275,7 +276,9 @@ public class DefaultNetworkTest extends BaseNetworkTest {
       List<? extends ReadableNetworkPacket<DefaultConnection>> receivedPackets =
           ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofSeconds(5)));
 
-      Assertions.assertEquals(packetCount, receivedPackets.size(), "Didn't receive all packets");
+      assertThat(receivedPackets.size())
+          .as("Didn't receive all packets")
+          .isEqualTo(packetCount);
 
       var wrongPacket = receivedPackets
           .stream()
@@ -287,7 +290,9 @@ public class DefaultNetworkTest extends BaseNetworkTest {
           .findFirst()
           .orElse(null);
 
-      Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
+      assertThat(wrongPacket)
+          .as("Wrong received packet: " + wrongPacket)
+          .isNull();
     }
   }
 }

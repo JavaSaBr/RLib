@@ -1,6 +1,7 @@
 package javasabr.rlib.network;
 
 import static javasabr.rlib.network.ServerNetworkConfig.DEFAULT_SERVER;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -26,7 +27,6 @@ import javasabr.rlib.network.packet.impl.StringWritableNetworkPacket;
 import javasabr.rlib.network.server.ServerNetwork;
 import lombok.CustomLog;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 
@@ -81,9 +81,9 @@ public class StringNetworkTest extends BaseNetworkTest {
           log.info(counter.getCount(), "Still wait for:[%s]"::formatted);
         });
 
-    Assertions.assertTrue(
-        counter.await(10000, TimeUnit.MINUTES),
-        "Still wait for " + counter.getCount() + " packets...");
+    assertThat(counter.await(10000, TimeUnit.MINUTES))
+        .as(() -> "Still wait for " + counter.getCount() + " packets...")
+        .isTrue();
 
     clientNetwork.shutdown();
     serverNetwork.shutdown();
@@ -136,7 +136,9 @@ public class StringNetworkTest extends BaseNetworkTest {
 
       log.info(receivedPackets.size(), "Received [%s] packets from client"::formatted);
 
-      Assertions.assertEquals(packetCount, receivedPackets.size(), "Didn't receive all packets");
+      assertThat(receivedPackets.size())
+          .as("Didn't receive all packets")
+          .isEqualTo(packetCount);
 
       var wrongPacket = receivedPackets
           .stream()
@@ -146,7 +148,9 @@ public class StringNetworkTest extends BaseNetworkTest {
           .findFirst()
           .orElse(null);
 
-      Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
+      assertThat(wrongPacket)
+          .as("Wrong received packet: " + wrongPacket)
+          .isNull();
     }
   }
 
@@ -194,7 +198,9 @@ public class StringNetworkTest extends BaseNetworkTest {
 
       log.info(receivedPackets.size(), "Received [%s] packets from client"::formatted);
 
-      Assertions.assertEquals(packetCount, receivedPackets.size(), "Didn't receive all packets");
+      assertThat(receivedPackets.size())
+          .as("Didn't receive all packets")
+          .isEqualTo(packetCount);
 
       var wrongPacket = receivedPackets
           .stream()
@@ -204,7 +210,9 @@ public class StringNetworkTest extends BaseNetworkTest {
           .findFirst()
           .orElse(null);
 
-      Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
+      assertThat(wrongPacket)
+          .as("Wrong received packet: " + wrongPacket)
+          .isNull();
     }
   }
 
@@ -252,7 +260,9 @@ public class StringNetworkTest extends BaseNetworkTest {
 
       log.info(receivedPackets.size(), "Received [%s] packets from client"::formatted);
 
-      Assertions.assertEquals(packetCount, receivedPackets.size(), "Didn't receive all packets");
+      assertThat(receivedPackets.size())
+          .as("Didn't receive all packets")
+          .isEqualTo(packetCount);
 
       var wrongPacket = receivedPackets
           .stream()
@@ -262,7 +272,9 @@ public class StringNetworkTest extends BaseNetworkTest {
           .findFirst()
           .orElse(null);
 
-      Assertions.assertNull(wrongPacket, () -> "Wrong received packet: " + wrongPacket);
+      assertThat(wrongPacket)
+          .as("Wrong received packet: " + wrongPacket)
+          .isNull();
     }
   }
 
@@ -319,12 +331,12 @@ public class StringNetworkTest extends BaseNetworkTest {
           receivedPacketsOnClients.incrementAndGet();
           counter.countDown();
         });
-
-    Assertions.assertTrue(
-        counter.await(10000, TimeUnit.MILLISECONDS),
-        "Still wait for " + counter.getCount() + " packets... " + "Sent packets to server: " + sentPacketsToServer
+    
+    assertThat(counter.await(10000, TimeUnit.MILLISECONDS))
+        .as(() -> "Still wait for " + counter.getCount() + " packets... " + "Sent packets to server: " + sentPacketsToServer
             + ", " + "Received packets on server: " + receivedPacketsOnServer + ", " + "Received packets on clients: "
-            + receivedPacketsOnClients);
+            + receivedPacketsOnClients)
+        .isTrue();
 
     serverNetwork.shutdown();
   }
@@ -380,11 +392,11 @@ public class StringNetworkTest extends BaseNetworkTest {
             .peek(value -> connection.sendInBackground(newMessage(minMessageLength, maxMessageLength)))
             .forEach(val -> sentPacketsToServer.incrementAndGet()));
 
-    Assertions.assertTrue(
-        counter.await(5, TimeUnit.SECONDS),
-        "Still wait for " + counter.getCount() + " packets... " + "Sent packets to server: " + sentPacketsToServer
+    assertThat(counter.await(5, TimeUnit.SECONDS))
+        .as("Still wait for " + counter.getCount() + " packets... " + "Sent packets to server: " + sentPacketsToServer
             + ", " + "Received packets on server: " + receivedPacketsOnServer + ", " + "Received packets on clients: "
-            + receivedPacketsOnClients);
+            + receivedPacketsOnClients)
+        .isTrue();
 
     clients.forEach(Network::shutdown);
     serverNetwork.shutdown();
@@ -423,12 +435,16 @@ public class StringNetworkTest extends BaseNetworkTest {
           .findFirst()
           .orElse(null);
 
-      Assertions.assertNull(notSentPacket, "Found not sent packets...");
+      assertThat(notSentPacket)
+          .as("Found not sent packets...")
+          .isNull();
 
       // so all packets are already sent, we should not wait for long time to get result
       var receivedPackets = ObjectUtils.notNull(pendingPacketsOnServer.blockFirst(Duration.ofMillis(100)));
 
-      Assertions.assertEquals(packetCount, receivedPackets.size(), "Didn't receive all packets");
+      assertThat(receivedPackets.size())
+          .as("Didn't receive all packets")
+          .isEqualTo(packetCount);
     }
   }
 

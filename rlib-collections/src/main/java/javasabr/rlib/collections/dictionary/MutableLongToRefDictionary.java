@@ -25,6 +25,12 @@ public interface MutableLongToRefDictionary<V> extends LongToRefDictionary<V> {
   @Nullable
   V put(long key, V value);
 
+  /**
+   * @return the existing value if the key is already present, or null if the key was absent and the new mapping was added.
+   */
+  @Nullable
+  V putIfAbsent(long key, V value);
+  
   void putAll(LongToRefDictionary<? extends V> dictionary);
 
   MutableLongToRefDictionary<V> append(LongToRefDictionary<? extends V> dictionary);
@@ -40,6 +46,11 @@ public interface MutableLongToRefDictionary<V> extends LongToRefDictionary<V> {
   @Nullable
   V remove(long key);
 
+  /**
+   * @return true if the expectedValue was removed
+   */
+  boolean remove(long key, V expectedValue);
+  
   /**
    * @return the optional value of the previous value for the key.
    */

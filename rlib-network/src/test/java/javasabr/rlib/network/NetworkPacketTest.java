@@ -1,5 +1,7 @@
 package javasabr.rlib.network;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import javasabr.rlib.network.BaseNetworkTest.MockConnection;
@@ -8,7 +10,6 @@ import javasabr.rlib.network.packet.impl.AbstractWritableNetworkPacket;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -132,7 +133,7 @@ class NetworkPacketTest {
 
     // then:
     byte[] wroteBytes = Arrays.copyOf(buffer.array(), buffer.limit());
-    Assertions.assertArrayEquals(expected, wroteBytes);
+    assertThat(wroteBytes).isEqualTo(expected);
   }
 
   @Test
@@ -170,9 +171,9 @@ class NetworkPacketTest {
     packet.read(BaseNetworkTest.MOCK_CONNECTION, ByteBuffer.wrap(data), data.length);
 
     // then:
-    Assertions.assertEquals(expected, packet);
-    Assertions.assertArrayEquals(expected.byteArrayField, packet.byteArrayField);
-    Assertions.assertArrayEquals(expected.bytesField1, packet.bytesField1);
-    Assertions.assertArrayEquals(expected.bytesField2, packet.bytesField2);
+    assertThat(packet).isEqualTo(expected);
+    assertThat(packet.byteArrayField).isEqualTo(expected.byteArrayField);
+    assertThat(packet.bytesField1).isEqualTo(expected.bytesField1);
+    assertThat(packet.bytesField2).isEqualTo(expected.bytesField2);
   }
 }

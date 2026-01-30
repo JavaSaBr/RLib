@@ -1,5 +1,7 @@
 package javasabr.rlib.network.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
@@ -11,7 +13,6 @@ import javasabr.rlib.network.ServerNetworkConfig.SimpleServerNetworkConfig;
 import javasabr.rlib.network.packet.ReadableNetworkPacket;
 import javasabr.rlib.network.packet.impl.DefaultNetworkPacketReader;
 import org.jspecify.annotations.NonNull;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,12 +78,12 @@ class DefaultDataConnectionTest {
         .read(Mockito.any(), Mockito.any(), Mockito.any());
 
     // then:
-    Assertions.assertFalse(connection.closed());
+    assertThat(connection.closed()).isFalse();
 
     // when:
     packetReader.startRead();
 
     // then:
-    Assertions.assertTrue(connection.closed());
+    assertThat(connection.closed()).isTrue();
   }
 }

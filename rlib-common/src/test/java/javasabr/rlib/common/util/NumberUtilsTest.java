@@ -1,11 +1,7 @@
 package javasabr.rlib.common.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 
@@ -18,233 +14,312 @@ class NumberUtilsTest {
 
   @Test
   void shouldCheckStringIsLong() {
-    assertTrue(NumberUtils.isLong("1"));
-    assertTrue(NumberUtils.isLong("123123213123"));
-    assertFalse(NumberUtils.isLong("notlong"));
-    assertFalse(NumberUtils.isLong(null));
-    assertFalse(NumberUtils.isLong("2.1234"));
+    assertThat(NumberUtils.isLong("1")).isTrue();
+    assertThat(NumberUtils.isLong("123123213123")).isTrue();
+    assertThat(NumberUtils.isLong("notlong")).isFalse();
+    assertThat(NumberUtils.isLong(null)).isFalse();
+    assertThat(NumberUtils.isLong("2.1234")).isFalse();
   }
 
   @Test
   void shouldSafetyConvertStringToLong() {
-    assertNotNull(NumberUtils.safeToLong("1"));
-    assertNotNull(NumberUtils.safeToLong("123123213123"));
-    assertNull(NumberUtils.safeToLong("notlong"));
-    assertNull(NumberUtils.safeToLong(null));
-    assertNull(NumberUtils.safeToLong("2.1234"));
+    assertThat(NumberUtils.safeToLong("1")).isNotNull();
+    assertThat(NumberUtils.safeToLong("123123213123")).isNotNull();
+    assertThat(NumberUtils.safeToLong("notlong")).isNull();
+    assertThat(NumberUtils.safeToLong(null)).isNull();
+    assertThat(NumberUtils.safeToLong("2.1234")).isNull();
   }
 
   @Test
   void shouldConvertStringToOptionalLong() {
-    assertTrue(NumberUtils
+    assertThat(NumberUtils
         .toOptionalLong("1")
-        .isPresent());
-    assertTrue(NumberUtils
+        .isPresent()).isTrue();
+    assertThat(NumberUtils
         .toOptionalLong("123123213123")
-        .isPresent());
-    assertFalse(NumberUtils
+        .isPresent()).isTrue();
+    assertThat(NumberUtils
         .toOptionalLong("notlong")
-        .isPresent());
-    assertFalse(NumberUtils
+        .isPresent()).isFalse();
+    assertThat(NumberUtils
         .toOptionalLong(null)
-        .isPresent());
-    assertFalse(NumberUtils
+        .isPresent()).isFalse();
+    assertThat(NumberUtils
         .toOptionalLong("2.1234")
-        .isPresent());
+        .isPresent()).isFalse();
   }
 
   @Test
   void shouldSafetyConvertStringToInt() {
-    assertNotNull(NumberUtils.safeToInt("1"));
-    assertNotNull(NumberUtils.safeToInt("123124"));
-    assertNull(NumberUtils.safeToInt("notlong"));
-    assertNull(NumberUtils.safeToInt(null));
-    assertNull(NumberUtils.safeToInt("2.1234"));
+    assertThat(NumberUtils.safeToInt("1")).isNotNull();
+    assertThat(NumberUtils.safeToInt("123124")).isNotNull();
+    assertThat(NumberUtils.safeToInt("notlong")).isNull();
+    assertThat(NumberUtils.safeToInt(null)).isNull();
+    assertThat(NumberUtils.safeToInt("2.1234")).isNull();
   }
 
   @Test
   void shouldReadBitsCorrectly() {
+    assertThat(NumberUtils.isSetBit((byte) 0b00000001, 0))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 0))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b00000001, 0));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 0));
+    assertThat(NumberUtils.isSetBit((byte) 0b00000010, 1))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 1))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b00000010, 1));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 1));
+    assertThat(NumberUtils.isSetBit((byte) 0b00000100, 2))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 2))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b00000100, 2));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 2));
+    assertThat(NumberUtils.isSetBit((byte) 0b00001000, 3))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 3))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b00001000, 3));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 3));
+    assertThat(NumberUtils.isSetBit((byte) 0b00010000, 4))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 4))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b00010000, 4));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 4));
+    assertThat(NumberUtils.isSetBit((byte) 0b00100000, 5))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 5))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b00100000, 5));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 5));
+    assertThat(NumberUtils.isSetBit((byte) 0b01000000, 6))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 6))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b01000000, 6));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 6));
+    assertThat(NumberUtils.isSetBit((byte) 0b10000000, 7))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 7))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b10000000, 7));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 7));
+    assertThat(NumberUtils.isSetBit((byte) 0b11111111, 0))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit((byte) 0b11111111, 1))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit((byte) 0b11111111, 2))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit((byte) 0b11111111, 3))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit((byte) 0b11111111, 4))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit((byte) 0b11111111, 5))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit((byte) 0b11111111, 6))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit((byte) 0b11111111, 7))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit((byte) 0b11111111, 0));
-    assertTrue(NumberUtils.isSetBit((byte) 0b11111111, 1));
-    assertTrue(NumberUtils.isSetBit((byte) 0b11111111, 2));
-    assertTrue(NumberUtils.isSetBit((byte) 0b11111111, 3));
-    assertTrue(NumberUtils.isSetBit((byte) 0b11111111, 4));
-    assertTrue(NumberUtils.isSetBit((byte) 0b11111111, 5));
-    assertTrue(NumberUtils.isSetBit((byte) 0b11111111, 6));
-    assertTrue(NumberUtils.isSetBit((byte) 0b11111111, 7));
-
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 0));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 1));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 2));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 3));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 4));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 5));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 6));
-    assertTrue(NumberUtils.isNotSetBit((byte) 0b00000000, 7));
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 0))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 1))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 2))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 3))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 4))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 5))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 6))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit((byte) 0b00000000, 7))
+        .isTrue();
   }
 
   @Test
   void shouldWriteHighLowBitsCorrectly() {
-
     for (int low = 0; low < 16; low++) {
       for (int high = 0; high < 16; high++) {
         var result = NumberUtils.setHighByteBits(low, high);
-        assertEquals(high, NumberUtils.getHighByteBits(result));
-        assertEquals(low, NumberUtils.getLowByteBits(result));
+        assertThat(NumberUtils.getHighByteBits(result))
+            .isEqualTo((byte) high);
+        assertThat(NumberUtils.getLowByteBits(result))
+            .isEqualTo((byte) low);
       }
     }
 
     for (int low = 0; low < 16; low++) {
       var result = NumberUtils.setLowByteBits(256, low);
-      assertEquals(16, NumberUtils.getHighByteBits(result));
-      assertEquals(low, NumberUtils.getLowByteBits(result));
+      assertThat(NumberUtils.getHighByteBits(result))
+          .isEqualTo((byte) 16);
+      assertThat(NumberUtils.getLowByteBits(result))
+          .isEqualTo((byte) low);
     }
   }
 
   @Test
   void shouldReadHighLowBitsCorrectly() {
-
     for (int i = 0; i < 16; i++) {
-      assertEquals(i, NumberUtils.getHighByteBits(i << 4));
+      assertThat(NumberUtils.getHighByteBits(i << 4))
+          .isEqualTo((byte) i);
     }
 
-    assertEquals(0b0000_1000, NumberUtils.getHighByteBits(0b1000_0100));
-    assertEquals(0b0000_0100, NumberUtils.getHighByteBits(0b0100_1000));
-    assertEquals(0b0000_0010, NumberUtils.getHighByteBits(0b0010_0010));
-    assertEquals(0b0000_0001, NumberUtils.getHighByteBits(0b0001_0001));
-    assertEquals(0b0000_0101, NumberUtils.getHighByteBits(0b0101_1000));
+    assertThat(NumberUtils.getHighByteBits(0b1000_0100))
+        .isEqualTo((byte) 0b0000_1000);
+    assertThat(NumberUtils.getHighByteBits(0b0100_1000))
+        .isEqualTo((byte) 0b0000_0100);
+    assertThat(NumberUtils.getHighByteBits(0b0010_0010))
+        .isEqualTo((byte) 0b0000_0010);
+    assertThat(NumberUtils.getHighByteBits(0b0001_0001))
+        .isEqualTo((byte) 0b0000_0001);
+    assertThat(NumberUtils.getHighByteBits(0b0101_1000))
+        .isEqualTo((byte) 0b0000_0101);
 
     for (int i = 0; i < 16; i++) {
-      assertEquals(i, NumberUtils.getLowByteBits(i & 0x0F));
+      assertThat(NumberUtils.getLowByteBits(i & 0x0F))
+          .isEqualTo((byte) i);
     }
 
-    assertEquals(0b0000_1000, NumberUtils.getLowByteBits(0b1000_1000));
-    assertEquals(0b0000_0100, NumberUtils.getLowByteBits(0b0100_0100));
-    assertEquals(0b0000_0010, NumberUtils.getLowByteBits(0b0010_0010));
-    assertEquals(0b0000_0001, NumberUtils.getLowByteBits(0b0001_0001));
-    assertEquals(0b0000_0101, NumberUtils.getLowByteBits(0b0101_0101));
+    assertThat(NumberUtils.getLowByteBits(0b1000_1000))
+        .isEqualTo((byte) 0b0000_1000);
+    assertThat(NumberUtils.getLowByteBits(0b0100_0100))
+        .isEqualTo((byte) 0b0000_0100);
+    assertThat(NumberUtils.getLowByteBits(0b0010_0010))
+        .isEqualTo((byte) 0b0000_0010);
+    assertThat(NumberUtils.getLowByteBits(0b0001_0001))
+        .isEqualTo((byte) 0b0000_0001);
+    assertThat(NumberUtils.getLowByteBits(0b0101_0101))
+        .isEqualTo((byte) 0b0000_0101);
   }
 
   @Test
   void shouldChangeBitsInByteCorrectly() {
+    assertThat(NumberUtils.isSetBit(NumberUtils.setBit(0, 0), 0))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit(NumberUtils.setBit(0, 1), 1))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit(NumberUtils.setBit(0, 2), 2))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit(NumberUtils.setBit(0, 3), 3))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit(NumberUtils.setBit(0, 4), 4))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit(NumberUtils.setBit(0, 5), 5))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit(NumberUtils.setBit(0, 6), 6))
+        .isTrue();
+    assertThat(NumberUtils.isSetBit(NumberUtils.setBit(0, 7), 7))
+        .isTrue();
 
-    assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 0), 0));
-    assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 1), 1));
-    assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 2), 2));
-    assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 3), 3));
-    assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 4), 4));
-    assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 5), 5));
-    assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 6), 6));
-    assertTrue(NumberUtils.isSetBit(NumberUtils.setBit(0, 7), 7));
-
-    assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 0), 0));
-    assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 1), 1));
-    assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 2), 2));
-    assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 3), 3));
-    assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 4), 4));
-    assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 5), 5));
-    assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 6), 6));
-    assertTrue(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 7), 7));
+    assertThat(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 0), 0))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 1), 1))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 2), 2))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 3), 3))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 4), 4))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 5), 5))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 6), 6))
+        .isTrue();
+    assertThat(NumberUtils.isNotSetBit(NumberUtils.unsetBit(255, 7), 7))
+        .isTrue();
   }
 
   @Test
   void shouldValidateIntegerCorrectly() {
-
     // int
-    assertEquals(10, NumberUtils.validate(10, 1, 20));
-    assertEquals(-20, NumberUtils.validate(-20, -21, 10));
-    assertEquals(-1000, NumberUtils.validate(-1000, -1050, -1000));
+    assertThat(NumberUtils.validate(10, 1, 20))
+        .isEqualTo(10);
+    assertThat(NumberUtils.validate(-20, -21, 10))
+        .isEqualTo(-20);
+    assertThat(NumberUtils.validate(-1000, -1050, -1000))
+        .isEqualTo(-1000);
 
-    assertEquals(10, NumberUtils.validate(10, 1, 20, IllegalArgumentException::new));
-    assertEquals(-20, NumberUtils.validate(-20, -21, 10, IllegalArgumentException::new));
-    assertEquals(-1000, NumberUtils.validate(-1000, -1050, -1000, IllegalArgumentException::new));
+    assertThat(NumberUtils.validate(10, 1, 20, IllegalArgumentException::new))
+        .isEqualTo(10);
+    assertThat(NumberUtils.validate(-20, -21, 10, IllegalArgumentException::new))
+        .isEqualTo(-20);
+    assertThat(NumberUtils.validate(-1000, -1050, -1000, IllegalArgumentException::new))
+        .isEqualTo(-1000);
 
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.validate(10, 20, 50, IllegalArgumentException::new));
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> NumberUtils.validate(-50, -70, -51, IllegalArgumentException::new));
+    assertThatThrownBy(() -> NumberUtils.validate(10, 20, 50, IllegalArgumentException::new))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> NumberUtils.validate(-50, -70, -51, IllegalArgumentException::new))
+        .isInstanceOf(IllegalArgumentException.class);
 
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.validate(10, 20, 50));
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.validate(-50, -70, -51));
+    assertThatThrownBy(() -> NumberUtils.validate(10, 20, 50))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> NumberUtils.validate(-50, -70, -51))
+        .isInstanceOf(IllegalArgumentException.class);
 
     // long
-    assertEquals(10, NumberUtils.validate(10L, 1, 20));
-    assertEquals(-20, NumberUtils.validate(-20L, -21, 10));
-    assertEquals(-1000, NumberUtils.validate(-1000L, -1050, -1000));
+    assertThat(NumberUtils.validate(10L, 1, 20))
+        .isEqualTo(10);
+    assertThat(NumberUtils.validate(-20L, -21, 10))
+        .isEqualTo(-20);
+    assertThat(NumberUtils.validate(-1000L, -1050, -1000))
+        .isEqualTo(-1000);
 
-    assertEquals(10, NumberUtils.validate(10L, 1, 20, IllegalArgumentException::new));
-    assertEquals(-20, NumberUtils.validate(-20L, -21, 10, IllegalArgumentException::new));
-    assertEquals(-1000, NumberUtils.validate(-1000L, -1050, -1000, IllegalArgumentException::new));
+    assertThat(NumberUtils.validate(10L, 1, 20, IllegalArgumentException::new))
+        .isEqualTo(10);
+    assertThat(NumberUtils.validate(-20L, -21, 10, IllegalArgumentException::new))
+        .isEqualTo(-20);
+    assertThat(NumberUtils.validate(-1000L, -1050, -1000, IllegalArgumentException::new))
+        .isEqualTo(-1000);
 
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> NumberUtils.validate(10L, 20, 50, IllegalArgumentException::new));
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> NumberUtils.validate(-50L, -70, -51, IllegalArgumentException::new));
+    assertThatThrownBy(() -> NumberUtils.validate(10L, 20, 50, IllegalArgumentException::new))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> NumberUtils.validate(-50L, -70, -51, IllegalArgumentException::new))
+        .isInstanceOf(IllegalArgumentException.class);
 
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.validate(10L, 20, 50));
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.validate(-50L, -70, -51));
+    assertThatThrownBy(() -> NumberUtils.validate(10L, 20, 50))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> NumberUtils.validate(-50L, -70, -51))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void shouldValidateBooleanCorrectly() {
+    assertThat(NumberUtils.toBoolean(1)).isTrue();
+    assertThat(NumberUtils.toBoolean(0)).isFalse();
+    assertThat(NumberUtils.toBoolean(1L)).isTrue();
+    assertThat(NumberUtils.toBoolean(0L)).isFalse();
+    assertThat(NumberUtils.toBoolean(1, IllegalArgumentException::new))
+        .isTrue();
+    assertThat(NumberUtils.toBoolean(0, IllegalArgumentException::new))
+        .isFalse();
+    assertThat(NumberUtils.toBoolean(1L, IllegalArgumentException::new))
+        .isTrue();
+    assertThat(NumberUtils.toBoolean(0L, IllegalArgumentException::new))
+        .isFalse();
 
-    assertTrue(NumberUtils.toBoolean(1));
-    assertFalse(NumberUtils.toBoolean(0));
-    assertTrue(NumberUtils.toBoolean(1L));
-    assertFalse(NumberUtils.toBoolean(0L));
-    assertTrue(NumberUtils.toBoolean(1, IllegalArgumentException::new));
-    assertFalse(NumberUtils.toBoolean(0, IllegalArgumentException::new));
-    assertTrue(NumberUtils.toBoolean(1L, IllegalArgumentException::new));
-    assertFalse(NumberUtils.toBoolean(0L, IllegalArgumentException::new));
-
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(2));
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(-1));
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(2L));
-    assertThrows(IllegalArgumentException.class, () -> NumberUtils.toBoolean(-1L));
+    assertThatThrownBy(() -> NumberUtils.toBoolean(2))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> NumberUtils.toBoolean(-1))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> NumberUtils.toBoolean(2L))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> NumberUtils.toBoolean(-1L))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void shouldEqualsNumbersCorrectly() {
+    assertThat(NumberUtils.equals((byte) 10, (byte) 10)).isTrue();
+    assertThat(NumberUtils.equals((short) 10, (short) 10)).isTrue();
+    assertThat(NumberUtils.equals(10, 10)).isTrue();
+    assertThat(NumberUtils.equals(10L, 10L)).isTrue();
+    assertThat(NumberUtils.equals(10F, 10F)).isTrue();
+    assertThat(NumberUtils.equals(10D, 10D)).isTrue();
 
-    assertTrue(NumberUtils.equals((byte) 10, (byte) 10));
-    assertTrue(NumberUtils.equals((short) 10, (short) 10));
-    assertTrue(NumberUtils.equals(10, 10));
-    assertTrue(NumberUtils.equals(10L, 10L));
-    assertTrue(NumberUtils.equals(10F, 10F));
-    assertTrue(NumberUtils.equals(10D, 10D));
-
-    assertFalse(NumberUtils.equals((byte) -10, (byte) 10));
-    assertFalse(NumberUtils.equals((short) -10, (short) 10));
-    assertFalse(NumberUtils.equals(-10, 10));
-    assertFalse(NumberUtils.equals(-10L, 10L));
-    assertFalse(NumberUtils.equals(-10F, 10F));
-    assertFalse(NumberUtils.equals(-10D, 10D));
+    assertThat(NumberUtils.equals((byte) -10, (byte) 10)).isFalse();
+    assertThat(NumberUtils.equals((short) -10, (short) 10)).isFalse();
+    assertThat(NumberUtils.equals(-10, 10)).isFalse();
+    assertThat(NumberUtils.equals(-10L, 10L)).isFalse();
+    assertThat(NumberUtils.equals(-10F, 10F)).isFalse();
+    assertThat(NumberUtils.equals(-10D, 10D)).isFalse();
   }
 }
