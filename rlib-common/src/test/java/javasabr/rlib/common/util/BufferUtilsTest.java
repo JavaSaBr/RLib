@@ -1,7 +1,8 @@
 package javasabr.rlib.common.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.nio.ByteBuffer;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -18,10 +19,10 @@ class BufferUtilsTest {
 
     var source = BufferUtils.loadFrom(data, ByteBuffer.allocate(12));
 
-    Assertions.assertEquals(0, source.position());
-    Assertions.assertEquals(4, source.limit());
-    Assertions.assertEquals(1, source.getInt());
-    Assertions.assertFalse(data.hasRemaining());
+    assertThat(source.position()).isEqualTo(0);
+    assertThat(source.limit()).isEqualTo(4);
+    assertThat(source.getInt()).isEqualTo(1);
+    assertThat(data.hasRemaining()).isFalse();
 
     data.clear();
     data
@@ -38,12 +39,12 @@ class BufferUtilsTest {
 
     BufferUtils.loadFrom(data, source);
 
-    Assertions.assertEquals(source.capacity(), data.position());
-    Assertions.assertEquals(0, source.position());
-    Assertions.assertEquals(source.capacity(), source.remaining());
-    Assertions.assertEquals(1, source.getInt());
-    Assertions.assertEquals(2, source.getInt());
-    Assertions.assertEquals(3, source.getInt());
+    assertThat(data.position()).isEqualTo(source.capacity());
+    assertThat(source.position()).isEqualTo(0);
+    assertThat(source.remaining()).isEqualTo(source.capacity());
+    assertThat(source.getInt()).isEqualTo(1);
+    assertThat(source.getInt()).isEqualTo(2);
+    assertThat(source.getInt()).isEqualTo(3);
   }
 
   @Test
@@ -56,10 +57,10 @@ class BufferUtilsTest {
           buffer.put((byte) 3);
         });
 
-    Assertions.assertEquals(3, result.limit());
-    Assertions.assertEquals(0, result.position());
-    Assertions.assertEquals(1, result.get());
-    Assertions.assertEquals(2, result.get());
-    Assertions.assertEquals(3, result.get());
+    assertThat(result.limit()).isEqualTo(3);
+    assertThat(result.position()).isEqualTo(0);
+    assertThat(result.get()).isEqualTo((byte) 1);
+    assertThat(result.get()).isEqualTo((byte) 2);
+    assertThat(result.get()).isEqualTo((byte) 3);
   }
 }

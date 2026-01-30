@@ -1,6 +1,7 @@
 package javasabr.rlib.geometry;
 
-import org.junit.jupiter.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,21 +27,27 @@ public class QuaternionTests {
 
     var side = quaternion.getDirection(DirectionType.FRONT);
 
-    Assertions.assertTrue(originForward.equals(side, 0.001f));
+    assertThat(originForward.equals(side, 0.001f))
+        .isTrue();
 
     quaternion.getDirection(DirectionType.BEHIND, side);
-    Assertions.assertTrue(originBackward.equals(side, 0.001f));
+    assertThat(originBackward.equals(side, 0.001f))
+        .isTrue();
 
     quaternion.getDirection(DirectionType.RIGHT, side);
-    Assertions.assertTrue(originRight.equals(side, 0.001f));
+    assertThat(originRight.equals(side, 0.001f))
+        .isTrue();
 
     quaternion.getDirection(DirectionType.LEFT, side);
-    Assertions.assertTrue(originLeft.equals(side, 0.001f));
+    assertThat(originLeft.equals(side, 0.001f))
+        .isTrue();
 
     quaternion.getDirection(DirectionType.UP, side);
-    Assertions.assertTrue(originUp.equals(side, 0.001f));
+    assertThat(originUp.equals(side, 0.001f))
+        .isTrue();
 
     quaternion.getDirection(DirectionType.DOWN, side);
-    Assertions.assertTrue(originDown.equals(side, 0.001f));
+    assertThat(originDown.equals(side, 0.001f))
+        .isTrue();
   }
 }

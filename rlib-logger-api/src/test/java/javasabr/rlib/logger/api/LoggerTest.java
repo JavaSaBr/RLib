@@ -1,9 +1,10 @@
 package javasabr.rlib.logger.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.jspecify.annotations.NonNull;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,6 @@ public class LoggerTest {
   @Test
   @DisplayName("should print all debug methods")
   void shouldPrintAllDebugMethods() {
-
     // given:
     var messages = new ArrayList<String>();
     var expectedMessages = List.of(
@@ -59,14 +59,13 @@ public class LoggerTest {
     logger.debug("str11", "str12", "str13", "str14", "msg11[%s, %s, %s, %s]"::formatted);
 
     // then:
-    Assertions.assertEquals(11, messages.size());
-    Assertions.assertEquals(expectedMessages, messages);
+    assertThat(messages.size()).isEqualTo(11);
+    assertThat(messages).isEqualTo(expectedMessages);
   }
 
   @Test
   @DisplayName("should print all info methods")
   void shouldPrintAllInfoMethods() {
-
     // given:
     var messages = new ArrayList<String>();
     var expectedMessages = List.of(
@@ -113,14 +112,13 @@ public class LoggerTest {
     logger.info("str11", "str12", "str13", "str14", "msg11[%s, %s, %s, %s]"::formatted);
 
     // then:
-    Assertions.assertEquals(11, messages.size());
-    Assertions.assertEquals(expectedMessages, messages);
+    assertThat(messages.size()).isEqualTo(11);
+    assertThat(messages).isEqualTo(expectedMessages);
   }
 
   @Test
   @DisplayName("should print all warning methods")
   void shouldPrintAllWarningMethods() {
-
     // given:
     var messages = new ArrayList<String>();
     var expectedMessages = List.of(
@@ -167,14 +165,13 @@ public class LoggerTest {
     logger.warning("str11", "str12", "str13", "str14", "msg11[%s, %s, %s, %s]"::formatted);
 
     // then:
-    Assertions.assertEquals(11, messages.size());
-    Assertions.assertEquals(expectedMessages, messages);
+    assertThat(messages.size()).isEqualTo(11);
+    assertThat(messages).isEqualTo(expectedMessages);
   }
 
   @Test
   @DisplayName("should print all error methods")
   void shouldPrintAllErrorMethods() {
-
     // given:
     var messages = new ArrayList<String>();
     var expectedMessages = List.of(
@@ -221,7 +218,7 @@ public class LoggerTest {
     logger.error("str11", "str12", "str13", "str14", "msg11[%s, %s, %s, %s]"::formatted);
 
     // then:
-    Assertions.assertEquals(11, messages.size());
-    Assertions.assertEquals(expectedMessages, messages);
+    assertThat(messages.size()).isEqualTo(11);
+    assertThat(messages).isEqualTo(expectedMessages);
   }
 }

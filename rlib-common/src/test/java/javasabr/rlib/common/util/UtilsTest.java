@@ -1,6 +1,7 @@
 package javasabr.rlib.common.util;
 
-import org.junit.jupiter.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -12,17 +13,22 @@ public class UtilsTest {
 
   @Test
   void shouldSafetyTryGet() {
+    assertThat(Utils.tryGet("15", Integer::valueOf))
+        .isEqualTo(Integer.valueOf(15));
+    assertThat(Utils.tryGet("invalidnumber", Integer::valueOf))
+        .isNull();
 
-    Assertions.assertEquals(Integer.valueOf(15), Utils.tryGet("15", Integer::valueOf));
-    Assertions.assertNull(Utils.tryGet("invalidnumber", Integer::valueOf));
-
-    Assertions.assertEquals(Integer.valueOf(15), Utils.tryGet("15", Integer::valueOf, 2));
-    Assertions.assertEquals(Integer.valueOf(2), Utils.tryGet("invalidnumber", Integer::valueOf, 2));
+    assertThat(Utils.tryGet("15", Integer::valueOf, 2))
+        .isEqualTo(Integer.valueOf(15));
+    assertThat(Utils.tryGet("invalidnumber", Integer::valueOf, 2))
+        .isEqualTo(Integer.valueOf(2));
   }
 
   @Test
   void shouldSafetyTryGetAndConvert() {
-    Assertions.assertEquals("15", Utils.tryGetAndConvert("15", Integer::valueOf, Object::toString));
-    Assertions.assertNull(Utils.tryGetAndConvert("invalidnumber", Integer::valueOf, Object::toString));
+    assertThat(Utils.tryGetAndConvert("15", Integer::valueOf, Object::toString))
+        .isEqualTo("15");
+    assertThat(Utils.tryGetAndConvert("invalidnumber", Integer::valueOf, Object::toString))
+        .isNull();
   }
 }

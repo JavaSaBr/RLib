@@ -1,8 +1,9 @@
 package javasabr.rlib.collections.array;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Objects;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,13 +14,15 @@ class ReversedArrayIterationsTest {
   @MethodSource("generateArrays")
   void shouldFindAnyCorrectly(Array<String> array) {
     // when/then:
-    Assertions.assertNull(array
+    assertThat(array
         .iterations()
         .reversedArgs()
-        .findAny("notexist", Objects::equals));
-    Assertions.assertNotNull(array
+        .findAny("notexist", Objects::equals))
+        .isNull();
+    assertThat(array
         .iterations()
-        .findAny("Second", Objects::equals));
+        .findAny("Second", Objects::equals))
+        .isNotNull();
   }
 
   @ParameterizedTest
@@ -40,7 +43,7 @@ class ReversedArrayIterationsTest {
         .forEach("prefix_", (arg1, element) -> result.add(arg1 + element));
 
     // then:
-    Assertions.assertEquals(expected, result);
+    assertThat(result).isEqualTo(expected);
   }
 
   @ParameterizedTest
@@ -62,21 +65,21 @@ class ReversedArrayIterationsTest {
         .forEach("prefix_", "_middle_", (arg1, arg2, element) -> result.add(arg1 + arg2 + element));
 
     // then:
-    Assertions.assertEquals(expected, result);
+    assertThat(result).isEqualTo(expected);
   }
 
   @ParameterizedTest
   @MethodSource("generateArrays")
   void shouldAnyMatchCorrectly(Array<String> array) {
     // when/then:
-    Assertions.assertFalse(array
+    assertThat(array
         .iterations()
         .reversedArgs()
-        .anyMatch("10", String::equals));
-    Assertions.assertTrue(array
+        .anyMatch("10", String::equals)).isFalse();
+    assertThat(array
         .iterations()
         .reversedArgs()
-        .anyMatch("5", String::equals));
+        .anyMatch("5", String::equals)).isTrue();
   }
 
   private static Stream<Arguments> generateArrays() {

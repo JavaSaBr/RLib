@@ -1,9 +1,10 @@
 package javasabr.rlib.testcontainers;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import javasabr.rlib.mail.sender.MailSenderConfig;
 import javasabr.rlib.mail.sender.impl.JavaxMailSender;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +25,8 @@ public class FakeSMTPTestContainerTest {
 
   @Test
   void shouldStartTestContainerAndCheckApi() {
-
-    Assertions.assertEquals(0, FAKE_SMTP_TEST_CONTAINER.getEmailCountFrom("from@test.com"));
+    assertThat(FAKE_SMTP_TEST_CONTAINER.getEmailCountFrom("from@test.com"))
+        .isEqualTo(0);
 
     var smtpServer = FAKE_SMTP_TEST_CONTAINER;
     var smtpPort = smtpServer.getSmtpPort();
@@ -45,10 +46,12 @@ public class FakeSMTPTestContainerTest {
     var sender = new JavaxMailSender(config);
     sender.send("to@test.com", "Test Subject", "Content");
 
-    Assertions.assertEquals(1, FAKE_SMTP_TEST_CONTAINER.getEmailCountFrom("from@test.com"));
+    assertThat(FAKE_SMTP_TEST_CONTAINER.getEmailCountFrom("from@test.com"))
+        .isEqualTo(1);
 
     FAKE_SMTP_TEST_CONTAINER.deleteEmails();
 
-    Assertions.assertEquals(0, FAKE_SMTP_TEST_CONTAINER.getEmailCountFrom("from@test.com"));
+    assertThat(FAKE_SMTP_TEST_CONTAINER.getEmailCountFrom("from@test.com"))
+        .isEqualTo(0);
   }
 }

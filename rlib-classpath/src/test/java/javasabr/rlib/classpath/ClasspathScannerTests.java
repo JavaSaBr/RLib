@@ -1,11 +1,12 @@
 package javasabr.rlib.classpath;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Collection;
 import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.collections.array.impl.AbstractArray;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerManager;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,10 +27,10 @@ public class ClasspathScannerTests {
 
     Array<Class<Collection>> implementations = scanner.findImplementations(Collection.class);
 
-    Assertions.assertFalse(implementations.isEmpty());
+    assertThat(implementations.isEmpty()).isFalse();
 
     Array<Class<AbstractArray>> inherited = scanner.findInherited(AbstractArray.class);
 
-    Assertions.assertFalse(inherited.isEmpty());
+    assertThat(inherited.isEmpty()).isFalse();
   }
 }

@@ -1,15 +1,15 @@
 package javasabr.rlib.mail.sender;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import javasabr.rlib.mail.BaseMailTest;
 import javasabr.rlib.mail.sender.impl.JavaxMailSender;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class JavaxMailSenderTest extends BaseMailTest {
 
   @Test
   void shouldSendEmailSuccessfully() {
-
     var smtpServer = FAKE_SMTP_TEST_CONTAINER;
     var smtpPort = smtpServer.getSmtpPort();
     var smtpUser = smtpServer.getSmtpUser();
@@ -28,10 +28,12 @@ public class JavaxMailSenderTest extends BaseMailTest {
     var sender = new JavaxMailSender(config);
     sender.send("to@test.com", "Test Subject", "Content");
 
-    Assertions.assertEquals(1, smtpServer.getEmailCountFrom("from@test.com"));
+    assertThat(smtpServer.getEmailCountFrom("from@test.com"))
+        .isEqualTo(1);
 
     sender.send("to@test.com", "Test Subject 2", "Content 2");
 
-    Assertions.assertEquals(2, smtpServer.getEmailCountFrom("from@test.com"));
+    assertThat(smtpServer.getEmailCountFrom("from@test.com"))
+        .isEqualTo(2);
   }
 }

@@ -1,6 +1,7 @@
 package javasabr.rlib.reference;
 
-import org.junit.jupiter.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -20,14 +21,14 @@ public class ReferencesTest {
     var objRef = ReferenceFactory.objRef("Val");
     var shortRef = ReferenceFactory.newShortRef((short) 7);
 
-    Assertions.assertEquals(5, byteRef.value());
-    Assertions.assertEquals('T', charRef.value());
-    Assertions.assertEquals(1.5D, doubleRef.value());
-    Assertions.assertEquals(2.5F, floatRef.value());
-    Assertions.assertEquals(5, intRef.value());
-    Assertions.assertEquals(7L, longRef.value());
-    Assertions.assertEquals("Val", objRef.value());
-    Assertions.assertEquals(7, shortRef.value());
+    assertThat(byteRef.value()).isEqualTo((byte) 5);
+    assertThat(charRef.value()).isEqualTo('T');
+    assertThat(doubleRef.value()).isEqualTo(1.5D);
+    assertThat(floatRef.value()).isEqualTo(2.5F);
+    assertThat(intRef.value()).isEqualTo(5);
+    assertThat(longRef.value()).isEqualTo(7L);
+    assertThat(objRef.value()).isEqualTo("Val");
+    assertThat(shortRef.value()).isEqualTo((short) 7);
   }
 
   @Test
@@ -42,14 +43,14 @@ public class ReferencesTest {
     var objRef = ReferenceFactory.threadLocalObjRef("Val3");
     var shortRef = ReferenceFactory.threadLocalShortRef((short) 2);
 
-    Assertions.assertEquals(3, byteRef.value());
-    Assertions.assertEquals('d', charRef.value());
-    Assertions.assertEquals(3.5D, doubleRef.value());
-    Assertions.assertEquals(1.5F, floatRef.value());
-    Assertions.assertEquals(7, intRef.value());
-    Assertions.assertEquals(4L, longRef.value());
-    Assertions.assertEquals("Val3", objRef.value());
-    Assertions.assertEquals(2, shortRef.value());
+    assertThat(byteRef.value()).isEqualTo((byte) 3);
+    assertThat(charRef.value()).isEqualTo('d');
+    assertThat(doubleRef.value()).isEqualTo(3.5D);
+    assertThat(floatRef.value()).isEqualTo(1.5F);
+    assertThat(intRef.value()).isEqualTo(7);
+    assertThat(longRef.value()).isEqualTo(4L);
+    assertThat(objRef.value()).isEqualTo("Val3");
+    assertThat(shortRef.value()).isEqualTo((short) 2);
 
     byteRef.release();
     charRef.release();
@@ -69,14 +70,14 @@ public class ReferencesTest {
     var objRef2 = ReferenceFactory.threadLocalObjRef("Val3");
     var shortRef2 = ReferenceFactory.threadLocalShortRef((short) 2);
 
-    Assertions.assertSame(byteRef, byteRef2);
-    Assertions.assertSame(charRef, charRef2);
-    Assertions.assertSame(doubleRef, doubleRef2);
-    Assertions.assertSame(floatRef, floatRef2);
-    Assertions.assertSame(intRef, intRef2);
-    Assertions.assertSame(longRef, longRef2);
-    Assertions.assertSame(objRef, objRef2);
-    Assertions.assertSame(shortRef, shortRef2);
+    assertThat(byteRef2).isSameAs(byteRef);
+    assertThat(charRef2).isSameAs(charRef);
+    assertThat(doubleRef2).isSameAs(doubleRef);
+    assertThat(floatRef2).isSameAs(floatRef);
+    assertThat(intRef2).isSameAs(intRef);
+    assertThat(longRef2).isSameAs(longRef);
+    assertThat(objRef2).isSameAs(objRef);
+    assertThat(shortRef2).isSameAs(shortRef);
 
     var byteRef3 = ReferenceFactory.threadLocalByteRef((byte) 3);
     var charRef3 = ReferenceFactory.threadLocalCharRef('d');
@@ -87,13 +88,13 @@ public class ReferencesTest {
     var objRef3 = ReferenceFactory.threadLocalObjRef("Val3");
     var shortRef3 = ReferenceFactory.threadLocalShortRef((short) 2);
 
-    Assertions.assertNotSame(byteRef, byteRef3);
-    Assertions.assertNotSame(charRef, charRef3);
-    Assertions.assertNotSame(doubleRef, doubleRef3);
-    Assertions.assertNotSame(floatRef, floatRef3);
-    Assertions.assertNotSame(intRef, intRef3);
-    Assertions.assertNotSame(longRef, longRef3);
-    Assertions.assertNotSame(objRef, objRef3);
-    Assertions.assertNotSame(shortRef, shortRef3);
+    assertThat(byteRef3).isNotSameAs(byteRef);
+    assertThat(charRef3).isNotSameAs(charRef);
+    assertThat(doubleRef3).isNotSameAs(doubleRef);
+    assertThat(floatRef3).isNotSameAs(floatRef);
+    assertThat(intRef3).isNotSameAs(intRef);
+    assertThat(longRef3).isNotSameAs(longRef);
+    assertThat(objRef3).isNotSameAs(objRef);
+    assertThat(shortRef3).isNotSameAs(shortRef);
   }
 }

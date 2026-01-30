@@ -1,5 +1,7 @@
 package javasabr.rlib.compiler;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.RecordComponent;
 import java.net.URISyntaxException;
@@ -9,7 +11,6 @@ import javasabr.rlib.collections.array.ArrayCollectors;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerManager;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -40,11 +41,14 @@ public class CompilerTests {
         .collect(ArrayCollectors.toArray(Class.class));
 
     // then:
-    Assertions.assertEquals(3, compiledClasses.size());
+    assertThat(compiledClasses.size()).isEqualTo(3);
 
-    Assertions.assertEquals("TestCompileDependency", compiledClasses.get(0).getName());
-    Assertions.assertEquals("TestCompileJavaSource", compiledClasses.get(1).getName());
-    Assertions.assertEquals("TestCompileRecord", compiledClasses.get(2).getName());
+    assertThat(compiledClasses.get(0).getName())
+        .isEqualTo("TestCompileDependency");
+    assertThat(compiledClasses.get(1).getName())
+        .isEqualTo("TestCompileJavaSource");
+    assertThat(compiledClasses.get(2).getName())
+        .isEqualTo("TestCompileRecord");
 
     // when:
     var instance1 = ClassUtils.newInstance(compiledClasses.get(0));
@@ -54,7 +58,7 @@ public class CompilerTests {
     var result = method.invoke(instance1);
 
     // then:
-    Assertions.assertEquals(5, result);
+    assertThat(result).isEqualTo(5);
 
     // when:
     var instance2 = ClassUtils.newInstance(compiledClasses.get(1));
@@ -64,7 +68,7 @@ public class CompilerTests {
     result = method.invoke(instance2);
 
     // then:
-    Assertions.assertEquals("testString", result);
+    assertThat(result).isEqualTo("testString");
 
     // when:
     Record instance3 = (Record) ClassUtils
@@ -76,7 +80,9 @@ public class CompilerTests {
         .getClass()
         .getRecordComponents();
 
-    Assertions.assertEquals(instance1, recordComponents[0].getAccessor().invoke(instance3));
-    Assertions.assertEquals("recordString", recordComponents[1].getAccessor().invoke(instance3));
+    assertThat(recordComponents[0].getAccessor().invoke(instance3))
+        .isEqualTo(instance1);
+    assertThat(recordComponents[1].getAccessor().invoke(instance3))
+        .isEqualTo("recordString");
   }
 }

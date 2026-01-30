@@ -1,10 +1,8 @@
 package javasabr.rlib.collections.deque;
 
 import static javasabr.rlib.common.util.ArrayUtils.array;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.lang.reflect.Field;
 import java.util.Deque;
@@ -17,7 +15,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.common.util.ReflectionUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -28,20 +25,21 @@ class DequeTest {
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldAddFirst(Deque<String> deque) {
-
     // when:
     deque.addFirst("val1");
     deque.addFirst("val2");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val2", "val1"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val2", "val1"));
 
     // when:
     deque.addFirst("val3");
     deque.addFirst("val4");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val4", "val3", "val2", "val1"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val4", "val3", "val2", "val1"));
 
     // when:
     deque.addFirst("val5");
@@ -54,40 +52,49 @@ class DequeTest {
     deque.addFirst("val12");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val12", "val11", "val10", "val9", "val8",
-        "val7", "val6", "val5", "val4", "val3", "val2", "val1"));
+    assertThat(deque.toArray())
+        .isEqualTo(array(
+            "val12",
+            "val11", 
+            "val10", 
+            "val9", 
+            "val8", 
+            "val7", 
+            "val6", 
+            "val5", 
+            "val4", 
+            "val3", 
+            "val2", 
+            "val1"));
   }
 
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldAddFirstManyElements(Deque<String> deque) {
-
     // when:
     IntStream.range(1, 200)
         .mapToObj(value -> "val_" + value)
         .forEach(deque::addFirst);
 
     // then:
-    assertEquals(199, deque.size());
+    assertThat(deque.size()).isEqualTo(199);
   }
 
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldAddLastManyElements(Deque<String> deque) {
-
     // when:
     IntStream.range(1, 200)
         .mapToObj(value -> "val_" + value)
         .forEach(deque::addLast);
 
     // then:
-    assertEquals(199, deque.size());
+    assertThat(deque.size()).isEqualTo(199);
   }
 
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldAddFirstLastManyElements(Deque<String> deque) {
-
     // when:
     IntStream
         .range(1, 500)
@@ -101,7 +108,7 @@ class DequeTest {
         });
 
     // then:
-    assertEquals(499, deque.size());
+    assertThat(deque.size()).isEqualTo(499);
   }
 
   @ParameterizedTest
@@ -137,20 +144,21 @@ class DequeTest {
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldAddLast(Deque<String> deque) {
-
     // when:
     deque.addLast("val1");
     deque.addLast("val2");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val1", "val2"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val2"));
 
     // when:
     deque.addLast("val3");
     deque.addLast("val4");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val1", "val2", "val3", "val4"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val2", "val3", "val4"));
 
     // when:
     deque.addLast("val5");
@@ -163,27 +171,40 @@ class DequeTest {
     deque.addLast("val12");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val1", "val2", "val3", "val4", "val5",
-        "val6", "val7", "val8", "val9", "val10", "val11", "val12"));
+    assertThat(deque.toArray())
+        .isEqualTo(array(
+            "val1",
+            "val2", 
+            "val3",
+            "val4",
+            "val5", 
+            "val6",
+            "val7",
+            "val8",
+            "val9", 
+            "val10", 
+            "val11", 
+            "val12"));
   }
 
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldAddFirstAndAddLastInMixMode(Deque<String> deque) {
-
     // when:
     deque.addFirst("val1");
     deque.addFirst("val2");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val2", "val1"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val2", "val1"));
 
     // when:
     deque.addLast("val3");
     deque.addLast("val4");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val2", "val1", "val3", "val4"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val2", "val1", "val3", "val4"));
 
     // when:
     deque.addFirst("val5");
@@ -196,14 +217,25 @@ class DequeTest {
     deque.addLast("val12");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val11", "val7", "val6", "val5", "val2",
-        "val1", "val3", "val4", "val8", "val9", "val10", "val12"));
+    assertThat(deque.toArray())
+        .isEqualTo(array(
+            "val11",
+            "val7", 
+            "val6",
+            "val5",
+            "val2", 
+            "val1",
+            "val3",
+            "val4", 
+            "val8", 
+            "val9", 
+            "val10", 
+            "val12"));
   }
 
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldRemoveFirst(Deque<String> deque) {
-
     // given:
     deque.addAll(List.of("val1", "val2", "val3", "val4", "val5"));
 
@@ -212,28 +244,29 @@ class DequeTest {
     var removed2 = deque.removeFirst();
 
     // then:
-    assertEquals("val1", removed1);
-    assertEquals("val2", removed2);
-    assertArrayEquals(deque.toArray(), array("val3", "val4", "val5"));
+    assertThat(removed1).isEqualTo("val1");
+    assertThat(removed2).isEqualTo("val2");
+    assertThat(deque.toArray())
+        .isEqualTo(array("val3", "val4", "val5"));
 
     // when:
     var removed3 = deque.removeFirst();
     var removed4 = deque.removeFirst();
 
     // then:
-    assertEquals("val3", removed3);
-    assertEquals("val4", removed4);
-    assertArrayEquals(deque.toArray(), array("val5"));
+    assertThat(removed3).isEqualTo("val3");
+    assertThat(removed4).isEqualTo("val4");
+    assertThat(deque.toArray()).isEqualTo(array("val5"));
 
     // when:
     var removed5 = deque.removeFirst();
 
     // then:
-    assertEquals("val5", removed5);
-    assertArrayEquals(deque.toArray(), array());
+    assertThat(removed5).isEqualTo("val5");
+    assertThat(deque.toArray()).isEqualTo(array());
 
     // when/then:
-    Assertions.assertThrows(NoSuchElementException.class, deque::removeFirst);
+    assertThatThrownBy(deque::removeFirst).isInstanceOf(NoSuchElementException.class);
   }
 
   @ParameterizedTest
@@ -248,28 +281,29 @@ class DequeTest {
     var removed2 = deque.removeLast();
 
     // then:
-    assertEquals("val5", removed1);
-    assertEquals("val4", removed2);
-    assertArrayEquals(deque.toArray(), array("val1", "val2", "val3"));
+    assertThat(removed1).isEqualTo("val5");
+    assertThat(removed2).isEqualTo("val4");
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val2", "val3"));
 
     // when:
     var removed3 = deque.removeLast();
     var removed4 = deque.removeLast();
 
     // then:
-    assertEquals("val3", removed3);
-    assertEquals("val2", removed4);
-    assertArrayEquals(deque.toArray(), array("val1"));
+    assertThat(removed3).isEqualTo("val3");
+    assertThat(removed4).isEqualTo("val2");
+    assertThat(deque.toArray()).isEqualTo(array("val1"));
 
     // when:
     var removed5 = deque.removeLast();
 
     // then:
-    assertEquals("val1", removed5);
-    assertArrayEquals(deque.toArray(), array());
+    assertThat(removed5).isEqualTo("val1");
+    assertThat(deque.toArray()).isEqualTo(array());
 
     // when/then:
-    Assertions.assertThrows(NoSuchElementException.class, deque::removeLast);
+    assertThatThrownBy(deque::removeLast).isInstanceOf(NoSuchElementException.class);
   }
 
   @ParameterizedTest
@@ -284,18 +318,20 @@ class DequeTest {
     var removed2 = deque.removeLast();
 
     // then:
-    assertEquals("val1", removed1);
-    assertEquals("val8", removed2);
-    assertArrayEquals(deque.toArray(), array("val2", "val3", "val4", "val5", "val6", "val7"));
+    assertThat(removed1).isEqualTo("val1");
+    assertThat(removed2).isEqualTo("val8");
+    assertThat(deque.toArray())
+        .isEqualTo(array("val2", "val3", "val4", "val5", "val6", "val7"));
 
     // when:
     var removed3 = deque.removeFirst();
     var removed4 = deque.removeLast();
 
     // then:
-    assertEquals("val2", removed3);
-    assertEquals("val7", removed4);
-    assertArrayEquals(deque.toArray(), array("val3", "val4", "val5", "val6"));
+    assertThat(removed3).isEqualTo("val2");
+    assertThat(removed4).isEqualTo("val7");
+    assertThat(deque.toArray())
+        .isEqualTo(array("val3", "val4", "val5", "val6"));
 
     // when:
     var removed5 = deque.removeFirst();
@@ -304,15 +340,17 @@ class DequeTest {
     var removed8 = deque.removeLast();
 
     // then:
-    assertEquals("val3", removed5);
-    assertEquals("val4", removed6);
-    assertEquals("val6", removed7);
-    assertEquals("val5", removed8);
-    assertArrayEquals(deque.toArray(), array());
+    assertThat(removed5).isEqualTo("val3");
+    assertThat(removed6).isEqualTo("val4");
+    assertThat(removed7).isEqualTo("val6");
+    assertThat(removed8).isEqualTo("val5");
+    assertThat(deque.toArray()).isEqualTo(array());
 
     // when/then:
-    Assertions.assertThrows(NoSuchElementException.class, deque::removeFirst);
-    Assertions.assertThrows(NoSuchElementException.class, deque::removeLast);
+    assertThatThrownBy(deque::removeFirst)
+        .isInstanceOf(NoSuchElementException.class);
+    assertThatThrownBy(deque::removeLast)
+        .isInstanceOf(NoSuchElementException.class);
   }
 
   @ParameterizedTest
@@ -326,57 +364,61 @@ class DequeTest {
     deque.remove("val9");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val1", "val2", "val3", "val4", "val5", "val6", "val7", "val8", "val10"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val2", "val3", "val4", "val5", "val6", "val7", "val8", "val10"));
 
     // when:
     deque.remove("val2");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val1", "val3", "val4", "val5", "val6", "val7", "val8", "val10"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val3", "val4", "val5", "val6", "val7", "val8", "val10"));
 
     // when:
     deque.remove("val5");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val1", "val3", "val4", "val6", "val7", "val8", "val10"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val3", "val4", "val6", "val7", "val8", "val10"));
 
     // when:
     deque.remove("val6");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val1", "val3", "val4", "val7", "val8", "val10"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val3", "val4", "val7", "val8", "val10"));
 
     // when:
     deque.remove("val1");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val3", "val4", "val7", "val8", "val10"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val3", "val4", "val7", "val8", "val10"));
 
     // when:
     deque.remove("val10");
 
     // then:
-    assertArrayEquals(deque.toArray(), array("val3", "val4", "val7", "val8"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val3", "val4", "val7", "val8"));
   }
 
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldCheckContains(Deque<String> deque) {
-
     // given:
     deque.addAll(List.of("val1", "val2", "val3", "val4", "val5", "val6", "val7", "val8", "val9", "val10"));
 
     // when/then:
-    assertTrue(deque.contains("val1"));
-    assertTrue(deque.contains("val10"));
-    assertTrue(deque.contains("val3"));
-    assertTrue(deque.contains("val8"));
-    assertFalse(deque.contains("val55"));
+    assertThat(deque.contains("val1")).isTrue();
+    assertThat(deque.contains("val10")).isTrue();
+    assertThat(deque.contains("val3")).isTrue();
+    assertThat(deque.contains("val8")).isTrue();
+    assertThat(deque.contains("val55")).isFalse();
   }
 
   @Test
   void shouldRebalanceIndexesAddLastRemoveFirst() {
-
     // given:
     Deque<String> deque = DequeFactory.arrayBasedBased(String.class, 15);
     Field head = ReflectionUtils.getUnsafeField(deque, "head");
@@ -395,9 +437,9 @@ class DequeTest {
     int tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(18, headValue);
-    assertEquals(19, tailValue);
-    assertEquals(2, deque.size());
+    assertThat(headValue).isEqualTo(18);
+    assertThat(tailValue).isEqualTo(19);
+    assertThat(deque.size()).isEqualTo(2);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -411,9 +453,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(29, headValue);
-    assertEquals(32, tailValue);
-    assertEquals(4, deque.size());
+    assertThat(headValue).isEqualTo(29);
+    assertThat(tailValue).isEqualTo(32);
+    assertThat(deque.size()).isEqualTo(4);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -427,9 +469,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(40, headValue);
-    assertEquals(45, tailValue);
-    assertEquals(6, deque.size());
+    assertThat(headValue).isEqualTo(40);
+    assertThat(tailValue).isEqualTo(45);
+    assertThat(deque.size()).isEqualTo(6);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -443,9 +485,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(31, headValue);
-    assertEquals(38, tailValue);
-    assertEquals(8, deque.size());
+    assertThat(headValue).isEqualTo(31);
+    assertThat(tailValue).isEqualTo(38);
+    assertThat(deque.size()).isEqualTo(8);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -459,9 +501,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(42, headValue);
-    assertEquals(51, tailValue);
-    assertEquals(10, deque.size());
+    assertThat(headValue).isEqualTo(42);
+    assertThat(tailValue).isEqualTo(51);
+    assertThat(deque.size()).isEqualTo(10);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -475,9 +517,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(30, headValue);
-    assertEquals(41, tailValue);
-    assertEquals(12, deque.size());
+    assertThat(headValue).isEqualTo(30);
+    assertThat(tailValue).isEqualTo(41);
+    assertThat(deque.size()).isEqualTo(12);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -491,14 +533,13 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(41, headValue);
-    assertEquals(54, tailValue);
-    assertEquals(14, deque.size());
+    assertThat(headValue).isEqualTo(41);
+    assertThat(tailValue).isEqualTo(54);
+    assertThat(deque.size()).isEqualTo(14);
   }
 
   @Test
   void shouldRebalanceIndexesAddFirstRemoveLast() {
-
     // given:
     Deque<String> deque = DequeFactory.arrayBasedBased(String.class, 15);
     Field head = ReflectionUtils.getUnsafeField(deque, "head");
@@ -517,9 +558,9 @@ class DequeTest {
     int tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(5, headValue);
-    assertEquals(6, tailValue);
-    assertEquals(2, deque.size());
+    assertThat(headValue).isEqualTo(5);
+    assertThat(tailValue).isEqualTo(6);
+    assertThat(deque.size()).isEqualTo(2);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -533,9 +574,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(2, headValue);
-    assertEquals(5, tailValue);
-    assertEquals(4, deque.size());
+    assertThat(headValue).isEqualTo(2);
+    assertThat(tailValue).isEqualTo(5);
+    assertThat(deque.size()).isEqualTo(4);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -549,9 +590,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(9, headValue);
-    assertEquals(14, tailValue);
-    assertEquals(6, deque.size());
+    assertThat(headValue).isEqualTo(9);
+    assertThat(tailValue).isEqualTo(14);
+    assertThat(deque.size()).isEqualTo(6);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -565,9 +606,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(25, headValue);
-    assertEquals(32, tailValue);
-    assertEquals(8, deque.size());
+    assertThat(headValue).isEqualTo(25);
+    assertThat(tailValue).isEqualTo(32);
+    assertThat(deque.size()).isEqualTo(8);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -581,9 +622,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(12, headValue);
-    assertEquals(21, tailValue);
-    assertEquals(10, deque.size());
+    assertThat(headValue).isEqualTo(12);
+    assertThat(tailValue).isEqualTo(21);
+    assertThat(deque.size()).isEqualTo(10);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -597,9 +638,9 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(31, headValue);
-    assertEquals(42, tailValue);
-    assertEquals(12, deque.size());
+    assertThat(headValue).isEqualTo(31);
+    assertThat(tailValue).isEqualTo(42);
+    assertThat(deque.size()).isEqualTo(12);
 
     // when:
     for (int i = 1; i < 14; i++) {
@@ -613,15 +654,14 @@ class DequeTest {
     tailValue = ReflectionUtils.getFieldValue(deque, tail);
 
     // then:
-    assertEquals(18, headValue);
-    assertEquals(31, tailValue);
-    assertEquals(14, deque.size());
+    assertThat(headValue).isEqualTo(18);
+    assertThat(tailValue).isEqualTo(31);
+    assertThat(deque.size()).isEqualTo(14);
   }
 
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldCorrectlyIterateDeque(Deque<String> deque) {
-
     // given:
     deque.addAll(List.of("val1", "val2", "val3", "val4", "val5", "val6"));
     var container = MutableArray.ofType(String.class);
@@ -636,14 +676,15 @@ class DequeTest {
     }
 
     // then:
-    assertArrayEquals(container.toArray(), array("val1", "val2", "val3", "val4", "val5", "val6"));
-    assertArrayEquals(deque.toArray(), array("val1", "val3", "val5", "val6"));
+    assertThat(container.toArray())
+        .isEqualTo(array("val1", "val2", "val3", "val4", "val5", "val6"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val3", "val5", "val6"));
   }
 
   @ParameterizedTest
   @MethodSource("generateDeque")
   void shouldCorrectlyIterate2Deque(Deque<String> deque) {
-
     // given:
     deque.addAll(List.of("val1", "val2", "val3", "val4", "val5", "val6"));
     var container = MutableArray.ofType(String.class);
@@ -658,8 +699,9 @@ class DequeTest {
     }
 
     // then:
-   // assertArrayEquals(container.toArray(), array("val6", "val5", "val4", "val3", "val2", "val1"));
-    assertArrayEquals(array("val1", "val3", "val5", "val6"), deque.toArray());
+   // assertThat(container.toArray()).isEqualTo(array("val6", "val5", "val4", "val3", "val2", "val1"));
+    assertThat(deque.toArray())
+        .isEqualTo(array("val1", "val3", "val5", "val6"));
   }
 
   private static Stream<Arguments> generateDeque() {

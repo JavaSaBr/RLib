@@ -29,8 +29,9 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @CustomLog
 public class StringSslNetworkLoadTest {
@@ -176,9 +177,9 @@ public class StringSslNetworkLoadTest {
     ThreadUtils.sleep(30000);
     finalWaiter.countDown();
 
-    Assertions
-        .assertTrue(finalWaiter.await(300_000, TimeUnit.MILLISECONDS),
-            "Still not received [%s] -> [%s] messages".formatted(expectedMessages, finalWaiter.getCount()));
+    assertThat(finalWaiter.await(300_000, TimeUnit.MILLISECONDS))
+        .as("Still not received [%s] -> [%s] messages".formatted(expectedMessages, finalWaiter.getCount()))
+        .isTrue();
 
     for (TestClient client : clients) {
       client.close();
