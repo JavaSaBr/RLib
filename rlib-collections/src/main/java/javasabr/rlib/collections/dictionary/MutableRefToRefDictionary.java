@@ -27,7 +27,7 @@ public interface MutableRefToRefDictionary<K, V> extends RefToRefDictionary<K, V
   V put(K key, V value);
 
   /**
-   * @return the previous value associated with the specified key, or null if there was no mapping for the key.
+   * @return the existing value if the key is already present, or null if the key was absent and the new mapping was added.
    */
   @Nullable 
   V putIfAbsent(K key, V value);

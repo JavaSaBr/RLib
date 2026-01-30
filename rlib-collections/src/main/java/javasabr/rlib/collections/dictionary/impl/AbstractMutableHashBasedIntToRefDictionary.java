@@ -94,7 +94,7 @@ public abstract class AbstractMutableHashBasedIntToRefDictionary<V, E extends Li
 
     for (E entry = entries[entryIndex]; entry != null; entry = entry.next()) {
       if (entry.hash() == hash && key == entry.key()) {
-        return null;
+        return entry.value();
       }
     }
 
@@ -144,25 +144,25 @@ public abstract class AbstractMutableHashBasedIntToRefDictionary<V, E extends Li
     int hash = hash(key);
     int entryIndex = indexFor(hash, entries.length);
 
-    E previosEntry = entries[entryIndex];
-    E entry = previosEntry;
+    E previousEntry = entries[entryIndex];
+    E entry = previousEntry;
 
     while (entry != null) {
       E nextEntry = entry.next();
       if (entry.hash() == hash && key == entry.key()) {
         if (Objects.equals(entry.value(), expectedValue)) {
           decrementSize();
-          if (previosEntry == entry) {
+          if (previousEntry == entry) {
             entries[entryIndex] = nextEntry;
           } else {
-            previosEntry.next(nextEntry);
+            previousEntry.next(nextEntry);
           }
           return true;
         } else {
           return false;
         }
       }
-      previosEntry = entry;
+      previousEntry = entry;
       entry = nextEntry;
     }
 

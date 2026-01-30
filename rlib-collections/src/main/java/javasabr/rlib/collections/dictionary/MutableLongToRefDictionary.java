@@ -26,7 +26,7 @@ public interface MutableLongToRefDictionary<V> extends LongToRefDictionary<V> {
   V put(long key, V value);
 
   /**
-   * @return the previous value associated with the specified key, or null if there was no mapping for the key.
+   * @return the existing value if the key is already present, or null if the key was absent and the new mapping was added.
    */
   @Nullable
   V putIfAbsent(long key, V value);

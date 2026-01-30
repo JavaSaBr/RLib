@@ -43,8 +43,8 @@ class MutableIntToRefDictionaryTest {
     String result2 = dictionary.putIfAbsent(4, "val4_1");
     String result3 = dictionary.putIfAbsent(44, "val44");
     // then:
-    assertThat(result1).isNull();
-    assertThat(result2).isNull();
+    assertThat(result1).isEqualTo("val1");
+    assertThat(result2).isEqualTo("val4");
     assertThat(result3).isNull();
     assertThat(dictionary.get(1)).isEqualTo("val1");
     assertThat(dictionary.get(4)).isEqualTo("val4");
