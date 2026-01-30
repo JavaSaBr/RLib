@@ -84,8 +84,8 @@ public abstract class AbstractMutableHashBasedRefToRefDictionary<K, V, E extends
     return null;
   }
 
-  @Override
   @Nullable
+  @Override
   public V putIfAbsent(K key, V value) {
     @Nullable E[] entries = entries();
     int hash = hash(key.hashCode());

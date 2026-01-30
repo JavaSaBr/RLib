@@ -32,6 +32,33 @@ class MutableIntToRefDictionaryTest {
 
   @ParameterizedTest
   @MethodSource("generateDictionaries")
+  void shouldPutIfAbsentNewPairs(MutableIntToRefDictionary<String> dictionary) {
+    // given:
+    dictionary.put(1, "val1");
+    dictionary.put(4, "val4");
+    dictionary.put(7, "val7");
+    dictionary.put(55, "val55");
+    // when:
+    String result1 = dictionary.putIfAbsent(1, "val1_1");
+    String result2 = dictionary.putIfAbsent(4, "val4_1");
+    String result3 = dictionary.putIfAbsent(44, "val44");
+    // then:
+    assertThat(result1).isNull();
+    assertThat(result2).isNull();
+    assertThat(result3).isNull();
+    assertThat(dictionary.get(1)).isEqualTo("val1");
+    assertThat(dictionary.get(4)).isEqualTo("val4");
+    assertThat(dictionary.get(55)).isEqualTo("val55");
+    assertThat(dictionary.get(44)).isEqualTo("val44");
+    assertThat(dictionary.containsKey(1)).isTrue();
+    assertThat(dictionary.containsKey(4)).isTrue();
+    assertThat(dictionary.containsKey(55)).isTrue();
+    assertThat(dictionary.containsKey(44)).isTrue();
+    assertThat(dictionary.size()).isEqualTo(5);
+  }
+
+  @ParameterizedTest
+  @MethodSource("generateDictionaries")
   void shouldPutOptionalNewPairs(MutableIntToRefDictionary<String> dictionary) {
     // when:
     dictionary.put(4, "val4");
@@ -70,6 +97,31 @@ class MutableIntToRefDictionaryTest {
     assertThat(dictionary.containsKey(1)).isFalse();
     assertThat(dictionary.containsKey(55)).isFalse();
     assertThat(dictionary.size()).isEqualTo(2);
+  }
+
+  @ParameterizedTest
+  @MethodSource("generateDictionaries")
+  void shouldRemoveByKeysWithExpectedValues(MutableIntToRefDictionary<String> dictionary) {
+    // given:
+    dictionary.put(1, "val1");
+    dictionary.put(4, "val4");
+    dictionary.put(7, "val7");
+    dictionary.put(55, "val55");
+
+    // when:
+    boolean removed1 = dictionary.remove(1, "val2");
+    boolean removed2 = dictionary.remove(55, "val55");
+
+    // then:
+    assertThat(removed1).isFalse();
+    assertThat(removed2).isTrue();
+    assertThat(dictionary.get(4)).isEqualTo("val4");
+    assertThat(dictionary.get(7)).isEqualTo("val7");
+    assertThat(dictionary.get(1)).isEqualTo("val1");
+    assertThat(dictionary.get(55)).isNull();
+    assertThat(dictionary.containsKey(1)).isTrue();
+    assertThat(dictionary.containsKey(55)).isFalse();
+    assertThat(dictionary.size()).isEqualTo(3);
   }
 
   @ParameterizedTest

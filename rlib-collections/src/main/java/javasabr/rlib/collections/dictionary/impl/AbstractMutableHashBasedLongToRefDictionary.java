@@ -1,5 +1,6 @@
 package javasabr.rlib.collections.dictionary.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.LongFunction;
@@ -83,7 +84,24 @@ public abstract class AbstractMutableHashBasedLongToRefDictionary<V, E extends L
     addEntry(hash, key, value, entryIndex);
     return null;
   }
+  
+  @Nullable
+  @Override
+  public V putIfAbsent(long key, V value) {
+    @Nullable E[] entries = entries();
+    int hash = hash(Long.hashCode(key));
+    int entryIndex = indexFor(hash, entries.length);
 
+    for (E entry = entries[entryIndex]; entry != null; entry = entry.next()) {
+      if (entry.hash() == hash && key == entry.key()) {
+        return null;
+      }
+    }
+
+    addEntry(hash, key, value, entryIndex);
+    return null;
+  }
+  
   @Override
   public Optional<V> putOptional(long key, V value) {
     return Optional.ofNullable(put(key, value));
@@ -120,6 +138,37 @@ public abstract class AbstractMutableHashBasedLongToRefDictionary<V, E extends L
     return removed.value();
   }
 
+  @Override
+  public boolean remove(long key, V expectedValue) {
+    @Nullable E[] entries = entries();
+    int hash = hash(Long.hashCode(key));
+    int entryIndex = indexFor(hash, entries.length);
+
+    E previosEntry = entries[entryIndex];
+    E entry = previosEntry;
+
+    while (entry != null) {
+      E nextEntry = entry.next();
+      if (entry.hash() == hash && key == entry.key()) {
+        if (Objects.equals(entry.value(), expectedValue)) {
+          decrementSize();
+          if (previosEntry == entry) {
+            entries[entryIndex] = nextEntry;
+          } else {
+            previosEntry.next(nextEntry);
+          }
+          return true;
+        } else {
+          return false;
+        }
+      }
+      previosEntry = entry;
+      entry = nextEntry;
+    }
+
+    return false;
+  }
+  
   @Override
   public Optional<V> removeOptional(long key) {
     return Optional.ofNullable(remove(key));
