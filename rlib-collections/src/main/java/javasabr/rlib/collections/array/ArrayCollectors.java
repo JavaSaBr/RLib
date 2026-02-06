@@ -12,6 +12,11 @@ import java.util.stream.Collector;
 import java.util.stream.Collector.Characteristics;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Provides {@link Collector} implementations for collecting stream elements into {@link Array} instances.
+ *
+ * @since 10.0.0
+ */
 @UtilityClass
 public class ArrayCollectors {
 
@@ -96,10 +101,26 @@ public class ArrayCollectors {
     };
   }
 
+  /**
+   * Returns a collector that accumulates elements into a mutable array.
+   *
+   * @param <T> the type of elements
+   * @param type the component type of the array
+   * @return a collector that collects elements into a mutable array
+   * @since 10.0.0
+   */
   public static <T> Collector<T, MutableArray<T>, MutableArray<T>> toMutableArray(Class<? super T> type) {
     return mutableCollector(type, ArrayFactory::mutableArray);
   }
 
+  /**
+   * Returns a collector that accumulates elements into an immutable array.
+   *
+   * @param <T> the type of elements
+   * @param type the component type of the array
+   * @return a collector that collects elements into an immutable array
+   * @since 10.0.0
+   */
   public static <T> Collector<T, MutableArray<T>, Array<T>> toArray(Class<? super T> type) {
     return collector(type, ArrayFactory::mutableArray);
   }
