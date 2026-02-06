@@ -24,9 +24,6 @@ import org.jspecify.annotations.Nullable;
 /**
  * Utility class for network operations including SSL context creation,
  * hex dump generation, and buffer manipulation.
-/**
- * Utility class for network operations including SSL context creation,
- * hex dump generation, and buffer manipulation.
  *
  * @author JavaSaBr
  * @since 10.0.0
