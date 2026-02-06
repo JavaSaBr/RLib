@@ -420,7 +420,7 @@ class DequeTest {
   @Test
   void shouldRebalanceIndexesAddLastRemoveFirst() {
     // given:
-    Deque<String> deque = DequeFactory.arrayBasedBased(String.class, 15);
+    Deque<String> deque = DequeFactory.arrayBased(String.class, 15);
     Field head = ReflectionUtils.getUnsafeField(deque, "head");
     Field tail = ReflectionUtils.getUnsafeField(deque, "tail");
     var generator = new AtomicInteger();
@@ -541,7 +541,7 @@ class DequeTest {
   @Test
   void shouldRebalanceIndexesAddFirstRemoveLast() {
     // given:
-    Deque<String> deque = DequeFactory.arrayBasedBased(String.class, 15);
+    Deque<String> deque = DequeFactory.arrayBased(String.class, 15);
     Field head = ReflectionUtils.getUnsafeField(deque, "head");
     Field tail = ReflectionUtils.getUnsafeField(deque, "tail");
     var generator = new AtomicInteger();
@@ -707,6 +707,6 @@ class DequeTest {
   private static Stream<Arguments> generateDeque() {
     return Stream.of(
         Arguments.of(DequeFactory.linkedListBased()),
-        Arguments.of(DequeFactory.arrayBasedBased(String.class, 15)));
+        Arguments.of(DequeFactory.arrayBased(String.class, 15)));
   }
 }

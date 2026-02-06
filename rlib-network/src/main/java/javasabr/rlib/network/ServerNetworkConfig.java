@@ -7,12 +7,18 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 /**
- * The interface to implement a server network config.
+ * The interface to implement a server network configuration.
  *
  * @author JavaSaBr
+ * @since 10.0.0
  */
 public interface ServerNetworkConfig extends NetworkConfig {
 
+  /**
+   * Simple implementation of server network configuration using Lombok builder.
+   *
+   * @since 10.0.0
+   */
   @Builder
   @Getter
   @Accessors(fluent = true, chain = false)
@@ -63,21 +69,30 @@ public interface ServerNetworkConfig extends NetworkConfig {
   };
 
   /**
-   * Get a minimal size of network thread executor.
+   * Gets the minimal size of network thread executor.
+   *
+   * @return the minimum thread pool size
+   * @since 10.0.0
    */
   default int threadGroupMinSize() {
     return 1;
   }
 
   /**
-   * Get a maximum size of network thread executor.
+   * Gets the maximum size of network thread executor.
+   *
+   * @return the maximum thread pool size
+   * @since 10.0.0
    */
   default int threadGroupMaxSize() {
     return threadGroupMinSize();
   }
 
   /**
-   * Get a size of network scheduled thread executor.
+   * Gets the size of network scheduled thread executor.
+   *
+   * @return the scheduled thread pool size
+   * @since 10.0.0
    */
   default int scheduledThreadGroupSize() {
     return 1;

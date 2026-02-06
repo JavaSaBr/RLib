@@ -33,7 +33,7 @@ public interface UnsafeMutableIntArray extends UnsafeIntArray, MutableIntArray {
    * @return the removed value
    * @since 10.0.0
    */
-  int unsafeRemoveByInex(int index);
+  int unsafeRemoveByIndex(int index);
 
   /**
    * Sets the value at the specified index without bounds checking.

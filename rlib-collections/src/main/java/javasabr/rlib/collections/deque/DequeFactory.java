@@ -33,7 +33,7 @@ public class DequeFactory {
    * @return a new array based deque
    * @since 10.0.0
    */
-  public static <E> Deque<E> arrayBasedBased(Class<? super E> type) {
+  public static <E> Deque<E> arrayBased(Class<? super E> type) {
     return new DefaultArrayBasedDeque<>(type);
   }
 
@@ -46,7 +46,7 @@ public class DequeFactory {
    * @return a new array based deque
    * @since 10.0.0
    */
-  public static <E> Deque<E> arrayBasedBased(Class<? super E> type, int capacity) {
+  public static <E> Deque<E> arrayBased(Class<? super E> type, int capacity) {
     return new DefaultArrayBasedDeque<>(type, capacity);
   }
 }

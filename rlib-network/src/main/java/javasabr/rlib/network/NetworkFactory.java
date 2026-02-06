@@ -16,19 +16,38 @@ import javax.net.ssl.SSLContext;
 import lombok.experimental.UtilityClass;
 
 /**
- * Class with factory methods to build client/server networks.
+ * Factory class with methods to build client and server networks.
  *
  * @author JavaSaBr
+ * @since 10.0.0
  */
 @UtilityClass
 public final class NetworkFactory {
 
+  /**
+   * Creates a new client network with custom connection factory.
+   *
+   * @param <C> the connection type
+   * @param networkConfig the network configuration
+   * @param channelToConnection the function to create connections from channels
+   * @return a new client network
+   * @since 10.0.0
+   */
   public static <C extends UnsafeConnection<C>> ClientNetwork<C> clientNetwork(
       NetworkConfig networkConfig,
       BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
     return new DefaultClientNetwork<>(networkConfig, channelToConnection);
   }
 
+  /**
+   * Creates a new server network with custom connection factory.
+   *
+   * @param <C> the connection type
+   * @param networkConfig the server network configuration
+   * @param channelToConnection the function to create connections from channels
+   * @return a new server network
+   * @since 10.0.0
+   */
   public static <C extends UnsafeConnection<C>> ServerNetwork<C> serverNetwork(
       ServerNetworkConfig networkConfig,
       BiFunction<Network<C>, AsynchronousSocketChannel, C> channelToConnection) {
@@ -36,14 +55,21 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create a string packet based asynchronous client network.
+   * Creates a string packet based asynchronous client network with default configuration.
+   *
+   * @return a new string data client network
+   * @since 10.0.0
    */
   public static ClientNetwork<StringDataConnection> stringDataClientNetwork() {
     return stringDataClientNetwork(NetworkConfig.DEFAULT_CLIENT);
   }
 
   /**
-   * Create a string packet based asynchronous client network.
+   * Creates a string packet based asynchronous client network with custom configuration.
+   *
+   * @param networkConfig the network configuration
+   * @return a new string data client network
+   * @since 10.0.0
    */
   public static ClientNetwork<StringDataConnection> stringDataClientNetwork(
       NetworkConfig networkConfig) {
@@ -51,7 +77,12 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create a string packet based asynchronous client network.
+   * Creates a string packet based asynchronous client network with custom configuration and allocator.
+   *
+   * @param networkConfig the network configuration
+   * @param bufferAllocator the buffer allocator
+   * @return a new string data client network
+   * @since 10.0.0
    */
   public static ClientNetwork<StringDataConnection> stringDataClientNetwork(
       NetworkConfig networkConfig,
@@ -62,7 +93,11 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create id based packet default asynchronous client network.
+   * Creates an ID-based packet default asynchronous client network.
+   *
+   * @param packetRegistry the packet registry
+   * @return a new default client network
+   * @since 10.0.0
    */
   public static ClientNetwork<DefaultConnection> defaultClientNetwork(
       ReadableNetworkPacketRegistry<DefaultReadableNetworkPacket<DefaultConnection>, DefaultConnection> packetRegistry) {
@@ -73,7 +108,13 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create id based packet default asynchronous client network.
+   * Creates an ID-based packet default asynchronous client network with custom configuration.
+   *
+   * @param networkConfig the network configuration
+   * @param bufferAllocator the buffer allocator
+   * @param packetRegistry the packet registry
+   * @return a new default client network
+   * @since 10.0.0
    */
   public static ClientNetwork<DefaultConnection> defaultClientNetwork(
       NetworkConfig networkConfig,
@@ -85,8 +126,13 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create string packet based asynchronous secure client network.
+   * Creates a string packet based asynchronous secure client network.
    *
+   * @param networkConfig the network configuration
+   * @param bufferAllocator the buffer allocator
+   * @param sslContext the SSL context
+   * @return a new SSL string data client network
+   * @since 10.0.0
    */
   public static ClientNetwork<StringDataSslConnection> stringDataSslClientNetwork(
       NetworkConfig networkConfig,
@@ -98,14 +144,21 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create string packet based asynchronous server network.
+   * Creates a string packet based asynchronous server network with default configuration.
+   *
+   * @return a new string data server network
+   * @since 10.0.0
    */
   public static ServerNetwork<StringDataConnection> stringDataServerNetwork() {
     return stringDataServerNetwork(ServerNetworkConfig.DEFAULT_SERVER);
   }
 
   /**
-   * Create string packet based asynchronous server network.
+   * Creates a string packet based asynchronous server network with custom configuration.
+   *
+   * @param networkConfig the server network configuration
+   * @return a new string data server network
+   * @since 10.0.0
    */
   public static ServerNetwork<StringDataConnection> stringDataServerNetwork(
       ServerNetworkConfig networkConfig) {
@@ -113,7 +166,12 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create string packet based asynchronous server network.
+   * Creates a string packet based asynchronous server network with custom configuration and allocator.
+   *
+   * @param networkConfig the server network configuration
+   * @param bufferAllocator the buffer allocator
+   * @return a new string data server network
+   * @since 10.0.0
    */
   public static ServerNetwork<StringDataConnection> stringDataServerNetwork(
       ServerNetworkConfig networkConfig,
@@ -124,7 +182,13 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create string packet based asynchronous secure server network.
+   * Creates a string packet based asynchronous secure server network.
+   *
+   * @param networkConfig the server network configuration
+   * @param bufferAllocator the buffer allocator
+   * @param sslContext the SSL context
+   * @return a new SSL string data server network
+   * @since 10.0.0
    */
   public static ServerNetwork<StringDataSslConnection> stringDataSslServerNetwork(
       ServerNetworkConfig networkConfig,
@@ -136,7 +200,11 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create id based packet default asynchronous server network.
+   * Creates an ID-based packet default asynchronous server network.
+   *
+   * @param packetRegistry the packet registry
+   * @return a new default server network
+   * @since 10.0.0
    */
   public static ServerNetwork<DefaultConnection> defaultServerNetwork(
       ReadableNetworkPacketRegistry<DefaultReadableNetworkPacket<DefaultConnection>, DefaultConnection> packetRegistry) {
@@ -147,7 +215,13 @@ public final class NetworkFactory {
   }
 
   /**
-   * Create id based packet default asynchronous server network.
+   * Creates an ID-based packet default asynchronous server network with custom configuration.
+   *
+   * @param networkConfig the server network configuration
+   * @param bufferAllocator the buffer allocator
+   * @param packetRegistry the packet registry
+   * @return a new default server network
+   * @since 10.0.0
    */
   public static ServerNetwork<DefaultConnection> defaultServerNetwork(
       ServerNetworkConfig networkConfig,

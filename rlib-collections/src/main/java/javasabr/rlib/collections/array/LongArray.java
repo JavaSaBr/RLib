@@ -1,4 +1,3 @@
-
 package javasabr.rlib.collections.array;
 
 import java.io.Serializable;
@@ -91,12 +90,12 @@ public interface LongArray extends Iterable<Long>, Serializable, Cloneable, Rand
   /**
    * Creates an immutable copy of the specified long array.
    *
-   * @param intArray the array to copy
+   * @param array the array to copy
    * @return an immutable copy
    * @since 10.0.0
    */
-  static LongArray copyOf(LongArray intArray) {
-    return new ImmutableLongArray(intArray.toArray());
+  static LongArray copyOf(LongArray array) {
+    return new ImmutableLongArray(array.toArray());
   }
 
   /**

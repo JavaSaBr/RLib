@@ -61,7 +61,7 @@ public abstract class AbstractIntArray implements UnsafeIntArray {
   @Override
   public boolean containsAll(IntArray array) {
     if (array.isEmpty()) {
-      return false;
+      return true;
     }
 
     int[] wrapped = array.asUnsafe().wrapped();
@@ -77,7 +77,7 @@ public abstract class AbstractIntArray implements UnsafeIntArray {
   @Override
   public boolean containsAll(int[] array) {
     if (array.length < 1) {
-      return false;
+      return true;
     }
     for (int value : array) {
       if (!contains(value)) {

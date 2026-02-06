@@ -66,7 +66,7 @@ public abstract class AbstractMutableIntArray extends AbstractIntArray implement
   @Override
   public int removeByIndex(int index) {
     checkIndex(index);
-    return unsafeRemoveByInex(index);
+    return unsafeRemoveByIndex(index);
   }
 
   @Override
@@ -75,7 +75,7 @@ public abstract class AbstractMutableIntArray extends AbstractIntArray implement
     if (index < 0) {
       return false;
     }
-    unsafeRemoveByInex(index);
+    unsafeRemoveByIndex(index);
     return true;
   }
 
@@ -108,7 +108,7 @@ public abstract class AbstractMutableIntArray extends AbstractIntArray implement
   }
 
   @Override
-  public int unsafeRemoveByInex(int index) {
+  public int unsafeRemoveByIndex(int index) {
     int numMoved = size() - index - 1;
     int[] wrapped = wrapped();
     int value = wrapped[index];

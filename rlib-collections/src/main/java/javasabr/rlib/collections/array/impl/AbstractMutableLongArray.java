@@ -66,7 +66,7 @@ public abstract class AbstractMutableLongArray extends AbstractLongArray impleme
   @Override
   public long removeByIndex(int index) {
     checkIndex(index);
-    return unsafeRemoveByInex(index);
+    return unsafeRemoveByIndex(index);
   }
 
   @Override
@@ -75,7 +75,7 @@ public abstract class AbstractMutableLongArray extends AbstractLongArray impleme
     if (index < 0) {
       return false;
     }
-    unsafeRemoveByInex(index);
+    unsafeRemoveByIndex(index);
     return true;
   }
 
@@ -108,7 +108,7 @@ public abstract class AbstractMutableLongArray extends AbstractLongArray impleme
   }
 
   @Override
-  public long unsafeRemoveByInex(int index) {
+  public long unsafeRemoveByIndex(int index) {
     int numMoved = size() - index - 1;
     long[] wrapped = wrapped();
     long value = wrapped[index];
