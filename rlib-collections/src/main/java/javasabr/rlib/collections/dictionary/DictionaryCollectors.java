@@ -18,6 +18,11 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 
+/**
+ * Provides {@link Collector} implementations for collecting stream elements into {@link RefToRefDictionary} instances.
+ *
+ * @since 10.0.0
+ */
 @UtilityClass
 public class DictionaryCollectors {
 
@@ -44,6 +49,16 @@ public class DictionaryCollectors {
     }
   }
 
+  /**
+   * Returns a collector that accumulates elements into a dictionary using the element as the value.
+   *
+   * @param <T> the type of input elements
+   * @param <K> the type of keys
+   * @param <U> unused type parameter
+   * @param keyMapper the function to extract keys
+   * @return a collector that collects elements into a dictionary
+   * @since 10.0.0
+   */
   public static <T, K, U> Collector<T, MutableRefToRefDictionary<K, T>, RefToRefDictionary<K, T>> toRefToRefDictionary(
       Function<? super T, ? extends K> keyMapper) {
     return new CollectorImpl<>(
@@ -54,6 +69,17 @@ public class DictionaryCollectors {
         CH_ID);
   }
 
+  /**
+   * Returns a collector that accumulates elements into a dictionary.
+   *
+   * @param <T> the type of input elements
+   * @param <K> the type of keys
+   * @param <U> the type of values
+   * @param keyMapper the function to extract keys
+   * @param valueMapper the function to extract values
+   * @return a collector that collects elements into a dictionary
+   * @since 10.0.0
+   */
   public static <T, K, U> Collector<T, MutableRefToRefDictionary<K, U>, RefToRefDictionary<K, U>> toRefToRefDictionary(
       Function<? super T, ? extends K> keyMapper,
       Function<? super T, ? extends U> valueMapper) {
