@@ -407,6 +407,7 @@ public class FileUtils {
     if (!Files.exists(destination)) {
       throw new IllegalArgumentException("The folder " + destination + " doesn't exist.");
     }
+    Path normalizedDestination = destination.normalize();
     int count = 0;
     try (var zin = new ZipInputStream(Files.newInputStream(zipFile))) {
       for (var entry = zin.getNextEntry(); entry != null; entry = zin.getNextEntry()) {
@@ -414,13 +415,14 @@ public class FileUtils {
         Path targetFile = destination
             .resolve(entryName)
             .normalize();
-        if (!targetFile.startsWith(destination)) {
+        if (!targetFile.startsWith(normalizedDestination)) {
           LOGGER.warning(entryName, "Unexpected entry name:[%s] which is outside"::formatted);
           continue;
         }
         if (entry.isDirectory()) {
           Files.createDirectories(targetFile);
         } else {
+          Files.createDirectories(targetFile.getParent());
           Files.copy(zin, targetFile, StandardCopyOption.REPLACE_EXISTING);
           count++;
         }

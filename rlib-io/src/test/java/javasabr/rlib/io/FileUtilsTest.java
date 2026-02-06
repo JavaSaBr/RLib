@@ -111,12 +111,31 @@ public class FileUtilsTest {
       zout.write("test text 5".getBytes(StandardCharsets.UTF_8));
     }
 
-    Path outputDir = Files.createTempDirectory("test-unzip");
+    Path tempDirectory = Files.createTempDirectory("test-unzip");
+    Path outputDir = tempDirectory
+        .resolve("output")
+        .resolve("folder");
+    
+    Files.createDirectories(outputDir);
     
     // when:
     int unpackedFiles = FileUtils.unzip(outputDir, zipFile);
 
     // then:
     assertThat(unpackedFiles).isEqualTo(3);
+    assertThat(outputDir
+        .resolve("fileA.txt"))
+        .exists();
+    assertThat(outputDir
+        .resolve("dir_a")
+        .resolve("fileC.txt"))
+        .exists();
+    assertThat(tempDirectory
+        .resolve("output")
+        .resolve("fileB.txt"))
+        .doesNotExist();
+    assertThat(tempDirectory
+        .resolve("fileE.txt"))
+        .doesNotExist();
   }
 }
