@@ -7,12 +7,18 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 /**
- * The interface to implement a network config.
+ * The interface to implement a network configuration.
  *
  * @author JavaSaBr
+ * @since 10.0.0
  */
 public interface NetworkConfig {
 
+  /**
+   * Simple implementation of network configuration using Lombok builder.
+   *
+   * @since 10.0.0
+   */
   @Builder
   @Getter
   @Accessors(fluent = true, chain = false)
@@ -52,82 +58,123 @@ public interface NetworkConfig {
   };
 
   /**
-   * Get a thread constructor which should be used to create network threads.
+   * Gets the thread constructor for creating network threads.
+   *
+   * @return the thread constructor
+   * @since 10.0.0
    */
   default ThreadConstructor threadConstructor() {
     return Thread::new;
   }
 
   /**
-   * Get a priority of network threads.
+   * Gets the priority of network threads.
    *
-   * @return the priority of network threads.
+   * @return the thread priority
+   * @since 10.0.0
    */
   default int threadPriority() {
     return Thread.NORM_PRIORITY;
   }
 
   /**
-   * Get a group name of network threads.
+   * Gets the group name of network threads.
+   *
+   * @return the thread group name
+   * @since 10.0.0
    */
   default String threadGroupName() {
     return "NetworkThread";
   }
 
   /**
-   * Get a group name of scheduling network threads.
+   * Gets the group name of scheduled network threads.
+   *
+   * @return the scheduled thread group name
+   * @since 10.0.0
    */
   default String scheduledThreadGroupName() {
     return "ScheduledNetworkThread";
   }
 
   /**
-   * Get size of buffer with will be used to collect received data from network.
+   * Gets the size of buffer used to collect received data from network.
+   *
+   * @return the read buffer size in bytes
+   * @since 10.0.0
    */
   default int readBufferSize() {
     return 2048;
   }
 
   /**
-   * Gets size of buffer with pending reading data. Pending buffer allows to construct a packet with bigger data part than
-   * {@link #readBufferSize()}. It should be at least 2x of {@link #readBufferSize()}
+   * Gets the size of buffer for pending reading data. The pending buffer allows constructing
+   * a packet with bigger data part than {@link #readBufferSize()}.
+   * It should be at least 2x of {@link #readBufferSize()}.
+   *
+   * @return the pending buffer size in bytes
+   * @since 10.0.0
    */
   default int pendingBufferSize() {
     return readBufferSize() * 2;
   }
 
   /**
-   * Gets a size of buffer which will be used for packet serialization.
+   * Gets the size of buffer used for packet serialization.
+   *
+   * @return the write buffer size in bytes
+   * @since 10.0.0
    */
   default int writeBufferSize() {
     return 2048;
   }
 
   /**
-   * Gets the max size of one single network packet.
+   * Gets the maximum size of a single network packet.
+   *
+   * @return the max packet size in bytes
+   * @since 10.0.0
    */
   default int maxPacketSize() {
     return 5 * 1024 * 1024;
   }
 
   /**
-   * Gets a timeout for retry read/write operation.
+   * Gets the timeout for retry read/write operations.
+   *
+   * @return the retry delay in milliseconds
+   * @since 10.0.0
    */
   default int retryDelayInMs() {
     return 1000;
   }
 
   /**
-   * Gets a max allowed empty reads from socket channel before closing a connection.
+   * Gets the maximum allowed empty reads from socket channel before closing a connection.
+   *
+   * @return the max empty reads count
+   * @since 10.0.0
    */
   default int maxEmptyReadsBeforeClose() {
     return 3;
   }
 
+  /**
+   * Gets the byte order for network data.
+   *
+   * @return the byte order
+   * @since 10.0.0
+   */
   default ByteOrder byteOrder() {
     return ByteOrder.BIG_ENDIAN;
   }
 
+  /**
+   * Checks if direct byte buffers should be used.
+   *
+   * @return true if direct buffers should be used
+   * @since 10.0.0
+   */
   default boolean useDirectByteBuffer() {
     return false;
   }

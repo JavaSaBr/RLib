@@ -22,12 +22,27 @@ import javax.net.ssl.X509TrustManager;
 import org.jspecify.annotations.Nullable;
 
 /**
+ * Utility class for network operations including SSL context creation,
+ * hex dump generation, and buffer manipulation.
+ *
  * @author JavaSaBr
+ * @since 10.0.0
  */
 public class NetworkUtils {
 
+  /**
+   * An empty byte buffer constant.
+   *
+   * @since 10.0.0
+   */
   public static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
 
+  /**
+   * A trust manager that accepts all certificates without validation.
+   * Use with caution in production environments.
+   *
+   * @since 10.0.0
+   */
   public static class AllTrustManager implements X509TrustManager {
 
     public static final X509Certificate[] EMPTY_CERTS = new X509Certificate[0];
@@ -41,16 +56,43 @@ public class NetworkUtils {
     public void checkServerTrusted(X509Certificate[] certificates, String arg1) {}
   }
 
+  /**
+   * Gets the remote address from an asynchronous socket channel.
+   *
+   * @param socketChannel the socket channel
+   * @return the remote socket address
+   * @since 10.0.0
+   */
   public static SocketAddress getRemoteAddress(AsynchronousSocketChannel socketChannel) {
     return Utils.uncheckedGet(socketChannel, AsynchronousSocketChannel::getRemoteAddress);
   }
 
+  /**
+   * Creates an SSL context from a PKCS12 key store.
+   *
+   * @param keyStoreData the key store input stream
+   * @param keyStorePassword the key store password
+   * @return the configured SSL context
+   * @since 10.0.0
+   */
   public static SSLContext createSslContext(
       InputStream keyStoreData,
       String keyStorePassword) {
     return createSslContext("PKCS12", keyStoreData, keyStorePassword, null, null, null);
   }
 
+  /**
+   * Creates an SSL context with custom key store and optional trust store.
+   *
+   * @param keyStoreType the key store type (e.g., "PKCS12", "JKS")
+   * @param keyStoreData the key store input stream
+   * @param keyStorePassword the key store password
+   * @param trustStoreType the trust store type or null
+   * @param trustStoreData the trust store input stream or null
+   * @param trustStorePassword the trust store password or null
+   * @return the configured SSL context
+   * @since 10.0.0
+   */
   public static SSLContext createSslContext(
       String keyStoreType,
       InputStream keyStoreData,
@@ -92,6 +134,13 @@ public class NetworkUtils {
     }
   }
 
+  /**
+   * Creates an SSL context that trusts all certificates.
+   * WARNING: Use only for testing or development, not in production.
+   *
+   * @return an SSL context that trusts all certificates
+   * @since 10.0.0
+   */
   public static SSLContext createAllTrustedClientSslContext() {
     try {
       var sslContext = SSLContext.getInstance("TLSv1.2");
@@ -103,11 +152,11 @@ public class NetworkUtils {
   }
 
   /**
-   * Prepare a string like 'HEX DUMP' by passed byte buffer.
+   * Prepares a hex dump string from a byte buffer.
    *
-   * @param buffer the byte buffer.
-   * @return the hex dump string.
-   * @since 9.9.0
+   * @param buffer the byte buffer
+   * @return the hex dump string
+   * @since 10.0.0
    */
   public static String hexDump(ByteBuffer buffer) {
     if (!buffer.hasRemaining()) {
@@ -118,12 +167,12 @@ public class NetworkUtils {
   }
 
   /**
-   * Prepare a string like 'HEX DUMP' by passed buffer and ssl engine result.
+   * Prepares a hex dump string from a buffer and SSL engine result.
    *
-   * @param buffer the byte buffer.
-   * @param result the ssl engine result.
-   * @return the hex dump string.
-   * @since 9.9.0
+   * @param buffer the byte buffer
+   * @param result the SSL engine result
+   * @return the hex dump string
+   * @since 10.0.0
    */
   public static String hexDump(ByteBuffer buffer, SSLEngineResult result) {
     if (result.bytesProduced() < 1) {
@@ -134,23 +183,25 @@ public class NetworkUtils {
   }
 
   /**
-   * Prepare a string like 'HEX DUMP' by passed array.
+   * Prepares a hex dump string from a byte array.
    *
-   * @param array the bytes array.
-   * @param length the length.
-   * @return the hex dump string.
+   * @param array the byte array
+   * @param length the length
+   * @return the hex dump string
+   * @since 10.0.0
    */
   public static String hexDump(byte[] array, int length) {
     return hexDump(array, 0, length);
   }
 
   /**
-   * Prepare a string like 'HEX DUMP' by passed array.
+   * Prepares a hex dump string from a byte array with offset.
    *
-   * @param array the byte array.
-   * @param offset the offset.
-   * @param length the length.
-   * @return the hex dump string.
+   * @param array the byte array
+   * @param offset the offset
+   * @param length the length
+   * @return the hex dump string
+   * @since 10.0.0
    */
   public static String hexDump(byte[] array, int offset, int length) {
 
@@ -238,21 +289,23 @@ public class NetworkUtils {
   }
 
   /**
-   * Check a network port to know is available it or not to open a new socket.
+   * Checks if a network port is available to open a new socket.
    *
-   * @param port the port.
-   * @return true if the port is available.
+   * @param port the port
+   * @return true if the port is available
+   * @since 10.0.0
    */
   public static boolean isPortAvailable(int port) {
     return isPortAvailable("*", port);
   }
 
   /**
-   * Check a network port to know is available it or not to open a new socket.
+   * Checks if a network port is available on the specified host.
    *
-   * @param host the host.
-   * @param port the port.
-   * @return true if the port is available.
+   * @param host the host ("*" for all interfaces)
+   * @param port the port
+   * @return true if the port is available
+   * @since 10.0.0
    */
   public static boolean isPortAvailable(String host, int port) {
     try (var ignored = "*".equals(host)
@@ -265,10 +318,11 @@ public class NetworkUtils {
   }
 
   /**
-   * Get a nearest available network port from a start port.
+   * Gets the nearest available network port starting from the specified port.
    *
-   * @param port the start port.
-   * @return the nearest available network port or -1.
+   * @param port the start port
+   * @return the nearest available network port or -1 if none found
+   * @since 10.0.0
    */
   public static int getAvailablePort(int port) {
     return IntStream
@@ -278,7 +332,15 @@ public class NetworkUtils {
         .orElse(-1);
   }
 
-
+  /**
+   * Increases the buffer size and copies existing data to the new buffer.
+   *
+   * @param current the current buffer
+   * @param allocator the buffer allocator
+   * @param newSize the new buffer size
+   * @return the new larger buffer with copied data
+   * @since 10.0.0
+   */
   public static ByteBuffer increaseBuffer(ByteBuffer current, BufferAllocator allocator, int newSize) {
 
     var newBuffer = allocator.takeBuffer(newSize);
@@ -291,10 +353,22 @@ public class NetworkUtils {
     return newBuffer;
   }
 
+  /**
+   * Clears a network buffer and sets its limit to 0.
+   *
+   * @param networkBuffer the buffer to clean
+   * @since 10.0.0
+   */
   public static void cleanNetworkBuffer(ByteBuffer networkBuffer) {
     networkBuffer.clear().limit(0);
   }
 
+  /**
+   * Compacts a network buffer if there is data at position > 0.
+   *
+   * @param networkBuffer the buffer to compact
+   * @since 10.0.0
+   */
   public static void compactNetworkBufferIfNeed(ByteBuffer networkBuffer) {
     if (networkBuffer.position() > 0) {
       networkBuffer.compact().limit(networkBuffer.position());

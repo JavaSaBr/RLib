@@ -1,17 +1,24 @@
 package javasabr.rlib.network.packet;
 
 /**
+ * Interface for reading network packets from a connection.
+ *
  * @author JavaSaBr
+ * @since 10.0.0
  */
 public interface NetworkPacketReader {
 
   /**
-   * Activate a process of receiving packets.
+   * Activates the process of receiving packets.
+   *
+   * @since 10.0.0
    */
   void startRead();
 
   /**
-   * Close all used resources.
+   * Closes all used resources.
+   *
+   * @since 10.0.0
    */
   void close();
 }

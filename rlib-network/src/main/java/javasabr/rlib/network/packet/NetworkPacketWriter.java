@@ -1,17 +1,25 @@
 package javasabr.rlib.network.packet;
 
 /**
+ * Interface for writing network packets to a connection.
+ *
  * @author JavaSaBr
+ * @since 10.0.0
  */
 public interface NetworkPacketWriter {
 
   /**
-   * @return true if the writer starting writing new data to channel.
+   * Tries to send the next packet in the queue.
+   *
+   * @return true if the writer started writing new data to the channel
+   * @since 10.0.0
    */
   boolean tryToSendNextPacket();
 
   /**
-   * Close all used resources.
+   * Closes all used resources.
+   *
+   * @since 10.0.0
    */
   void close();
 }

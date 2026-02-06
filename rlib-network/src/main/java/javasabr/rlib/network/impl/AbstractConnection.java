@@ -79,7 +79,7 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
     this.maxPacketsByRead = maxPacketsByRead;
     this.lock = new StampedLock();
     this.channel = channel;
-    this.pendingPackets = DequeFactory.arrayBasedBased(WritableNetworkPacket.class);
+    this.pendingPackets = DequeFactory.arrayBased(WritableNetworkPacket.class);
     this.network = network;
     this.closed = new AtomicBoolean(false);
     this.validPacketSubscribers = ArrayFactory.copyOnModifyArray(BiConsumer.class);

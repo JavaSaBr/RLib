@@ -33,7 +33,7 @@ public interface UnsafeMutableLongArray extends UnsafeLongArray, MutableLongArra
    * @return the removed value
    * @since 10.0.0
    */
-  long unsafeRemoveByInex(int index);
+  long unsafeRemoveByIndex(int index);
 
   /**
    * Sets the value at the specified index without bounds checking.

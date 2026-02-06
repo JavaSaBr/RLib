@@ -11,21 +11,33 @@ import javasabr.rlib.network.packet.IdBasedReadableNetworkPacket;
 import javasabr.rlib.network.packet.registry.impl.IdBasedReadableNetworkPacketRegistry;
 
 /**
- * The interface to implement a registry of readable packets.
+ * Interface to implement a registry of readable network packets.
  *
+ * @param <R> the readable packet type
+ * @param <C> the connection type
  * @author JavaSaBr
+ * @since 10.0.0
  */
 public interface ReadableNetworkPacketRegistry<R extends IdBasedReadableNetworkPacket<C>, C extends Connection<C>> {
 
   /**
    * Creates a new empty readable packet registry.
+   *
+   * @return an empty registry
+   * @since 10.0.0
    */
   static ReadableNetworkPacketRegistry<?, ?> empty() {
     return new IdBasedReadableNetworkPacketRegistry<>(IdBasedReadableNetworkPacket.class);
   }
 
   /**
-   * Create a new empty readable packet registry.
+   * Creates a new empty readable packet registry with the specified type.
+   *
+   * @param <R> the readable packet type
+   * @param <C> the connection type
+   * @param type the packet type class
+   * @return an empty registry
+   * @since 10.0.0
    */
   static <
       R extends IdBasedReadableNetworkPacket<C>,
@@ -34,7 +46,13 @@ public interface ReadableNetworkPacketRegistry<R extends IdBasedReadableNetworkP
   }
 
   /**
-   * Creates a new class path scanning based readable packet registry.
+   * Creates a new classpath scanning based readable packet registry.
+   *
+   * @param <R> the readable packet type
+   * @param <C> the connection type
+   * @param baseType the base packet type class
+   * @return a registry populated with discovered packets
+   * @since 10.0.0
    */
   static <
       R extends IdBasedReadableNetworkPacket<C>,
@@ -46,7 +64,14 @@ public interface ReadableNetworkPacketRegistry<R extends IdBasedReadableNetworkP
   }
 
   /**
-   * Creates a new class path scanning based readable packet registry by scanning the main class.
+   * Creates a new classpath scanning based readable packet registry by scanning the main class.
+   *
+   * @param <R> the readable packet type
+   * @param <C> the connection type
+   * @param baseType the base packet type class
+   * @param mainClass the main class to scan from
+   * @return a registry populated with discovered packets
+   * @since 10.0.0
    */
   static <
       R extends IdBasedReadableNetworkPacket<C>,
@@ -60,7 +85,14 @@ public interface ReadableNetworkPacketRegistry<R extends IdBasedReadableNetworkP
   }
 
   /**
-   * Creates a new class path scanning based readable packet registry.
+   * Creates a new readable packet registry from a classpath scanner.
+   *
+   * @param <R> the readable packet type
+   * @param <C> the connection type
+   * @param baseType the base packet type class
+   * @param scanner the classpath scanner
+   * @return a registry populated with discovered packets
+   * @since 10.0.0
    */
   static <
       R extends IdBasedReadableNetworkPacket<C>,
@@ -78,7 +110,14 @@ public interface ReadableNetworkPacketRegistry<R extends IdBasedReadableNetworkP
   }
 
   /**
-   * Creates a new readable packet registry.
+   * Creates a new readable packet registry from varargs classes.
+   *
+   * @param <R> the readable packet type
+   * @param <C> the connection type
+   * @param type the packet type class
+   * @param classes the packet classes to register
+   * @return a registry with registered packets
+   * @since 10.0.0
    */
   @SafeVarargs
   static <
@@ -90,6 +129,17 @@ public interface ReadableNetworkPacketRegistry<R extends IdBasedReadableNetworkP
         .register(classes, classes.length);
   }
 
+  /**
+   * Creates a new readable packet registry from varargs classes with explicit connection type.
+   *
+   * @param <R> the readable packet type
+   * @param <C> the connection type
+   * @param type the packet type class
+   * @param connectionType the connection type class
+   * @param classes the packet classes to register
+   * @return a registry with registered packets
+   * @since 10.0.0
+   */
   @SafeVarargs
   static <
       R extends IdBasedReadableNetworkPacket<C>,
@@ -102,7 +152,14 @@ public interface ReadableNetworkPacketRegistry<R extends IdBasedReadableNetworkP
   }
 
   /**
-   * Creates a new readable packet registry.
+   * Creates a new readable packet registry from an array of classes.
+   *
+   * @param <R> the readable packet type
+   * @param <C> the connection type
+   * @param type the packet type class
+   * @param classes the array of packet classes to register
+   * @return a registry with registered packets
+   * @since 10.0.0
    */
   static <
       R extends IdBasedReadableNetworkPacket<C>,
@@ -114,11 +171,12 @@ public interface ReadableNetworkPacketRegistry<R extends IdBasedReadableNetworkP
   }
 
   /**
-   * Resolve a network packet prototype based on packet id.
+   * Resolves a network packet prototype based on packet ID.
    *
-   * @param id the network packet id.
-   * @return the resolve prototype.
-   * @throws IllegalArgumentException if can't resolve a prototype by the id.
+   * @param id the network packet ID
+   * @return the resolved prototype
+   * @throws IllegalArgumentException if no prototype found for the ID
+   * @since 10.0.0
    */
   R resolvePrototypeById(int id);
 }

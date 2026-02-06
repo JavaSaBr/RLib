@@ -1,6 +1,8 @@
 package javasabr.rlib.network.packet;
 
 /**
- * Interface to mark that some specific packet doesn't have any data.
+ * Marker interface indicating that a packet has no data payload.
+ *
+ * @since 10.0.0
  */
 public interface MarkerNetworkPacket {}

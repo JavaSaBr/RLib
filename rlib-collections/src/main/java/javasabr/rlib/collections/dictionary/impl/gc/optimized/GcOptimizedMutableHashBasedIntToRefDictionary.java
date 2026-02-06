@@ -34,7 +34,7 @@ public class GcOptimizedMutableHashBasedIntToRefDictionary<V> extends
     //noinspection unchecked
     this.entries = new ReusableLinkedHashIntToRefEntry[initCapacity];
     this.threshold = (int) (initCapacity * loadFactor);
-    this.entryPool = DequeFactory.arrayBasedBased(ReusableLinkedHashIntToRefEntry.class);
+    this.entryPool = DequeFactory.arrayBased(ReusableLinkedHashIntToRefEntry.class);
   }
 
   @Override

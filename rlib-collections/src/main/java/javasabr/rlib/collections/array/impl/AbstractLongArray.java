@@ -61,7 +61,7 @@ public abstract class AbstractLongArray implements UnsafeLongArray {
   @Override
   public boolean containsAll(LongArray array) {
     if (array.isEmpty()) {
-      return false;
+      return true;
     }
     long[] wrapped = array.asUnsafe().wrapped();
     for (int i = 0, length = array.size(); i < length; i++) {
@@ -75,7 +75,7 @@ public abstract class AbstractLongArray implements UnsafeLongArray {
   @Override
   public boolean containsAll(long[] array) {
     if (array.length < 1) {
-      return false;
+      return true;
     }
     for (long value : array) {
       if (!contains(value)) {
