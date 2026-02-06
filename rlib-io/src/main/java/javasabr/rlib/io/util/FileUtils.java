@@ -400,36 +400,37 @@ public class FileUtils {
    *
    * @param destination the destination folder.
    * @param zipFile the zip file.
+   * 
+   * @return the count of unpacked files
    */
-  public static void unzip(Path destination, Path zipFile) {
-
+  public static int unzip(Path destination, Path zipFile) {
     if (!Files.exists(destination)) {
       throw new IllegalArgumentException("The folder " + destination + " doesn't exist.");
     }
-
+    Path normalizedDestination = destination.normalize();
+    int count = 0;
     try (var zin = new ZipInputStream(Files.newInputStream(zipFile))) {
       for (var entry = zin.getNextEntry(); entry != null; entry = zin.getNextEntry()) {
-
         String entryName = entry.getName();
         Path targetFile = destination
             .resolve(entryName)
-            .toRealPath(LinkOption.NOFOLLOW_LINKS);
-
-        if (!targetFile.startsWith(destination)) {
+            .normalize();
+        if (!targetFile.startsWith(normalizedDestination)) {
           LOGGER.warning(entryName, "Unexpected entry name:[%s] which is outside"::formatted);
           continue;
         }
-
         if (entry.isDirectory()) {
           Files.createDirectories(targetFile);
         } else {
+          Files.createDirectories(targetFile.getParent());
           Files.copy(zin, targetFile, StandardCopyOption.REPLACE_EXISTING);
+          count++;
         }
       }
-
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
+    return count;
   }
 
   /**

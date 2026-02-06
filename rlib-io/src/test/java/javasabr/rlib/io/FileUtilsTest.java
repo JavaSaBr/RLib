@@ -2,6 +2,13 @@ package javasabr.rlib.io;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javasabr.rlib.io.util.FileUtils;
 import org.junit.jupiter.api.Test;
 
@@ -73,5 +80,61 @@ public class FileUtilsTest {
     assertThat(FileUtils.hasExtension(path4)).isTrue();
     assertThat(FileUtils.hasExtension(path6)).isFalse();
     assertThat(FileUtils.hasExtension(path7)).isFalse();
+  }
+ 
+  @Test
+  void shouldUnzipFileCorrectly() throws IOException {
+    // given:
+    Path zipFile = Files.createTempFile("test-archive", ".zip");
+
+    try (var zout = new ZipOutputStream(Files.newOutputStream(zipFile, StandardOpenOption.CREATE))) {
+      zout.putNextEntry(new ZipEntry("fileA.txt"));
+      zout.write("test text".getBytes(StandardCharsets.UTF_8));
+
+      zout.putNextEntry(new ZipEntry("../fileB.txt"));
+      zout.write("test text 2".getBytes(StandardCharsets.UTF_8));
+
+      ZipEntry dirAEntry = new ZipEntry("dir_a/");
+      dirAEntry.setMethod(ZipEntry.STORED);
+      dirAEntry.setSize(0);
+      dirAEntry.setCrc(0);
+      zout.putNextEntry(dirAEntry);
+
+      zout.putNextEntry(new ZipEntry("dir_a/fileC.txt"));
+      zout.write("test text 3".getBytes(StandardCharsets.UTF_8));
+
+      zout.putNextEntry(new ZipEntry("dir_a/../fileD.txt"));
+      zout.write("test text 4".getBytes(StandardCharsets.UTF_8));
+
+      zout.putNextEntry(new ZipEntry("dir_a/../../../fileE.txt"));
+      zout.write("test text 5".getBytes(StandardCharsets.UTF_8));
+    }
+
+    Path tempDirectory = Files.createTempDirectory("test-unzip");
+    Path outputDir = tempDirectory
+        .resolve("output")
+        .resolve("folder");
+    
+    Files.createDirectories(outputDir);
+    
+    // when:
+    int unpackedFiles = FileUtils.unzip(outputDir, zipFile);
+
+    // then:
+    assertThat(unpackedFiles).isEqualTo(3);
+    assertThat(outputDir
+        .resolve("fileA.txt"))
+        .exists();
+    assertThat(outputDir
+        .resolve("dir_a")
+        .resolve("fileC.txt"))
+        .exists();
+    assertThat(tempDirectory
+        .resolve("output")
+        .resolve("fileB.txt"))
+        .doesNotExist();
+    assertThat(tempDirectory
+        .resolve("fileE.txt"))
+        .doesNotExist();
   }
 }
