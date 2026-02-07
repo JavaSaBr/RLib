@@ -234,7 +234,7 @@ public class FileUtils {
   }
 
   public static boolean hasExtensions(String path, String @Nullable [] extensions) {
-    return ArrayUtils.anyMatchR(extensions, path, String::endsWith);
+    return ArrayUtils.anyMatch(extensions, path, (extension, arg) -> arg.endsWith(extension));
   }
 
   public static boolean hasExtensions(String path, @Nullable Array<String> extensions) {
