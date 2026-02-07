@@ -51,6 +51,21 @@ Common pitfalls and fixes
 Linting & style
 - The root does not expose an obvious global formatting tool (no Spotless or root Checkstyle detected). Use the existing code style. Run `./gradlew check` to execute configured verification tasks.
 
+Testing conventions
+- Use AssertJ for assertions (import `org.assertj.core.api.Assertions`), not JUnit's `Assertions`.
+- Test class naming: `<ClassName>Test.java` in the same package under `src/test/java`.
+- Test method naming: `should<ExpectedBehavior>` pattern (e.g., `shouldReturnEmptyArrayForNullInput`).
+- Use given/when/then comments to structure test methods.
+- When adding new public methods, ensure corresponding unit tests are added.
+
+Javadoc conventions
+- All public classes, interfaces, and methods should have javadoc.
+- Javadoc must include `@since` tag with version (e.g., `@since 10.0.0`).
+- Use short, active-voice descriptions (e.g., "Creates an array" not "Create an array").
+- Include `@param` and `@return` tags for non-trivial methods; simple getters/setters may omit them.
+- Type parameter descriptions should be meaningful (e.g., `@param <T> the element type` not `@param <T> the type parameter`).
+- Do not generate javadoc for implementation classes (only interfaces and public API classes).
+
 Project layout & where to change things
 - Root-level important files:
     - `build.gradle` — root build settings, wrapper config.
