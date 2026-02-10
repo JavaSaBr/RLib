@@ -62,7 +62,9 @@ Javadoc conventions
 - All public classes, interfaces, and methods should have javadoc.
 - Javadoc must include `@since` tag with version (e.g., `@since 10.0.0`).
 - Use short, active-voice descriptions (e.g., "Creates an array" not "Create an array").
-- Include `@param` and `@return` tags for non-trivial methods; simple getters/setters may omit them.
+- Include `@param` and `@return` tags for non-trivial methods.
+- Omit javadoc for simple getters/setters (e.g., `getArch()`, `setArch(String)`); they are self-explanatory.
+- Omit obvious field comments that just repeat the field name (e.g., `/** The name. */ private String name;`).
 - Type parameter descriptions should be meaningful (e.g., `@param <T> the element type` not `@param <T> the type parameter`).
 - Do not generate javadoc for implementation classes (only interfaces and public API classes).
 

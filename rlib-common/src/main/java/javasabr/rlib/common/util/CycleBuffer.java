@@ -16,19 +16,8 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public final class CycleBuffer<T> {
 
-  /**
-   * The array with buffered objects.
-   */
   private final T[] buffer;
-
-  /**
-   * The handler of getting object from buffer.
-   */
   private final @Nullable Consumer<T> handler;
-
-  /**
-   * The index of next object.
-   */
   private int order;
 
   /**
@@ -71,9 +60,9 @@ public final class CycleBuffer<T> {
   }
 
   /**
-   * Get a next free object.
+   * Returns the next object from the buffer, cycling back to the start when the end is reached.
    *
-   * @return the next free object.
+   * @return the next object from the buffer
    */
   public T next() {
     if (order >= buffer.length) {

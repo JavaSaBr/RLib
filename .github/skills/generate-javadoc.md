@@ -16,23 +16,27 @@ When the user asks to:
 2. **Skip implementation classes** - files in `impl/` packages are NOT documented
 3. **Skip test classes** - files in `src/test/` are NOT documented
 
+### What to Omit
+1. **Simple getters/setters** - methods like `getArch()`, `setArch(String)` are self-explanatory
+2. **Obvious field comments** - avoid comments that just repeat the field name (e.g., `/** The name. */ private String name;`)
+3. **Obvious constructor javadocs** - avoid comments like "Instantiates a new Foo"
+
 ### Javadoc Standards
 Each documented element must include:
 
 1. **Class/Interface level:**
-   - Short description of purpose
-   - `@param` for type parameters (if generic)
-   - `@author JavaSaBr`
+   - Short description of purpose (active voice)
+   - `@param` for type parameters with meaningful descriptions (if generic)
    - `@since 10.0.0`
 
 2. **Method level:**
-   - Short description for ALL methods
+   - Short description for non-trivial methods
    - `@param` and `@return` only for **non-trivial** methods
    - `@since 10.0.0`
    - `@throws` only when explicitly thrown
 
 3. **Constants/Fields:**
-   - Short description
+   - Short description (only if not obvious from the name)
    - `@since 10.0.0`
 
 ### Example Format
@@ -42,7 +46,6 @@ Each documented element must include:
  * An immutable array interface that provides type-safe, indexed access to elements.
  *
  * @param <E> the type of elements in this array
- * @author JavaSaBr
  * @since 10.0.0
  */
 public interface Array<E> extends Iterable<E> {
@@ -94,7 +97,7 @@ public interface Array<E> extends Iterable<E> {
 3. **Read each file** to understand existing documentation state
 
 4. **Add Javadocs** using `replace_string_in_file` tool:
-   - Add class-level Javadoc with description, `@author`, `@since`
+   - Add class-level Javadoc with description and `@since`
    - Add method-level Javadocs with description and `@since`
    - Add `@param`/`@return` only for non-trivial methods
 

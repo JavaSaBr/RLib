@@ -21,7 +21,6 @@ import org.jspecify.annotations.Nullable;
 /**
  * Utility class for array operations including creation, manipulation, searching, and conversion.
  *
- * @author JavaSaBr
  * @since 10.0.0
  */
 public final class ArrayUtils {

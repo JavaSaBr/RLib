@@ -22,38 +22,14 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class OperatingSystemResolver {
 
-  /**
-   * The constant FILE_PROC_VERSION.
-   */
   public static final String FILE_PROC_VERSION = "/proc/version";
-  /**
-   * The constant FILE_ETC_ISSUE.
-   */
   public static final String FILE_ETC_ISSUE = "/etc/issue";
-  /**
-   * The constant FILE_ETC.
-   */
   public static final String FILE_ETC = "/etc/";
-  /**
-   * The constant FILE_ETC_SYSTEM_RELEASE.
-   */
   public static final String FILE_ETC_SYSTEM_RELEASE = "/etc/system-release";
-  /**
-   * The constant FILE_ETC_LSB_RELEASE.
-   */
   public static final String FILE_ETC_LSB_RELEASE = "/etc/lsb-release";
 
-  /**
-   * The constant PROP_PRETTY_NAME.
-   */
   public static final String PROP_PRETTY_NAME = "PRETTY_NAME";
-  /**
-   * The constant PROP_DISTRIB_CODENAME.
-   */
   public static final String PROP_DISTRIB_CODENAME = "DISTRIB_CODENAME";
-  /**
-   * The constant PROP_DISTRIB_DESCRIPTION.
-   */
   public static final String PROP_DISTRIB_DESCRIPTION = "DISTRIB_DESCRIPTION";
 
   private static final String NAME = System.getProperty("os.name");

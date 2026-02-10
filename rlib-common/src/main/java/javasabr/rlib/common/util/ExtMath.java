@@ -16,14 +16,10 @@ public final class ExtMath {
   public static final Integer ZERO_INTEGER = 0;
   public static final Long ZERO_LONG = 0L;
 
-  /**
-   * The value PI as a float. (180 degrees).
-   */
+  /** PI as a float (180 degrees). */
   public static final float PI = (float) Math.PI;
 
-  /**
-   * The value PI/2 as a float. (90 degrees)
-   */
+  /** PI/2 as a float (90 degrees). */
   public static final float HALF_PI = 0.5f * PI;
 
   public static final double EPSILON = 1.40129846432482E-45;
@@ -115,166 +111,166 @@ public final class ExtMath {
   }
 
   /**
-   * Returns the square root of a given value.
+   * Returns the square root of a value.
    *
-   * @param value The value to sqrt.
-   * @return The square root of the given value.
-   * @see java.lang.Math#sqrt(double) java.lang.Math#sqrt(double)
+   * @param value the value to sqrt
+   * @return the square root of the value
+   * @see java.lang.Math#sqrt(double)
    */
   public static float sqrt(float value) {
     return (float) Math.sqrt(value);
   }
 
   /**
-   * Return true of the value is zero.
+   * Returns true if the value is zero.
    *
-   * @param value the value.
-   * @return true if the values are equals.
+   * @param value the value
+   * @return true if the value is zero
    */
   public static boolean isZero(float value) {
     return Float.compare(value, 0F) == 0;
   }
 
   /**
-   * Return true of the value is zero.
+   * Returns true if the value is zero.
    *
-   * @param value the value.
-   * @return true if the values are equals.
+   * @param value the value
+   * @return true if the value is zero
    */
   public static boolean isZero(double value) {
     return Double.compare(value, 0D) == 0;
   }
 
   /**
-   * Compare the two float values.
+   * Compares two float values for equality.
    *
-   * @param first the first.
-   * @param second the second.
-   * @return true if the values are equals.
+   * @param first the first value
+   * @param second the second value
+   * @return true if the values are equal
    */
   public static boolean equals(float first, float second) {
     return Float.compare(first, second) == 0;
   }
 
   /**
-   * Compare the two float values.
+   * Compares two double values for equality.
    *
-   * @param first the first.
-   * @param second the second.
-   * @return true if the values are equals.
+   * @param first the first value
+   * @param second the second value
+   * @return true if the values are equal
    */
   public static boolean equals(double first, double second) {
     return Double.compare(first, second) == 0;
   }
 
   /**
-   * Compare the two float values by the epsilon.
+   * Compares two float values for equality within an epsilon tolerance.
    *
-   * @param first the first.
-   * @param second the second.
-   * @param epsilon the epsilon.
-   * @return true if the values are equals.
+   * @param first the first value
+   * @param second the second value
+   * @param epsilon the tolerance
+   * @return true if the values are equal within the epsilon
    */
   public static boolean equals(float first, float second, float epsilon) {
     return first == second || Math.abs(first - second) < epsilon;
   }
 
   /**
-   * Compare the two float values by the epsilon.
+   * Compares two double values for equality within an epsilon tolerance.
    *
-   * @param first the first.
-   * @param second the second.
-   * @param epsilon the epsilon.
-   * @return true if the values are equals.
+   * @param first the first value
+   * @param second the second value
+   * @param epsilon the tolerance
+   * @return true if the values are equal within the epsilon
    */
   public static boolean equals(double first, double second, double epsilon) {
     return first == second || Math.abs(first - second) < epsilon;
   }
 
   /**
-   * Compare the two float values by the epsilon.
+   * Checks if the first float value is less than the second within an epsilon tolerance.
    *
-   * @param first the first.
-   * @param second the second.
-   * @param epsilon the epsilon.
-   * @return true if the first value is less than the second value.
+   * @param first the first value
+   * @param second the second value
+   * @param epsilon the tolerance
+   * @return true if the first value is less than the second
    */
   public static boolean lessThan(float first, float second, float epsilon) {
     return second - first > epsilon;
   }
 
   /**
-   * Compare the two float values by the epsilon.
+   * Checks if the first double value is less than the second within an epsilon tolerance.
    *
-   * @param first the first.
-   * @param second the second.
-   * @param epsilon the epsilon.
-   * @return true if the first value is less than the second value.
+   * @param first the first value
+   * @param second the second value
+   * @param epsilon the tolerance
+   * @return true if the first value is less than the second
    */
   public static boolean lessThan(double first, double second, double epsilon) {
     return second - first > epsilon;
   }
 
   /**
-   * Compare the two float values by the epsilon.
+   * Checks if the first float value is greater than the second within an epsilon tolerance.
    *
-   * @param first the first.
-   * @param second the second.
-   * @param epsilon the epsilon.
-   * @return true if the first value is greater than the second value.
+   * @param first the first value
+   * @param second the second value
+   * @param epsilon the tolerance
+   * @return true if the first value is greater than the second
    */
   public static boolean greaterThan(float first, float second, float epsilon) {
     return first - second > epsilon;
   }
 
   /**
-   * Compare the two float values by the epsilon.
+   * Checks if the first double value is greater than the second within an epsilon tolerance.
    *
-   * @param first the first.
-   * @param second the second.
-   * @param epsilon the epsilon.
-   * @return true if the first value is greater than the second value.
+   * @param first the first value
+   * @param second the second value
+   * @param epsilon the tolerance
+   * @return true if the first value is greater than the second
    */
   public static boolean greaterThan(double first, double second, double epsilon) {
     return first - second > epsilon;
   }
 
   /**
-   * Cut the second part of the float value by the mod. For example: cut(1.123456F, 3) returns 1.123F.
+   * Truncates a float value to a specified precision. For example: cut(1.123456F, 1000) returns 1.123F.
    *
-   * @param value the value.
-   * @param mod the mod.
-   * @return the cut value.
+   * @param value the value to truncate
+   * @param mod the precision modifier
+   * @return the truncated value
    */
   public static float cut(float value, float mod) {
     return (int) (value * mod) / mod;
   }
 
   /**
-   * Return zero if the value is null.
+   * Returns zero if the value is null.
    *
-   * @param value the value.
-   * @return zero if the value is null.
+   * @param value the value
+   * @return zero if the value is null, otherwise the value
    */
   public static Float zeroIfNull(@Nullable Float value) {
     return value == null ? ZERO_FLOAT : value;
   }
 
   /**
-   * Return zero if the value is null.
+   * Returns zero if the value is null.
    *
-   * @param value the value.
-   * @return zero if the value is null.
+   * @param value the value
+   * @return zero if the value is null, otherwise the value
    */
   public static Double zeroIfNull(@Nullable Double value) {
     return value == null ? ZERO_DOUBLE : value;
   }
 
   /**
-   * Return zero if the value is null.
+   * Returns zero if the value is null.
    *
-   * @param value the value.
-   * @return zero if the value is null.
+   * @param value the value
+   * @return zero if the value is null, otherwise the value
    */
   public static Integer zeroIfNull(@Nullable Integer value) {
     return value == null ? ZERO_INTEGER : value;

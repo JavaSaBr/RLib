@@ -12,7 +12,6 @@ import java.util.function.Supplier;
  * <p>This is a <a href="package-summary.html">functional interface</a>
  * whose functional method is {@link #getAsChar()}.
  *
- * @author JavaSaBr
  * @see Supplier
  * @since 8.1.0
  */
