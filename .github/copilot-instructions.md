@@ -55,8 +55,12 @@ Testing conventions
 - Use AssertJ for assertions (import `org.assertj.core.api.Assertions`), not JUnit's `Assertions`.
 - Test class naming: `<ClassName>Test.java` in the same package under `src/test/java`.
 - Test method naming: `should<ExpectedBehavior>` pattern (e.g., `shouldReturnEmptyArrayForNullInput`).
-- Use given/when/then comments to structure test methods.
+- Use given/when/then comments with trailing colons to structure test methods (e.g., `// given:`, `// when:`, `// then:`, `// when/then:`).
+- Prefer project collections (e.g., `MutableArray`) over JDK collections (e.g., `ArrayList`) in tests when appropriate.
+- Use proper imports instead of fully qualified class names in test code.
 - When adding new public methods, ensure corresponding unit tests are added.
+- For `assertThat()` calls: break method chains onto new lines with indentation when the assertion has arguments or multiple chained methods (e.g., `assertThat(result)\n    .isEqualTo("expected")`). Short simple assertions can stay on one line.
+- For fluent builder/method chains: break onto new lines with indentation (e.g., `tempDir\n    .resolve("level1")\n    .resolve("level2")`).
 
 Javadoc conventions
 - All public classes, interfaces, and methods should have javadoc.

@@ -5,11 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.io.util.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,11 +22,11 @@ class FileUtilsTest {
 
   @Test
   void shouldGetNameByPath() {
-    // given
+    // given:
     var path = "/some/folder/some/name.ololo";
     var path2 = "D:\\some\\folder\\some\\name.ololo";
 
-    // when/then
+    // when/then:
     assertThat(FileUtils.getName(path, '/'))
         .isEqualTo("name.ololo");
     assertThat(FileUtils.getName(path2, '\\'))
@@ -31,11 +35,11 @@ class FileUtilsTest {
 
   @Test
   void shouldGetParentByPath() {
-    // given
+    // given:
     var path = "/some/folder/some/name.ololo";
     var path2 = "D:\\some\\folder\\some\\name.ololo";
 
-    // when/then
+    // when/then:
     assertThat(FileUtils.getParent(path, '/'))
         .isEqualTo("/some/folder/some");
     assertThat(FileUtils.getParent(path2, '\\'))
@@ -44,26 +48,26 @@ class FileUtilsTest {
 
   @Test
   void shouldNormalizeFileName() {
-    // given
+    // given:
     var invalidFileName = "file*:?name!!@#$\"\"wefwef<>.png";
 
-    // when
+    // when:
     var normalized = FileUtils.normalizeName(invalidFileName);
 
-    // then
+    // then:
     assertThat(normalized).isEqualTo("file___name!!@#$__wefwef__.png");
   }
 
   @Test
   void shouldNormalizeEmptyFileName() {
-    // when/then
+    // when/then:
     assertThat(FileUtils.normalizeName(null)).isEqualTo("_");
     assertThat(FileUtils.normalizeName("")).isEqualTo("_");
   }
 
   @Test
   void shouldGetFileExtension() {
-    // given
+    // given:
     var path1 = "file.txt";
     var path2 = "file.tar.gz";
     var path3 = "folder/folder.subname/file.png";
@@ -72,7 +76,7 @@ class FileUtilsTest {
     var path6 = "D:\\folder\\folder.folder\\test";
     var path7 = "/folder/folder.folder/test";
 
-    // when/then
+    // when/then:
     assertThat(FileUtils.getExtension(path1)).isEqualTo("txt");
     assertThat(FileUtils.getExtension(path2)).isEqualTo("gz");
     assertThat(FileUtils.getExtension(path3)).isEqualTo("png");
@@ -85,7 +89,7 @@ class FileUtilsTest {
 
   @Test
   void shouldCheckExistingExtension() {
-    // given
+    // given:
     var path1 = "file.txt";
     var path2 = "file.tar.gz";
     var path3 = "folder/folder.subname/file.png";
@@ -93,7 +97,7 @@ class FileUtilsTest {
     var path6 = "D:\\folder\\folder.folder\\test";
     var path7 = "/folder/folder.folder/test";
 
-    // when/then
+    // when/then:
     assertThat(FileUtils.hasExtension(path1)).isTrue();
     assertThat(FileUtils.hasExtension(path2)).isTrue();
     assertThat(FileUtils.hasExtension(path3)).isTrue();
@@ -104,12 +108,12 @@ class FileUtilsTest {
 
   @Test
   void shouldValidateFileName() {
-    // when/then - valid filenames
+    // when/then: - valid filenames
     assertThat(FileUtils.isValidFileName("document.txt")).isTrue();
     assertThat(FileUtils.isValidFileName("my-file_123.pdf")).isTrue();
     assertThat(FileUtils.isValidFileName("file")).isTrue();
 
-    // when/then - invalid filenames
+    // when/then: - invalid filenames
     assertThat(FileUtils.isValidFileName(null)).isFalse();
     assertThat(FileUtils.isValidFileName("")).isFalse();
     assertThat(FileUtils.isValidFileName("file<name>.txt")).isFalse();
@@ -124,49 +128,56 @@ class FileUtilsTest {
 
   @Test
   void shouldGetNameWithoutExtension() {
-    // when/then
-    assertThat(FileUtils.getNameWithoutExtension("file.txt")).isEqualTo("file");
-    assertThat(FileUtils.getNameWithoutExtension("file.tar.gz")).isEqualTo("file.tar");
-    assertThat(FileUtils.getNameWithoutExtension("file")).isEqualTo("file");
-    assertThat(FileUtils.getNameWithoutExtension("")).isEqualTo("");
-    assertThat(FileUtils.getNameWithoutExtension((String) null)).isNull();
+    // when/then:
+    assertThat(FileUtils.getNameWithoutExtension("file.txt"))
+        .isEqualTo("file");
+    assertThat(FileUtils.getNameWithoutExtension("file.tar.gz"))
+        .isEqualTo("file.tar");
+    assertThat(FileUtils.getNameWithoutExtension("file"))
+        .isEqualTo("file");
+    assertThat(FileUtils.getNameWithoutExtension(""))
+        .isEqualTo("");
+    assertThat(FileUtils.getNameWithoutExtension((String) null))
+        .isNull();
   }
 
   @Test
   void shouldGetNameWithoutExtensionFromPath(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path fileWithExtension = tempDir.resolve("test.txt");
     Path fileWithoutExtension = tempDir.resolve("testfile");
     Files.createFile(fileWithExtension);
     Files.createFile(fileWithoutExtension);
 
-    // when/then
-    assertThat(FileUtils.getNameWithoutExtension(fileWithExtension)).isEqualTo("test");
-    assertThat(FileUtils.getNameWithoutExtension(fileWithoutExtension)).isEqualTo("testfile");
+    // when/then:
+    assertThat(FileUtils.getNameWithoutExtension(fileWithExtension))
+        .isEqualTo("test");
+    assertThat(FileUtils.getNameWithoutExtension(fileWithoutExtension))
+        .isEqualTo("testfile");
   }
 
   @Test
   void shouldGetFileName(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path file = tempDir.resolve("myfile.txt");
     Files.createFile(file);
 
-    // when
+    // when:
     String fileName = FileUtils.fileName(file);
 
-    // then
+    // then:
     assertThat(fileName).isEqualTo("myfile.txt");
   }
 
   @Test
   void shouldCheckExtensionOnPath(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path txtFile = tempDir.resolve("document.txt");
     Path pngFile = tempDir.resolve("image.png");
     Files.createFile(txtFile);
     Files.createFile(pngFile);
 
-    // when/then
+    // when/then:
     assertThat(FileUtils.hasExtension(txtFile, ".txt")).isTrue();
     assertThat(FileUtils.hasExtension(txtFile, ".pdf")).isFalse();
     assertThat(FileUtils.hasExtension(pngFile, ".png")).isTrue();
@@ -174,138 +185,155 @@ class FileUtilsTest {
 
   @Test
   void shouldDeleteFile(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path fileToDelete = tempDir.resolve("to-delete.txt");
     Files.writeString(fileToDelete, "content");
     assertThat(fileToDelete).exists();
 
-    // when
+    // when:
     FileUtils.delete(fileToDelete);
 
-    // then
+    // then:
     assertThat(fileToDelete).doesNotExist();
   }
 
   @Test
   void shouldDeleteDirectoryRecursively(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path dirToDelete = tempDir.resolve("dir-to-delete");
     Files.createDirectories(dirToDelete);
     Files.writeString(dirToDelete.resolve("file1.txt"), "content1");
     Files.writeString(dirToDelete.resolve("file2.txt"), "content2");
+    
     Path subDir = dirToDelete.resolve("subdir");
     Files.createDirectories(subDir);
     Files.writeString(subDir.resolve("file3.txt"), "content3");
+    
     assertThat(dirToDelete).exists();
 
-    // when
+    // when:
     FileUtils.delete(dirToDelete);
 
-    // then
+    // then:
     assertThat(dirToDelete).doesNotExist();
   }
 
   @Test
   void shouldGetFilesFromDirectory(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Files.writeString(tempDir.resolve("file1.txt"), "content1");
     Files.writeString(tempDir.resolve("file2.txt"), "content2");
     Files.writeString(tempDir.resolve("file3.png"), "content3");
 
-    // when
+    // when:
     var allFiles = FileUtils.getFiles(tempDir);
     var txtFiles = FileUtils.getFiles(tempDir, ".txt");
 
-    // then
+    // then:
     assertThat(allFiles).hasSize(3);
     assertThat(txtFiles).hasSize(2);
   }
 
   @Test
   void shouldCreateDirectories(@TempDir Path tempDir) {
-    // given
-    Path nestedDir = tempDir.resolve("level1").resolve("level2").resolve("level3");
+    // given:
+    Path nestedDir = tempDir
+        .resolve("level1")
+        .resolve("level2")
+        .resolve("level3");
     assertThat(nestedDir).doesNotExist();
 
-    // when
+    // when:
     FileUtils.createDirectories(nestedDir);
 
-    // then
+    // then:
     assertThat(nestedDir).exists().isDirectory();
   }
 
   @Test
   void shouldStreamDirectory(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Files.writeString(tempDir.resolve("file1.txt"), "content1");
     Files.writeString(tempDir.resolve("file2.txt"), "content2");
     Path subDir = tempDir.resolve("subdir");
     Files.createDirectories(subDir);
 
-    // when
-    var files = FileUtils.stream(tempDir).toList();
+    // when:
+    var files = FileUtils
+        .stream(tempDir)
+        .toList();
 
-    // then
+    // then:
     assertThat(files).hasSize(3);
   }
 
   @Test
   void shouldThrowWhenStreamingNonDirectory(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path file = tempDir.resolve("file.txt");
     Files.writeString(file, "content");
 
-    // when/then
+    // when/then:
     assertThatThrownBy(() -> FileUtils.stream(file))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void shouldGetExtensionFromPath(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path txtFile = tempDir.resolve("document.txt");
     Path directory = tempDir.resolve("subdir");
     Files.createFile(txtFile);
     Files.createDirectories(directory);
 
-    // when/then
-    assertThat(FileUtils.getExtension(txtFile)).isEqualTo("txt");
-    assertThat(FileUtils.getExtension(txtFile, true)).isEqualTo("txt");
-    assertThat(FileUtils.getExtension(directory)).isNull();
+    // when/then:
+    assertThat(FileUtils.getExtension(txtFile))
+        .isEqualTo("txt");
+    assertThat(FileUtils.getExtension(txtFile, true))
+        .isEqualTo("txt");
+    assertThat(FileUtils.getExtension(directory))
+        .isNull();
   }
 
   @Test
   void shouldGetUri(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path file = tempDir.resolve("test.txt");
     Files.createFile(file);
 
-    // when
+    // when:
     var uri = FileUtils.getUri(file);
 
-    // then
+    // then:
     assertThat(uri).isNotNull();
     assertThat(uri.toString()).contains("test.txt");
   }
 
   @Test
   void shouldRelativizePaths(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path base = tempDir.resolve("base");
-    Path other = tempDir.resolve("base").resolve("sub").resolve("file.txt");
+    Path other = tempDir
+        .resolve("base")
+        .resolve("sub")
+        .resolve("file.txt");
     Files.createDirectories(other.getParent());
     Files.createFile(other);
-
-    // when
+    
+    String expected = "sub/file.txt".replace("/", tempDir
+        .getFileSystem()
+        .getSeparator());
+    
+    // when:
     Path relative = FileUtils.relativize(base, other);
 
-    // then
-    assertThat(relative.toString()).isEqualTo("sub/file.txt".replace("/", tempDir.getFileSystem().getSeparator()));
+    // then:
+    assertThat(relative.toString()).isEqualTo(expected);
   }
 
   @Test
   void shouldSafeRelativizeWithNulls() {
-    // when/then
+    // when/then:
     assertThat(FileUtils.safeRelativize(null, Path.of("/some/path"))).isNull();
     assertThat(FileUtils.safeRelativize(Path.of("/base"), null)).isNull();
     assertThat(FileUtils.safeRelativize(null, null)).isNull();
@@ -313,7 +341,7 @@ class FileUtilsTest {
 
   @Test
   void shouldUnzipFileCorrectly() throws IOException {
-    // given
+    // given:
     Path zipFile = Files.createTempFile("test-archive", ".zip");
 
     try (var zout = new ZipOutputStream(Files.newOutputStream(zipFile, StandardOpenOption.CREATE))) {
@@ -346,10 +374,10 @@ class FileUtilsTest {
 
     Files.createDirectories(outputDir);
 
-    // when
+    // when:
     int unpackedFiles = FileUtils.unzip(outputDir, zipFile);
 
-    // then
+    // then:
     assertThat(unpackedFiles).isEqualTo(3);
     assertThat(outputDir.resolve("fileA.txt")).exists();
     assertThat(outputDir.resolve("dir_a").resolve("fileC.txt")).exists();
@@ -359,7 +387,7 @@ class FileUtilsTest {
 
   @Test
   void shouldThrowWhenUnzipToNonExistentDirectory() throws IOException {
-    // given
+    // given:
     Path zipFile = Files.createTempFile("test-archive", ".zip");
     try (var zout = new ZipOutputStream(Files.newOutputStream(zipFile, StandardOpenOption.CREATE))) {
       zout.putNextEntry(new ZipEntry("file.txt"));
@@ -367,14 +395,14 @@ class FileUtilsTest {
     }
     Path nonExistentDir = Path.of("/non/existent/directory");
 
-    // when/then
+    // when/then:
     assertThatThrownBy(() -> FileUtils.unzip(nonExistentDir, zipFile))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void shouldCheckMultipleExtensionsOnPath(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path txtFile = tempDir.resolve("document.txt");
     Path pngFile = tempDir.resolve("image.png");
     Path jpgFile = tempDir.resolve("photo.jpg");
@@ -385,7 +413,7 @@ class FileUtilsTest {
     String[] imageExtensions = {".png", ".jpg", ".gif"};
     String[] textExtensions = {".txt", ".md", ".doc"};
 
-    // when/then
+    // when/then:
     assertThat(FileUtils.hasExtensions(txtFile, textExtensions)).isTrue();
     assertThat(FileUtils.hasExtensions(txtFile, imageExtensions)).isFalse();
     assertThat(FileUtils.hasExtensions(pngFile, imageExtensions)).isTrue();
@@ -394,7 +422,7 @@ class FileUtilsTest {
 
   @Test
   void shouldCheckMultipleExtensionsOnString() {
-    // given
+    // given:
     var txtPath = "document.txt";
     var pngPath = "image.png";
     var noExtPath = "noextension";
@@ -402,7 +430,7 @@ class FileUtilsTest {
     String[] imageExtensions = {".png", ".jpg", ".gif"};
     String[] textExtensions = {".txt", ".md", ".doc"};
 
-    // when/then
+    // when/then:
     assertThat(FileUtils.hasExtensions(txtPath, textExtensions)).isTrue();
     assertThat(FileUtils.hasExtensions(txtPath, imageExtensions)).isFalse();
     assertThat(FileUtils.hasExtensions(pngPath, imageExtensions)).isTrue();
@@ -412,44 +440,44 @@ class FileUtilsTest {
 
   @Test
   void shouldGetFirstFreeName(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path existingFile = tempDir.resolve("file.txt");
     Files.createFile(existingFile);
 
-    // when
+    // when:
     String firstName = FileUtils.getFirstFreeName(tempDir, existingFile);
 
-    // then
+    // then:
     assertThat(firstName).isEqualTo("file_1.txt");
 
-    // given - create file_1.txt
+    // given: - create file_1.txt
     Files.createFile(tempDir.resolve("file_1.txt"));
 
-    // when
+    // when:
     String secondName = FileUtils.getFirstFreeName(tempDir, existingFile);
 
-    // then
+    // then:
     assertThat(secondName).isEqualTo("file_2.txt");
   }
 
   @Test
   void shouldGetFirstFreeNameWhenNotExists(@TempDir Path tempDir) {
-    // given
+    // given:
     Path nonExistingFile = tempDir.resolve("newfile.txt");
 
-    // when
+    // when:
     String name = FileUtils.getFirstFreeName(tempDir, nonExistingFile);
 
-    // then
+    // then:
     assertThat(name).isEqualTo("newfile.txt");
   }
 
   @Test
   void shouldCreateTempFile() throws IOException {
-    // when
+    // when:
     Path tempFile = FileUtils.createTempFile("test-prefix", ".tmp");
 
-    // then
+    // then:
     assertThat(tempFile).exists();
     assertThat(tempFile.getFileName().toString()).startsWith("test-prefix");
     assertThat(tempFile.getFileName().toString()).endsWith(".tmp");
@@ -460,35 +488,35 @@ class FileUtilsTest {
 
   @Test
   void shouldGetUrl(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path file = tempDir.resolve("test.txt");
     Files.createFile(file);
 
-    // when
+    // when:
     var url = FileUtils.getUrl(file);
 
-    // then
+    // then:
     assertThat(url).isNotNull();
     assertThat(url.toString()).contains("test.txt");
   }
 
   @Test
   void shouldGetLastModifiedTime(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path file = tempDir.resolve("test.txt");
     Files.writeString(file, "content");
 
-    // when
+    // when:
     var lastModified = FileUtils.getLastModifiedTime(file);
 
-    // then
+    // then:
     assertThat(lastModified).isNotNull();
     assertThat(lastModified.toMillis()).isGreaterThan(0);
   }
 
   @Test
   void shouldGetFilesWithDirectoriesIncluded(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Path testDir = tempDir.resolve("testdir");
     Files.createDirectories(testDir);
     Files.writeString(testDir.resolve("file1.txt"), "content1");
@@ -496,11 +524,11 @@ class FileUtilsTest {
     Path subDir = testDir.resolve("subdir");
     Files.createDirectories(subDir);
 
-    // when
+    // when:
     var filesWithDirs = FileUtils.getFiles(testDir, true, (String[]) null);
     var filesWithoutDirs = FileUtils.getFiles(testDir, false, (String[]) null);
 
-    // then
+    // then:
     // With dirs: testDir + subdir + file1.txt + file2.txt = 4
     assertThat(filesWithDirs).hasSize(4);
     // Without dirs: file1.txt + file2.txt = 2
@@ -509,62 +537,68 @@ class FileUtilsTest {
 
   @Test
   void shouldWalkFileTree(@TempDir Path tempDir) throws IOException {
-    // given
+    // given:
     Files.writeString(tempDir.resolve("file1.txt"), "content1");
     Path subDir = tempDir.resolve("subdir");
     Files.createDirectories(subDir);
     Files.writeString(subDir.resolve("file2.txt"), "content2");
 
-    var visitedFiles = new java.util.ArrayList<Path>();
+    var visitedFiles = MutableArray.ofType(Path.class);
 
-    // when
-    FileUtils.walkFileTree(tempDir, new java.nio.file.SimpleFileVisitor<>() {
+    // when:
+    FileUtils.walkFileTree(tempDir, new SimpleFileVisitor<>() {
       @Override
-      public java.nio.file.FileVisitResult visitFile(Path file, java.nio.file.attribute.BasicFileAttributes attrs) {
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
         visitedFiles.add(file);
-        return java.nio.file.FileVisitResult.CONTINUE;
+        return FileVisitResult.CONTINUE;
       }
     });
 
-    // then
+    // then:
     assertThat(visitedFiles).hasSize(2);
   }
 
   @Test
   void shouldReturnNullFileNameForRootPath() {
-    // given
+    // given:
     Path rootPath = Path.of("/");
 
-    // when
+    // when:
     String fileName = FileUtils.fileName(rootPath);
 
-    // then
+    // then:
     assertThat(fileName).isNull();
   }
 
   @Test
   void shouldHandleShortPathsInGetName() {
-    // when/then
-    assertThat(FileUtils.getName("a", '/')).isEqualTo("a");
-    assertThat(FileUtils.getName("", '/')).isEqualTo("");
+    // when/then:
+    assertThat(FileUtils.getName("a", '/'))
+        .isEqualTo("a");
+    assertThat(FileUtils.getName("", '/'))
+        .isEqualTo("");
   }
 
   @Test
   void shouldHandleShortPathsInGetParent() {
-    // when/then
-    assertThat(FileUtils.getParent("a", '/')).isEqualTo("a");
-    assertThat(FileUtils.getParent("", '/')).isEqualTo("");
+    // when/then:
+    assertThat(FileUtils.getParent("a", '/'))
+        .isEqualTo("a");
+    assertThat(FileUtils.getParent("", '/'))
+        .isEqualTo("");
   }
 
   @Test
   void shouldHandlePathWithNoSeparatorInGetName() {
-    // when/then
-    assertThat(FileUtils.getName("filename.txt", '/')).isEqualTo("filename.txt");
+    // when/then:
+    assertThat(FileUtils.getName("filename.txt", '/'))
+        .isEqualTo("filename.txt");
   }
 
   @Test
   void shouldHandlePathWithNoSeparatorInGetParent() {
-    // when/then
-    assertThat(FileUtils.getParent("filename.txt", '/')).isEqualTo("filename.txt");
+    // when/then:
+    assertThat(FileUtils.getParent("filename.txt", '/'))
+        .isEqualTo("filename.txt");
   }
 }
