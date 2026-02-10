@@ -724,7 +724,7 @@ public final class ArrayUtils {
     }
     var builder = new StringBuilder();
     if (needType) {
-      builder.append("int");
+      builder.append("long");
     }
     if (needBrackets) {
       builder.append('[');

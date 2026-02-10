@@ -340,7 +340,7 @@ class FileUtilsTest {
   }
 
   @Test
-  void shouldUnzipFileCorrectly() throws IOException {
+  void shouldUnzipFileCorrectly(@TempDir Path tempDir) throws IOException {
     // given:
     Path zipFile = Files.createTempFile("test-archive", ".zip");
 
@@ -367,8 +367,7 @@ class FileUtilsTest {
       zout.write("test text 5".getBytes(StandardCharsets.UTF_8));
     }
 
-    Path tempDirectory = Files.createTempDirectory("test-unzip");
-    Path outputDir = tempDirectory
+    Path outputDir = tempDir
         .resolve("output")
         .resolve("folder");
 
@@ -381,19 +380,22 @@ class FileUtilsTest {
     assertThat(unpackedFiles).isEqualTo(3);
     assertThat(outputDir.resolve("fileA.txt")).exists();
     assertThat(outputDir.resolve("dir_a").resolve("fileC.txt")).exists();
-    assertThat(tempDirectory.resolve("output").resolve("fileB.txt")).doesNotExist();
-    assertThat(tempDirectory.resolve("fileE.txt")).doesNotExist();
+    assertThat(tempDir.resolve("output").resolve("fileB.txt")).doesNotExist();
+    assertThat(tempDir.resolve("fileE.txt")).doesNotExist();
+    
+    // cleanup:
+    FileUtils.delete(zipFile);
   }
 
   @Test
-  void shouldThrowWhenUnzipToNonExistentDirectory() throws IOException {
+  void shouldThrowWhenUnzipToNonExistentDirectory(@TempDir Path tempDir) throws IOException {
     // given:
     Path zipFile = Files.createTempFile("test-archive", ".zip");
     try (var zout = new ZipOutputStream(Files.newOutputStream(zipFile, StandardOpenOption.CREATE))) {
       zout.putNextEntry(new ZipEntry("file.txt"));
       zout.write("content".getBytes(StandardCharsets.UTF_8));
     }
-    Path nonExistentDir = Path.of("/non/existent/directory");
+    Path nonExistentDir = tempDir.resolve("/non/existent/directory");
 
     // when/then:
     assertThatThrownBy(() -> FileUtils.unzip(nonExistentDir, zipFile))

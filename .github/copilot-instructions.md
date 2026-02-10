@@ -54,11 +54,15 @@ Linting & style
 Testing conventions
 - Use AssertJ for assertions (import `org.assertj.core.api.Assertions`), not JUnit's `Assertions`.
 - Test class naming: `<ClassName>Test.java` in the same package under `src/test/java`.
+- Test class visibility: use package-private (no `public` modifier) for test classes.
 - Test method naming: `should<ExpectedBehavior>` pattern (e.g., `shouldReturnEmptyArrayForNullInput`).
 - Use given/when/then comments with trailing colons to structure test methods (e.g., `// given:`, `// when:`, `// then:`, `// when/then:`).
+- For cleanup steps, use `// cleanup:` comment section at the end of the test method.
 - Prefer project collections (e.g., `MutableArray`) over JDK collections (e.g., `ArrayList`) in tests when appropriate.
 - Use proper imports instead of fully qualified class names in test code.
 - When adding new public methods, ensure corresponding unit tests are added.
+- Use JUnit's `@TempDir Path tempDir` parameter injection for tests that need temporary directories instead of manually creating temp directories with `Files.createTempDirectory()`.
+- For resources created outside `@TempDir` (e.g., `Files.createTempFile()`), add explicit cleanup in the `// cleanup:` section.
 - For `assertThat()` calls: break method chains onto new lines with indentation when the assertion has arguments or multiple chained methods (e.g., `assertThat(result)\n    .isEqualTo("expected")`). Short simple assertions can stay on one line.
 - For fluent builder/method chains: break onto new lines with indentation (e.g., `tempDir\n    .resolve("level1")\n    .resolve("level2")`).
 
