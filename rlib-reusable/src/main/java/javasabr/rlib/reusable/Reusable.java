@@ -1,12 +1,16 @@
 package javasabr.rlib.reusable;
 
 /**
- * @author JavaSaBr
+ * Represents a reusable object that can be cleaned up and reused.
+ *
+ * @since 10.0.0
  */
 public interface Reusable extends AutoCloseable {
 
   /**
-   * Cleanup this object
+   * Cleans up this object for reuse.
+   *
+   * @since 10.0.0
    */
   default void cleanup() {}
 
