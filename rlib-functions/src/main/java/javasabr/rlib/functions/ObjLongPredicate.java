@@ -15,6 +15,7 @@ public interface ObjLongPredicate<A> {
    * @param arg1 the object argument
    * @param arg2 the long argument
    * @return true if the arguments match the predicate
+   * @since 10.0.0
    */
   boolean test(A arg1, long arg2);
 }

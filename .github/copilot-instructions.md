@@ -75,9 +75,14 @@ Javadoc conventions
 - Omit javadoc for simple getters/setters (e.g., `getArch()`, `setArch(String)`); they are self-explanatory.
 - Omit obvious field comments that just repeat the field name (e.g., `/** The name. */ private String name;`).
 - Omit obvious constant comments (e.g., `/** The constant FOO. */ public static final String FOO = "foo";`).
-- Type parameter descriptions should be meaningful (e.g., `@param <T> the element type` not `@param <T> the type parameter`).
+- Type parameter descriptions should use consistent format: "the type of..." (e.g., `@param <T> the type of elements` not `@param <T> the element type`).
 - Do not generate javadoc for implementation classes (only interfaces and public API classes).
 - For `@see` tags, avoid duplicate references (e.g., use `@see Math#sin(double)` not `@see Math#sin(double) Math#sin(double)`).
+- For functional interfaces:
+    - Consumer descriptions must include "and returns no result" (e.g., "Represents an operation that accepts an int and an object argument, and returns no result.").
+    - Use type-specific @param descriptions (e.g., "the int argument", "the object argument") instead of generic "the first argument".
+    - Function @return should use "the function result" for consistency.
+    - Predicate @return should use "true if the arguments match the predicate".
 
 Project layout & where to change things
 - Root-level important files:

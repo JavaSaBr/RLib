@@ -29,6 +29,14 @@ When the user asks to:
 2. **No trailing periods** - in `@param` and `@return` descriptions (e.g., `@param value the value` not `@param value the value.`)
 3. **No duplicate @see references** - use `@see Math#sin(double)` not `@see Math#sin(double) Math#sin(double)`
 4. **Lowercase @param/@return descriptions** - start with lowercase (e.g., `@param value the value` not `@param value The value`)
+5. **Consistent type parameter format** - use "the type of..." pattern (e.g., `@param <T> the type of elements` not `@param <T> the element type`)
+6. **Descriptive @param names** - for functional interfaces, use type-specific descriptions (e.g., "the int argument", "the object argument") instead of generic "the first argument"
+
+### Functional Interface Conventions
+1. **Consumer descriptions** - always include "and returns no result" (e.g., "Represents an operation that accepts an int and an object argument, and returns no result.")
+2. **Function @return** - use "the function result" for consistency
+3. **Predicate @return** - use "true if the arguments match the predicate" or "true if the arguments match the predicate, false otherwise"
+4. **Supplier @return** - describe what is supplied (e.g., "the char value" not just "a result")
 
 ### Javadoc Standards
 Each documented element must include:
@@ -88,6 +96,29 @@ public interface Array<E> extends Iterable<E> {
    * @since 10.0.0
    */
   E get(int index);
+}
+```
+
+### Functional Interface Example
+
+```java
+/**
+ * Represents an operation that accepts an int and an object argument, and returns no result.
+ *
+ * @param <B> the type of the object argument
+ * @since 10.0.0
+ */
+@FunctionalInterface
+public interface IntObjConsumer<B> {
+
+  /**
+   * Performs this operation on the given arguments.
+   *
+   * @param arg1 the int argument
+   * @param arg2 the object argument
+   * @since 10.0.0
+   */
+  void accept(int arg1, B arg2);
 }
 ```
 

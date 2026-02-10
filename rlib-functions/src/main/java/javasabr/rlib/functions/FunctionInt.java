@@ -14,6 +14,7 @@ public interface FunctionInt<A> {
    *
    * @param arg the function argument
    * @return the int result
+   * @since 10.0.0
    */
   int apply(A arg);
 }

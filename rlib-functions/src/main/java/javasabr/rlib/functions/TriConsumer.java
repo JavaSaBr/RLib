@@ -3,9 +3,9 @@ package javasabr.rlib.functions;
 /**
  * Represents an operation that accepts three arguments and returns no result.
  *
- * @param <A> the first argument type
- * @param <B> the second argument type
- * @param <C> the third argument type
+ * @param <A> the type of the first argument
+ * @param <B> the type of the second argument
+ * @param <C> the type of the third argument
  * @since 10.0.0
  */
 @FunctionalInterface

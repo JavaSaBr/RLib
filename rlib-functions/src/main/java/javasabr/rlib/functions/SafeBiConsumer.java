@@ -16,6 +16,7 @@ public interface SafeBiConsumer<A, B> {
    * @param arg1 the first argument
    * @param arg2 the second argument
    * @throws Exception if an error occurs
+   * @since 10.0.0
    */
   void accept(A arg1, B arg2) throws Exception;
 }

@@ -14,6 +14,7 @@ public interface DoubleObjConsumer<B> {
    *
    * @param arg1 the double argument
    * @param arg2 the object argument
+   * @since 10.0.0
    */
   void accept(double arg1, B arg2);
 }

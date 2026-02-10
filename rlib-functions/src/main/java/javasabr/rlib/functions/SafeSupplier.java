@@ -16,6 +16,7 @@ public interface SafeSupplier<T> {
    *
    * @return a result, possibly null
    * @throws Exception if an error occurs
+   * @since 10.0.0
    */
   @Nullable T get() throws Exception;
 }

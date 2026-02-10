@@ -3,8 +3,8 @@ package javasabr.rlib.functions;
 /**
  * Represents a function that accepts an object and an int argument and produces a result.
  *
- * @param <A> the object argument type
- * @param <R> the result type
+ * @param <A> the type of the object argument
+ * @param <R> the type of the result
  * @since 10.0.0
  */
 @FunctionalInterface
@@ -13,8 +13,8 @@ public interface ObjIntFunction<A, R> {
   /**
    * Applies this function to the given arguments.
    *
-   * @param arg1 the first argument
-   * @param arg2 the second argument
+   * @param arg1 the object argument
+   * @param arg2 the int argument
    * @return the function result
    * @since 10.0.0
    */

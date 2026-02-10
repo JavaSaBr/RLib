@@ -18,6 +18,7 @@ public interface TriPredicate<A, B, C> {
    * @param arg2 the second argument
    * @param arg3 the third argument
    * @return true if the arguments match the predicate
+   * @since 10.0.0
    */
   boolean test(A arg1, B arg2, C arg3);
 }

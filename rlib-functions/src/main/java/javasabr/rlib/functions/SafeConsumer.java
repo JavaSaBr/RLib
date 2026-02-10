@@ -14,6 +14,7 @@ public interface SafeConsumer<A> {
    *
    * @param arg the input argument
    * @throws Exception if an error occurs
+   * @since 10.0.0
    */
   void accept(A arg) throws Exception;
 }

@@ -14,8 +14,9 @@ public interface SafeFunction<A, R> {
    * Applies this function to the given argument.
    *
    * @param arg the function argument
-   * @return the result
+   * @return the function result
    * @throws Exception if an error occurs
+   * @since 10.0.0
    */
   R apply(A arg) throws Exception;
 }

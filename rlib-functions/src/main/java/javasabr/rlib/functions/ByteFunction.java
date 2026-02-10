@@ -12,7 +12,7 @@ public interface ByteFunction<R> {
   /**
    * Applies this function to the given argument.
    *
-   * @param value the argument
+   * @param value the byte value
    * @return the function result
    * @since 10.0.0
    */

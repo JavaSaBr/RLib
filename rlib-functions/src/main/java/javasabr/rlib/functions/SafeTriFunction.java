@@ -18,8 +18,9 @@ public interface SafeTriFunction<F, S, T, R> {
    * @param arg1 the first argument
    * @param arg2 the second argument
    * @param arg3 the third argument
-   * @return the result
+   * @return the function result
    * @throws Exception if an error occurs
+   * @since 10.0.0
    */
   R apply(F arg1, S arg2, T arg3) throws Exception;
 }

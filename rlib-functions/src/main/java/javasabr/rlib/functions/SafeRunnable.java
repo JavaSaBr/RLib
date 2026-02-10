@@ -12,6 +12,7 @@ public interface SafeRunnable {
    * Runs this task.
    *
    * @throws Exception if an error occurs
+   * @since 10.0.0
    */
   void run() throws Exception;
 }

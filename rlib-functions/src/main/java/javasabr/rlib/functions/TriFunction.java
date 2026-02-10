@@ -3,10 +3,10 @@ package javasabr.rlib.functions;
 /**
  * Represents a function that accepts three arguments and produces a result.
  *
- * @param <A> the first argument type
- * @param <B> the second argument type
- * @param <C> the third argument type
- * @param <R> the result type
+ * @param <A> the type of the first argument
+ * @param <B> the type of the second argument
+ * @param <C> the type of the third argument
+ * @param <R> the type of the result
  * @since 10.0.0
  */
 @FunctionalInterface

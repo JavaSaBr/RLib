@@ -16,8 +16,9 @@ public interface SafeBiFunction<A, B, R> {
    *
    * @param arg1 the first argument
    * @param arg2 the second argument
-   * @return the result
+   * @return the function result
    * @throws Exception if an error occurs
+   * @since 10.0.0
    */
   R apply(A arg1, B arg2) throws Exception;
 }
