@@ -1,6 +1,4 @@
-package javasabr.rlib.common.function;
-
-import org.jspecify.annotations.NullUnmarked;
+package javasabr.rlib.functions;
 
 /**
  * Represents a function that accepts three arguments and produces a result, and may throw an exception.
@@ -11,18 +9,17 @@ import org.jspecify.annotations.NullUnmarked;
  * @param <R> the type of the result
  * @since 10.0.0
  */
-@NullUnmarked
 @FunctionalInterface
 public interface SafeTriFunction<F, S, T, R> {
 
   /**
    * Applies this function to the given arguments.
    *
-   * @param first the first argument
-   * @param second the second argument
-   * @param third the third argument
+   * @param arg1 the first argument
+   * @param arg2 the second argument
+   * @param arg3 the third argument
    * @return the result
    * @throws Exception if an error occurs
    */
-  R apply(F first, S second, T third) throws Exception;
+  R apply(F arg1, S arg2, T arg3) throws Exception;
 }

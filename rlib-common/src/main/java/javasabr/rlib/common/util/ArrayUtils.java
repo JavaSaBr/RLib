@@ -11,11 +11,11 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import javasabr.rlib.common.function.CharSupplier;
-import javasabr.rlib.common.function.DoubleObjectConsumer;
-import javasabr.rlib.common.function.TripleConsumer;
-import javasabr.rlib.common.function.TripleFunction;
-import javasabr.rlib.common.function.TriplePredicate;
+import javasabr.rlib.functions.CharSupplier;
+import javasabr.rlib.functions.DoubleObjConsumer;
+import javasabr.rlib.functions.TriConsumer;
+import javasabr.rlib.functions.TriFunction;
+import javasabr.rlib.functions.TriPredicate;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -904,7 +904,7 @@ public final class ArrayUtils {
    * @param consumer the consumer.
    * @since 10.0.0
    */
-  public static <A> void forEach(double @Nullable [] array, A arg, DoubleObjectConsumer<A> consumer) {
+  public static <A> void forEach(double @Nullable [] array, A arg, DoubleObjConsumer<A> consumer) {
     if (isNotEmpty(array)) {
       for (double element : array) {
         consumer.accept(element, arg);
@@ -1012,7 +1012,7 @@ public final class ArrayUtils {
    * @param consumer the function.
    * @since 10.0.0
    */
-  public static <T, A, B> void forEach(T @Nullable [] array, A arg1, B arg2, TripleConsumer<T, A, B> consumer) {
+  public static <T, A, B> void forEach(T @Nullable [] array, A arg1, B arg2, TriConsumer<T, A, B> consumer) {
     if (isNotEmpty(array)) {
       for (final T element : array) {
         consumer.accept(element, arg1, arg2);
@@ -1038,8 +1038,8 @@ public final class ArrayUtils {
       T @Nullable [] array,
       A arg1,
       B arg2,
-      TripleFunction<T, A, B, R> getter,
-      TripleConsumer<R, A, B> consumer) {
+      TriFunction<T, A, B, R> getter,
+      TriConsumer<R, A, B> consumer) {
     if (isNotEmpty(array)) {
       for (T element : array) {
         R subElement = getter.apply(element, arg1, arg2);
@@ -1265,7 +1265,7 @@ public final class ArrayUtils {
    * @since 10.0.0
    */
   @Nullable
-  public static <T, F, S> T findAny(T @Nullable [] array, F arg1, S arg2, TriplePredicate<T, F, S> condition) {
+  public static <T, F, S> T findAny(T @Nullable [] array, F arg1, S arg2, TriPredicate<T, F, S> condition) {
     if (isNotEmpty(array)) {
       for (T element : array) {
         if (condition.test(element, arg1, arg2)) {

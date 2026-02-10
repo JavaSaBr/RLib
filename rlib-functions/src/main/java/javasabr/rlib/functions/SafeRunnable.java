@@ -1,4 +1,4 @@
-package javasabr.rlib.common.function;
+package javasabr.rlib.functions;
 
 /**
  * Represents a task that may throw an exception.

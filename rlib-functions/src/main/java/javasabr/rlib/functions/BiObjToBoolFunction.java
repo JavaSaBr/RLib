@@ -8,7 +8,7 @@ package javasabr.rlib.functions;
  * @since 10.0.0
  */
 @FunctionalInterface
-public interface BiObjToBooleanFunction<A, B> {
+public interface BiObjToBoolFunction<A, B> {
 
   /**
    * Applies this function to the given arguments.

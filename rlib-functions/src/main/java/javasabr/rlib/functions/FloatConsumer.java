@@ -1,4 +1,4 @@
-package javasabr.rlib.common.function;
+package javasabr.rlib.functions;
 
 /**
  * Represents an operation that accepts a single float argument and returns no result.
@@ -11,7 +11,7 @@ public interface FloatConsumer {
   /**
    * Performs this operation on the given float value.
    *
-   * @param value the float value
+   * @param arg the float value
    */
-  void consume(float value);
+  void consume(float arg);
 }

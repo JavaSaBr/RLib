@@ -1,4 +1,4 @@
-package javasabr.rlib.common.function;
+package javasabr.rlib.functions;
 
 import org.jspecify.annotations.Nullable;
 

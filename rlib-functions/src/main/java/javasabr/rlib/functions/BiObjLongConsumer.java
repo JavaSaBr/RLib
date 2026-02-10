@@ -8,7 +8,7 @@ package javasabr.rlib.functions;
  * @since 10.0.0
  */
 @FunctionalInterface
-public interface ObjObjLongConsumer<A, B> {
+public interface BiObjLongConsumer<A, B> {
 
   /**
    * Performs this operation on the given arguments.

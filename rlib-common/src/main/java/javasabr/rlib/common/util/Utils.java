@@ -8,13 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
-import javasabr.rlib.common.function.NotNullSafeBiConsumer;
-import javasabr.rlib.common.function.NotNullSafeBiFunction;
-import javasabr.rlib.common.function.NotNullSafeConsumer;
-import javasabr.rlib.common.function.NotNullSafeFunction;
-import javasabr.rlib.common.function.NotNullSafeSupplier;
-import javasabr.rlib.common.function.NotNullSafeTriFunction;
-import javasabr.rlib.common.function.SafeRunnable;
+import javasabr.rlib.functions.SafeBiConsumer;
+import javasabr.rlib.functions.SafeBiFunction;
+import javasabr.rlib.functions.SafeConsumer;
+import javasabr.rlib.functions.SafeFunction;
+import javasabr.rlib.functions.SafeRunnable;
+import javasabr.rlib.functions.SafeSupplier;
+import javasabr.rlib.functions.SafeTriFunction;
 import javasabr.rlib.logger.api.LoggerManager;
 import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.Nullable;
@@ -115,7 +115,7 @@ public final class Utils {
     }
   }
 
-  public static <R> @Nullable R tryGet(NotNullSafeSupplier<R> function) {
+  public static <R> @Nullable R tryGet(SafeSupplier<R> function) {
     try {
       return function.get();
     } catch (Exception e) {
@@ -124,7 +124,7 @@ public final class Utils {
     }
   }
 
-  public static <F> void unchecked(F first, NotNullSafeConsumer<F> function) {
+  public static <F> void unchecked(F first, SafeConsumer<F> function) {
     try {
       function.accept(first);
     } catch (IOException e) {
@@ -137,7 +137,7 @@ public final class Utils {
   public static <F, S> void unchecked(
       F first,
       S second,
-      NotNullSafeBiConsumer<F, S> consumer) {
+      SafeBiConsumer<F, S> consumer) {
     try {
       consumer.accept(first, second);
     } catch (IOException e) {
@@ -157,7 +157,7 @@ public final class Utils {
     }
   }
 
-  public static <F, R> R uncheckedGet(F argument, NotNullSafeFunction<F, R> function) {
+  public static <F, R> R uncheckedGet(F argument, SafeFunction<F, R> function) {
     try {
       return function.apply(argument);
     } catch (IOException e) {
@@ -169,7 +169,7 @@ public final class Utils {
 
   public static <F, R> R uncheckedGet(
       F argument,
-      NotNullSafeFunction<F, R> function,
+      SafeFunction<F, R> function,
       R def) {
     try {
       return function.apply(argument);
@@ -181,7 +181,7 @@ public final class Utils {
   public static <F, S, R> R uncheckedGet(
       F first,
       S second,
-      NotNullSafeBiFunction<F, S, R> function) {
+      SafeBiFunction<F, S, R> function) {
     try {
       return function.apply(first, second);
     } catch (IOException e) {
@@ -194,7 +194,7 @@ public final class Utils {
       F first,
       S second,
       T third,
-      NotNullSafeTriFunction<F, S, T, R> function) {
+      SafeTriFunction<F, S, T, R> function) {
     try {
       return function.apply(first, second, third);
     } catch (IOException e) {
@@ -204,7 +204,7 @@ public final class Utils {
     }
   }
 
-  public static <F, R> @Nullable R tryGet(F argument, NotNullSafeFunction<F, R> function) {
+  public static <F, R> @Nullable R tryGet(F argument, SafeFunction<F, R> function) {
     try {
       return function.apply(argument);
     } catch (Exception e) {
@@ -215,7 +215,7 @@ public final class Utils {
 
   public static <F, R> R tryGet(
       F argument,
-      NotNullSafeFunction<F, R> function,
+      SafeFunction<F, R> function,
       R def) {
     try {
       return function.apply(argument);
@@ -227,8 +227,8 @@ public final class Utils {
 
   public static <F, R, FR> @Nullable FR tryGetAndConvert(
       F argument,
-      NotNullSafeFunction<F, R> function,
-      NotNullSafeFunction<R, FR> resultConverter) {
+      SafeFunction<F, R> function,
+      SafeFunction<R, FR> resultConverter) {
     try {
       return resultConverter.apply(function.apply(argument));
     } catch (Exception e) {
