@@ -3,19 +3,19 @@ package javasabr.rlib.common.function;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The function.
+ * Represents a function that accepts an object and produces an int result.
  *
- * @param <T> the type parameter
- * @author JavaSaBr
+ * @param <T> the type of the input argument
+ * @since 10.0.0
  */
 @FunctionalInterface
 public interface FunctionInt<T> {
 
   /**
-   * Apply int.
+   * Applies this function to the given argument.
    *
-   * @param first the first
-   * @return the int
+   * @param first the function argument
+   * @return the int result
    */
   int apply(@Nullable T first);
 }

@@ -4,9 +4,9 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * THe class with description of an Operation System.
+ * Represents information about the current operating system.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @NullMarked
 public class OperatingSystem {

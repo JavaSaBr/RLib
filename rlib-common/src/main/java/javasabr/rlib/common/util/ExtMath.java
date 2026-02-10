@@ -4,9 +4,9 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The utility class.
+ * Extended math utility methods including float-based trigonometry and epsilon comparisons.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @NullMarked
 public final class ExtMath {

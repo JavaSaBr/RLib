@@ -1,7 +1,11 @@
 package javasabr.rlib.common.function;
 
 /**
- * @author JavaSaBr
+ * Represents an operation that accepts two non-null arguments and may throw an exception.
+ *
+ * @param <F> the type of the first argument
+ * @param <S> the type of the second argument
+ * @since 10.0.0
  */
 @FunctionalInterface
 public interface NotNullSafeBiConsumer<F, S> extends SafeBiConsumer<F, S> {

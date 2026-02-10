@@ -15,9 +15,9 @@ import java.util.Scanner;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * THe resolver of OS information.
+ * Resolves operating system information from system properties and configuration files.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @NullMarked
 public class OperatingSystemResolver {

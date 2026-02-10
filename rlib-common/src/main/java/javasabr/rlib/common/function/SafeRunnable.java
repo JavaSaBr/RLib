@@ -1,17 +1,17 @@
 package javasabr.rlib.common.function;
 
 /**
- * The function.
+ * Represents a task that may throw an exception.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @FunctionalInterface
 public interface SafeRunnable {
 
   /**
-   * Run.
+   * Runs this task.
    *
-   * @throws Exception the exception
+   * @throws Exception if an error occurs
    */
   void run() throws Exception;
 }

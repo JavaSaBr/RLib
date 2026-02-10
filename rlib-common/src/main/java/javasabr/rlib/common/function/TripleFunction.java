@@ -3,25 +3,25 @@ package javasabr.rlib.common.function;
 import org.jspecify.annotations.NullUnmarked;
 
 /**
- * The function.
+ * Represents a function that accepts three arguments and produces a result.
  *
- * @param <F> the type parameter
- * @param <S> the type parameter
- * @param <T> the type parameter
- * @param <R> the type parameter
- * @author JavaSaBr
+ * @param <F> the type of the first argument
+ * @param <S> the type of the second argument
+ * @param <T> the type of the third argument
+ * @param <R> the type of the result
+ * @since 10.0.0
  */
 @NullUnmarked
 @FunctionalInterface
 public interface TripleFunction<F, S, T, R> {
 
   /**
-   * Apply r.
+   * Applies this function to the given arguments.
    *
-   * @param first the first
-   * @param second the second
-   * @param third the third
-   * @return the r
+   * @param first the first argument
+   * @param second the second argument
+   * @param third the third argument
+   * @return the result
    */
   R apply(F first, S second, T third);
 }

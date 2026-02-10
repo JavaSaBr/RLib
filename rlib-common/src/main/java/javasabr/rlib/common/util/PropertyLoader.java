@@ -12,12 +12,19 @@ import java.util.ResourceBundle;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author JavaSaBr
+ * Resource bundle control that loads properties files as UTF-8.
+ *
+ * @since 10.0.0
  */
 public final class PropertyLoader extends ResourceBundle.Control {
 
   private static final PropertyLoader INSTANCE = new PropertyLoader();
 
+  /**
+   * Returns the singleton instance.
+   *
+   * @return the property loader instance
+   */
   public static PropertyLoader getInstance() {
     return INSTANCE;
   }

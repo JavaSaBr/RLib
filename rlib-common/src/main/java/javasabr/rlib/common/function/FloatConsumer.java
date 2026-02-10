@@ -1,17 +1,17 @@
 package javasabr.rlib.common.function;
 
 /**
- * The function to consume float values.
+ * Represents an operation that accepts a single float argument and returns no result.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @FunctionalInterface
 public interface FloatConsumer {
 
   /**
-   * Consume the float value.
+   * Performs this operation on the given float value.
    *
-   * @param value the value.
+   * @param value the float value
    */
   void consume(float value);
 }

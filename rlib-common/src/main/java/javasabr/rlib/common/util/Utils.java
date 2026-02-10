@@ -20,7 +20,9 @@ import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author JavaSaBr
+ * General utility methods for file operations and exception handling.
+ *
+ * @since 10.0.0
  */
 @UtilityClass
 public final class Utils {

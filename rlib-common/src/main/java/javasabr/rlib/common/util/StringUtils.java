@@ -11,9 +11,9 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The class with utility methods for working with strings.
+ * Utility methods for string operations including validation, comparison, and generation.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @NullMarked
 public class StringUtils {
