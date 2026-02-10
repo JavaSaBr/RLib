@@ -61,12 +61,15 @@ Testing conventions
 Javadoc conventions
 - All public classes, interfaces, and methods should have javadoc.
 - Javadoc must include `@since` tag with version (e.g., `@since 10.0.0`).
-- Use short, active-voice descriptions (e.g., "Creates an array" not "Create an array").
+- Use short, active-voice descriptions (e.g., "Returns an array" not "Return an array").
+- Do not use trailing periods in `@param` and `@return` descriptions (e.g., `@param value the value` not `@param value the value.`).
 - Include `@param` and `@return` tags for non-trivial methods.
 - Omit javadoc for simple getters/setters (e.g., `getArch()`, `setArch(String)`); they are self-explanatory.
 - Omit obvious field comments that just repeat the field name (e.g., `/** The name. */ private String name;`).
+- Omit obvious constant comments (e.g., `/** The constant FOO. */ public static final String FOO = "foo";`).
 - Type parameter descriptions should be meaningful (e.g., `@param <T> the element type` not `@param <T> the type parameter`).
 - Do not generate javadoc for implementation classes (only interfaces and public API classes).
+- For `@see` tags, avoid duplicate references (e.g., use `@see Math#sin(double)` not `@see Math#sin(double) Math#sin(double)`).
 
 Project layout & where to change things
 - Root-level important files:

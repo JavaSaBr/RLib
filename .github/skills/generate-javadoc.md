@@ -8,6 +8,8 @@ When the user asks to:
 - Generate javadocs for a module
 - Add documentation to public APIs
 - Document interfaces/classes with `@since` tags
+- Review and fix existing javadocs
+- Clean up javadoc formatting
 
 ## Requirements
 
@@ -20,6 +22,13 @@ When the user asks to:
 1. **Simple getters/setters** - methods like `getArch()`, `setArch(String)` are self-explanatory
 2. **Obvious field comments** - avoid comments that just repeat the field name (e.g., `/** The name. */ private String name;`)
 3. **Obvious constructor javadocs** - avoid comments like "Instantiates a new Foo"
+4. **Obvious constant comments** - avoid comments like "The constant FOO" for `public static final String FOO`
+
+### Formatting Rules
+1. **Active voice** - use "Returns" not "Return", "Creates" not "Create"
+2. **No trailing periods** - in `@param` and `@return` descriptions (e.g., `@param value the value` not `@param value the value.`)
+3. **No duplicate @see references** - use `@see Math#sin(double)` not `@see Math#sin(double) Math#sin(double)`
+4. **Lowercase @param/@return descriptions** - start with lowercase (e.g., `@param value the value` not `@param value The value`)
 
 ### Javadoc Standards
 Each documented element must include:
@@ -81,6 +90,14 @@ public interface Array<E> extends Iterable<E> {
   E get(int index);
 }
 ```
+
+### Common Fixes When Reviewing Existing Javadocs
+- Change "Return the" to "Returns the"
+- Change "Compare the" to "Compares the"
+- Remove trailing periods from `@param` and `@return` lines
+- Remove obvious/redundant javadocs (getters, setters, constants)
+- Remove duplicate `@see` references
+- Add missing `@since` tags
 
 ## Execution Steps
 
