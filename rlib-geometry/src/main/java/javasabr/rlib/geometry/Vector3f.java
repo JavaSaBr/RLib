@@ -277,12 +277,14 @@ public final class Vector3f implements Cloneable {
   }
 
   /**
-   * Move this vector to destination vector. If distance argument is greater or equal to real distance between this
-   * vector and destination vector then coordinates will be set to equal destination.
+   * Moves this vector towards the destination by the given distance.
+   * If the distance is greater than or equal to the actual distance to the destination,
+   * this vector is set to the destination.
    *
-   * @param destination destination vector
-   * @param distance move distance
-   * @return this vector with new position
+   * @param destination the destination vector
+   * @param distance the maximum distance to move
+   * @return this vector with the new position
+   * @since 10.0.0
    */
   public Vector3f moveToPoint(Vector3f destination, float distance) {
 

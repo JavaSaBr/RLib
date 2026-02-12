@@ -9,22 +9,17 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 /**
- * Geometry 3D plane.<br> Follow to the formula: <pre>Ax + By + Cz + D = 0</pre>
+ * Represents a 3D plane defined by the formula: Ax + By + Cz + D = 0.
  *
- * @author zcxv
+ * @since 10.0.0
  */
 @Getter
 @Accessors(fluent = true)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class Plane {
 
-  /**
-   * The plane normal
-   */
   final Vector3f normal;
-  /**
-   * The D component, inverted by sign.
-   */
+
   float dot;
 
   public Plane(Vector3f first, Vector3f second, Vector3f third) {
