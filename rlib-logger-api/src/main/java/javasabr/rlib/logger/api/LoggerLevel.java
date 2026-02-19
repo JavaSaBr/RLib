@@ -7,7 +7,9 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 /**
- * @author JavaSaBr
+ * Enumeration of log levels.
+ *
+ * @since 10.0.0
  */
 @Getter
 @RequiredArgsConstructor
@@ -19,6 +21,9 @@ public enum LoggerLevel {
   WARNING("WARNING", "", true, true),
   ERROR("ERROR", "  ", true, true);
 
+  /**
+   * The number of log levels.
+   */
   public static final int LENGTH = values().length;
 
   String title;
