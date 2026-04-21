@@ -26,6 +26,9 @@ public abstract class AbstractSslConnection<C extends AbstractSslConnection<C>>
     super(network, channel, bufferAllocator, maxPacketsByRead);
     this.sslEngine = sslContext.createSSLEngine();
     this.sslEngine.setUseClientMode(clientMode);
+  }
+
+  public void beginHandshake(){
     try {
       this.sslEngine.beginHandshake();
     } catch (SSLException e) {
