@@ -7,6 +7,7 @@ import javasabr.rlib.network.client.impl.DefaultClientNetwork;
 import javasabr.rlib.network.impl.DefaultBufferAllocator;
 import javasabr.rlib.network.impl.DefaultConnection;
 import javasabr.rlib.network.impl.StringDataConnection;
+import javasabr.rlib.network.impl.StringDataMtlsServerConnection;
 import javasabr.rlib.network.impl.StringDataSslConnection;
 import javasabr.rlib.network.packet.impl.DefaultReadableNetworkPacket;
 import javasabr.rlib.network.packet.registry.ReadableNetworkPacketRegistry;
@@ -140,7 +141,11 @@ public final class NetworkFactory {
       SSLContext sslContext) {
     return clientNetwork(
         networkConfig,
-        (network, channel) -> new StringDataSslConnection(network, channel, bufferAllocator, sslContext, true));
+        (network, channel) -> {
+          StringDataSslConnection connection = new StringDataSslConnection(network, channel, bufferAllocator, sslContext, true);
+          connection.beginHandshake();
+          return connection;
+        });
   }
 
   /**
@@ -196,7 +201,11 @@ public final class NetworkFactory {
       SSLContext sslContext) {
     return serverNetwork(
         networkConfig,
-        (network, channel) -> new StringDataSslConnection(network, channel, bufferAllocator, sslContext, false));
+        (network, channel) -> {
+          StringDataSslConnection connection = new StringDataSslConnection(network, channel, bufferAllocator, sslContext, false);
+          connection.beginHandshake();
+          return connection;
+        });
   }
 
   /**
@@ -230,5 +239,27 @@ public final class NetworkFactory {
     return serverNetwork(
         networkConfig,
         (network, channel) -> new DefaultConnection(network, channel, bufferAllocator, packetRegistry));
+  }
+
+  /**
+   * Create string packet based asynchronous Mutual TLS server network.
+   *
+   * @param networkConfig the server network configuration
+   * @param bufferAllocator the buffer allocator
+   * @param sslContext SSL context
+   * @return a new mTLS server network
+   * @since 10.0.0
+   */
+  public static ServerNetwork<StringDataMtlsServerConnection> stringDataMtlsServerNetwork(
+      ServerNetworkConfig networkConfig,
+      BufferAllocator bufferAllocator,
+      SSLContext sslContext) {
+    return serverNetwork(
+        networkConfig,
+        (network, channel) -> {
+          StringDataMtlsServerConnection connection = new StringDataMtlsServerConnection(network, channel, bufferAllocator, sslContext);
+          connection.beginHandshake();
+          return connection;
+        });
   }
 }
