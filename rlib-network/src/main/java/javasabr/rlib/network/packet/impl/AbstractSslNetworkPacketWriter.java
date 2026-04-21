@@ -197,7 +197,7 @@ public abstract class AbstractSslNetworkPacketWriter<
           break;
         }
         case NEED_UNWRAP: {
-          break;
+          return EMPTY_BUFFER;
         }
         default: {
           throw new IllegalStateException("Invalid SSL status:" + handshakeStatus);
