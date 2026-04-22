@@ -139,14 +139,13 @@ public class SslMutualTlsTest extends BaseNetworkTest {
     return sslContext;
   }
 
-
   /**
    * Regression test for the {@code sslEngine.setNeedClientAuth(true)} call
-   * in {@code AbstractSslConnection}.
+   * in {@code StringDataMtlsServerConnection}.
    */
   @Test
   @SneakyThrows
-  void serverShouldRejectClientWithoutCertificateWhenRequireClientAuthIsTrue() {
+  void serverShouldRejectClientWithoutCertificateWhenNeedClientAuthIsTrue() {
     InputStream serverKeystoreStream = SslMutualTlsTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
     SSLContext serverSslContext = NetworkUtils.createSslContext(serverKeystoreStream, "test");
     ServerNetworkConfig serverConfig = ServerNetworkConfig.SimpleServerNetworkConfig.builder().build();
