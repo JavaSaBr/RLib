@@ -23,6 +23,7 @@ import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.common.util.Utils;
 import javasabr.rlib.network.client.ClientNetwork;
 import javasabr.rlib.network.impl.DefaultBufferAllocator;
+import javasabr.rlib.network.impl.StringDataMtlsServerConnection;
 import javasabr.rlib.network.impl.StringDataSslConnection;
 import javasabr.rlib.network.packet.ReadableNetworkPacket;
 import javasabr.rlib.network.packet.impl.StringReadableNetworkPacket;
@@ -325,6 +326,46 @@ public class StringSslNetworkTest extends BaseNetworkTest {
       assertThat(wrongPacket)
           .as("Wrong received packet: " + wrongPacket)
           .isNull();
+    }
+  }
+
+  @Test
+  @SneakyThrows
+  void shouldRejectClientWithoutCertificateWithinMutualTls() {
+    InputStream serverKeystoreFile = StringSslNetworkTest.class.getResourceAsStream("/ssl/rlib_test_cert.p12");
+    SSLContext serverSslContext = NetworkUtils.createSslContext(serverKeystoreFile, "test");
+    ServerNetworkConfig serverConfig = ServerNetworkConfig.SimpleServerNetworkConfig.builder().build();
+    BufferAllocator bufferAllocator = new DefaultBufferAllocator(serverConfig);
+
+    ServerNetwork<StringDataMtlsServerConnection> serverNetwork =
+        NetworkFactory.stringDataMtlsServerNetwork(serverConfig, bufferAllocator, serverSslContext);
+
+    InetSocketAddress serverAddress = serverNetwork.start();
+    CountDownLatch dataReceivedByServer = new CountDownLatch(1);
+
+    serverNetwork
+        .accepted()
+        .flatMap(Connection::receivedEvents)
+        .subscribe(event -> dataReceivedByServer.countDown());
+
+    SSLContext clientWithoutCertContext = NetworkUtils.createAllTrustedClientSslContext();
+    ClientNetwork<StringDataSslConnection> clientNetwork = NetworkFactory.stringDataSslClientNetwork(
+        NetworkConfig.DEFAULT_CLIENT,
+        new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
+        clientWithoutCertContext);
+
+    try {
+      clientNetwork
+          .connectReactive(serverAddress)
+          .doOnNext(connection -> connection.sendInBackground(new StringWritableNetworkPacket<>("no cert")))
+          .subscribe();
+
+      assertThat(dataReceivedByServer.await(5, TimeUnit.SECONDS))
+          .as("Server must reject a client that presents no certificate when requireClientAuth=true.")
+          .isFalse();
+    } finally {
+      serverNetwork.shutdown();
+      clientNetwork.shutdown();
     }
   }
 
