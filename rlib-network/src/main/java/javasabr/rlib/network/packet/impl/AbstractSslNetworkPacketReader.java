@@ -160,6 +160,9 @@ public abstract class AbstractSslNetworkPacketReader<
         case NEED_WRAP: {
           log.debug(remoteAddress, "[%s] Send command to wrap data"::formatted);
           packetWriter.accept(SslWrapRequestNetworkPacket.getInstance());
+          if (networkBuffer.hasRemaining()) {
+            return decryptAndRead(networkBuffer);
+          }
           NetworkUtils.cleanNetworkBuffer(networkBuffer);
           return SKIP_READ_PACKETS;
         }
