@@ -10,7 +10,9 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 /**
- * @author JavaSaBr
+ * Container for a plugin that holds plugin metadata and resources.
+ *
+ * @since 10.0.0
  */
 @Getter
 @Accessors(fluent = true)
@@ -27,6 +29,16 @@ public class PluginContainer {
   Version version;
   boolean embedded;
 
+  /**
+   * Creates a new plugin container.
+   *
+   * @param pluginClass the plugin class
+   * @param classLoader the class loader for the plugin
+   * @param scanner the classpath scanner for the plugin
+   * @param path the path to the plugin file
+   * @param embedded true if the plugin is embedded
+   * @since 10.0.0
+   */
   public PluginContainer(
       Class<Plugin> pluginClass,
       URLClassLoader classLoader,

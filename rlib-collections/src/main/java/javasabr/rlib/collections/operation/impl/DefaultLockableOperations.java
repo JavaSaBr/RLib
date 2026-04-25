@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import javasabr.rlib.collections.operation.LockableOperations;
 import javasabr.rlib.collections.operation.LockableSource;
-import javasabr.rlib.functions.BiObjToBooleanFunction;
+import javasabr.rlib.functions.BiObjToBoolFunction;
 import javasabr.rlib.functions.ObjIntFunction;
 import javasabr.rlib.functions.TriConsumer;
 import javasabr.rlib.functions.TriFunction;
@@ -55,7 +55,7 @@ public record DefaultLockableOperations<S extends LockableSource>(S source)
   }
 
   @Override
-  public <A> boolean getBooleanInReadLock(A arg1, BiObjToBooleanFunction<S, A> function) {
+  public <A> boolean getBooleanInReadLock(A arg1, BiObjToBoolFunction<S, A> function) {
     long stamp = source.readLock();
     try {
       return function.apply(source, arg1);

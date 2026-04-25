@@ -6,15 +6,20 @@ import java.util.stream.Stream;
 import javasabr.rlib.common.util.ArrayUtils;
 
 /**
- * @author JavaSaBr
+ * Represents a version number with comparable segments (e.g., "1.2.3").
+ *
+ * @since 10.0.0
  */
 public class Version implements Comparable<Version> {
 
-  /**
-   * The version segments.
-   */
   private final int[] segments;
 
+  /**
+   * Creates a new version from a version string.
+   *
+   * @param version the version string (e.g., "1.2.3")
+   * @since 10.0.0
+   */
   public Version(String version) {
     this.segments = parseSegments(version);
   }

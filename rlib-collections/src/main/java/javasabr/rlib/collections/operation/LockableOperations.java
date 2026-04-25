@@ -4,7 +4,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javasabr.rlib.functions.BiObjToBooleanFunction;
+import javasabr.rlib.functions.BiObjToBoolFunction;
 import javasabr.rlib.functions.ObjIntFunction;
 import javasabr.rlib.functions.TriConsumer;
 import javasabr.rlib.functions.TriFunction;
@@ -73,7 +73,7 @@ public interface LockableOperations<S extends LockableSource> {
    * @return the boolean result
    * @since 10.0.0
    */
-  <A> boolean getBooleanInReadLock(A arg1, BiObjToBooleanFunction<S, A> function);
+  <A> boolean getBooleanInReadLock(A arg1, BiObjToBoolFunction<S, A> function);
 
   /**
    * Executes a consumer within a read lock with one argument.

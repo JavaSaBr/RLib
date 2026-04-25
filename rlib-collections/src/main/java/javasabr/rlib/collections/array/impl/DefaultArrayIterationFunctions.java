@@ -5,8 +5,8 @@ import java.util.function.BiPredicate;
 import javasabr.rlib.collections.array.ArrayIterationFunctions;
 import javasabr.rlib.collections.array.ReversedArgsArrayIterationFunctions;
 import javasabr.rlib.collections.array.UnsafeArray;
+import javasabr.rlib.functions.BiObjLongConsumer;
 import javasabr.rlib.functions.ObjIntPredicate;
-import javasabr.rlib.functions.ObjObjLongConsumer;
 import javasabr.rlib.functions.TriConsumer;
 import org.jspecify.annotations.Nullable;
 
@@ -64,7 +64,7 @@ public record DefaultArrayIterationFunctions<E>(
   }
 
   @Override
-  public <F> ArrayIterationFunctions<E> forEach(F arg1, long arg2, ObjObjLongConsumer<? super E, F> consumer) {
+  public <F> ArrayIterationFunctions<E> forEach(F arg1, long arg2, BiObjLongConsumer<? super E, F> consumer) {
     @Nullable E[] wrapped = array.wrapped();
     int size = array.size();
     for (int i = 0; i < size; i++) {

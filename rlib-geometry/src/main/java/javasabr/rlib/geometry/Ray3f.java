@@ -7,7 +7,9 @@ import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 /**
- * @author JavaSaBr
+ * Represents a 3D ray with a start point and direction.
+ *
+ * @since 10.0.0
  */
 @Getter
 @Accessors(fluent = true)
@@ -18,7 +20,9 @@ public class Ray3f {
   Vector3f start, direction;
 
   /**
-   * Construct empty ray in zero point and zero direction.
+   * Constructs a ray at the origin with zero direction.
+   *
+   * @since 10.0.0
    */
   public Ray3f() {
     this(new Vector3f(), new Vector3f());

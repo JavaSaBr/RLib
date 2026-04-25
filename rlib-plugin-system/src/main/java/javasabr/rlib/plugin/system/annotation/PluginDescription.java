@@ -7,9 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation to describe a plugin.
+ * Annotation to describe a plugin's metadata.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -17,44 +17,50 @@ import java.lang.annotation.Target;
 public @interface PluginDescription {
 
   /**
-   * Get the plugin id.
+   * Returns the unique plugin identifier.
    *
-   * @return the plugin id.
+   * @return the plugin id
+   * @since 10.0.0
    */
   String id() default "unknown";
 
   /**
-   * Get dependencies of this plugin.
+   * Returns the dependencies of this plugin.
    *
-   * @return dependencies of this plugin.
+   * @return the array of dependency plugin ids
+   * @since 10.0.0
    */
   String[] dependences() default {};
 
   /**
-   * Get the plugin version.
+   * Returns the plugin version.
    *
-   * @return the plugin version.
+   * @return the version string
+   * @since 10.0.0
    */
   String version() default "0.1.0";
 
   /**
-   * Get the min version of application.
+   * Returns the minimum application version required by this plugin.
    *
-   * @return the min version of application.
+   * @return the minimum app version string
+   * @since 10.0.0
    */
   String minAppVersion() default "0.0.0";
 
   /**
-   * Get the plugin name.
+   * Returns the display name of this plugin.
    *
-   * @return the plugin name.
+   * @return the plugin name
+   * @since 10.0.0
    */
   String name() default "no name";
 
   /**
-   * Get the plugin description.
+   * Returns the description of this plugin.
    *
-   * @return the plugin description.
+   * @return the plugin description
+   * @since 10.0.0
    */
   String description() default "no description";
 }

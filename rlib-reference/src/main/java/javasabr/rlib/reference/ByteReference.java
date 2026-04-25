@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * @author JavaSaBr
+ * A mutable reference to a byte value.
+ *
+ * @since 10.0.0
  */
 @Data
 @AllArgsConstructor

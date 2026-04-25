@@ -100,7 +100,10 @@ public class Vector2f implements Cloneable {
   }
 
   /**
-   * Return true if all components are zero.
+   * Checks if all components are zero.
+   *
+   * @return true if all components are zero
+   * @since 10.0.0
    */
   public boolean isZero() {
     return ExtMath.isZero(x) && ExtMath.isZero(y);

@@ -4,11 +4,18 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullUnmarked;
 
 /**
- * @author JavaSaBr
+ * Logger interface for outputting messages at different log levels.
+ *
+ * @since 10.0.0
  */
 @NullUnmarked
 public interface Logger {
 
+  /**
+   * Factory for creating log messages with no arguments.
+   *
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface Factory {
 
@@ -16,6 +23,12 @@ public interface Logger {
     String make();
   }
 
+  /**
+   * Factory for creating log messages with one argument.
+   *
+   * @param <A> the type of the argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface N1Factory<A> {
 
@@ -23,6 +36,11 @@ public interface Logger {
     String make(A arg1);
   }
 
+  /**
+   * Factory for creating log messages with one int argument.
+   *
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface IntFactory {
 
@@ -30,6 +48,12 @@ public interface Logger {
     String make(int arg1);
   }
 
+  /**
+   * Factory for creating log messages with an int and an object argument.
+   *
+   * @param <B> the type of the object argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface IntN1Factory<B> {
 
@@ -37,6 +61,13 @@ public interface Logger {
     String make(int arg1, B arg2);
   }
 
+  /**
+   * Factory for creating log messages with two arguments.
+   *
+   * @param <A> the type of the first argument
+   * @param <B> the type of the second argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface N2Factory<A, B> {
 
@@ -44,6 +75,12 @@ public interface Logger {
     String make(A arg1, B arg2);
   }
 
+  /**
+   * Factory for creating log messages with an object and an int argument.
+   *
+   * @param <A> the type of the object argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface N1IntFactory<A> {
 
@@ -51,6 +88,12 @@ public interface Logger {
     String make(A arg1, int arg2);
   }
 
+  /**
+   * Factory for creating log messages with an object and two int arguments.
+   *
+   * @param <A> the type of the object argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface N1Int2Factory<A> {
 
@@ -58,6 +101,13 @@ public interface Logger {
     String make(A arg1, int arg2, int arg3);
   }
 
+  /**
+   * Factory for creating log messages with an object, an int, and another object argument.
+   *
+   * @param <A> the type of the first object argument
+   * @param <C> the type of the second object argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface N1IntN1Factory<A, C> {
 
@@ -65,6 +115,11 @@ public interface Logger {
     String make(A arg1, int arg2, C arg3);
   }
 
+  /**
+   * Factory for creating log messages with two int arguments.
+   *
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface Int2Factory {
 
@@ -72,6 +127,14 @@ public interface Logger {
     String make(int arg1, int arg2);
   }
 
+  /**
+   * Factory for creating log messages with three arguments.
+   *
+   * @param <A> the type of the first argument
+   * @param <B> the type of the second argument
+   * @param <C> the type of the third argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface N3Factory<A, B, C> {
 
@@ -79,6 +142,12 @@ public interface Logger {
     String make(A arg1, B arg2, C arg3);
   }
 
+  /**
+   * Factory for creating log messages with two int and one object argument.
+   *
+   * @param <C> the type of the object argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface Int2N1Factory<C> {
 
@@ -86,6 +155,13 @@ public interface Logger {
     String make(int arg1, int arg2, C arg3);
   }
 
+  /**
+   * Factory for creating log messages with an object, two ints, and another object argument.
+   *
+   * @param <A> the type of the first object argument
+   * @param <D> the type of the second object argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface N1Int2N1Factory<A, D> {
 
@@ -93,6 +169,15 @@ public interface Logger {
     String make(A arg1, int arg2, int arg3, D arg4);
   }
 
+  /**
+   * Factory for creating log messages with four arguments.
+   *
+   * @param <A> the type of the first argument
+   * @param <B> the type of the second argument
+   * @param <C> the type of the third argument
+   * @param <D> the type of the fourth argument
+   * @since 10.0.0
+   */
   @FunctionalInterface
   interface N4Factory<A, B, C, D> {
 
@@ -101,9 +186,10 @@ public interface Logger {
   }
 
   /**
-   * Print the debug message.
+   * Prints a debug message.
    *
-   * @param message the message.
+   * @param message the message to print
+   * @since 10.0.0
    */
   default void debug(@NonNull String message) {
     print(LoggerLevel.DEBUG, message);

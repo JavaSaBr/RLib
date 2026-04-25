@@ -7,7 +7,9 @@ import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
 
 /**
- * @author JavaSaBr
+ * Utility methods for coordinate calculations and transformations.
+ *
+ * @since 10.0.0
  */
 public final class CoordsUtils {
 

@@ -94,7 +94,11 @@ public final class IoUtils {
   }
 
   /**
-   * Read full string using thread local buffer
+   * Reads the full string from the reader using a thread-local buffer.
+   *
+   * @param reader the reader to read from
+   * @return the string content
+   * @since 10.0.0
    */
   public static String toStringUsingTlb(Reader reader) {
     return toString(reader, LOCAL_CHAR_BUFFER.get());

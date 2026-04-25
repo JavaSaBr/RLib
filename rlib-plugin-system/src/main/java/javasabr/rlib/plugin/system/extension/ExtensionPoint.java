@@ -14,7 +14,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 /**
- * @author JavaSaBr
+ * A thread-safe extension point that holds a collection of extensions.
+ *
+ * @param <T> the type of extensions
+ * @since 10.0.0
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class ExtensionPoint<T> implements Iterable<T> {
@@ -25,12 +28,6 @@ public class ExtensionPoint<T> implements Iterable<T> {
       return new State<>(List.of(), ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
-    /**
-     * Append the additional extensions to the current state as new state.
-     *
-     * @param additionalExtensions the additional extension.
-     * @return the new state.
-     */
     @SafeVarargs
     public final State<T> append(T... additionalExtensions) {
 
@@ -51,10 +48,22 @@ public class ExtensionPoint<T> implements Iterable<T> {
 
   AtomicReference<State<T>> state;
 
+  /**
+   * Creates an empty extension point.
+   *
+   * @since 10.0.0
+   */
   public ExtensionPoint() {
     this.state = new AtomicReference<>(State.empty());
   }
 
+  /**
+   * Registers an extension to this extension point.
+   *
+   * @param extension the extension to register
+   * @return this extension point
+   * @since 10.0.0
+   */
   public ExtensionPoint<T> register(T extension) {
 
     State<T> currentState = state.get();
@@ -68,6 +77,13 @@ public class ExtensionPoint<T> implements Iterable<T> {
     return this;
   }
 
+  /**
+   * Registers multiple extensions to this extension point.
+   *
+   * @param extensions the extensions to register
+   * @return this extension point
+   * @since 10.0.0
+   */
   @SafeVarargs
   public final ExtensionPoint<T> register(T... extensions) {
 
@@ -82,6 +98,12 @@ public class ExtensionPoint<T> implements Iterable<T> {
     return this;
   }
 
+  /**
+   * Returns all registered extensions.
+   *
+   * @return an unmodifiable list of extensions
+   * @since 10.0.0
+   */
   public List<T> extensions() {
     return state.get().extensions;
   }
@@ -99,6 +121,12 @@ public class ExtensionPoint<T> implements Iterable<T> {
     return state.get().extensions.iterator();
   }
 
+  /**
+   * Returns a stream of all registered extensions.
+   *
+   * @return a stream of extensions
+   * @since 10.0.0
+   */
   public Stream<T> stream() {
     return StreamSupport.stream(spliterator(), false);
   }

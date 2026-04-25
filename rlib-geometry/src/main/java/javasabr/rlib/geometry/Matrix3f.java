@@ -112,6 +112,13 @@ public final class Matrix3f {
     this.val_2_2 = val_2_2;
   }
 
+  /**
+   * Sets this matrix from a quaternion rotation.
+   *
+   * @param rotation the quaternion to convert to a rotation matrix
+   * @return this matrix
+   * @since 10.0.0
+   */
   public Matrix3f set(Quaternion4f rotation) {
     return rotation.toRotationMatrix(this);
   }

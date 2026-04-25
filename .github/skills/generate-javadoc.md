@@ -8,6 +8,8 @@ When the user asks to:
 - Generate javadocs for a module
 - Add documentation to public APIs
 - Document interfaces/classes with `@since` tags
+- Review and fix existing javadocs
+- Clean up javadoc formatting
 
 ## Requirements
 
@@ -16,23 +18,42 @@ When the user asks to:
 2. **Skip implementation classes** - files in `impl/` packages are NOT documented
 3. **Skip test classes** - files in `src/test/` are NOT documented
 
+### What to Omit
+1. **Simple getters/setters** - methods like `getArch()`, `setArch(String)` are self-explanatory
+2. **Obvious field comments** - avoid comments that just repeat the field name (e.g., `/** The name. */ private String name;`)
+3. **Obvious constructor javadocs** - avoid comments like "Instantiates a new Foo"
+4. **Obvious constant comments** - avoid comments like "The constant FOO" for `public static final String FOO`
+
+### Formatting Rules
+1. **Active voice** - use "Returns" not "Return", "Creates" not "Create"
+2. **No trailing periods** - in `@param` and `@return` descriptions (e.g., `@param value the value` not `@param value the value.`)
+3. **No duplicate @see references** - use `@see Math#sin(double)` not `@see Math#sin(double) Math#sin(double)`
+4. **Lowercase @param/@return descriptions** - start with lowercase (e.g., `@param value the value` not `@param value The value`)
+5. **Consistent type parameter format** - use "the type of..." pattern (e.g., `@param <T> the type of elements` not `@param <T> the element type`)
+6. **Descriptive @param names** - for functional interfaces, use type-specific descriptions (e.g., "the int argument", "the object argument") instead of generic "the first argument"
+
+### Functional Interface Conventions
+1. **Consumer descriptions** - always include "and returns no result" (e.g., "Represents an operation that accepts an int and an object argument, and returns no result.")
+2. **Function @return** - use "the function result" for consistency
+3. **Predicate @return** - use "true if the arguments match the predicate" or "true if the arguments match the predicate, false otherwise"
+4. **Supplier @return** - describe what is supplied (e.g., "the char value" not just "a result")
+
 ### Javadoc Standards
 Each documented element must include:
 
 1. **Class/Interface level:**
-   - Short description of purpose
-   - `@param` for type parameters (if generic)
-   - `@author JavaSaBr`
+   - Short description of purpose (active voice)
+   - `@param` for type parameters with meaningful descriptions (if generic)
    - `@since 10.0.0`
 
 2. **Method level:**
-   - Short description for ALL methods
+   - Short description for non-trivial methods
    - `@param` and `@return` only for **non-trivial** methods
    - `@since 10.0.0`
    - `@throws` only when explicitly thrown
 
 3. **Constants/Fields:**
-   - Short description
+   - Short description (only if not obvious from the name)
    - `@since 10.0.0`
 
 ### Example Format
@@ -42,7 +63,6 @@ Each documented element must include:
  * An immutable array interface that provides type-safe, indexed access to elements.
  *
  * @param <E> the type of elements in this array
- * @author JavaSaBr
  * @since 10.0.0
  */
 public interface Array<E> extends Iterable<E> {
@@ -79,6 +99,37 @@ public interface Array<E> extends Iterable<E> {
 }
 ```
 
+### Functional Interface Example
+
+```java
+/**
+ * Represents an operation that accepts an int and an object argument, and returns no result.
+ *
+ * @param <B> the type of the object argument
+ * @since 10.0.0
+ */
+@FunctionalInterface
+public interface IntObjConsumer<B> {
+
+  /**
+   * Performs this operation on the given arguments.
+   *
+   * @param arg1 the int argument
+   * @param arg2 the object argument
+   * @since 10.0.0
+   */
+  void accept(int arg1, B arg2);
+}
+```
+
+### Common Fixes When Reviewing Existing Javadocs
+- Change "Return the" to "Returns the"
+- Change "Compare the" to "Compares the"
+- Remove trailing periods from `@param` and `@return` lines
+- Remove obvious/redundant javadocs (getters, setters, constants)
+- Remove duplicate `@see` references
+- Add missing `@since` tags
+
 ## Execution Steps
 
 1. **Analyze module structure:**
@@ -94,7 +145,7 @@ public interface Array<E> extends Iterable<E> {
 3. **Read each file** to understand existing documentation state
 
 4. **Add Javadocs** using `replace_string_in_file` tool:
-   - Add class-level Javadoc with description, `@author`, `@since`
+   - Add class-level Javadoc with description and `@since`
    - Add method-level Javadocs with description and `@since`
    - Add `@param`/`@return` only for non-trivial methods
 

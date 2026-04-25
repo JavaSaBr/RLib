@@ -12,7 +12,9 @@ import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author JavaSaBr
+ * Utility methods for Java reflection operations.
+ *
+ * @since 10.0.0
  */
 @UtilityClass
 public final class ReflectionUtils {
