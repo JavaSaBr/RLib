@@ -115,8 +115,9 @@ public class SslPacketReaderTest {
     // Initial state: NEED_UNWRAP
     when(sslEngine.getHandshakeStatus()).thenReturn(HandshakeStatus.NEED_UNWRAP);
 
-    // First unwrap will result in NEED_WRAP and status OK, consuming some data
-    // MQTT broker received 10 bytes, first 5 bytes are handshake, and the last 5 bytes are application data
+    // First unwrap will result in NEED_WRAP and status OK, consuming some data.
+    // Simulate a single network buffer containing 5 bytes of handshake data followed by
+    // 5 bytes of application data, so the remaining bytes can still be processed afterward.
     ByteBuffer networkData = ByteBuffer.allocate(10);
     networkData.put(new byte[10]);
     networkData.flip();
