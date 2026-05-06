@@ -17,11 +17,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 import javasabr.rlib.common.util.ObjectUtils;
 import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.common.util.Utils;
 import javasabr.rlib.network.client.ClientNetwork;
+import javasabr.rlib.network.exception.ConnectionClosedException;
 import javasabr.rlib.network.impl.DefaultBufferAllocator;
 import javasabr.rlib.network.impl.StringDataMtlsServerConnection;
 import javasabr.rlib.network.impl.StringDataSslConnection;
@@ -354,15 +356,32 @@ public class StringSslNetworkTest extends BaseNetworkTest {
         new DefaultBufferAllocator(NetworkConfig.DEFAULT_CLIENT),
         clientWithoutCertContext);
 
+    AtomicReference<Throwable> connectionError = new AtomicReference<>();
+    CountDownLatch errorReceived = new CountDownLatch(1);
+
     try {
       clientNetwork
           .connectReactive(serverAddress)
           .doOnNext(connection -> connection.sendInBackground(new StringWritableNetworkPacket<>("no cert")))
-          .subscribe();
+          .flatMapMany(Connection::receivedEvents)
+          .subscribe(
+              event -> {},
+              ex -> {
+                connectionError.set(ex);
+                errorReceived.countDown();
+              });
 
-      assertThat(dataReceivedByServer.await(5, TimeUnit.SECONDS))
-          .as("Server must reject a client that presents no certificate when requireClientAuth=true.")
-          .isFalse();
+      assertThat(errorReceived.await(5, TimeUnit.SECONDS))
+          .as("Client subscriber must receive an error when the server closes the mTLS connection.")
+          .isTrue();
+
+      assertThat(connectionError.get())
+          .as("Client must receive ConnectionClosedException, not a timeout.")
+          .isInstanceOf(ConnectionClosedException.class);
+
+      assertThat(dataReceivedByServer.getCount())
+          .as("Server must not receive data from an unauthenticated client.")
+          .isEqualTo(1);
     } finally {
       serverNetwork.shutdown();
       clientNetwork.shutdown();
