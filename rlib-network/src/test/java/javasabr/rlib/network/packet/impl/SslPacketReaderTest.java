@@ -1,8 +1,10 @@
 package javasabr.rlib.network.packet.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import java.time.Duration;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -149,6 +151,37 @@ public class SslPacketReaderTest {
     // readPackets should have been called for the remaining 5 bytes,
     // since each packet is 1 byte, it should have read 5 packets
     assertThat(reader.readPacketsCount.get()).isEqualTo(5);
+    verify(packetWriter).accept(any(SslWrapRequestNetworkPacket.class));
+  }
+
+  @Test
+  void testShouldNotDeadLoopWhenNeedWrapAndNoProgress() throws Exception {
+    // given
+    var reader = new TestSslPacketReader(connection, packetHandler, sslEngine, packetWriter);
+
+    // Initial state: NEED_WRAP
+    when(sslEngine.getHandshakeStatus()).thenReturn(HandshakeStatus.NEED_WRAP);
+
+    // Network buffer has data
+    ByteBuffer networkData = ByteBuffer.allocate(10);
+    networkData.put(new byte[10]);
+    networkData.flip();
+
+    // Mock unwrap in decryptAndRead to return OK with 0 progress
+    // This happens if engine is in NEED_WRAP and can't decrypt application data
+    when(sslEngine.unwrap(any(ByteBuffer.class), any(ByteBuffer.class))).thenReturn(
+        new SSLEngineResult(Status.OK, HandshakeStatus.NEED_WRAP, 0, 0)
+    );
+
+    // when
+    // We expect this NOT to hang indefinitely.
+    // If it dead-loops, the test will fail by timeout.
+    assertTimeoutPreemptively(Duration.ofSeconds(5), () ->
+        reader.readPackets(networkData)
+    );
+
+    // then
+    // Should have requested wrap
     verify(packetWriter).accept(any(SslWrapRequestNetworkPacket.class));
   }
 }

@@ -206,6 +206,10 @@ public abstract class AbstractSslNetworkPacketReader<
       }
       switch (result.getStatus()) {
         case OK: {
+          if (result.bytesConsumed() == 0 && result.bytesProduced() == 0) {
+            log.debug(remoteAddress, "[%s] No progress during decryption, stop processing"::formatted);
+            return total;
+          }
           sslDataBuffer.flip();
           logDataAfterDecrypt(remoteAddress, sslDataBuffer);
           total += readPackets(sslDataBuffer, sslDataPendingBuffer);
