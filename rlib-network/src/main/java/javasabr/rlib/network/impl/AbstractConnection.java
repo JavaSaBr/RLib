@@ -217,14 +217,13 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
 
   protected void notifySinksWithError(Throwable error) {
     Array<FluxSink<?>> localActiveSinks = activeSinksOperations.getInReadLock(Array::copyOf);
-    localActiveSinks.iterations().forEach(
-        error, (sink, exc) -> {
-          try {
-            sink.error(exc);
-          } catch (RuntimeException e) {
-            log.error(e.getMessage(), "Failed to notify sink of connection closure: "::formatted);
-          }
-        });
+    for (FluxSink<?> sink : localActiveSinks) {
+      try {
+        sink.error(error);
+      } catch (RuntimeException e) {
+        log.error(e.getMessage(), "Failed to notify sink of connection closure: "::formatted);
+      }
+    }
   }
 
   /**
