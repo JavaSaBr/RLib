@@ -4,18 +4,23 @@ import static javasabr.rlib.common.util.Utils.unchecked;
 
 import java.nio.channels.AsynchronousChannel;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.BiConsumer;
+import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.collections.array.ArrayFactory;
+import javasabr.rlib.collections.array.LockableArray;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.collections.deque.DequeFactory;
+import javasabr.rlib.collections.operation.LockableOperations;
 import javasabr.rlib.network.BufferAllocator;
 import javasabr.rlib.network.Connection;
 import javasabr.rlib.network.Network;
 import javasabr.rlib.network.UnsafeConnection;
+import javasabr.rlib.network.exception.ConnectionClosedException;
 import javasabr.rlib.network.packet.NetworkPacketReader;
 import javasabr.rlib.network.packet.NetworkPacketWriter;
 import javasabr.rlib.network.packet.ReadableNetworkPacket;
@@ -64,6 +69,8 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
 
   final MutableArray<BiConsumer<C, ? super ReadableNetworkPacket<C>>> validPacketSubscribers;
   final MutableArray<BiConsumer<C, ? super ReadableNetworkPacket<C>>> invalidPacketSubscribers;
+  final LockableArray<FluxSink<?>> activeSinks;
+  final LockableOperations<LockableArray<FluxSink<?>>> activeSinksOperations;
 
   final int maxPacketsByRead;
 
@@ -84,6 +91,8 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
     this.closed = new AtomicBoolean(false);
     this.validPacketSubscribers = ArrayFactory.copyOnModifyArray(BiConsumer.class);
     this.invalidPacketSubscribers = ArrayFactory.copyOnModifyArray(BiConsumer.class);
+    this.activeSinks = ArrayFactory.stampedLockBasedArray(FluxSink.class);
+    this.activeSinksOperations = activeSinks.operations();
     this.remoteAddress = String.valueOf(NetworkUtils.getRemoteAddress(channel));
   }
 
@@ -134,10 +143,12 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
 
     validPacketSubscribers.add(validListener);
     invalidPacketSubscribers.add(invalidListener);
+    activeSinksOperations.inWriteLock(sink, Collection::add);
 
     sink.onDispose(() -> {
       validPacketSubscribers.remove(validListener);
-      validPacketSubscribers.remove(invalidListener);
+      invalidPacketSubscribers.remove(invalidListener);
+      activeSinksOperations.inWriteLock(sink, Collection::remove);
     });
 
     network.inNetworkThread(() -> packetReader().startRead());
@@ -146,14 +157,22 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
   protected void registerFluxOnReceivedValidPackets(FluxSink<? super ReadableNetworkPacket<C>> sink) {
     BiConsumer<C, ReadableNetworkPacket<C>> listener = (connection, packet) -> sink.next(packet);
     validPacketSubscribers.add(listener);
-    sink.onDispose(() -> validPacketSubscribers.remove(listener));
+    activeSinksOperations.inWriteLock(sink, Collection::add);
+    sink.onDispose(() -> {
+      validPacketSubscribers.remove(listener);
+      activeSinksOperations.inWriteLock(sink, Collection::remove);
+    });
     network.inNetworkThread(() -> packetReader().startRead());
   }
 
   protected void registerFluxOnReceivedInvalidPackets(FluxSink<? super ReadableNetworkPacket<C>> sink) {
     BiConsumer<C, ReadableNetworkPacket<C>> listener = (connection, packet) -> sink.next(packet);
     invalidPacketSubscribers.add(listener);
-    sink.onDispose(() -> invalidPacketSubscribers.remove(listener));
+    activeSinksOperations.inWriteLock(sink, Collection::add);
+    sink.onDispose(() -> {
+      invalidPacketSubscribers.remove(listener);
+      activeSinksOperations.inWriteLock(sink, Collection::remove);
+    });
     network.inNetworkThread(() -> packetReader().startRead());
   }
 
@@ -184,6 +203,27 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
     clearWaitPackets();
     packetReader().close();
     packetWriter().close();
+    notifyActiveSinks();
+  }
+
+  protected void notifyActiveSinks() {
+    Boolean noActiveSinks = activeSinksOperations.getInReadLock(Array::isEmpty);
+    if (noActiveSinks) {
+      return;
+    }
+    notifySinksWithError(new ConnectionClosedException(remoteAddress));
+    activeSinksOperations.inWriteLock(Collection::clear);
+  }
+
+  protected void notifySinksWithError(Throwable error) {
+    Array<FluxSink<?>> localActiveSinks = activeSinksOperations.getInReadLock(Array::copyOf);
+    for (FluxSink<?> sink : localActiveSinks) {
+      try {
+        sink.error(error);
+      } catch (RuntimeException e) {
+        log.error(e.getMessage(), "Failed to notify sink of connection closure: "::formatted);
+      }
+    }
   }
 
   /**

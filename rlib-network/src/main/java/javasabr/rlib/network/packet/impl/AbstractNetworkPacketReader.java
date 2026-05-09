@@ -461,10 +461,14 @@ public abstract class AbstractNetworkPacketReader<
           retryReadLater();
         }
       }
-      case AsynchronousCloseException ex ->
-          log.info(remoteAddress(), "[%s] Connection was closed"::formatted);
-      case ClosedChannelException ex ->
-          log.info(remoteAddress(), "[%s] Connection was closed"::formatted);
+      case AsynchronousCloseException ex -> {
+        log.info(remoteAddress(), "[%s] Connection was closed"::formatted);
+        connection.close();
+      }
+      case ClosedChannelException ex -> {
+        log.info(remoteAddress(), "[%s] Connection was closed"::formatted);
+        connection.close();
+      }
       default -> {
         log.error(exception);
         connection.close();

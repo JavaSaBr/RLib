@@ -76,6 +76,7 @@ public abstract class AbstractSslNetworkPacketReader<
   protected void handleReceivedData(int receivedBytes, ByteBuffer readingBuffer) {
     if (receivedBytes == -1) {
       doHandshake(sslNetworkBuffer(), -1);
+      handleEmptyReadFromChannel();
       return;
     }
     super.handleReceivedData(receivedBytes, readingBuffer);
