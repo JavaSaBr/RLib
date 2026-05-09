@@ -1,6 +1,6 @@
 package javasabr.rlib.common.util;
 
-import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**
@@ -19,11 +19,11 @@ public final class AwaitUtils {
    * @return true if the condition was met.
    * @throws InterruptedException if the current thread was interrupted.
    */
-  public static boolean await(long amount, ChronoUnit unit, Supplier<Boolean> condition) throws InterruptedException {
+  public static boolean await(long amount, TimeUnit unit, Supplier<Boolean> condition) throws InterruptedException {
     if (condition.get()) {
       return true;
     }
-    var timeoutMillis = unit.getDuration().toMillis() * amount;
+    var timeoutMillis = unit.toMillis(amount);
     var endTime = System.currentTimeMillis() + timeoutMillis;
     while (System.currentTimeMillis() < endTime) {
       if (condition.get()) {

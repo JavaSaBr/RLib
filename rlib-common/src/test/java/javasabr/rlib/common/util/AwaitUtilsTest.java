@@ -2,7 +2,7 @@ package javasabr.rlib.common.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ public class AwaitUtilsTest {
 
     // when
     thread.start();
-    boolean result = AwaitUtils.await(500, ChronoUnit.MILLIS, condition::get);
+    boolean result = AwaitUtils.await(500, TimeUnit.MILLISECONDS, condition::get);
 
     // then
     assertThat(result).isTrue();
@@ -40,7 +40,7 @@ public class AwaitUtilsTest {
     var condition = new AtomicBoolean(false);
 
     // when
-    boolean result = AwaitUtils.await(100, ChronoUnit.MILLIS, condition::get);
+    boolean result = AwaitUtils.await(100, TimeUnit.MILLISECONDS, condition::get);
 
     // then
     assertThat(result).isFalse();

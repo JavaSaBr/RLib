@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import javasabr.rlib.common.util.AwaitUtils;
@@ -77,11 +76,11 @@ public class ConnectionCloseTest extends BaseNetworkTest {
 
       // when
       clientConnection.channel().close();
-      assertThat(AwaitUtils.await(5000, ChronoUnit.MILLIS, clientConnection::closed))
+      assertThat(AwaitUtils.await(5, TimeUnit.SECONDS, clientConnection::closed))
           .as("Client connection should be closed prior server side verification").isTrue();
 
       // then
-      assertThat(AwaitUtils.await(5000, ChronoUnit.MILLIS, serverConnection::closed))
+      assertThat(AwaitUtils.await(5, TimeUnit.SECONDS, serverConnection::closed))
           .as("Server connection should be closed after receiving EOF from abruptly closed client channel")
           .isTrue();
     }
