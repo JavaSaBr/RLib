@@ -11,4 +11,5 @@ dependencies {
   api libs.project.reactor.core
   testRuntimeOnly projects.rlibLoggerImpl
   loadTestRuntimeOnly projects.rlibLoggerImpl
+  testImplementation testFixtures(projects.rlibCommon)
 }

@@ -2,14 +2,12 @@ package javasabr.rlib.common.util;
 
 import java.time.temporal.ChronoUnit;
 import java.util.function.Supplier;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * The utility class to await some conditions.
  *
  * @author crazyrokr
  */
-@NullMarked
 public final class AwaitUtils {
 
   /**
