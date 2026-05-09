@@ -2,12 +2,14 @@ package javasabr.rlib.common.util;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import lombok.experimental.UtilityClass;
 
 /**
  * The utility class to await some conditions.
  *
  * @author crazyrokr
  */
+@UtilityClass
 public final class AwaitUtils {
 
   /**
