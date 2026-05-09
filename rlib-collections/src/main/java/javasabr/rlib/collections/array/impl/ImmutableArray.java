@@ -81,7 +81,7 @@ public class ImmutableArray<E> extends AbstractArray<E> implements UnsafeArray<E
   @SafeVarargs
   public ImmutableArray(Class<? super E> type, E... elements) {
     super(type);
-    if (ArrayUtils.getComponentType(elements) == type) {
+    if (ArrayUtils.resolveComponentType(elements) == type) {
       this.wrapped = elements;
       return;
     }

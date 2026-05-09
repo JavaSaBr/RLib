@@ -1,8 +1,8 @@
 package javasabr.rlib.concurrent.util;
 
 import java.util.function.Function;
-import javasabr.rlib.common.function.ObjectIntFunction;
 import javasabr.rlib.concurrent.lock.Lockable;
+import javasabr.rlib.functions.ObjIntFunction;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
 import lombok.experimental.UtilityClass;
@@ -80,7 +80,7 @@ public final class ConcurrentUtils {
   }
 
   @Nullable
-  public static <T extends Lockable, R> R get(T sync, int argument, ObjectIntFunction<T, R> function) {
+  public static <T extends Lockable, R> R get(T sync, int argument, ObjIntFunction<T, @Nullable R> function) {
     sync.lock();
     try {
       return function.apply(sync, argument);

@@ -13,7 +13,9 @@ import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author JavaSaBr
+ * A quaternion for representing 3D rotations with float components.
+ *
+ * @since 10.0.0
  */
 @Getter
 @Setter
@@ -22,10 +24,19 @@ import org.jspecify.annotations.Nullable;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Quaternion4f {
 
+  /**
+   * The identity quaternion representing no rotation.
+   */
   public static final Quaternion4f IDENTITY = new Quaternion4f(0, 0, 0, 1);
 
   private static final ThreadLocal<Quaternion4f> ROTATION_LOCAL = ThreadLocal.withInitial(Quaternion4f::new);
 
+  /**
+   * Returns a thread-local quaternion instance.
+   *
+   * @return a thread-local quaternion
+   * @since 10.0.0
+   */
   public static Quaternion4f threadLocal() {
     return ROTATION_LOCAL.get();
   }

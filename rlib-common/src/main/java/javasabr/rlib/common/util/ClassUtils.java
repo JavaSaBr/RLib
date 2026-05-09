@@ -10,13 +10,21 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The class with utility methods.
+ * Utility methods for class and constructor operations.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @NullMarked
 public final class ClassUtils {
 
+  /**
+   * Finds the common super type of two objects.
+   *
+   * @param <E> the common type
+   * @param e1 the first object
+   * @param e2 the second object
+   * @return the common super class
+   */
   public static <E> Class<E> commonType(E e1, E e2) {
     Class<?> type = e1.getClass();
     while (!type.isInstance(e2)) {
@@ -25,6 +33,15 @@ public final class ClassUtils {
     return (Class<E>) type;
   }
 
+  /**
+   * Finds the common super type of three objects.
+   *
+   * @param <E> the common type
+   * @param e1 the first object
+   * @param e2 the second object
+   * @param e3 the third object
+   * @return the common super class
+   */
   public static <E> Class<E> commonType(E e1, E e2, E e3) {
     Class<?> type = e1.getClass();
     while (!type.isInstance(e2) || !type.isInstance(e3)) {
@@ -33,6 +50,16 @@ public final class ClassUtils {
     return (Class<E>) type;
   }
 
+  /**
+   * Finds the common super type of four objects.
+   *
+   * @param <E> the common type
+   * @param e1 the first object
+   * @param e2 the second object
+   * @param e3 the third object
+   * @param e4 the fourth object
+   * @return the common super class
+   */
   public static <E> Class<E> commonType(E e1, E e2, E e3, E e4) {
     Class<?> type = e1.getClass();
     while (!type.isInstance(e2) || !type.isInstance(e3) || !type.isInstance(e4)) {
@@ -41,6 +68,17 @@ public final class ClassUtils {
     return (Class<E>) type;
   }
 
+  /**
+   * Finds the common super type of five objects.
+   *
+   * @param <E> the common type
+   * @param e1 the first object
+   * @param e2 the second object
+   * @param e3 the third object
+   * @param e4 the fourth object
+   * @param e5 the fifth object
+   * @return the common super class
+   */
   public static <E> Class<E> commonType(E e1, E e2, E e3, E e4, E e5) {
     Class<?> type = e1.getClass();
     while (!type.isInstance(e2) || !type.isInstance(e3) || !type.isInstance(e4) || !type.isInstance(e5)) {
@@ -49,6 +87,18 @@ public final class ClassUtils {
     return (Class<E>) type;
   }
 
+  /**
+   * Finds the common super type of six objects.
+   *
+   * @param <E> the common type
+   * @param e1 the first object
+   * @param e2 the second object
+   * @param e3 the third object
+   * @param e4 the fourth object
+   * @param e5 the fifth object
+   * @param e6 the sixth object
+   * @return the common super class
+   */
   public static <E> Class<E> commonType(E e1, E e2, E e3, E e4, E e5, E e6) {
     Class<?> type = e1.getClass();
     while (!type.isInstance(e2) || !type.isInstance(e3) || !type.isInstance(e4) || !type.isInstance(e5) || !type.isInstance(e6)) {
@@ -57,6 +107,12 @@ public final class ClassUtils {
     return (Class<E>) type;
   }
 
+  /**
+   * Finds the common super type of multiple objects.
+   *
+   * @param objects the objects to find common type for
+   * @return the common super class, or Object.class if empty
+   */
   public static Class<?> commonType(Object... objects) {
     if (objects.length < 1) {
       return Object.class;

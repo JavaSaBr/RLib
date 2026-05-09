@@ -6,9 +6,9 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The utility class.
+ * Utility methods for numeric operations including parsing, bit manipulation, and conversion.
  *
- * @author JavaSaBr
+ * @since 9.3.0
  */
 @NullMarked
 public final class NumberUtils {

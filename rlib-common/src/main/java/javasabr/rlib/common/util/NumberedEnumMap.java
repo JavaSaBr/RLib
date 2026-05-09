@@ -6,12 +6,25 @@ import lombok.CustomLog;
 import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Maps numeric identifiers to enum constants for enums implementing {@link NumberedEnum}.
+ * <p>
+ * Provides efficient lookup of enum constants by their number.
+ *
+ * @param <T> the enum type that implements NumberedEnum
+ * @since 10.0.0
+ */
 @CustomLog
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class NumberedEnumMap<T extends Enum<T> & NumberedEnum<T>> {
 
   T[] values;
 
+  /**
+   * Creates a new number map for the specified enum class.
+   *
+   * @param enumClass the enum class to create the map for
+   */
   public NumberedEnumMap(Class<T> enumClass) {
 
     T[] enumConstants = enumClass.getEnumConstants();
@@ -29,6 +42,12 @@ public class NumberedEnumMap<T extends Enum<T> & NumberedEnum<T>> {
     values = indexedConstants;
   }
 
+  /**
+   * Resolves an enum constant by its number.
+   *
+   * @param number the number to look up
+   * @return the enum constant, or null if not found
+   */
   @Nullable
   public T resolve(int number) {
     try {
@@ -39,11 +58,25 @@ public class NumberedEnumMap<T extends Enum<T> & NumberedEnum<T>> {
     }
   }
 
+  /**
+   * Resolves an enum constant by its number, returning a default if not found.
+   *
+   * @param number the number to look up
+   * @param def the default value to return if not found
+   * @return the enum constant, or the default value if not found
+   */
   public T resolve(int number, T def) {
     T resolved = resolve(number);
     return resolved == null ? def : resolved;
   }
 
+  /**
+   * Resolves an enum constant by its number, throwing if not found.
+   *
+   * @param number the number to look up
+   * @return the enum constant
+   * @throws IllegalArgumentException if no constant matches the number
+   */
   public T require(int number) {
     T constant = resolve(number);
     if (constant == null) {

@@ -2,8 +2,8 @@ package javasabr.rlib.collections.array;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
+import javasabr.rlib.functions.BiObjLongConsumer;
 import javasabr.rlib.functions.ObjIntPredicate;
-import javasabr.rlib.functions.ObjObjLongConsumer;
 import javasabr.rlib.functions.TriConsumer;
 import org.jspecify.annotations.Nullable;
 
@@ -80,7 +80,7 @@ public interface ArrayIterationFunctions<E> {
    * @return this for method chaining
    * @since 10.0.0
    */
-  <A> ArrayIterationFunctions<E> forEach(A arg1, long arg2, ObjObjLongConsumer<? super E, A> consumer);
+  <A> ArrayIterationFunctions<E> forEach(A arg1, long arg2, BiObjLongConsumer<? super E, A> consumer);
 
   /**
    * Returns whether any element matches the filter predicate.

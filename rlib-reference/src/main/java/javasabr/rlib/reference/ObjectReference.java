@@ -6,7 +6,10 @@ import lombok.experimental.Accessors;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author JavaSaBr
+ * A mutable reference to an object value.
+ *
+ * @param <T> the type of the referenced object
+ * @since 10.0.0
  */
 
 @Data

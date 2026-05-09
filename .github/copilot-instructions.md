@@ -51,6 +51,39 @@ Common pitfalls and fixes
 Linting & style
 - The root does not expose an obvious global formatting tool (no Spotless or root Checkstyle detected). Use the existing code style. Run `./gradlew check` to execute configured verification tasks.
 
+Testing conventions
+- Use AssertJ for assertions (import `org.assertj.core.api.Assertions`), not JUnit's `Assertions`.
+- Test class naming: `<ClassName>Test.java` in the same package under `src/test/java`.
+- Test class visibility: use package-private (no `public` modifier) for test classes.
+- Test method naming: `should<ExpectedBehavior>` pattern (e.g., `shouldReturnEmptyArrayForNullInput`).
+- Use given/when/then comments with trailing colons to structure test methods (e.g., `// given:`, `// when:`, `// then:`, `// when/then:`).
+- For cleanup steps, use `// cleanup:` comment section at the end of the test method.
+- Prefer project collections (e.g., `MutableArray`) over JDK collections (e.g., `ArrayList`) in tests when appropriate.
+- Use proper imports instead of fully qualified class names in test code.
+- When adding new public methods, ensure corresponding unit tests are added.
+- Use JUnit's `@TempDir Path tempDir` parameter injection for tests that need temporary directories instead of manually creating temp directories with `Files.createTempDirectory()`.
+- For resources created outside `@TempDir` (e.g., `Files.createTempFile()`), add explicit cleanup in the `// cleanup:` section.
+- For `assertThat()` calls: break method chains onto new lines with indentation when the assertion has arguments or multiple chained methods (e.g., `assertThat(result)\n    .isEqualTo("expected")`). Short simple assertions can stay on one line.
+- For fluent builder/method chains: break onto new lines with indentation (e.g., `tempDir\n    .resolve("level1")\n    .resolve("level2")`).
+
+Javadoc conventions
+- All public classes, interfaces, and methods should have javadoc.
+- Javadoc must include `@since` tag with version (e.g., `@since 10.0.0`).
+- Use short, active-voice descriptions (e.g., "Returns an array" not "Return an array").
+- Do not use trailing periods in `@param` and `@return` descriptions (e.g., `@param value the value` not `@param value the value.`).
+- Include `@param` and `@return` tags for non-trivial methods.
+- Omit javadoc for simple getters/setters (e.g., `getArch()`, `setArch(String)`); they are self-explanatory.
+- Omit obvious field comments that just repeat the field name (e.g., `/** The name. */ private String name;`).
+- Omit obvious constant comments (e.g., `/** The constant FOO. */ public static final String FOO = "foo";`).
+- Type parameter descriptions should use consistent format: "the type of..." (e.g., `@param <T> the type of elements` not `@param <T> the element type`).
+- Do not generate javadoc for implementation classes (only interfaces and public API classes).
+- For `@see` tags, avoid duplicate references (e.g., use `@see Math#sin(double)` not `@see Math#sin(double) Math#sin(double)`).
+- For functional interfaces:
+    - Consumer descriptions must include "and returns no result" (e.g., "Represents an operation that accepts an int and an object argument, and returns no result.").
+    - Use type-specific @param descriptions (e.g., "the int argument", "the object argument") instead of generic "the first argument".
+    - Function @return should use "the function result" for consistency.
+    - Predicate @return should use "true if the arguments match the predicate".
+
 Project layout & where to change things
 - Root-level important files:
     - `build.gradle` — root build settings, wrapper config.

@@ -37,7 +37,10 @@ import javasabr.rlib.logger.api.LoggerManager;
 import org.jspecify.annotations.Nullable;
 
 /**
- * @author JavaSaBr
+ * Utility methods for file and path operations including file discovery, extension handling,
+ * zip extraction, and path manipulation.
+ *
+ * @since 10.0.0
  */
 public class FileUtils {
 
@@ -92,6 +95,13 @@ public class FileUtils {
 
   private static final Path[] EMPTY_PATHS = new Path[0];
 
+  /**
+   * Checks if the filename is a valid Windows filename.
+   *
+   * @param filename the filename to validate
+   * @return true if the filename is valid
+   * @since 10.0.0
+   */
   public static boolean isValidFileName(@Nullable String filename) {
 
     if (StringUtils.isEmpty(filename)) {
@@ -104,7 +114,11 @@ public class FileUtils {
   }
 
   /**
-   * Normalize the file name to an invalid file name.
+   * Normalizes a filename by replacing invalid characters with underscores.
+   *
+   * @param filename the filename to normalize
+   * @return the normalized filename
+   * @since 10.0.0
    */
   public static String normalizeName(@Nullable String filename) {
 
@@ -117,12 +131,27 @@ public class FileUtils {
         .replaceAll("_");
   }
 
-
-
+  /**
+   * Returns all files in the directory matching the specified extensions.
+   *
+   * @param directory the directory to search
+   * @param extensions the file extensions to match, or null for all files
+   * @return an array of matching paths
+   * @since 10.0.0
+   */
   public static Array<Path> getFiles(Path directory, String @Nullable ... extensions) {
     return getFiles(directory, false, extensions);
   }
 
+  /**
+   * Returns all files in the directory matching the specified extensions.
+   *
+   * @param directory the directory to search
+   * @param includeDirectoriesToResult whether to include directories in the result
+   * @param extensions the file extensions to match, or null for all files
+   * @return an array of matching paths
+   * @since 10.0.0
+   */
   public static Array<Path> getFiles(
       Path directory,
       boolean includeDirectoriesToResult,
@@ -132,6 +161,14 @@ public class FileUtils {
     return Array.copyOf(result);
   }
 
+  /**
+   * Returns all files from a package matching the specified extensions.
+   *
+   * @param pckg the package to search
+   * @param extensions the file extensions to match, or null for all files
+   * @return an array of matching paths
+   * @since 10.0.0
+   */
   public static Path[] getFiles(Package pckg, String @Nullable ... extensions) {
 
     ClassLoader classLoader = Thread
@@ -176,6 +213,15 @@ public class FileUtils {
     return files.toArray(Path.class);
   }
 
+  /**
+   * Collects files from a directory into the container.
+   *
+   * @param container the container to collect files into
+   * @param directory the directory to search
+   * @param includeDirectoriesToResult whether to include directories in the result
+   * @param extensions the file extensions to match, or null for all files
+   * @since 10.0.0
+   */
   public static void collectFilesTo(
       MutableArray<Path> container,
       Path directory,
@@ -210,33 +256,88 @@ public class FileUtils {
     }
   }
 
+  /**
+   * Returns the filename of the path as a string.
+   *
+   * @param file the path
+   * @return the filename, or null if the path has no filename
+   * @since 10.0.0
+   */
   @Nullable
   public static String fileName(Path file) {
     Path fileName = file.getFileName();
     return fileName == null ? null : fileName.toString();
   }
 
+  /**
+   * Checks if the file has the specified extension.
+   *
+   * @param file the file to check
+   * @param extension the extension to match
+   * @return true if the file has the extension
+   * @since 10.0.0
+   */
   public static boolean hasExtension(Path file, String extension) {
     String fileName = fileName(file);
     return fileName != null && fileName.endsWith(extension);
   }
 
+  /**
+   * Checks if the file has any of the specified extensions.
+   *
+   * @param file the file to check
+   * @param extensions the extensions to match
+   * @return true if the file has any of the extensions
+   * @since 10.0.0
+   */
   public static boolean hasExtensions(Path file, String @Nullable [] extensions) {
     return hasExtensions(file.toString(), extensions);
   }
 
+  /**
+   * Checks if the file has any of the specified extensions.
+   *
+   * @param file the file to check
+   * @param extensions the extensions to match
+   * @return true if the file has any of the extensions
+   * @since 10.0.0
+   */
   public static boolean hasExtensions(Path file, @Nullable Array<String> extensions) {
     return hasExtensions(file.toString(), extensions);
   }
 
+  /**
+   * Checks if the file has any of the specified extensions.
+   *
+   * @param file the file to check
+   * @param extensions the extensions to match
+   * @return true if the file has any of the extensions
+   * @since 10.0.0
+   */
   public static boolean hasExtensions(Path file, @Nullable Collection<String> extensions) {
     return hasExtensions(file.toString(), extensions);
   }
 
+  /**
+   * Checks if the path string ends with any of the specified extensions.
+   *
+   * @param path the path string to check
+   * @param extensions the extensions to match
+   * @return true if the path ends with any of the extensions
+   * @since 10.0.0
+   */
   public static boolean hasExtensions(String path, String @Nullable [] extensions) {
-    return ArrayUtils.anyMatchR(extensions, path, String::endsWith);
+    return ArrayUtils.anyMatch(extensions, path, (extension, arg) -> arg.endsWith(extension));
   }
 
+  /**
+   * Checks if the path string ends with any of the specified extensions.
+   *
+   * @param path the path string to check
+   * @param extensions the extensions to match
+   * @return true if the path ends with any of the extensions
+   * @since 10.0.0
+   */
   public static boolean hasExtensions(String path, @Nullable Array<String> extensions) {
     return extensions != null && extensions
         .iterations()
@@ -244,12 +345,27 @@ public class FileUtils {
         .anyMatch(path, String::endsWith);
   }
 
+  /**
+   * Checks if the path string ends with any of the specified extensions.
+   *
+   * @param path the path string to check
+   * @param extensions the extensions to match
+   * @return true if the path ends with any of the extensions
+   * @since 10.0.0
+   */
   public static boolean hasExtensions(String path, @Nullable Collection<String> extensions) {
     return extensions != null && extensions
         .stream()
         .anyMatch(path::endsWith);
   }
 
+  /**
+   * Deletes a file or directory recursively.
+   *
+   * @param file the file or directory to delete
+   * @throws UncheckedIOException if an I/O error occurs
+   * @since 10.0.0
+   */
   public static void delete(Path file) {
     try {
       deleteImpl(file);
@@ -266,6 +382,13 @@ public class FileUtils {
     }
   }
 
+  /**
+   * Checks if the path has a file extension.
+   *
+   * @param path the path to check
+   * @return true if the path has an extension
+   * @since 10.0.0
+   */
   public static boolean hasExtension(@Nullable String path) {
 
     if (StringUtils.isEmpty(path)) {
@@ -282,13 +405,25 @@ public class FileUtils {
   }
 
   /**
-   * Get an extension of the path or empty string.
+   * Returns the extension of the path, or null if none.
+   *
+   * @param path the path
+   * @return the extension without the dot, or null
+   * @since 10.0.0
    */
   @Nullable
   public static String getExtension(@Nullable String path) {
     return getExtension(path, false);
   }
 
+  /**
+   * Returns the extension of the path, optionally in lowercase.
+   *
+   * @param path the path
+   * @param toLowerCase whether to convert to lowercase
+   * @return the extension without the dot, or null
+   * @since 10.0.0
+   */
   @Nullable
   public static String getExtension(@Nullable String path, boolean toLowerCase) {
 
@@ -314,6 +449,13 @@ public class FileUtils {
     return result;
   }
 
+  /**
+   * Returns the extension of the file.
+   *
+   * @param file the file
+   * @return the extension without the dot, or null if directory or no extension
+   * @since 10.0.0
+   */
   @Nullable
   public static String getExtension(Path file) {
 
@@ -324,6 +466,14 @@ public class FileUtils {
     return getExtension(fileName(file));
   }
 
+  /**
+   * Returns the extension of the file, optionally in lowercase.
+   *
+   * @param file the file
+   * @param toLowerCase whether to convert to lowercase
+   * @return the extension without the dot, or null if directory or no extension
+   * @since 10.0.0
+   */
   @Nullable
   public static String getExtension(Path file, boolean toLowerCase) {
 
@@ -334,6 +484,13 @@ public class FileUtils {
     return getExtension(fileName(file), toLowerCase);
   }
 
+  /**
+   * Returns the filename without the extension.
+   *
+   * @param fileName the filename
+   * @return the filename without extension, or the original if no extension
+   * @since 10.0.0
+   */
   @Nullable
   public static String getNameWithoutExtension(@Nullable String fileName) {
 
@@ -349,18 +506,37 @@ public class FileUtils {
     return fileName.substring(0, index);
   }
 
+  /**
+   * Returns the filename without the extension.
+   *
+   * @param file the file
+   * @return the filename without extension, or null if no filename
+   * @since 10.0.0
+   */
   @Nullable
   public static String getNameWithoutExtension(Path file) {
     return getNameWithoutExtension(fileName(file));
   }
 
+  /**
+   * Reads a file from the classpath as a string.
+   *
+   * @param path the classpath resource path
+   * @return the file content as a string, or null if not found
+   * @since 10.0.0
+   */
   @Nullable
   public static String readFromClasspath(String path) {
     return readFromClasspath(FileUtils.class, path);
   }
 
   /**
-   * Read the file as a string from classpath.
+   * Reads a file from the classpath as a string.
+   *
+   * @param cs the class to use for loading the resource
+   * @param path the classpath resource path
+   * @return the file content as a string, or null if not found
+   * @since 10.0.0
    */
   @Nullable
   public static String readFromClasspath(Class<?> cs, String path) {
@@ -372,7 +548,12 @@ public class FileUtils {
   }
 
   /**
-   * Find a first free file name in the directory.
+   * Finds the first available filename in the directory, appending a counter if needed.
+   *
+   * @param directory the directory to check
+   * @param file the desired file
+   * @return the first available filename
+   * @since 10.0.0
    */
   public static String getFirstFreeName(Path directory, Path file) {
 
@@ -396,12 +577,14 @@ public class FileUtils {
   }
 
   /**
-   * Unzip the zip file to the destination folder.
+   * Extracts a zip file to the destination folder.
    *
-   * @param destination the destination folder.
-   * @param zipFile the zip file.
-   * 
+   * @param destination the destination folder
+   * @param zipFile the zip file to extract
    * @return the count of unpacked files
+   * @throws IllegalArgumentException if the destination folder doesn't exist
+   * @throws UncheckedIOException if an I/O error occurs
+   * @since 10.0.0
    */
   public static int unzip(Path destination, Path zipFile) {
     if (!Files.exists(destination)) {
@@ -434,11 +617,12 @@ public class FileUtils {
   }
 
   /**
-   * Get a name of the file by the path and the separator.
+   * Returns the filename from the path using the specified separator.
    *
-   * @param path the path.
-   * @param separator the separator.
-   * @return the name.
+   * @param path the path
+   * @param separator the path separator character
+   * @return the filename
+   * @since 10.0.0
    */
   public static String getName(String path, char separator) {
 
@@ -455,11 +639,12 @@ public class FileUtils {
   }
 
   /**
-   * Get a parent path of the path using the separator.
+   * Returns the parent path using the specified separator.
    *
-   * @param path the path.
-   * @param separator the separator.
-   * @return the parent path.
+   * @param path the path
+   * @param separator the path separator character
+   * @return the parent path
+   * @since 10.0.0
    */
   public static String getParent(String path, char separator) {
 
@@ -476,69 +661,84 @@ public class FileUtils {
   }
 
   /**
-   * @param directory the directory.
-   * @param attrs the directory attributes.
+   * Creates directories, wrapping checked exceptions.
+   *
+   * @param directory the directory to create
+   * @param attrs the directory attributes
    * @see Files#createDirectories(Path, FileAttribute[])
+   * @since 10.0.0
    */
   public static void createDirectories(Path directory, FileAttribute<?>... attrs) {
     Utils.unchecked(directory, attrs, Files::createDirectories);
   }
 
   /**
-   * @param file the file.
-   * @param options the link options.
-   * @return the last modified time.
+   * Returns the last modified time of the file.
+   *
+   * @param file the file
+   * @param options the link options
+   * @return the last modified time
    * @see Files#getLastModifiedTime(Path, LinkOption...)
+   * @since 10.0.0
    */
   public static FileTime getLastModifiedTime(Path file, LinkOption... options) {
     return notNull(Utils.uncheckedGet(file, options, Files::getLastModifiedTime));
   }
 
   /**
-   * Get a {@link URI} of the file.
+   * Returns the URI of the file.
    *
-   * @param file the file.
-   * @return the {@link URI}.
+   * @param file the file
+   * @return the URI
+   * @since 10.0.0
    */
   public static URI getUri(Path file) {
     return Utils.uncheckedGet(file, Path::toUri);
   }
 
   /**
-   * Get a {@link URI} of the {@link URL}.
+   * Returns the URI of the URL.
    *
-   * @param url the url.
-   * @return the {@link URI}.
+   * @param url the URL
+   * @return the URI
+   * @since 10.0.0
    */
   public static URI getUri(URL url) {
     return Utils.uncheckedGet(url, URL::toURI);
   }
 
   /**
-   * Get a {@link URL} of the file.
+   * Returns the URL of the file.
    *
-   * @param file the file.
-   * @return the {@link URL}.
+   * @param file the file
+   * @return the URL
+   * @since 10.0.0
    */
   public static URL getUrl(Path file) {
     return Utils.uncheckedGet(getUri(file), URI::toURL);
   }
 
   /**
-   * @param base the base file path.
-   * @param other the other file path.
-   * @return the resulting relative path, or an empty path if both paths are equal.
+   * Returns the relative path from base to other.
+   *
+   * @param base the base file path
+   * @param other the other file path
+   * @return the resulting relative path, or an empty path if both paths are equal
    * @see Path#relativize(Path)
+   * @since 10.0.0
    */
   public static Path relativize(Path base, Path other) {
     return Utils.uncheckedGet(base, other, Path::relativize);
   }
 
   /**
-   * @param base the base file path.
-   * @param other the other filepath.
-   * @return the resulting relative path, or an empty path if both paths are equal or null.
+   * Returns the relative path from base to other, or null if either is null.
+   *
+   * @param base the base file path
+   * @param other the other file path
+   * @return the resulting relative path, or null if either path is null
    * @see Path#relativize(Path)
+   * @since 10.0.0
    */
   public static @Nullable Path safeRelativize(@Nullable Path base, @Nullable Path other) {
     if (base == null || other == null) {
@@ -549,10 +749,12 @@ public class FileUtils {
   }
 
   /**
-   * Create a new default watch service.
+   * Creates a new default watch service.
    *
-   * @return the new default watch service.
+   * @return the new default watch service
+   * @throws UncheckedIOException if an I/O error occurs
    * @see FileSystems#getDefault()
+   * @since 10.0.0
    */
   public static WatchService newDefaultWatchService() {
     try {
@@ -565,10 +767,14 @@ public class FileUtils {
   }
 
   /**
-   * @param start the start folder.
-   * @param visitor the visitor.
-   * @return the start folder.
+   * Walks a file tree starting from the specified path.
+   *
+   * @param start the start folder
+   * @param visitor the visitor
+   * @return the start folder
+   * @throws UncheckedIOException if an I/O error occurs
    * @see Files#walkFileTree(Path, FileVisitor)
+   * @since 10.0.0
    */
   public static Path walkFileTree(Path start, FileVisitor<? super Path> visitor) {
     try {
@@ -579,11 +785,15 @@ public class FileUtils {
   }
 
   /**
-   * @param prefix the prefix of a temp file.
-   * @param suffix the suffix of a temp file.
-   * @param attrs the additional attributes.
-   * @return the created temp file.
+   * Creates a temporary file.
+   *
+   * @param prefix the prefix of the temp file
+   * @param suffix the suffix of the temp file
+   * @param attrs the additional attributes
+   * @return the created temp file
+   * @throws UncheckedIOException if an I/O error occurs
    * @see Files#createTempFile(String, String, FileAttribute[])
+   * @since 10.0.0
    */
   public static Path createTempFile(
       String prefix,
@@ -604,6 +814,15 @@ public class FileUtils {
     }
   }
 
+  /**
+   * Returns a stream of files in the directory.
+   *
+   * @param directory the directory
+   * @return a stream of paths in the directory
+   * @throws IllegalArgumentException if the path is not a directory or doesn't exist
+   * @throws UncheckedIOException if an I/O error occurs
+   * @since 10.0.0
+   */
   public static Stream<Path> stream(Path directory) {
     validateDirectory(directory);
 

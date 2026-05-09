@@ -162,27 +162,27 @@ public class Polygon {
   }
 
   /**
-   * Determines if line AB intersect polygon.<br> If point isn't null and line intersect polygon then point coordinates
-   * is set to intersection.
+   * Determines if the line segment intersects this polygon.
    *
-   * @param startLine start line point
-   * @param endLine end line point
-   * @param point [out] point with intersection coordinates, can be null
-   * @return true if line AB intersect polygon
+   * @param startLine the start point of the line
+   * @param endLine the end point of the line
+   * @param point output parameter for intersection coordinates, or null
+   * @return true if the line intersects the polygon
+   * @since 10.0.0
    */
   public boolean intersect(Vector3f startLine, Vector3f endLine, Vector3f point) {
     return intersect(startLine, endLine, point, Vector3fBuffer.NO_REUSE);
   }
 
   /**
-   * Determines if line AB intersect polygon.<br> If point isn't null and line intersect polygon then point coordinates
-   * is set to intersection.
+   * Determines if the line segment intersects this polygon.
    *
-   * @param startLine start line point
-   * @param endLine end line point
-   * @param point [out] point with intersection coordinates, can be null
-   * @param vectorBuffer vector's buffer
-   * @return true if line AB intersect polygon
+   * @param startLine the start point of the line
+   * @param endLine the end point of the line
+   * @param point output parameter for intersection coordinates, or null
+   * @param vectorBuffer the vector buffer for temporary calculations
+   * @return true if the line intersects the polygon
+   * @since 10.0.0
    */
   public boolean intersect(
       Vector3f startLine,

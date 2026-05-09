@@ -6,47 +6,39 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The implementation of cycle buffer of some objects.
+ * A circular buffer that cycles through pre-allocated objects.
+ * <p>
+ * Useful for reusing objects in hot paths to reduce garbage collection overhead.
  *
- * @param <T> the type parameter
- * @author JavaSaBr
+ * @param <T> the type of objects in the buffer
+ * @since 10.0.0
  */
 @NullMarked
 public final class CycleBuffer<T> {
 
-  /**
-   * The array with buffered objects.
-   */
   private final T[] buffer;
-
-  /**
-   * The handler of getting object from buffer.
-   */
   private final @Nullable Consumer<T> handler;
-
-  /**
-   * The index of next object.
-   */
   private int order;
 
   /**
-   * Instantiates a new Cycle buffer.
+   * Creates a new cycle buffer.
    *
-   * @param type the type
-   * @param size the size
-   * @param factory the factory
+   * @param type the element type
+   * @param size the buffer size (must be at least 2)
+   * @param factory the factory to create elements
    */
   public CycleBuffer(final Class<?> type, final int size, final Supplier<T> factory) {
     this(type, size, factory, null);
   }
 
   /**
-   * Instantiates a new Cycle buffer.
+   * Creates a new cycle buffer with an optional handler.
    *
-   * @param type the type
-   * @param size the size
-   * @param factory the factory
-   * @param handler the handler
+   * @param type the element type
+   * @param size the buffer size (must be at least 2)
+   * @param factory the factory to create elements
+   * @param handler optional handler called when retrieving an element
+   * @throws RuntimeException if size is less than 2
    */
   public CycleBuffer(
       Class<?> type,
@@ -68,9 +60,9 @@ public final class CycleBuffer<T> {
   }
 
   /**
-   * Get a next free object.
+   * Returns the next object from the buffer, cycling back to the start when the end is reached.
    *
-   * @return the next free object.
+   * @return the next object from the buffer
    */
   public T next() {
     if (order >= buffer.length) {

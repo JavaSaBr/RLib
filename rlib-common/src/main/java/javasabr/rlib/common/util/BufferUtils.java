@@ -13,7 +13,9 @@ import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * @author JavaSaBr
+ * Utility methods for working with NIO byte buffers.
+ *
+ * @since 10.0.0
  */
 @NullMarked
 @UtilityClass
@@ -68,6 +70,13 @@ public class BufferUtils {
     }
   }
 
+  /**
+   * Puts additional buffer content into the buffer and flips it.
+   *
+   * @param buffer the target buffer
+   * @param additional the buffer to append
+   * @return the flipped buffer
+   */
   public static ByteBuffer putToAndFlip(ByteBuffer buffer, ByteBuffer additional) {
     return buffer
         .limit(buffer.capacity())
@@ -75,6 +84,13 @@ public class BufferUtils {
         .flip();
   }
 
+  /**
+   * Appends additional buffer content to the buffer and clears the additional buffer.
+   *
+   * @param buffer the target buffer
+   * @param additional the buffer to append
+   * @return the flipped buffer
+   */
   public static ByteBuffer appendAndClear(ByteBuffer buffer, ByteBuffer additional) {
     ByteBuffer result = buffer
         .position(buffer.limit())
@@ -86,11 +102,11 @@ public class BufferUtils {
   }
 
   /**
-   * Create a new byte buffer with writing some data inside the consumer and to flip in the result.
+   * Creates a new byte buffer with writing some data inside the consumer and to flip in the result.
    *
-   * @param size the buffer's size.
-   * @param consumer the consumer to write data.
-   * @return the flipped buffer.
+   * @param size the buffer's size
+   * @param consumer the consumer to write data
+   * @return the flipped buffer
    */
   public static ByteBuffer prepareBuffer(int size, Consumer<ByteBuffer> consumer) {
     var buffer = ByteBuffer.allocate(size);

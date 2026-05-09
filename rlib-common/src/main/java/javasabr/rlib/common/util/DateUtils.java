@@ -12,9 +12,9 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The class with utility methods to work with dates and times.
+ * Utility methods for working with dates and times.
  *
- * @author JavaSaBr
+ * @since 9.3.0
  */
 @NullMarked
 public class DateUtils {

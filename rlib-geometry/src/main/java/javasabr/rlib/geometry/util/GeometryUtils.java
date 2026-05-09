@@ -160,7 +160,13 @@ public final class GeometryUtils {
   }
 
   /**
-   * Return true if these vectors are equals.
+   * Checks if two vectors are equal within the specified epsilon.
+   *
+   * @param first the first vector
+   * @param second the second vector
+   * @param epsilon the tolerance for comparison
+   * @return true if the vectors are equal within epsilon
+   * @since 10.0.0
    */
   public boolean isEquals(@Nullable Vector3f first, @Nullable Vector3f second, float epsilon) {
     if (first == null || second == null) {

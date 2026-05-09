@@ -3,17 +3,20 @@ package javasabr.rlib.geometry.util;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * @author JavaSaBr
+ * Utility methods for angle conversions and calculations.
+ *
+ * @since 10.0.0
  */
 @NullMarked
 public final class AngleUtils {
 
   /**
-   * The constant HEADINGS_IN_PI.
+   * Number of headings in PI radians.
    */
   public static final float HEADINGS_IN_PI = 10430.378350470452724949566316381F;
+
   /**
-   * The constant PI.
+   * The value of PI.
    */
   public static final float PI = 3.14159265358979323846F;
 

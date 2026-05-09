@@ -8,9 +8,9 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The class with utility methods.
+ * Utility methods for null-checking and hashing objects.
  *
- * @author JavaSaBr
+ * @since 9.0.2
  */
 @NullMarked
 public final class ObjectUtils {

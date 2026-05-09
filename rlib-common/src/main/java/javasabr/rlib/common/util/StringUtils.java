@@ -11,9 +11,9 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The class with utility methods for working with strings.
+ * Utility methods for string operations including validation, comparison, and generation.
  *
- * @author JavaSaBr
+ * @since 10.0.0
  */
 @NullMarked
 public class StringUtils {
@@ -27,32 +27,32 @@ public class StringUtils {
   private static final ThreadLocal<MessageDigest> LOCAL_HASH_MD = ThreadLocal.withInitial(StringUtils::getHashMD5);
 
   /**
-   * Return an empty string if the received string is null.
+   * Returns an empty string if the received string is null.
    *
-   * @param string the string.
-   * @return an empty string if the received string is null.
+   * @param string the string
+   * @return an empty string if the received string is null
    */
   public static String emptyIfNull(@Nullable String string) {
     return string == null ? EMPTY : string;
   }
 
   /**
-   * Return the another string if the received string is empty or null.
+   * Returns the alternative string if the received string is empty or null.
    *
-   * @param string the string.
-   * @param another the another string.
-   * @return the another string if the received string is empty or null.
+   * @param string the string
+   * @param another the alternative string
+   * @return the alternative string if the received string is empty or null
    */
   public static String ifEmpty(@Nullable String string, String another) {
     return isEmpty(string) ? another : string;
   }
 
   /**
-   * Return the another string if the received string is blank or null.
+   * Returns the alternative string if the received string is blank or null.
    *
-   * @param string the string.
-   * @param another the another string.
-   * @return the another string if the received string is blank or null.
+   * @param string the string
+   * @param another the alternative string
+   * @return the alternative string if the received string is blank or null
    */
   public static String ifBlank(@Nullable String string, String another) {
     return isBlank(string) ? another : string;
