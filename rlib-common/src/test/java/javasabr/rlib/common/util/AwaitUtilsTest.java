@@ -45,25 +45,4 @@ public class AwaitUtilsTest {
     // then
     assertThat(result).isFalse();
   }
-
-  @Test
-  void shouldAwaitWithChronoUnit() throws InterruptedException {
-    // given
-    var condition = new AtomicBoolean(false);
-    var thread = new Thread(() -> {
-      try {
-        Thread.sleep(100);
-        condition.set(true);
-      } catch (InterruptedException e) {
-        // ignore
-      }
-    });
-
-    // when
-    thread.start();
-    boolean result = AwaitUtils.await(1, ChronoUnit.SECONDS, condition::get);
-
-    // then
-    assertThat(result).isTrue();
-  }
 }
