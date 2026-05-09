@@ -77,7 +77,8 @@ public class ConnectionCloseTest extends BaseNetworkTest {
       // when
       clientConnection.channel().close();
       assertThat(AwaitUtils.await(5, TimeUnit.SECONDS, clientConnection::closed))
-          .as("Client connection should be closed prior server side verification").isTrue();
+          .as("Client connection should be closed prior server side verification")
+          .isTrue();
 
       // then
       assertThat(AwaitUtils.await(5, TimeUnit.SECONDS, serverConnection::closed))
