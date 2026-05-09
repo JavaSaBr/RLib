@@ -147,7 +147,7 @@ public abstract class AbstractConnection<C extends AbstractConnection<C>> implem
 
     sink.onDispose(() -> {
       validPacketSubscribers.remove(validListener);
-      validPacketSubscribers.remove(invalidListener);
+      invalidPacketSubscribers.remove(invalidListener);
       activeSinksOperations.inWriteLock(sink, Collection::remove);
     });
 
