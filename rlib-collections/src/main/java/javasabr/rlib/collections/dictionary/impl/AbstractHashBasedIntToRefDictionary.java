@@ -85,8 +85,9 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
   public Iterator<V> iterator() {
     if (isEmpty()) {
       return Collections.emptyIterator();
+    } else {
+      return new LinkedRefEntryIterator<>(entries());
     }
-    return new LinkedRefEntryIterator<>(entries());
   }
 
   @Nullable
@@ -118,48 +119,59 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
 
   @Override
   public IntArray keys() {
-    return IntArray.copyOf(keys(ArrayFactory.mutableIntArray()));
+    if (isEmpty()) {
+      return IntArray.empty();
+    } else {
+      return IntArray.copyOf(keys(ArrayFactory.mutableIntArray()));
+    }
   }
 
   @Override
   public MutableIntArray keys(MutableIntArray container) {
-
+    if (isEmpty()) {
+      return container;
+    }
     UnsafeMutableIntArray unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         unsafe.unsafeAdd(entry.key());
         entry = entry.next();
       }
     }
-
     return container;
   }
 
   @Override
   public Array<Integer> keys(Class<Integer> type) {
-    return keys(MutableArray.ofType(Integer.class));
+    if (isEmpty()) {
+      return Array.empty(type);
+    } else {
+      return keys(MutableArray.ofType(type));
+    }
   }
 
   @Override
   public MutableArray<Integer> keys(MutableArray<Integer> container) {
-
+    if (isEmpty()) {
+      return container;
+    }
     UnsafeMutableArray<Integer> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         unsafe.unsafeAdd(entry.key());
         entry = entry.next();
       }
     }
-
     return container;
   }
 
   @Override
   public <C extends Collection<Integer>> C keys(C container) {
+    if (isEmpty()) {
+      return container;
+    }
     for (E entry : entries()) {
       while (entry != null) {
         container.add(entry.key());
@@ -171,11 +183,18 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
 
   @Override
   public Array<V> values(Class<V> type) {
-    return Array.copyOf(values(ArrayFactory.mutableArray(type, size())));
+    if (isEmpty()) {
+      return Array.empty(type);
+    } else {
+      return Array.copyOf(values(ArrayFactory.mutableArray(type, size())));
+    }
   }
 
   @Override
   public <C extends Collection<V>> C values(C container) {
+    if (isEmpty()) {
+      return container;
+    }
     for (E entry : entries()) {
       while (entry != null) {
         V value = entry.value();
@@ -190,10 +209,11 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
 
   @Override
   public MutableArray<V> values(MutableArray<V> container) {
-
+    if (isEmpty()) {
+      return container;
+    }
     UnsafeMutableArray<V> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         V value = entry.value();
@@ -203,7 +223,6 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
         entry = entry.next();
       }
     }
-
     return container;
   }
 }

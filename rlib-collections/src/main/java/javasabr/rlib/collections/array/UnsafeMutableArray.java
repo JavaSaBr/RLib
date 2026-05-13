@@ -53,4 +53,16 @@ public interface UnsafeMutableArray<E> extends UnsafeArray<E>, MutableArray<E> {
    * @since 10.0.0
    */
   UnsafeMutableArray<E> trimToSize();
+
+  /**
+   * Attempts to trim the internal storage to the specified size.
+   *
+   * If the requested size is greater than the current capacity or less than the
+   * current size, the array is not modified.
+   *
+   * @param internalStorageSize the desired internal storage size
+   * @return this for method chaining
+   * @since 10.0.0
+   */
+  UnsafeMutableArray<E> tryTrimTo(int internalStorageSize);
 }

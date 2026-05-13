@@ -62,8 +62,9 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
   public Iterator<V> iterator() {
     if (isEmpty()) {
       return Collections.emptyIterator();
+    } else {
+      return new LinkedRefEntryIterator<>(entries());
     }
-    return new LinkedRefEntryIterator<>(entries());
   }
 
   @Nullable
@@ -95,11 +96,18 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
 
   @Override
   public Array<K> keys(Class<K> type) {
-    return Array.copyOf(keys(ArrayFactory.mutableArray(type, size())));
+    if (isEmpty()) {
+      return Array.empty(type);
+    } else {
+      return Array.copyOf(keys(ArrayFactory.mutableArray(type, size())));
+    }
   }
 
   @Override
   public <C extends Collection<K>> C keys(C container) {
+    if (isEmpty()) {
+      return container;
+    }
     for (E entry : entries()) {
       while (entry != null) {
         container.add(entry.key());
@@ -111,6 +119,9 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
 
   @Override
   public MutableArray<K> keys(MutableArray<K> container) {
+    if (isEmpty()) {
+      return container;
+    }
 
     UnsafeMutableArray<K> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
@@ -127,11 +138,18 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
 
   @Override
   public Array<V> values(Class<V> type) {
-    return Array.copyOf(values(ArrayFactory.mutableArray(type, size())));
+    if (isEmpty()) {
+      return Array.empty(type);
+    } else {
+      return Array.copyOf(values(ArrayFactory.mutableArray(type, size())));
+    }
   }
 
   @Override
   public <C extends Collection<V>> C values(C container) {
+    if (isEmpty()) {
+      return container;
+    }
     for (E entry : entries()) {
       while (entry != null) {
         V value = entry.value();
@@ -146,10 +164,11 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
 
   @Override
   public MutableArray<V> values(MutableArray<V> container) {
-
+    if (isEmpty()) {
+      return container;
+    }
     UnsafeMutableArray<V> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         V value = entry.value();
@@ -159,7 +178,6 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
         entry = entry.next();
       }
     }
-
     return container;
   }
 

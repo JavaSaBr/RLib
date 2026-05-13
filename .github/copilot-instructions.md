@@ -51,6 +51,11 @@ Common pitfalls and fixes
 Linting & style
 - The root does not expose an obvious global formatting tool (no Spotless or root Checkstyle detected). Use the existing code style. Run `./gradlew check` to execute configured verification tasks.
 
+Collections optimization pattern
+- In collection implementations (dictionaries, arrays), use early-exit `isEmpty()` checks to avoid unnecessary allocations and iterations. Return empty collections or unmodified containers immediately when the collection is empty.
+- Example: Check `isEmpty()` before allocating arrays in `keys()`, `values()`, or `iterator()` methods; return `IntArray.empty()`, `Array.empty(type)`, or unmodified containers on empty state.
+- This applies across all collection types: `IntToRef`, `LongToRef`, `RefToRef` dictionaries, and array implementations.
+
 Testing conventions
 - Use AssertJ for assertions (import `org.assertj.core.api.Assertions`), not JUnit's `Assertions`.
 - Test class naming: `<ClassName>Test.java` in the same package under `src/test/java`.
@@ -68,7 +73,7 @@ Testing conventions
 
 Javadoc conventions
 - All public classes, interfaces, and methods should have javadoc.
-- Javadoc must include `@since` tag with version (e.g., `@since 10.0.0`).
+- Javadoc must include `@since` tag with version (e.g., `@since 10.0.0`). Use the base GA version, not pre-release qualifiers (e.g., use `10.0.0` not `10.0.alpha14`), even if `build.gradle` specifies a pre-release version.
 - Use short, active-voice descriptions (e.g., "Returns an array" not "Return an array").
 - Do not use trailing periods in `@param` and `@return` descriptions (e.g., `@param value the value` not `@param value the value.`).
 - Include `@param` and `@return` tags for non-trivial methods.
