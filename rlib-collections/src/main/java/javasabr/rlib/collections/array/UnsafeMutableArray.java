@@ -62,7 +62,7 @@ public interface UnsafeMutableArray<E> extends UnsafeArray<E>, MutableArray<E> {
    *
    * @param internalStorageSize the desired internal storage size
    * @return this for method chaining
-   * @since 10.0.alpha14
+   * @since 10.0.0
    */
   UnsafeMutableArray<E> tryTrimTo(int internalStorageSize);
 }

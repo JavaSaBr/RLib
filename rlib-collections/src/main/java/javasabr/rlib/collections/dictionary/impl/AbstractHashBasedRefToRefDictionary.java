@@ -167,10 +167,8 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
     if (isEmpty()) {
       return container;
     }
-
     UnsafeMutableArray<V> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         V value = entry.value();
@@ -180,7 +178,6 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
         entry = entry.next();
       }
     }
-
     return container;
   }
 

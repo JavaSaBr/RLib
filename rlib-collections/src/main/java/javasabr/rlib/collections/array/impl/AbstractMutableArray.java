@@ -225,7 +225,7 @@ public abstract class AbstractMutableArray<E> extends AbstractArray<E> implement
   public UnsafeMutableArray<E> tryTrimTo(int internalStorageSize) {
     @Nullable E[] wrapped = wrapped();
     int size = size();
-    if (internalStorageSize > wrapped.length) {
+    if (internalStorageSize >= wrapped.length) {
       return this;
     } else if (internalStorageSize < size) {
       return this;

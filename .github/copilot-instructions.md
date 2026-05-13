@@ -73,7 +73,7 @@ Testing conventions
 
 Javadoc conventions
 - All public classes, interfaces, and methods should have javadoc.
-- Javadoc must include `@since` tag with version (e.g., `@since 10.0.0`).
+- Javadoc must include `@since` tag with version (e.g., `@since 10.0.0`). Use the base GA version, not pre-release qualifiers (e.g., use `10.0.0` not `10.0.alpha14`), even if `build.gradle` specifies a pre-release version.
 - Use short, active-voice descriptions (e.g., "Returns an array" not "Return an array").
 - Do not use trailing periods in `@param` and `@return` descriptions (e.g., `@param value the value` not `@param value the value.`).
 - Include `@param` and `@return` tags for non-trivial methods.

@@ -131,17 +131,14 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
     if (isEmpty()) {
       return container;
     }
-    
     UnsafeMutableIntArray unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         unsafe.unsafeAdd(entry.key());
         entry = entry.next();
       }
     }
-
     return container;
   }
 
@@ -150,7 +147,7 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
     if (isEmpty()) {
       return Array.empty(type);
     } else {
-      return keys(MutableArray.ofType(Integer.class));
+      return keys(MutableArray.ofType(type));
     }
   }
 
@@ -159,17 +156,14 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
     if (isEmpty()) {
       return container;
     }
-    
     UnsafeMutableArray<Integer> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         unsafe.unsafeAdd(entry.key());
         entry = entry.next();
       }
     }
-
     return container;
   }
 
@@ -218,10 +212,8 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
     if (isEmpty()) {
       return container;
     }
-
     UnsafeMutableArray<V> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         V value = entry.value();
@@ -231,7 +223,6 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
         entry = entry.next();
       }
     }
-
     return container;
   }
 }
