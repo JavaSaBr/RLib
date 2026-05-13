@@ -214,11 +214,23 @@ public abstract class AbstractMutableArray<E> extends AbstractArray<E> implement
   public UnsafeMutableArray<E> trimToSize() {
     @Nullable E[] wrapped = wrapped();
     int size = size();
-
     if (size == wrapped.length) {
       return this;
     }
     wrapped(Arrays.copyOfRange(wrapped, 0, size));
+    return this;
+  }
+
+  @Override
+  public UnsafeMutableArray<E> tryTrimTo(int internalStorageSize) {
+    @Nullable E[] wrapped = wrapped();
+    int size = size();
+    if (internalStorageSize > wrapped.length) {
+      return this;
+    } else if (internalStorageSize < size) {
+      return this;
+    }
+    wrapped(Arrays.copyOf(wrapped, internalStorageSize));
     return this;
   }
 

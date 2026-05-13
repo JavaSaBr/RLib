@@ -85,8 +85,9 @@ public abstract class AbstractHashBasedLongToRefDictionary<V, E extends LinkedHa
   public Iterator<V> iterator() {
     if (isEmpty()) {
       return Collections.emptyIterator();
+    } else {
+      return new LinkedRefEntryIterator<>(entries());
     }
-    return new LinkedRefEntryIterator<>(entries());
   }
 
   @Nullable
@@ -118,11 +119,18 @@ public abstract class AbstractHashBasedLongToRefDictionary<V, E extends LinkedHa
 
   @Override
   public LongArray keys() {
-    return LongArray.copyOf(keys(ArrayFactory.mutableLongArray()));
+    if (isEmpty()) {
+      return LongArray.empty();
+    } else {
+      return LongArray.copyOf(keys(ArrayFactory.mutableLongArray()));
+    }
   }
 
   @Override
   public MutableLongArray keys(MutableLongArray container) {
+    if (isEmpty()) {
+      return container;
+    }
 
     UnsafeMutableLongArray unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
@@ -139,11 +147,18 @@ public abstract class AbstractHashBasedLongToRefDictionary<V, E extends LinkedHa
 
   @Override
   public Array<Long> keys(Class<Long> type) {
-    return keys(MutableArray.ofType(Long.class));
+    if (isEmpty()) {
+      return Array.empty(type);
+    } else {
+      return keys(MutableArray.ofType(Long.class));
+    }
   }
 
   @Override
   public MutableArray<Long> keys(MutableArray<Long> container) {
+    if (isEmpty()) {
+      return container;
+    }
 
     UnsafeMutableArray<Long> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
@@ -160,6 +175,9 @@ public abstract class AbstractHashBasedLongToRefDictionary<V, E extends LinkedHa
 
   @Override
   public <C extends Collection<Long>> C keys(C container) {
+    if (isEmpty()) {
+      return container;
+    }
     for (E entry : entries()) {
       while (entry != null) {
         container.add(entry.key());
@@ -171,11 +189,18 @@ public abstract class AbstractHashBasedLongToRefDictionary<V, E extends LinkedHa
 
   @Override
   public Array<V> values(Class<V> type) {
-    return Array.copyOf(values(ArrayFactory.mutableArray(type, size())));
+    if (isEmpty()) {
+      return Array.empty(type);
+    } else {
+      return Array.copyOf(values(ArrayFactory.mutableArray(type, size())));
+    }
   }
 
   @Override
   public <C extends Collection<V>> C values(C container) {
+    if (isEmpty()) {
+      return container;
+    }
     for (E entry : entries()) {
       while (entry != null) {
         V value = entry.value();
@@ -190,7 +215,10 @@ public abstract class AbstractHashBasedLongToRefDictionary<V, E extends LinkedHa
 
   @Override
   public MutableArray<V> values(MutableArray<V> container) {
-
+    if (isEmpty()) {
+      return container;
+    }
+    
     UnsafeMutableArray<V> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
 

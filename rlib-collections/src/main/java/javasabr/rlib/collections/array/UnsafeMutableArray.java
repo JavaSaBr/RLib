@@ -53,4 +53,6 @@ public interface UnsafeMutableArray<E> extends UnsafeArray<E>, MutableArray<E> {
    * @since 10.0.0
    */
   UnsafeMutableArray<E> trimToSize();
+  
+  UnsafeMutableArray<E> tryTrimTo(int internalStorageSize);
 }
