@@ -37,6 +37,7 @@ When the user asks to:
 2. **Function @return** - use "the function result" for consistency
 3. **Predicate @return** - use "true if the arguments match the predicate" or "true if the arguments match the predicate, false otherwise"
 4. **Supplier @return** - describe what is supplied (e.g., "the char value" not just "a result")
+5. **Signature-text alignment** - ensure class-level description and type-parameter text match the exact argument order in `make(...)`/`accept(...)` methods (for example, `A, int, C` must be described as "an object, an int, and another object", while `A, B, int` must be described as "two objects and one int")
 
 ### Javadoc Standards
 Each documented element must include:
@@ -129,6 +130,7 @@ public interface IntObjConsumer<B> {
 - Remove obvious/redundant javadocs (getters, setters, constants)
 - Remove duplicate `@see` references
 - Add missing `@since` tags
+- Fix swapped functional-interface descriptions so they match the method signature argument order
 
 ## Execution Steps
 
@@ -145,9 +147,10 @@ public interface IntObjConsumer<B> {
 3. **Read each file** to understand existing documentation state
 
 4. **Add Javadocs** using `replace_string_in_file` tool:
-   - Add class-level Javadoc with description and `@since`
-   - Add method-level Javadocs with description and `@since`
-   - Add `@param`/`@return` only for non-trivial methods
+    - Add class-level Javadoc with description and `@since`
+    - Add method-level Javadocs with description and `@since`
+    - Add `@param`/`@return` only for non-trivial methods
+    - For functional interfaces, verify description wording against the exact parameter order in method signatures
 
 5. **Validate changes:**
    ```bash

@@ -154,12 +154,45 @@ public class OperatingSystemResolver {
   }
 
   private String resolveMacDistribution() {
-    double version = parseDouble(VERSION);
-    if (version < 10) {
+    String normalizedVersion = normalizeMacVersion(VERSION);
+    if (normalizedVersion == null) {
+      return "OS X " + VERSION;
+    } else if (parseDouble(normalizedVersion) < 10) {
       return "Mac OS " + VERSION;
-    } else {
-      return "OS X " + MAC_OS_VERSION_MAPPING.get(VERSION) + " (" + VERSION + ")";
     }
+    String distribution = MAC_OS_VERSION_MAPPING.get(normalizedVersion);
+    return distribution == null ? "OS X " + VERSION : "OS X " + distribution + " (" + VERSION + ")";
+  }
+
+  @Nullable
+  static String normalizeMacVersion(@Nullable String version) {
+    if (StringUtils.isBlank(version)) {
+      return null;
+    }
+    String[] versions = version.split("\\.");
+    if (versions.length == 0 || StringUtils.isBlank(versions[0])) {
+      return null;
+    }
+    int majorVersion;
+    try {
+      majorVersion = parseInt(versions[0]);
+    } catch (NumberFormatException e) {
+      return null;
+    }
+    if (majorVersion < 10) {
+      return version;
+    }
+    if (majorVersion == 10) {
+      if (versions.length < 2 || StringUtils.isBlank(versions[1])) {
+        return null;
+      }
+      try {
+        return majorVersion + "." + parseInt(versions[1]);
+      } catch (NumberFormatException e) {
+        return null;
+      }
+    }
+    return String.valueOf(majorVersion);
   }
 
   @Nullable
@@ -226,7 +259,8 @@ public class OperatingSystemResolver {
           .findFirst()
           .orElse(null);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      log.warn(e);
+      return null;
     }
   }
 }

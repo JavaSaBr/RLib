@@ -37,6 +37,14 @@ Review the current branch against `develop` and report only material issues with
    - Prefer AssertJ assertions
    - Keep test naming and style aligned with repo conventions
 
+7. **Version mapping correctness**
+   - For version-to-name lookups (for example OS distribution naming), verify runtime version normalization before map access
+   - Confirm behavior for real version formats (for example `10.15.7`, `14.4.1`, `15.1`) with targeted tests
+
+8. **Path handling in file discovery**
+   - Ensure file discovery helpers return full/usable paths when downstream code reads files
+   - Flag bare filename returns that make behavior depend on current working directory
+
 ## Process
 
 ### 1. Gather branch diff

@@ -102,7 +102,7 @@ public interface Logger {
   }
 
   /**
-   * Factory for creating log messages with two objects and one int argument.
+   * Factory for creating log messages with an object, an int, and another object argument.
    *
    * @param <A> the type of the first object argument
    * @param <C> the type of the third object argument
@@ -116,7 +116,7 @@ public interface Logger {
   }
 
   /**
-   * Factory for creating log messages with an object, an int, and another object argument.
+   * Factory for creating log messages with two objects and one int argument.
    *
    * @param <A> the type of the first object argument
    * @param <B> the type of the second object argument
