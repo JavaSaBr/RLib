@@ -225,4 +225,56 @@ public abstract class AbstractHashBasedLongToRefDictionary<V, E extends LinkedHa
     }
     return container;
   }
+
+  @Override
+  public int values(MutableArray<V> container, int startIndex, int limit) {
+    if (isEmpty()) {
+      return -1;
+    }
+    UnsafeMutableArray<V> unsafe = container.asUnsafe();
+    unsafe.prepareForSize(Math.min(limit, size()));
+    E[] entries = entries();
+    for (int i = startIndex, length = entries.length; i < length; i++) {
+      if (unsafe.size() >= limit) {
+        return i;
+      }
+      E entry = entries[i];
+      while (entry != null) {
+        V value = entry.value();
+        if (value != null) {
+          unsafe.unsafeAdd(value);
+        }
+        entry = entry.next();
+      }
+    }
+    return -1;
+  }
+
+  @Override
+  public String toString() {
+    if (isEmpty()) {
+      return "[]";
+    }
+    StringBuilder builder = new StringBuilder("[");
+    for (E entry : entries()) {
+      while (entry != null) {
+        builder
+            .append('\'')
+            .append(entry.key())
+            .append('\'')
+            .append(":")
+            .append('\'')
+            .append(entry.value())
+            .append('\'')
+            .append(", ");
+
+        entry = entry.next();
+      }
+    }
+    if (builder.length() > 1) {
+      builder.delete(builder.length() - 2, builder.length());
+    }
+    builder.append("]");
+    return builder.toString();
+  }
 }

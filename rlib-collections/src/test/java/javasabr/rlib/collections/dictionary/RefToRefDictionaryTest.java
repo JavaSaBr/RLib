@@ -157,7 +157,7 @@ class RefToRefDictionaryTest {
     // then:
     assertThat(pairs).isEqualTo(expectedPairs);
   }
-
+  
   private static Stream<Arguments> generateDictionaries() {
 
     RefToRefDictionary<String, String> source = RefToRefDictionary.ofEntries(

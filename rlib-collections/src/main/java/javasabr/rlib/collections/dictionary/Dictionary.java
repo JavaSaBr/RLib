@@ -127,6 +127,13 @@ public interface Dictionary<K, V> extends Iterable<V> {
   MutableArray<V> values(MutableArray<V> container);
 
   /**
+   * Collects part of values from this dictionary with starting from index with provided soft limit.
+   * 
+   * @return the index which can be used as startIndex for next iteration or -1
+   */
+  int values(MutableArray<V> container, int startIndex, int limit);
+  
+  /**
    * Returns all values as an immutable array.
    *
    * @param type the type of values
