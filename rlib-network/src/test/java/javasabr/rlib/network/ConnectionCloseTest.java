@@ -1,13 +1,14 @@
 package javasabr.rlib.network;
 
+import static java.util.function.Predicate.isEqual;
 import static javasabr.rlib.network.util.NetworkUtils.createAllTrustedClientSslContext;
 import static javasabr.rlib.network.util.NetworkUtils.createSslContext;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import javasabr.rlib.common.util.AwaitUtils;
 import javasabr.rlib.network.exception.ConnectionClosedException;
 import javasabr.rlib.network.impl.AbstractConnection;
 import javasabr.rlib.network.impl.DefaultConnection;
@@ -80,14 +81,16 @@ public class ConnectionCloseTest extends BaseNetworkTest {
 
       // when
       clientConnection.channel().close();
-      assertThat(AwaitUtils.await(5, TimeUnit.SECONDS, clientConnection::closed))
-          .as("Client connection should be closed prior server side verification")
-          .isTrue();
 
       // then
-      assertThat(AwaitUtils.await(5, TimeUnit.SECONDS, serverConnection::closed))
-          .as("Server connection should be closed after receiving EOF from abruptly closed client channel")
-          .isTrue();
+      await()
+          .alias("Client connection should be closed prior server side verification")
+          .atMost(5, TimeUnit.SECONDS)
+          .until(clientConnection::closed, isEqual(true));
+      await()
+          .alias("Server connection should be closed after receiving EOF from abruptly closed client channel")
+          .atMost(5, TimeUnit.SECONDS)
+          .until(serverConnection::closed, isEqual(true));
     }
   }
 }
