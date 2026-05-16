@@ -19,6 +19,8 @@ jspecify = "1.0.0"
 mockito = "5.20.0"
 # https://mvnrepository.com/artifact/org.assertj/assertj-core
 assertj-core = "4.0.0-M1"
+# https://mvnrepository.com/artifact/org.awaitility/awaitility
+awaitility = "4.3.0"
 
 [libraries]
 project-reactor-core = { module = "io.projectreactor:reactor-core", version.ref = "project-reactor" }
@@ -37,6 +39,7 @@ testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj-core" }
+awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
 
 [bundles]
 mail = ["jakarta-mail-api", "angus-mail"]
