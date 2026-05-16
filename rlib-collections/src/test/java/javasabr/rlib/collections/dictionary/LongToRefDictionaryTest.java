@@ -172,6 +172,35 @@ class LongToRefDictionaryTest {
     assertThat(pairs).isEqualTo(expectedPairs);
   }
 
+  @ParameterizedTest
+  @MethodSource("generateDictionaries")
+  void shouldCheckEqualsCorrectly(LongToRefDictionary<String> dictionary) {
+    // given:
+    LongToRefDictionary<String> theSame = LongToRefDictionary.ofEntries(
+        entry(1, "val1"),
+        entry(2, "val2"),
+        entry(3, "val3"),
+        entry(4, "val4"),
+        entry(5, "val5"));
+    LongToRefDictionary<String> notTheSame1 = LongToRefDictionary.ofEntries(
+        entry(1, "val1"),
+        entry(2, "val2"),
+        entry(33, "val3"),
+        entry(4, "val4"),
+        entry(5, "val5"));
+    LongToRefDictionary<String> notTheSame2 = LongToRefDictionary.ofEntries(
+        entry(1, "val1"),
+        entry(2, "val2"),
+        entry(3, "val3"),
+        entry(4, "val44"),
+        entry(5, "val5"));
+
+    // when/then:
+    assertThat(dictionary).isEqualTo(theSame);
+    assertThat(dictionary).isNotEqualTo(notTheSame1);
+    assertThat(dictionary).isNotEqualTo(notTheSame2);
+  }
+  
   private static Stream<Arguments> generateDictionaries() {
 
     LongToRefDictionary<String> source = LongToRefDictionary.ofEntries(

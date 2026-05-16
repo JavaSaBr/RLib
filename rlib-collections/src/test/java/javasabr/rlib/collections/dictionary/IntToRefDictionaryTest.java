@@ -172,6 +172,35 @@ class IntToRefDictionaryTest {
     assertThat(pairs).isEqualTo(expectedPairs);
   }
 
+  @ParameterizedTest
+  @MethodSource("generateDictionaries")
+  void shouldCheckEqualsCorrectly(IntToRefDictionary<String> dictionary) {
+    // given:
+    IntToRefDictionary<String> theSame = IntToRefDictionary.ofEntries(
+        entry(1, "val1"),
+        entry(2, "val2"),
+        entry(3, "val3"),
+        entry(4, "val4"),
+        entry(5, "val5"));
+    IntToRefDictionary<String> notTheSame1 = IntToRefDictionary.ofEntries(
+        entry(1, "val1"),
+        entry(2, "val2"),
+        entry(33, "val3"),
+        entry(4, "val4"),
+        entry(5, "val5"));
+    IntToRefDictionary<String> notTheSame2 = IntToRefDictionary.ofEntries(
+        entry(1, "val1"),
+        entry(2, "val2"),
+        entry(3, "val3"),
+        entry(4, "val44"),
+        entry(5, "val5"));
+
+    // when/then:
+    assertThat(dictionary).isEqualTo(theSame);
+    assertThat(dictionary).isNotEqualTo(notTheSame1);
+    assertThat(dictionary).isNotEqualTo(notTheSame2);
+  }
+
   private static Stream<Arguments> generateDictionaries() {
 
     IntToRefDictionary<String> source = IntToRefDictionary.ofEntries(
