@@ -12,4 +12,5 @@ dependencies {
   testRuntimeOnly projects.rlibLoggerImpl
   loadTestRuntimeOnly projects.rlibLoggerImpl
   testImplementation testFixtures(projects.rlibCommon)
+  testImplementation libs.awaitility
 }
