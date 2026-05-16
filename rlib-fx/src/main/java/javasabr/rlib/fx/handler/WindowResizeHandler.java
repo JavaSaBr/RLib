@@ -57,7 +57,7 @@ public class WindowResizeHandler implements EventHandler<MouseEvent> {
   private double startX;
   private double startY;
 
-  private int border;
+  private final int border;
 
   public WindowResizeHandler(Stage stage) {
     this.stage = stage;

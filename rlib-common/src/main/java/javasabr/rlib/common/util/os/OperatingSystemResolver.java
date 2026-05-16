@@ -5,21 +5,24 @@ import static java.lang.Integer.parseInt;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import org.jspecify.annotations.NullMarked;
+import lombok.CustomLog;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Resolves operating system information from system properties and configuration files.
  *
  * @since 10.0.0
  */
-@NullMarked
+@CustomLog
 public class OperatingSystemResolver {
 
   public static final String FILE_PROC_VERSION = "/proc/version";
@@ -43,15 +46,15 @@ public class OperatingSystemResolver {
 
   static {
     MAC_OS_VERSION_MAPPING.put(10.0, "Puma");
-    MAC_OS_VERSION_MAPPING.put(10.1, "Cheetah");
-    MAC_OS_VERSION_MAPPING.put(10.2, "Jaguar");
-    MAC_OS_VERSION_MAPPING.put(10.3, "Panther");
-    MAC_OS_VERSION_MAPPING.put(10.4, "Tiger");
-    MAC_OS_VERSION_MAPPING.put(10.5, "Leopard");
-    MAC_OS_VERSION_MAPPING.put(10.6, "Snow Leopard");
-    MAC_OS_VERSION_MAPPING.put(10.7, "Snow Lion");
-    MAC_OS_VERSION_MAPPING.put(10.8, "Mountain Lion");
-    MAC_OS_VERSION_MAPPING.put(10.9, "Mavericks");
+    MAC_OS_VERSION_MAPPING.put(10.01, "Cheetah");
+    MAC_OS_VERSION_MAPPING.put(10.02, "Jaguar");
+    MAC_OS_VERSION_MAPPING.put(10.03, "Panther");
+    MAC_OS_VERSION_MAPPING.put(10.04, "Tiger");
+    MAC_OS_VERSION_MAPPING.put(10.05, "Leopard");
+    MAC_OS_VERSION_MAPPING.put(10.06, "Snow Leopard");
+    MAC_OS_VERSION_MAPPING.put(10.07, "Snow Lion");
+    MAC_OS_VERSION_MAPPING.put(10.08, "Mountain Lion");
+    MAC_OS_VERSION_MAPPING.put(10.09, "Mavericks");
     MAC_OS_VERSION_MAPPING.put(10.10, "Yosemite");
     MAC_OS_VERSION_MAPPING.put(10.11, "El Capitan ");
     MAC_OS_VERSION_MAPPING.put(10.12, "Sierra");
@@ -73,7 +76,7 @@ public class OperatingSystemResolver {
 
   private String findFile(final File dir, final String postfix) {
 
-    final File[] files = dir.listFiles((FilenameFilter) (directory, filename) -> filename.endsWith(postfix));
+    final File[] files = dir.listFiles((directory, filename) -> filename.endsWith(postfix));
 
     if (files != null && files.length > 0) {
       return files[0].getAbsolutePath();
@@ -187,42 +190,30 @@ public class OperatingSystemResolver {
     }
   }
 
-  private void resolveNameFromFile(final OperatingSystem system, final String filename) {
-
+  private void resolveNameFromFile(OperatingSystem system, @Nullable String filename) {
     if (filename == null) {
       return;
     }
-
-    final File file = new File(filename);
-
-    if (!file.exists()) {
+    var file = Path.of(filename);
+    if (!Files.exists(file)) {
       return;
     }
-
     String lastLine = null;
-
-    try (Scanner scanner = new Scanner(file)) {
-
+    try (Scanner scanner = new Scanner(Files.newBufferedReader(file))) {
       int lineNb = 0;
-
       while (scanner.hasNextLine()) {
-
-        final String line = scanner.nextLine();
-
+        String line = scanner.nextLine();
         if (lineNb++ == 0) {
           lastLine = line;
         }
-
         if (line.startsWith(PROP_PRETTY_NAME)) {
           system.setDistribution(line.substring(13, line.length() - 1));
           break;
         }
       }
-
-    } catch (final FileNotFoundException e) {
-      e.printStackTrace();
+    } catch (IOException e) {
+      log.warn(e);
     }
-
     if (system.getDistribution() == null) {
       system.setDistribution(lastLine);
     }

@@ -231,7 +231,7 @@ public class NetworkUtils {
       if (i == end) {
         chars[count] = ch;
         hexDigit(builder, val)
-            .append("   ".repeat(15 - count))
+            .repeat("   ", 15 - count)
             .append("    ");
         if (count < 9) {
           builder.append("  ");

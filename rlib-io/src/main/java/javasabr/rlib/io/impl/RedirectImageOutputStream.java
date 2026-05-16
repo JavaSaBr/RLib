@@ -22,7 +22,7 @@ public class RedirectImageOutputStream extends ImageOutputStreamImpl {
   @Nullable InputStream in;
 
   @Override
-  public void close() throws IOException {}
+  public void close() {}
 
   @Override
   public int read() throws IOException {

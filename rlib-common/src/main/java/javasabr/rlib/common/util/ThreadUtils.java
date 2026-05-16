@@ -21,7 +21,7 @@ public class ThreadUtils {
       Thread.sleep(time);
       return false;
     } catch (InterruptedException e) {
-      log.warning(e);
+      log.warn(e);
       return true;
     }
   }

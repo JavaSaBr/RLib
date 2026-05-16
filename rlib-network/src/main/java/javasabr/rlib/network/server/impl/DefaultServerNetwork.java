@@ -64,7 +64,7 @@ public class DefaultServerNetwork<C extends UnsafeConnection<C>>
     @Override
     public void failed(Throwable exc, DefaultServerNetwork<C> network) {
       if (exc instanceof AsynchronousCloseException) {
-        log.warning("Server network was closed");
+        log.warn("Server network was closed");
       } else {
         log.error("Got exception during accepting new connection:");
         log.error(exc);

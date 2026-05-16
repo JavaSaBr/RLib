@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import javasabr.rlib.logger.api.LoggerListener;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @author JavaSaBr
@@ -21,14 +22,14 @@ public class FolderFileListener implements LoggerListener {
   private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyy-MM-dd_HH-mm-ss");
 
   final Path folder;
-  Writer writer;
+  
+  @Nullable
+  volatile Writer writer;
 
   public FolderFileListener(Path folder) {
-
     if (!Files.isDirectory(folder)) {
       throw new IllegalArgumentException("File:[%s] is not directory".formatted(folder));
     }
-
     if (!Files.exists(folder)) {
       try {
         Files.createDirectories(folder);
@@ -36,19 +37,24 @@ public class FolderFileListener implements LoggerListener {
         throw new UncheckedIOException(e);
       }
     }
-
     this.folder = folder;
   }
 
   public Writer getOrCreateWriter() throws IOException {
-
-    if (writer == null) {
-      var dateTime = LocalDateTime.now();
-      var filename = TIME_FORMATTER.format(dateTime) + ".log";
-      writer = Files.newBufferedWriter(folder.resolve(filename), StandardCharsets.UTF_8);
+    var local = writer;
+    if (local == null) {
+      synchronized (this) {
+        local = writer;
+        if (local == null) {
+          var dateTime = LocalDateTime.now();
+          var filename = TIME_FORMATTER.format(dateTime) + ".log";
+          local = Files.newBufferedWriter(folder.resolve(filename), StandardCharsets.UTF_8);
+          this.writer = local;
+          return local;
+        }
+      }
     }
-
-    return writer;
+    return local;
   }
 
   @Override

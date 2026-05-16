@@ -49,7 +49,7 @@ public abstract class AbstractReusableWritableNetworkPacket<C extends Connection
   public boolean write(C connection, ByteBuffer buffer) {
 
     if (counter.get() < 1) {
-      log.warning(this, arg ->
+      log.warn(this, arg ->
           "Attempt to write is already finished packet:[%s] on thread:[%s]".formatted(arg, Thread.currentThread().getName()));
       return false;
     }

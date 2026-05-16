@@ -5,7 +5,6 @@ import static java.lang.Class.forName;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import javasabr.rlib.logger.api.LoggerManager;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -148,9 +147,7 @@ public final class ClassUtils {
     try {
       return unsafeCast(forName(name));
     } catch (ClassNotFoundException e) {
-      LoggerManager
-          .getDefaultLogger()
-          .warning(e);
+      Utils.printWarn(e);
       return null;
     }
   }
@@ -184,9 +181,7 @@ public final class ClassUtils {
     try {
       return unsafeCast(cs.getConstructor(classes));
     } catch (NoSuchMethodException | SecurityException e) {
-      LoggerManager
-          .getDefaultLogger()
-          .warning(e);
+      Utils.printWarn(e);
       return null;
     }
   }
@@ -204,9 +199,7 @@ public final class ClassUtils {
     try {
       return unsafeCast(forName(className).getConstructor(classes));
     } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-      LoggerManager
-          .getDefaultLogger()
-          .warning(e);
+      Utils.printWarn(e);
       return null;
     }
   }

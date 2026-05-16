@@ -14,11 +14,13 @@ import javasabr.rlib.collections.array.ArrayCollectors;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.common.util.Utils;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.experimental.FieldDefaults;
 
 /**
  * @author JavaSaBr
  */
+@CustomLog
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
 
@@ -50,7 +52,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
         URL url = urls.nextElement();
         InputStream is = url.openStream();
         if (is == null) {
-          LOGGER.warning(url, arg -> "not found input stream for the url " + arg);
+          log.warn(url, arg -> "not found input stream for the url " + arg);
           continue;
         }
 
@@ -72,7 +74,7 @@ public class ManifestClassPathScannerImpl extends ClassPathScannerImpl {
         }
 
       } catch (Exception exc) {
-        LOGGER.warning(exc);
+        log.warn(exc);
       }
     }
 

@@ -98,7 +98,7 @@ public abstract class AbstractNetworkPacketReader<
   @Override
   public void startRead() {
     if (connection.closed()) {
-      log.warning(connection.remoteAddress(), "[%s] Connection is already closed"::formatted);
+      log.warn(connection.remoteAddress(), "[%s] Connection is already closed"::formatted);
       return;
     } else if (!reading.compareAndSet(false, true)) {
       log.debug(connection.remoteAddress(), "[%s] Connection is already waiting for new data from channel"::formatted);
@@ -298,7 +298,7 @@ public abstract class AbstractNetworkPacketReader<
         log.debug(remoteAddress, readablePacket, "[%s] Finished reading data for packet:[%s]"::formatted);
         readPackets++;
       } else {
-        log.warning(remoteAddress, "[%s] Cannot create any instance of packet to read data"::formatted);
+        log.warn(remoteAddress, "[%s] Cannot create any instance of packet to read data"::formatted);
       }
     }
 

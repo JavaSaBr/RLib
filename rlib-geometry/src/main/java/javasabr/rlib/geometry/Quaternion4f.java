@@ -233,8 +233,7 @@ public class Quaternion4f {
   }
 
   @Override
-  public final boolean equals(Object obj) {
-
+  public final boolean equals(@Nullable Object obj) {
     if (this == obj) {
       return true;
     } else if (obj == null) {
@@ -242,9 +241,7 @@ public class Quaternion4f {
     } else if (getClass() != obj.getClass()) {
       return false;
     }
-
     Quaternion4f other = (Quaternion4f) obj;
-
     if (Float.floatToIntBits(w) != Float.floatToIntBits(other.w)) {
       return false;
     } else if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
@@ -254,7 +251,6 @@ public class Quaternion4f {
     } else if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
       return false;
     }
-
     return true;
   }
 

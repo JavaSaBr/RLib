@@ -111,7 +111,7 @@ public class ObservableUtils {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
       value = null;
     }
   }

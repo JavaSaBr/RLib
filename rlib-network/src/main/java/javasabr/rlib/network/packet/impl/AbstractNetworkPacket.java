@@ -19,7 +19,7 @@ public abstract class AbstractNetworkPacket<C extends Connection<C>> implements 
    * Handles packet data exception.
    */
   protected void handleException(C connection, ByteBuffer buffer, Exception exception) {
-    log.warning(exception);
+    log.warn(exception);
     if (!log.warningEnabled()) {
       return;
     }
@@ -34,7 +34,7 @@ public abstract class AbstractNetworkPacket<C extends Connection<C>> implements 
       hexDump = hexDump(buffer.array(), buffer.position(), buffer.limit());
     }
 
-    log.warning(connection.remoteAddress(), name(), buffer, hexDump,
+    log.warn(connection.remoteAddress(), name(), buffer, hexDump,
         "[%s] Hexdump for:[%s] -> buffer:[%s]\n[%s]"::formatted);
   }
 

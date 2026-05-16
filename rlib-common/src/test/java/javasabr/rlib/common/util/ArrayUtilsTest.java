@@ -880,7 +880,7 @@ public class ArrayUtilsTest {
   @Test
   void shouldReturnNullForNullArray() {
     // when:
-    String result = ArrayUtils.findAny((String[]) null, s -> true);
+    String result = ArrayUtils.findAny(null, s -> true);
     // then:
     assertThat(result).isNull();
   }

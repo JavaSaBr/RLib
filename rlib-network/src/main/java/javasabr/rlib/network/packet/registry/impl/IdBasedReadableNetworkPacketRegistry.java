@@ -91,7 +91,7 @@ public class IdBasedReadableNetworkPacketRegistry<
     for (int i = 0; i < length; i++) {
       Class<? extends R> cs = classes[i];
       if (!type.isAssignableFrom(cs)) {
-        log.warning(cs, type, "Found incompatibility packet's type:[%s] with type:[%s]"::formatted);
+        log.warn(cs, type, "Found incompatibility packet's type:[%s] with type:[%s]"::formatted);
         continue;
       }
 

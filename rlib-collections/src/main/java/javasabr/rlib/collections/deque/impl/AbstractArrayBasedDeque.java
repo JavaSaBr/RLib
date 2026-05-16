@@ -493,7 +493,7 @@ public abstract class AbstractArrayBasedDeque<E> implements Deque<E> {
     @Nullable E[] items = items();
 
     for (int i = head(), j = 0, limit = tail(); i <= limit; i++) {
-      //noinspection DataFlowIssue,SingleStatementInBlock,unchecked
+      //noinspection DataFlowIssue,unchecked
       container[j++] = (T) items[i];
     }
 

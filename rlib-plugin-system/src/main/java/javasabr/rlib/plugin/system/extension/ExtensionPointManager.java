@@ -4,9 +4,8 @@ import javasabr.rlib.collections.dictionary.Dictionary;
 import javasabr.rlib.collections.dictionary.DictionaryFactory;
 import javasabr.rlib.collections.dictionary.LockableRefToRefDictionary;
 import javasabr.rlib.common.util.ClassUtils;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.experimental.FieldDefaults;
 
 /**
@@ -14,11 +13,10 @@ import lombok.experimental.FieldDefaults;
  *
  * @since 10.0.0
  */
+@CustomLog
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class ExtensionPointManager {
-
-  private static final Logger LOGGER = LoggerManager.getLogger(ExtensionPointManager.class);
-
+  
   private static final ExtensionPointManager INSTANCE = new ExtensionPointManager();
 
   /**
@@ -67,7 +65,7 @@ public class ExtensionPointManager {
     try {
       ExtensionPoint<?> exists = extensionPoints.get(id);
       if (exists != null) {
-        LOGGER.warning(id, "Extension point:[%s] is already registered"::formatted);
+        log.warn(id, "Extension point:[%s] is already registered"::formatted);
         return ClassUtils.unsafeNNCast(exists);
       }
       var extensionPoint = new ExtensionPoint<T>();
@@ -116,7 +114,8 @@ public class ExtensionPointManager {
    * @return this manager
    * @since 10.0.0
    */
-  public <T> ExtensionPointManager addExtension(String id, T... extensions) {
+  @SafeVarargs
+  public final <T> ExtensionPointManager addExtension(String id, T... extensions) {
     getOrCreateExtensionPoint(id).register(extensions);
     return this;
   }

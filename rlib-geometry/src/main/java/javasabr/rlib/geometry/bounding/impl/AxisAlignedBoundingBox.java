@@ -7,6 +7,7 @@ import javasabr.rlib.geometry.Vector3fBuffer;
 import javasabr.rlib.geometry.bounding.Bounding;
 import javasabr.rlib.geometry.bounding.BoundingType;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -15,6 +16,7 @@ import lombok.experimental.FieldDefaults;
  * @author JavaSaBr
  */
 @Getter
+@CustomLog
 @Accessors(fluent = true)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class AxisAlignedBoundingBox extends AbstractBounding {
@@ -126,7 +128,7 @@ public class AxisAlignedBoundingBox extends AbstractBounding {
 
       }
       default: {
-        LOGGER.warning(new IllegalArgumentException("incorrect bounding type " + bounding.boundingType()));
+        log.warn(new IllegalArgumentException("incorrect bounding type " + bounding.boundingType()));
       }
     }
 

@@ -53,7 +53,7 @@ public class NumberedEnumMap<T extends Enum<T> & NumberedEnum<T>> {
     try {
       return values[number];
     } catch (IndexOutOfBoundsException e) {
-      log.warning(e.getMessage());
+      log.warn(e);
       return null;
     }
   }

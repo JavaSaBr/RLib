@@ -11,11 +11,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collector.Characteristics;
 import javasabr.rlib.common.util.ObjectUtils;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
-import lombok.experimental.FieldDefaults;
 import lombok.experimental.UtilityClass;
 
 /**
@@ -28,26 +23,21 @@ public class DictionaryCollectors {
 
   static final Set<Characteristics> CH_ID = unmodifiableSet(EnumSet.of(Characteristics.IDENTITY_FINISH));
 
-  @Getter
-  @Accessors(fluent = true)
-  @RequiredArgsConstructor
-  @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-  static class CollectorImpl<T, A, R> implements Collector<T, A, R> {
-
-    Supplier<A> supplier;
-    BiConsumer<A, T> accumulator;
-    BinaryOperator<A> combiner;
-    Function<A, R> finisher;
-    Set<Characteristics> characteristics;
-
-    CollectorImpl(
-        Supplier<A> supplier,
-        BiConsumer<A, T> accumulator,
-        BinaryOperator<A> combiner,
-        Set<Characteristics> characteristics) {
-      this(supplier, accumulator, combiner, a -> (R) a, characteristics);
+  record CollectorImpl<T, A, R>(
+      Supplier<A> supplier,
+      BiConsumer<A, T> accumulator,
+      BinaryOperator<A> combiner,
+      Function<A, R> finisher,
+      Set<Characteristics> characteristics) implements Collector<T, A, R> {
+  
+      CollectorImpl(
+          Supplier<A> supplier,
+          BiConsumer<A, T> accumulator,
+          BinaryOperator<A> combiner,
+          Set<Characteristics> characteristics) {
+        this(supplier, accumulator, combiner, a -> (R) a, characteristics);
+      }
     }
-  }
 
   /**
    * Returns a collector that accumulates elements into a dictionary using the element as the value.

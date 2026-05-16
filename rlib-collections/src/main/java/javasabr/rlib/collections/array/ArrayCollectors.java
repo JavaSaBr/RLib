@@ -20,10 +20,10 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ArrayCollectors {
 
-  private static Set<Characteristics> CH_ID =
+  private static final Set<Characteristics> CH_ID =
       unmodifiableSet(EnumSet.of(Characteristics.IDENTITY_FINISH));
 
-  private static Set<Characteristics> CH_ID_CONC = unmodifiableSet(EnumSet.of(
+  private static final Set<Characteristics> CH_ID_CONC = unmodifiableSet(EnumSet.of(
       Characteristics.IDENTITY_FINISH,
       Characteristics.CONCURRENT));
 
