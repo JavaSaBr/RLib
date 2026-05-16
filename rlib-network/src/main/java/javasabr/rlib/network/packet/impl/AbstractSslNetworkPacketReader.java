@@ -160,6 +160,9 @@ public abstract class AbstractSslNetworkPacketReader<
         case NEED_WRAP: {
           log.debug(remoteAddress, "[%s] Send command to wrap data"::formatted);
           packetWriter.accept(SslWrapRequestNetworkPacket.getInstance());
+          if (networkBuffer.hasRemaining()) {
+            return decryptAndRead(networkBuffer);
+          }
           NetworkUtils.cleanNetworkBuffer(networkBuffer);
           return SKIP_READ_PACKETS;
         }
@@ -204,6 +207,10 @@ public abstract class AbstractSslNetworkPacketReader<
       }
       switch (result.getStatus()) {
         case OK: {
+          if (result.bytesConsumed() == 0 && result.bytesProduced() == 0) {
+            log.debug(remoteAddress, "[%s] No progress during decryption, stop processing"::formatted);
+            return SKIP_READ_PACKETS;
+          }
           sslDataBuffer.flip();
           logDataAfterDecrypt(remoteAddress, sslDataBuffer);
           total += readPackets(sslDataBuffer, sslDataPendingBuffer);
