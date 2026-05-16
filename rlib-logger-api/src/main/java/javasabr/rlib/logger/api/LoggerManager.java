@@ -38,7 +38,9 @@ public class LoggerManager {
     }
 
     if (implementation == null) {
-      System.err.printf("ERROR: No any exist implementation of [%s], will be used null logger%n", LoggerFactory.class);
+      System.err.printf(
+          "ERROR: No any exist implementation of [%s], will be used null logger%n",
+          LoggerFactory.class);
       LOGGER_FACTORY = new NullLoggerFactory();
     } else {
       try {

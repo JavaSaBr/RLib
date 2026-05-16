@@ -18,7 +18,7 @@ import lombok.experimental.FieldDefaults;
 public enum LoggerLevel {
   INFO("INFO", "   ", false, true),
   DEBUG("DEBUG", "  ", false, false),
-  WARNING("WARNING", "", true, true),
+  WARNING("WARN", "", true, true),
   ERROR("ERROR", "  ", true, true);
 
   /**

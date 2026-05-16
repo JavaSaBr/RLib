@@ -26,7 +26,8 @@ public class LoggerTest {
         "DEBUG_msg8[str5, str6, str7]",
         "DEBUG_msg9[str8, 54, str9]",
         "DEBUG_msg10[str10, 37, 76]",
-        "DEBUG_msg11[str11, str12, str13, str14]");
+        "DEBUG_msg11[str11, str12, str13, str14]",
+        "DEBUG_msg12[str15, str16, 32]");
 
     Logger logger = new Logger() {
 
@@ -57,9 +58,10 @@ public class LoggerTest {
     logger.debug("str8", 54, "str9", "msg9[%s, %d, %s]"::formatted);
     logger.debug("str10", 37, 76, "msg10[%s, %d, %d]"::formatted);
     logger.debug("str11", "str12", "str13", "str14", "msg11[%s, %s, %s, %s]"::formatted);
+    logger.debug("str15", "str16", 32, "msg12[%s, %s, %d]"::formatted);
 
     // then:
-    assertThat(messages.size()).isEqualTo(11);
+    assertThat(messages.size()).isEqualTo(12);
     assertThat(messages).isEqualTo(expectedMessages);
   }
 
@@ -122,17 +124,18 @@ public class LoggerTest {
     // given:
     var messages = new ArrayList<String>();
     var expectedMessages = List.of(
-        "WARNING_msg1",
-        "WARNING_msg2[str1]",
-        "WARNING_msg3[13]",
-        "WARNING_msg4[str2, 15]",
-        "WARNING_msg5[14, str3]",
-        "WARNING_msg6[22, 32]",
-        "WARNING_msg7[str4, str5]",
-        "WARNING_msg8[str5, str6, str7]",
-        "WARNING_msg9[str8, 54, str9]",
-        "WARNING_msg10[str10, 37, 76]",
-        "WARNING_msg11[str11, str12, str13, str14]");
+        "WARN_msg1",
+        "WARN_msg2[str1]",
+        "WARN_msg3[13]",
+        "WARN_msg4[str2, 15]",
+        "WARN_msg5[14, str3]",
+        "WARN_msg6[22, 32]",
+        "WARN_msg7[str4, str5]",
+        "WARN_msg8[str5, str6, str7]",
+        "WARN_msg9[str8, 54, str9]",
+        "WARN_msg10[str10, 37, 76]",
+        "WARN_msg11[str11, str12, str13, str14]",
+        "WARN_msg12[str15, str16, 22]");
 
     Logger logger = new Logger() {
 
@@ -152,20 +155,21 @@ public class LoggerTest {
     };
 
     // when:
-    logger.warning("msg1");
-    logger.warning("str1", "msg2[%s]"::formatted);
-    logger.warning(13, "msg3[%d]"::formatted);
-    logger.warning("str2", 15, "msg4[%s, %d]"::formatted);
-    logger.warning(14, "str3", "msg5[%d, %s]"::formatted);
-    logger.warning(22, 32, "msg6[%d, %d]"::formatted);
-    logger.warning("str4", "str5", "msg7[%s, %s]"::formatted);
-    logger.warning("str5", "str6", "str7", "msg8[%s, %s, %s]"::formatted);
-    logger.warning("str8", 54, "str9", "msg9[%s, %d, %s]"::formatted);
-    logger.warning("str10", 37, 76, "msg10[%s, %d, %d]"::formatted);
-    logger.warning("str11", "str12", "str13", "str14", "msg11[%s, %s, %s, %s]"::formatted);
+    logger.warn("msg1");
+    logger.warn("str1", "msg2[%s]"::formatted);
+    logger.warn(13, "msg3[%d]"::formatted);
+    logger.warn("str2", 15, "msg4[%s, %d]"::formatted);
+    logger.warn(14, "str3", "msg5[%d, %s]"::formatted);
+    logger.warn(22, 32, "msg6[%d, %d]"::formatted);
+    logger.warn("str4", "str5", "msg7[%s, %s]"::formatted);
+    logger.warn("str5", "str6", "str7", "msg8[%s, %s, %s]"::formatted);
+    logger.warn("str8", 54, "str9", "msg9[%s, %d, %s]"::formatted);
+    logger.warn("str10", 37, 76, "msg10[%s, %d, %d]"::formatted);
+    logger.warn("str11", "str12", "str13", "str14", "msg11[%s, %s, %s, %s]"::formatted);
+    logger.warn("str15", "str16", 22, "msg12[%s, %s, %d]"::formatted);
 
     // then:
-    assertThat(messages.size()).isEqualTo(11);
+    assertThat(messages.size()).isEqualTo(12);
     assertThat(messages).isEqualTo(expectedMessages);
   }
 

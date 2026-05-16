@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import javasabr.rlib.collections.array.ArrayFactory;
+import javasabr.rlib.collections.array.ArrayIterationFunctions;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
@@ -31,7 +32,9 @@ public class DefaultLoggerService implements LoggerFactory, LoggerService {
 
   ConcurrentMap<String, Logger> loggers;
   MutableArray<LoggerListener> listeners;
+  ArrayIterationFunctions<LoggerListener> listenerIterations;
   MutableArray<Writer> writers;
+  ArrayIterationFunctions<Writer> writerIterations;
 
   Logger logger;
   DateTimeFormatter timeFormatter;
@@ -42,7 +45,9 @@ public class DefaultLoggerService implements LoggerFactory, LoggerService {
     this.logger = new DefaultLogger("", this);
     this.timeFormatter = DateTimeFormatter.ofPattern("d.MM.yyyy HH:mm:ss:SSS");
     this.listeners = ArrayFactory.copyOnModifyArray(LoggerListener.class);
+    this.listenerIterations = listeners.iterations();
     this.writers = ArrayFactory.copyOnModifyArray(Writer.class);
+    this.writerIterations = writers.iterations();
     this.override = new int[LOGGER_LEVELS.length];
     Arrays.fill(override, NOT_CONFIGURE);
   }
@@ -114,31 +119,25 @@ public class DefaultLoggerService implements LoggerFactory, LoggerService {
 
   @Override
   public void write(LoggerLevel level, String loggerName, String logMessage) {
-
     var timestamp = timeFormatter.format(LocalDateTime.now());
-    var resultMessage = level.title() + level.offset() + ' ' + timestamp + ' ' + loggerName + ": " + logMessage;
-
+    var resultMessage = level.title() 
+        + level.offset() + ' ' 
+        + timestamp + ' '
+        + loggerName + ": "
+        + logMessage;
     write(level, resultMessage);
   }
 
   private void write(LoggerLevel level, String resultMessage) {
-
-    listeners
-        .iterations()
-        .forEach(resultMessage, LoggerListener::println);
-    writers
-        .iterations()
-        .forEach(resultMessage, DefaultLoggerService::append);
-
+    listenerIterations.forEach(resultMessage, LoggerListener::println);
+    writerIterations.forEach(resultMessage, DefaultLoggerService::append);
     switch (level) {
       case INFO, DEBUG -> System.out.println(resultMessage);
       case ERROR, WARNING -> System.err.println(resultMessage);
     }
-
     if (!level.forceFlush()) {
       return;
     }
-
     listeners.forEach(LoggerListener::flush);
     writers.forEach(DefaultLoggerService::flush);
   }
