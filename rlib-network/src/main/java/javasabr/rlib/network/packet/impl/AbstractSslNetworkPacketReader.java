@@ -208,7 +208,8 @@ public abstract class AbstractSslNetworkPacketReader<
       switch (result.getStatus()) {
         case OK: {
           if (result.bytesConsumed() == 0 && result.bytesProduced() == 0) {
-            log.debug(remoteAddress, "[%s] No progress during decryption, stop processing"::formatted);
+            log.debug(remoteAddress, "[%s] No progress during decryption, skip read packets"::formatted);
+            NetworkUtils.cleanNetworkBuffer(receivedBuffer);
             return SKIP_READ_PACKETS;
           }
           sslDataBuffer.flip();
