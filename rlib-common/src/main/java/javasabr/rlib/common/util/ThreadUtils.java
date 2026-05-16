@@ -14,7 +14,8 @@ public class ThreadUtils {
    * Sleeps the current thread for the specified time, ignoring interrupts.
    *
    * @param time the time to sleep in milliseconds
-   * @return true if it was interrupted.
+   * @return true if it was interrupted
+   * @since 10.0.0
    */
   public static boolean sleep(long time) {
     try {

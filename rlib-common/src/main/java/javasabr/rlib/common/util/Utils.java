@@ -237,12 +237,24 @@ public final class Utils {
     }
   }
 
+  /**
+   * Logs warning details from the exception to the default logger.
+   *
+   * @param exception the exception to log
+   * @since 10.0.0
+   */
   public static void printWarn(Exception exception) {
     LoggerManager
         .getDefaultLogger()
         .warn(exception);
   }
 
+  /**
+   * Logs a warning message to the default logger.
+   *
+   * @param message the message to log
+   * @since 10.0.0
+   */
   public static void printWarn(String message) {
     LoggerManager
         .getDefaultLogger()

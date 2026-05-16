@@ -81,6 +81,12 @@ public class OperatingSystemResolver {
     LINUX_VERSION_NAMES.addAll(Arrays.asList("Linux", "SunOS"));
   }
 
+  /**
+   * Resolves details of the current operating system.
+   *
+   * @return resolved operating system details
+   * @since 10.0.0
+   */
   public OperatingSystem resolve() {
     if (NAME.startsWith("Mac")) {
       return new OperatingSystem(NAME, VERSION, ARCH, resolveMacDistribution());

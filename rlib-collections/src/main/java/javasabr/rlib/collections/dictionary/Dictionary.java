@@ -128,8 +128,12 @@ public interface Dictionary<K, V> extends Iterable<V> {
 
   /**
    * Collects part of values from this dictionary with starting from index with provided soft limit.
-   * 
+   *
+   * @param container the array to add values to
+   * @param startIndex the index of first value to collect
+   * @param limit the soft limit of values to collect
    * @return the index which can be used as startIndex for next iteration or -1
+   * @since 10.0.0
    */
   int values(MutableArray<V> container, int startIndex, int limit);
   
