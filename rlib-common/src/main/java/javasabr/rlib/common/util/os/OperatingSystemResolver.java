@@ -221,8 +221,8 @@ public class OperatingSystemResolver {
   private String findFile(Path directory, String postfix) {
     try (var stream = Files.list(directory)) {
       return stream
-          .filter(path -> path.endsWith(postfix))
-          .map(path -> path.getFileName().toString())
+          .map(Path::toString)
+          .filter(fileName -> fileName.endsWith(postfix))
           .findFirst()
           .orElse(null);
     } catch (IOException e) {
