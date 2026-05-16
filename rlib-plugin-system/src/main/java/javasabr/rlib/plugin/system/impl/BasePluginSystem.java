@@ -30,17 +30,15 @@ import javasabr.rlib.collections.dictionary.RefToRefDictionary;
 import javasabr.rlib.common.util.ClassUtils;
 import javasabr.rlib.common.util.Utils;
 import javasabr.rlib.io.util.FileUtils;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.plugin.system.ConfigurablePluginSystem;
 import javasabr.rlib.plugin.system.Plugin;
 import javasabr.rlib.plugin.system.PluginContainer;
-import javasabr.rlib.plugin.system.PluginSystem;
 import javasabr.rlib.plugin.system.Version;
 import javasabr.rlib.plugin.system.annotation.PluginDescription;
 import javasabr.rlib.plugin.system.exception.InitializePluginException;
 import javasabr.rlib.plugin.system.exception.PluginException;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -49,11 +47,10 @@ import org.jspecify.annotations.Nullable;
 /**
  * @author JavaSaBr
  */
+@CustomLog
 @Accessors(fluent = true)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class BasePluginSystem implements ConfigurablePluginSystem {
-
-  protected static final Logger LOGGER = LoggerManager.getLogger(PluginSystem.class);
 
     protected record State(
       Array<PluginContainer> containers,
@@ -113,7 +110,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
   }
 
   protected BasePluginSystem preLoadImpl(Executor executor) {
-    LOGGER.debug("Start pre-loading all plugins...");
+    log.debug("Start pre-loading all plugins...");
 
     State current = state.get();
     Array<CompletionStage<Array<PluginContainer>>> futures = Array.optionals(
@@ -139,8 +136,8 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         RefToRefDictionary.empty());
 
     if (state.compareAndSet(current, newState)) {
-      LOGGER.debug(containers, "Pre-loaded:%s"::formatted);
-      LOGGER.debug("All plugins were pre-loaded");
+      log.debug(containers, "Pre-loaded:%s"::formatted);
+      log.debug("All plugins were pre-loaded");
       return this;
     }
 
@@ -163,7 +160,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
   }
 
   protected BasePluginSystem initializeImpl(Executor executor) {
-    LOGGER.debug("Start loading all plugins...");
+    log.debug("Start loading all plugins...");
 
     var current = state.get();
     var plugins = current.containers
@@ -181,7 +178,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
         plugins);
 
     if (state.compareAndSet(current, newState)) {
-      LOGGER.debug("All plugins were initialized");
+      log.debug("All plugins were initialized");
       return this;
     }
 
@@ -195,7 +192,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
   protected Plugin createPluginClassImpl(PluginContainer container) {
     var pluginClass = container.pluginClass();
 
-    LOGGER.debug(pluginClass, "Start creating plugin:[%s]"::formatted);
+    log.debug(pluginClass, "Start creating plugin:[%s]"::formatted);
 
     Constructor<Plugin> constructor = ClassUtils.tryGetConstructor(pluginClass, PluginContainer.class);
     if (constructor == null) {
@@ -244,7 +241,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
       throw new UncheckedIOException(e);
     }
 
-    LOGGER.debug(realPath, "Try to pre-load plugins from the folder:[%s]"::formatted);
+    log.debug(realPath, "Try to pre-load plugins from the folder:[%s]"::formatted);
     return supplyAsync(
         () -> FileUtils
             .stream(realPath)
@@ -298,18 +295,18 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     try {
       scanner.scan();
     } catch (Throwable throwable) {
-      LOGGER.warning(throwable);
+      log.warn(throwable);
       return null;
     }
 
     Array<Class<Plugin>> pluginImplementations = scanner.findImplementations(Plugin.class);
     if (pluginImplementations.isEmpty()) {
-      LOGGER.warning(
+      log.warn(
           directory,
           "Can't load plugin from directory:[%s] because can't find any implementation of plugin interface"::formatted);
       return null;
     } else if (pluginImplementations.size() > 1) {
-      LOGGER.warning(
+      log.warn(
           directory,
           "Can't load plugin from directory:[%s] because found more than 1 implementation of plugin interface"::formatted);
       return null;
@@ -318,7 +315,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     Class<Plugin> pluginClass = notNull(pluginImplementations.first());
     PluginDescription description = pluginClass.getAnnotation(PluginDescription.class);
     if (description == null) {
-      LOGGER.warning(
+      log.warn(
           directory,
           pluginClass,
           "Can't load plugin from directory:[%s] because can't find description on class:[%s]"::formatted);
@@ -329,7 +326,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     if (appVersion != null) {
       var minVersion = new Version(description.minAppVersion());
       if (minVersion.compareTo(appVersion) > 0) {
-        LOGGER.warning(
+        log.warn(
             description.id(),
             description.minAppVersion(),
             "Can't load plugin:[%s] because it requires minimum app version:[%s]"::formatted);
@@ -406,7 +403,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     }
 
     State current = state.get();
-    String folderName = FileUtils.getNameWithoutExtension(file);
+    String folderName = Objects.requireNonNull(FileUtils.getNameWithoutExtension(file));
     Path pluginFolder = installPath.resolve(folderName);
 
     if (Files.exists(pluginFolder)) {
@@ -430,7 +427,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     }
 
     Class<Plugin> pluginClass = container.pluginClass();
-    Constructor<Plugin> constructor = ClassUtils.<Plugin>tryGetConstructor(pluginClass, PluginContainer.class);
+    Constructor<Plugin> constructor = ClassUtils.tryGetConstructor(pluginClass, PluginContainer.class);
     if (constructor == null) {
       throw new InitializePluginException(
           "Not found base constructor in class:[%s]".formatted(pluginClass),
@@ -476,7 +473,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
       return plugin;
     }
 
-    LOGGER.warning("Detected concurrent attempt to install plugin:[%s], trying again...".formatted(pluginClass));
+    log.warn("Detected concurrent attempt to install plugin:[%s], trying again...".formatted(pluginClass));
     return installPlugin(file, needInitialize);
   }
 
@@ -487,7 +484,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     String pluginId = plugin.id();
     PluginContainer pluginContainer = current.idToContainer.get(pluginId);
     if (pluginContainer == null) {
-      LOGGER.warning("Plugin:[%s] is already removed".formatted(plugin.name()));
+      log.warn("Plugin:[%s] is already removed".formatted(plugin.name()));
       return false;
     }
 
@@ -510,7 +507,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
       return true;
     }
 
-    LOGGER.warning("Detected concurrent attempt to remove plugin:[%s], trying again...".formatted(plugin.name()));
+    log.warn("Detected concurrent attempt to remove plugin:[%s], trying again...".formatted(plugin.name()));
     return removePlugin(plugin);
   }
 }

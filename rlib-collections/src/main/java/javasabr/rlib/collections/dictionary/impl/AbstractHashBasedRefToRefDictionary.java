@@ -14,6 +14,7 @@ import javasabr.rlib.collections.array.UnsafeMutableArray;
 import javasabr.rlib.collections.dictionary.LinkedHashEntry;
 import javasabr.rlib.collections.dictionary.RefToRefDictionary;
 import javasabr.rlib.collections.dictionary.UnsafeRefToRefDictionary;
+import javasabr.rlib.collections.dictionary.impl.util.LinkedEntryUtils;
 import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends LinkedHashEntry<K, V, E>>
@@ -122,17 +123,14 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
     if (isEmpty()) {
       return container;
     }
-
     UnsafeMutableArray<K> unsafe = container.asUnsafe();
     unsafe.prepareForSize(container.size() + size());
-
     for (E entry : entries()) {
       while (entry != null) {
         unsafe.unsafeAdd(entry.key());
         entry = entry.next();
       }
     }
-
     return container;
   }
 
@@ -147,38 +145,17 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
 
   @Override
   public <C extends Collection<V>> C values(C container) {
-    if (isEmpty()) {
-      return container;
-    }
-    for (E entry : entries()) {
-      while (entry != null) {
-        V value = entry.value();
-        if (value != null) {
-          container.add(value);
-        }
-        entry = entry.next();
-      }
-    }
-    return container;
+    return LinkedEntryUtils.values(entries(), size(), container);
   }
 
   @Override
   public MutableArray<V> values(MutableArray<V> container) {
-    if (isEmpty()) {
-      return container;
-    }
-    UnsafeMutableArray<V> unsafe = container.asUnsafe();
-    unsafe.prepareForSize(container.size() + size());
-    for (E entry : entries()) {
-      while (entry != null) {
-        V value = entry.value();
-        if (value != null) {
-          unsafe.unsafeAdd(value);
-        }
-        entry = entry.next();
-      }
-    }
-    return container;
+    return LinkedEntryUtils.values(entries(), size(), container);
+  }
+
+  @Override
+  public int values(MutableArray<V> container, int startIndex, int limit) {
+    return LinkedEntryUtils.values(entries(), size(), container, startIndex, limit);
   }
 
   @Override
@@ -193,17 +170,15 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
     } else if (size() != another.size()) {
       return false;
     }
-
-    RefToRefDictionary<Object, Object> toCompare = (RefToRefDictionary<Object, Object>) obj;
-
+    @SuppressWarnings("unchecked") 
+    var toCompare = (RefToRefDictionary<Object, Object>) obj;
     for (E entry : entries()) {
       while (entry != null) {
         if (!toCompare.containsKey(entry.key())) {
           return false;
         }
         V value = entry.value();
-        Object anotherValue = toCompare.get(entry.key());
-        if (!Objects.equals(value, anotherValue)) {
+        if (!Objects.equals(value, toCompare.get(entry.key()))) {
           return false;
         }
         entry = entry.next();
@@ -214,35 +189,9 @@ public abstract class AbstractHashBasedRefToRefDictionary<K, V, E extends Linked
 
   @Override
   public String toString() {
-
-    if (isEmpty()) {
-      return "[]";
-    }
-
-    StringBuilder builder = new StringBuilder("[");
-
-    for (E entry : entries()) {
-      while (entry != null) {
-        builder
-            .append('\'')
-            .append(entry.key())
-            .append('\'')
-            .append(":")
-            .append('\'')
-            .append(entry.value())
-            .append('\'')
-            .append(", ");
-
-        entry = entry.next();
-      }
-    }
-
-    if (builder.length() > 1) {
-      builder.delete(builder.length() - 2, builder.length());
-    }
-
-    builder.append("]");
-
-    return builder.toString();
+    return LinkedEntryUtils.toString(
+        entries(), 
+        size(), 
+        (builder, entry) -> builder.append(entry.key()));
   }
 }

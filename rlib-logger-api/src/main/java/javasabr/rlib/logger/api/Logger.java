@@ -105,7 +105,7 @@ public interface Logger {
    * Factory for creating log messages with an object, an int, and another object argument.
    *
    * @param <A> the type of the first object argument
-   * @param <C> the type of the second object argument
+   * @param <C> the type of the third object argument
    * @since 10.0.0
    */
   @FunctionalInterface
@@ -113,6 +113,20 @@ public interface Logger {
 
     @NonNull
     String make(A arg1, int arg2, C arg3);
+  }
+
+  /**
+   * Factory for creating log messages with two objects and one int argument.
+   *
+   * @param <A> the type of the first object argument
+   * @param <B> the type of the second object argument
+   * @since 10.0.0
+   */
+  @FunctionalInterface
+  interface N2IntFactory<A, B> {
+
+    @NonNull
+    String make(A arg1, B arg2, int arg3);
   }
 
   /**
@@ -220,6 +234,15 @@ public interface Logger {
   }
 
   default <A, B, C> void debug(A arg1, B arg2, C arg3, @NonNull N3Factory<A, B, C> factory) {
+    print(LoggerLevel.DEBUG, arg1, arg2, arg3, factory);
+  }
+
+  /**
+   * Prints a debug message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A, B> void debug(A arg1, B arg2, int arg3, @NonNull N2IntFactory<A, B> factory) {
     print(LoggerLevel.DEBUG, arg1, arg2, arg3, factory);
   }
 
@@ -366,50 +389,186 @@ public interface Logger {
    */
   default void resetToDefault(@NonNull LoggerLevel level) {}
 
+  /**
+   * Prints a warning message.
+   *
+   * @param message the message to print
+   * @since 10.0.0
+   */
+  default void warn(@NonNull String message) {
+    print(LoggerLevel.WARNING, message);
+  }
+
+  @Deprecated(forRemoval = true)
   default void warning(@NonNull String message) {
     print(LoggerLevel.WARNING, message);
   }
 
+  /**
+   * Prints a warning exception.
+   *
+   * @param exception the exception to print
+   * @since 10.0.0
+   */
+  default void warn(@NonNull Throwable exception) {
+    print(LoggerLevel.WARNING, exception);
+  }
+
+  @Deprecated(forRemoval = true)
   default void warning(@NonNull Throwable exception) {
     print(LoggerLevel.WARNING, exception);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A> void warn(A arg1, @NonNull N1Factory<A> factory) {
+    print(LoggerLevel.WARNING, arg1, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default <A> void warning(A arg1, @NonNull N1Factory<A> factory) {
     print(LoggerLevel.WARNING, arg1, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default void warn(int arg1, @NonNull IntFactory factory) {
+    print(LoggerLevel.WARNING, arg1, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default void warning(int arg1, @NonNull IntFactory factory) {
     print(LoggerLevel.WARNING, arg1, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A, B> void warn(A arg1, B arg2, @NonNull N2Factory<A, B> factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default <A, B> void warning(A arg1, B arg2, @NonNull N2Factory<A, B> factory) {
     print(LoggerLevel.WARNING, arg1, arg2, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default void warn(int arg1, int arg2, @NonNull Int2Factory factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default void warning(int arg1, int arg2, @NonNull Int2Factory factory) {
     print(LoggerLevel.WARNING, arg1, arg2, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <B> void warn(int arg1, B arg2, @NonNull IntN1Factory<B> factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default <B> void warning(int arg1, B arg2, @NonNull IntN1Factory<B> factory) {
     print(LoggerLevel.WARNING, arg1, arg2, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A> void warn(A arg1, int arg2, @NonNull N1IntFactory<A> factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default <A> void warning(A arg1, int arg2, @NonNull N1IntFactory<A> factory) {
     print(LoggerLevel.WARNING, arg1, arg2, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A, B, C> void warn(A arg1, B arg2, C arg3, @NonNull N3Factory<A, B, C> factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, arg3, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default <A, B, C> void warning(A arg1, B arg2, C arg3, @NonNull N3Factory<A, B, C> factory) {
     print(LoggerLevel.WARNING, arg1, arg2, arg3, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A, B> void warn(A arg1, B arg2, int arg3, @NonNull N2IntFactory<A, B> factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, arg3, factory);
+  }
+
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A, C> void warn(A arg1, int arg2, C arg3, @NonNull N1IntN1Factory<A, C> factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, arg3, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default <A, C> void warning(A arg1, int arg2, C arg3, @NonNull N1IntN1Factory<A, C> factory) {
     print(LoggerLevel.WARNING, arg1, arg2, arg3, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A> void warn(A arg1, int arg2, int arg3, @NonNull N1Int2Factory<A> factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, arg3, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default <A> void warning(A arg1, int arg2, int arg3, @NonNull N1Int2Factory<A> factory) {
     print(LoggerLevel.WARNING, arg1, arg2, arg3, factory);
   }
 
+  /**
+   * Prints a warning message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A, B, C, D> void warn(
+      A arg1,
+      B arg2,
+      C arg3,
+      D arg4,
+      @NonNull N4Factory<A, B, C, D> factory) {
+    print(LoggerLevel.WARNING, arg1, arg2, arg3, arg4, factory);
+  }
+
+  @Deprecated(forRemoval = true)
   default <A, B, C, D> void warning(
       A arg1,
       B arg2,
@@ -481,6 +640,22 @@ public interface Logger {
       B arg2,
       C arg3,
       @NonNull N3Factory<A, B, C> factory) {
+    if (enabled(level)) {
+      print(level, factory.make(arg1, arg2, arg3));
+    }
+  }
+
+  /**
+   * Prints a level-specific message produced by the provided factory.
+   *
+   * @since 10.0.0
+   */
+  default <A, B> void print(
+      @NonNull LoggerLevel level,
+      A arg1,
+      B arg2,
+      int arg3,
+      @NonNull N2IntFactory<A, B> factory) {
     if (enabled(level)) {
       print(level, factory.make(arg1, arg2, arg3));
     }

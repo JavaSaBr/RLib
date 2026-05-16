@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+import javasabr.rlib.collections.array.ArrayFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -205,6 +206,36 @@ class MutableRefToRefDictionaryTest {
     assertThat(dictionary.containsKey("key55")).isFalse();
     assertThat(dictionary.get("key10")).isNull();
     assertThat(dictionary.size()).isEqualTo(5);
+  }
+
+  @ParameterizedTest
+  @MethodSource("generateDictionaries")
+  void shouldIterateAllValuesUsingPartIndex(MutableRefToRefDictionary<String, String> dictionary) {
+    // given:
+    var expectedValues = ArrayFactory.mutableArray(String.class);
+    for (int i = 10; i < 1000; i += 8) {
+      var value = "value_" + i;
+      var key = "key_" + i;
+      expectedValues.add(value);
+      dictionary.put(key, value);
+    }
+
+    expectedValues.sort();
+    
+    var accumulatedValues = ArrayFactory.mutableArray(String.class);
+    var extractedPart = ArrayFactory.mutableArray(String.class);
+
+    // when:
+    int partIndex = 0;
+    while (partIndex >= 0) {
+      extractedPart.clear();
+      partIndex = dictionary.values(extractedPart, partIndex, 20);
+      accumulatedValues.addAll(extractedPart);
+    }
+    accumulatedValues.sort();
+    
+    // then:
+    assertThat(accumulatedValues).isEqualTo(expectedValues);
   }
 
   private static Stream<Arguments> generateDictionaries() {

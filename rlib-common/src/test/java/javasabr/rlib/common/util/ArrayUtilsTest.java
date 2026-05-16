@@ -503,7 +503,7 @@ public class ArrayUtilsTest {
     // given:
     String[] array = {"apple", "banana", "cherry"};
     // when:
-    int index = ArrayUtils.indexOf(array, "an", (element, arg) -> element.contains(arg));
+    int index = ArrayUtils.indexOf(array, "an", String::contains);
     // then:
     assertThat(index).isEqualTo(1);
   }
@@ -513,7 +513,7 @@ public class ArrayUtilsTest {
     // given:
     String[] array = {"apple", "banana", "avocado", "apricot"};
     // when:
-    int index = ArrayUtils.indexOf(array, "a", (e, arg) -> e.startsWith(arg), 1, 4);
+    int index = ArrayUtils.indexOf(array, "a", String::startsWith, 1, 4);
     // then:
     assertThat(index).isEqualTo(2);
   }
@@ -880,7 +880,7 @@ public class ArrayUtilsTest {
   @Test
   void shouldReturnNullForNullArray() {
     // when:
-    String result = ArrayUtils.findAny((String[]) null, s -> true);
+    String result = ArrayUtils.findAny(null, s -> true);
     // then:
     assertThat(result).isNull();
   }
@@ -890,7 +890,7 @@ public class ArrayUtilsTest {
     // given:
     String[] array = {"apple", "banana", "cherry"};
     // when:
-    String result = ArrayUtils.findAny(array, "an", (s, arg) -> s.contains(arg));
+    String result = ArrayUtils.findAny(array, "an", String::contains);
     // then:
     assertThat(result).isEqualTo("banana");
   }
@@ -900,7 +900,7 @@ public class ArrayUtilsTest {
     // given:
     String[] array = {"ab", "abc", "abcd"};
     // when:
-    Integer result = ArrayUtils.findAny(array, 3, String::length, (len, target) -> len.equals(target));
+    Integer result = ArrayUtils.findAny(array, 3, String::length, Integer::equals);
     // then:
     assertThat(result).isEqualTo(3);
   }

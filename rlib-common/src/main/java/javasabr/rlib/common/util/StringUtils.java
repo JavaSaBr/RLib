@@ -155,27 +155,18 @@ public class StringUtils {
    * @return the stack trace.
    */
   public static String toString(Throwable throwable, int deepLevel) {
-
     var writer = new StringWriter();
     var printWriter = new PrintWriter(writer);
-
     throwable.printStackTrace(printWriter);
-
     var stackTrace = new StringBuilder(writer.toString());
-
     int level = 0;
-
     for (var cause = throwable.getCause(); cause != null && level < deepLevel; cause = cause.getCause(), level++) {
-
       writer = new StringWriter();
       printWriter = new PrintWriter(writer);
-
       cause.printStackTrace(printWriter);
-
       stackTrace.append("\n caused by ");
-      stackTrace.append(writer.toString());
+      stackTrace.append(writer);
     }
-
     return stackTrace.toString();
   }
 

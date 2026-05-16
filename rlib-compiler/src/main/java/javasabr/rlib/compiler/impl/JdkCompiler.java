@@ -8,8 +8,6 @@ import javasabr.rlib.collections.array.ArrayCollectors;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.compiler.Compiler;
 import javasabr.rlib.io.util.FileUtils;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import javax.tools.Diagnostic;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -17,6 +15,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -26,11 +25,10 @@ import org.jspecify.annotations.Nullable;
  * @author JavaSaBr
  */
 @Getter
+@CustomLog
 @Accessors(fluent = true)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class JdkCompiler implements Compiler {
-
-  private static final Logger LOGGER = LoggerManager.getLogger(JdkCompiler.class);
 
   private static final Array<String> EMPTY_OPTIONS = Array.empty(String.class);
   private static final Class<?>[] EMPTY_CLASSES = new Class[0];
@@ -103,7 +101,7 @@ public class JdkCompiler implements Compiler {
       @Nullable Array<String> options,
       Array<JavaFileObject> sources) {
 
-    LOGGER.debug(sources.size(), "Start compiling [%s] source files..."::formatted);
+    log.debug(sources.size(), "Start compiling [%s] source files..."::formatted);
 
     JavaCompiler compiler = compiler();
     CompiledJavaFileManager fileManager = fileManager();
@@ -116,24 +114,24 @@ public class JdkCompiler implements Compiler {
 
       Array<Diagnostic<? extends JavaFileObject>> diagnostics = listener.diagnostics();
       if (showDiagnostic() && !diagnostics.isEmpty()) {
-        LOGGER.warning("Compilation messages:");
+        log.warn("Compilation messages:");
         for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics) {
-          LOGGER.warning(String.valueOf(diagnostic));
+          log.warn(String.valueOf(diagnostic));
         }
       }
 
       MutableArray<Class<?>> result = MutableArray.ofType(Class.class);
       String[] classNames = fileManager.classNames();
 
-      LOGGER.debug(classNames.length, "Got [%s] compiled class names"::formatted);
+      log.debug(classNames.length, "Got [%s] compiled class names"::formatted);
 
       for (String className : classNames) {
-        LOGGER.debug(className, "Try to load class:[%s]"::formatted);
+        log.debug(className, "Try to load class:[%s]"::formatted);
         try {
           Class<?> klass = Class.forName(className, false, loader);
           result.add(klass);
         } catch (ClassNotFoundException e) {
-          LOGGER.warning(e);
+          log.warn(e);
         }
       }
 

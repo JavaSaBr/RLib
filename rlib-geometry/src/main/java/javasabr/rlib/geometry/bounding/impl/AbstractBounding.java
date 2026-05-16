@@ -6,9 +6,8 @@ import javasabr.rlib.geometry.Vector3f;
 import javasabr.rlib.geometry.Vector3fBuffer;
 import javasabr.rlib.geometry.bounding.Bounding;
 import javasabr.rlib.geometry.bounding.BoundingType;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -17,12 +16,11 @@ import lombok.experimental.FieldDefaults;
  * @author JavaSaBr
  */
 @Getter
+@CustomLog
 @Accessors(fluent = true)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class AbstractBounding implements Bounding {
-
-  protected static final Logger LOGGER = LoggerManager.getLogger(Bounding.class);
-
+  
   Vector3f center, offset;
 
   protected AbstractBounding(Vector3f center, Vector3f offset) {

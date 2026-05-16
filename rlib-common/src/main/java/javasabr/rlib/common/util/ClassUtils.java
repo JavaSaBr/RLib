@@ -5,7 +5,6 @@ import static java.lang.Class.forName;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import javasabr.rlib.logger.api.LoggerManager;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -144,13 +143,12 @@ public final class ClassUtils {
    * @return the class or null.
    * @since 9.8.0
    */
-  public static <T> @Nullable Class<T> tryGetClass(String name) {
+  @Nullable
+  public static <T> Class<T> tryGetClass(String name) {
     try {
       return unsafeCast(forName(name));
     } catch (ClassNotFoundException e) {
-      LoggerManager
-          .getDefaultLogger()
-          .warning(e);
+      Utils.printWarn(e);
       return null;
     }
   }
@@ -180,13 +178,12 @@ public final class ClassUtils {
    * @return the constructor or null.
    * @since 9.8.0
    */
-  public static <T> @Nullable Constructor<T> tryGetConstructor(Class<?> cs, @Nullable Class<?>... classes) {
+  @Nullable
+  public static <T> Constructor<T> tryGetConstructor(Class<?> cs, @Nullable Class<?>... classes) {
     try {
       return unsafeCast(cs.getConstructor(classes));
     } catch (NoSuchMethodException | SecurityException e) {
-      LoggerManager
-          .getDefaultLogger()
-          .warning(e);
+      Utils.printWarn(e);
       return null;
     }
   }
@@ -200,13 +197,12 @@ public final class ClassUtils {
    * @return the constructor or null.
    * @since 9.8.0
    */
-  public static <T> @Nullable Constructor<T> tryGetConstructor(String className, Class<?>... classes) {
+  @Nullable
+  public static <T> Constructor<T> tryGetConstructor(String className, Class<?>... classes) {
     try {
       return unsafeCast(forName(className).getConstructor(classes));
     } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-      LoggerManager
-          .getDefaultLogger()
-          .warning(e);
+      Utils.printWarn(e);
       return null;
     }
   }
@@ -236,13 +232,11 @@ public final class ClassUtils {
    * @return true if this class has constructor wth the arguments.
    */
   public static boolean hasConstructor(Class<?> cs, Class<?>... classes) {
-
     for (var constructor : cs.getConstructors()) {
       if (Arrays.equals(constructor.getParameterTypes(), classes)) {
         return true;
       }
     }
-
     return false;
   }
 
@@ -253,13 +247,11 @@ public final class ClassUtils {
    * @return true if this class has empty constructor.
    */
   public static boolean hasConstructor(Class<?> cs) {
-
     for (var constructor : cs.getConstructors()) {
       if (constructor.getParameterCount() == 0) {
         return true;
       }
     }
-
     return false;
   }
 
@@ -273,7 +265,8 @@ public final class ClassUtils {
   public static <T> T newInstance(Class<?> cs) {
     try {
       return unsafeNNCast(cs.getDeclaredConstructor().newInstance());
-    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+    } catch (InstantiationException | IllegalAccessException | 
+             NoSuchMethodException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
   }
@@ -306,8 +299,8 @@ public final class ClassUtils {
   public static <T> T newInstance(String className) {
     try {
       return unsafeNNCast(forName(className).getDeclaredConstructor().newInstance());
-    } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException |
-             InvocationTargetException e) {
+    } catch (InstantiationException | IllegalAccessException | 
+             ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
   }
@@ -319,7 +312,8 @@ public final class ClassUtils {
    * @param <T> the expected type.
    * @return the casted object.
    */
-  public static <T> @Nullable T unsafeCast(@Nullable Object object) {
+  @Nullable
+  public static <T> T unsafeCast(@Nullable Object object) {
     return (T) object;
   }
 
@@ -342,7 +336,8 @@ public final class ClassUtils {
    * @param <T> the target type.
    * @return the casted object.
    */
-  public static <T> @Nullable T unsafeCast(Class<T> type, @Nullable Object object) {
+  @Nullable
+  public static <T> T unsafeCast(Class<T> type, @Nullable Object object) {
     return type.cast(object);
   }
 

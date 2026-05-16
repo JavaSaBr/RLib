@@ -14,19 +14,17 @@ import javasabr.rlib.concurrent.lock.Lockable;
 import javasabr.rlib.concurrent.task.CallableTask;
 import javasabr.rlib.concurrent.task.SimpleTask;
 import javasabr.rlib.concurrent.util.ConcurrentUtils;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.experimental.FieldDefaults;
 
 /**
  * @author JavaSaBr
  */
+@CustomLog
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, Lockable {
-
-  protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadTaskExecutor.class);
-
+  
   MutableArray<CallableTask<?, L>> waitTasks;
 
   Thread thread;
@@ -108,7 +106,7 @@ public class SingleThreadTaskExecutor<L> implements TaskExecutor<L>, Runnable, L
             .iterations()
             .forEach(local, System.currentTimeMillis(), CallableTask::call);
       } catch (final Exception e) {
-        LOGGER.warning(e);
+        log.warn(e);
       }
     }
   }

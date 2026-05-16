@@ -51,7 +51,7 @@ public class ControlResizeHandler implements EventHandler<MouseEvent> {
   private double startX;
   private double startY;
 
-  private int border;
+  private final int border;
 
   public ControlResizeHandler(Region node, int borderWidth) {
     this.node = node;

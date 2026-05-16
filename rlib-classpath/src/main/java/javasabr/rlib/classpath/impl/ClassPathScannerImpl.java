@@ -22,9 +22,8 @@ import javasabr.rlib.common.util.ArrayUtils;
 import javasabr.rlib.io.impl.ReuseBytesInputStream;
 import javasabr.rlib.io.impl.ReuseBytesOutputStream;
 import javasabr.rlib.io.util.IoUtils;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
@@ -33,13 +32,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * @author JavaSaBr
  */
+@CustomLog
 @Accessors(fluent = true)
 @Getter(AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public class ClassPathScannerImpl implements ClassPathScanner {
-
-  protected static final Logger LOGGER = LoggerManager.getLogger(ClassPathScanner.class);
-
+  
   private static final String CLASS_PATH = System.getProperty("java.class.path");
   private static final String PATH_SEPARATOR = File.pathSeparator;
   private static final String CLASS_EXTENSION = ".class";
@@ -176,10 +174,10 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     if (!name.endsWith(CLASS_EXTENSION)) {
       return;
     } else if(MODULE_INFO_CLASS.equals(name)) {
-      LOGGER.debug("Skip loading module-info...");
+      log.debug("Skip loading module-info...");
       return;
     } else if(name.startsWith(META_INF_PREFIX)) {
-      LOGGER.debug("Skip loading META-INF class...");
+      log.debug("Skip loading META-INF class...");
       return;
     }
 
@@ -199,19 +197,19 @@ public class ClassPathScannerImpl implements ClassPathScanner {
       className = result.toString();
 
     } catch (Exception e) {
-      LOGGER.warning(name, File.separator, "Incorrect replaced class name:[%s] to java path, used separator:[%s]"::formatted);
+      log.warn(name, File.separator, "Incorrect replaced class name:[%s] to java path, used separator:[%s]"::formatted);
       return;
     }
 
-    LOGGER.debug(className, "Try to load class:[%s]"::formatted);
+    log.debug(className, "Try to load class:[%s]"::formatted);
     try {
       container.add(loader().loadClass(className));
     } catch (NoClassDefFoundError error) {
-      LOGGER.warning(className, name, rootPath, file,
+      log.warn(className, name, rootPath, file,
           "Can't load class:[%s] with original name:[%s], root folder:[%s] and class file:[%s]"::formatted);
-      LOGGER.warning(error);
+      log.warn(error);
     } catch (Throwable e) {
-      LOGGER.warning(e);
+      log.warn(e);
     }
   }
 
@@ -220,7 +218,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
       MutableArray<Class<?>> classes,
       MutableArray<String> resources,
       Path directory) {
-    LOGGER.debug(directory, "Scanning directory:[%s]"::formatted);
+    log.debug(directory, "Scanning directory:[%s]"::formatted);
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
       for (Path file : stream) {
 
@@ -261,15 +259,15 @@ public class ClassPathScannerImpl implements ClassPathScanner {
       }
 
     } catch (IOException ex) {
-      LOGGER.warning(ex);
+      log.warn(ex);
     }
   }
 
   private void scanJar(MutableArray<Class<?>> classes, MutableArray<String> resources, Path jarFile) {
-    LOGGER.debug(jarFile, "Scanning jar:[%s]"::formatted);
+    log.debug(jarFile, "Scanning jar:[%s]"::formatted);
 
     if (!Files.exists(jarFile)) {
-      LOGGER.warning(jarFile, "Jar file:[%s] does not exists"::formatted);
+      log.warn(jarFile, "Jar file:[%s] does not exists"::formatted);
       return;
     }
 
@@ -280,10 +278,10 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     try (var jin = new JarInputStream(Files.newInputStream(jarFile))) {
       scanJarInputStream(classes, resources, rout, rin, buffer, jin);
     } catch (ZipException e) {
-      LOGGER.warning(jarFile, "Can't open zip file:[%s]"::formatted);
-      LOGGER.warning(e);
+      log.warn(jarFile, "Can't open zip file:[%s]"::formatted);
+      log.warn(e);
     } catch (IOException e) {
-      LOGGER.warning(e);
+      log.warn(e);
     }
   }
 
@@ -317,7 +315,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
   }
 
   private void scanJar(MutableArray<Class<?>> classes, MutableArray<String> resources, InputStream jarFile) {
-    LOGGER.debug(jarFile, "Scanning jar:[%s]"::formatted);
+    log.debug(jarFile, "Scanning jar:[%s]"::formatted);
 
     var rout = new ReuseBytesOutputStream();
     var rin = new ReuseBytesInputStream();
@@ -326,10 +324,10 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     try (var jin = new JarInputStream(jarFile)) {
       scanJarInputStream(classes, resources, rout, rin, buffer, jin);
     } catch (final ZipException e) {
-      LOGGER.warning(jarFile, arg -> "Can't open zip file " + arg);
-      LOGGER.warning(e);
+      log.warn(jarFile, arg -> "Can't open zip file " + arg);
+      log.warn(e);
     } catch (final IOException e) {
-      LOGGER.warning(e);
+      log.warn(e);
     }
   }
 
@@ -347,7 +345,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
         continue;
       }
 
-      LOGGER.debug(file, "Scanning file:[%s]"::formatted);
+      log.debug(file, "Scanning file:[%s]"::formatted);
 
       var filename = file
           .getFileName()
@@ -363,7 +361,7 @@ public class ClassPathScannerImpl implements ClassPathScanner {
     this.classes = classes.toArray(ArrayUtils.EMPTY_CLASS_ARRAY);
     this.resources = resources.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
 
-    LOGGER.debug(
+    log.debug(
         classes().length,
         resources().length,
         "Scanned [%s] classes and [%s] resources"::formatted);

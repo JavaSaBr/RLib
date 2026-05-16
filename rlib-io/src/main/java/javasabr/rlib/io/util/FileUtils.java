@@ -34,6 +34,7 @@ import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.common.util.Utils;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerManager;
+import lombok.CustomLog;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -42,6 +43,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @since 10.0.0
  */
+@CustomLog
 public class FileUtils {
 
   private static final Logger LOGGER = LoggerManager.getLogger(FileUtils.class);
@@ -181,9 +183,7 @@ public class FileUtils {
           .getName()
           .replace('.', '/'));
     } catch (IOException exc) {
-      LoggerManager
-          .getDefaultLogger()
-          .warning(exc);
+      Utils.printWarn(exc);
     }
 
     if (urls == null) {
@@ -198,7 +198,7 @@ public class FileUtils {
       var path = next.getFile();
 
       if (path.contains("%20")) {
-        path = path.replaceAll("%20", " ");
+        path = path.replace("%20", " ");
       }
 
       var file = Paths.get(path);
@@ -233,9 +233,7 @@ public class FileUtils {
     }
 
     if (!Files.exists(directory)) {
-      LoggerManager
-          .getDefaultLogger()
-          .warning(directory, "Directory:[%s] not found"::formatted);
+      Utils.printWarn("Directory:[%s] not found".formatted(directory));
       return;
     }
 
@@ -493,16 +491,13 @@ public class FileUtils {
    */
   @Nullable
   public static String getNameWithoutExtension(@Nullable String fileName) {
-
     if (StringUtils.isEmpty(fileName)) {
       return fileName;
     }
-
     int index = fileName.lastIndexOf('.');
     if (index == -1) {
       return fileName;
     }
-
     return fileName.substring(0, index);
   }
 
@@ -599,7 +594,7 @@ public class FileUtils {
             .resolve(entryName)
             .normalize();
         if (!targetFile.startsWith(normalizedDestination)) {
-          LOGGER.warning(entryName, "Unexpected entry name:[%s] which is outside"::formatted);
+          LOGGER.warn(entryName, "Unexpected entry name:[%s] which is outside"::formatted);
           continue;
         }
         if (entry.isDirectory()) {

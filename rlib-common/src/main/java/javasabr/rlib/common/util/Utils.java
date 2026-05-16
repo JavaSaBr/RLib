@@ -58,7 +58,7 @@ public final class Utils {
       var uri = new URI(path);
 
       path = uri.getPath();
-      path = path.replaceAll("%20", " ");
+      path = path.replace("%20", " ");
 
       if (File.separatorChar != '/') {
 
@@ -237,15 +237,27 @@ public final class Utils {
     }
   }
 
-  public static void print(Exception exception) {
+  /**
+   * Logs warning details from the exception to the default logger.
+   *
+   * @param exception the exception to log
+   * @since 10.0.0
+   */
+  public static void printWarn(Exception exception) {
     LoggerManager
         .getDefaultLogger()
-        .warning(exception);
+        .warn(exception);
   }
 
-  public static void print(String message) {
+  /**
+   * Logs a warning message to the default logger.
+   *
+   * @param message the message to log
+   * @since 10.0.0
+   */
+  public static void printWarn(String message) {
     LoggerManager
         .getDefaultLogger()
-        .warning(message);
+        .warn(message);
   }
 }

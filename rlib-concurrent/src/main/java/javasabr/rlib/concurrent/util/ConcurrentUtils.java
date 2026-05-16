@@ -3,19 +3,17 @@ package javasabr.rlib.concurrent.util;
 import java.util.function.Function;
 import javasabr.rlib.concurrent.lock.Lockable;
 import javasabr.rlib.functions.ObjIntFunction;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
+import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import org.jspecify.annotations.Nullable;
 
 /**
  * @author JavaSaBr
  */
+@CustomLog
 @UtilityClass
 public final class ConcurrentUtils {
-
-  private static final Logger LOGGER = LoggerManager.getLogger(ConcurrentUtils.class);
-
+  
   public static void notifyAll(Object object) {
     synchronized (object) {
       object.notifyAll();
@@ -38,7 +36,7 @@ public final class ConcurrentUtils {
       try {
         object.wait();
       } catch (final InterruptedException e) {
-        LOGGER.warning(e);
+        log.warn(e);
       }
     }
   }
@@ -48,7 +46,7 @@ public final class ConcurrentUtils {
       try {
         object.wait(time);
       } catch (final InterruptedException e) {
-        LOGGER.warning(e);
+        log.warn(e);
       }
     }
   }
@@ -57,7 +55,7 @@ public final class ConcurrentUtils {
     try {
       object.wait();
     } catch (final InterruptedException e) {
-      LOGGER.warning(e);
+      log.warn(e);
     }
   }
 
@@ -65,7 +63,7 @@ public final class ConcurrentUtils {
     try {
       object.wait(time);
     } catch (final InterruptedException e) {
-      LOGGER.warning(e);
+      log.warn(e);
     }
   }
 

@@ -142,6 +142,7 @@ public class CopyOnWriteMutableArray<E> extends AbstractMutableArray<E> implemen
 
       if (index == lastInex) {
         if (wrapped.compareAndSet(currentArray, copy)) {
+          //noinspection DataFlowIssue
           return currentArray[index];
         }
         continue;
@@ -154,6 +155,7 @@ public class CopyOnWriteMutableArray<E> extends AbstractMutableArray<E> implemen
       }
 
       if (wrapped.compareAndSet(currentArray, copy)) {
+        //noinspection DataFlowIssue
         return currentArray[index];
       }
     }

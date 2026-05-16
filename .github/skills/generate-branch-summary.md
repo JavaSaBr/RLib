@@ -37,12 +37,6 @@ Group modifications by their nature:
 Create a section in `summary.md` with this format:
 
 ```markdown
-# Branch: <branch-name>
-
-**Status:** <Ready for review / In progress / Draft>
-**Commits:** <number> (e.g., "1 (abc1234 - 'commit message')" or "3 commits")
-**Version:** <old-version> → <new-version> (if applicable)
-
 ## Changes Summary
 
 ### <Category 1> (e.g., "New Array API")
@@ -87,6 +81,8 @@ Create a section in `summary.md` with this format:
 - Use bullet points for lists
 - Use bold (`**`) for emphasis on key terms
 - Use inline code (`` ` ` ``) for class/method names
+- Do not add a `Branch:` section or heading in the summary
+- Do not add `Status`, `Commits`, or `Version` metadata lines in the summary
 
 ### 6. Output Location
 Always write to `summary.md` in the repository root, replacing or updating the previous summary section.
@@ -97,12 +93,6 @@ If `summary.md` already contains unrelated sections (e.g., documentation of othe
 ## Example Output
 
 ```markdown
-# Branch: update-api-part-2
-
-**Status:** Ready for review  
-**Commits:** 1 (1367d9b - "small improvements")  
-**Version:** 10.0.alpha13 → 10.0.alpha14
-
 ## Changes Summary
 
 ### 1. New Array API: `tryTrimTo(int)`

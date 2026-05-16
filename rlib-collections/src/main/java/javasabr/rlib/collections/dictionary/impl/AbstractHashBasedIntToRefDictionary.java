@@ -12,8 +12,10 @@ import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.collections.array.MutableIntArray;
 import javasabr.rlib.collections.array.UnsafeMutableArray;
 import javasabr.rlib.collections.array.UnsafeMutableIntArray;
+import javasabr.rlib.collections.dictionary.IntToRefDictionary;
 import javasabr.rlib.collections.dictionary.LinkedHashIntToRefEntry;
 import javasabr.rlib.collections.dictionary.UnsafeIntToRefDictionary;
+import javasabr.rlib.collections.dictionary.impl.util.LinkedEntryUtils;
 import javasabr.rlib.functions.IntObjConsumer;
 import org.jspecify.annotations.Nullable;
 
@@ -33,15 +35,13 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
 
   @Override
   public boolean containsValue(V value) {
-
     for (E entry : entries()) {
-      for (E nextEntry = entry; nextEntry != null; nextEntry = nextEntry.next()) {
-        if (Objects.equals(value, nextEntry.value())) {
+      for (E next = entry; next != null; next = next.next()) {
+        if (Objects.equals(value, next.value())) {
           return true;
         }
       }
     }
-
     return false;
   }
 
@@ -92,17 +92,14 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
 
   @Nullable
   protected E findEntry(int key) {
-
     @Nullable E[] entries = entries();
     int hash = hash(key);
     int entryIndex = indexFor(hash, entries.length);
-
     for (E entry = entries[entryIndex]; entry != null; entry = entry.next()) {
       if (entry.hash() == hash && key == entry.key()) {
         return entry;
       }
     }
-
     return null;
   }
 
@@ -192,37 +189,46 @@ public abstract class AbstractHashBasedIntToRefDictionary<V, E extends LinkedHas
 
   @Override
   public <C extends Collection<V>> C values(C container) {
-    if (isEmpty()) {
-      return container;
-    }
-    for (E entry : entries()) {
-      while (entry != null) {
-        V value = entry.value();
-        if (value != null) {
-          container.add(value);
-        }
-        entry = entry.next();
-      }
-    }
-    return container;
+    return LinkedEntryUtils.values(entries(), size(), container);
   }
 
   @Override
   public MutableArray<V> values(MutableArray<V> container) {
-    if (isEmpty()) {
-      return container;
+    return LinkedEntryUtils.values(entries(), size(), container);
+  }
+
+  @Override
+  public int values(MutableArray<V> container, int startIndex, int limit) {
+    return LinkedEntryUtils.values(entries(), size(), container, startIndex, limit);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof IntToRefDictionary<?> another)) {
+      return false;
+    } else if (size() != another.size()) {
+      return false;
     }
-    UnsafeMutableArray<V> unsafe = container.asUnsafe();
-    unsafe.prepareForSize(container.size() + size());
     for (E entry : entries()) {
       while (entry != null) {
+        if (!another.containsKey(entry.key())) {
+          return false;
+        }
         V value = entry.value();
-        if (value != null) {
-          unsafe.unsafeAdd(value);
+        if (!Objects.equals(value, another.get(entry.key()))) {
+          return false;
         }
         entry = entry.next();
       }
     }
-    return container;
+    return true;
+  }
+  
+  @Override
+  public String toString() {
+    return LinkedEntryUtils.toString(
+        entries(),
+        size(),
+        (builder, entry) -> builder.append(entry.key()));
   }
 }

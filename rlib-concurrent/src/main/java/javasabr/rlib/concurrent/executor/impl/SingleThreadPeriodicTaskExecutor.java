@@ -16,9 +16,8 @@ import javasabr.rlib.concurrent.lock.Lockable;
 import javasabr.rlib.concurrent.task.PeriodicTask;
 import javasabr.rlib.concurrent.util.ConcurrentUtils;
 import javasabr.rlib.functions.LongObjConsumer;
-import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerManager;
 import lombok.AccessLevel;
+import lombok.CustomLog;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.Nullable;
@@ -26,13 +25,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * @author JavaSaBr
  */
+@CustomLog
 @Accessors(fluent = true, chain = false)
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> implements
     PeriodicTaskExecutor<T, L>, Runnable, Lockable {
-
-  protected static final Logger LOGGER = LoggerManager.getLogger(SingleThreadPeriodicTaskExecutor.class);
-
+  
   MutableArray<T> waitTasks;
   MutableArray<T> executeTasks;
   MutableArray<T> finishedTasks;
@@ -190,7 +188,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
       try {
         executeImpl(tasksToExecute, finishedTasks, local, startExecuteTime);
       } catch (Exception exc) {
-        LOGGER.warning(exc);
+        log.warn(exc);
       } finally {
         postExecute(tasksToExecute, local, startExecuteTime);
       }
@@ -210,7 +208,7 @@ public class SingleThreadPeriodicTaskExecutor<T extends PeriodicTask<L>, L> impl
         }
 
       } catch (Exception exc) {
-        LOGGER.warning(exc);
+        log.warn(exc);
       }
 
       if (interval < 1) {

@@ -74,7 +74,6 @@ public final class CoordsUtils {
     return y + distance * (float) Math.sin(AngleUtils.headingToRadians(heading + offset));
   }
 
-  @SuppressWarnings("unchecked")
   public static Vector3f[] circularCoords(float x, float y, float z, int radius, int count) {
 
     Vector3f[] locs = new Vector3f[count];

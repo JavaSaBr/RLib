@@ -16,8 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAccumulator;
 import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.common.util.ThreadUtils;
-import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.network.ServerNetworkConfig.SimpleServerNetworkConfig;
 import javasabr.rlib.network.client.ClientNetwork;
 import javasabr.rlib.network.impl.DefaultBufferAllocator;
@@ -121,7 +119,6 @@ public class StringSslNetworkLoadTest {
   @Test
   @SneakyThrows
   void testServerWithMultiplyClients() {
-    LoggerManager.enable(StringSslNetworkLoadTest.class, LoggerLevel.INFO);
     //LoggerManager.enable(AbstractSslNetworkPacketReader.class, LoggerLevel.DEBUG);
     //LoggerManager.enable(AbstractSslNetworkPacketWriter.class, LoggerLevel.DEBUG);
 

@@ -133,7 +133,6 @@ class RefToRefDictionaryTest {
   @ParameterizedTest
   @MethodSource("generateDictionaries")
   void shouldHaveExpectedResultFromForEach(RefToRefDictionary<String, String> dictionary) {
-
     // given:
     var expectedArray = Array.typed(String.class, "val4", "val3", "val5", "val2", "val1");
     var expectedPairs = Array.typed(Tuple.class,
@@ -158,6 +157,35 @@ class RefToRefDictionaryTest {
     assertThat(pairs).isEqualTo(expectedPairs);
   }
 
+  @ParameterizedTest
+  @MethodSource("generateDictionaries")
+  void shouldCheckEqualsCorrectly(RefToRefDictionary<String, String> dictionary) {
+    // given:
+    RefToRefDictionary<String, String> theSame = RefToRefDictionary.ofEntries(
+        entry("key1", "val1"),
+        entry("key2", "val2"),
+        entry("key3", "val3"),
+        entry("key4", "val4"),
+        entry("key5", "val5"));
+    RefToRefDictionary<String, String> notTheSame1 = RefToRefDictionary.ofEntries(
+        entry("key1", "val1"),
+        entry("key2", "val2"),
+        entry("key3", "val3"),
+        entry("key4", "val46"),
+        entry("key5", "val5"));
+    RefToRefDictionary<String, String> notTheSame2 = RefToRefDictionary.ofEntries(
+        entry("key1", "val1"),
+        entry("key21", "val2"),
+        entry("key3", "val3"),
+        entry("key4", "val4"),
+        entry("key5", "val5"));
+
+    // when/then:
+    assertThat(dictionary).isEqualTo(theSame);
+    assertThat(dictionary).isNotEqualTo(notTheSame1);
+    assertThat(dictionary).isNotEqualTo(notTheSame2);
+  }
+  
   private static Stream<Arguments> generateDictionaries() {
 
     RefToRefDictionary<String, String> source = RefToRefDictionary.ofEntries(

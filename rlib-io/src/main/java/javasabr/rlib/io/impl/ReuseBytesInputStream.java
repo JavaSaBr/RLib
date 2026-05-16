@@ -20,7 +20,7 @@ public final class ReuseBytesInputStream extends InputStream implements Reusable
     this.buffer = ArrayUtils.EMPTY_BYTE_ARRAY;
   }
 
-  public ReuseBytesInputStream(byte buffer[]) {
+  public ReuseBytesInputStream(byte[] buffer) {
     this.buffer = buffer;
     this.position = 0;
     this.count = buffer.length;
