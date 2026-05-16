@@ -40,7 +40,7 @@ import org.mockito.quality.Strictness;
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class AbstractSslNetworkPacketReaderTest {
+class AbstractSslNetworkPacketReaderTest {
 
   @Mock
   private TestConnection connection;
@@ -91,7 +91,7 @@ public class AbstractSslNetworkPacketReaderTest {
   }
 
   @Test
-  void testShouldNotLoseDataOnNeedWrapDuringHandshake() throws Exception {
+  void shouldNotLoseDataOnNeedWrapDuringHandshake() throws Exception {
     // given
     // Initial state: NEED_UNWRAP
     when(sslEngine.getHandshakeStatus()).thenReturn(HandshakeStatus.NEED_UNWRAP);
