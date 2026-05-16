@@ -12,12 +12,11 @@ public record DefaultReversedArgsArrayIterationFunctions<E>(UnsafeArray<E> array
 
   @Override
   public <T> @Nullable E findAny(T arg1, BiPredicate<T, ? super E> filter) {
-
     @Nullable E[] wrapped = array.wrapped();
     int size = array.size();
-
     for (int i = 0; i < size; i++) {
       E element = wrapped[i];
+      //noinspection DataFlowIssue
       if (filter.test(arg1, element)) {
         return element;
       }
@@ -30,6 +29,7 @@ public record DefaultReversedArgsArrayIterationFunctions<E>(UnsafeArray<E> array
     @Nullable E[] wrapped = array.wrapped();
     int size = array.size();
     for (int i = 0; i < size; i++) {
+      //noinspection DataFlowIssue
       consumer.accept(arg1, wrapped[i]);
     }
     return this;
@@ -40,6 +40,7 @@ public record DefaultReversedArgsArrayIterationFunctions<E>(UnsafeArray<E> array
     @Nullable E[] wrapped = array.wrapped();
     int size = array.size();
     for (int i = 0; i < size; i++) {
+      //noinspection DataFlowIssue
       consumer.accept(arg1, arg2, wrapped[i]);
     }
     return this;

@@ -1,5 +1,6 @@
 package javasabr.rlib.collections.dictionary;
 
+import java.util.Objects;
 import java.util.Optional;
 import javasabr.rlib.collections.array.LongArray;
 import javasabr.rlib.collections.array.MutableLongArray;
@@ -80,7 +81,7 @@ public interface LongToRefDictionary<V> extends Dictionary<Long, V> {
   static <V> LongToRefDictionary<V> ofEntries(LongToRefEntry<V>... entries) {
     MutableLongToRefDictionary<V> mutable = DictionaryFactory.mutableLongToRefDictionary();
     for (var entry : entries) {
-      mutable.put(entry.key(), entry.value());
+      mutable.put(entry.key(), Objects.requireNonNull(entry.value()));
     }
     return mutable.toReadOnly();
   }

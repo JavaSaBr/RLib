@@ -1,5 +1,6 @@
 package javasabr.rlib.collections.dictionary;
 
+import java.util.Objects;
 import java.util.Optional;
 import javasabr.rlib.collections.array.IntArray;
 import javasabr.rlib.collections.array.MutableIntArray;
@@ -80,7 +81,7 @@ public interface IntToRefDictionary<V> extends Dictionary<Integer, V> {
   static <V> IntToRefDictionary<V> ofEntries(IntToRefEntry<V>... entries) {
     MutableIntToRefDictionary<V> mutable = DictionaryFactory.mutableIntToRefDictionary();
     for (var entry : entries) {
-      mutable.put(entry.key(), entry.value());
+      mutable.put(entry.key(), Objects.requireNonNull(entry.value()));
     }
     return mutable.toReadOnly();
   }

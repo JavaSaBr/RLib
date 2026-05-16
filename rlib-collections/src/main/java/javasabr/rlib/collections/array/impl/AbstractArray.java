@@ -168,6 +168,7 @@ public abstract class AbstractArray<E> implements UnsafeArray<E> {
   public void forEach(Consumer<? super E> action) {
     @Nullable E[] wrapped = wrapped();
     for (int i = 0, limit = size(); i < limit; i++) {
+      //noinspection DataFlowIssue
       action.accept(wrapped[i]);
     }
   }
@@ -189,6 +190,7 @@ public abstract class AbstractArray<E> implements UnsafeArray<E> {
 
     if (newArray.length >= size()) {
       for (int i = 0, j = 0, length = size(), newLength = newArray.length; i < length && j < newLength; i++) {
+        //noinspection DataFlowIssue,unchecked
         newArray[j++] = (T) array[i];
       }
       return newArray;
@@ -197,6 +199,7 @@ public abstract class AbstractArray<E> implements UnsafeArray<E> {
     Class<T[]> arrayClass = unsafeCast(newArray.getClass());
     Class<T> componentType = unsafeCast(arrayClass.getComponentType());
 
+    //noinspection DataFlowIssue
     return toArray(componentType);
   }
 

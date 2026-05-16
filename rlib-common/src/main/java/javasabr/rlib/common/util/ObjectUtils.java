@@ -46,11 +46,9 @@ public final class ObjectUtils {
    * @since 9.0.2
    */
   public static <T> T notNull(@Nullable T obj, Supplier<? extends RuntimeException> supplier) {
-
     if (obj == null) {
       throw supplier.get();
     }
-
     return obj;
   }
 
@@ -69,11 +67,9 @@ public final class ObjectUtils {
       @Nullable T obj,
       F arg,
       Function<F, ? extends RuntimeException> factory) {
-
     if (obj == null) {
       throw factory.apply(arg);
     }
-
     return obj;
   }
 
@@ -91,11 +87,9 @@ public final class ObjectUtils {
       @Nullable T obj,
       long arg,
       LongFunction<? extends RuntimeException> factory) {
-
     if (obj == null) {
       throw factory.apply(arg);
     }
-
     return obj;
   }
 
@@ -122,25 +116,15 @@ public final class ObjectUtils {
   public static <T> T ifNull(@Nullable T obj, Supplier<T> factory) {
     return obj == null ? factory.get() : obj;
   }
-
-  /**
-   * Gets hash of the boolean value.
-   *
-   * @param value the boolean value.
-   * @return the hash.
-   */
+  
+  @Deprecated(forRemoval = true)
   public static int hash(boolean value) {
-    return value ? 1231 : 1237;
+    return Boolean.hashCode(value);
   }
-
-  /**
-   * Gets hash of the long value.
-   *
-   * @param value the long value.
-   * @return the hash.
-   */
+  
+  @Deprecated(forRemoval = true)
   public static int hash(long value) {
-    return (int) (value ^ value >>> 32);
+    return Long.hashCode(value);
   }
 
   /**

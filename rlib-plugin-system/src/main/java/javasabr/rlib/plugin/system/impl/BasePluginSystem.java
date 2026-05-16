@@ -403,7 +403,7 @@ public class BasePluginSystem implements ConfigurablePluginSystem {
     }
 
     State current = state.get();
-    String folderName = FileUtils.getNameWithoutExtension(file);
+    String folderName = Objects.requireNonNull(FileUtils.getNameWithoutExtension(file));
     Path pluginFolder = installPath.resolve(folderName);
 
     if (Files.exists(pluginFolder)) {

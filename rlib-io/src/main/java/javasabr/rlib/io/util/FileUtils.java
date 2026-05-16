@@ -491,16 +491,13 @@ public class FileUtils {
    */
   @Nullable
   public static String getNameWithoutExtension(@Nullable String fileName) {
-
     if (StringUtils.isEmpty(fileName)) {
       return fileName;
     }
-
     int index = fileName.lastIndexOf('.');
     if (index == -1) {
       return fileName;
     }
-
     return fileName.substring(0, index);
   }
 
