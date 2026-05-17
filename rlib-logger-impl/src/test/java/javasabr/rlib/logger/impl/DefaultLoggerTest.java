@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
 @ResourceLock("LoggerListeners")
-public class DefaultLoggerTest {
+class DefaultLoggerTest {
 
   private static final LockableArray<String> LOGS_DATA = ArrayFactory
       .stampedLockBasedArray(String.class);
-  public static final LockableOperations<LockableArray<String>> LOGS_DATA_OPERATIONS = 
+  private static final LockableOperations<LockableArray<String>> LOGS_DATA_OPERATIONS = 
       LOGS_DATA.operations();
   
   private static final LoggerListener LOGGER_LISTENER = text -> LOGS_DATA_OPERATIONS
