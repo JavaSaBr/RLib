@@ -59,8 +59,10 @@ public class LinkedEntryUtils {
     if (size < 1) {
       return -1;
     }
+    int extra = 10; // if we have several values per one dictionary cell
+    int reserved = Math.min(limit, size) + extra;
     UnsafeMutableArray<V> unsafe = container.asUnsafe();
-    unsafe.prepareForSize(container.size() + Math.min(limit, size));
+    unsafe.prepareForSize(container.size() + reserved);
     for (int i = startIndex, length = entries.length; i < length; i++) {
       if (unsafe.size() >= limit) {
         return i;
@@ -69,7 +71,12 @@ public class LinkedEntryUtils {
       while (entry != null) {
         V value = entry.value();
         if (value != null) {
+          if (reserved < 1) {
+            unsafe.prepareForSize(container.size() + extra);
+            reserved = extra;
+          }
           unsafe.unsafeAdd(value);
+          reserved--;
         }
         entry = entry.next();
       }

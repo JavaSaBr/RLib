@@ -213,7 +213,7 @@ class MutableRefToRefDictionaryTest {
   void shouldIterateAllValuesUsingPartIndex(MutableRefToRefDictionary<String, String> dictionary) {
     // given:
     var expectedValues = ArrayFactory.mutableArray(String.class);
-    for (int i = 10; i < 1000; i += 8) {
+    for (int i = 10; i < 1000; i++) {
       var value = "value_" + i;
       var key = "key_" + i;
       expectedValues.add(value);
