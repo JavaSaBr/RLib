@@ -208,8 +208,7 @@ public abstract class AbstractMutableArray<E> extends AbstractArray<E> implement
     }
     return this;
   }
-
-
+  
   @Override
   public UnsafeMutableArray<E> trimToSize() {
     @Nullable E[] wrapped = wrapped();
