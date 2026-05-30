@@ -37,6 +37,10 @@ Group modifications by their nature:
 Create a section in `summary.md` with this format:
 
 ```markdown
+## Overview
+
+Short 2-4 sentence summary of what the branch introduces and why it matters.
+
 ## Changes Summary
 
 ### <Category 1> (e.g., "New Array API")
@@ -52,6 +56,12 @@ Create a section in `summary.md` with this format:
 ### <Category 3> (e.g., "Documentation")
 - What documentation was added
 - Why it matters (e.g., for future contributors)
+
+### <Category N> Event flow diagram (when relevant)
+- Add a Mermaid `flowchart` for runtime flow when the branch introduces/changes flow-heavy APIs
+
+### <Category N+1> Usage samples (when relevant)
+- Add copy-pasteable API usage examples for new public APIs
 
 ## Testing & Validation
 - `./gradlew :module-name:build` ✅
@@ -81,8 +91,15 @@ Create a section in `summary.md` with this format:
 - Use bullet points for lists
 - Use bold (`**`) for emphasis on key terms
 - Use inline code (`` ` ` ``) for class/method names
+- Always include `## Overview` before `## Changes Summary`
 - Do not add a `Branch:` section or heading in the summary
 - Do not add `Status`, `Commits`, or `Version` metadata lines in the summary
+
+#### Mermaid Diagram Safety (when diagrams are included)
+- Prefer quoted node labels, e.g. `A["Create bus"]`
+- Avoid method-signature punctuation inside node text (`(`, `)`, `,`, generics); use plain words instead
+- Use edge labels like `|send|` instead of `|send(event)|`
+- Keep node text short and parser-safe; move details to bullets under the diagram
 
 ### 6. Output Location
 Always write to `summary.md` in the repository root, replacing or updating the previous summary section.
@@ -93,6 +110,11 @@ If `summary.md` already contains unrelated sections (e.g., documentation of othe
 ## Example Output
 
 ```markdown
+## Overview
+
+This branch extends the collections API with safe internal resizing and dictionary optimizations.
+It reduces overhead on empty collections and adds documentation to clarify the new contract.
+
 ## Changes Summary
 
 ### 1. New Array API: `tryTrimTo(int)`
@@ -151,3 +173,10 @@ Mention:
 4. **Be concise** — summaries should be readable in 2-3 minutes
 5. **Link to code** — mention file paths and method names so reviewers can navigate easily
 6. **Quantify changes** — "7 methods optimized" is more informative than "several optimizations"
+
+## Final Checklist (before saving `summary.md`)
+- `## Overview` exists and is concise
+- `## Changes Summary` exists with clear categories
+- If a diagram is included, Mermaid renders with parser-safe labels
+- If a new public API is introduced, usage samples are included
+- `## Testing & Validation` includes executed commands and recommended full build

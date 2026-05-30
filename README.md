@@ -18,6 +18,7 @@ A modular Java utility library providing common utilities for classpath scanning
 | `rlib-collections` | Extended collection implementations |
 | `rlib-compiler` | Runtime Java source compilation API |
 | `rlib-concurrent` | Concurrency utilities and helpers |
+| `rlib-eventbus` | Typed low-overhead event bus API |
 | `rlib-classpath` | Classpath scanning and class discovery |
 | `rlib-functions` | Functional interfaces and utilities |
 | `rlib-geometry` | Geometry utilities |
@@ -45,7 +46,7 @@ repositories {
 }
 
 ext {
-    rlibVersion = "10.0.alpha16"
+    rlibVersion = "10.0.alpha17"
 }
 
 dependencies {
@@ -53,12 +54,14 @@ dependencies {
     implementation "javasabr.rlib:rlib-collections:$rlibVersion"
     implementation "javasabr.rlib:rlib-compiler:$rlibVersion"
     implementation "javasabr.rlib:rlib-concurrent:$rlibVersion"
+    implementation "javasabr.rlib:rlib-eventbus:$rlibVersion"
     implementation "javasabr.rlib:rlib-geometry:$rlibVersion"
     implementation "javasabr.rlib:rlib-logger-api:$rlibVersion"
     implementation "javasabr.rlib:rlib-logger-slf4j:$rlibVersion"
     implementation "javasabr.rlib:rlib-plugin-system:$rlibVersion"
     implementation "javasabr.rlib:rlib-reference:$rlibVersion"
     implementation "javasabr.rlib:rlib-reusable:$rlibVersion"
+    implementation "javasabr.rlib:rlib-eventbus:$rlibVersion"
     implementation "javasabr.rlib:rlib-fx:$rlibVersion"
     implementation "javasabr.rlib:rlib-network:$rlibVersion"
     implementation "javasabr.rlib:rlib-mail:$rlibVersion"
@@ -118,6 +121,29 @@ LoggerLevel.DEBUG.setEnabled(false);
 
 // local enable debug level only for this logger instance
 logger.setEnabled(LoggerLevel.DEBUG, true);
+```
+
+### EventBus API
+
+Type-safe event publishing and subscription with low dispatch overhead:
+
+```java
+interface AppEvents extends EventBus.TypeIdSet {}
+
+record UserCreatedEvent(
+    String userId,
+    EventBus.TypeId<AppEvents, UserCreatedEvent> typeId
+) implements EventBus.Event<AppEvents> {}
+
+var typeIdFactory = EventBusFactory.createTypeIdFactory(AppEvents.class);
+var eventBus = EventBusFactory.createEventBus(typeIdFactory);
+var userCreatedTypeId = typeIdFactory.typeIdOf(UserCreatedEvent.class);
+
+eventBus.subscribe(userCreatedTypeId, event ->
+    System.out.println("User created: " + event.userId()));
+
+eventBus.send(new UserCreatedEvent("user-42", userCreatedTypeId));
+eventBus.sendInBackground(new UserCreatedEvent("user-43", userCreatedTypeId));
 ```
 
 ### Mail Sender
