@@ -19,5 +19,6 @@ dependencies {
   jacocoAggregation projects.rlibPluginSystem
   jacocoAggregation projects.rlibReference
   jacocoAggregation projects.rlibReusable
+  jacocoAggregation projects.rlibEventbus
   jacocoAggregation projects.rlibTestcontainers
 }

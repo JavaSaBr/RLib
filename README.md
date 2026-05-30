@@ -61,6 +61,7 @@ dependencies {
     implementation "javasabr.rlib:rlib-plugin-system:$rlibVersion"
     implementation "javasabr.rlib:rlib-reference:$rlibVersion"
     implementation "javasabr.rlib:rlib-reusable:$rlibVersion"
+    implementation "javasabr.rlib:rlib-eventbus:$rlibVersion"
     implementation "javasabr.rlib:rlib-fx:$rlibVersion"
     implementation "javasabr.rlib:rlib-network:$rlibVersion"
     implementation "javasabr.rlib:rlib-mail:$rlibVersion"
