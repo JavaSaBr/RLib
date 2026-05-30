@@ -4,12 +4,14 @@ import javasabr.rlib.eventbus.EventBus.TypeIdFactory;
 import javasabr.rlib.eventbus.EventBus.TypeIdSet;
 import javasabr.rlib.eventbus.impl.DefaultEventBus;
 import javasabr.rlib.eventbus.impl.DefaultTypeIdFactory;
+import lombok.experimental.UtilityClass;
 
 /**
  * Provides factory methods for creating event bus API components.
  *
  * @since 10.0.0
  */
+@UtilityClass
 public class EventBusFactory {
 
   /**
