@@ -31,13 +31,13 @@ public class DefaultEventBus<S extends EventBus.TypeIdSet> implements EventBus<S
   }
 
   @Override
-  public <E extends Event<S>> void registerConsumer(TypeId<S, E> typeId, Consumer<E> consumer) {
+  public <E extends Event<S>> void subscribe(TypeId<S, E> typeId, Consumer<E> consumer) {
     registerTypeId(typeId);
     consumers.unsafeGet(typeId.id()).add(consumer);
   }
 
   @Override
-  public <E extends Event<S>> void unregisterConsumer(TypeId<S, E> typeId, Consumer<E> consumer) {
+  public <E extends Event<S>> void unsubscribe(TypeId<S, E> typeId, Consumer<E> consumer) {
     if (typeId.id() < 0) {
       throw new IllegalArgumentException("Unexpected typeId:[%s]".formatted(typeId));
     }
@@ -47,13 +47,13 @@ public class DefaultEventBus<S extends EventBus.TypeIdSet> implements EventBus<S
   }
 
   @Override
-  public void sendSync(Event<S> event) {
+  public void send(Event<S> event) {
     UnsafeMutableArray<Consumer<?>> eventConsumers;
     try {
       eventConsumers = consumers.unsafeGet(event.typeId().id());
     } catch (ArrayIndexOutOfBoundsException e) {
       registerTypeId(event.typeId());
-      sendSync(event);
+      send(event);
       return;
     }
     //noinspection unchecked we control it during registering
@@ -63,8 +63,8 @@ public class DefaultEventBus<S extends EventBus.TypeIdSet> implements EventBus<S
   }
 
   @Override
-  public void sendAsync(Event<S> event) {
-    asyncExecutor.execute(() -> sendSync(event));
+  public void sendInBackground(Event<S> event) {
+    asyncExecutor.execute(() -> send(event));
   }
   
   private synchronized void registerTypeId(TypeId<S, ? extends Event<S>> typeId) {

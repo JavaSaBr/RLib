@@ -34,7 +34,7 @@ public class DefaultTypeIdFactory {
     }
 
     @Override
-    public synchronized <E extends Event<S>> TypeId<S, E> createFor(Class<E> eventType) {
+    public synchronized <E extends Event<S>> TypeId<S, E> typeIdOf(Class<E> eventType) {
       TypeIdImpl<?, ?> exist = knownTypes.get(eventType);
       if (exist != null) {
         //noinspection unchecked it's checked during creation

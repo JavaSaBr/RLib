@@ -1,6 +1,8 @@
 package javasabr.rlib.eventbus;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -9,7 +11,6 @@ import javasabr.rlib.collections.array.ArrayFactory;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.eventbus.EventBus.TypeId;
 import javasabr.rlib.eventbus.EventBus.TypeIdFactory;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class DefaultEventBusTest {
@@ -24,7 +25,7 @@ public class DefaultEventBusTest {
   
   public record EventA(String value) implements EventBus.Event<TestTypeIdSet> {
     
-    static final TypeId<TestTypeIdSet, EventA> TYPE_ID = typeIdFactory.createFor(EventA.class);
+    static final TypeId<TestTypeIdSet, EventA> TYPE_ID = typeIdFactory.typeIdOf(EventA.class);
     
     @Override
     public TypeId<TestTypeIdSet, EventA> typeId() {
@@ -34,7 +35,7 @@ public class DefaultEventBusTest {
 
   public record EventB(String value) implements EventBus.Event<TestTypeIdSet> {
     
-    static final TypeId<TestTypeIdSet, EventB> TYPE_ID = typeIdFactory.createFor(EventB.class);
+    static final TypeId<TestTypeIdSet, EventB> TYPE_ID = typeIdFactory.typeIdOf(EventB.class);
 
     @Override
     public TypeId<TestTypeIdSet, EventB> typeId() {
@@ -44,7 +45,7 @@ public class DefaultEventBusTest {
 
   public record EventC(String value) implements EventBus.Event<TestTypeIdSet> {
     
-    static final TypeId<TestTypeIdSet, EventC> TYPE_ID = typeIdFactory.createFor(EventC.class);
+    static final TypeId<TestTypeIdSet, EventC> TYPE_ID = typeIdFactory.typeIdOf(EventC.class);
 
     @Override
     public TypeId<TestTypeIdSet, EventC> typeId() {
@@ -54,7 +55,7 @@ public class DefaultEventBusTest {
 
   public record EventD(String value) implements EventBus.Event<Test2TypeIdSet> {
 
-    static final TypeId<Test2TypeIdSet, EventD> TYPE_ID = typeIdFactory2.createFor(EventD.class);
+    static final TypeId<Test2TypeIdSet, EventD> TYPE_ID = typeIdFactory2.typeIdOf(EventD.class);
 
     @Override
     public TypeId<Test2TypeIdSet, EventD> typeId() {
@@ -92,7 +93,7 @@ public class DefaultEventBusTest {
   @Test
   void shouldCorrectlyDeliverEvents() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
 
     MutableArray<EventA> receivedEventsA1 = ArrayFactory.mutableArray(EventA.class);
     MutableArray<EventA> receivedEventsA2 = ArrayFactory.mutableArray(EventA.class);
@@ -101,23 +102,23 @@ public class DefaultEventBusTest {
     MutableArray<EventC> receivedEventsC2 = ArrayFactory.mutableArray(EventC.class);
     MutableArray<EventC> receivedEventsC3 = ArrayFactory.mutableArray(EventC.class);
 
-    eventBus.registerConsumer(EventA.TYPE_ID, receivedEventsA1::add);
-    eventBus.registerConsumer(EventA.TYPE_ID, eventA -> {
+    eventBus.subscribe(EventA.TYPE_ID, receivedEventsA1::add);
+    eventBus.subscribe(EventA.TYPE_ID, eventA -> {
       receivedEventsA1.add(eventA);
       receivedEventsA2.add(eventA);
     });
-    eventBus.registerConsumer(EventB.TYPE_ID, receivedEventsB1::add);
-    eventBus.registerConsumer(EventC.TYPE_ID, receivedEventsC1::add);
-    eventBus.registerConsumer(EventC.TYPE_ID, receivedEventsC2::add);
-    eventBus.registerConsumer(EventC.TYPE_ID, receivedEventsC3::add);
+    eventBus.subscribe(EventB.TYPE_ID, receivedEventsB1::add);
+    eventBus.subscribe(EventC.TYPE_ID, receivedEventsC1::add);
+    eventBus.subscribe(EventC.TYPE_ID, receivedEventsC2::add);
+    eventBus.subscribe(EventC.TYPE_ID, receivedEventsC3::add);
 
     // when:
-    eventBus.sendSync(new EventA("event_a_1"));
-    eventBus.sendSync(new EventA("event_a_2"));
-    eventBus.sendSync(new EventB("event_b_1"));
-    eventBus.sendSync(new EventC("event_c_1"));
-    eventBus.sendSync(new EventC("event_c_2"));
-    eventBus.sendSync(new EventC("event_c_3"));
+    eventBus.send(new EventA("event_a_1"));
+    eventBus.send(new EventA("event_a_2"));
+    eventBus.send(new EventB("event_b_1"));
+    eventBus.send(new EventC("event_c_1"));
+    eventBus.send(new EventC("event_c_2"));
+    eventBus.send(new EventC("event_c_3"));
     
     // then:
     assertThat(receivedEventsA1).containsExactly(
@@ -147,10 +148,10 @@ public class DefaultEventBusTest {
   @Test
   void shouldThrowExceptionWhenSendingEventWithNegativeTypeId() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
 
     // when/then:
-    Assertions.assertThatThrownBy(() -> eventBus.sendSync(new EventWithNegativeTypeId("event")))
+    assertThatThrownBy(() -> eventBus.send(new EventWithNegativeTypeId("event")))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("Unexpected typeId");
   }
@@ -158,11 +159,11 @@ public class DefaultEventBusTest {
   @Test
   void shouldThrowExceptionWhenUnregisteringConsumerWithNegativeTypeId() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
 
     // when/then:
-    Assertions.assertThatThrownBy(
-            () -> eventBus.unregisterConsumer(EventWithNegativeTypeId.TYPE_ID, event -> {}))
+    assertThatThrownBy(
+            () -> eventBus.unsubscribe(EventWithNegativeTypeId.TYPE_ID, event -> {}))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessageContaining("Unexpected typeId");
   }
@@ -170,13 +171,13 @@ public class DefaultEventBusTest {
   @Test
   void shouldIgnoreUnregisterForOutOfRangeTypeId() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
     MutableArray<EventA> receivedEventsA = ArrayFactory.mutableArray(EventA.class);
-    eventBus.registerConsumer(EventA.TYPE_ID, receivedEventsA::add);
+    eventBus.subscribe(EventA.TYPE_ID, receivedEventsA::add);
 
     // when:
-    eventBus.unregisterConsumer(EventWithOutOfRangeTypeId.TYPE_ID, event -> {});
-    eventBus.sendSync(new EventA("event_a_1"));
+    eventBus.unsubscribe(EventWithOutOfRangeTypeId.TYPE_ID, event -> {});
+    eventBus.send(new EventA("event_a_1"));
 
     // then:
     assertThat(receivedEventsA).containsExactly(new EventA("event_a_1"));
@@ -185,24 +186,24 @@ public class DefaultEventBusTest {
   @Test
   void shouldNotFailWhenSendingEventWithOutOfRangeTypeId() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
 
     // when/then:
-    Assertions.assertThatCode(() -> eventBus.sendSync(new EventWithOutOfRangeTypeId("event")))
+    assertThatCode(() -> eventBus.send(new EventWithOutOfRangeTypeId("event")))
         .doesNotThrowAnyException();
   }
 
   @Test
-  void shouldUnregisterConsumer() {
+  void shouldUnsubscribe() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
     MutableArray<EventA> receivedEventsA = ArrayFactory.mutableArray(EventA.class);
     Consumer<EventA> consumer = receivedEventsA::add;
-    eventBus.registerConsumer(EventA.TYPE_ID, consumer);
+    eventBus.subscribe(EventA.TYPE_ID, consumer);
 
     // when:
-    eventBus.unregisterConsumer(EventA.TYPE_ID, consumer);
-    eventBus.sendSync(new EventA("event_a_1"));
+    eventBus.unsubscribe(EventA.TYPE_ID, consumer);
+    eventBus.send(new EventA("event_a_1"));
 
     // then:
     assertThat(receivedEventsA).isEmpty();
@@ -211,18 +212,18 @@ public class DefaultEventBusTest {
   @Test
   void shouldIgnoreDuplicateUnregister() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
     MutableArray<EventA> firstConsumerEvents = ArrayFactory.mutableArray(EventA.class);
     MutableArray<EventA> secondConsumerEvents = ArrayFactory.mutableArray(EventA.class);
     Consumer<EventA> firstConsumer = firstConsumerEvents::add;
     Consumer<EventA> secondConsumer = secondConsumerEvents::add;
-    eventBus.registerConsumer(EventA.TYPE_ID, firstConsumer);
-    eventBus.registerConsumer(EventA.TYPE_ID, secondConsumer);
+    eventBus.subscribe(EventA.TYPE_ID, firstConsumer);
+    eventBus.subscribe(EventA.TYPE_ID, secondConsumer);
 
     // when:
-    eventBus.unregisterConsumer(EventA.TYPE_ID, firstConsumer);
-    eventBus.unregisterConsumer(EventA.TYPE_ID, firstConsumer);
-    eventBus.sendSync(new EventA("event_a_1"));
+    eventBus.unsubscribe(EventA.TYPE_ID, firstConsumer);
+    eventBus.unsubscribe(EventA.TYPE_ID, firstConsumer);
+    eventBus.send(new EventA("event_a_1"));
 
     // then:
     assertThat(firstConsumerEvents).isEmpty();
@@ -232,12 +233,12 @@ public class DefaultEventBusTest {
   @Test
   void shouldThrowExceptionForConflictingTypeIdOfSameEventType() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
     TypeId<TestTypeIdSet, EventA> conflictingTypeId = new CustomTypeId<>(EventA.class, 1001);
-    eventBus.registerConsumer(EventA.TYPE_ID, event -> {});
+    eventBus.subscribe(EventA.TYPE_ID, event -> {});
 
     // when/then:
-    Assertions.assertThatThrownBy(() -> eventBus.registerConsumer(conflictingTypeId, event -> {}))
+    assertThatThrownBy(() -> eventBus.subscribe(conflictingTypeId, event -> {}))
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("already registered");
   }
@@ -245,16 +246,16 @@ public class DefaultEventBusTest {
   @Test
   void shouldDeliverEventsAsync() throws Exception {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
     MutableArray<EventA> receivedEventsA = ArrayFactory.mutableArray(EventA.class);
     CountDownLatch latch = new CountDownLatch(1);
-    eventBus.registerConsumer(EventA.TYPE_ID, event -> {
+    eventBus.subscribe(EventA.TYPE_ID, event -> {
       receivedEventsA.add(event);
       latch.countDown();
     });
 
     // when:
-    eventBus.sendAsync(new EventA("event_a_1"));
+    eventBus.sendInBackground(new EventA("event_a_1"));
 
     // then:
     assertThat(latch.await(2, TimeUnit.SECONDS)).isTrue();
@@ -264,12 +265,12 @@ public class DefaultEventBusTest {
   @Test
   void shouldDeliverEventsForSparseTypeId() {
     // given:
-    var eventBus = EventBusFactory.eventBus(typeIdFactory);
+    var eventBus = EventBusFactory.createEventBus(typeIdFactory);
     MutableArray<EventWithOutOfRangeTypeId> receivedEvents = ArrayFactory.mutableArray(EventWithOutOfRangeTypeId.class);
-    eventBus.registerConsumer(EventWithOutOfRangeTypeId.TYPE_ID, receivedEvents::add);
+    eventBus.subscribe(EventWithOutOfRangeTypeId.TYPE_ID, receivedEvents::add);
 
     // when:
-    eventBus.sendSync(new EventWithOutOfRangeTypeId("event"));
+    eventBus.send(new EventWithOutOfRangeTypeId("event"));
 
     // then:
     assertThat(receivedEvents).containsExactly(new EventWithOutOfRangeTypeId("event"));
