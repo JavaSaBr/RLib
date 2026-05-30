@@ -116,6 +116,9 @@ Behavior rules for the coding agent
 - If changing code that touches Testcontainers or integration tests, ensure Docker is available when validating; otherwise skip integration tests locally and make this explicit in PR.
 - If any command from these instructions fails, only then search the repository for more details or updated config. Trust this document first.
 - When tests fail locally, reproduce failing tests selectively with `--tests` before making fixes.
+- Do not report exact test counts unless verified from test result files (`build/test-results/**/TEST-*.xml`); Gradle console summaries may be misleading with caching or filtered runs.
+- When adding or updating documentation examples, verify API names and signatures against current source code (especially after recent renames).
+- If the user says changes are already committed, avoid unsolicited commit-oriented follow-ups and focus on the requested review/documentation/diff task.
 
 Reference (root file list, quick)
 - README.md
