@@ -127,4 +127,23 @@ class Slf4jLoggerImplTest {
     assertThat(LOGS_DATA.get(0))
         .endsWith("Slf4jLoggerImplTest: value is 42");
   }
+
+  @Test
+  void shouldDelegateFormattedMessageWithTrailingExceptionToRlibLogger() {
+    // given:
+    rlibLogger.overrideEnabled(LoggerLevel.ERROR, true);
+    
+    var slf4jLogger = LoggerFactory.getLogger(Slf4jLoggerImplTest.class);
+    var exception = new RuntimeException("oops");
+
+    // when:
+    slf4jLogger.error("failed with code {}", 500, exception);
+
+    // then:
+    assertThat(LOGS_DATA.size())
+        .isEqualTo(1);
+    assertThat(LOGS_DATA.get(0))
+        .contains("Slf4jLoggerImplTest: failed with code 500")
+        .contains("RuntimeException: oops");
+  }
 }
