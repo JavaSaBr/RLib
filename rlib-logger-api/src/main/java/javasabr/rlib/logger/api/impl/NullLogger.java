@@ -2,7 +2,6 @@ package javasabr.rlib.logger.api.impl;
 
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
-import org.jspecify.annotations.NonNull;
 
 public final class NullLogger implements Logger {
   

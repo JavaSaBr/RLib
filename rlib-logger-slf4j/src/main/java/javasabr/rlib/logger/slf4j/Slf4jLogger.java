@@ -3,7 +3,6 @@ package javasabr.rlib.logger.slf4j;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 
 @RequiredArgsConstructor
 public class Slf4jLogger implements Logger {
