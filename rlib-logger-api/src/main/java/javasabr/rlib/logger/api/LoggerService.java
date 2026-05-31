@@ -103,10 +103,10 @@ public interface LoggerService {
   /**
    * Writes a log message.
    *
+   * @param logger the logger
    * @param level the log level
-   * @param loggerName the logger name
-   * @param logMessage the message to write
+   * @param message the message to write
    * @since 10.0.0
    */
-  void write(LoggerLevel level, String loggerName, String logMessage);
+  void write(Logger logger, LoggerLevel level, String message);
 }

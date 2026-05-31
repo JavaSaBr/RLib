@@ -3,7 +3,7 @@ package javasabr.rlib.logger.api.impl;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 
-public final class NullLogger implements Logger {
+public final class NoOpsLogger implements Logger {
   
   @Override
   public String name() {

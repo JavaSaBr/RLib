@@ -1,24 +1,28 @@
 package javasabr.rlib.logger.impl;
 
 import java.util.Arrays;
+import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerService;
+import javasabr.rlib.logger.impl.config.LogConsumer;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 /**
  * @author JavaSaBr
  */
-@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PROTECTED)
 public final class DefaultLogger implements Logger {
-  
-  int[] override;
-  String name;
-  LoggerService loggerService;
 
-  public DefaultLogger(String name, LoggerService loggerService) {
+  final int[] override;
+  final String name;
+  final DefaultLoggerService loggerService;
+
+  Array<LogConsumer> resolvedConsumers;
+  
+  public DefaultLogger(String name, DefaultLoggerService loggerService) {
     this.name = name;
     this.loggerService = loggerService;
     this.override = new int[DefaultLoggerService.LOGGER_LEVELS.length];
@@ -56,14 +60,14 @@ public final class DefaultLogger implements Logger {
   @Override
   public void print(LoggerLevel level, String logMessage) {
     if (enabled(level)) {
-      loggerService.write(level, name, logMessage);
+      loggerService.write(this, level, logMessage);
     }
   }
 
   @Override
   public void print(LoggerLevel level, Throwable exception) {
     if (enabled(level)) {
-      loggerService.write(level, name, StringUtils.toString(exception));
+      loggerService.write(this, level, StringUtils.toString(exception));
     }
   }
 
@@ -71,7 +75,7 @@ public final class DefaultLogger implements Logger {
   public void print(LoggerLevel level, String message, Throwable exception) {
     if (enabled(level)) {
       String exceptionInfo = StringUtils.toString(exception);
-      loggerService.write(level, name, message + ": " + exceptionInfo);
+      loggerService.write(this, level, message + ": " + exceptionInfo);
     }
   }
 }

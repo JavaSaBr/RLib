@@ -1,7 +1,5 @@
 package javasabr.rlib.logger.impl;
 
-import static javasabr.rlib.common.util.ObjectUtils.notNull;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDateTime;
@@ -13,7 +11,6 @@ import javasabr.rlib.collections.array.ArrayFactory;
 import javasabr.rlib.collections.array.ArrayIterationFunctions;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.logger.api.Logger;
-import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerListener;
 import javasabr.rlib.logger.api.LoggerService;
@@ -26,11 +23,11 @@ import lombok.experimental.FieldDefaults;
  * @author JavaSaBr
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public class DefaultLoggerService implements LoggerFactory, LoggerService {
+public class DefaultLoggerService implements LoggerService {
 
   static final LoggerLevel[] LOGGER_LEVELS = LoggerLevel.values();
 
-  ConcurrentMap<String, Logger> loggers;
+  ConcurrentMap<Object, DefaultLogger> loggers;
   MutableArray<LoggerListener> listeners;
   ArrayIterationFunctions<LoggerListener> listenerIterations;
   MutableArray<Writer> writers;
@@ -42,7 +39,7 @@ public class DefaultLoggerService implements LoggerFactory, LoggerService {
 
   public DefaultLoggerService() {
     this.loggers = new ConcurrentHashMap<>();
-    this.logger = new DefaultLogger("", this);
+    this.logger = getLogger("");
     this.timeFormatter = DateTimeFormatter.ofPattern("d.MM.yyyy HH:mm:ss:SSS");
     this.listeners = ArrayFactory.copyOnModifyArray(LoggerListener.class);
     this.listenerIterations = listeners.iterations();
@@ -62,24 +59,23 @@ public class DefaultLoggerService implements LoggerFactory, LoggerService {
     writers.add(writer);
   }
 
-  @Override
   public Logger getDefault() {
     return logger;
   }
 
-  @Override
-  public Logger make(Class<?> type) {
-    String simpleName = type.getSimpleName();
-    Logger logger = loggers
-        .computeIfAbsent(simpleName, name -> new DefaultLogger(name, this));
-    return notNull(logger);
+  public DefaultLogger getLogger(Class<?> type) {
+    return loggers.computeIfAbsent(
+        type, 
+        key -> {
+          var clazz = (Class<?>) key;
+          return new DefaultLogger(clazz.getSimpleName(), this);
+        });
   }
 
-  @Override
-  public Logger make(String name) {
-    Logger logger = loggers
-        .computeIfAbsent(name, str -> new DefaultLogger(str, this));
-    return notNull(logger);
+  public DefaultLogger getLogger(String name) {
+    return loggers.computeIfAbsent(
+        name, 
+        key -> new DefaultLogger(key.toString(), this));
   }
 
   @Override
@@ -94,12 +90,12 @@ public class DefaultLoggerService implements LoggerFactory, LoggerService {
 
   @Override
   public void enable(Class<?> cs, LoggerLevel level) {
-    make(cs).overrideEnabled(level, true);
+    getLogger(cs).overrideEnabled(level, true);
   }
 
   @Override
   public void disable(Class<?> cs, LoggerLevel level) {
-    make(cs).overrideEnabled(level, false);
+    getLogger(cs).overrideEnabled(level, false);
   }
 
   @Override
@@ -118,13 +114,22 @@ public class DefaultLoggerService implements LoggerFactory, LoggerService {
   }
 
   @Override
-  public void write(LoggerLevel level, String loggerName, String logMessage) {
+  public void write(Logger logger, LoggerLevel level, String message) {
+    if (logger instanceof DefaultLogger defaultLogger) {
+      write(defaultLogger, level, message);
+    } else {
+      throw new UnsupportedOperationException("Unsupported logger type: " + logger.getClass());
+    }
+  }
+
+  void write(DefaultLogger logger, LoggerLevel level, String message) {
+    String name = logger.name();
     var timestamp = timeFormatter.format(LocalDateTime.now());
-    var resultMessage = level.title() 
-        + level.offset() + ' ' 
+    var resultMessage = level.title()
+        + level.offset() + ' '
         + timestamp + ' '
-        + loggerName + ": "
-        + logMessage;
+        + name + ": "
+        + message;
     write(level, resultMessage);
   }
 
