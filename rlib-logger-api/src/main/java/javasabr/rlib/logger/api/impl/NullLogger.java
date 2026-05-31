@@ -4,10 +4,18 @@ import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 
 public final class NullLogger implements Logger {
+  
+  @Override
+  public String name() {
+    return "null";
+  }
 
   @Override
   public void print(LoggerLevel level, String message) {}
 
   @Override
   public void print(LoggerLevel level, Throwable exception) {}
+
+  @Override
+  public void print(LoggerLevel level, String message, Throwable exception) {}
 }

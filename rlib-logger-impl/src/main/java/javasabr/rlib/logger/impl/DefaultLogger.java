@@ -13,9 +13,7 @@ import lombok.experimental.FieldDefaults;
  */
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public final class DefaultLogger implements Logger {
-
-  private static final LoggerLevel[] VALUES = LoggerLevel.values();
-
+  
   int[] override;
   String name;
   LoggerService loggerService;
@@ -25,6 +23,11 @@ public final class DefaultLogger implements Logger {
     this.loggerService = loggerService;
     this.override = new int[DefaultLoggerService.LOGGER_LEVELS.length];
     Arrays.fill(override, LoggerService.NOT_CONFIGURE);
+  }
+
+  @Override
+  public String name() {
+    return name;
   }
 
   @Override
@@ -61,6 +64,14 @@ public final class DefaultLogger implements Logger {
   public void print(LoggerLevel level, Throwable exception) {
     if (enabled(level)) {
       loggerService.write(level, name, StringUtils.toString(exception));
+    }
+  }
+
+  @Override
+  public void print(LoggerLevel level, String message, Throwable exception) {
+    if (enabled(level)) {
+      String exceptionInfo = StringUtils.toString(exception);
+      loggerService.write(level, name, message + ": " + exceptionInfo);
     }
   }
 }
