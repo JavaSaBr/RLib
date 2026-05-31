@@ -7,7 +7,6 @@ import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.jspecify.annotations.NonNull;
 
 /**
  * @author JavaSaBr

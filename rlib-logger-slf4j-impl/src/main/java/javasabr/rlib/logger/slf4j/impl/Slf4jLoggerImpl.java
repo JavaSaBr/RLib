@@ -28,17 +28,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void trace(String format, Object arg) {
-    logger.trace(MessageFormatter.format(format, arg).getMessage());
+    if (isTraceEnabled()) {
+      logger.trace(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void trace(String format, Object arg1, Object arg2) {
-    logger.trace(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isTraceEnabled()) {
+      logger.trace(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void trace(String format, Object... arguments) {
-    logger.trace(MessageFormatter.format(format, arguments).getMessage());
+    if (isTraceEnabled()) {
+      logger.trace(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -58,17 +64,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void trace(Marker marker, String format, Object arg) {
-    logger.trace(MessageFormatter.format(format, arg).getMessage());
+    if (isTraceEnabled()) {
+      logger.trace(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void trace(Marker marker, String format, Object arg1, Object arg2) {
-    logger.trace(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isTraceEnabled()) {
+      logger.trace(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void trace(Marker marker, String format, Object... arguments) {
-    logger.trace(MessageFormatter.format(format, arguments).getMessage());
+    if (isTraceEnabled()) {
+      logger.trace(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -88,17 +100,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void debug(String format, Object arg) {
-    logger.debug(MessageFormatter.format(format, arg).getMessage());
+    if (isDebugEnabled()) {
+      logger.debug(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void debug(String format, Object arg1, Object arg2) {
-    logger.debug(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isDebugEnabled()) {
+      logger.debug(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void debug(String format, Object... arguments) {
-    logger.debug(MessageFormatter.format(format, arguments).getMessage());
+    if (isDebugEnabled()) {
+      logger.debug(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -118,17 +136,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void debug(Marker marker, String format, Object arg) {
-    logger.debug(MessageFormatter.format(format, arg).getMessage());
+    if (isDebugEnabled()) {
+      logger.debug(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void debug(Marker marker, String format, Object arg1, Object arg2) {
-    logger.debug(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isDebugEnabled()) {
+      logger.debug(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void debug(Marker marker, String format, Object... arguments) {
-    logger.debug(MessageFormatter.format(format, arguments).getMessage());
+    if (isDebugEnabled()) {
+      logger.debug(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -148,17 +172,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void info(String format, Object arg) {
-    logger.info(MessageFormatter.format(format, arg).getMessage());
+    if (isInfoEnabled()) {
+      logger.info(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void info(String format, Object arg1, Object arg2) {
-    logger.info(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isInfoEnabled()) {
+      logger.info(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void info(String format, Object... arguments) {
-    logger.info(MessageFormatter.format(format, arguments).getMessage());
+    if (isInfoEnabled()) {
+      logger.info(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -178,17 +208,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void info(Marker marker, String format, Object arg) {
-    logger.info(MessageFormatter.format(format, arg).getMessage());
+    if (isInfoEnabled()) {
+      logger.info(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void info(Marker marker, String format, Object arg1, Object arg2) {
-    logger.info(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isInfoEnabled()) {
+      logger.info(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void info(Marker marker, String format, Object... arguments) {
-    logger.info(MessageFormatter.format(format, arguments).getMessage());
+    if (isInfoEnabled()) {
+      logger.info(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -208,17 +244,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void warn(String format, Object arg) {
-    logger.warn(MessageFormatter.format(format, arg).getMessage());
+    if (isWarnEnabled()) {
+      logger.warn(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void warn(String format, Object arg1, Object arg2) {
-    logger.warn(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isWarnEnabled()) {
+      logger.warn(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void warn(String format, Object... arguments) {
-    logger.warn(MessageFormatter.format(format, arguments).getMessage());
+    if (isWarnEnabled()) {
+      logger.warn(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -238,17 +280,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void warn(Marker marker, String format, Object arg) {
-    logger.warn(MessageFormatter.format(format, arg).getMessage());
+    if (isWarnEnabled()) {
+      logger.warn(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void warn(Marker marker, String format, Object arg1, Object arg2) {
-    logger.warn(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isWarnEnabled()) {
+      logger.warn(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void warn(Marker marker, String format, Object... arguments) {
-    logger.warn(MessageFormatter.format(format, arguments).getMessage());
+    if (isWarnEnabled()) {
+      logger.warn(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -268,17 +316,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void error(String format, Object arg) {
-    logger.error(MessageFormatter.format(format, arg).getMessage());
+    if (isErrorEnabled()) {
+      logger.error(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void error(String format, Object arg1, Object arg2) {
-    logger.error(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isErrorEnabled()) {
+      logger.error(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void error(String format, Object... arguments) {
-    logger.error(MessageFormatter.format(format, arguments).getMessage());
+    if (isErrorEnabled()) {
+      logger.error(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
@@ -298,17 +352,23 @@ public class Slf4jLoggerImpl implements org.slf4j.Logger {
 
   @Override
   public void error(Marker marker, String format, Object arg) {
-    logger.error(MessageFormatter.format(format, arg).getMessage());
+    if (isErrorEnabled()) {
+      logger.error(MessageFormatter.format(format, arg).getMessage());
+    }
   }
 
   @Override
   public void error(Marker marker, String format, Object arg1, Object arg2) {
-    logger.error(MessageFormatter.format(format, arg1, arg2).getMessage());
+    if (isErrorEnabled()) {
+      logger.error(MessageFormatter.format(format, arg1, arg2).getMessage());
+    }
   }
 
   @Override
   public void error(Marker marker, String format, Object... arguments) {
-    logger.error(MessageFormatter.format(format, arguments).getMessage());
+    if (isErrorEnabled()) {
+      logger.error(MessageFormatter.arrayFormat(format, arguments).getMessage());
+    }
   }
 
   @Override
