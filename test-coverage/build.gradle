@@ -14,6 +14,7 @@ dependencies {
   jacocoAggregation projects.rlibLoggerApi
   jacocoAggregation projects.rlibLoggerImpl
   jacocoAggregation projects.rlibLoggerSlf4j
+  jacocoAggregation projects.rlibLoggerSlf4jImpl
   jacocoAggregation projects.rlibMail
   jacocoAggregation projects.rlibNetwork
   jacocoAggregation projects.rlibPluginSystem

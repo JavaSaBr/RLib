@@ -11,6 +11,49 @@ import org.junit.jupiter.api.Test;
 public class LoggerTest {
 
   @Test
+  @DisplayName("should print trace message and trace message with exception")
+  void shouldPrintTraceMethods() {
+    // given:
+    var messages = new ArrayList<String>();
+    var exception = new RuntimeException("trace-error");
+
+    Logger logger = new Logger() {
+
+      @Override
+      public String name() {
+        return "test";
+      }
+
+      @Override
+      public boolean enabled(@NonNull LoggerLevel level) {
+        return true;
+      }
+
+      @Override
+      public void print(@NonNull LoggerLevel level, @NonNull String message) {
+        messages.add(level + "_" + message);
+      }
+
+      @Override
+      public void print(@NonNull LoggerLevel level, @NonNull Throwable exception) {
+      }
+
+      @Override
+      public void print(@NonNull LoggerLevel level, @NonNull String message, @NonNull Throwable exception) {
+        messages.add(level + "_" + message + "_" + exception.getMessage());
+      }
+    };
+
+    // when:
+    logger.trace("msg1");
+    logger.trace("msg2", exception);
+
+    // then:
+    assertThat(messages)
+        .isEqualTo(List.of("TRACE_msg1", "TRACE_msg2_trace-error"));
+  }
+
+  @Test
   @DisplayName("should print all debug methods")
   void shouldPrintAllDebugMethods() {
     // given:
@@ -32,6 +75,11 @@ public class LoggerTest {
     Logger logger = new Logger() {
 
       @Override
+      public String name() {
+        return "test";
+      }
+
+      @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;
       }
@@ -43,6 +91,10 @@ public class LoggerTest {
 
       @Override
       public void print(@NonNull LoggerLevel level, @NonNull Throwable exception) {
+      }
+
+      @Override
+      public void print(@NonNull LoggerLevel level, @NonNull String message, @NonNull Throwable exception) {
       }
     };
 
@@ -86,6 +138,11 @@ public class LoggerTest {
     Logger logger = new Logger() {
 
       @Override
+      public String name() {
+        return "test";
+      }
+
+      @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;
       }
@@ -97,6 +154,10 @@ public class LoggerTest {
 
       @Override
       public void print(@NonNull LoggerLevel level, @NonNull Throwable exception) {
+      }
+
+      @Override
+      public void print(@NonNull LoggerLevel level, @NonNull String message, @NonNull Throwable exception) {
       }
     };
 
@@ -140,6 +201,11 @@ public class LoggerTest {
     Logger logger = new Logger() {
 
       @Override
+      public String name() {
+        return "test";
+      }
+
+      @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;
       }
@@ -151,6 +217,10 @@ public class LoggerTest {
 
       @Override
       public void print(@NonNull LoggerLevel level, @NonNull Throwable exception) {
+      }
+
+      @Override
+      public void print(@NonNull LoggerLevel level, @NonNull String message, @NonNull Throwable exception) {
       }
     };
 
@@ -194,6 +264,11 @@ public class LoggerTest {
     Logger logger = new Logger() {
 
       @Override
+      public String name() {
+        return "test";
+      }
+
+      @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;
       }
@@ -205,6 +280,10 @@ public class LoggerTest {
 
       @Override
       public void print(@NonNull LoggerLevel level, @NonNull Throwable exception) {
+      }
+
+      @Override
+      public void print(@NonNull LoggerLevel level, @NonNull String message, @NonNull Throwable exception) {
       }
     };
 

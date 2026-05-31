@@ -16,8 +16,9 @@ import lombok.experimental.FieldDefaults;
 @Accessors(fluent = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum LoggerLevel {
-  INFO("INFO", "  ", true, true),
+  TRACE("TRACE", " ", false, false),
   DEBUG("DEBUG", " ", false, false),
+  INFO("INFO", "  ", true, true),
   WARNING("WARN", "  ", true, true),
   ERROR("ERROR", " ", true, true);
 

@@ -198,7 +198,36 @@ public interface Logger {
     @NonNull
     String make(A arg1, B arg2, C arg3, D arg4);
   }
+  
+  /**
+   * Returns the name of this logger.
+   *
+   * @return the logger name
+   * @since 10.0.0
+   */
+  @NonNull String name();
 
+  /**
+   * Prints a trace message.
+   *
+   * @param message the message to print
+   * @since 10.0.0
+   */
+  default void trace(@NonNull String message) {
+    print(LoggerLevel.TRACE, message);
+  }
+
+  /**
+   * Prints a trace message with an exception.
+   *
+   * @param message   the message to print
+   * @param exception the exception to print
+   * @since 10.0.0
+   */
+  default void trace(@NonNull String message, @NonNull Throwable exception) {
+    print(LoggerLevel.TRACE, message, exception);
+  }
+  
   /**
    * Prints a debug message.
    *
@@ -207,6 +236,17 @@ public interface Logger {
    */
   default void debug(@NonNull String message) {
     print(LoggerLevel.DEBUG, message);
+  }
+
+  /**
+   * Prints a debug message with an exception.
+   *
+   * @param message   the message to print
+   * @param exception the exception to print
+   * @since 10.0.0
+   */
+  default void debug(@NonNull String message, @NonNull Throwable exception) {
+    print(LoggerLevel.DEBUG, message, exception);
   }
 
   default void debug(int arg1, @NonNull IntFactory factory) {
@@ -261,6 +301,21 @@ public interface Logger {
   default void error(@NonNull String message) {
     print(LoggerLevel.ERROR, message);
   }
+  
+  default void error(@NonNull Throwable exception) {
+    print(LoggerLevel.ERROR, exception);
+  }
+
+  /**
+   * Prints an error message with an exception.
+   *
+   * @param message   the message to print
+   * @param exception the exception to print
+   * @since 10.0.0
+   */
+  default void error(@NonNull String message, @NonNull Throwable exception) {
+    print(LoggerLevel.ERROR, message, exception);
+  }
 
   default <A> void error(A arg1, @NonNull N1Factory<A> factory) {
     print(LoggerLevel.ERROR, arg1, factory);
@@ -310,12 +365,19 @@ public interface Logger {
     print(LoggerLevel.ERROR, arg1, arg2, arg3, arg4, factory);
   }
 
-  default void error(@NonNull Throwable exception) {
-    print(LoggerLevel.ERROR, exception);
-  }
-
   default void info(@NonNull String message) {
     print(LoggerLevel.INFO, message);
+  }
+
+  /**
+   * Prints an info message with an exception.
+   *
+   * @param message   the message to print
+   * @param exception the exception to print
+   * @since 10.0.0
+   */
+  default void info(@NonNull String message, @NonNull Throwable exception) {
+    print(LoggerLevel.INFO, message, exception);
   }
 
   default void info(int arg1, @NonNull IntFactory factory) {
@@ -397,6 +459,17 @@ public interface Logger {
    */
   default void warn(@NonNull String message) {
     print(LoggerLevel.WARNING, message);
+  }
+
+  /**
+   * Prints a warning message with an exception.
+   *
+   * @param message   the message to print
+   * @param exception the exception to print
+   * @since 10.0.0
+   */
+  default void warn(@NonNull String message, @NonNull Throwable exception) {
+    print(LoggerLevel.WARNING, message, exception);
   }
 
   @Deprecated(forRemoval = true)
@@ -582,6 +655,16 @@ public interface Logger {
 
   void print(@NonNull LoggerLevel level, @NonNull Throwable exception);
 
+  /**
+   * Prints a message with an exception at the specified level.
+   *
+   * @param level     the logger level
+   * @param message   the message to print
+   * @param exception the exception to print
+   * @since 10.0.0
+   */
+  void print(@NonNull LoggerLevel level, @NonNull String message, @NonNull Throwable exception);
+  
   default <A> void print(@NonNull LoggerLevel level, A arg1, @NonNull N1Factory<A> factory) {
     if (enabled(level)) {
       print(level, factory.make(arg1));
