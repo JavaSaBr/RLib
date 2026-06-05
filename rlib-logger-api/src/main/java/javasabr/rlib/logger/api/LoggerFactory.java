@@ -33,5 +33,11 @@ public interface LoggerFactory {
    */
   Logger getDefault();
   
+  /**
+   * Returns the logger service.
+   *
+   * @return the logger service
+   * @since 10.0.0
+   */
   LoggerService getLoggerService();
 }

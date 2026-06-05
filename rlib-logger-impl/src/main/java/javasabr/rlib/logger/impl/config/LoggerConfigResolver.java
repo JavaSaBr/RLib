@@ -6,6 +6,11 @@ import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.collections.array.ArrayCollectors;
 import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfigLoader;
 
+/**
+ * Resolver of logger configuration from available loaders.
+ *
+ * @since 10.0.0
+ */
 public class LoggerConfigResolver {
   
   private static final Array<LoggerConfigLoader> LOADERS = Array
@@ -14,6 +19,12 @@ public class LoggerConfigResolver {
       .sorted(Comparator.comparingInt(LoggerConfigLoader::order))
       .collect(ArrayCollectors.toArray(LoggerConfigLoader.class));
 
+  /**
+   * Loads logger configuration.
+   *
+   * @return the loaded logger configuration
+   * @since 10.0.0
+   */
   public static LoggerConfig load() {
     return LOADERS
         .stream()

@@ -84,6 +84,12 @@ public class LoggerManager {
     return LOGGER_FACTORY.getLogger(id);
   }
 
+  /**
+   * Returns the logger service.
+   *
+   * @return the logger service
+   * @since 10.0.0
+   */
   public static LoggerService getLoggerService() {
     return LOGGER_FACTORY.getLoggerService();
   }
