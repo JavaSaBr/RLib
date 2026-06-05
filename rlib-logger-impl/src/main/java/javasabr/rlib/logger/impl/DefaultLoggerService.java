@@ -1,19 +1,15 @@
 package javasabr.rlib.logger.impl;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import javasabr.rlib.collections.array.ArrayFactory;
-import javasabr.rlib.collections.array.ArrayIterationFunctions;
-import javasabr.rlib.collections.array.MutableArray;
+import java.util.function.Function;
+import javasabr.rlib.collections.array.UnsafeArray;
+import javasabr.rlib.collections.dictionary.DictionaryFactory;
+import javasabr.rlib.collections.dictionary.LockableRefToRefDictionary;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.api.LoggerListener;
 import javasabr.rlib.logger.api.LoggerService;
+import javasabr.rlib.logger.impl.config.LogMessageConsumer;
+import javasabr.rlib.logger.impl.config.LoggerConfig;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
@@ -22,41 +18,26 @@ import lombok.experimental.FieldDefaults;
  *
  * @author JavaSaBr
  */
-@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PROTECTED)
 public class DefaultLoggerService implements LoggerService {
 
-  static final LoggerLevel[] LOGGER_LEVELS = LoggerLevel.values();
+  public static final LoggerLevel[] LOGGER_LEVELS = LoggerLevel.values();
+  public static final String ROOT_LOGGER_NAME = "ROOT";
 
-  ConcurrentMap<Object, DefaultLogger> loggers;
-  MutableArray<LoggerListener> listeners;
-  ArrayIterationFunctions<LoggerListener> listenerIterations;
-  MutableArray<Writer> writers;
-  ArrayIterationFunctions<Writer> writerIterations;
+  final LockableRefToRefDictionary<String, DefaultLogger> loggers;
+  final Function<String, DefaultLogger> loggerFactory = this::createNew;
 
-  Logger logger;
-  DateTimeFormatter timeFormatter;
-  int[] override;
+  final Logger logger;
+  final int[] override;
+  
+  volatile LoggerConfig config;
 
-  public DefaultLoggerService() {
-    this.loggers = new ConcurrentHashMap<>();
-    this.logger = getLogger("");
-    this.timeFormatter = DateTimeFormatter.ofPattern("d.MM.yyyy HH:mm:ss:SSS");
-    this.listeners = ArrayFactory.copyOnModifyArray(LoggerListener.class);
-    this.listenerIterations = listeners.iterations();
-    this.writers = ArrayFactory.copyOnModifyArray(Writer.class);
-    this.writerIterations = writers.iterations();
+  public DefaultLoggerService(LoggerConfig config) {
+    this.config = config;
+    this.loggers = DictionaryFactory.stampedLockBasedRefToRefDictionary();
+    this.logger = getLogger(ROOT_LOGGER_NAME);
     this.override = new int[LOGGER_LEVELS.length];
     Arrays.fill(override, NOT_CONFIGURE);
-  }
-
-  @Override
-  public void addListener(LoggerListener listener) {
-    listeners.add(listener);
-  }
-
-  @Override
-  public void addWriter(Writer writer) {
-    writers.add(writer);
   }
 
   public Logger getDefault() {
@@ -64,28 +45,38 @@ public class DefaultLoggerService implements LoggerService {
   }
 
   public DefaultLogger getLogger(Class<?> type) {
-    return loggers.computeIfAbsent(
-        type, 
-        key -> {
-          var clazz = (Class<?>) key;
-          return new DefaultLogger(clazz.getSimpleName(), this);
-        });
+    long lock = loggers.writeLock();
+    try {
+      return loggers.getOrCompute(type.getName(), loggerFactory);
+    } finally {
+      loggers.writeUnlock(lock);
+    }
   }
 
   public DefaultLogger getLogger(String name) {
-    return loggers.computeIfAbsent(
-        name, 
-        key -> new DefaultLogger(key.toString(), this));
+    long lock = loggers.writeLock();
+    try {
+      return loggers.getOrCompute(name, loggerFactory);
+    } finally {
+      loggers.writeUnlock(lock);
+    }
   }
 
-  @Override
-  public void removeListener(LoggerListener listener) {
-    listeners.remove(listener);
-  }
-
-  @Override
-  public void removeWriter(Writer writer) {
-    writers.remove(writer);
+  private DefaultLogger createNew(String name) {
+    DefaultLogger created;
+    String shortName = name;
+    int cutUntil = name.lastIndexOf('.');
+    boolean isDotLastChar = cutUntil != -1 && cutUntil == shortName.length() - 1;
+    if (isDotLastChar && shortName.length() > 1) {
+      shortName = shortName.substring(0, shortName.length() - 1);
+      cutUntil = shortName.lastIndexOf('.');
+    }
+    if (cutUntil != -1) {
+      shortName = shortName.substring(cutUntil + 1);
+    }
+    created = new DefaultLogger(name, shortName, this);
+    config.configureLevels(created);
+    return created;
   }
 
   @Override
@@ -123,46 +114,21 @@ public class DefaultLoggerService implements LoggerService {
   }
 
   void write(DefaultLogger logger, LoggerLevel level, String message) {
-    String name = logger.name();
-    var timestamp = timeFormatter.format(LocalDateTime.now());
-    var resultMessage = level.title()
-        + level.offset() + ' '
-        + timestamp + ' '
-        + name + ": "
-        + message;
-    write(level, resultMessage);
-  }
-
-  private void write(LoggerLevel level, String resultMessage) {
-    listenerIterations.forEach(resultMessage, LoggerListener::println);
-    writerIterations.forEach(resultMessage, DefaultLoggerService::append);
-    switch (level) {
-      case INFO, DEBUG -> System.out.println(resultMessage);
-      case ERROR, WARNING -> System.err.println(resultMessage);
-    }
-    if (!level.forceFlush()) {
-      return;
-    }
-    listeners.forEach(LoggerListener::flush);
-    writers.forEach(DefaultLoggerService::flush);
-  }
-
-  private static void append(Writer writer, String toWrite) {
-    try {
-      writer.append(toWrite);
-      writer.append('\n');
-    } catch (IOException exception) {
-      //noinspection CallToPrintStackTrace
-      exception.printStackTrace();
+    UnsafeArray<LogMessageConsumer> consumers = resolveConsumers(logger, level);
+    for (LogMessageConsumer consumer : consumers.wrapped()) {
+      //noinspection DataFlowIssue it's safe
+      consumer.consume(level, logger, message);
     }
   }
 
-  private static void flush(Writer writer) {
-    try {
-      writer.flush();
-    } catch (IOException exception) {
-      //noinspection CallToPrintStackTrace
-      exception.printStackTrace();
+  private UnsafeArray<LogMessageConsumer> resolveConsumers(DefaultLogger logger, LoggerLevel level) {
+    UnsafeArray<LogMessageConsumer> consumers = logger.resolvedConsumers(level);
+    if (consumers == null) {
+      consumers = config
+          .resolveConsumers(logger, level)
+          .asUnsafe();
+      logger.saveResolvedConsumers(level, consumers);
     }
+    return consumers;
   }
 }

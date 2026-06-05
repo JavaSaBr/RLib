@@ -25,6 +25,11 @@ public class LoggerTest {
       }
 
       @Override
+      public String shortName() {
+        return "test";
+      }
+
+      @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;
       }
@@ -79,6 +84,11 @@ public class LoggerTest {
         return "test";
       }
 
+      @Override
+      public String shortName() {
+        return "test";
+      }
+      
       @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;
@@ -143,6 +153,11 @@ public class LoggerTest {
       }
 
       @Override
+      public String shortName() {
+        return "test";
+      }
+      
+      @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;
       }
@@ -206,6 +221,11 @@ public class LoggerTest {
       }
 
       @Override
+      public String shortName() {
+        return "test";
+      }
+      
+      @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;
       }
@@ -268,6 +288,11 @@ public class LoggerTest {
         return "test";
       }
 
+      @Override
+      public String shortName() {
+        return "test";
+      }
+      
       @Override
       public boolean enabled(@NonNull LoggerLevel level) {
         return true;

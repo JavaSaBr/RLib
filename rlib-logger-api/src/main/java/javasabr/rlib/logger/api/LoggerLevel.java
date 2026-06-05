@@ -16,11 +16,11 @@ import lombok.experimental.FieldDefaults;
 @Accessors(fluent = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum LoggerLevel {
-  TRACE("TRACE", " ", false, false),
-  DEBUG("DEBUG", " ", false, false),
-  INFO("INFO", "  ", true, true),
-  WARNING("WARN", "  ", true, true),
-  ERROR("ERROR", " ", true, true);
+  TRACE("TRACE", " ", 0, false, false),
+  DEBUG("DEBUG", " ", 1, false, false),
+  INFO("INFO", "  ", 2, true, true),
+  WARNING("WARN", "  ", 3, true, true),
+  ERROR("ERROR", " ", 4, true, true);
 
   /**
    * The number of log levels.
@@ -30,6 +30,7 @@ public enum LoggerLevel {
   String title;
   String offset;
 
+  int severity;
   boolean enabled;
   boolean forceFlush;
 

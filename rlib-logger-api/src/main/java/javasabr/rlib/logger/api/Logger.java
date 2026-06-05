@@ -205,8 +205,12 @@ public interface Logger {
    * @return the logger name
    * @since 10.0.0
    */
-  @NonNull String name();
+  @NonNull 
+  String name();
 
+  @NonNull
+  String shortName();
+  
   /**
    * Prints a trace message.
    *

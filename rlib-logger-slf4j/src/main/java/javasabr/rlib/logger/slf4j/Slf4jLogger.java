@@ -3,6 +3,7 @@ package javasabr.rlib.logger.slf4j;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 
 @RequiredArgsConstructor
 public class Slf4jLogger implements Logger {
@@ -11,6 +12,11 @@ public class Slf4jLogger implements Logger {
 
   @Override
   public String name() {
+    return logger.getName();
+  }
+
+  @Override
+  public String shortName() {
     return logger.getName();
   }
 

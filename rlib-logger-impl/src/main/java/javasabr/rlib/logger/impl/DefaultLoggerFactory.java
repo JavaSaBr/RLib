@@ -3,13 +3,14 @@ package javasabr.rlib.logger.impl;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerService;
+import javasabr.rlib.logger.impl.config.LoggerConfigResolver;
 
 public class DefaultLoggerFactory implements LoggerFactory {
   
   DefaultLoggerService defaultLoggerService;
   
   public DefaultLoggerFactory() {
-    this.defaultLoggerService = new DefaultLoggerService();
+    this.defaultLoggerService = new DefaultLoggerService(LoggerConfigResolver.load());
   }
   
   @Override

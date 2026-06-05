@@ -7,7 +7,12 @@ public final class NoOpsLogger implements Logger {
   
   @Override
   public String name() {
-    return "null";
+    return "noops";
+  }
+
+  @Override
+  public String shortName() {
+    return "noops";
   }
 
   @Override

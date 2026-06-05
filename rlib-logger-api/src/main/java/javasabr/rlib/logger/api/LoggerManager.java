@@ -1,6 +1,5 @@
 package javasabr.rlib.logger.api;
 
-import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -89,54 +88,6 @@ public class LoggerManager {
     return LOGGER_FACTORY.getLoggerService();
   }
   
-  /**
-   * Adds a listener to receive log output.
-   *
-   * @param listener the listener to add
-   * @since 10.0.0
-   */
-  public static void addListener(LoggerListener listener) {
-    LOGGER_FACTORY
-        .getLoggerService()
-        .addListener(listener);
-  }
-
-  /**
-   * Removes a previously added listener.
-   *
-   * @param listener the listener to remove
-   * @since 10.0.0
-   */
-  public static void removeListener(LoggerListener listener) {
-    LOGGER_FACTORY
-        .getLoggerService()
-        .removeListener(listener);
-  }
-
-  /**
-   * Adds a writer to receive log output.
-   *
-   * @param writer the writer to add
-   * @since 10.0.0
-   */
-  public static void addWriter(Writer writer) {
-    LOGGER_FACTORY
-        .getLoggerService()
-        .addWriter(writer);
-  }
-
-  /**
-   * Removes a previously added writer.
-   *
-   * @param writer the writer to remove
-   * @since 10.0.0
-   */
-  public static void removeWriter(Writer writer) {
-    LOGGER_FACTORY
-        .getLoggerService()
-        .removeWriter(writer);
-  }
-
   /**
    * Configures the default setting for a log level.
    *

@@ -3,7 +3,7 @@ package javasabr.rlib.logger.impl.config;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 
-public interface LogMessageRender {
+public interface LogMessageConsumer {
   
-  String render(LoggerLevel level, Logger logger, String message);
+  void consume(LoggerLevel level, Logger logger, String message);
 }
