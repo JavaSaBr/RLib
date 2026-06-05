@@ -13,7 +13,6 @@ import javasabr.rlib.logger.impl.config.LogMessageConsumer;
 import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfig;
 import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfig.LoggerConsumersKey;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class DefaultLoggerTest {

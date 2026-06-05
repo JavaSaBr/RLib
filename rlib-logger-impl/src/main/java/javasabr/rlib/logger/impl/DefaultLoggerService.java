@@ -63,22 +63,12 @@ public class DefaultLoggerService implements LoggerService {
   }
 
   private DefaultLogger createNew(String name) {
-    DefaultLogger created;
-    String shortName = name;
-    int cutUntil = name.lastIndexOf('.');
-    boolean isDotLastChar = cutUntil != -1 && cutUntil == shortName.length() - 1;
-    if (isDotLastChar && shortName.length() > 1) {
-      shortName = shortName.substring(0, shortName.length() - 1);
-      cutUntil = shortName.lastIndexOf('.');
-    }
-    if (cutUntil != -1) {
-      shortName = shortName.substring(cutUntil + 1);
-    }
-    created = new DefaultLogger(name, shortName, this);
+    String shortName = calculateShortName(name);
+    var created = new DefaultLogger(name, shortName, this);
     config.configureLevels(created);
     return created;
   }
-
+  
   @Override
   public void enable(Class<?> cs, LoggerLevel level) {
     getLogger(cs).overrideEnabled(level, true);
@@ -109,7 +99,13 @@ public class DefaultLoggerService implements LoggerService {
     if (logger instanceof DefaultLogger defaultLogger) {
       write(defaultLogger, level, message);
     } else {
-      throw new UnsupportedOperationException("Unsupported logger type: " + logger.getClass());
+      UnsafeArray<LogMessageConsumer> consumers = config
+          .resolveConsumers(logger, level)
+          .asUnsafe();
+      for (LogMessageConsumer consumer : consumers.wrapped()) {
+        //noinspection DataFlowIssue it's safe
+        consumer.consume(level, logger, message);
+      }
     }
   }
 
@@ -130,5 +126,22 @@ public class DefaultLoggerService implements LoggerService {
       logger.saveResolvedConsumers(level, consumers);
     }
     return consumers;
+  }
+  
+  private static String calculateShortName(String name) {
+    String shortName = name;
+    int cutUntil = name.lastIndexOf('.');
+    boolean isDotLastChar = cutUntil != -1 && cutUntil == shortName.length() - 1;
+    if (isDotLastChar && shortName.length() > 1) {
+      shortName = shortName.substring(0, shortName.length() - 1);
+      cutUntil = shortName.lastIndexOf('.');
+    }
+    if (cutUntil != -1) {
+      shortName = shortName.substring(cutUntil + 1);
+    }
+    if (shortName.isEmpty()) {
+      shortName = name;
+    }
+    return shortName;
   }
 }

@@ -4,7 +4,10 @@ import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerService;
 import javasabr.rlib.logger.impl.config.LoggerConfigResolver;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DefaultLoggerFactory implements LoggerFactory {
   
   DefaultLoggerService defaultLoggerService;
