@@ -2,15 +2,15 @@ package javasabr.rlib.logger.slf4j.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collection;
-import javasabr.rlib.collections.array.ArrayFactory;
-import javasabr.rlib.collections.array.LockableArray;
-import javasabr.rlib.collections.operation.LockableOperations;
+import java.util.ArrayList;
+import java.util.List;
+import javasabr.rlib.collections.array.Array;
+import javasabr.rlib.collections.dictionary.RefToRefDictionary;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.api.LoggerListener;
-import javasabr.rlib.logger.api.LoggerManager;
-import org.junit.jupiter.api.AfterEach;
+import javasabr.rlib.logger.impl.DefaultLoggerService;
+import javasabr.rlib.logger.impl.config.LogMessageConsumer;
+import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
@@ -21,30 +21,20 @@ import org.slf4j.LoggerFactory;
 @ResourceLock(value = "RLibLoggerOverrides", mode = ResourceAccessMode.READ_WRITE)
 class Slf4jLoggerImplTest {
 
-  private static final LockableArray<String> LOGS_DATA = ArrayFactory
-      .stampedLockBasedArray(String.class);
-  private static final LockableOperations<LockableArray<String>> LOGS_DATA_OPERATIONS =
-      LOGS_DATA.operations();
-  private static final LoggerListener LOGGER_LISTENER = text -> LOGS_DATA_OPERATIONS
-      .inWriteLock(text, Collection::add);
-
-  private final Logger rlibLogger = LoggerManager.getLogger(Slf4jLoggerImplTest.class);
+  private final List<String> receivedLogs = new ArrayList<>();
+  private Logger logger;
 
   @BeforeEach
   void prepare() {
-    LoggerManager.addListener(LOGGER_LISTENER);
-    LOGS_DATA_OPERATIONS.inWriteLock(Collection::clear);
+    RefToRefDictionary<DefaultLoggerConfig.LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> receivedLogs.add(level + " " + logger.name() + " " + message)));
+    var defaultLoggerService = new DefaultLoggerService(new DefaultLoggerConfig(
+        DefaultLoggerConfig.ENABLE_ALL_LEVELS,
+        loggerConsumers));
+    logger = defaultLoggerService.getLogger(Slf4jLoggerImplTest.class);
   }
-
-  @AfterEach
-  void cleanup() {
-    for (var level : LoggerLevel.values()) {
-      rlibLogger.resetToDefault(level);
-    }
-    LOGS_DATA_OPERATIONS.inWriteLock(Collection::clear);
-    LoggerManager.removeListener(LOGGER_LISTENER);
-  }
-
+  
   @Test
   void shouldReturnSlf4jLoggerImplFromLoggerFactory() {
     // when:
@@ -68,82 +58,79 @@ class Slf4jLoggerImplTest {
   @Test
   void shouldDelegateInfoMessageToRlibLogger() {
     // given:
-    rlibLogger.overrideEnabled(LoggerLevel.INFO, true);
-    var slf4jLogger = LoggerFactory.getLogger(Slf4jLoggerImplTest.class);
+    var slf4jLogger = new Slf4jLoggerImpl(logger);
 
     // when:
     slf4jLogger.info("hello from slf4j");
 
     // then:
-    assertThat(LOGS_DATA.size())
+    assertThat(receivedLogs.size())
         .isEqualTo(1);
-    assertThat(LOGS_DATA.get(0))
-        .endsWith("Slf4jLoggerImplTest: hello from slf4j");
+    assertThat(receivedLogs.getFirst())
+        .isEqualTo("INFO javasabr.rlib.logger.slf4j.impl.Slf4jLoggerImplTest hello from slf4j");
   }
 
   @Test
   void shouldDelegateErrorWithExceptionToRlibLogger() {
     // given:
-    rlibLogger.overrideEnabled(LoggerLevel.ERROR, true);
-    var slf4jLogger = LoggerFactory.getLogger(Slf4jLoggerImplTest.class);
+    var slf4jLogger = new Slf4jLoggerImpl(logger);
     var exception = new RuntimeException("boom");
 
     // when:
     slf4jLogger.error("error occurred", exception);
 
     // then:
-    assertThat(LOGS_DATA.size())
+    assertThat(receivedLogs.size())
         .isEqualTo(1);
-    assertThat(LOGS_DATA.get(0))
-        .contains("Slf4jLoggerImplTest: error occurred")
-        .contains("RuntimeException: boom");
+    assertThat(receivedLogs.getFirst())
+        .startsWith("ERROR javasabr.rlib.logger.slf4j.impl.Slf4jLoggerImplTest error occurred: java.lang.RuntimeException: boom");
   }
 
   @Test
-  void shouldNotDelegateDebugWhenDisabledByDefault() {
+  void shouldNotDelegateDebugWhenDisabled() {
     // given:
-    var slf4jLogger = LoggerFactory.getLogger(Slf4jLoggerImplTest.class);
+    logger.overrideEnabled(LoggerLevel.DEBUG, false);
+    var slf4jLogger = new Slf4jLoggerImpl(logger);
 
     // when:
     slf4jLogger.debug("should not appear");
 
     // then:
-    assertThat(LOGS_DATA.size())
+    assertThat(receivedLogs.size())
         .isEqualTo(0);
   }
 
   @Test
   void shouldDelegateFormattedMessageToRlibLogger() {
     // given:
-    rlibLogger.overrideEnabled(LoggerLevel.INFO, true);
-    var slf4jLogger = LoggerFactory.getLogger(Slf4jLoggerImplTest.class);
+    logger.overrideEnabled(LoggerLevel.INFO, true);
+    var slf4jLogger = new Slf4jLoggerImpl(logger);
 
     // when:
     slf4jLogger.info("value is {}", 42);
 
     // then:
-    assertThat(LOGS_DATA.size())
+    assertThat(receivedLogs.size())
         .isEqualTo(1);
-    assertThat(LOGS_DATA.get(0))
-        .endsWith("Slf4jLoggerImplTest: value is 42");
+    assertThat(receivedLogs.getFirst())
+        .endsWith("INFO javasabr.rlib.logger.slf4j.impl.Slf4jLoggerImplTest value is 42");
   }
 
   @Test
   void shouldDelegateFormattedMessageWithTrailingExceptionToRlibLogger() {
     // given:
-    rlibLogger.overrideEnabled(LoggerLevel.ERROR, true);
-    
-    var slf4jLogger = LoggerFactory.getLogger(Slf4jLoggerImplTest.class);
+    logger.overrideEnabled(LoggerLevel.ERROR, true);
+    var slf4jLogger = new Slf4jLoggerImpl(logger);
     var exception = new RuntimeException("oops");
 
     // when:
     slf4jLogger.error("failed with code {}", 500, exception);
 
     // then:
-    assertThat(LOGS_DATA.size())
+    assertThat(receivedLogs.size())
         .isEqualTo(1);
-    assertThat(LOGS_DATA.get(0))
-        .contains("Slf4jLoggerImplTest: failed with code 500")
+    assertThat(receivedLogs.getFirst())
+        .contains("ERROR javasabr.rlib.logger.slf4j.impl.Slf4jLoggerImplTest failed with code 500: java.lang.RuntimeException: oops")
         .contains("RuntimeException: oops");
   }
 }

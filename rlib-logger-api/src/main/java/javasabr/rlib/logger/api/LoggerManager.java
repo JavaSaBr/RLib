@@ -1,10 +1,9 @@
 package javasabr.rlib.logger.api;
 
-import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.ServiceLoader;
-import javasabr.rlib.logger.api.impl.NullLoggerFactory;
+import javasabr.rlib.logger.api.impl.NoOpsLoggerFactory;
 
 /**
  * Central manager for obtaining and configuring loggers.
@@ -39,9 +38,9 @@ public class LoggerManager {
 
     if (implementation == null) {
       System.err.printf(
-          "ERROR: No any exist implementation of [%s], will be used null logger%n",
+          "ERROR: No any exist implementation of [%s], will be used no ops logger%n",
           LoggerFactory.class);
-      LOGGER_FACTORY = new NullLoggerFactory();
+      LOGGER_FACTORY = new NoOpsLoggerFactory();
     } else {
       try {
         LOGGER_FACTORY = implementation
@@ -71,7 +70,7 @@ public class LoggerManager {
    * @since 10.0.0
    */
   public static Logger getLogger(Class<?> cs) {
-    return LOGGER_FACTORY.make(cs);
+    return LOGGER_FACTORY.getLogger(cs);
   }
 
   /**
@@ -82,57 +81,19 @@ public class LoggerManager {
    * @since 10.0.0
    */
   public static Logger getLogger(String id) {
-    return LOGGER_FACTORY.make(id);
+    return LOGGER_FACTORY.getLogger(id);
   }
 
   /**
-   * Adds a listener to receive log output.
+   * Returns the logger service.
    *
-   * @param listener the listener to add
+   * @return the logger service
    * @since 10.0.0
    */
-  public static void addListener(LoggerListener listener) {
-    if (LOGGER_FACTORY instanceof LoggerService ls) {
-      ls.addListener(listener);
-    }
+  public static LoggerService getLoggerService() {
+    return LOGGER_FACTORY.getLoggerService();
   }
-
-  /**
-   * Removes a previously added listener.
-   *
-   * @param listener the listener to remove
-   * @since 10.0.0
-   */
-  public static void removeListener(LoggerListener listener) {
-    if (LOGGER_FACTORY instanceof LoggerService ls) {
-      ls.removeListener(listener);
-    }
-  }
-
-  /**
-   * Adds a writer to receive log output.
-   *
-   * @param writer the writer to add
-   * @since 10.0.0
-   */
-  public static void addWriter(Writer writer) {
-    if (LOGGER_FACTORY instanceof LoggerService ls) {
-      ls.addWriter(writer);
-    }
-  }
-
-  /**
-   * Removes a previously added writer.
-   *
-   * @param writer the writer to remove
-   * @since 10.0.0
-   */
-  public static void removeWriter(Writer writer) {
-    if (LOGGER_FACTORY instanceof LoggerService ls) {
-      ls.removeWriter(writer);
-    }
-  }
-
+  
   /**
    * Configures the default setting for a log level.
    *
@@ -141,9 +102,9 @@ public class LoggerManager {
    * @since 10.0.0
    */
   public static void configureDefault(LoggerLevel level, boolean def) {
-    if (LOGGER_FACTORY instanceof LoggerService ls) {
-      ls.configureDefault(level, def);
-    }
+    LOGGER_FACTORY
+        .getLoggerService()
+        .configureDefault(level, def);
   }
 
   /**
@@ -153,9 +114,9 @@ public class LoggerManager {
    * @since 10.0.0
    */
   public static void removeDefault(LoggerLevel level) {
-    if (LOGGER_FACTORY instanceof LoggerService ls) {
-      ls.removeDefault(level);
-    }
+    LOGGER_FACTORY
+        .getLoggerService()
+        .removeDefault(level);
   }
 
   /**
@@ -166,9 +127,9 @@ public class LoggerManager {
    * @since 10.0.0
    */
   public static void enable(Class<?> cs, LoggerLevel level) {
-    if (LOGGER_FACTORY instanceof LoggerService ls) {
-      ls.enable(cs, level);
-    }
+    LOGGER_FACTORY
+        .getLoggerService()
+        .enable(cs, level);
   }
 
   /**
@@ -179,8 +140,8 @@ public class LoggerManager {
    * @since 10.0.0
    */
   public static void disable(Class<?> cs, LoggerLevel level) {
-    if (LOGGER_FACTORY instanceof LoggerService ls) {
-      ls.disable(cs, level);
-    }
+    LOGGER_FACTORY
+        .getLoggerService()
+        .disable(cs, level);
   }
 }

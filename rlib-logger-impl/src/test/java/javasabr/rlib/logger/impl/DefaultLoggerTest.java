@@ -2,40 +2,26 @@ package javasabr.rlib.logger.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collection;
-import javasabr.rlib.collections.array.ArrayFactory;
-import javasabr.rlib.collections.array.LockableArray;
-import javasabr.rlib.collections.operation.LockableOperations;
+import java.util.ArrayList;
+import java.util.List;
+import javasabr.rlib.collections.array.Array;
+import javasabr.rlib.collections.dictionary.RefToRefDictionary;
+import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.api.LoggerListener;
 import javasabr.rlib.logger.api.LoggerManager;
+import javasabr.rlib.logger.impl.config.LogMessageConsumer;
+import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfig;
+import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfig.LoggerConsumersKey;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.ResourceLock;
 
-@ResourceLock("LoggerListeners")
 class DefaultLoggerTest {
-
-  private static final LockableArray<String> LOGS_DATA = ArrayFactory
-      .stampedLockBasedArray(String.class);
-  private static final LockableOperations<LockableArray<String>> LOGS_DATA_OPERATIONS = 
-      LOGS_DATA.operations();
   
-  private static final LoggerListener LOGGER_LISTENER = text -> LOGS_DATA_OPERATIONS
-      .inWriteLock(text, Collection::add);
-
-  @BeforeEach
-  void prepare() {
-    LoggerManager.addListener(LOGGER_LISTENER);
-    LOGS_DATA_OPERATIONS
-        .inWriteLock(Collection::clear);
-  }
+  private final List<String> receivedLogs = new ArrayList<>();
   
   @AfterEach
   void cleanup() {
-    LOGS_DATA_OPERATIONS.inWriteLock(Collection::clear);
-    LoggerManager.removeListener(LOGGER_LISTENER);
+    receivedLogs.clear();
   }
 
   @Test
@@ -45,44 +31,316 @@ class DefaultLoggerTest {
   }
 
   @Test
-  void shouldWriteDataToDefaultLoggerImplementation() {
+  void shouldCreateLoggerWithCorrectFullNameAndShortName() {
+    // when:
+    Logger logger1 = LoggerManager.getLogger(DefaultLoggerTest.class);
+    Logger logger2 = LoggerManager.getLogger("javasabr.rlib.logger.impl.DefaultLoggerTest2");
+    
+    // then
+    assertThat(logger1.name()).isEqualTo("javasabr.rlib.logger.impl.DefaultLoggerTest");
+    assertThat(logger1.shortName()).isEqualTo("DefaultLoggerTest");
+    assertThat(logger2.name()).isEqualTo("javasabr.rlib.logger.impl.DefaultLoggerTest2");
+    assertThat(logger2.shortName()).isEqualTo("DefaultLoggerTest2");
+
+    // when:
+    Logger logger3 = LoggerManager.getLogger("javasabr.rlib.logger.impl.DefaultLoggerTest3.");
+    
+    // then:
+    assertThat(logger3.name()).isEqualTo("javasabr.rlib.logger.impl.DefaultLoggerTest3.");
+    assertThat(logger3.shortName()).isEqualTo("DefaultLoggerTest3");
+  }
+
+  @Test
+  void shouldSendLogMessagesForAllLevels() {
     // given:
-    var logger = LoggerManager.getLogger(DefaultLoggerTest.class);
-    logger.overrideEnabled(LoggerLevel.DEBUG, true);
-    logger.overrideEnabled(LoggerLevel.WARNING, true);
-    logger.overrideEnabled(LoggerLevel.ERROR, true);
-    logger.overrideEnabled(LoggerLevel.INFO, true);
+    RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> receivedLogs.add(level + " " + logger.name() + " " + message)));
+    var loggerService = new DefaultLoggerService(new DefaultLoggerConfig(
+        DefaultLoggerConfig.ENABLE_ALL_LEVELS,
+        loggerConsumers));
+    var logger = loggerService.getLogger(DefaultLoggerTest.class);
     
     // when:
     logger.print(LoggerLevel.ERROR, "test error data");
 
     // then:
-    assertThat(LOGS_DATA.size()).isEqualTo(1);
-    assertThat(LOGS_DATA.get(0)).startsWith("ERROR  ");
-    assertThat(LOGS_DATA.get(0)).endsWith("DefaultLoggerTest: test error data");
+    assertThat(receivedLogs.size()).isEqualTo(1);
+    assertThat(receivedLogs.get(0)).isEqualTo("ERROR javasabr.rlib.logger.impl.DefaultLoggerTest test error data");
 
     // when:
     logger.print(LoggerLevel.WARNING, "test warn data 2");
 
     // then:
-    assertThat(LOGS_DATA.size()).isEqualTo(2);
-    assertThat(LOGS_DATA.get(1)).startsWith("WARN   ");
-    assertThat(LOGS_DATA.get(1)).endsWith("DefaultLoggerTest: test warn data 2");
+    assertThat(receivedLogs.size()).isEqualTo(2);
+    assertThat(receivedLogs.get(1)).isEqualTo("WARN javasabr.rlib.logger.impl.DefaultLoggerTest test warn data 2");
 
     // when:
     logger.print(LoggerLevel.DEBUG, "test debug data 3");
 
     // then:
-    assertThat(LOGS_DATA.size()).isEqualTo(3);
-    assertThat(LOGS_DATA.get(2)).startsWith("DEBUG  ");
-    assertThat(LOGS_DATA.get(2)).endsWith("DefaultLoggerTest: test debug data 3");
+    assertThat(receivedLogs.size()).isEqualTo(3);
+    assertThat(receivedLogs.get(2)).isEqualTo("DEBUG javasabr.rlib.logger.impl.DefaultLoggerTest test debug data 3");
 
     // when:
     logger.print(LoggerLevel.INFO, "test info data 4");
 
     // then:
-    assertThat(LOGS_DATA.size()).isEqualTo(4);
-    assertThat(LOGS_DATA.get(3)).startsWith("INFO   ");
-    assertThat(LOGS_DATA.get(3)).endsWith("DefaultLoggerTest: test info data 4");
+    assertThat(receivedLogs.size()).isEqualTo(4);
+    assertThat(receivedLogs.get(3)).isEqualTo("INFO javasabr.rlib.logger.impl.DefaultLoggerTest test info data 4");
+
+    // when:
+    logger.print(LoggerLevel.TRACE, "test info data 5");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(5);
+    assertThat(receivedLogs.get(4)).isEqualTo("TRACE javasabr.rlib.logger.impl.DefaultLoggerTest test info data 5");
+  }
+
+  @Test
+  void shouldSendOnlyErrorLogMessages() {
+    // given:
+    var enabledLevels = RefToRefDictionary.of(
+        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerLevel.ERROR);
+    RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> receivedLogs.add(level + " " + logger.name() + " " + message)));
+    var loggerService = new DefaultLoggerService(new DefaultLoggerConfig(enabledLevels, loggerConsumers));
+    var logger = loggerService.getLogger(DefaultLoggerTest.class);
+
+    // when:
+    logger.print(LoggerLevel.ERROR, "test error data");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(1);
+    assertThat(receivedLogs.get(0)).isEqualTo("ERROR javasabr.rlib.logger.impl.DefaultLoggerTest test error data");
+
+    // when:
+    logger.print(LoggerLevel.WARNING, "test warn data 2");
+    logger.print(LoggerLevel.INFO, "test info data 3");
+    logger.print(LoggerLevel.DEBUG, "test debug data 4");
+    logger.print(LoggerLevel.TRACE, "test info data 5");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(1);
+  }
+
+  @Test
+  void shouldSendOnlyWarnAndHigherLogMessages() {
+    // given:
+    var enabledLevels = RefToRefDictionary.of(
+        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerLevel.WARNING);
+    RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> receivedLogs.add(level + " " + logger.name() + " " + message)));
+    var loggerService = new DefaultLoggerService(new DefaultLoggerConfig(enabledLevels, loggerConsumers));
+    var logger = loggerService.getLogger(DefaultLoggerTest.class);
+
+    // when:
+    logger.print(LoggerLevel.ERROR, "test error data");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(1);
+    assertThat(receivedLogs.get(0)).isEqualTo("ERROR javasabr.rlib.logger.impl.DefaultLoggerTest test error data");
+
+    // when:
+    logger.print(LoggerLevel.WARNING, "test warn data 2");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(2);
+    assertThat(receivedLogs.get(1)).isEqualTo("WARN javasabr.rlib.logger.impl.DefaultLoggerTest test warn data 2");
+
+    // when:
+    logger.print(LoggerLevel.INFO, "test info data 3");
+    logger.print(LoggerLevel.DEBUG, "test debug data 4");
+    logger.print(LoggerLevel.TRACE, "test info data 5");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(2);
+  }
+
+  @Test
+  void shouldSendOnlyInfoAndHigherLogMessages() {
+    // given:
+    var enabledLevels = RefToRefDictionary.of(
+        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerLevel.INFO);
+    RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> receivedLogs.add(level + " " + logger.name() + " " + message)));
+    var loggerService = new DefaultLoggerService(new DefaultLoggerConfig(enabledLevels, loggerConsumers));
+    var logger = loggerService.getLogger(DefaultLoggerTest.class);
+
+    // when:
+    logger.print(LoggerLevel.ERROR, "test error data");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(1);
+    assertThat(receivedLogs.get(0)).isEqualTo("ERROR javasabr.rlib.logger.impl.DefaultLoggerTest test error data");
+
+    // when:
+    logger.print(LoggerLevel.WARNING, "test warn data 2");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(2);
+    assertThat(receivedLogs.get(1)).isEqualTo("WARN javasabr.rlib.logger.impl.DefaultLoggerTest test warn data 2");
+    
+    // when:
+    logger.print(LoggerLevel.INFO, "test info data 3");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(3);
+    assertThat(receivedLogs.get(2)).isEqualTo("INFO javasabr.rlib.logger.impl.DefaultLoggerTest test info data 3");
+   
+    // when:
+    logger.print(LoggerLevel.DEBUG, "test debug data 4");
+    logger.print(LoggerLevel.TRACE, "test info data 5");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(3);
+  }
+
+  @Test
+  void shouldSendOnlyDebugAndHigherLogMessages() {
+    // given:
+    var enabledLevels = RefToRefDictionary.of(
+        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerLevel.DEBUG);
+    RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> receivedLogs.add(level + " " + logger.name() + " " + message)));
+    var loggerService = new DefaultLoggerService(new DefaultLoggerConfig(enabledLevels, loggerConsumers));
+    var logger = loggerService.getLogger(DefaultLoggerTest.class);
+
+    // when:
+    logger.print(LoggerLevel.ERROR, "test error data");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(1);
+    assertThat(receivedLogs.get(0)).isEqualTo("ERROR javasabr.rlib.logger.impl.DefaultLoggerTest test error data");
+
+    // when:
+    logger.print(LoggerLevel.WARNING, "test warn data 2");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(2);
+    assertThat(receivedLogs.get(1)).isEqualTo("WARN javasabr.rlib.logger.impl.DefaultLoggerTest test warn data 2");
+
+    // when:
+    logger.print(LoggerLevel.INFO, "test info data 3");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(3);
+    assertThat(receivedLogs.get(2)).isEqualTo("INFO javasabr.rlib.logger.impl.DefaultLoggerTest test info data 3");
+
+    // when:
+    logger.print(LoggerLevel.DEBUG, "test debug data 4");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(4);
+    assertThat(receivedLogs.get(3)).isEqualTo("DEBUG javasabr.rlib.logger.impl.DefaultLoggerTest test debug data 4");
+
+    // when:
+    logger.print(LoggerLevel.TRACE, "test info data 5");
+
+    // then:
+    assertThat(receivedLogs.size()).isEqualTo(4);
+  }
+
+  @Test
+  void shouldSendLogMessageToCorrectConsumer1() {
+    // given:
+    List<String> traceReceivedLogs = new ArrayList<>();
+    List<String> warnReceivedLogs = new ArrayList<>();
+    RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> traceReceivedLogs.add(level + " " + logger.name() + " " + message)),
+        DefaultLoggerConfig.ROOT_WARN_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> warnReceivedLogs.add(level + " " + logger.name() + " " + message)));
+    var loggerService = new DefaultLoggerService(new DefaultLoggerConfig(
+        DefaultLoggerConfig.ENABLE_ALL_LEVELS,
+        loggerConsumers));
+    var logger = loggerService.getLogger(DefaultLoggerTest.class);
+
+    // when:
+    logger.print(LoggerLevel.ERROR, "test error data");
+    logger.print(LoggerLevel.WARNING, "test warn data 2");
+    logger.print(LoggerLevel.INFO, "test info data 3");
+    logger.print(LoggerLevel.DEBUG, "test debug data 4");
+    logger.print(LoggerLevel.TRACE, "test info data 5");
+
+    // then:
+    assertThat(warnReceivedLogs).hasSize(2);
+    assertThat(traceReceivedLogs).hasSize(3);
+    assertThat(warnReceivedLogs.get(0)).isEqualTo("ERROR javasabr.rlib.logger.impl.DefaultLoggerTest test error data");
+    assertThat(warnReceivedLogs.get(1)).isEqualTo("WARN javasabr.rlib.logger.impl.DefaultLoggerTest test warn data 2");
+    assertThat(traceReceivedLogs.get(0)).isEqualTo("INFO javasabr.rlib.logger.impl.DefaultLoggerTest test info data 3");
+    assertThat(traceReceivedLogs.get(1)).isEqualTo("DEBUG javasabr.rlib.logger.impl.DefaultLoggerTest test debug data 4");
+    assertThat(traceReceivedLogs.get(2)).isEqualTo("TRACE javasabr.rlib.logger.impl.DefaultLoggerTest test info data 5");
+  }
+
+  @Test
+  void shouldSendLogMessageToCorrectConsumer2() {
+    // given:
+    List<String> debugReceivedLogs = new ArrayList<>();
+    List<String> errorReceivedLogs = new ArrayList<>();
+    RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_DEBUG_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> debugReceivedLogs.add(level + " " + logger.name() + " " + message)),
+        DefaultLoggerConfig.ROOT_ERROR_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> errorReceivedLogs.add(level + " " + logger.name() + " " + message)));
+    var loggerService = new DefaultLoggerService(new DefaultLoggerConfig(
+        DefaultLoggerConfig.ENABLE_ALL_LEVELS,
+        loggerConsumers));
+    var logger = loggerService.getLogger(DefaultLoggerTest.class);
+
+    // when:
+    logger.print(LoggerLevel.ERROR, "test error data");
+    logger.print(LoggerLevel.WARNING, "test warn data 2");
+    logger.print(LoggerLevel.INFO, "test info data 3");
+    logger.print(LoggerLevel.DEBUG, "test debug data 4");
+    logger.print(LoggerLevel.TRACE, "test info data 5");
+
+    // then:
+    assertThat(errorReceivedLogs).hasSize(1);
+    assertThat(debugReceivedLogs).hasSize(3);
+    assertThat(errorReceivedLogs.get(0)).isEqualTo("ERROR javasabr.rlib.logger.impl.DefaultLoggerTest test error data");
+    assertThat(debugReceivedLogs.get(0)).isEqualTo("WARN javasabr.rlib.logger.impl.DefaultLoggerTest test warn data 2");
+    assertThat(debugReceivedLogs.get(1)).isEqualTo("INFO javasabr.rlib.logger.impl.DefaultLoggerTest test info data 3");
+    assertThat(debugReceivedLogs.get(2)).isEqualTo("DEBUG javasabr.rlib.logger.impl.DefaultLoggerTest test debug data 4");
+  }
+
+  @Test
+  void shouldSendLogMessageToCorrectConsumer3() {
+    // given:
+    List<String> traceReceivedLogs = new ArrayList<>();
+    List<String> infoReceivedLogs = new ArrayList<>();
+    RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
+        DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> traceReceivedLogs.add(level + " " + logger.name() + " " + message)),
+        DefaultLoggerConfig.ROOT_INFO_CONSUMERS_KEY,
+        Array.of((level, logger, message) -> infoReceivedLogs.add(level + " " + logger.name() + " " + message)));
+    var loggerService = new DefaultLoggerService(new DefaultLoggerConfig(
+        DefaultLoggerConfig.ENABLE_ALL_LEVELS,
+        loggerConsumers));
+    var logger = loggerService.getLogger(DefaultLoggerTest.class);
+
+    // when:
+    logger.print(LoggerLevel.ERROR, "test error data");
+    logger.print(LoggerLevel.WARNING, "test warn data 2");
+    logger.print(LoggerLevel.INFO, "test info data 3");
+    logger.print(LoggerLevel.DEBUG, "test debug data 4");
+    logger.print(LoggerLevel.TRACE, "test info data 5");
+
+    // then:
+    assertThat(infoReceivedLogs).hasSize(3);
+    assertThat(traceReceivedLogs).hasSize(2);
+    assertThat(infoReceivedLogs.get(0)).isEqualTo("ERROR javasabr.rlib.logger.impl.DefaultLoggerTest test error data");
+    assertThat(infoReceivedLogs.get(1)).isEqualTo("WARN javasabr.rlib.logger.impl.DefaultLoggerTest test warn data 2");
+    assertThat(infoReceivedLogs.get(2)).isEqualTo("INFO javasabr.rlib.logger.impl.DefaultLoggerTest test info data 3");
+    assertThat(traceReceivedLogs.get(0)).isEqualTo("DEBUG javasabr.rlib.logger.impl.DefaultLoggerTest test debug data 4");
+    assertThat(traceReceivedLogs.get(1)).isEqualTo("TRACE javasabr.rlib.logger.impl.DefaultLoggerTest test info data 5");
   }
 }

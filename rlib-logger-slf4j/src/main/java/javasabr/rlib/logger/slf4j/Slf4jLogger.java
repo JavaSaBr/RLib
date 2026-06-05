@@ -15,6 +15,11 @@ public class Slf4jLogger implements Logger {
   }
 
   @Override
+  public String shortName() {
+    return logger.getName();
+  }
+
+  @Override
   public boolean enabled(LoggerLevel level) {
     return switch (level) {
       case TRACE -> logger.isTraceEnabled();
