@@ -64,7 +64,7 @@ public class PatternRenderNodesParser {
   }
 
   private static String extractArgumentsString(String pattern, int afterNameIndex) {
-    if (pattern.charAt(afterNameIndex) != '{') {
+    if (pattern.length() <= afterNameIndex || pattern.charAt(afterNameIndex) != '{') {
       throw new IllegalArgumentException("Missed '{' at position:[%d] in pattern:[%s]"
           .formatted(afterNameIndex, pattern));
     }

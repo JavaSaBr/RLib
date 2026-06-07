@@ -431,42 +431,61 @@ public interface Logger {
   }
 
   /**
-   * Check of enabling the logger level.
+   * Checks whether logging is enabled at the specified level.
+   *
+   * @param level the log level
+   * @return true if logging is enabled, false otherwise
+   * @since 10.0.0
    */
   default boolean enabled(@NonNull LoggerLevel level) {
     return level.enabled();
   }
 
   /**
-   * Check of enabling the error level.
+   * Checks whether logging is enabled at the error level.
+   *
+   * @return true if logging is enabled, false otherwise
+   * @since 10.0.0
    */
   default boolean errorEnabled() {
     return enabled(LoggerLevel.ERROR);
   }
   
   /**
-   * Check of enabling the warning level.
+   * Checks whether logging is enabled at the warning level.
+   *
+   * @return true if logging is enabled, false otherwise
+   * @since 10.0.0
    */
   default boolean warnEnabled() {
     return enabled(LoggerLevel.WARNING);
   }
 
   /**
-   * Check of enabling the info level.
+   * Checks whether logging is enabled at the info level.
+   *
+   * @return true if logging is enabled, false otherwise
+   * @since 10.0.0
    */
   default boolean infoEnabled() {
     return enabled(LoggerLevel.INFO);
   }
 
   /**
-   * Check of enabling the debug level.
+   * Checks whether logging is enabled at the debug level.
+   *
+   * @return true if logging is enabled, false otherwise
+   * @since 10.0.0
    */
   default boolean debugEnabled() {
     return enabled(LoggerLevel.DEBUG);
   }
 
   /**
-   * Check of enabling the trace level.
+   * Checks whether logging is enabled at the trace level.
+   *
+   * @return true if logging is enabled, false otherwise
+   * @since 10.0.0
    */
   default boolean traceEnabled() {
     return enabled(LoggerLevel.TRACE);
