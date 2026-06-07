@@ -16,8 +16,8 @@ import javasabr.rlib.logger.impl.config.render.impl.pattern.PatternLogMessageRen
 
 public class PropertyLoggerConfigLoader implements LoggerConfigLoader {
 
-  public static final String FILE_MAIN = "/rlib.logger.properties";
-  public static final String FILE_TEST = "/rlib.logger-test.properties";
+  public static final String FILE_MAIN = "rlib.logger.properties";
+  public static final String FILE_TEST = "rlib.logger-test.properties";
 
   @Override
   public Optional<LoggerConfig> tryToLoad() {
