@@ -3,7 +3,7 @@ package javasabr.rlib.logger.impl;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerService;
-import javasabr.rlib.logger.impl.config.LoggerConfigResolver;
+import javasabr.rlib.logger.impl.config.loader.LoggerConfigResolver;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 

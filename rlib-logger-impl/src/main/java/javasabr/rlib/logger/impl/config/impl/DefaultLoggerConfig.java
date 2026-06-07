@@ -7,8 +7,8 @@ import javasabr.rlib.collections.dictionary.RefToRefDictionary;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.impl.DefaultLoggerService;
-import javasabr.rlib.logger.impl.config.LogMessageConsumer;
 import javasabr.rlib.logger.impl.config.LoggerConfig;
+import javasabr.rlib.logger.impl.config.consumer.LogMessageConsumer;
 
 public class DefaultLoggerConfig implements LoggerConfig {
 

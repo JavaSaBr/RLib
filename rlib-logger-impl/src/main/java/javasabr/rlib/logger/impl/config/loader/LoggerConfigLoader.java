@@ -1,6 +1,7 @@
-package javasabr.rlib.logger.impl.config;
+package javasabr.rlib.logger.impl.config.loader;
 
 import java.util.Optional;
+import javasabr.rlib.logger.impl.config.LoggerConfig;
 
 /**
  * Loader of logger configuration.
@@ -8,6 +9,10 @@ import java.util.Optional;
  * @since 10.0.0
  */
 public interface LoggerConfigLoader {
+  
+  int ORDER_NORMAL = 100;
+  int ORDER_LOW = 1000;
+  int ORDER_HIGH = 0;
   
   /**
    * Tries to load logger configuration.
