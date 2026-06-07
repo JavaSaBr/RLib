@@ -12,7 +12,7 @@ import javasabr.rlib.logger.impl.config.render.impl.pattern.node.ShortLoggerPatt
 import javasabr.rlib.logger.impl.config.render.impl.pattern.node.StringPatternRenderNode;
 import org.junit.jupiter.api.Test;
 
-public class PatternRenderNodesParserTest {
+class PatternRenderNodesParserTest {
   
   @Test
   void shouldParseCorrectlyPattern1() {

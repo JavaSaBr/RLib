@@ -32,17 +32,10 @@ public class PropertyLoggerConfigLoader implements LoggerConfigLoader {
       return Optional.empty();
     }
     Properties properties = new Properties();
-    try {
-      properties.load(propertiesStream);
+    try (var source = propertiesStream) {
+      properties.load(source);
     } catch (IOException ex) {
-      ex.printStackTrace();
       return Optional.empty();
-    } finally {
-      try {
-        propertiesStream.close();
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      }
     }
     LoggerConfig loggerConfig = loadFromProperties(properties);
     properties.clear();

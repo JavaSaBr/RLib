@@ -31,7 +31,7 @@ import javasabr.rlib.logger.impl.config.render.impl.pattern.node.PatternRenderNo
 import javasabr.rlib.logger.impl.config.render.impl.pattern.node.StringPatternRenderNode;
 import org.junit.jupiter.api.Test;
 
-public class PropertyLoggerConfigLoaderTest {
+class PropertyLoggerConfigLoaderTest {
   
   @Test
   void shouldLoadLoggerConfigCorrectly() throws IOException {
