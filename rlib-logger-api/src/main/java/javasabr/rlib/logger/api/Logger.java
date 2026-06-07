@@ -438,10 +438,24 @@ public interface Logger {
   }
 
   /**
+   * Check of enabling the error level.
+   */
+  default boolean errorEnabled() {
+    return enabled(LoggerLevel.ERROR);
+  }
+  
+  /**
    * Check of enabling the warning level.
    */
-  default boolean warningEnabled() {
+  default boolean warnEnabled() {
     return enabled(LoggerLevel.WARNING);
+  }
+
+  /**
+   * Check of enabling the info level.
+   */
+  default boolean infoEnabled() {
+    return enabled(LoggerLevel.INFO);
   }
 
   /**
@@ -449,6 +463,13 @@ public interface Logger {
    */
   default boolean debugEnabled() {
     return enabled(LoggerLevel.DEBUG);
+  }
+
+  /**
+   * Check of enabling the trace level.
+   */
+  default boolean traceEnabled() {
+    return enabled(LoggerLevel.TRACE);
   }
 
   /**

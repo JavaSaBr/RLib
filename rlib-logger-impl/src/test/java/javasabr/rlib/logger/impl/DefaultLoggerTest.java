@@ -9,7 +9,7 @@ import javasabr.rlib.collections.dictionary.RefToRefDictionary;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerManager;
-import javasabr.rlib.logger.impl.config.LogMessageConsumer;
+import javasabr.rlib.logger.impl.config.consumer.LogMessageConsumer;
 import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfig;
 import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfig.LoggerConsumersKey;
 import org.junit.jupiter.api.AfterEach;

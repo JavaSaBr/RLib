@@ -8,8 +8,8 @@ import javasabr.rlib.collections.dictionary.LockableRefToRefDictionary;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerService;
-import javasabr.rlib.logger.impl.config.LogMessageConsumer;
 import javasabr.rlib.logger.impl.config.LoggerConfig;
+import javasabr.rlib.logger.impl.config.consumer.LogMessageConsumer;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 

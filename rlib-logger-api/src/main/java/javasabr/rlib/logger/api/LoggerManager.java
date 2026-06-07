@@ -16,7 +16,7 @@ public class LoggerManager {
 
   static {
 
-    String className = System.getProperty("com.ss.rlib.logger.factory", "");
+    String className = System.getProperty("javasabr.rlib.logger.factory", "");
     Class<? extends LoggerFactory> implementation = null;
 
     if (!className.isEmpty()) {

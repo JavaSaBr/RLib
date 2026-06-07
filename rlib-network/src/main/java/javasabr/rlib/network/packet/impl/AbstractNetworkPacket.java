@@ -20,7 +20,7 @@ public abstract class AbstractNetworkPacket<C extends Connection<C>> implements 
    */
   protected void handleException(C connection, ByteBuffer buffer, Exception exception) {
     log.warn(exception);
-    if (!log.warningEnabled()) {
+    if (!log.warnEnabled()) {
       return;
     }
 

@@ -1,9 +1,9 @@
-package javasabr.rlib.logger.impl.config.impl;
+package javasabr.rlib.logger.impl.config.consumer.impl;
 
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.impl.config.LogMessageConsumer;
-import javasabr.rlib.logger.impl.config.LogMessageRender;
+import javasabr.rlib.logger.impl.config.consumer.LogMessageConsumer;
+import javasabr.rlib.logger.impl.config.render.LogMessageRender;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

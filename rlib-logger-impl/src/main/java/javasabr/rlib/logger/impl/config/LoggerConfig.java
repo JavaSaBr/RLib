@@ -3,6 +3,7 @@ package javasabr.rlib.logger.impl.config;
 import javasabr.rlib.collections.array.UnsafeArray;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
+import javasabr.rlib.logger.impl.config.consumer.LogMessageConsumer;
 
 /**
  * Configuration contract for logger levels and message consumers.

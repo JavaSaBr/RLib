@@ -1,10 +1,10 @@
-package javasabr.rlib.logger.impl.config.impl;
+package javasabr.rlib.logger.impl.config.render.impl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.impl.config.LogMessageRender;
+import javasabr.rlib.logger.impl.config.render.LogMessageRender;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
@@ -20,9 +20,9 @@ public class SimpleLogMessageRender implements LogMessageRender {
   @Override
   public String render(LoggerLevel level, Logger logger, String message) {
     var timestamp = timeFormatter.format(LocalDateTime.now());
-    return level.title()
+    return timestamp + ' ' 
+        + level.title()
         + level.offset() + ' '
-        + timestamp + ' '
         + logger.shortName() + ": "
         + message;
   }

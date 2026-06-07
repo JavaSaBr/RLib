@@ -6,7 +6,7 @@ import javasabr.rlib.common.util.StringUtils;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerService;
-import javasabr.rlib.logger.impl.config.LogMessageConsumer;
+import javasabr.rlib.logger.impl.config.consumer.LogMessageConsumer;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.Nullable;

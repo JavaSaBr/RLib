@@ -1,10 +1,11 @@
-package javasabr.rlib.logger.impl.config;
+package javasabr.rlib.logger.impl.config.loader;
 
 import java.util.Comparator;
 import java.util.Optional;
 import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.collections.array.ArrayCollectors;
-import javasabr.rlib.logger.impl.config.impl.DefaultLoggerConfigLoader;
+import javasabr.rlib.logger.impl.config.LoggerConfig;
+import javasabr.rlib.logger.impl.config.loader.impl.DefaultLoggerConfigLoader;
 
 /**
  * Resolver of logger configuration from available loaders.

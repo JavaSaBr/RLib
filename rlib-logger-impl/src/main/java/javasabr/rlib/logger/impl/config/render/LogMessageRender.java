@@ -1,4 +1,4 @@
-package javasabr.rlib.logger.impl.config;
+package javasabr.rlib.logger.impl.config.render;
 
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
