@@ -5,6 +5,7 @@ import javasabr.rlib.collections.array.UnsafeArray;
 import javasabr.rlib.collections.dictionary.DictionaryFactory;
 import javasabr.rlib.collections.dictionary.RefToRefDictionary;
 import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.impl.DefaultLoggerService;
 import javasabr.rlib.logger.impl.config.LoggerConfig;
@@ -49,18 +50,18 @@ public class DefaultLoggerConfig implements LoggerConfig {
       .asUnsafe();
   
   public static final LoggerConsumersKey ROOT_TRACE_CONSUMERS_KEY = 
-      new LoggerConsumersKey(DefaultLoggerService.ROOT_LOGGER_NAME, LoggerLevel.TRACE);
+      new LoggerConsumersKey(LoggerFactory.ROOT_LOGGER_NAME, LoggerLevel.TRACE);
   public static final LoggerConsumersKey ROOT_DEBUG_CONSUMERS_KEY =
-      new LoggerConsumersKey(DefaultLoggerService.ROOT_LOGGER_NAME, LoggerLevel.DEBUG);
+      new LoggerConsumersKey(LoggerFactory.ROOT_LOGGER_NAME, LoggerLevel.DEBUG);
   public static final LoggerConsumersKey ROOT_INFO_CONSUMERS_KEY =
-      new LoggerConsumersKey(DefaultLoggerService.ROOT_LOGGER_NAME, LoggerLevel.INFO);
+      new LoggerConsumersKey(LoggerFactory.ROOT_LOGGER_NAME, LoggerLevel.INFO);
   public static final LoggerConsumersKey ROOT_WARN_CONSUMERS_KEY =
-      new LoggerConsumersKey(DefaultLoggerService.ROOT_LOGGER_NAME, LoggerLevel.WARNING);
+      new LoggerConsumersKey(LoggerFactory.ROOT_LOGGER_NAME, LoggerLevel.WARNING);
   public static final LoggerConsumersKey ROOT_ERROR_CONSUMERS_KEY =
-      new LoggerConsumersKey(DefaultLoggerService.ROOT_LOGGER_NAME, LoggerLevel.ERROR);
+      new LoggerConsumersKey(LoggerFactory.ROOT_LOGGER_NAME, LoggerLevel.ERROR);
   
   public static final RefToRefDictionary<String, LoggerLevel> ENABLE_ALL_LEVELS = RefToRefDictionary.of(
-      DefaultLoggerService.ROOT_LOGGER_NAME,
+      LoggerFactory.ROOT_LOGGER_NAME,
       LoggerLevel.TRACE);
   
   final RefToRefDictionary<String, LoggerLevel> loggerLevels;
@@ -77,7 +78,7 @@ public class DefaultLoggerConfig implements LoggerConfig {
   public void configureLevels(Logger logger) {
     LoggerLevel targetLevel = loggerLevels.get(logger.name());
     if (targetLevel == null) {
-      targetLevel = loggerLevels.get(DefaultLoggerService.ROOT_LOGGER_NAME);
+      targetLevel = loggerLevels.get(LoggerFactory.ROOT_LOGGER_NAME);
     }
     if (targetLevel == null) {
       return;

@@ -1,0 +1,10 @@
+plugins {
+  id("configure-java")
+  id("configure-publishing")
+}
+
+dependencies {
+  api projects.rlibLoggerImpl
+  api libs.jackson.core
+  api libs.jackson.databind
+}

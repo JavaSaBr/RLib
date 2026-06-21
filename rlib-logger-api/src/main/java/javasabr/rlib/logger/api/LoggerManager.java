@@ -59,7 +59,7 @@ public class LoggerManager {
    * @since 10.0.0
    */
   public static Logger getDefaultLogger() {
-    return LOGGER_FACTORY.getDefault();
+    return LOGGER_FACTORY.getRootLogger();
   }
 
   /**

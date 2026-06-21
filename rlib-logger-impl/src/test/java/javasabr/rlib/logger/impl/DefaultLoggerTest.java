@@ -7,6 +7,7 @@ import java.util.List;
 import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.collections.dictionary.RefToRefDictionary;
 import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerManager;
 import javasabr.rlib.logger.impl.config.consumer.LogMessageConsumer;
@@ -101,7 +102,7 @@ class DefaultLoggerTest {
   void shouldSendOnlyErrorLogMessages() {
     // given:
     var enabledLevels = RefToRefDictionary.of(
-        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerFactory.ROOT_LOGGER_NAME,
         LoggerLevel.ERROR);
     RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
         DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
@@ -130,7 +131,7 @@ class DefaultLoggerTest {
   void shouldSendOnlyWarnAndHigherLogMessages() {
     // given:
     var enabledLevels = RefToRefDictionary.of(
-        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerFactory.ROOT_LOGGER_NAME,
         LoggerLevel.WARNING);
     RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
         DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
@@ -165,7 +166,7 @@ class DefaultLoggerTest {
   void shouldSendOnlyInfoAndHigherLogMessages() {
     // given:
     var enabledLevels = RefToRefDictionary.of(
-        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerFactory.ROOT_LOGGER_NAME,
         LoggerLevel.INFO);
     RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
         DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,
@@ -206,7 +207,7 @@ class DefaultLoggerTest {
   void shouldSendOnlyDebugAndHigherLogMessages() {
     // given:
     var enabledLevels = RefToRefDictionary.of(
-        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerFactory.ROOT_LOGGER_NAME,
         LoggerLevel.DEBUG);
     RefToRefDictionary<LoggerConsumersKey, Array<LogMessageConsumer>> loggerConsumers = RefToRefDictionary.of(
         DefaultLoggerConfig.ROOT_TRACE_CONSUMERS_KEY,

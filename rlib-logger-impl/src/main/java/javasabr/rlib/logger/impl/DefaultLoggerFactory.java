@@ -27,8 +27,8 @@ public class DefaultLoggerFactory implements LoggerFactory {
   }
 
   @Override
-  public Logger getDefault() {
-    return defaultLoggerService.getDefault();
+  public Logger getRootLogger() {
+    return defaultLoggerService.getRootLogger();
   }
 
   @Override
