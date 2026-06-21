@@ -163,8 +163,9 @@ public class JsonLoggerConfigLoader implements LoggerConfigLoader {
         .getContextClassLoader();
     try {
       var targetClass = (Class<? extends CustomLogMessageConsumer>) classLoader.loadClass(className);
-      Constructor<? extends CustomLogMessageConsumer> constructor = targetClass.getDeclaredConstructor(Map.class);
-      return constructor.newInstance(consumerDto.args());
+      Constructor<? extends CustomLogMessageConsumer> constructor = targetClass
+          .getDeclaredConstructor(LogMessageRender.class, Map.class);
+      return constructor.newInstance(render, consumerDto.args());
     } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
              IllegalAccessException e) {
       throw new RuntimeException(e);

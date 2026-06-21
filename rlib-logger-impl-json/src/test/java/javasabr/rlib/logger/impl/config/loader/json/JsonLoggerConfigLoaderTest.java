@@ -11,6 +11,7 @@ import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.impl.DefaultLoggerService;
 import javasabr.rlib.logger.impl.config.LoggerConfig;
 import javasabr.rlib.logger.impl.config.consumer.impl.CustomLogMessageConsumer;
+import javasabr.rlib.logger.impl.config.render.LogMessageRender;
 import javasabr.rlib.logger.impl.config.render.impl.CustomLogMessageRender;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -28,20 +29,19 @@ class JsonLoggerConfigLoaderTest {
     int consumerArg1;
     String consumerArg2;
     
-    public TestCustomLogMessageConsumer(Map<String, Object> args) {
-      super(args);
+    public TestCustomLogMessageConsumer(LogMessageRender render, Map<String, Object> args) {
+      super(render, args);
       consumerArg1 = (Integer) args.get("consumerArg1");
       consumerArg2 = (String) args.get("consumerArg2");
     }
 
     @Override
     public void consume(LoggerLevel level, Logger logger, String message) {
-      CONSUMED_MESSAGES.get().add("[%s][%s]->%s->%s:%s".formatted(
+      CONSUMED_MESSAGES.get().add("[%s][%s]->%s->%s".formatted(
           consumerArg1,
           consumerArg2,
-          level,
-          logger.name(),
-          message));
+          logger.shortName(),
+          render.render(level, logger, message)));
     }
   }
 
@@ -54,7 +54,7 @@ class JsonLoggerConfigLoaderTest {
     public TestCustomLogMessageRender(Map<String, Object> args) {
       super(args);
       renderArg1 = (Integer) args.get("renderArg1");
-      renderArg2 = (String) args.get("renderArg2+");
+      renderArg2 = (String) args.get("renderArg2");
     }
 
     @Override
@@ -94,8 +94,8 @@ class JsonLoggerConfigLoaderTest {
     assertThat(receivedMessages)
         .hasSize(2)
         .containsExactly(
-            "[66][arg2]->ERROR->javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger1:test error 1",
-            "[66][arg2]->WARN->javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger1:test warning 1");
+            "[66][arg2]->logger1->[55][arg2]->test error 1",
+            "[66][arg2]->logger1->[55][arg2]->test warning 1");
     
     // when:
     receivedMessages.clear();
@@ -111,10 +111,10 @@ class JsonLoggerConfigLoaderTest {
     assertThat(receivedMessages)
         .hasSize(4)
         .containsExactly(
-            "[66][arg2]->ERROR->javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger2:test error 2",
-            "[66][arg2]->WARN->javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger2:test warning 2",
-            "[66][arg2]->INFO->javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger2:test info 2",
-            "[66][arg2]->DEBUG->javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger2:test debug 2");
+            "[66][arg2]->logger2->[55][arg2]->test error 2",
+            "[66][arg2]->logger2->[55][arg2]->test warning 2",
+            "[66][arg2]->logger2->[55][arg2]->test info 2",
+            "[66][arg2]->logger2->[55][arg2]->test debug 2");
     
     // when:
     receivedMessages.clear();
@@ -130,7 +130,7 @@ class JsonLoggerConfigLoaderTest {
     assertThat(receivedMessages)
         .hasSize(1)
         .containsExactly(
-            "[66][arg2]->ERROR->javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger3:test error 3");
+            "[66][arg2]->logger3->[55][arg2]->test error 3");
 
     // when:
     receivedMessages.clear();
@@ -145,6 +145,6 @@ class JsonLoggerConfigLoaderTest {
     assertThat(receivedMessages)
         .hasSize(1)
         .containsExactly(
-            "[66][arg2]->ERROR->ROOT:test error 4");
+            "[66][arg2]->ROOT->[55][arg2]->test error 4");
   }
 }
