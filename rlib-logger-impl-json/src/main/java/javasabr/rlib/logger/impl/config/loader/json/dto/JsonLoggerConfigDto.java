@@ -25,6 +25,9 @@ public record JsonLoggerConfigDto(
       @JsonProperty("consumers") Set<String> consumerNames) {
 
     public LoggerDto {
+      if (StringUtils.isBlank(name)) {
+        throw new IllegalArgumentException("name is blank");
+      }
       consumerNames = consumerNames == null ? Set.of() : Set.copyOf(consumerNames);
     }
   }
@@ -59,6 +62,11 @@ public record JsonLoggerConfigDto(
       Map<String, Object> args) {
 
     public ConsumerDto {
+      if (StringUtils.isBlank(name)) {
+        throw new IllegalArgumentException("name is blank");
+      } else if (type == null) {
+        throw new IllegalArgumentException("type is null");
+      }
       args = args == null ? Map.of() : Map.copyOf(args);
     }
   }

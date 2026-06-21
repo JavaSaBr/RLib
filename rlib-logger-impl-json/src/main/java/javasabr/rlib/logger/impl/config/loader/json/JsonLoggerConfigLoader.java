@@ -126,7 +126,7 @@ public class JsonLoggerConfigLoader implements LoggerConfigLoader {
   LogMessageRender createCustomRender(RenderDto renderDto) {
     String className = renderDto.className();
     if (StringUtils.isBlank(className)) {
-      throw new IllegalArgumentException("'class'' is required for custom render");
+      throw new IllegalArgumentException("'class' attribute is required for custom render");
     }
     ClassLoader classLoader = Thread
         .currentThread()
@@ -156,7 +156,7 @@ public class JsonLoggerConfigLoader implements LoggerConfigLoader {
   LogMessageConsumer createCustomConsumer(LogMessageRender render, ConsumerDto consumerDto) {
     String className = consumerDto.className();
     if (StringUtils.isBlank(className)) {
-      throw new IllegalArgumentException("'class'' is required for custom consumer");
+      throw new IllegalArgumentException("'class' attribute is required for custom consumer");
     }
     ClassLoader classLoader = Thread
         .currentThread()
