@@ -1,9 +1,15 @@
 package javasabr.rlib.logger.impl.config.loader.json;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javasabr.rlib.collections.array.ArrayFactory;
 import javasabr.rlib.collections.array.MutableArray;
 import javasabr.rlib.logger.api.Logger;
@@ -13,6 +19,11 @@ import javasabr.rlib.logger.impl.config.LoggerConfig;
 import javasabr.rlib.logger.impl.config.consumer.impl.CustomLogMessageConsumer;
 import javasabr.rlib.logger.impl.config.render.LogMessageRender;
 import javasabr.rlib.logger.impl.config.render.impl.CustomLogMessageRender;
+import javasabr.rlib.logger.impl.config.render.impl.SimpleLogMessageRender;
+import javasabr.rlib.logger.impl.config.loader.json.dto.JsonLoggerConfigDto.ConsumerDto;
+import javasabr.rlib.logger.impl.config.loader.json.dto.JsonLoggerConfigDto.ConsumerType;
+import javasabr.rlib.logger.impl.config.loader.json.dto.JsonLoggerConfigDto.RenderDto;
+import javasabr.rlib.logger.impl.config.loader.json.dto.JsonLoggerConfigDto.RenderType;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.AfterEach;
@@ -42,6 +53,31 @@ class JsonLoggerConfigLoaderTest {
           consumerArg2,
           logger.shortName(),
           render.render(level, logger, message)));
+    }
+  }
+
+  @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+  public static class WrongCustomLogMessageRender extends CustomLogMessageRender {
+
+    public WrongCustomLogMessageRender() {
+      super(Map.of());
+    }
+
+    @Override
+    public String render(LoggerLevel level, Logger logger, String message) {
+      return message;
+    }
+  }
+
+  @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+  public static class WrongCustomLogMessageConsumer extends CustomLogMessageConsumer {
+
+    public WrongCustomLogMessageConsumer(LogMessageRender render, String unsupportedArg) {
+      super(render, Map.of());
+    }
+
+    @Override
+    public void consume(LoggerLevel level, Logger logger, String message) {
     }
   }
 
@@ -146,5 +182,253 @@ class JsonLoggerConfigLoaderTest {
         .hasSize(1)
         .containsExactly(
             "[66][arg2]->ROOT->[55][arg2]->test error 4");
+  }
+
+  @Test
+  void shouldPreferTestJsonOverMainJson() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var contextClassLoader = new ResourceClassLoader(Map.of(
+        JsonLoggerConfigLoader.FILE_TEST, buildRootOnlyConfigJson("TRACE"),
+        JsonLoggerConfigLoader.FILE_MAIN, buildRootOnlyConfigJson("ERROR")));
+
+    // when:
+    Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
+
+    // then:
+    assertThat(loadedConfig).isPresent();
+
+    // when:
+    var loggerService = new DefaultLoggerService(loadedConfig.orElseThrow());
+    Logger logger = loggerService.getLogger("example.logger");
+
+    // then:
+    assertThat(logger)
+        .returns(true, Logger::traceEnabled)
+        .returns(true, Logger::debugEnabled)
+        .returns(true, Logger::infoEnabled)
+        .returns(true, Logger::warnEnabled)
+        .returns(true, Logger::errorEnabled);
+  }
+
+  @Test
+  void shouldFallbackToMainJsonWhenTestMissing() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var contextClassLoader = new ResourceClassLoader(Map.of(
+        JsonLoggerConfigLoader.FILE_MAIN, buildRootOnlyConfigJson("ERROR")));
+
+    // when:
+    Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
+
+    // then:
+    assertThat(loadedConfig).isPresent();
+
+    // when:
+    var loggerService = new DefaultLoggerService(loadedConfig.orElseThrow());
+    Logger logger = loggerService.getLogger("example.logger");
+
+    // then:
+    assertThat(logger)
+        .returns(false, Logger::traceEnabled)
+        .returns(false, Logger::debugEnabled)
+        .returns(false, Logger::infoEnabled)
+        .returns(false, Logger::warnEnabled)
+        .returns(true, Logger::errorEnabled);
+  }
+
+  @Test
+  void shouldReturnEmptyWhenNoJsonConfigFound() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var contextClassLoader = new ResourceClassLoader(Map.of());
+
+    // when:
+    Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
+
+    // then:
+    assertThat(loadedConfig).isEmpty();
+  }
+
+  @Test
+  void shouldThrowWhenJsonContentIsMalformed() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var contextClassLoader = new ResourceClassLoader(Map.of(
+        JsonLoggerConfigLoader.FILE_TEST, "{ malformed-json"));
+
+    // when/then:
+    assertThatThrownBy(() -> withContextClassLoader(contextClassLoader, loader::tryToLoad))
+        .isInstanceOf(RuntimeException.class);
+  }
+
+  @Test
+  void shouldThrowWhenConsumerReferencesUnknownRender() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var contextClassLoader = new ResourceClassLoader(Map.of(
+        JsonLoggerConfigLoader.FILE_TEST, """
+            {
+              "renders": [{"name":"render1","type":"SIMPLE"}],
+              "consumers": [{"name":"consumer1","type":"CONSOLE","render":"unknown-render"}],
+              "loggers": [{"name":"ROOT","level":"INFO","consumers":["consumer1"]}]
+            }
+            """));
+
+    // when/then:
+    assertThatThrownBy(() -> withContextClassLoader(contextClassLoader, loader::tryToLoad))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Unknown render with name");
+  }
+
+  @Test
+  void shouldThrowWhenCustomRenderClassIsMissing() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var contextClassLoader = new ResourceClassLoader(Map.of(
+        JsonLoggerConfigLoader.FILE_TEST, """
+            {
+              "renders": [{"name":"render1","type":"CUSTOM"}]
+            }
+            """));
+
+    // when/then:
+    assertThatThrownBy(() -> withContextClassLoader(contextClassLoader, loader::tryToLoad))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("'class' attribute is required for custom render");
+  }
+
+  @Test
+  void shouldThrowWhenCustomConsumerClassIsMissing() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var contextClassLoader = new ResourceClassLoader(Map.of(
+        JsonLoggerConfigLoader.FILE_TEST, """
+            {
+              "renders": [{"name":"render1","type":"SIMPLE"}],
+              "consumers": [{"name":"consumer1","type":"CUSTOM","render":"render1"}]
+            }
+            """));
+
+    // when/then:
+    assertThatThrownBy(() -> withContextClassLoader(contextClassLoader, loader::tryToLoad))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("'class' attribute is required for custom consumer");
+  }
+
+  @Test
+  void shouldThrowWhenCustomRenderClassCannotBeFound() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var renderDto = new RenderDto(
+        "render1",
+        RenderType.CUSTOM,
+        "example.missing.CustomRender",
+        Map.of());
+
+    // when/then:
+    assertThatThrownBy(() -> loader.createCustomRender(renderDto))
+        .isInstanceOf(RuntimeException.class)
+        .hasCauseInstanceOf(ClassNotFoundException.class);
+  }
+
+  @Test
+  void shouldThrowWhenCustomConsumerClassCannotBeFound() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var consumerDto = new ConsumerDto(
+        "consumer1",
+        ConsumerType.CUSTOM,
+        "render1",
+        "example.missing.CustomConsumer",
+        Map.of());
+
+    // when/then:
+    assertThatThrownBy(() -> loader.createCustomConsumer(new SimpleLogMessageRender(), consumerDto))
+        .isInstanceOf(RuntimeException.class)
+        .hasCauseInstanceOf(ClassNotFoundException.class);
+  }
+
+  @Test
+  void shouldThrowWhenCustomRenderConstructorSignatureIsInvalid() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var renderDto = new RenderDto(
+        "render1",
+        RenderType.CUSTOM,
+        WrongCustomLogMessageRender.class.getName(),
+        Map.of());
+
+    // when/then:
+    assertThatThrownBy(() -> loader.createCustomRender(renderDto))
+        .isInstanceOf(RuntimeException.class)
+        .hasCauseInstanceOf(NoSuchMethodException.class);
+  }
+
+  @Test
+  void shouldThrowWhenCustomConsumerConstructorSignatureIsInvalid() {
+    // given:
+    var loader = new JsonLoggerConfigLoader();
+    var consumerDto = new ConsumerDto(
+        "consumer1",
+        ConsumerType.CUSTOM,
+        "render1",
+        WrongCustomLogMessageConsumer.class.getName(),
+        Map.of());
+
+    // when/then:
+    assertThatThrownBy(() -> loader.createCustomConsumer(new SimpleLogMessageRender(), consumerDto))
+        .isInstanceOf(RuntimeException.class)
+        .hasCauseInstanceOf(NoSuchMethodException.class);
+  }
+
+  private static String buildRootOnlyConfigJson(String level) {
+    return """
+        {
+          "renders": [{"name":"render1","type":"SIMPLE"}],
+          "consumers": [{"name":"consumer1","type":"CONSOLE","render":"render1"}],
+          "loggers": [{"name":"ROOT","level":"%s","consumers":["consumer1"]}]
+        }
+        """.formatted(level);
+  }
+
+  private static <T> T withContextClassLoader(ClassLoader contextClassLoader, Supplier<T> action) {
+    Thread currentThread = Thread.currentThread();
+    ClassLoader previousClassLoader = currentThread.getContextClassLoader();
+    try {
+      currentThread.setContextClassLoader(contextClassLoader);
+      return action.get();
+    } finally {
+      currentThread.setContextClassLoader(previousClassLoader);
+    }
+  }
+
+  private static class ResourceClassLoader extends ClassLoader {
+
+    private final Map<String, byte[]> resources;
+
+    private ResourceClassLoader(Map<String, String> resources) {
+      super(Thread
+          .currentThread()
+          .getContextClassLoader());
+      this.resources = resources
+          .entrySet()
+          .stream()
+          .collect(Collectors.toUnmodifiableMap(
+              Map.Entry::getKey,
+              entry -> entry.getValue().getBytes(StandardCharsets.UTF_8)));
+    }
+
+    @Override
+    public InputStream getResourceAsStream(String name) {
+      byte[] loaded = resources.get(name);
+      if (loaded != null) {
+        return new ByteArrayInputStream(loaded);
+      }
+      if (JsonLoggerConfigLoader.FILE_TEST.equals(name) || JsonLoggerConfigLoader.FILE_MAIN.equals(name)) {
+        return null;
+      }
+      return super.getResourceAsStream(name);
+    }
   }
 }
