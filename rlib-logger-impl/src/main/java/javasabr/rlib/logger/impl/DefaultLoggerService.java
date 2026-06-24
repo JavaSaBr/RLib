@@ -6,11 +6,13 @@ import javasabr.rlib.collections.array.UnsafeArray;
 import javasabr.rlib.collections.dictionary.DictionaryFactory;
 import javasabr.rlib.collections.dictionary.LockableRefToRefDictionary;
 import javasabr.rlib.logger.api.Logger;
+import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.api.LoggerService;
 import javasabr.rlib.logger.impl.config.LoggerConfig;
 import javasabr.rlib.logger.impl.config.consumer.LogMessageConsumer;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 /**
@@ -22,12 +24,12 @@ import lombok.experimental.FieldDefaults;
 public class DefaultLoggerService implements LoggerService {
 
   public static final LoggerLevel[] LOGGER_LEVELS = LoggerLevel.values();
-  public static final String ROOT_LOGGER_NAME = "ROOT";
 
   final LockableRefToRefDictionary<String, DefaultLogger> loggers;
   final Function<String, DefaultLogger> loggerFactory = this::createNew;
 
-  final Logger logger;
+  @Getter
+  final Logger rootLogger;
   final int[] override;
   
   volatile LoggerConfig config;
@@ -35,15 +37,11 @@ public class DefaultLoggerService implements LoggerService {
   public DefaultLoggerService(LoggerConfig config) {
     this.config = config;
     this.loggers = DictionaryFactory.stampedLockBasedRefToRefDictionary();
-    this.logger = getLogger(ROOT_LOGGER_NAME);
+    this.rootLogger = getLogger(LoggerFactory.ROOT_LOGGER_NAME);
     this.override = new int[LOGGER_LEVELS.length];
     Arrays.fill(override, NOT_CONFIGURE);
   }
-
-  public Logger getDefault() {
-    return logger;
-  }
-
+  
   public DefaultLogger getLogger(Class<?> type) {
     long lock = loggers.writeLock();
     try {

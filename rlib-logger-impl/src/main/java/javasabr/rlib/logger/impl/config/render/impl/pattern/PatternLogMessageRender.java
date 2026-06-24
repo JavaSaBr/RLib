@@ -1,5 +1,6 @@
 package javasabr.rlib.logger.impl.config.render.impl.pattern;
 
+import java.util.Map;
 import javasabr.rlib.collections.array.UnsafeArray;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
@@ -10,12 +11,18 @@ import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PatternLogMessageRender implements LogMessageRender {
+
+  private static final int DEF_INIT_BUFFER_SIZE = 256;
   
   UnsafeArray<PatternRenderNode> renderNodes;
   int initBufferSize;
 
+  public PatternLogMessageRender(Map<String, Object> args) {
+    this(extractPattern(args), extractInitBufferSize(args));
+  }
+  
   public PatternLogMessageRender(String pattern) {
-    this(pattern, 256);
+    this(pattern, DEF_INIT_BUFFER_SIZE);
   }
 
   public PatternLogMessageRender(String pattern, int initBufferSize) {
@@ -33,5 +40,25 @@ public class PatternLogMessageRender implements LogMessageRender {
       renderNode.append(level, logger, message, buffer);
     }
     return buffer.toString();
+  }
+
+  private static String extractPattern(Map<String, Object> args) {
+    Object pattern = args.get("pattern");
+    if (pattern instanceof String stringPattern) {
+      return stringPattern;
+    } else {
+      throw new IllegalArgumentException("'pattern' argument must be a string");
+    }
+  }
+
+  private static int extractInitBufferSize(Map<String, Object> args) {
+    Object initBufferSize = args.get("initBufferSize");
+    if (initBufferSize instanceof Integer integer) {
+      return integer;
+    } else if (initBufferSize instanceof String string) {
+      return Integer.parseInt(string);
+    } else {
+      return DEF_INIT_BUFFER_SIZE;
+    }
   }
 }

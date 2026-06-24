@@ -1,0 +1,75 @@
+{
+  "renders": [
+    {
+      "name": "Render1",
+      "type": "PATTERN",
+      "args": {
+        "pattern": "%dateTime{d.MM.yyyy HH:mm:ss:SSS} %level : %msg"
+      }
+    },
+    {
+      "name": "Render2",
+      "type": "CUSTOM",
+      "class": "javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest$TestCustomLogMessageRender",
+      "args": {
+        "renderArg1": 55,
+        "renderArg2": "arg2"
+      }
+    }
+  ],
+  "consumers": [
+    {
+      "name": "Consumer1",
+      "type": "CONSOLE",
+      "render": "Render1"
+    },
+    {
+      "name": "Consumer2",
+      "type": "CUSTOM",
+      "class": "javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest$TestCustomLogMessageConsumer",
+      "render": "Render2",
+      "args": {
+        "consumerArg1": 66,
+        "consumerArg2": "arg2"
+      }
+    }
+  ],
+  "loggers": [
+    {
+      "name": "ROOT",
+      "level": "ERROR",
+      "consumers": [
+        "Consumer2"
+      ]
+    },
+    {
+      "name": "javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger1",
+      "level": "DEBUG",
+      "consumers": [
+        "Consumer1",
+        "Consumer2"
+      ]
+    },
+    {
+      "name": "javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger1",
+      "level": "WARN",
+      "consumers": [
+        "Consumer2"
+      ]
+    },
+    {
+      "name": "javasabr.rlib.logger.impl.config.loader.json.JsonLoggerConfigLoaderTest.logger2",
+      "level": "DEBUG",
+      "consumers": [
+        "Consumer2"
+      ]
+    },
+    {
+      "name": "javasabr.mqtt.service.session.impl.InMemoryMqttSessionService",
+      "level": "WARN",
+      "consumers": [
+        "Consumer2"
+      ]
+    }
+  ]
+}

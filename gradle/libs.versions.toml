@@ -21,6 +21,8 @@ mockito = "5.20.0"
 assertj-core = "4.0.0-M1"
 # https://mvnrepository.com/artifact/org.awaitility/awaitility
 awaitility = "4.3.0"
+# https://mvnrepository.com/artifact/tools.jackson.core/jackson-core/3.2.0
+jackson = "3.2.0"
 
 [libraries]
 project-reactor-core = { module = "io.projectreactor:reactor-core", version.ref = "project-reactor" }
@@ -40,6 +42,8 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj-core" }
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
+jackson-core = { module = "tools.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson" }
 
 [bundles]
 mail = ["jakarta-mail-api", "angus-mail"]

@@ -37,7 +37,7 @@ public class Slf4jLoggerFactory implements LoggerFactory {
   }
 
   @Override
-  public Logger getDefault() {
+  public Logger getRootLogger() {
     return logger;
   }
 

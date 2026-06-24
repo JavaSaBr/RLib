@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Properties;
+import javasabr.rlib.logger.api.LoggerFactory;
 import javasabr.rlib.logger.api.LoggerLevel;
-import javasabr.rlib.logger.impl.DefaultLoggerService;
 import javasabr.rlib.logger.impl.config.LoggerConfig;
 import javasabr.rlib.logger.impl.config.consumer.impl.ConsoleMessageConsumer;
 import javasabr.rlib.logger.impl.config.impl.LoggerConfigBuilder;
@@ -59,7 +59,7 @@ public class PropertyLoggerConfigLoader implements LoggerConfigLoader {
       messageRender = new SimpleLogMessageRender();
     }
     builder.registerLoggerConsumer(
-        DefaultLoggerService.ROOT_LOGGER_NAME,
+        LoggerFactory.ROOT_LOGGER_NAME,
         LoggerLevel.TRACE,
         new ConsoleMessageConsumer(messageRender));
     return builder.build();

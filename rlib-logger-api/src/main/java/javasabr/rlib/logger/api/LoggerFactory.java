@@ -7,6 +7,8 @@ package javasabr.rlib.logger.api;
  */
 public interface LoggerFactory {
 
+  String ROOT_LOGGER_NAME = "ROOT";
+  
   /**
    * Creates or gets a logger with the specified name.
    *
@@ -26,12 +28,12 @@ public interface LoggerFactory {
   Logger getLogger(Class<?> type);
 
   /**
-   * Returns the default logger.
+   * Returns the root logger.
    *
-   * @return the default logger
+   * @return the root logger
    * @since 10.0.0
    */
-  Logger getDefault();
+  Logger getRootLogger();
   
   /**
    * Returns the logger service.

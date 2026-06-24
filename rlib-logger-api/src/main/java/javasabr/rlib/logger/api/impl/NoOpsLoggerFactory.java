@@ -20,7 +20,7 @@ public class NoOpsLoggerFactory implements LoggerFactory {
   }
 
   @Override
-  public Logger getDefault() {
+  public Logger getRootLogger() {
     return NO_OPS_LOGGER;
   }
 

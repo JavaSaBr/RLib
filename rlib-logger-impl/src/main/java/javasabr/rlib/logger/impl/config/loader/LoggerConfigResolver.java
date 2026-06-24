@@ -9,6 +9,7 @@ import javasabr.rlib.collections.array.ArrayFactory;
 import javasabr.rlib.logger.impl.config.LoggerConfig;
 import javasabr.rlib.logger.impl.config.loader.impl.DefaultLoggerConfigLoader;
 import javasabr.rlib.logger.impl.config.loader.impl.PropertyLoggerConfigLoader;
+import javasabr.rlib.logger.impl.config.loader.spi.LoggerConfigLoadersProvider;
 
 /**
  * Resolver of logger configuration from available loaders.
