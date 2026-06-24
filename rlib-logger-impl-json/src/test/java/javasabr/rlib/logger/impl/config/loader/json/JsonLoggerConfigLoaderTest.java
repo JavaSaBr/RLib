@@ -3,27 +3,25 @@ package javasabr.rlib.logger.impl.config.loader.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javasabr.rlib.collections.array.ArrayFactory;
 import javasabr.rlib.collections.array.MutableArray;
+import javasabr.rlib.common.util.ResourceClassLoader;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.impl.DefaultLoggerService;
 import javasabr.rlib.logger.impl.config.LoggerConfig;
 import javasabr.rlib.logger.impl.config.consumer.impl.CustomLogMessageConsumer;
-import javasabr.rlib.logger.impl.config.render.LogMessageRender;
-import javasabr.rlib.logger.impl.config.render.impl.CustomLogMessageRender;
-import javasabr.rlib.logger.impl.config.render.impl.SimpleLogMessageRender;
 import javasabr.rlib.logger.impl.config.loader.json.dto.JsonLoggerConfigDto.ConsumerDto;
 import javasabr.rlib.logger.impl.config.loader.json.dto.JsonLoggerConfigDto.ConsumerType;
 import javasabr.rlib.logger.impl.config.loader.json.dto.JsonLoggerConfigDto.RenderDto;
 import javasabr.rlib.logger.impl.config.loader.json.dto.JsonLoggerConfigDto.RenderType;
+import javasabr.rlib.logger.impl.config.render.LogMessageRender;
+import javasabr.rlib.logger.impl.config.render.impl.CustomLogMessageRender;
+import javasabr.rlib.logger.impl.config.render.impl.SimpleLogMessageRender;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.AfterEach;
@@ -190,7 +188,9 @@ class JsonLoggerConfigLoaderTest {
     var loader = new JsonLoggerConfigLoader();
     var contextClassLoader = new ResourceClassLoader(Map.of(
         JsonLoggerConfigLoader.FILE_TEST, buildRootOnlyConfigJson("TRACE"),
-        JsonLoggerConfigLoader.FILE_MAIN, buildRootOnlyConfigJson("ERROR")));
+        JsonLoggerConfigLoader.FILE_MAIN, buildRootOnlyConfigJson("ERROR")), Set.of(
+        JsonLoggerConfigLoader.FILE_TEST,
+        JsonLoggerConfigLoader.FILE_MAIN));
 
     // when:
     Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
@@ -216,7 +216,9 @@ class JsonLoggerConfigLoaderTest {
     // given:
     var loader = new JsonLoggerConfigLoader();
     var contextClassLoader = new ResourceClassLoader(Map.of(
-        JsonLoggerConfigLoader.FILE_MAIN, buildRootOnlyConfigJson("ERROR")));
+        JsonLoggerConfigLoader.FILE_MAIN, buildRootOnlyConfigJson("ERROR")), Set.of(
+        JsonLoggerConfigLoader.FILE_TEST,
+        JsonLoggerConfigLoader.FILE_MAIN));
 
     // when:
     Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
@@ -241,7 +243,9 @@ class JsonLoggerConfigLoaderTest {
   void shouldReturnEmptyWhenNoJsonConfigFound() {
     // given:
     var loader = new JsonLoggerConfigLoader();
-    var contextClassLoader = new ResourceClassLoader(Map.of());
+    var contextClassLoader = new ResourceClassLoader(Map.of(), Set.of(
+        JsonLoggerConfigLoader.FILE_TEST,
+        JsonLoggerConfigLoader.FILE_MAIN));
 
     // when:
     Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
@@ -255,7 +259,9 @@ class JsonLoggerConfigLoaderTest {
     // given:
     var loader = new JsonLoggerConfigLoader();
     var contextClassLoader = new ResourceClassLoader(Map.of(
-        JsonLoggerConfigLoader.FILE_TEST, "{ malformed-json"));
+        JsonLoggerConfigLoader.FILE_TEST, "{ malformed-json"), Set.of(
+        JsonLoggerConfigLoader.FILE_TEST,
+        JsonLoggerConfigLoader.FILE_MAIN));
 
     // when/then:
     assertThatThrownBy(() -> withContextClassLoader(contextClassLoader, loader::tryToLoad))
@@ -273,7 +279,9 @@ class JsonLoggerConfigLoaderTest {
               "consumers": [{"name":"consumer1","type":"CONSOLE","render":"unknown-render"}],
               "loggers": [{"name":"ROOT","level":"INFO","consumers":["consumer1"]}]
             }
-            """));
+            """), Set.of(
+        JsonLoggerConfigLoader.FILE_TEST,
+        JsonLoggerConfigLoader.FILE_MAIN));
 
     // when/then:
     assertThatThrownBy(() -> withContextClassLoader(contextClassLoader, loader::tryToLoad))
@@ -290,7 +298,9 @@ class JsonLoggerConfigLoaderTest {
             {
               "renders": [{"name":"render1","type":"CUSTOM"}]
             }
-            """));
+            """), Set.of(
+        JsonLoggerConfigLoader.FILE_TEST,
+        JsonLoggerConfigLoader.FILE_MAIN));
 
     // when/then:
     assertThatThrownBy(() -> withContextClassLoader(contextClassLoader, loader::tryToLoad))
@@ -308,7 +318,9 @@ class JsonLoggerConfigLoaderTest {
               "renders": [{"name":"render1","type":"SIMPLE"}],
               "consumers": [{"name":"consumer1","type":"CUSTOM","render":"render1"}]
             }
-            """));
+            """), Set.of(
+        JsonLoggerConfigLoader.FILE_TEST,
+        JsonLoggerConfigLoader.FILE_MAIN));
 
     // when/then:
     assertThatThrownBy(() -> withContextClassLoader(contextClassLoader, loader::tryToLoad))
@@ -400,35 +412,6 @@ class JsonLoggerConfigLoaderTest {
       return action.get();
     } finally {
       currentThread.setContextClassLoader(previousClassLoader);
-    }
-  }
-
-  private static class ResourceClassLoader extends ClassLoader {
-
-    private final Map<String, byte[]> resources;
-
-    private ResourceClassLoader(Map<String, String> resources) {
-      super(Thread
-          .currentThread()
-          .getContextClassLoader());
-      this.resources = resources
-          .entrySet()
-          .stream()
-          .collect(Collectors.toUnmodifiableMap(
-              Map.Entry::getKey,
-              entry -> entry.getValue().getBytes(StandardCharsets.UTF_8)));
-    }
-
-    @Override
-    public InputStream getResourceAsStream(String name) {
-      byte[] loaded = resources.get(name);
-      if (loaded != null) {
-        return new ByteArrayInputStream(loaded);
-      }
-      if (JsonLoggerConfigLoader.FILE_TEST.equals(name) || JsonLoggerConfigLoader.FILE_MAIN.equals(name)) {
-        return null;
-      }
-      return super.getResourceAsStream(name);
     }
   }
 }

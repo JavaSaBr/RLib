@@ -7,4 +7,5 @@ dependencies {
   api projects.rlibLoggerImpl
   api libs.jackson.core
   api libs.jackson.databind
+  testImplementation testFixtures(projects.rlibCommon)
 }

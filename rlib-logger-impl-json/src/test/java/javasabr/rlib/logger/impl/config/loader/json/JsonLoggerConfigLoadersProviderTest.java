@@ -2,13 +2,11 @@ package javasabr.rlib.logger.impl.config.loader.json;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import javasabr.rlib.common.util.ResourceClassLoader;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.impl.DefaultLoggerService;
 import javasabr.rlib.logger.impl.config.loader.LoggerConfigResolver;
@@ -46,7 +44,11 @@ class JsonLoggerConfigLoadersProviderTest {
               "consumers": [{"name":"consumer1","type":"CONSOLE","render":"render1"}],
               "loggers": [{"name":"ROOT","level":"TRACE","consumers":["consumer1"]}]
             }
-            """));
+            """), Set.of(
+        JsonLoggerConfigLoader.FILE_TEST,
+        JsonLoggerConfigLoader.FILE_MAIN,
+        PropertyLoggerConfigLoader.FILE_TEST,
+        PropertyLoggerConfigLoader.FILE_MAIN));
 
     // when:
     var config = withContextClassLoader(contextClassLoader, LoggerConfigResolver::load);
@@ -70,38 +72,6 @@ class JsonLoggerConfigLoadersProviderTest {
       return action.get();
     } finally {
       currentThread.setContextClassLoader(previousClassLoader);
-    }
-  }
-
-  private static class ResourceClassLoader extends ClassLoader {
-
-    private final Map<String, byte[]> resources;
-
-    private ResourceClassLoader(Map<String, String> resources) {
-      super(Thread
-          .currentThread()
-          .getContextClassLoader());
-      this.resources = resources
-          .entrySet()
-          .stream()
-          .collect(Collectors.toUnmodifiableMap(
-              Map.Entry::getKey,
-              entry -> entry.getValue().getBytes(StandardCharsets.UTF_8)));
-    }
-
-    @Override
-    public InputStream getResourceAsStream(String name) {
-      byte[] loaded = resources.get(name);
-      if (loaded != null) {
-        return new ByteArrayInputStream(loaded);
-      }
-      if (JsonLoggerConfigLoader.FILE_TEST.equals(name) ||
-          JsonLoggerConfigLoader.FILE_MAIN.equals(name) ||
-          PropertyLoggerConfigLoader.FILE_TEST.equals(name) ||
-          PropertyLoggerConfigLoader.FILE_MAIN.equals(name)) {
-        return null;
-      }
-      return super.getResourceAsStream(name);
     }
   }
 }

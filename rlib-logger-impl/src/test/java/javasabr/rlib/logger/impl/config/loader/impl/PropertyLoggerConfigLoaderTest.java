@@ -3,17 +3,15 @@ package javasabr.rlib.logger.impl.config.loader.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javasabr.rlib.collections.array.Array;
 import javasabr.rlib.collections.array.UnsafeArray;
+import javasabr.rlib.common.util.ResourceClassLoader;
 import javasabr.rlib.logger.api.Logger;
 import javasabr.rlib.logger.api.LoggerLevel;
 import javasabr.rlib.logger.impl.DefaultLogger;
@@ -116,7 +114,9 @@ class PropertyLoggerConfigLoaderTest {
     var loader = new PropertyLoggerConfigLoader();
     var contextClassLoader = new ResourceClassLoader(Map.of(
         PropertyLoggerConfigLoader.FILE_TEST, "logger.level.ROOT=TRACE",
-        PropertyLoggerConfigLoader.FILE_MAIN, "logger.level.ROOT=ERROR"));
+        PropertyLoggerConfigLoader.FILE_MAIN, "logger.level.ROOT=ERROR"), Set.of(
+        PropertyLoggerConfigLoader.FILE_TEST,
+        PropertyLoggerConfigLoader.FILE_MAIN));
 
     // when:
     Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
@@ -142,7 +142,9 @@ class PropertyLoggerConfigLoaderTest {
     // given:
     var loader = new PropertyLoggerConfigLoader();
     var contextClassLoader = new ResourceClassLoader(Map.of(
-        PropertyLoggerConfigLoader.FILE_MAIN, "logger.level.ROOT=ERROR"));
+        PropertyLoggerConfigLoader.FILE_MAIN, "logger.level.ROOT=ERROR"), Set.of(
+        PropertyLoggerConfigLoader.FILE_TEST,
+        PropertyLoggerConfigLoader.FILE_MAIN));
 
     // when:
     Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
@@ -167,7 +169,9 @@ class PropertyLoggerConfigLoaderTest {
   void shouldReturnEmptyWhenNoPropertiesFound() {
     // given:
     var loader = new PropertyLoggerConfigLoader();
-    var contextClassLoader = new ResourceClassLoader(Map.of());
+    var contextClassLoader = new ResourceClassLoader(Map.of(), Set.of(
+        PropertyLoggerConfigLoader.FILE_TEST,
+        PropertyLoggerConfigLoader.FILE_MAIN));
 
     // when:
     Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
@@ -182,7 +186,9 @@ class PropertyLoggerConfigLoaderTest {
     var loader = new PropertyLoggerConfigLoader();
     var contextClassLoader = new ResourceClassLoader(Map.of(
         PropertyLoggerConfigLoader.FILE_MAIN,
-        "logger.level.ROOT=WARNING\nlogger.level.configured.logger=TRACE"));
+        "logger.level.ROOT=WARNING\nlogger.level.configured.logger=TRACE"), Set.of(
+        PropertyLoggerConfigLoader.FILE_TEST,
+        PropertyLoggerConfigLoader.FILE_MAIN));
 
     // when:
     Optional<LoggerConfig> loadedConfig = withContextClassLoader(contextClassLoader, loader::tryToLoad);
@@ -261,35 +267,6 @@ class PropertyLoggerConfigLoaderTest {
       return action.get();
     } finally {
       currentThread.setContextClassLoader(previousClassLoader);
-    }
-  }
-
-  private static class ResourceClassLoader extends ClassLoader {
-
-    private final Map<String, byte[]> resources;
-
-    private ResourceClassLoader(Map<String, String> resources) {
-      super(Thread
-          .currentThread()
-          .getContextClassLoader());
-      this.resources = resources
-          .entrySet()
-          .stream()
-          .collect(Collectors.toUnmodifiableMap(
-              Map.Entry::getKey,
-              entry -> entry.getValue().getBytes(StandardCharsets.UTF_8)));
-    }
-
-    @Override
-    public InputStream getResourceAsStream(String name) {
-      byte[] loaded = resources.get(name);
-      if (loaded != null) {
-        return new ByteArrayInputStream(loaded);
-      }
-      if (PropertyLoggerConfigLoader.FILE_TEST.equals(name) || PropertyLoggerConfigLoader.FILE_MAIN.equals(name)) {
-        return null;
-      }
-      return super.getResourceAsStream(name);
     }
   }
 }
